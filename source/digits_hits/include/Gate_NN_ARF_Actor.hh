@@ -7,27 +7,26 @@
   ----------------------*/
 
 /*!
-  \class  GateDetectorInOutActor
+  \class  Gate_NN_ARF_Actor
 */
 
 #include "GateConfiguration.h"
 
-#ifndef GATEDETECTORINOUT_HH
-#define GATEDETECTORINOUT_HH
+#ifndef GATE_NN_ARF_ACTOR_HH
+#define GATE_NN_ARF_ACTOR_HH
 
 #include "GateActorManager.hh"
 #include "GateMiscFunctions.hh"
 #include "GateVActor.hh"
-#include "GateDetectorInOutActorMessenger.hh"
-
+#include "Gate_NN_ARF_ActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
-struct DetectorInData {
+struct Gate_NN_ARF_Input_Data {
   // Input parameters
   double x;     // in mm
   double y;     // in mm
-  double theta; // radian along X
-  double phi;   // radian along Y
+  double theta; // in deg, angle along X
+  double phi;   // in deg, angle along Y
   double E;     // in MeV
   // Helper
   void Print(std::ostream & os);
@@ -36,10 +35,8 @@ struct DetectorInData {
 
 
 //-----------------------------------------------------------------------------
-struct DetectorOutData {
+struct Gate_NN_ARF_Output_Data {
   // Output parameters
-  //double u;
-  //double v;
   double w;     // windows id (0 if outside)
   // Helper
   void Print(std::ostream & os);
@@ -48,22 +45,22 @@ struct DetectorOutData {
 
 
 //-----------------------------------------------------------------------------
-class GateDetectorInOutActor: public GateVActor
+class Gate_NN_ARF_Actor: public GateVActor
 {
 public:
 
   // Macro to auto declare actor
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectorInOutActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(Gate_NN_ARF_Actor)
 
   // Actor name
-  virtual ~GateDetectorInOutActor();
+  virtual ~Gate_NN_ARF_Actor();
 
   // Constructs the sensor
   virtual void Construct();
 
   // Parameters
-  void SetOutputWindowNames(std::string & names);
-  void SetOutputInDataOnlyFlag(bool b);
+  void SetEnergyWindowNames(std::string & names);
+  void SetMode(std::string m);
   void SetMaxAngle(double a);
   void SetRRFactor(int f);
 
@@ -78,16 +75,16 @@ public:
   virtual void ResetData();
 
 protected:
-  GateDetectorInOutActor(G4String name, G4int depth = 0);
-  GateDetectorInOutActorMessenger * pMessenger;
+  Gate_NN_ARF_Actor(G4String name, G4int depth = 0);
+  Gate_NN_ARF_ActorMessenger * pMessenger;
 
-  bool mOutputInDataOnlyFlag;
+  bool mTrainingModeFlag;
   bool mIgnoreCurrentData;
-  std::vector<DetectorOutData> mOutData;
-  std::vector<DetectorInData> mInData;
+  std::vector<Gate_NN_ARF_Output_Data> mOutData;
+  std::vector<Gate_NN_ARF_Input_Data> mInData;
   bool mEventIsAlreadyStored;
-  DetectorOutData mCurrentOutData;
-  DetectorInData mCurrentInData;
+  Gate_NN_ARF_Output_Data mCurrentOutData;
+  Gate_NN_ARF_Input_Data mCurrentInData;
   std::vector<G4String> mListOfWindowNames;
   std::vector<int> mListOfWindowIds;
   int mNumberOfDetectedEvent;
@@ -98,6 +95,6 @@ protected:
 };
 
 // Macro to auto declare actor
-MAKE_AUTO_CREATOR_ACTOR(DetectorInOutActor, GateDetectorInOutActor)
+MAKE_AUTO_CREATOR_ACTOR(NN_ARF_Actor, Gate_NN_ARF_Actor)
 
 #endif /* end #define GATEDETECTORINOUT_HH */
