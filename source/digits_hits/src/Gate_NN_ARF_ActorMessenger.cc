@@ -6,11 +6,11 @@
   See LICENSE.md for further details
   ----------------------*/
 
-#include "GateDetectorInOutActorMessenger.hh"
-#include "GateDetectorInOutActor.hh"
+#include "Gate_NN_ARF_ActorMessenger.hh"
+#include "Gate_NN_ARF_Actor.hh"
 
 //-----------------------------------------------------------------------------
-GateDetectorInOutActorMessenger::GateDetectorInOutActorMessenger(GateDetectorInOutActor* sensor):
+Gate_NN_ARF_ActorMessenger::Gate_NN_ARF_ActorMessenger(Gate_NN_ARF_Actor* sensor):
   GateActorMessenger(sensor), pDIOActor(sensor)
 {
   BuildCommands(baseName + sensor->GetObjectName());
@@ -19,10 +19,10 @@ GateDetectorInOutActorMessenger::GateDetectorInOutActorMessenger(GateDetectorInO
 
 
 //-----------------------------------------------------------------------------
-GateDetectorInOutActorMessenger::~GateDetectorInOutActorMessenger()
+Gate_NN_ARF_ActorMessenger::~Gate_NN_ARF_ActorMessenger()
 {
-  delete pSetOutputWindowNamesCmd;
-  delete pSetOutputInDataOnlyFlagCmd;
+  delete pSetEnergyWindowNamesCmd;
+  delete pSetModeFlagCmd;
   delete pSetMaxAngleCmd;
   delete pSetRRFactorCmd;
 }
@@ -30,24 +30,24 @@ GateDetectorInOutActorMessenger::~GateDetectorInOutActorMessenger()
 
 
 //-----------------------------------------------------------------------------
-void GateDetectorInOutActorMessenger::BuildCommands(G4String base)
+void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
 {
-  G4String n = base + "/setOutputWindowNames";
-  pSetOutputWindowNamesCmd = new G4UIcmdWithAString(n, this);
+  G4String n = base + "/setEnergyWindowNames";
+  pSetEnergyWindowNamesCmd = new G4UIcmdWithAString(n, this);
   auto guid = G4String("Set the names of the energy windows to output (e.g. scatter, peak1 etc)");
-  pSetOutputWindowNamesCmd->SetGuidance(guid);
+  pSetEnergyWindowNamesCmd->SetGuidance(guid);
 
-  n = base + "/setOutputInDataOnly";
-  pSetOutputInDataOnlyFlagCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("If 'true', onlye output the In Data (and not the Out)");
-  pSetOutputInDataOnlyFlagCmd->SetGuidance(guid);
+  n = base + "/setMode";
+  pSetModeFlagCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("If 'train': store [theta phi E w]. If 'test': store [x y theta phi E]");
+  pSetModeFlagCmd->SetGuidance(guid);
 
   n = base + "/setMaxAngle";
   pSetMaxAngleCmd = new G4UIcmdWithADoubleAndUnit(n, this);
-  guid = G4String("Do not store data if angle larger than the given treshold ()in degree)");
+  guid = G4String("Do not store data if angle larger than the given treshold (in degree, only for 'train' mode)");
   pSetMaxAngleCmd->SetGuidance(guid);
 
-  n = base + "/setOutsideRussianRouletteFactor";
+  n = base + "/setRussianRoulette";
   pSetRRFactorCmd = new G4UIcmdWithAnInteger(n, this);
   guid = G4String("Apply Russian Roulette VRT to data outside all energy windows. The given nb is the factor (1/w w=weight), integer (e.g. 50)");
   pSetRRFactorCmd->SetGuidance(guid);
@@ -57,10 +57,10 @@ void GateDetectorInOutActorMessenger::BuildCommands(G4String base)
 
 
 //-----------------------------------------------------------------------------
-void GateDetectorInOutActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
+void Gate_NN_ARF_ActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pSetOutputWindowNamesCmd)    pDIOActor->SetOutputWindowNames(newValue);
-  if (cmd == pSetOutputInDataOnlyFlagCmd) pDIOActor->SetOutputInDataOnlyFlag(pSetOutputInDataOnlyFlagCmd->GetNewBoolValue(newValue));
+  if (cmd == pSetEnergyWindowNamesCmd)    pDIOActor->SetEnergyWindowNames(newValue);
+  if (cmd == pSetModeFlagCmd)             pDIOActor->SetMode(newValue);
   if (cmd == pSetMaxAngleCmd)             pDIOActor->SetMaxAngle(pSetMaxAngleCmd->GetNewDoubleValue(newValue));
   if (cmd == pSetRRFactorCmd)             pDIOActor->SetRRFactor(pSetRRFactorCmd->GetNewIntValue(newValue));
   GateActorMessenger::SetNewValue(cmd, newValue);

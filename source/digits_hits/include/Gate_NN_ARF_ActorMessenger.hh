@@ -7,36 +7,35 @@
   ----------------------*/
 
 /*
-  \class  GateDetectorInOutActorMessenger
-  \author simon.rit@creatis.insa-lyon.fr
+  \class  Gate_NN_ARF_ActorMessenger
 */
 
-#ifndef GATEDETECTORINOUTMESSENGER_HH
-#define GATEDETECTORINOUTMESSENGER_HH
+#ifndef GATE_NN_ARF_ACTORMESSENGER_HH
+#define GATE_NN_ARF_ACTORMESSENGER_HH
 
 #include "GateActorMessenger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
-class GateDetectorInOutActor;
+class Gate_NN_ARF_Actor;
 
 //-----------------------------------------------------------------------------
-class GateDetectorInOutActorMessenger : public GateActorMessenger
+class Gate_NN_ARF_ActorMessenger : public GateActorMessenger
 {
 public:
-  GateDetectorInOutActorMessenger(GateDetectorInOutActor* sensor);
-  virtual ~GateDetectorInOutActorMessenger();
+  Gate_NN_ARF_ActorMessenger(Gate_NN_ARF_Actor* sensor);
+  virtual ~Gate_NN_ARF_ActorMessenger();
 
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
-  GateDetectorInOutActor    * pDIOActor;
-  G4UIcmdWithAString        * pSetOutputWindowNamesCmd;
-  G4UIcmdWithABool          * pSetOutputInDataOnlyFlagCmd;
+  Gate_NN_ARF_Actor         * pDIOActor;
+  G4UIcmdWithAString        * pSetEnergyWindowNamesCmd;
+  G4UIcmdWithAString        * pSetModeFlagCmd;
   G4UIcmdWithADoubleAndUnit * pSetMaxAngleCmd;
   G4UIcmdWithAnInteger      * pSetRRFactorCmd;
 };
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEDETECTORINOUTMESSENGER_HH */
+#endif /* end #define GATE_NN_ARF_ACTORMESSENGER_HH */
