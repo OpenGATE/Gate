@@ -27,6 +27,7 @@ class GateDigitizerMessenger;
 class GateHitConvertor;
 class GateVDigiMakerModule;
 class GateVSystem;
+class GateCrystalHit;
 
 class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 {
@@ -86,6 +87,9 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   //! Find a pulse-list from the array of pulse-list
   GatePulseList* FindPulseList(const G4String& pulseListName);
 
+
+
+
   //! Find a pulse-list from the array of pulse-list
   std::vector<GateCoincidencePulse*> FindCoincidencePulse(const G4String& pulseName);
 
@@ -103,7 +107,8 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   void MakeCoincidencePulse(G4int i)
     { m_coincidenceSorterList[i]->ProcessSinglePulseList();}
 
-  virtual void Digitize();
+ virtual void Digitize();
+  void Digitize(GateCrystalHitsCollection * hitCollection);
 
   //! Return the hit convertor attached to the digitizer
   inline GateHitConvertor* GetHitConvertor()
@@ -165,13 +170,17 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 
   typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
   typedef std::pair<G4String,GateCoincidencePulse*> GateCoincidencePulseListAlias;
-
+public:
   std::vector<GatePulseList*>            	m_pulseListVector;
   std::vector<GateCoincidencePulse*>     	m_coincidencePulseVector;
   std::vector<GatePulseListAlias>      		m_pulseListAliasVector;
+ protected:
   std::vector<GateCoincidencePulseListAlias>    m_coincidencePulseListAliasVector;
 
   static GateDigitizer*      			theDigitizer;
+//public:
+  //unsigned int GetPulseSingleListVectorSize();
+  //std::vector<GatePulseListAlias> searchSingles();
 };
 
 #endif
