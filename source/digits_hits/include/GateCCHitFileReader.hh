@@ -1,11 +1,14 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
+/*!
+  \class  GateCCHitFileReader
+*/
 
 #ifndef GateCCHitFileReader_h
 #define GateCCHitFileReader_h 1
@@ -16,42 +19,36 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 #include <queue>
-
-#include "G4Event.hh"
-
-class G4Event;
-class GateCrystalHit;
-
-
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-
+#include <G4Event.hh>
+#include <TROOT.h>
+#include <TFile.h>
+#include <TTree.h>
 #include "GateCCRootDefs.hh"
 #include "GateClockDependent.hh"
 #include "GateCrystalHit.hh"
 
+class G4Event;
+class GateCrystalHit;
 class GateCCHitFileReaderMessenger;
 
+//-----------------------------------------------------------------------------
 /*! \class  GateCCHitFileReader
-    \brief  Reads hits data from a ROOT simulation-output file and recreates hit-collections for digitisation
+  \brief  Reads hits data from a ROOT simulation-output file and recreates hit-collections for digitisation
 
-    - GateCCHitFileReader - by Daniel.Strul@iphe.unil.ch (Oct. 2002)
-
-    - The GateCCHitFileReader is a singleton. It is designed to be used in the DigiGate mode.
-      In this mode, the GateCCHitFileReader will read hits data from a ROOT simulation-output file.
-      Based on these data, it will recreate hit-collections that can be fed to the digitizer to
-      reprocess the hits.
+  - The GateCCHitFileReader is a singleton. It is designed to be used in the DigiGate mode.
+  In this mode, the GateCCHitFileReader will read hits data from a ROOT simulation-output file.
+  Based on these data, it will recreate hit-collections that can be fed to the digitizer to
+  reprocess the hits.
 */
 class GateCCHitFileReader : public GateClockDependent
 {
 public:
-    /*! This function allows to retrieve the current instance of the GateCCHitFileReader singleton
+  /*! This function allows to retrieve the current instance of the GateCCHitFileReader singleton
 
-        If the GateCCHitFileReader already exists, GetInstance only returns a pointer to this singleton.
-	If this singleton does not exist yet, GetInstance creates it by calling the private
+    If the GateCCHitFileReader already exists, GetInstance only returns a pointer to this singleton.
+    If this singleton does not exist yet, GetInstance creates it by calling the private
     GateCCHitFileReader constructor
-    */
+  */
 
   static GateCCHitFileReader* GetInstance(G4String filen);
 
@@ -67,12 +64,12 @@ public:
   void PrepareAcquisition();
 
   /*! \brief This method is meant to be called by the primary generator action at the beginning of each event.
-      \brief It read a series of hit data from the ROOT file, and stores them into a queue of hits
+    \brief It read a series of hit data from the ROOT file, and stores them into a queue of hits
 
-      \returns 1 -> series of hits OK for the current run, 0 -> either no hits or series of hits for the NEXT run
+    \returns 1 -> series of hits OK for the current run, 0 -> either no hits or series of hits for the NEXT run
   */
   G4int PrepareNextEvent();
-    G4bool HasNextEvent();
+  G4bool HasNextEvent();
 
   //! This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
   //! It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
@@ -90,10 +87,9 @@ public:
 
   /*! \brief Overload of the base-class virtual method to print-out a description of the reader
 
-      \param indent: the print-out indentation (cosmetic parameter)
+    \param indent: the print-out indentation (cosmetic parameter)
   */
   virtual void Describe(size_t indent=0);
-
 
 protected:
 
@@ -113,14 +109,14 @@ protected:
 
 
   GateCCRootHitBuffer        m_hitBuffer;       	      //!< Buffer to store the data read from the hit-tree
-      	      	      	      	      	      //!< Each field of this structure is a buffer for one of the branches of the tree
-					      //!< The hit-data are loaded into this buffer by LoadHitData()
-					      //!< They are then transformed into a crystal-hit by PrepareNextEvent()
+  //!< Each field of this structure is a buffer for one of the branches of the tree
+  //!< The hit-data are loaded into this buffer by LoadHitData()
+  //!< They are then transformed into a crystal-hit by PrepareNextEvent()
 
   std::queue<GateCrystalHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
-      	      	      	      	      	      //!< For each event, the queue is filled (from data read out of the hit-file) at
-					      //!< the beginning of each event by PrepareNextEvent(). It is emptied into
-					      //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
+  //!< For each event, the queue is filled (from data read out of the hit-file) at
+  //!< the beginning of each event by PrepareNextEvent(). It is emptied into
+  //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
 
   GateCCHitFileReaderMessenger *m_messenger;    //!< Messenger;
 
@@ -131,6 +127,7 @@ protected:
 private:
   static GateCCHitFileReader*   instance;       //!< Instance of the GateHitFielReader singleton
 };
+//-----------------------------------------------------------------------------
 
 #endif
 #endif

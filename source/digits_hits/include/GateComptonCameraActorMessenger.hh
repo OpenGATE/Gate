@@ -1,9 +1,16 @@
+/*----------------------
+  Copyright (C): OpenGATE Collaboration
 
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
+
+/*!
+  \class  GateComptonCameraActorMessenger
+*/
 
 #include "GateConfiguration.h"
-//#ifdef G4ANALYSIS_USE_ROOT
-
-
 
 #ifndef GATECOMPTONCAMERAACTORMESSENGER_HH
 #define GATECOMPTONCAMERAACTORMESSENGER_HH
@@ -37,13 +44,8 @@ protected:
   /// Associated sensor
   GateComptonCameraActor * pActor;
 
-  /// Command objects (These are the parameters that I can include in my macros)
-
-  //G4UIcmdWithADoubleAndUnit * pEdepminCmd;
- // G4UIcmdWithABool          * pSaveAsText;
-
+  /// Command objects
   G4UIcmdWithABool          * pSaveHitsTree;
-
 
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------

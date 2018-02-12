@@ -1,16 +1,16 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 #include "GateCCHitFileReader.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-#include "TBranch.h"
+#include <TBranch.h>
 #include "GateCrystalHit.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateOutputMgr.hh"
@@ -33,19 +33,18 @@ GateCCHitFileReader::GateCCHitFileReader(G4String file)
 {
 
 
-    unsigned lastPointPos=file.rfind(".");
-    std::string pathExt = file.substr(lastPointPos);
-    m_fileName=file.substr(0,lastPointPos);
-    unsigned lastDirect=file.rfind("/");
-    m_filePath= file.substr(0,lastDirect+1);
+  unsigned lastPointPos=file.rfind(".");
+  std::string pathExt = file.substr(lastPointPos);
+  m_fileName=file.substr(0,lastPointPos);
+  unsigned lastDirect=file.rfind("/");
+  m_filePath= file.substr(0,lastDirect+1);
 
-    std::string nameExt=file.substr(lastDirect+1);
-     unsigned lastDot=nameExt.rfind(".");
-   //Esto seria solo el nombre pero yo quiero el nombre ocn el path
-     //m_fileName=nameExt.substr(0,lastDot);
-    std::cout<<"directory "<<m_filePath<<std::endl;
-     std::cout<<"name "<<m_fileName<<std::endl;
-
+  std::string nameExt=file.substr(lastDirect+1);
+  unsigned lastDot=nameExt.rfind("."); // To remove to avoid warning if unused (?)
+  //Esto seria solo el nombre pero yo quiero el nombre ocn el path
+  //m_fileName=nameExt.substr(0,lastDot);
+  std::cout<<"directory "<<m_filePath<<std::endl;
+  std::cout<<"name "<<m_fileName<<std::endl;
 
   // Clear the root-hit structure
   m_hitBuffer.Clear();
@@ -72,16 +71,16 @@ GateCCHitFileReader::~GateCCHitFileReader()
 
 /* This function allows to retrieve the current instance of the GateCCHitFileReader singleton
 
-        If the GateCCHitFileReader already exists, GetInstance only returns a pointer to this singleton.
-	If this singleton does not exist yet, GetInstance creates it by calling the private
-    GateCCHitFileReader constructor
+   If the GateCCHitFileReader already exists, GetInstance only returns a pointer to this singleton.
+   If this singleton does not exist yet, GetInstance creates it by calling the private
+   GateCCHitFileReader constructor
 */
 
 GateCCHitFileReader* GateCCHitFileReader::GetInstance(G4String filename)
 {
-    if (instance == 0)
-      instance = new GateCCHitFileReader(filename);
-    return instance;
+  if (instance == 0)
+    instance = new GateCCHitFileReader(filename);
+  return instance;
 }
 
 
@@ -95,29 +94,29 @@ void GateCCHitFileReader::PrepareAcquisition()
   // Open the input file
   m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
   if (!m_hitFile)
-	{
-		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
-    G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
-	}
+    {
+      G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
+      G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
+    }
   if (!(m_hitFile->IsOpen()))
-	{
-		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
-    G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
-	}
+    {
+      G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
+      G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
+    }
   // Get the hit tree
   m_hitTree = (TTree*)( m_hitFile->Get(GateHitConvertor::GetOutputAlias()) );
   if (!m_hitTree)
-	{
-		G4String msg = "Could not find a tree of hits in the ROOT file '" + m_fileName + ".root'!";
-    G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg);
-	}
+    {
+      G4String msg = "Could not find a tree of hits in the ROOT file '" + m_fileName + ".root'!";
+      G4Exception( "GateCCHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg);
+    }
   // Reset the entry counters
   m_currentEntry=0;
   m_entries = m_hitTree->GetEntries();
 
 
   // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
-      GateCCHitTree::SetBranchAddresses(m_hitTree,m_hitBuffer);
+  GateCCHitTree::SetBranchAddresses(m_hitTree,m_hitBuffer);
 
 
 
@@ -135,7 +134,7 @@ void GateCCHitFileReader::PrepareAcquisition()
    It can return 0 in two cases:
    - either it failed to read a series of hits (end-of-file)
    - or the series of hits has a different runID from the current runID, so that this series
-     should not be used for the current run but rather for a later run
+   should not be used for the current run but rather for a later run
 */
 G4int GateCCHitFileReader::PrepareNextEvent( )
 {
@@ -144,7 +143,7 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
   if(crystalCollection){
-      delete crystalCollection;
+    delete crystalCollection;
   }
   crystalCollection = new GateCrystalHitsCollection("CCActorVolume",theCrystalCollectionName);
 
@@ -169,10 +168,10 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
     return 1;
   }
   else
-  {
-    // We got a set of hits for a later run -> return 0
-    return 0;
-  }
+    {
+      // We got a set of hits for a later run -> return 0
+      return 0;
+    }
 }
 
 
@@ -185,7 +184,7 @@ GateCrystalHitsCollection*  GateCCHitFileReader::PrepareEndOfEvent()
   while (m_hitQueue.size()) {
 
 
-   crystalCollection->insert(m_hitQueue.front());
+    crystalCollection->insert(m_hitQueue.front());
     m_hitQueue.pop();
   }
   return crystalCollection;
@@ -217,13 +216,13 @@ void GateCCHitFileReader::TerminateAfterAcquisition()
 
 G4bool GateCCHitFileReader::HasNextEvent(){
 
-    if (m_currentEntry>=m_entries){
+  if (m_currentEntry>=m_entries){
 
-        return false;
-    }
-    else{
-        return true;
-    }
+    return false;
+  }
+  else{
+    return true;
+  }
 }
 
 // Reads a set of hit data from the hit-tree, and stores them into the root-hit buffer

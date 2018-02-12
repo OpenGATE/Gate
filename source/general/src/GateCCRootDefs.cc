@@ -1,18 +1,26 @@
+/*----------------------
+  Copyright (C): OpenGATE Collaboration
 
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
-
+/*!
+  \class  GateCCRootHitBuffer
+  \class  GateCCHitTree
+  \class  GateCCRootSingleBuffer
+  \class  GateCCSingleTree
+*/
 
 #include "GateCCRootDefs.hh"
 #include "GateCrystalHit.hh"
 #include "GateSingleDigi.hh"
 
-
-
-
-
+//-----------------------------------------------------------------------------
 void GateCCRootHitBuffer::Clear()
 {
-     //G4cout<<"GATECCRootHitBuffer::clear"<<G4endl;
+  //G4cout<<"GATECCRootHitBuffer::clear"<<G4endl;
   PDGEncoding   = 0;
   trackID       = 0;
   parentID      = 0;
@@ -29,14 +37,13 @@ void GateCCRootHitBuffer::Clear()
   localPosZ       = 0./mm;
   eventID         = -1;
   runID           = -1;
-   strcpy (layerName, " ");
+  strcpy (layerName, " ");
   strcpy (processName, " ");
-  
-
-
 }
+//-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
 void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
 {
   //G4cout<<"GATECCRootHitBuffer::Fill"<<G4endl;
@@ -56,16 +63,16 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
   runID           = aHit->GetRunID();
   strcpy (processName, aHit->GetProcess().c_str());
   strcpy (layerName, layerN.c_str());
-
-
 }
+//-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
 GateCrystalHit* GateCCRootHitBuffer::CreateHit()
 {
   // Create a new hit
   GateCrystalHit* aHit = new GateCrystalHit();
-// Initialise the hit data from the root-hit data
+  // Initialise the hit data from the root-hit data
   aHit->SetPDGEncoding(PDGEncoding);\
   aHit->SetTrackID(trackID);
   aHit->SetParentID(parentID);
@@ -79,21 +86,19 @@ GateCrystalHit* GateCCRootHitBuffer::CreateHit()
   aHit->SetEventID(eventID);
   aHit->SetRunID(runID);
   aHit->SetProcess(processName);
-
-
   return aHit;
 }
+//-----------------------------------------------------------------------------
 
 
-
-
+//-----------------------------------------------------------------------------
 void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
 {
-      //G4cout<<"GATECCHitTree::init"<<G4endl;
-//When large Trees are produced, it is safe to activate the AutoSave
-//   procedure. Some branches may have buffers holding many entries.
-//   AutoSave is automatically called by TTree::Fill when the number ofbytes
-//   generated since the previous AutoSave is greater than fAutoSave bytes.
+  //G4cout<<"GATECCHitTree::init"<<G4endl;
+  //When large Trees are produced, it is safe to activate the AutoSave
+  //   procedure. Some branches may have buffers holding many entries.
+  //   AutoSave is automatically called by TTree::Fill when the number ofbytes
+  //   generated since the previous AutoSave is greater than fAutoSave bytes.
   SetAutoSave(10000);
   Branch("PDGEncoding",    &buffer.PDGEncoding,"PDGEncoding/I");
   Branch("trackID",        &buffer.trackID,"trackID/I");
@@ -112,13 +117,15 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("eventID",        &buffer.eventID,"eventID/I");
   Branch("runID",          &buffer.runID,"runID/I");
   Branch("processName",    (void *)buffer.processName,"processName/C");
-    Branch("layerName",     (void *)buffer.layerName,"layername/C");
- 
+  Branch("layerName",     (void *)buffer.layerName,"layername/C");
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffer)
 {
-   // G4cout<<"GATECCHitTree::seBranchaddres"<<G4endl;
+  // G4cout<<"GATECCHitTree::seBranchaddres"<<G4endl;
   // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
   hitTree->SetBranchAddress("PDGEncoding",&buffer.PDGEncoding);
   hitTree->SetBranchAddress("trackID",&buffer.trackID);
@@ -135,16 +142,14 @@ void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffe
   hitTree->SetBranchAddress("eventID",&buffer.eventID);
   hitTree->SetBranchAddress("runID",&buffer.runID);
   hitTree->SetBranchAddress("processName",&buffer.processName);
-   hitTree->SetBranchAddress("layerName",&buffer.layerName);
+  hitTree->SetBranchAddress("layerName",&buffer.layerName);
 }
+//-----------------------------------------------------------------------------
 
 
-
-
+//-----------------------------------------------------------------------------
 void GateCCRootSingleBuffer::Clear()
 {
-
-
   runID            = -1;
   eventID          = -1;
   time             = 0./s;
@@ -152,18 +157,16 @@ void GateCCRootSingleBuffer::Clear()
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
-   strcpy (layerName, " ");
-   layerID=-1;
-   sublayerID=-1;
-
+  strcpy (layerName, " ");
+  layerID=-1;
+  sublayerID=-1;
 }
+//-----------------------------------------------------------------------------
 
 
-
+//-----------------------------------------------------------------------------
 void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi, int slayerID)
 {
-
-
   runID         =  aDigi->GetRunID();
   eventID       =  aDigi->GetEventID();
   time          =  aDigi->GetTime()/s;
@@ -175,13 +178,12 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi, int slayerID)
 
   strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
   //Not working think for segmented detectore identifier
- //sublayerID=aDigi->GetPulse().GetVolumeID().GetVolume(3)->GetCopyNo();
-
-
+  //sublayerID=aDigi->GetPulse().GetVolumeID().GetVolume(3)->GetCopyNo();
 }
+//-----------------------------------------------------------------------------
 
 
-
+//-----------------------------------------------------------------------------
 void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
 {
   SetAutoSave(2000);
@@ -200,9 +202,8 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
   if ( GateSingleDigi::GetSingleASCIIMask(11) )
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
 
-   Branch("layerName",    (void *)buffer.layerName,"layername/C");
-   Branch("layerID",     &buffer.layerID,"layerID/I");
-    Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
+  Branch("layerName",    (void *)buffer.layerName,"layername/C");
+  Branch("layerID",     &buffer.layerID,"layerID/I");
+  Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
 }
-
-
+//-----------------------------------------------------------------------------

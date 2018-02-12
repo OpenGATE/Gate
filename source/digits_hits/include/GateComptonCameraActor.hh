@@ -1,8 +1,14 @@
+/*----------------------
+  Copyright (C): OpenGATE Collaboration
 
-//(No hace falta?)
-//#include "GateConfiguration.h"
-//#ifdef G4ANALYSIS_USE_ROOT
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
+/*!
+  \class  GateComptonCameraActor
+*/
 
 #ifndef GATECOMPTONCAMERACTOR_HH
 #define GATECOMPTONCAMERACTOR_HH
@@ -12,12 +18,10 @@
 #include "GateVolumeID.hh"
 #include "GateCCRootDefs.hh"
 
-
 #include "GateCrystalHit.hh"
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
 #include "GatePulseAdder.hh"
-
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -33,148 +37,123 @@ class G4EmCalculator;
 class GateDigitizer;
 
 //-----------------------------------------------------------------------------
-
 class GateComptonCameraActor : public GateVActor
 {
 public:
 
-    virtual ~GateComptonCameraActor();
+  virtual ~GateComptonCameraActor();
 
-    //-----------------------------------------------------------------------------
-    // This macro initialize the CreatePrototype and CreateInstance
-    FCT_FOR_AUTO_CREATOR_ACTOR(GateComptonCameraActor)
+  //-----------------------------------------------------------------------------
+  // This macro initialize the CreatePrototype and CreateInstance
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateComptonCameraActor)
 
-    //-----------------------------------------------------------------------------
-    // Constructs the sensor
-    virtual void Construct();
+  //-----------------------------------------------------------------------------
+  // Constructs the sensor
+  virtual void Construct();
 
-    //-----------------------------------------------------------------------------
-    // Callbacks
+  //-----------------------------------------------------------------------------
+  // Callbacks
 
-    virtual void BeginOfRunAction(const G4Run * r);
-    virtual void BeginOfEventAction(const G4Event *) ;
-    virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
+  virtual void BeginOfRunAction(const G4Run * r);
+  virtual void BeginOfEventAction(const G4Event *) ;
+  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
-    virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void EndOfEventAction(const G4Event*);
+  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
+  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
+  virtual void EndOfEventAction(const G4Event*);
 
-    //-----------------------------------------------------------------------------
-    /// Saves the data collected to the file
-    virtual void SaveData();
-    virtual void ResetData();
+  //-----------------------------------------------------------------------------
+  /// Saves the data collected to the file
+  virtual void SaveData();
+  virtual void ResetData();
 
-    virtual void Initialize(G4HCofThisEvent* HCE);
-    virtual void EndOfEvent(G4HCofThisEvent*);
+  virtual void Initialize(G4HCofThisEvent* HCE);
+  virtual void EndOfEvent(G4HCofThisEvent*);
 
+  int GetNDaughtersBB() {return nDaughterBB;}
 
+  //Messenger flag
+  void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
 
-
-    int GetNDaughtersBB() {return nDaughterBB;}
-
-    //Messenger flag
-    void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
-
-    //! Get the digitizer
-    inline GateDigitizer*   GetDigitizer()
-        { return m_digitizer; }
-
-
-
+  //! Get the digitizer
+  inline GateDigitizer*   GetDigitizer()
+  { return m_digitizer; }
 
 protected:
-    GateComptonCameraActor(G4String name, G4int depth=0);
+  GateComptonCameraActor(G4String name, G4int depth=0);
 
-    TFile * pTfile;
+  TFile * pTfile;
 
-    GateCCHitTree*  m_hitsTree;
-    GateCCRootHitBuffer  m_hitsBuffer;
+  GateCCHitTree*  m_hitsTree;
+  GateCCRootHitBuffer  m_hitsBuffer;
 
-    GateCCHitTree*  m_hitsAbsTree;
-    GateCCRootHitBuffer  m_hitsAbsBuffer;
+  GateCCHitTree*  m_hitsAbsTree;
+  GateCCRootHitBuffer  m_hitsAbsBuffer;
 
-    GateCCHitTree*  m_hitsScatTree;
-    GateCCRootHitBuffer  m_hitsScatBuffer;
+  GateCCHitTree*  m_hitsScatTree;
+  GateCCRootHitBuffer  m_hitsScatBuffer;
 
-    std::vector<G4String> layerNames;
-    std::vector<std::unique_ptr<TTree>> pSingles;
+  std::vector<G4String> layerNames;
+  std::vector<std::unique_ptr<TTree>> pSingles;
 
+  GateCCSingleTree*  m_SingleTree;
+  GateCCRootSingleBuffer  m_SinglesBuffer;
 
+  int slayerID;
+  G4String mHistName;
 
-    GateCCSingleTree*  m_SingleTree;
-    GateCCRootSingleBuffer  m_SinglesBuffer;
+  unsigned int nDaughterBB;
+  G4String attachPhysVolumeName;
 
-    int slayerID;
-    G4String mHistName;
+  double Ei,Ef;
+  int nTrack;
+  int nEvent;
+  bool newEvt;
+  bool newTrack;
+  double sumNi;
+  double edepTrack;
+  double edepEvt;
+  double tof;
+  double edptempAb;
 
+  G4String VolNameStep;
+  G4int evtID;
+  G4int runID;
 
+  G4double hitEdep;
+  G4ThreeVector hitPostPos;
+  G4ThreeVector hitPrePos;
+  G4int trackID;
+  G4int  parentID;
+  G4double trackLength;
+  G4double trackLocalTime;
+  G4ThreeVector hitPreLocalPos;
 
-    unsigned int nDaughterBB;
-    G4String attachPhysVolumeName;
+  //Test for readout output (Manual singles)
+  double* edepInEachLayerEvt;
 
+  double* xPos_InEachLayerEvt;
+  double* yPos_InEachLayerEvt;
+  double* zPos_InEachLayerEvt;
 
-    double Ei,Ef;
-    int nTrack;
-    int nEvent;
-    bool newEvt;
-    bool newTrack;
-    double sumNi;
-    double edepTrack;
-    double edepEvt;
-    double tof;
-    double edptempAb;
+  GateCrystalHitsCollection* crystalCollection; //Hit collection
+  static const G4String theCrystalCollectionName;//name of the hit collection
+  // int m_collectionID;
 
+  GatePulseList* crystalPulseList;
+  static const G4String thedigitizerName;
+  GatePulseProcessorChain* chain;
 
-    G4String VolNameStep;
-    G4int evtID;
-    G4int runID;
+  void readPulses(GatePulseList* pPulseList);
+  void processPulsesIntoSinglesTree();
 
-    G4double hitEdep;
-    G4ThreeVector hitPostPos;
-    G4ThreeVector hitPrePos;
-    G4int trackID;
-    G4int  parentID;
-    G4double trackLength;
-    G4double trackLocalTime;
-    G4ThreeVector hitPreLocalPos;
+  GateActorMessenger* pMessenger;
 
+  //messenger
+  bool mSaveHitsTreeFlag;
 
-
-    //Test for readout output (Manual singles)
-    double* edepInEachLayerEvt;
-
-    double* xPos_InEachLayerEvt;
-    double* yPos_InEachLayerEvt;
-    double* zPos_InEachLayerEvt;
-
-
-    GateCrystalHitsCollection* crystalCollection; //Hit collection
-    static const G4String theCrystalCollectionName;//name of the hit collection
-   // int m_collectionID;
-
-    GatePulseList* crystalPulseList;
-    static const G4String thedigitizerName;
-    GatePulseProcessorChain* chain;
-
-    void readPulses(GatePulseList* pPulseList);
-    void processPulsesIntoSinglesTree();
-
-
-
-
-
-
-
-    GateActorMessenger* pMessenger;
-
-    //messenger
-    bool mSaveHitsTreeFlag;
-
-    G4EmCalculator * emcalc;
-    GateDigitizer* m_digitizer;
-
-
-
+  G4EmCalculator * emcalc;
+  GateDigitizer* m_digitizer;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(ComptonCameraActor,GateComptonCameraActor)
