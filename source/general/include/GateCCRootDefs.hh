@@ -32,7 +32,7 @@ class GateCCRootHitBuffer
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
     void Fill(GateCrystalHit* aHit, std::string layerN);
-    //GateCrystalHit* CreateHit();
+    GateCrystalHit* CreateHit();
 
    
     //! Returns the time in G4 units (conversion from seconds)
