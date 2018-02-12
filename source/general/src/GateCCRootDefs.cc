@@ -61,6 +61,31 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
 }
 
 
+GateCrystalHit* GateCCRootHitBuffer::CreateHit()
+{
+  // Create a new hit
+  GateCrystalHit* aHit = new GateCrystalHit();
+// Initialise the hit data from the root-hit data
+  aHit->SetPDGEncoding(PDGEncoding);\
+  aHit->SetTrackID(trackID);
+  aHit->SetParentID(parentID);
+  aHit->SetTime(GetTime());
+  aHit->SetTrackLocalTime(GetTrackLocalTime());
+  aHit->SetEdep(GetEdep());
+  aHit->SetStepLength(GetStepLength());
+  aHit->SetTrackLength(GetTrackLength());
+  aHit->SetGlobalPos(GetPos());
+  aHit->SetLocalPos(GetLocalPos());
+  aHit->SetEventID(eventID);
+  aHit->SetRunID(runID);
+  aHit->SetProcess(processName);
+
+
+  return aHit;
+}
+
+
+
 
 void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
 {
