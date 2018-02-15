@@ -40,7 +40,7 @@ GateCCHitFileReader::GateCCHitFileReader(G4String file)
   m_filePath= file.substr(0,lastDirect+1);
 
   std::string nameExt=file.substr(lastDirect+1);
-  unsigned lastDot=nameExt.rfind("."); // To remove to avoid warning if unused (?)
+  //unsigned lastDot=nameExt.rfind("."); // To remove to avoid warning if unused (?)
   //Esto seria solo el nombre pero yo quiero el nombre ocn el path
   //m_fileName=nameExt.substr(0,lastDot);
   std::cout<<"directory "<<m_filePath<<std::endl;
@@ -91,6 +91,7 @@ GateCCHitFileReader* GateCCHitFileReader::GetInstance(G4String filename)
 // It opens the ROOT input file, sets up the hit tree, and loads the first series of hits
 void GateCCHitFileReader::PrepareAcquisition()
 {
+    std::cout<<"Preparing acquisition"<<std::endl;
   // Open the input file
   m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
   if (!m_hitFile)
@@ -113,15 +114,17 @@ void GateCCHitFileReader::PrepareAcquisition()
   // Reset the entry counters
   m_currentEntry=0;
   m_entries = m_hitTree->GetEntries();
+  //std::cout<<"entries hit root "<<m_entries<<std::endl;
 
-
+  //std::cout<<"setting branch address"<<std::endl;
   // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
   GateCCHitTree::SetBranchAddresses(m_hitTree,m_hitBuffer);
 
 
-
+ //std::cout<<"load data"<<std::endl;
   //  Load the first hit into the root-hit structure
   LoadHitData();
+  std::cout<<"Done"<<std::endl;
 }
 
 
@@ -138,7 +141,7 @@ void GateCCHitFileReader::PrepareAcquisition()
 */
 G4int GateCCHitFileReader::PrepareNextEvent( )
 {
-  G4cout << " GateCCHitFileReader::PrepareNextEvent\n";
+  //G4cout << " GateCCHitFileReader::PrepareNextEvent\n";
   // Store the current runID and eventID
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
@@ -155,12 +158,11 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
   // We loop until the data that have been read are found to be for a different event or run
   while ( (currentEventID == m_hitBuffer.eventID) && (currentRunID == m_hitBuffer.runID) ) {
 
-    // Create a new hit and store it into the hit-queue
-    GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
-    m_hitQueue.push(aHit);
-
-    // Load the next set of hit-data into the root-hit structure
-    LoadHitData();
+      // Create a new hit and store it into the hit-queue
+      GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
+      m_hitQueue.push(aHit);
+      // Load the next set of hit-data into the root-hit structure
+      LoadHitData();
   }
 
   if (currentRunID==m_hitBuffer.runID){

@@ -413,14 +413,14 @@ void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
   ErasePulseListVector();
 
 
-  G4cout << "[GateDigitizer::Digitize]: crystal collection entries  "<<hitCollection->entries()<<"\n";
-  G4cout << "[GateDigitizer::Digitize]: launching hit conversion\n";
+  //G4cout << "[GateDigitizer::Digitize]: crystal collection entries  "<<hitCollection->entries()<<"\n";
+  //G4cout << "[GateDigitizer::Digitize]: launching hit conversion\n";
   m_hitConvertor->ProcessHits(hitCollection);
 
-  G4cout << "[GateDigitizer::Digitize]:  hitconvertor pulse vector size+ "<<m_pulseListVector.size()<<G4endl;
+  //G4cout << "[GateDigitizer::Digitize]:  hitconvertor pulse vector size+ "<<m_pulseListVector.size()<<G4endl;
   // Have the hits processed by the pulse-processor chains
   size_t i;
-  G4cout << "[GateDigitizer::Digitize]:Gate chain number"<<GetChainNumber()<<"\n";
+ // G4cout << "[GateDigitizer::Digitize]:Gate chain number"<<GetChainNumber()<<"\n";
   for (i=0; i<GetChainNumber() ; ++i) {
     //if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: launching processor chain '" << GetChain(i)->GetObjectName() << "'\n";
@@ -428,11 +428,10 @@ void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
     GetChain(i)->GetOutputName();
     GetChain(i)->ProcessPulseList();
   }
-  G4cout << "[GateDigitizer::Digitize]:  Singles pulse vector size+ "<<m_pulseListVector.size()<<G4endl;
 
   // Have the pulses processed by the coincidence sorters
   for (i=0; i<m_coincidenceSorterList.size() ; ++i) {
-    if (nVerboseLevel>1)
+   // if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::Digitize]: launching coincidence sorter '" << m_coincidenceSorterList[i]->GetObjectName() << "'\n";
     m_coincidenceSorterList[i]->ProcessSinglePulseList();
   }

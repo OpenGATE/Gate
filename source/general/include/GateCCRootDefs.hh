@@ -26,8 +26,9 @@
 
 class GateCrystalHit;
 class GateSingleDigi;
+class GateCCCoincidenceDigi;
 
-
+#define ROOT_VOLUMEIDSIZE 10
 //-----------------------------------------------------------------------------
 /*! \class  GateCCRootHitBuffer
   \brief  ROOT structure to store hits f
@@ -118,6 +119,7 @@ public:
   Int_t    runID;   	      	      	      	//!< Run ID
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
   Char_t  layerName[40];
+  Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
   //@}
 
 };
@@ -179,6 +181,49 @@ public:
   virtual inline ~GateCCSingleTree() {}
 
   void Init(GateCCRootSingleBuffer& buffer);
+};
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+class GateCCRootCoincBuffer
+{
+public:
+
+  inline GateCCRootCoincBuffer() {Clear();}   	      	  //!< Public constructor
+  inline virtual ~GateCCRootCoincBuffer() {} 	      	  //!< Public destructor
+
+  void Clear();     	      	      	      	  //!< Reset the fields of the structure
+  void Fill(GateCCCoincidenceDigi* aDigi);
+
+  //! \name Data fields
+  //@{
+  Int_t    coincID;
+  Int_t    runID;
+  Int_t    eventID;
+  Double_t time;
+  Float_t  energy;
+  Float_t  globalPosX;
+  Float_t  globalPosY;
+  Float_t  globalPosZ;
+  //Int_t    layerID;
+  Char_t   layerName[40];
+  Int_t    sublayerID;
+  //@}
+};
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+class GateCCCoincTree : public  TTree
+{
+public:
+  inline GateCCCoincTree( const G4String& treeName,
+                           const G4String& treeDescription="The root tree for coincidences ")
+    : TTree(treeName,treeDescription)
+  {}
+  virtual inline ~GateCCCoincTree() {}
+
+  void Init(GateCCRootCoincBuffer& buffer);
 };
 //-----------------------------------------------------------------------------
 

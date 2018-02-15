@@ -30,9 +30,9 @@ See LICENSE.md for further details
 G4int GateCoincidenceSorter::gm_coincSectNum=0;
 // Constructs a new coincidence sorter, attached to a GateDigitizer and to a system
 GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
-      	      	      	      	      	     const G4String& itsOutputName,
-      	      	      	      	      	     G4double itsWindow,
-      	      	      	      	      	     const G4String& itsInputName)
+                                             const G4String& itsOutputName,
+                                             G4double itsWindow,
+                                             const G4String& itsInputName, const bool& IsCCSorter)
   : GateClockDependent(itsDigitizer->GetObjectName()+"/"+itsOutputName),
     m_digitizer(itsDigitizer),
     m_system(0),
@@ -47,11 +47,13 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_allPulseOpenCoincGate(false),
     m_depth(1),
     m_presortBufferSize(256),
-    m_presortWarning(false)
+    m_presortWarning(false),
+    m_CCSorter(IsCCSorter)
 {
 
   // Create the messenger
   m_messenger = new GateCoincidenceSorterMessenger(this);
+  //if(m_CCSorter==true)
 
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
@@ -182,10 +184,14 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     // process completed coincidence pulse window at front of list
     while(!m_coincidencePulses.empty() && m_coincidencePulses.front()->IsAfterWindow(pulse))
     {
-      coincidence = m_coincidencePulses.front();
-      m_coincidencePulses.pop_front();
-
-      ProcessCompletedCoincidenceWindow(coincidence);
+        coincidence = m_coincidencePulses.front();
+        m_coincidencePulses.pop_front();
+        if(m_CCSorter==true){
+            ProcessCompletedCoincidenceWindow4CC(coincidence);
+        }
+        else{
+            ProcessCompletedCoincidenceWindow(coincidence);
+        }
     }
 
     // add event to coincidences
@@ -220,6 +226,38 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     else
       delete pulse; // pulses that don't open a coincidence window can be discarded
   }
+
+}
+
+
+void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidencePulse *coincidence)
+{
+
+
+    G4int nPulses = coincidence->size();
+    if (nPulses<2)
+    {
+      delete coincidence;
+      return;
+    }
+    else if (nPulses==2)
+    {
+        // Introduce some conditions to check if  is good
+          m_digitizer->StoreCoincidencePulse(coincidence);
+         // delete coincidence; // ?
+
+        return;
+    }
+    else // nPulses>2
+    {
+
+        //maybe application conditions 4 different policies
+        m_digitizer->StoreCoincidencePulse(coincidence);
+        //I have to check if I can delate it
+        // delete coincidence;
+       return;
+
+    }
 
 }
 

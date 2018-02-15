@@ -58,7 +58,7 @@ class GateCoincidenceSorter : public GateClockDependent
     GateCoincidenceSorter(GateDigitizer* itsDigitizer,
                           const G4String& itsName,
                           G4double itsWindow,
-                          const G4String& itsInputName="Singles");
+                          const G4String& itsInputName="Singles", const bool &IsCCSorter=false);
     //! Destructor
     virtual ~GateCoincidenceSorter() ;
 
@@ -162,9 +162,12 @@ class GateCoincidenceSorter : public GateClockDependent
     G4int                 m_presortBufferSize;
     G4bool                m_presortWarning;     // avoid repeat warnings
 
+    bool                m_CCSorter;     // compton camera sorter
+
     std::deque<GateCoincidencePulse*> m_coincidencePulses;  // open coincidence windows
 
     void ProcessCompletedCoincidenceWindow(GateCoincidencePulse*);
+    void ProcessCompletedCoincidenceWindow4CC(GateCoincidencePulse *);
 
     G4bool IsForbiddenCoincidence(const GatePulse* pulse1,const GatePulse* pulse2);
     GateCoincidencePulse* CreateSubPulse(GateCoincidencePulse* coincidence, G4int i, G4int j);

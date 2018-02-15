@@ -22,6 +22,7 @@
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
 #include "GatePulseAdder.hh"
+#include "GateCCCoincidenceDigi.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -94,10 +95,14 @@ protected:
   GateCCRootHitBuffer  m_hitsScatBuffer;
 
   std::vector<G4String> layerNames;
+  bool mSaveSinglesManualTreeFlag;
   std::vector<std::unique_ptr<TTree>> pSingles;
 
   GateCCSingleTree*  m_SingleTree;
   GateCCRootSingleBuffer  m_SinglesBuffer;
+
+  GateCCCoincTree*  m_CoincTree;
+  GateCCRootCoincBuffer  m_CoincBuffer;
 
   int slayerID;
   G4String mHistName;
@@ -129,6 +134,8 @@ protected:
   G4double trackLocalTime;
   G4ThreeVector hitPreLocalPos;
 
+  G4int coincID;
+
   //Test for readout output (Manual singles)
   double* edepInEachLayerEvt;
 
@@ -143,6 +150,8 @@ protected:
   GatePulseList* crystalPulseList;
   static const G4String thedigitizerName;
   GatePulseProcessorChain* chain;
+  static const G4String thedigitizerSorterName;
+  GateCoincidenceSorter* coincidenceSorter;
 
   void readPulses(GatePulseList* pPulseList);
   void processPulsesIntoSinglesTree();

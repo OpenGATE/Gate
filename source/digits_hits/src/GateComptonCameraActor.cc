@@ -1,4 +1,4 @@
-﻿/*----------------------
+/*----------------------
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -26,6 +26,7 @@ typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
 
 const G4String GateComptonCameraActor::theCrystalCollectionName="crystalCollection";
 const G4String GateComptonCameraActor::thedigitizerName="layers";
+const G4String GateComptonCameraActor::thedigitizerSorterName="Coincidences";
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
@@ -46,8 +47,9 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   nTrack=0;
   edepEvt = 0.;
   slayerID=-1;
+  coincID=0;
 
-  pMessenger = new GateComptonCameraActorMessenger(this);
+  mSaveSinglesManualTreeFlag=false;
 
   emcalc = new G4EmCalculator;
   m_digitizer =    GateDigitizer::GetInstance();
@@ -56,7 +58,15 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   //digitizer() function applied independently both chains
   chain=new GatePulseProcessorChain(m_digitizer, thedigitizerName);
   m_digitizer->StoreNewPulseProcessorChain(chain);
+  //Include a coincidence sorte into the digitizer with a default coincidence window that can be changed with macro commands
+  G4double coincidenceWindow = 10.* ns;
+  bool IsCCSorter=1;
+  coincidenceSorter = new GateCoincidenceSorter(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
+  m_digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
 
+
+
+  pMessenger = new GateComptonCameraActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
 }
 //-----------------------------------------------------------------------------
@@ -114,7 +124,7 @@ void GateComptonCameraActor::Construct()
   pTfile = new TFile(mSaveFilename,"RECREATE");
   //A tree for the hits
   if(mSaveHitsTreeFlag){
-    m_hitsTree=new GateCCHitTree("hits");
+    m_hitsTree=new GateCCHitTree("Hits");
     m_hitsTree->Init(m_hitsBuffer);
     m_hitsAbsTree=new GateCCHitTree("AbsorberHits");
     m_hitsAbsTree->Init(m_hitsAbsBuffer);
@@ -122,20 +132,26 @@ void GateComptonCameraActor::Construct()
     m_hitsScatTree->Init(m_hitsScatBuffer);
   }
   // singles tree
-  m_SingleTree=new GateCCSingleTree("singles");
+  m_SingleTree=new GateCCSingleTree("Singles");
   m_SingleTree->Init(m_SinglesBuffer);
+
+  // coincidence tree
+  m_CoincTree=new GateCCCoincTree("Coincidences");
+  m_CoincTree->Init(m_CoincBuffer);
 
   //output for the manual singles ree
   //A tree for each layer
-  for(unsigned int i=0; i<nDaughterBB;i++){
-    pSingles.emplace_back(new TTree(layerNames.at(i), "Singles tree"));
-    pSingles.at(i)->Branch("edepEvt",&edepInEachLayerEvt[i],"edepEvt/D");
-    pSingles.at(i)->Branch("xPosEvt",&xPos_InEachLayerEvt[i],"xPosEvt/D");
-    pSingles.at(i)->Branch("yPosEvt",&yPos_InEachLayerEvt[i],"yPosEvt/D");
-    pSingles.at(i)->Branch("zPosEvt",&zPos_InEachLayerEvt[i],"zPosEvt/D");
+  if(mSaveSinglesManualTreeFlag){
 
-    //This line does not work I do not know how to put the units in the histograms of the branch
-    //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (mm)");
+      for(unsigned int i=0; i<nDaughterBB;i++){
+          pSingles.emplace_back(new TTree(layerNames.at(i), "Singles tree"));
+          pSingles.at(i)->Branch("edepEvt",&edepInEachLayerEvt[i],"edepEvt/D");
+          pSingles.at(i)->Branch("xPosEvt",&xPos_InEachLayerEvt[i],"xPosEvt/D");
+          pSingles.at(i)->Branch("yPosEvt",&yPos_InEachLayerEvt[i],"yPosEvt/D");
+          pSingles.at(i)->Branch("zPosEvt",&zPos_InEachLayerEvt[i],"zPosEvt/D");
+      }
+      //This line does not work I do not know how to put the units in the histograms of the branch
+      //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (mm)");
   }
 
   ResetData();
@@ -201,7 +217,7 @@ void GateComptonCameraActor::BeginOfRunAction(const G4Run * run)
 void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 {
   GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Event\n");
-  G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
+ // G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
   newEvt = true;
   edepEvt = 0.;
   //edepInEachLayerEvt.assign(nDaughterBB,0.0);
@@ -231,25 +247,71 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 {
-  G4cout<<"######start of  :END OF EVENT ACTION####################################"<<G4endl;
+  //G4cout<<"######start of  :END OF EVENT ACTION####################################"<<G4endl;
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
   if (edepEvt > 0) {
     //Manually constructed singles
-    for(unsigned int i=0; i<nDaughterBB; i++){
-      //I let divide by zero because it gives me null value for the position in the layer when there is no energy deposition
-      if(edepInEachLayerEvt[i]!=0.){
-        xPos_InEachLayerEvt[i]=xPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-        yPos_InEachLayerEvt[i]=yPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-        zPos_InEachLayerEvt[i]=zPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-        // }
-        pSingles.at(i)->Fill();
+      if(mSaveSinglesManualTreeFlag){
+          for(unsigned int i=0; i<nDaughterBB; i++){
+              //I let divide by zero because it gives me null value for the position in the layer when there is no energy deposition
+              if(edepInEachLayerEvt[i]!=0.){
+                  xPos_InEachLayerEvt[i]=xPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                  yPos_InEachLayerEvt[i]=yPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                  zPos_InEachLayerEvt[i]=zPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                  // }
+                  pSingles.at(i)->Fill();
+              }
+          }
       }
-    }
-
     if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
-    G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<<G4endl;
-    m_digitizer->Digitize(crystalCollection);
-    processPulsesIntoSinglesTree();
+    G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<< "  edep  "<<edepEvt <<G4endl;
+    if(crystalCollection->entries()>0){
+        m_digitizer->Digitize(crystalCollection);
+        processPulsesIntoSinglesTree();
+        G4cout<<"coincidenceVectorPulse size="<<m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()<<G4endl;
+        if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()==1){
+
+            //Here I have my coincidences (Singles fill a buffer  every event and when the size is above a THR  coincidences are processed and then we have a ocincidnece pulse output after the event which is erase at hte beginning of the next event
+
+            GateCoincidencePulse* coincPulse=m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(0);
+            //GAteCoincidencePulse compose of several GatePulse
+
+                   unsigned int numCoincPulses=coincPulse->size();
+                   for(unsigned int i=0;i<numCoincPulses;i++){
+                         GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
+                         //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
+                         m_CoincBuffer.Fill(aCoinDigi);
+                         m_CoincTree->Fill();
+                         m_CoincBuffer.Clear();
+                   }
+
+            G4cout<<"size of the  coincidence Pulse"<<coincPulse->size()<<G4endl;
+            if(coincPulse->size()>2){
+                //Sometimes 3 or more pulses (singles) in a coincidence
+                G4cout<<"###############################################################"<<G4endl;
+                G4cout<<"number PULSES IN THE COINCIDENCEPULSE the vector ."<<coincPulse->size()<<G4endl;
+                G4cout<<"###############################################################"<<G4endl;
+
+
+            }
+
+
+           coincID++;
+        }
+        else if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()>1){
+            G4cout<<"###############################################################"<<G4endl;
+            G4cout<<"More than one coincidencePulse in the vector . If I have defined only the sorter PROBLEMS"<<G4endl;
+            G4cout<<"###############################################################"<<G4endl;
+            //para que se salga con un break
+            m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(15);
+
+        }
+    }
+    else{
+        G4cout<<"#########################################"<<G4endl;
+        G4cout<<"no hits with energy deposition in layer collection ="<<edepEvt<<G4endl;
+        G4cout<<"######################################"<<G4endl;
+    }
     // crystalPulseList=GateHitConvertor::GetInstance()->ProcessHits(crystalCollection);
     // const G4String adderName="adder";
     // GatePulseList* pPulseFinalList=GatePulseAdder(chain,adderName).ProcessPulseList(crystalPulseList);
@@ -322,7 +384,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
   GateVolumeID volumeID(touchableH);
   hitPreLocalPos=volumeID.MoveToBottomVolumeFrame(hitPrePos);
-
+  // std::cout << "VolumNameStep " <<VolNameStep <<"energy="<<hitEdep<<'\n';
   //========================track (step) =========================================
   ///SD hit position from postStep
   ///processName from posStep GetProccessDefinedStep (this works with post and pre step)
@@ -350,9 +412,11 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
       yPos_InEachLayerEvt[poslayer]+=hitEdep*(hitPrePos.getY()+hitPostPos.getY())/2;
       zPos_InEachLayerEvt[poslayer]+=hitEdep*(hitPrePos.getZ()+hitPostPos.getZ())/2;
     }
+    //I add energy to the event only if it is deposited in the layers
+     edepEvt += step->GetTotalEnergyDeposit();
   }
 
-  edepEvt += step->GetTotalEnergyDeposit();
+
   //  edepTrack += step->GetTotalEnergyDeposit();
 
   //  //First hit of a new event tof (time) and for the rest ltof
@@ -408,8 +472,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     if (it != layerNames.end()){
       //Maybe I need different collection for each layer to apply different digitization chains
       crystalCollection->insert(aHit);
-      G4cout<<"inserting a hit"<<G4endl;
-      G4cout<<"layer+"<<VolNameStep<<G4endl;
+      //G4cout<<"inserting a hit"<<G4endl;
+     // G4cout<<"layer+"<<VolNameStep<<G4endl;
       m_hitsBuffer.Fill(aHit,VolNameStep);
       m_hitsTree->Fill();
       m_hitsBuffer.Clear();
@@ -469,8 +533,8 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
   //     }
 
   //Choose the pulses of the desired chain
-  GatePulseList* pPulseList=m_digitizer->FindPulseList("Singles");
-  //GatePulseList* pPulseList=m_digitizer->FindPulseList("layers");
+  //GatePulseList* pPulseList=m_digitizer->FindPulseList("Singles");
+  GatePulseList* pPulseList=m_digitizer->FindPulseList("layers");
 
   GatePulseConstIterator iterIn;
   for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
@@ -478,17 +542,19 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
     GateSingleDigi* aSingleDigi=new GateSingleDigi(inputPulse);
     // G4cout << "eventID"<< inputPulse->GetEventID()<<"singleDigi evtID="<<aSingleDigi->GetEventID()<<G4endl;
 
-
+    //LAYER NAMES MUST BE INTRODUCED AS INPUT IN ACTOR MESSENGER ang HERE some generalization
     //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
     //G4cout << "vol name nivel 2"<<inputPulse->GetVolumeID().GetVolume(2)->GetName()<<G4endl;
     // G4cout << "vol ID nivel 2="<<inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()<<G4endl;
     ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
     /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
     if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
-      slayerID=nDaughterBB-1;
+    //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()!="scatterer_phys"){
+     // slayerID=nDaughterBB-1;
+        slayerID=0;
     }
     else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="scatterer_phys"){
-      slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo();
+      slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()+1;
     }
     else{
       G4cout << "problems of layer identification"<<G4endl;

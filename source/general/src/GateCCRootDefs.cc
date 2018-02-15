@@ -16,6 +16,7 @@
 #include "GateCCRootDefs.hh"
 #include "GateCrystalHit.hh"
 #include "GateSingleDigi.hh"
+#include "GateCCCoincidenceDigi.hh"
 
 //-----------------------------------------------------------------------------
 void GateCCRootHitBuffer::Clear()
@@ -39,6 +40,10 @@ void GateCCRootHitBuffer::Clear()
   runID           = -1;
   strcpy (layerName, " ");
   strcpy (processName, " ");
+
+  size_t d;
+  for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
+    volumeID[d] = -1;
 }
 //-----------------------------------------------------------------------------
 
@@ -63,6 +68,7 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
   runID           = aHit->GetRunID();
   strcpy (processName, aHit->GetProcess().c_str());
   strcpy (layerName, layerN.c_str());
+   aHit->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 }
 //-----------------------------------------------------------------------------
 
@@ -70,6 +76,7 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
 //-----------------------------------------------------------------------------
 GateCrystalHit* GateCCRootHitBuffer::CreateHit()
 {
+    GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
   // Create a new hit
   GateCrystalHit* aHit = new GateCrystalHit();
   // Initialise the hit data from the root-hit data
@@ -86,6 +93,7 @@ GateCrystalHit* GateCCRootHitBuffer::CreateHit()
   aHit->SetEventID(eventID);
   aHit->SetRunID(runID);
   aHit->SetProcess(processName);
+   aHit->SetVolumeID(	      	aVolumeID);
   return aHit;
 }
 //-----------------------------------------------------------------------------
@@ -118,6 +126,7 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("runID",          &buffer.runID,"runID/I");
   Branch("processName",    (void *)buffer.processName,"processName/C");
   Branch("layerName",     (void *)buffer.layerName,"layername/C");
+  Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 //-----------------------------------------------------------------------------
 
@@ -143,6 +152,7 @@ void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffe
   hitTree->SetBranchAddress("runID",&buffer.runID);
   hitTree->SetBranchAddress("processName",&buffer.processName);
   hitTree->SetBranchAddress("layerName",&buffer.layerName);
+   hitTree->SetBranchAddress("volumeID",buffer.volumeID);
 }
 //-----------------------------------------------------------------------------
 
@@ -207,3 +217,63 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
   Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
 }
 //-----------------------------------------------------------------------------
+
+
+
+
+//-----------------------------------------------------------------------------
+void GateCCRootCoincBuffer::Clear()
+{
+  coincID          =-1;
+  runID            = -1;
+  eventID          = -1;
+  time             = 0./s;
+  energy           = 0./MeV;
+  globalPosX       = 0./mm;
+  globalPosY       = 0./mm;
+  globalPosZ       = 0./mm;
+  strcpy (layerName, " ");
+  //layerID=-1;
+  sublayerID=-1;
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
+{
+    coincID       = aDigi->GetCoincidenceID();
+    runID         =  aDigi->GetRunID();
+    eventID       =  aDigi->GetEventID();
+    time          =  aDigi->GetTime()/s;
+    energy        =  aDigi->GetEnergy()/MeV;
+    globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
+    globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
+    globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
+    //layerID=slayerID;
+    strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
+
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
+{
+    SetAutoSave(2000);
+    Branch("coincID",          &buffer.coincID,"coincID/I");
+    Branch("runID",          &buffer.runID,"runID/I");
+    Branch("eventID",        &buffer.eventID,"eventID/I");
+    Branch("time",           &buffer.time,"time/D");
+    Branch("energy",         &buffer.energy,"energy/F");
+    Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
+    Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
+    Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
+     Branch("layerName",    (void *)buffer.layerName,"layername/C");
+    //Branch("layerID",     &buffer.layerID,"layerID/I");
+    Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
+}
+//-----------------------------------------------------------------------------
+
