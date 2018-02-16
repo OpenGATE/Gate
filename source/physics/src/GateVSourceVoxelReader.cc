@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GateVSourceVoxelReader.hh"
@@ -19,7 +19,8 @@ GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
 {
   m_position = G4ThreeVector();
   m_activityTotal = 0. * becquerel;
-  m_activityMax   = 0. * becquerel;
+  m_tactivityTotal = 0. * becquerel;
+//  m_activityMax   = 0. * becquerel;
   m_image_origin = G4ThreeVector(0);
 
   G4double voxelSize = 1.*mm;
@@ -55,43 +56,43 @@ void GateVSourceVoxelReader::Dump(G4int level)
          << GetVoxelSize().z()/mm << Gateendl;
 
   if (level > 2) {
-    GateSourceActivityMap::iterator voxel;
-    for (voxel = m_sourceVoxelActivities.begin(); voxel != m_sourceVoxelActivities.end(); voxel++) {
-      G4cout << "   Index"
-             << " " << (*voxel).first[0]
-             << " " << (*voxel).first[1]
-             << " " << (*voxel).first[2]
-             << " Activity (Bq) " << (*voxel).second / becquerel << Gateendl;
-    }
+	  for (G4int iz=0; iz<m_voxelNz; iz++) {
+		  for (G4int iy=0; iy<m_voxelNy; iy++) {
+			  for (G4int ix=0; ix<m_voxelNx; ix++) {
+				  G4cout << "   Index"
+						  << " " << ix
+						  << " " << iy
+						  << " " << iz
+						  << " Activity (Bq) " << m_sourceVoxelActivities[RealArrayIndex(ix,iy,iz)] / becquerel << Gateendl;
+			  }
+		  }
+	  }
   }
 }
 //-------------------------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------------------------
-std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
+G4int GateVSourceVoxelReader::GetNextSource()
 {
   // the method decides which is the source that has to be used for this event
-  std::vector<G4int> firstSource;
+	G4int firstSource;
 
   if (m_sourceVoxelActivities.size()==0) {
-    G4cout << "GateVSourceVoxelReader::GetNextSource : WARNING: No source available\n";
-    return firstSource;
+    GateError("GateVSourceVoxelReader::GetNextSource : ERROR: No source available");
   } else {
     // if there is at least one voxel
 
     // now assign the event to one voxel, according to the relative activity
     // integral method
     // from STL doc: iterator upper_bound(const key_type& k)   Sorted Associative Container   Finds the first element whose key greater than k.
-    firstSource = (*(m_sourceVoxelIntegratedActivities.upper_bound(G4UniformRand() * m_activityTotal))).second;
+    firstSource = (m_sourceVoxelIntegratedActivities.upper_bound(G4UniformRand() * m_activityTotal))->second;
 
   }
 
   if (nVerboseLevel>1)
     G4cout << "GateVSourceVoxelReader::GetNextSource : source chosen : "
-           << " " << firstSource[0]
-           << " " << firstSource[1]
-           << " " << firstSource[2]
+           << " " << GetVoxelIndices(firstSource)
            << Gateendl;
 
   return firstSource;
@@ -101,60 +102,11 @@ std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
 
 //-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::AddVoxel(G4int ix, G4int iy, G4int iz, G4double activity)
-{
-  // this method is used by the ReadFile method.
-  // Note: The decision to create a new voxel has already been taken before.
-
-  // create the vector key
-  std::vector<G4int>* index = new std::vector<G4int>;
-  index->push_back(ix);
-  index->push_back(iy);
-  index->push_back(iz);
-
-  // if a source had already been inserted with the same key (ix,iy,iz) this will substitute the previous one;
-  // thus we must delete the previous from the sum of the activities and we recompute the maximum
-  if (m_sourceVoxelActivities[*index] != 0) {
-    G4cout << "GateVSourceVoxelReader::AddVoxel: already existing voxel, activity replaced\n";
-    m_activityTotal -= m_sourceVoxelActivities[*index];
-
-    // loop over all the voxels to recompute the maximum of the activies
-    // without this voxel
-    m_sourceVoxelActivities[*index] = 0. * becquerel;
-    GateSourceActivityMap::iterator voxel;
-    m_activityMax = 0. * becquerel;
-    for (voxel = m_sourceVoxelActivities.begin(); voxel != m_sourceVoxelActivities.end(); voxel++) {
-      G4double iterActivity = (*voxel).second;
-      if (iterActivity > m_activityMax) {
-        m_activityMax = iterActivity;
-      }
-    }
-
-  }
-  m_activityTotal += activity;
-
-
-  if (activity > m_activityMax) {
-    m_activityMax = activity;
-  }
-
-  m_sourceVoxelActivities[*index] = activity;
-
-}
-//-------------------------------------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------------------------------------
-void GateVSourceVoxelReader::AddVoxel_FAST(G4int ix, G4int iy, G4int iz, G4double activity)
 { // no check if Voxel already existed to speed-up
   //
-  // create the vector key
-  std::vector<G4int> index;
-  index.push_back(ix);
-  index.push_back(iy);
-  index.push_back(iz);
+//  m_activityTotal += activity;
+  m_sourceVoxelActivities[RealArrayIndex(ix,iy,iz)] = activity;
 
-
-  m_sourceVoxelActivities[index] = activity;
 
 }
 //-------------------------------------------------------------------------------------------------
@@ -201,25 +153,22 @@ void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
   // create the new integrated activity map
   m_activityTotal = 0.;
   GateSourceActivityMap::iterator voxel;
-  for (voxel = m_sourceVoxelActivities.begin(); voxel != m_sourceVoxelActivities.end(); voxel++) {
-    m_activityTotal += (*voxel).second;
-    G4double* intActivityKey = new G4double(m_activityTotal);
-    m_sourceVoxelIntegratedActivities[*intActivityKey] = (*voxel).first;
-
-    delete intActivityKey;
+  for (size_t iVoxel = 0; iVoxel < m_sourceVoxelActivities.size(); iVoxel++) {
+	  if (m_sourceVoxelActivities[iVoxel]>0.0) {
+		  m_activityTotal += m_sourceVoxelActivities[iVoxel];
+		  m_sourceVoxelIntegratedActivities[m_activityTotal] = iVoxel;
+	  }
   }
 
   if (nVerboseLevel>1) {
-    G4int nVoxels = 0;
-    GateSourceActivityMap::iterator voxel = m_sourceVoxelActivities.begin();
-    GateSourceIntegratedActivityMap::iterator intVoxel;
-    for (intVoxel = m_sourceVoxelIntegratedActivities.begin(); intVoxel != m_sourceVoxelIntegratedActivities.end(); intVoxel++, voxel++) {
-      nVoxels++;
-      G4cout << "[GateVSourceVoxelReader::PrepareIntegratedActivityMap] "
-             << "   voxel: " << ((*voxel).first)[0] << " " << ((*voxel).first)[1] << " " << ((*voxel).first)[2]
-             << "   activity : (Bq) " << ((*voxel).second) / becquerel
-             << "   intVoxel: " << ((*intVoxel).second)[0] << " " << ((*intVoxel).second)[1] << " " << ((*intVoxel).second)[2]
-             << "   integrated: (Bq) " << ((*intVoxel).first)  / becquerel << Gateendl;
+	  GateSourceIntegratedActivityMap::iterator intVoxel;
+	  for (intVoxel = m_sourceVoxelIntegratedActivities.begin(); intVoxel != m_sourceVoxelIntegratedActivities.end(); intVoxel++) {
+		  G4int iVoxel = intVoxel->second;
+		  G4cout << "[GateVSourceVoxelReader::PrepareIntegratedActivityMap] "
+				  << "   voxel: " << GetVoxelIndices(iVoxel)
+				  << "   activity : (Bq) " << m_sourceVoxelActivities[iVoxel] / becquerel
+				  << "   integrated: (Bq) " << ((*intVoxel).first)  / becquerel
+				  << Gateendl;
     }
   }
   m_tactivityTotal = m_activityTotal;  // added by I. Martinez-Rovira (immamartinez@gmail.com)

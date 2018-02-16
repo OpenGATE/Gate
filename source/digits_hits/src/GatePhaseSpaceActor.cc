@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GatePhaseSpaceActor.hh"
@@ -159,7 +159,7 @@ void GatePhaseSpaceActor::Construct()
     if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
     if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
     if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
-    if (bEnablePDGCode || bEnableCompact) pListeVar->Branch("PDGCode", &bPDGCode, "PDGCode/I");
+    if (bEnablePDGCode) pListeVar->Branch("PDGCode", &bPDGCode, "PDGCode/I");
     if (bEnableEmissionPoint) {
       pListeVar->Branch("EmissionPointX", &bEmissionPointX, "EmissionPointX/F");
       pListeVar->Branch("EmissionPointY", &bEmissionPointY, "EmissionPointY/F");

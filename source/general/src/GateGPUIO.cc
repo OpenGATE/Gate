@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GateConfiguration.h"
@@ -192,7 +192,9 @@ typedef std::vector<ActivityMaterialTuple> ActivityMaterialTuplesVector;
 
 
 //----------------------------------------------------------
-void GateGPUIO_Input_parse_activities(const ActivityMap& activities, 
+//void GateGPUIO_Input_parse_activities(const ActivityMap& activities,
+//                                      GateGPUIO_Input * input)
+void GateGPUIO_Input_parse_activities(const GateVSourceVoxelReader::GateSourceActivityMap& activities,
                                       GateGPUIO_Input * input)
 {
   DD("GateGPUIO_Input_parse_activities");
@@ -207,27 +209,10 @@ void GateGPUIO_Input_parse_activities(const ActivityMap& activities,
   ActivityMaterialTuplesVector tuples;
   double total_activity = 0;
   { // fill tuples structure
-    for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); iter++)
-      {
-        const int ii = iter->first[0];
-        const int jj = iter->first[1];
-        const int kk = iter->first[2];
-
-        assert(ii >= 0);
-        assert(jj >= 0);
-        assert(kk >= 0);
-        assert(ii < input->phantom_size_x);
-        assert(jj < input->phantom_size_y);
-        assert(kk < input->phantom_size_z);
-
-        const int index = ii + jj*input->phantom_size_x + kk*input->phantom_size_y*input->phantom_size_x;
-    
-        assert(index >= 0);
-        assert(index < input->phantom_size_x*input->phantom_size_y*input->phantom_size_z);
-
+	  for (size_t index = 0; index < activities.size(); ++index) {
         ActivityMaterialTuple tuple;
         tuple.index = index;
-        tuple.activity = iter->second;
+        tuple.activity = activities[index];
         tuples.push_back(tuple);
         total_activity += tuple.activity; // in GBq - JB
       }

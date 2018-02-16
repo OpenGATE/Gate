@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 
@@ -39,7 +39,7 @@ public:
   static BrokenString BreakString(const G4String& stringToBreak,char separator);
 
 public:
-  G4SubString operator()(const char* str=" \t\n",size_t l=0)
+  G4String operator()(const char* str=" \t\n",size_t l=0)
     {
       return G4Tokenizer::operator()(str,l);
     }
