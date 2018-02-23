@@ -170,6 +170,9 @@ void GateCCRootSingleBuffer::Clear()
   strcpy (layerName, " ");
   layerID=-1;
   sublayerID=-1;
+  size_t d;
+  for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
+    volumeID[d] = -1;
 }
 //-----------------------------------------------------------------------------
 
@@ -177,18 +180,30 @@ void GateCCRootSingleBuffer::Clear()
 //-----------------------------------------------------------------------------
 void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi, int slayerID)
 {
-  runID         =  aDigi->GetRunID();
-  eventID       =  aDigi->GetEventID();
-  time          =  aDigi->GetTime()/s;
-  energy        =  aDigi->GetEnergy()/MeV;
-  globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
-  globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
-  globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
-  layerID=slayerID;
+    runID         =  aDigi->GetRunID();
+    eventID       =  aDigi->GetEventID();
+    time          =  aDigi->GetTime()/s;
+    energy        =  aDigi->GetEnergy()/MeV;
+    globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
+    globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
+    globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
+    layerID=slayerID;
+    aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
-  strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
-  //Not working think for segmented detectore identifier
-  //sublayerID=aDigi->GetPulse().GetVolumeID().GetVolume(3)->GetCopyNo();
+
+
+    int copyN=aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    if(copyN==0){
+        strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
+    }
+    else{
+
+        const G4String name=aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+        strcpy (layerName,name);
+    }
+
+    //Not working think for segmented detectore identifier
+    //sublayerID=aDigi->GetPulse().GetVolumeID().GetVolume(3)->GetCopyNo();
 }
 //-----------------------------------------------------------------------------
 
@@ -215,12 +230,65 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
   Branch("layerName",    (void *)buffer.layerName,"layername/C");
   Branch("layerID",     &buffer.layerID,"layerID/I");
   Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
+   Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 //-----------------------------------------------------------------------------
 
 
 
+void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuffer& buffer)
+{
 
+    singlesTree->SetBranchAddress("runID",&buffer.runID);
+    singlesTree->SetBranchAddress("eventID",&buffer.eventID);
+    singlesTree->SetBranchAddress("time",&buffer.time);
+    singlesTree->SetBranchAddress("energy",&buffer.energy);
+    singlesTree->SetBranchAddress("globalPosX",&buffer.globalPosX);
+    singlesTree->SetBranchAddress("globalPosY",&buffer.globalPosY);
+    singlesTree->SetBranchAddress("globalPosZ",&buffer.globalPosZ);
+
+
+
+    singlesTree->SetBranchAddress("layerName",&buffer.layerName);
+    singlesTree->SetBranchAddress("layerID",&buffer.layerID);
+    singlesTree->SetBranchAddress("sublayerID",&buffer.sublayerID);
+    singlesTree->SetBranchAddress("volumeID",buffer.volumeID);
+
+
+
+}
+
+
+
+GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
+{
+
+
+    GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
+    // G4cout<<"CreateSingle::tras create aVolume"<<G4endl;
+  GateSingleDigi* aSingle = new GateSingleDigi();
+  // Initialise the hit data from the root-hit data
+  aSingle->SetRunID(runID);
+  aSingle->SetEventID(eventID);
+
+  aSingle->SetTime(GetTime());
+  G4ThreeVector globalPos;
+  globalPos.setX(globalPosX);
+  globalPos.setY(globalPosY);
+  globalPos.setZ(globalPosZ);
+
+  aSingle->SetGlobalPos(globalPos);
+
+
+
+  aSingle->SetEnergy(energy);
+  //G4cout<<"antes del setvolID to the aSingle"<<G4endl;
+  aSingle->SetVolumeID(aVolumeID);
+
+  //Set the paremeters
+
+  return aSingle;
+}
 //-----------------------------------------------------------------------------
 void GateCCRootCoincBuffer::Clear()
 {
@@ -235,6 +303,9 @@ void GateCCRootCoincBuffer::Clear()
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
+  size_t d;
+  for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
+    volumeID[d] = -1;
 
 }
 //-----------------------------------------------------------------------------
@@ -252,7 +323,18 @@ void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
     globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
     globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
     //layerID=slayerID;
-    strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
+    aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
+
+    //Tengo  problema cuando uso  el offline(xq no tengo volId e los isngles)
+   int copyN=aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    if(copyN==0){
+        strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName());
+    }
+    else{
+        const G4String name=aDigi->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+        strcpy (layerName,name);
+        strcpy (layerName, name );
+    }
 
 
 }
@@ -274,6 +356,7 @@ void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
      Branch("layerName",    (void *)buffer.layerName,"layername/C");
     //Branch("layerID",     &buffer.layerID,"layerID/I");
     Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
+     Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 //-----------------------------------------------------------------------------
 

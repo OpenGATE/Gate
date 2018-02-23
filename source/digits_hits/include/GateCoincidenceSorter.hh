@@ -170,6 +170,7 @@ class GateCoincidenceSorter : public GateClockDependent
     void ProcessCompletedCoincidenceWindow4CC(GateCoincidencePulse *);
 
     G4bool IsForbiddenCoincidence(const GatePulse* pulse1,const GatePulse* pulse2);
+     G4bool IsCoincidenceGood4CC(GateCoincidencePulse* coincidence);
     GateCoincidencePulse* CreateSubPulse(GateCoincidencePulse* coincidence, G4int i, G4int j);
     G4int ComputeSectorID(const GatePulse& pulse);
     static G4int          gm_coincSectNum;     // internal use

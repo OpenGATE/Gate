@@ -28,6 +28,7 @@
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
+#include  <iomanip>
 
 #include "TNtuple.h"
 #include "TTree.h"
@@ -75,6 +76,9 @@ public:
 
   //Messenger flag
   void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
+  void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
+  void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
+
 
   //! Get the digitizer
   inline GateDigitizer*   GetDigitizer()
@@ -82,6 +86,13 @@ public:
 
 protected:
   GateComptonCameraActor(G4String name, G4int depth=0);
+
+  void OpenTextFile4Singles(G4String initial_filename);
+  void SaveAsTextSingleEvt(GateSingleDigi *aSin);
+  void closeTextFile4Singles();
+  void OpenTextFile4Coinc(G4String initial_filename);
+  void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin);
+  void closeTextFile4Coinc();
 
   TFile * pTfile;
 
@@ -133,6 +144,7 @@ protected:
   G4double trackLength;
   G4double trackLocalTime;
   G4ThreeVector hitPreLocalPos;
+   G4ThreeVector hitPostLocalPos;
 
   G4int coincID;
 
@@ -160,6 +172,11 @@ protected:
 
   //messenger
   bool mSaveHitsTreeFlag;
+  bool mSaveSinglesTextFlag;
+  bool mSaveCoincTextFlag;
+
+  std::ofstream ossSingles;
+  std::ofstream ossCoincidences;
 
   G4EmCalculator * emcalc;
   GateDigitizer* m_digitizer;

@@ -46,6 +46,8 @@ protected:
 
   /// Command objects
   G4UIcmdWithABool          * pSaveHitsTree;
+  G4UIcmdWithABool          *pSaveCoincidenceText;
+  G4UIcmdWithABool          * pSaveSinglesText;
 
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------

@@ -59,7 +59,8 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   chain=new GatePulseProcessorChain(m_digitizer, thedigitizerName);
   m_digitizer->StoreNewPulseProcessorChain(chain);
   //Include a coincidence sorte into the digitizer with a default coincidence window that can be changed with macro commands
-  G4double coincidenceWindow = 10.* ns;
+  //G4double coincidenceWindow = 1;
+   G4double coincidenceWindow = 10.* ns;
   bool IsCCSorter=1;
   coincidenceSorter = new GateCoincidenceSorter(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
   m_digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
@@ -153,6 +154,12 @@ void GateComptonCameraActor::Construct()
       //This line does not work I do not know how to put the units in the histograms of the branch
       //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (mm)");
   }
+  if(mSaveSinglesTextFlag){
+      OpenTextFile4Singles(mSaveFilename);
+  }
+  if(mSaveCoincTextFlag){
+      OpenTextFile4Coinc(mSaveFilename);
+  }
 
   ResetData();
 }
@@ -167,6 +174,14 @@ void GateComptonCameraActor::SaveData()
   GateVActor::SaveData();
 
   pTfile->Write();
+
+  if(mSaveSinglesTextFlag){
+      closeTextFile4Singles();
+  }
+  if(mSaveCoincTextFlag){
+      closeTextFile4Coinc();
+  }
+
 
   //pTfile->Close();
 }
@@ -232,9 +247,11 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     crystalCollection=0;\
     delete crystalCollection;
   }
-  m_hitsBuffer.Clear();
-  m_hitsScatBuffer.Clear();
-  m_hitsAbsBuffer.Clear();
+  if(mSaveHitsTreeFlag){
+      m_hitsBuffer.Clear();
+      m_hitsScatBuffer.Clear();
+      m_hitsAbsBuffer.Clear();
+  }
 
   evtID = evt->GetEventID();
   crystalCollection = new GateCrystalHitsCollection(attachPhysVolumeName,theCrystalCollectionName);
@@ -268,44 +285,61 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
     if(crystalCollection->entries()>0){
         m_digitizer->Digitize(crystalCollection);
         processPulsesIntoSinglesTree();
-        G4cout<<"coincidenceVectorPulse size="<<m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()<<G4endl;
-        if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()==1){
+        std::vector<GateCoincidencePulse*> coincidencePulseV = m_digitizer->FindCoincidencePulse(thedigitizerSorterName);
+        G4cout<<"coincidenceVectorPulse size="<<coincidencePulseV.size()<<G4endl;
+        if(coincidencePulseV.size()>0){
+            for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseV.begin();it != coincidencePulseV.end() ; ++it){
 
-            //Here I have my coincidences (Singles fill a buffer  every event and when the size is above a THR  coincidences are processed and then we have a ocincidnece pulse output after the event which is erase at hte beginning of the next event
+                //Here I have my coincidences (Singles fill a buffer  every event and when the size is above a THR  coincidences are processed and then we have a ocincidnece pulse output after the event which is erase at hte beginning of the next event
 
-            GateCoincidencePulse* coincPulse=m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(0);
-            //GAteCoincidencePulse compose of several GatePulse
+                GateCoincidencePulse* coincPulse=*it;
 
-                   unsigned int numCoincPulses=coincPulse->size();
-                   for(unsigned int i=0;i<numCoincPulses;i++){
-                         GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
-                         //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
-                         m_CoincBuffer.Fill(aCoinDigi);
-                         m_CoincTree->Fill();
-                         m_CoincBuffer.Clear();
-                   }
+                //GAteCoincidencePulse compose of several GatePulse
 
-            G4cout<<"size of the  coincidence Pulse"<<coincPulse->size()<<G4endl;
-            if(coincPulse->size()>2){
-                //Sometimes 3 or more pulses (singles) in a coincidence
-                G4cout<<"###############################################################"<<G4endl;
-                G4cout<<"number PULSES IN THE COINCIDENCEPULSE the vector ."<<coincPulse->size()<<G4endl;
-                G4cout<<"###############################################################"<<G4endl;
+                unsigned int numCoincPulses=coincPulse->size();
+                for(unsigned int i=0;i<numCoincPulses;i++){
+                    GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
+                    //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
+                    if(mSaveCoincTextFlag){
+                        SaveAsTextCoincEvt(aCoinDigi);
+                    }
+                    m_CoincBuffer.Fill(aCoinDigi);
+                    m_CoincTree->Fill();
+                    m_CoincBuffer.Clear();
+
+                }
+
+                G4cout<<"size of the  coincidence Pulse"<<coincPulse->size()<<G4endl;
+                if(coincPulse->size()>2){
+                    //Sometimes 3 or more pulses (singles) in a coincidence
+                    G4cout<<"###############################################################"<<G4endl;
+                    G4cout<<"number PULSES IN THE COINCIDENCEPULSE the vector ."<<coincPulse->size()<<G4endl;
+                    G4cout<<"###############################################################"<<G4endl;
 
 
+                }
+
+
+                coincID++;
             }
-
-
-           coincID++;
         }
-        else if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()>1){
-            G4cout<<"###############################################################"<<G4endl;
-            G4cout<<"More than one coincidencePulse in the vector . If I have defined only the sorter PROBLEMS"<<G4endl;
-            G4cout<<"###############################################################"<<G4endl;
-            //para que se salga con un break
-            m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(15);
+//        else if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()>1){
+//            //What does it mean to have two coincidence pulses
+//         GateCoincidencePulse* coincPulse_1= m_digitizer->m_coincidencePulseVector.at(0);
+//          GateCoincidencePulse* coincPulse_2=m_digitizer->m_coincidencePulseVector.at(1);
+//          G4cout<<"evtID del primer pulso de la primer coinc"<<coincPulse_1->at(0)->GetEventID()<<"time "<<coincPulse_1->at(0)->GetTime()<<G4endl;
+//          G4cout<<"evtID del primer pulso de la segunda coinc"<<coincPulse_2->at(0)->GetEventID()<<"time "<<coincPulse_2->at(0)->GetTime()<<G4endl;
+//          //separadas por mas que la ventana temp
+//          //size null
+//         // G4cout<<"size alias vector="<<m_digitizer->m_coincidencePulseListAliasVector.size()<<G4endl;
 
-        }
+//            G4cout<<"###############################################################"<<G4endl;
+//            G4cout<<"More than one coincidencePulse in the vector . If I have defined only the sorter PROBLEMS"<<G4endl;
+//            G4cout<<"###############################################################"<<G4endl;
+//            //para que se salga con un break (PASA PCO PERO PUEDE PASAR)
+//           // m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(15);
+
+//        }
     }
     else{
         G4cout<<"#########################################"<<G4endl;
@@ -384,6 +418,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
   GateVolumeID volumeID(touchableH);
   hitPreLocalPos=volumeID.MoveToBottomVolumeFrame(hitPrePos);
+   hitPostLocalPos=volumeID.MoveToBottomVolumeFrame(hitPostPos);
+   G4ThreeVector hitMeanLocalPos=(hitPreLocalPos+hitPostLocalPos)/2;
   // std::cout << "VolumNameStep " <<VolNameStep <<"energy="<<hitEdep<<'\n';
   //========================track (step) =========================================
   ///SD hit position from postStep
@@ -445,8 +481,14 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     // Create a new crystal hit (maybe better an object hit
     GateCrystalHit* aHit = new GateCrystalHit();
     aHit->SetEdep(hitEdep);
-    aHit->SetGlobalPos(hitPrePos);
-    aHit->SetLocalPos(hitPreLocalPos);
+    G4ThreeVector hitPos;
+    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
+    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
+    hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
+    aHit->SetGlobalPos(hitPos);
+   //aHit->SetGlobalPos(hitPrePos);
+   // aHit->SetLocalPos(hitPreLocalPos);
+    aHit->SetLocalPos(hitMeanLocalPos);
     //step->GetPreStepPoint()->GetGlobalTime()
     /////Which time do I need to save. Prestep or the time of the track?
     /// also possiblitiy of track local time.
@@ -461,6 +503,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     aHit->SetEventID(evtID);
     aHit->SetRunID(runID);
     aHit->SetPDGEncoding(PDGEncoding);
+
     //track creator
     aHit->SetProcess(processName);
     aHit->SetStepLength(step->GetStepLength());
@@ -474,28 +517,30 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
       crystalCollection->insert(aHit);
       //G4cout<<"inserting a hit"<<G4endl;
      // G4cout<<"layer+"<<VolNameStep<<G4endl;
-      m_hitsBuffer.Fill(aHit,VolNameStep);
-      m_hitsTree->Fill();
-      m_hitsBuffer.Clear();
+      if(mSaveHitsTreeFlag){
+          m_hitsBuffer.Fill(aHit,VolNameStep);
+          m_hitsTree->Fill();
+          m_hitsBuffer.Clear();
 
-      //Test: create a separate output tree for the hit in the absorber and hits in the scatterer
-      if(nDaughterBB>1){
-        if(poslayer==(signed int)nDaughterBB-1){
-          // Mattia does not save hits in the absoreber without track processCreator. But that depend on the cuts
-          //if(aHit->GetProcess()!=G4String()){
-          m_hitsAbsBuffer.Fill(aHit,VolNameStep);
-          m_hitsAbsTree->Fill();
-          m_hitsAbsBuffer.Clear();
-          // }
-        }
-        else{
-          m_hitsScatBuffer.Fill(aHit,VolNameStep);
-          m_hitsScatTree->Fill();
-          m_hitsScatBuffer.Clear();
-        }
-      }
-      else{
-        G4cout<<"problems our CC has less than two layers"<<G4endl;
+          //Test: create a separate output tree for the hit in the absorber and hits in the scatterer
+          if(nDaughterBB>1){
+              if(poslayer==(signed int)nDaughterBB-1){
+                  // Mattia does not save hits in the absoreber without track processCreator. But that depend on the cuts
+                  //if(aHit->GetProcess()!=G4String()){
+                  m_hitsAbsBuffer.Fill(aHit,VolNameStep);
+                  m_hitsAbsTree->Fill();
+                  m_hitsAbsBuffer.Clear();
+                  // }
+              }
+              else{
+                  m_hitsScatBuffer.Fill(aHit,VolNameStep);
+                  m_hitsScatTree->Fill();
+                  m_hitsScatBuffer.Clear();
+              }
+          }
+          else{
+              G4cout<<"problems our CC has less than two layers"<<G4endl;
+          }
       }
     }
   }
@@ -535,17 +580,19 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
   //Choose the pulses of the desired chain
   //GatePulseList* pPulseList=m_digitizer->FindPulseList("Singles");
   GatePulseList* pPulseList=m_digitizer->FindPulseList("layers");
-
+if(pPulseList){
+    if(pPulseList->size()>0){
   GatePulseConstIterator iterIn;
   for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
     GatePulse* inputPulse = *iterIn;
     GateSingleDigi* aSingleDigi=new GateSingleDigi(inputPulse);
-    // G4cout << "eventID"<< inputPulse->GetEventID()<<"singleDigi evtID="<<aSingleDigi->GetEventID()<<G4endl;
 
     //LAYER NAMES MUST BE INTRODUCED AS INPUT IN ACTOR MESSENGER ang HERE some generalization
     //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
     //G4cout << "vol name nivel 2"<<inputPulse->GetVolumeID().GetVolume(2)->GetName()<<G4endl;
-    // G4cout << "vol ID nivel 2="<<inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()<<G4endl;
+    //G4cout << "PDGsummedPulse="<<inputPulse->GetPDGEncoding()<<G4endl;
+     //G4cout << "PDGsummedPulse="<<inputPulse->GetNCrystalCompton()<<G4endl;
+
     ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
     /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
     if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
@@ -562,10 +609,97 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
 
     //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"){
     m_SinglesBuffer.Fill(aSingleDigi,slayerID);
+     G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
     m_SingleTree->Fill();
     m_SinglesBuffer.Clear();
+    if(mSaveSinglesTextFlag){
+        SaveAsTextSingleEvt(aSingleDigi);
+    }
+
+
     //}
   }
+    }
+}
 }
 //-----------------------------------------------------------------------------
 
+
+void GateComptonCameraActor::OpenTextFile4Singles(G4String initial_filename){
+    // Compute new filename: remove extension, add name of the histo, add txt extension
+    std::string filename = removeExtension(initial_filename);
+    filename = filename + "_Singles.txt";
+
+    // Create output file
+
+    OpenFileOutput(filename, ossSingles);
+}
+
+void GateComptonCameraActor::OpenTextFile4Coinc(G4String initial_filename){
+    // Compute new filename: remove extension, add name of the histo, add txt extension
+    std::string filename = removeExtension(initial_filename);
+    filename = filename + "_Coincidences.txt";
+
+    // Create output file
+
+    OpenFileOutput(filename, ossCoincidences);
+}
+
+
+
+void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
+{
+
+
+   ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+
+
+
+    int copyN=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    std::string layerName;
+    if(copyN==0){
+    layerName=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
+    }
+     else{
+       layerName=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+    }
+
+
+     ossSingles<<aSin->GetEventID()<<"    "<<aSin->GetEnergy()<<"    "<<layerName<< '\n';
+
+
+}
+
+
+
+void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
+{
+
+
+   ossCoincidences << "# coincID   " <<" # EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+
+
+
+    int copyN=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    std::string layerName;
+    if(copyN==0){
+    layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
+    }
+     else{
+       layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+    }
+
+
+     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<aCoin->GetEnergy()<<"    "<<layerName<< std::endl;
+
+
+}
+
+void GateComptonCameraActor::closeTextFile4Singles(){
+    ossSingles.close();
+}
+void GateComptonCameraActor::closeTextFile4Coinc(){
+    ossSingles.close();
+}
+
+//-----------------------------------------------------------------------------

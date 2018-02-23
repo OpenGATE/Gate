@@ -96,6 +96,10 @@ public:
       inline const GateOutputVolumeID& GetOutputVolumeID() const    { return m_pulse.GetOutputVolumeID(); }
       inline G4int GetComponentID(size_t depth) const    { return m_pulse.GetComponentID(depth); }
 
+      inline void     SetVolumeID(const GateVolumeID& v) {  m_pulse.SetVolumeID(v); }
+
+    
+
       inline GatePulse& GetPulse()             { return m_pulse; }
 
       // HDS : septal penetration
@@ -145,3 +149,4 @@ inline void GateSingleDigi::operator delete(void* aDigi)
 }
 
 #endif
+

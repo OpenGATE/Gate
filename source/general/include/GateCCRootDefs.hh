@@ -152,6 +152,15 @@ public:
 
   void Clear();     	      	      	      	  //!< Reset the fields of the structure
   void Fill(GateSingleDigi* aDigi, int slayerID);
+  GateSingleDigi* CreateSingle();
+
+  //! Returns the time in G4 units (conversion from seconds)
+  inline G4double GetTime() const
+    { return time * second;}
+  //! Set the time from a value expressed in G4 units (conversion into seconds)
+  inline void SetTime(G4double aTime)
+    { time = aTime / second;}
+
 
   //! \name Data fields
   //@{
@@ -165,6 +174,7 @@ public:
   Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
+   Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
   //@}
 };
 //-----------------------------------------------------------------------------
@@ -181,6 +191,7 @@ public:
   virtual inline ~GateCCSingleTree() {}
 
   void Init(GateCCRootSingleBuffer& buffer);
+  static void SetBranchAddresses(TTree* singleTree,GateCCRootSingleBuffer& buffer);
 };
 //-----------------------------------------------------------------------------
 
@@ -195,6 +206,15 @@ public:
   void Clear();     	      	      	      	  //!< Reset the fields of the structure
   void Fill(GateCCCoincidenceDigi* aDigi);
 
+
+
+  //! Returns the time in G4 units (conversion from seconds)
+  inline G4double GetTime() const
+    { return time * second;}
+  //! Set the time from a value expressed in G4 units (conversion into seconds)
+  inline void SetTime(G4double aTime)
+    { time = aTime / second;}
+
   //! \name Data fields
   //@{
   Int_t    coincID;
@@ -208,6 +228,7 @@ public:
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
+   Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
   //@}
 };
 //-----------------------------------------------------------------------------
