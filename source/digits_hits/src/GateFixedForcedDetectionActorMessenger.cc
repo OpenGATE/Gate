@@ -50,7 +50,7 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base + "/binningFactor";
   pSetBinningFactorCmd = new GateUIcmdWith2Vector(bb, this);
-  guidance = "Set binning factor for modeling the pixel-binning in a detector.";
+  guidance = "Set u and v binning factor for computing several rays per pixel.";
   pSetBinningFactorCmd->SetGuidance(guidance);
 
   bb = base + "/geometryFilename";
@@ -75,12 +75,12 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base + "/materialDeltaFilename";
   pSetMaterialDeltaFilenameCmd = new G4UIcmdWithAString(bb, this);
-  guidance = "Set the file name for the refractive index decrement lookup table. Two paramaters: material index and energy.";
+  guidance = "Set the output file name for the refractive index decrement lookup table. Two paramaters: material index and energy.";
   pSetMaterialDeltaFilenameCmd->SetGuidance(guidance);
 
   bb = base + "/fresnelFilename";
   pSetFresnelFilenameCmd = new G4UIcmdWithAString(bb, this);
-  guidance = "Set the file name for the Fresnel diffraction image (printf format with runId as a single parameter).";
+  guidance = "Set the output file name for the Fresnel diffraction image (printf format with runId as a single parameter).";
   pSetFresnelFilenameCmd->SetGuidance(guidance);
 
   bb = base + "/responseDetectorFilename";

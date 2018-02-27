@@ -129,7 +129,11 @@ void G4XrayBoundaryProcess::DoReflection() {
 }
 
 inline
+#ifdef GATE_USE_XRAYLIB
 G4double G4XrayBoundaryProcess::GetRindex(G4Material *Material, G4double Energy) {
+#else
+G4double G4XrayBoundaryProcess::GetRindex(G4Material *Material, G4double) {
+#endif
     G4double delta = 0.0;
     G4double Density = Material->GetDensity() / (g / cm3);
 
