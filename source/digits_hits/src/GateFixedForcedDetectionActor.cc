@@ -405,6 +405,10 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
     }
 
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
+  if (mFresnelFilename != "" && mNoisePrimary)
+    {
+    GateError("Adding noise to Fresnel image is not possible (yet).");
+    }
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   if (!mGeneratePhotons && !mARF)
     {
