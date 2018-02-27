@@ -596,7 +596,7 @@ namespace GateFixedForcedDetectionFunctor
             wavelength = wavelength * (m/mm); // To use the same unit as Geant4
             rayIntegral *= (-2*itk::Math::pi/wavelength);
             this->AccumulatePhase(output,
-                                  rayIntegral * (*m_EnergyWeightList)[i],
+                                  rayIntegral + vcl_log((*m_EnergyWeightList)[i])/2.,
                                   m_EnergyList[i]);
             }
           }
