@@ -27,6 +27,10 @@
 /* XRAYLIB */
 #ifdef GATE_USE_XRAYLIB
 #include <xraylib.h>
+// xraylib defines ZMAX which interfers with another Geant4 dev, undefine.
+#  ifdef ZMAX
+#    undef ZMAX
+#  endif
 #endif
 
 struct newPhoton
@@ -98,6 +102,7 @@ namespace GateFixedForcedDetectionFunctor
 
       VAccumulation() :
           m_NumberOfPrimaries(0),
+          m_MuToDeltaImageOffset(0),
           m_EnergyResolvedBinSize(0.),
           m_generatePhotons(false),
           m_ARF(false)
@@ -269,8 +274,8 @@ namespace GateFixedForcedDetectionFunctor
         }
 
       void CreateMaterialDeltaMap(const double energySpacing,
-                               const double energyMax,
-                               GateVImageVolume * gateImageVolume)
+                                  const double energyMax,
+                                  GateVImageVolume * gateImageVolume)
         {
         std::vector<double> energyList;
         energyList.push_back(0.);
@@ -285,7 +290,7 @@ namespace GateFixedForcedDetectionFunctor
         }
 
       void CreateMaterialDeltaMap(const std::vector<double> & energyList,
-                               GateVImageVolume * gateImageVolume)
+                                  GateVImageVolume * gateImageVolume)
         {
         m_EnergyList = energyList;
         itk::TimeProbe deltaProbe;
@@ -467,8 +472,8 @@ namespace GateFixedForcedDetectionFunctor
         }
 
       inline void AccumulatePhase(float & output,
-                             const double valueToAccumulate,
-                             const double energy)
+                                  const double valueToAccumulate,
+                                  const double energy)
         {
         if (m_EnergyResolvedBinSize > 0)
           {
@@ -561,34 +566,38 @@ namespace GateFixedForcedDetectionFunctor
             double a = vcl_exp(-rayIntegral);
             double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
             double n = ((nprimE)?G4Poisson(nprimE*a)/nprimE:0.);
-            this->Accumulate(threadId, output, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)(m_EnergyList[i] ), m_EnergyList[i]);
+            this->Accumulate(threadId,
+                             output,
+                             n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)(m_EnergyList[i] ),
+                             m_EnergyList[i]);
             }
           else
             {
             this->Accumulate(threadId,
-            output,
-            vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
-            m_EnergyList[i]);
+                             output,
+                             vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
+                             m_EnergyList[i]);
+            }
 
-            if (m_MaterialDelta != nullptr)
+          /* Phase for Fresnel diffraction */
+          if (m_MuToDeltaImageOffset != 0)
+            {
+            double *q = m_MaterialDelta->GetPixelContainer()->GetBufferPointer();
+            double rayIntegral = 0.;
+            for (unsigned int j = 0; j < m_InterpolationWeights[threadId].size(); j++)
               {
-              double *q = m_MaterialDelta->GetPixelContainer()->GetBufferPointer();
-              double rayIntegral = 0.;
-              for (unsigned int j = 0; j < m_InterpolationWeights[threadId].size(); j++)
-                {
-                rayIntegral += m_InterpolationWeights[threadId][j] * *q++;
-                }
-
-              /* Matter wave : for photon, the formula is lambda = hc/E
-               * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
-               */
-              double wavelength = h_Planck/(eV*s) * c_light/(m/s) / (m_EnergyList[i]/eV);
-              wavelength = wavelength * (m/mm); // To use the same unit as Geant4
-              rayIntegral *= (-2*itk::Math::pi/wavelength);
-              this->AccumulatePhase(output,
-              rayIntegral * (*m_EnergyWeightList)[i],
-              m_EnergyList[i]);
+              rayIntegral += m_InterpolationWeights[threadId][j] * *q++;
               }
+
+            /* Matter wave : for photon, the formula is lambda = hc/E
+             * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
+             */
+            double wavelength = h_Planck/(eV*s) * c_light/(m/s) / (m_EnergyList[i]/eV);
+            wavelength = wavelength * (m/mm); // To use the same unit as Geant4
+            rayIntegral *= (-2*itk::Math::pi/wavelength);
+            this->AccumulatePhase(output,
+                                  rayIntegral * (*m_EnergyWeightList)[i],
+                                  m_EnergyList[i]);
             }
           }
 
@@ -1195,9 +1204,8 @@ namespace GateFixedForcedDetectionFunctor
       inline TOutput operator()(const TInput1 A, const TInput2 B) const
         {
         /* Calculate transmittance */
-        const std::complex<TInput1> i(0.0,1.0);  // imaginary unit
-        std::complex<TInput1> amp = std::sqrt(std::complex<TInput1>(A));  // Amplitude
-        std::complex<TInput1> pt = std::exp(i*std::complex<TInput1>(B));  // Phase Transition
+        std::complex<TInput1> amp = std::complex<TInput1>(std::sqrt(A), 0.);  // Amplitude
+        std::complex<TInput1> pt = std::exp(std::complex<TInput1>(0., B));  // Phase Transition
         return (TOutput) (amp*pt);
         }
       };

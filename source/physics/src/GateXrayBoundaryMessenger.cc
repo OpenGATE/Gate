@@ -18,5 +18,5 @@ GateXrayBoundaryMessenger::~GateXrayBoundaryMessenger() {}
 
 void GateXrayBoundaryMessenger::BuildCommands(G4String base) {G4cout << base;}
 
-void GateXrayBoundaryMessenger::SetNewValue(G4UIcommand* command, G4String param) {}
+void GateXrayBoundaryMessenger::SetNewValue(G4UIcommand* , G4String ) {}
 

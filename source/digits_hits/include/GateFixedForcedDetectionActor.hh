@@ -32,9 +32,11 @@
 #include "GateFixedForcedDetectionProjector.h"
 #include "GateFixedForcedDetectionProcessType.hh"
 #include "GateARFSD.hh"
+
 /* itk */
 #include <itkTimeProbe.h>
 #include <itkBinShrinkImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 /* rtk */
 #include <rtkConstantImageSource.h>
@@ -65,6 +67,21 @@ public:
   virtual void SaveData();
   virtual void SaveData(const G4String prefix);
   virtual void ResetData();
+
+  /* Typedef for rtk */
+  static const unsigned int Dimension = 3;
+  typedef float InputPixelType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
+  typedef itk::Image<int, Dimension> IntegerImageType;
+  typedef itk::Image<double, Dimension> DoubleImageType;
+  typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
+  typedef float OutputPixelType;
+  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
+  typedef rtk::Reg23ProjectionGeometry GeometryType;
+  typedef rtk::Reg23ProjectionGeometry::PointType PointType;
+  typedef rtk::Reg23ProjectionGeometry::VectorType VectorType;
+  typedef rtk::ConstantImageSource<OutputImageType> ConstantImageSourceType;
+  typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
 
   /* Resolution of the detector plane (2D only, z=1); */
   const G4ThreeVector & GetDetectorResolution() const
@@ -171,7 +188,7 @@ public:
     {
     mNoisePrimary = n;
     }
-  const G4ThreeVector & GetBinningFactor() const
+  const BinShrinkFilterType::ShrinkFactorsType & GetBinningFactor() const
     {
     return mBinningFactor;
     }
@@ -179,11 +196,7 @@ public:
     {
     mBinningFactor[0] = x;
     mBinningFactor[1] = y;
-
-    BinShrinkFilterType::ShrinkFactorsType shrinkFactor(1);
-    shrinkFactor[0] = x;
-    shrinkFactor[1] = y;
-    mBinShrinkFilter->SetShrinkFactors(shrinkFactor);
+    mBinShrinkFilter->SetShrinkFactors(mBinningFactor);
     }
   void SetInputRTKGeometryFilename(G4String name)
     {
@@ -193,20 +206,6 @@ public:
     {
     mEnergyResolvedBinSize = e;
     }
-
-  /* Typedef for rtk */
-  static const unsigned int Dimension = 3;
-  typedef float InputPixelType;
-  typedef itk::Image<InputPixelType, Dimension> InputImageType;
-  typedef itk::Image<int, Dimension> IntegerImageType;
-  typedef itk::Image<double, Dimension> DoubleImageType;
-  typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
-  typedef float OutputPixelType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
-  typedef rtk::Reg23ProjectionGeometry GeometryType;
-  typedef rtk::Reg23ProjectionGeometry::PointType PointType;
-  typedef rtk::Reg23ProjectionGeometry::VectorType VectorType;
-  typedef rtk::ConstantImageSource<OutputImageType> ConstantImageSourceType;
 
   void SetGeometryFromInputRTKGeometryFile(GateVSource *source,
                                            GateVVolume *detector,
@@ -299,7 +298,7 @@ protected:
   /* Parameter for statistical noise */
   G4int mNoisePrimary;
   /* Parameter for modeling pixel-binning */
-  G4ThreeVector mBinningFactor;
+  BinShrinkFilterType::ShrinkFactorsType mBinningFactor;
 
   G4double mMinPrimaryEnergy;
   G4double mMaxPrimaryEnergy;
@@ -371,8 +370,9 @@ protected:
   IsotropicPrimaryProjectionType::Pointer mIsotropicPrimaryProjector;
 
   /* Pixel-binning stuff */
-  typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
   BinShrinkFilterType::Pointer mBinShrinkFilter;
+  typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> BinMultiplyFilterType;
+  BinMultiplyFilterType::Pointer mBinMultiplyFilter;
 
   /* Phase space variables */
   G4String mPhaseSpaceFilename;
@@ -405,7 +405,7 @@ protected:
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 
   /* Account for pixel-binning */
-  InputImageType::Pointer PixelBinning(const InputImageType::Pointer input);
+  InputImageType::Pointer PixelBinning(const InputImageType::Pointer input, bool bSum = true, bool bSQRT = false);
 
   G4String AddPrefix(G4String prefix, G4String filename);
   };
