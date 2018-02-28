@@ -519,16 +519,25 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 }
 //------------------------------------------------------------------------------------------------------
   G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
-      //Check if the absorber has trigger (Necessary that the layer name is absorber and saugther of BB daughter of wordl)
+      //Check if the absorber has trigger (Necessary that the layer name is absorber and daugther of BB daughter of wordl)
       G4bool isTriggAbsorber=false;
+      G4bool isSingleInAnotherLayer=false;
       unsigned int numCoincPulses=coincidence->size();
       for(unsigned int i=0;i<numCoincPulses;i++){
           if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"  ){
               isTriggAbsorber=true;
 
           }
+          else{
+              isSingleInAnotherLayer=true;
+          }
       }
+      if(isSingleInAnotherLayer==true && isTriggAbsorber==true){
       return isTriggAbsorber;
+      }
+      else{
+          return false;
+      }
 
   }
 

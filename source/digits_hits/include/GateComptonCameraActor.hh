@@ -74,7 +74,7 @@ public:
 
   int GetNDaughtersBB() {return nDaughterBB;}
 
-  //Messenger flag
+  //Messenger flags
   void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
   void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
   void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
@@ -132,6 +132,7 @@ protected:
   double tof;
   double edptempAb;
 
+  G4String processPostStep;
   G4String VolNameStep;
   G4int evtID;
   G4int runID;

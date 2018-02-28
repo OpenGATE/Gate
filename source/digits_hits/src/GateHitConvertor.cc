@@ -117,6 +117,19 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
 #endif
   pulse->SetNSeptal( hit->GetNSeptal() );  // HDS : septal penetration
 
+      // AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume 
+    pulse->SetPostStepProcess(hit->GetPostStepProcess());
+    pulse->SetEnergyIniTrack(hit->GetEnergyIniTrack());
+    pulse->SetEnergyFin(hit->GetEnergyFin());
+    pulse->SetProcessCreator(hit->GetProcess());
+    pulse->SetTrackID(hit->GetTrackID());
+   pulse->SetParentID(hit->GetParentID());
+
+    
+//-------------------------------------------------
+     
+
+
   if (hit->GetComptonVolumeName().empty()) {
     pulse->SetComptonVolumeName( "NULL" );
     pulse->SetSourceID( -1 );

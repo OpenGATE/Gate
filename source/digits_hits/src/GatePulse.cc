@@ -36,6 +36,15 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   // sourceID: identical for both pulses, nothing to do
   // source-position: identical for both pulses, nothing to do
 
+   
+// AE : Added in a real pulse no sense
+    m_Postprocess="NULL";         // PostStep process 
+    m_energyIniTrack=0;         // Initial energy of the track
+    m_energyFin=0;         // final energy of the particle
+    m_processCreator="NULL"; 
+    m_trackID=0;
+//-----------------
+
   // time: store the minimum time
   m_time = std::min ( m_time , right->m_time ) ;
 
@@ -65,6 +74,57 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   }
 
   // HDS : # of septal hits: store the max nb
+	if ( right->m_nSeptal > m_nSeptal )
+	{
+		m_nSeptal 	= right->m_nSeptal;
+	}
+
+  // VolumeID: should be identical for both pulses, we do nothing
+  // m_scannerPos: identical for both pulses, nothing to do
+  // m_scannerRotAngle: identical for both pulses, nothing to do
+  // m_outputVolumeID: should be identical for both pulses, we do nothing
+
+  return *this;
+}
+
+
+
+
+const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
+{
+  // We define below the fields of the merged pulse
+
+  // runID: identical for both pulses, nothing to do
+  // eventID: identical for both pulses, nothing to do
+  // sourceID: identical for both pulses, nothing to do
+  // source-position: identical for both pulses, nothing to do
+
+  // time: store the minimum time
+  //m_time = std::min ( m_time , right->m_time ) ;
+
+  // energy: we compute the sum
+  G4double totalEnergy = m_energy + right->m_energy;
+
+  // Local and global positions: keep the original Position
+
+  // Now that the centroids are stored, we can store the energy
+  m_energy   = totalEnergy;
+
+  // # of compton process: store the max nb
+  if ( right->m_nPhantomCompton > m_nPhantomCompton )
+  {
+    m_nPhantomCompton 	= right->m_nPhantomCompton;
+    m_comptonVolumeName = right->m_comptonVolumeName;
+  }
+
+  // # of Rayleigh process: store the max nb
+  if ( right->m_nPhantomRayleigh > m_nPhantomRayleigh )
+  {
+    m_nPhantomRayleigh 	= right->m_nPhantomRayleigh;
+    m_RayleighVolumeName = right->m_RayleighVolumeName;
+  }
+
+    // HDS : # of septal hits: store the max nb
 	if ( right->m_nSeptal > m_nSeptal )
 	{
 		m_nSeptal 	= right->m_nSeptal;

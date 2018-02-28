@@ -44,6 +44,7 @@ See LICENSE.md for further details
 #include "GateSpblurring.hh"
 #include "GatePulseAdder.hh"
 #include "GatePulseAdderCompton.hh"
+#include "GatePulseAdderComptPhotIdeal.hh"
 #include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GatePulseAdderGPUSpect.hh"
@@ -90,7 +91,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
+   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
   return theList;
 }
 
@@ -144,6 +145,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GatePulseAdder(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderCompton")
     newProcessor = new GatePulseAdderCompton(GetProcessorChain(),newInsertionName);
+ else if (childTypeName=="adderComptPhotIdeal")
+    newProcessor = new GatePulseAdderComptPhotIdeal(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderGPUSpect")
 		newProcessor = new GatePulseAdderGPUSpect(GetProcessorChain(),newInsertionName);
 	else if (childTypeName=="crystalblurring")

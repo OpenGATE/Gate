@@ -92,6 +92,14 @@ private:
   // HDS : Added in order to record septal penetration
   G4int m_nSeptal;
 
+
+
+// AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume
+   G4String m_Postprocess;         // PostStep process 
+   G4double m_energyIniTrack;         // Initial energy of the track
+   G4double m_energyFin;         // final energy of the particle
+
+
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
       inline void AddEdep(G4double de)          { m_edep += de; }
@@ -190,6 +198,21 @@ private:
       // HDS : Added in order to record septal penetration
       inline void  SetNSeptal(G4int j)  { m_nSeptal = j; }
       inline G4int GetNSeptal() const        { return m_nSeptal; }
+
+
+
+
+      // AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume 
+      inline void     SetPostStepProcess(G4String proc) { m_Postprocess = proc; }
+      inline G4String GetPostStepProcess() const             { return m_Postprocess; }
+     
+      inline void SetEnergyIniTrack(G4double eIni)          { m_energyIniTrack = eIni; }
+      inline G4double GetEnergyIniTrack() const                { return m_energyIniTrack; }
+
+      inline void SetEnergyFin(G4double eFin)          { m_energyFin = eFin; }
+      inline G4double GetEnergyFin() const                { return m_energyFin; }
+
+      /////--------------------------------------------------------------
 
 
       // To test move part of the code ---------------------------------------------------------

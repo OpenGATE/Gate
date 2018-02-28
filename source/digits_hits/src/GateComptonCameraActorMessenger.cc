@@ -19,6 +19,7 @@ GateComptonCameraActorMessenger::GateComptonCameraActorMessenger(GateComptonCame
   : GateActorMessenger(v),
     pActor(v)
 {
+    G4cout<<"buildCommand ComptonCamera messenger"<<G4endl;
   BuildCommands(baseName+pActor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -67,7 +68,10 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
 void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if(cmd == pSaveHitsTree) pActor->SetSaveHitsTreeFlag(  pSaveHitsTree->GetNewBoolValue(newValue)  ) ;
-  if(cmd == pSaveSinglesText) pActor->SetSaveSinglesTextFlag(  pSaveSinglesText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveSinglesText){
+       G4cout<<"entra en comando singles"<<G4endl;
+      pActor->SetSaveSinglesTextFlag(  pSaveSinglesText->GetNewBoolValue(newValue)  ) ;
+  }
   if(cmd == pSaveCoincidenceText) pActor->SetSaveCoincidenceTextFlag(  pSaveCoincidenceText->GetNewBoolValue(newValue)  ) ;
   GateActorMessenger::SetNewValue(cmd,newValue);
 }

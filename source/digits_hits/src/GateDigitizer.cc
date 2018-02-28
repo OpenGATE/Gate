@@ -423,21 +423,21 @@ void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
   size_t i;
  // G4cout << "[GateDigitizer::Digitize]:Gate chain number"<<GetChainNumber()<<"\n";
   for (i=0; i<GetChainNumber() ; ++i) {
-    //if (nVerboseLevel>1)
+    if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: launching processor chain '" << GetChain(i)->GetObjectName() << "'\n";
     //GetChain(i)->Describe();
     GetChain(i)->GetOutputName();
     GetChain(i)->ProcessPulseList();
   }
 
-   G4cout << "coinc vector Size before procesSinglesList="<<m_coincidencePulseVector.size()<<G4endl;
+   //G4cout << "coinc vector Size before procesSinglesList="<<m_coincidencePulseVector.size()<<G4endl;
   // Have the pulses processed by the coincidence sorters
   for (i=0; i<m_coincidenceSorterList.size() ; ++i) {
-   // if (nVerboseLevel>1)
+    if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::Digitize]: launching coincidence sorter '" << m_coincidenceSorterList[i]->GetObjectName() << "'\n";
     m_coincidenceSorterList[i]->ProcessSinglePulseList();
   }
-   G4cout << "coinc vector Siz after procesSinglesList="<<m_coincidencePulseVector.size()<<G4endl;
+   //G4cout << "coinc vector Siz after procesSinglesList="<<m_coincidencePulseVector.size()<<G4endl;
 
   // Have the coincidences processed by the coincidence-processor chains
   for (i=0; i<m_coincidenceChainList.size() ; ++i) {

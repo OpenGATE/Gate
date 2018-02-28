@@ -51,6 +51,10 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
 
   mSaveSinglesManualTreeFlag=false;
 
+  mSaveSinglesTextFlag=true;
+  mSaveCoincTextFlag=true;
+   pMessenger = new GateComptonCameraActorMessenger(this);
+
   emcalc = new G4EmCalculator;
   m_digitizer =    GateDigitizer::GetInstance();
 
@@ -67,8 +71,9 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
 
 
 
-  pMessenger = new GateComptonCameraActorMessenger(this);
+
   GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
+  G4cout<< "Singles save flag"<<mSaveSinglesTextFlag<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -281,12 +286,12 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
           }
       }
     if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
-    G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<< "  edep  "<<edepEvt <<G4endl;
+   // G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<< "  edep  "<<edepEvt <<G4endl;
     if(crystalCollection->entries()>0){
         m_digitizer->Digitize(crystalCollection);
         processPulsesIntoSinglesTree();
         std::vector<GateCoincidencePulse*> coincidencePulseV = m_digitizer->FindCoincidencePulse(thedigitizerSorterName);
-        G4cout<<"coincidenceVectorPulse size="<<coincidencePulseV.size()<<G4endl;
+       // G4cout<<"coincidenceVectorPulse size="<<coincidencePulseV.size()<<G4endl;
         if(coincidencePulseV.size()>0){
             for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseV.begin();it != coincidencePulseV.end() ; ++it){
 
@@ -309,15 +314,15 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 
                 }
 
-                G4cout<<"size of the  coincidence Pulse"<<coincPulse->size()<<G4endl;
-                if(coincPulse->size()>2){
+                //G4cout<<"size of the  coincidence Pulse"<<coincPulse->size()<<G4endl;
+                //if(coincPulse->size()>2){
                     //Sometimes 3 or more pulses (singles) in a coincidence
-                    G4cout<<"###############################################################"<<G4endl;
-                    G4cout<<"number PULSES IN THE COINCIDENCEPULSE the vector ."<<coincPulse->size()<<G4endl;
-                    G4cout<<"###############################################################"<<G4endl;
+//                    G4cout<<"###############################################################"<<G4endl;
+//                    G4cout<<"number PULSES IN THE COINCIDENCEPULSE the vector ."<<coincPulse->size()<<G4endl;
+//                    G4cout<<"###############################################################"<<G4endl;
 
 
-                }
+                //}
 
 
                 coincID++;
@@ -429,7 +434,12 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   // const G4VProcess* process=step->GetPreStepPoint()->GetProcessDefinedStep();
   //const G4VProcess* process=step->GetPostStepPoint()->GetProcessDefinedStep();
   G4String processName = ( (processTrack != NULL) ? processTrack->GetProcessName() : G4String() ) ;
-
+  if(step->GetPostStepPoint()->GetProcessDefinedStep()!=0){
+       processPostStep=step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  }
+  else{
+      processPostStep="NULL";
+  }
   //=================================================
 
   //To check if  step ends in the  boundary
@@ -470,25 +480,47 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     //      ltof /= 2;
   }
 
+
   //  //Energy of particles
-  //  Ef=step->GetPostStepPoint()->GetKineticEnergy();
+    Ef=step->GetPostStepPoint()->GetKineticEnergy();
+  //     G4cout<<"Ef="<<step->GetPostStepPoint()->GetKineticEnergy()<<G4endl;
   if(newTrack){
-    //      Ei=step->GetPreStepPoint()->GetKineticEnergy();
+      //G4cout<<"new track Ei="<<step->GetPreStepPoint()->GetKineticEnergy()<<G4endl;
+          Ei=step->GetPreStepPoint()->GetKineticEnergy();
     newTrack=false;
   }
 
-  if (hitEdep!=0.){
+  if(evtID==30548){
+      G4cout<<"parentID="<<parentID <<"  PDGEN="<<PDGEncoding<<"  processTrackCreatro"<<processName<<" volStepName="<<VolNameStep<<"  hitedep="<<hitEdep<<"  trackID="<<trackID<<G4endl;
+      G4cout<<" Prepos="<<hitPrePos.getX()<<"  "<<hitPrePos.getY()<<"   "<<hitPrePos.getZ()<<G4endl;
+      G4cout<< " Postpos="<<hitPostPos.getX()<<"  "<<hitPostPos.getY()<<"   "<<hitPostPos.getZ()<<G4endl;
+      G4cout<< " EiniTrack="<<Ei<<"  Efinal= "<<Ef<<G4endl;
+
+      if(step->GetPreStepPoint()->GetProcessDefinedStep()!=0){
+          G4cout<<"preStepprocess="<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
+      }
+      if(step->GetPostStepPoint()->GetProcessDefinedStep()!=0){
+          G4cout<<"postStepprocess="<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
+      }
+
+  }
+   if (it != layerNames.end()){
+  //if (hitEdep!=0.){
     // Create a new crystal hit (maybe better an object hit
     GateCrystalHit* aHit = new GateCrystalHit();
     aHit->SetEdep(hitEdep);
+    aHit->SetEnergyFin(Ef);
+    aHit->SetEnergyIniTrack(Ei);
     G4ThreeVector hitPos;
     hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
     hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
     hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
-    aHit->SetGlobalPos(hitPos);
+    //aHit->SetGlobalPos(hitPos);
+    aHit->SetGlobalPos(hitPostPos);
    //aHit->SetGlobalPos(hitPrePos);
-   // aHit->SetLocalPos(hitPreLocalPos);
-    aHit->SetLocalPos(hitMeanLocalPos);
+    //aHit->SetLocalPos(hitPreLocalPos);
+   aHit->SetLocalPos( hitPostLocalPos);
+    //aHit->SetLocalPos(hitMeanLocalPos);
     //step->GetPreStepPoint()->GetGlobalTime()
     /////Which time do I need to save. Prestep or the time of the track?
     /// also possiblitiy of track local time.
@@ -503,6 +535,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     aHit->SetEventID(evtID);
     aHit->SetRunID(runID);
     aHit->SetPDGEncoding(PDGEncoding);
+    aHit->SetPostStepProcess( processPostStep);
+
+
 
     //track creator
     aHit->SetProcess(processName);
@@ -512,36 +547,38 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
     //Only hits in the layer are saved
     //if(aHit->GetProcess()!="Transportation"){
-    if (it != layerNames.end()){
-      //Maybe I need different collection for each layer to apply different digitization chains
-      crystalCollection->insert(aHit);
-      //G4cout<<"inserting a hit"<<G4endl;
-     // G4cout<<"layer+"<<VolNameStep<<G4endl;
-      if(mSaveHitsTreeFlag){
-          m_hitsBuffer.Fill(aHit,VolNameStep);
-          m_hitsTree->Fill();
-          m_hitsBuffer.Clear();
 
-          //Test: create a separate output tree for the hit in the absorber and hits in the scatterer
-          if(nDaughterBB>1){
-              if(poslayer==(signed int)nDaughterBB-1){
-                  // Mattia does not save hits in the absoreber without track processCreator. But that depend on the cuts
-                  //if(aHit->GetProcess()!=G4String()){
-                  m_hitsAbsBuffer.Fill(aHit,VolNameStep);
-                  m_hitsAbsTree->Fill();
-                  m_hitsAbsBuffer.Clear();
-                  // }
-              }
-              else{
-                  m_hitsScatBuffer.Fill(aHit,VolNameStep);
-                  m_hitsScatTree->Fill();
-                  m_hitsScatBuffer.Clear();
-              }
-          }
-          else{
-              G4cout<<"problems our CC has less than two layers"<<G4endl;
-          }
-      }
+      //Maybe I need different collection for each layer to apply different digitization chains
+     if (hitEdep!=0. ||(parentID==0 && processPostStep!="Transportation")){
+    crystalCollection->insert(aHit);
+    //G4cout<<"inserting a hit"<<G4endl;
+    // G4cout<<"layer+"<<VolNameStep<<G4endl;
+
+        if(mSaveHitsTreeFlag){
+            m_hitsBuffer.Fill(aHit,VolNameStep);
+            m_hitsTree->Fill();
+            m_hitsBuffer.Clear();
+
+            //Test: create a separate output tree for the hit in the absorber and hits in the scatterer
+            if(nDaughterBB>1){
+                if(poslayer==(signed int)nDaughterBB-1){
+                    // Mattia does not save hits in the absoreber without track processCreator. But that depend on the cuts
+                    //if(aHit->GetProcess()!=G4String()){
+                    m_hitsAbsBuffer.Fill(aHit,VolNameStep);
+                    m_hitsAbsTree->Fill();
+                    m_hitsAbsBuffer.Clear();
+                    // }
+                }
+                else{
+                    m_hitsScatBuffer.Fill(aHit,VolNameStep);
+                    m_hitsScatTree->Fill();
+                    m_hitsScatBuffer.Clear();
+                }
+            }
+            else{
+                G4cout<<"problems our CC has less than two layers"<<G4endl;
+            }
+        }
     }
   }
   // G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
@@ -609,7 +646,7 @@ if(pPulseList){
 
     //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"){
     m_SinglesBuffer.Fill(aSingleDigi,slayerID);
-     G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
+    // G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
     m_SingleTree->Fill();
     m_SinglesBuffer.Clear();
     if(mSaveSinglesTextFlag){
@@ -633,6 +670,7 @@ void GateComptonCameraActor::OpenTextFile4Singles(G4String initial_filename){
     // Create output file
 
     OpenFileOutput(filename, ossSingles);
+    G4cout<<"Open Singles FILE  "<<filename<<G4endl;
 }
 
 void GateComptonCameraActor::OpenTextFile4Coinc(G4String initial_filename){
@@ -651,7 +689,7 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 {
 
 
-   ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+ //  ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
 
 
 
@@ -665,7 +703,8 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
     }
 
 
-     ossSingles<<aSin->GetEventID()<<"    "<<aSin->GetEnergy()<<"    "<<layerName<< '\n';
+
+     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
 
 
 }
@@ -676,7 +715,7 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
 {
 
 
-   ossCoincidences << "# coincID   " <<" # EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+   //ossCoincidences << "# coincID   " <<" # EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
 
 
 
@@ -690,7 +729,7 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
     }
 
 
-     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<aCoin->GetEnergy()<<"    "<<layerName<< std::endl;
+     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
 
 
 }
