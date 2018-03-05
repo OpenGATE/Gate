@@ -27,9 +27,10 @@ GateKermaFactorHandler::GateKermaFactorHandler()
   m_distance     = 0.;
   m_kerma_factor = 0.;
 
-  mKFExtrapolation       = false;
-  mKFDA                  = false;
-  mKermaEquivalentFactor = false;
+  mKFExtrapolation             = false;
+  mKFDA                        = false;
+  mKermaEquivalentFactor       = false;
+  mPhotonKermaEquivalentFactor = false;
 
   kfTable.clear();
   MuEnTable.clear();
