@@ -357,8 +357,9 @@ void GateFixedForcedDetectionActor::ComputeFlatField(std::vector<double> & energ
   mFlatFieldDeltaImage = CreateVoidProjectionImage();
   mPrimaryProjector->SetInput(FirstSliceProjection(mFlatFieldImage));
   mPrimaryProjector->SetInput(1, flatFieldSource->GetOutput());
-  mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mFlatFieldDeltaImage->GetPixelContainer()->GetBufferPointer() -
-                                                                             mFlatFieldImage->GetPixelContainer()->GetBufferPointer());
+  if (mMaterialDeltaFilename != "" || mFresnelFilename != "")
+    mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mFlatFieldDeltaImage->GetPixelContainer()->GetBufferPointer() -
+                                                                               mFlatFieldImage->GetPixelContainer()->GetBufferPointer());
   /* Remove noise from I0. */
   if (mNoisePrimary != 0)
     {
@@ -389,13 +390,13 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   mPrimaryProjector->GetProjectedValueAccumulation().SetVolumeSpacing(mGateVolumeImage->GetSpacing());
   mPrimaryProjector->GetProjectedValueAccumulation().SetInterpolationWeights(mPrimaryProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights());
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyWeightList(&energyWeightList);
-  mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mDeltaImage->GetPixelContainer()->GetBufferPointer() -
-                                                                             mPrimaryImage->GetPixelContainer()->GetBufferPointer());
   mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          energyList,
                                                                          gate_image_volume);
   if (mMaterialDeltaFilename != "" || mFresnelFilename != "")
     {
+    mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mDeltaImage->GetPixelContainer()->GetBufferPointer() -
+                                                                               mPrimaryImage->GetPixelContainer()->GetBufferPointer());
     mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
                                                                               gate_image_volume);
     }
