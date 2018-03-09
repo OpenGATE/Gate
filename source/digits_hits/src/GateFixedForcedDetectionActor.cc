@@ -139,10 +139,6 @@ void GateFixedForcedDetectionActor::TestSource(GateSourceMgr * sm)
       }
     else if (mSource->GetPosDist()->GetPosDisType() == "Plane")
       {
-      if (mSource->GetAngDist()->GetDistType() != "focused")
-        {
-        GateError("Error: forced detection only supports focused distributions for plane sources.");
-        }
       if (mSource->GetPosDist()->GetPosDisShape() != "Rectangle")
         {
         GateError("Error: forced detection only supports rectangle plane sources.");
@@ -298,15 +294,15 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   /* There are two geometry objects. One stores all projection images
    (one per run) and the other contains the geometry of one projection
    image. */
-  mGeometry->AddReg23Projection(mPrimarySourcePosition,
-                                mDetectorPosition,
-                                mDetectorRowVector,
-                                mDetectorColVector);
+  mGeometry->AddProjection(mPrimarySourcePosition,
+                           mDetectorPosition,
+                           mDetectorRowVector,
+                           mDetectorColVector);
   GeometryType::Pointer oneProjGeometry = GeometryType::New();
-  oneProjGeometry->AddReg23Projection(mPrimarySourcePosition,
-                                      mDetectorPosition,
-                                      mDetectorRowVector,
-                                      mDetectorColVector);
+  oneProjGeometry->AddProjection(mPrimarySourcePosition,
+                                 mDetectorPosition,
+                                 mDetectorRowVector,
+                                 mDetectorColVector);
 
   /* Create primary projector and compute primary */
   unsigned int nPixOneSlice = mPrimaryImage->GetLargestPossibleRegion().GetNumberOfPixels()
@@ -1519,15 +1515,35 @@ void GateFixedForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(G
   G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0, 0, 0));
 
   /*  Source */
-  G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
-  if (src->GetPosDist()->GetPosDisType() == "Point")
-    {
-    s = src->GetPosDist()->GetCentreCoords();
-    } /*  point */
-
+  G4ThreeVector s;
   m_SourceToCT = sourceToWorld * m_WorldToCT;
   m_SourceToDetector = sourceToWorld * m_WorldToDetector;
-  s = m_SourceToCT.TransformPoint(s);
+  if (src->GetAngDist()->GetDistType() == "focused")
+    {
+    s = src->GetAngDist()->GetFocusPointCopy();
+    s = m_SourceToCT.TransformPoint(s);
+    }
+  else  if (src->GetPosDist()->GetPosDisType() == "Point")
+    {
+    s = src->GetPosDist()->GetCentreCoords();
+    s = m_SourceToCT.TransformPoint(s);
+    } /*  point */
+  else // parallel geometry
+    {
+    s = dp;
+    G4ThreeVector dw = du.cross(dv);
+    double d1 = src->GetPosDist()->GetCentreCoords().dot(dw);
+    double d2 = dp.dot(dw);
+    if(std::abs(d1+d2)>1e-6)
+      {
+      GateError("RTK requires equal source-to-center and center-to-detector distances in parallel geometry");
+      }
+    if(std::abs(src->GetAngDist()->GetDirection().dot(du))>1e-6 ||
+       std::abs(src->GetAngDist()->GetDirection().dot(dv))>1e-6)
+      {
+      GateError("RTK requires a source direction orthogonal to the detector in parallel geometry");
+      }
+    }
 
   /*  Copy in ITK vectors */
   for (int i = 0; i < 3; i++)
