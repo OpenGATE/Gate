@@ -369,7 +369,11 @@ void GateDoseActor::SaveData() {
   }
 
   if (mIsNumberOfHitsImageEnabled) {
-    mNumberOfHitsImage.Write(mNbOfHitsFilename);
+    G4String f = mNbOfHitsFilename;
+    if (!mOverWriteFilesFlag) {
+      f = GetSaveCurrentFilename(mNbOfHitsFilename);
+    }
+    mNumberOfHitsImage.Write(f);
   }
 
   if (mDoseByRegionsFlag) {
