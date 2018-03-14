@@ -5,7 +5,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -38,10 +38,13 @@ protected:
   GateFixedForcedDetectionActor * pActor;
   G4UIcmdWithAString * pSetDetectorCmd;
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
+  GateUIcmdWith2Vector * pSetBinningFactorCmd;
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
   G4UIcmdWithAString * pSetAttenuationFilenameCmd;
+  G4UIcmdWithAString * pSetMaterialDeltaFilenameCmd;
+  G4UIcmdWithAString * pSetFresnelFilenameCmd;
   G4UIcmdWithAString * pSetResponseDetectorFilenameCmd;
   G4UIcmdWithAString * pSetFlatFieldFilenameCmd;
   G4UIcmdWithAString * pSetComptonFilenameCmd;

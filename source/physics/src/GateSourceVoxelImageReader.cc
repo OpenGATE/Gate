@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "G4SystemOfUnits.hh"
@@ -56,6 +56,7 @@ void GateSourceVoxelImageReader::ReadFile(G4String filename)
   vz=image->GetVoxelSize()[2];
 
   SetVoxelSize( G4ThreeVector(vx, vy, vz) * mm );
+  SetArraySize(G4ThreeVector(nx, ny, nz));
 
   m_image_origin = image->GetOrigin();
 
@@ -108,6 +109,7 @@ void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
 
   inFile >> dx >> dy >> dz;
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
+  SetArraySize(G4ThreeVector(nx, ny, nz));
 
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
