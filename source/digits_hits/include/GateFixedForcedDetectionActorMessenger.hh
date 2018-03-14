@@ -38,10 +38,13 @@ protected:
   GateFixedForcedDetectionActor * pActor;
   G4UIcmdWithAString * pSetDetectorCmd;
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
+  GateUIcmdWith2Vector * pSetBinningFactorCmd;
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
   G4UIcmdWithAString * pSetAttenuationFilenameCmd;
+  G4UIcmdWithAString * pSetMaterialDeltaFilenameCmd;
+  G4UIcmdWithAString * pSetFresnelFilenameCmd;
   G4UIcmdWithAString * pSetResponseDetectorFilenameCmd;
   G4UIcmdWithAString * pSetFlatFieldFilenameCmd;
   G4UIcmdWithAString * pSetComptonFilenameCmd;
