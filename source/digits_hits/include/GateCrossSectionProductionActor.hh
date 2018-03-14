@@ -11,9 +11,14 @@ See LICENSE.md for further details
   \class  GateDoseActor
   \author claire.vanngocty@gmail.com
  */
+
+/* Modified: replaced length of voxel by path length of proton in voxel. This enables arbitrary beam directions. Author: Heide Meissner, TU Wien */
+
 #ifndef GATECROSSSECTIONPRODUCTIONACTOR_HH
 #define GATECROSSSECTIONPRODUCTIONACTOR_HH
 
+
+// #include "GateSourceMgr.hh"
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
@@ -82,6 +87,11 @@ protected:
   GateImageWithStatistic *  mIsotopeImage;
   GateImage mEnergyImage;
   GateImage mStatImage;
+
+  /* Stores path length of proton */
+  GateImage mStepLengthImage;
+  GateImage mStepLengthImage_secondary;
+
   GateImage mEnergyImage_secondary;
   GateImage mStatImage_secondary;
   GateImage mDensityImage;
