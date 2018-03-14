@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 /*
@@ -370,7 +370,11 @@ void GateDoseActor::SaveData() {
   }
 
   if (mIsNumberOfHitsImageEnabled) {
-    mNumberOfHitsImage.Write(mNbOfHitsFilename);
+    G4String f = mNbOfHitsFilename;
+    if (!mOverWriteFilesFlag) {
+      f = GetSaveCurrentFilename(mNbOfHitsFilename);
+    }
+    mNumberOfHitsImage.Write(f);
   }
 
   if (mDoseByRegionsFlag) {

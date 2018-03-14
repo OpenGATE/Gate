@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -29,9 +29,8 @@ GateMultiSensitiveDetector::GateMultiSensitiveDetector(G4String name)
 GateMultiSensitiveDetector::~GateMultiSensitiveDetector()
 {
 
-  //if (pSensitiveDetector != 0) delete pSensitiveDetector; //already delete by G4
+  // if (pSensitiveDetector != 0) delete pSensitiveDetector; //already delete by G4
   // if (pMultiFunctionalDetector != 0) delete pMultiFunctionalDetector;
-  // pMultiFunctionalDetector = 0;
 }
 //-----------------------------------------------------------------------------
 
