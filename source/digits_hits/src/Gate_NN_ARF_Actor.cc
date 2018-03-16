@@ -9,16 +9,21 @@
 #include "Gate_NN_ARF_Actor.hh"
 #include "GateSingleDigi.hh"
 #include "G4DigiManager.hh"
+#include "TROOT.h"
+#include "TFile.h"
+#include "TNtuple.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TString.h"
 
 //-----------------------------------------------------------------------------
-void Gate_NN_ARF_Input_Data::Print(std::ostream & os)
+void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
 {
-  os << " in = "
-     << x << " "
-     << y << " "
+  os << " train = "
      << theta << " "
      << phi << " "
-     << E << " "
+     << E << " : "
+     << w << " "
      << std::endl;
 }
 //-----------------------------------------------------------------------------
@@ -26,9 +31,15 @@ void Gate_NN_ARF_Input_Data::Print(std::ostream & os)
 
 
 //-----------------------------------------------------------------------------
-void Gate_NN_ARF_Output_Data::Print(std::ostream & os)
+void Gate_NN_ARF_Test_Data::Print(std::ostream & os)
 {
-  os << "out = " << w << std::endl;
+  os << " test = "
+     << x << " "
+     << y << " "
+     << theta << " "
+     << phi << " "
+     << E << " "
+     << std::endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -88,7 +99,6 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
 void Gate_NN_ARF_Actor::SetMaxAngle(double a)
 {
   mMaxAngle = a/deg;
-  DD(mMaxAngle);
 }
 //-----------------------------------------------------------------------------
 
@@ -123,37 +133,83 @@ void Gate_NN_ARF_Actor::Construct()
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SaveData()
 {
-  GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> Detected "
-              << mNumberOfDetectedEvent
-              << " / " << mInData.size()
-              << " = " << (double)mNumberOfDetectedEvent/(double)mInData.size()*100.0
-              << "%" << std::endl);
+  if (mTrainingModeFlag) {
+    GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> Detected "
+                << mNumberOfDetectedEvent
+                << " / " << mTrainData.size()
+                << " = " << (double)mNumberOfDetectedEvent/(double)mTrainData.size()*100.0
+                << "%" << std::endl);
+  }
+  else {
+    GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> Stored "
+                << " " << mTestData.size() << std::endl);
+
+  }
   GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> max angles "
               << mThetaMax << " " << mPhiMax << std::endl);
 
   // Output simple binary file
   std::ofstream os;
   os.open(mSaveFilename, std::ios::out | std::ios::binary);
-  auto s_in = sizeof(Gate_NN_ARF_Input_Data);
-  auto s_out = sizeof(Gate_NN_ARF_Output_Data);
+  auto s_train = sizeof(Gate_NN_ARF_Train_Data);
+  auto s_test = sizeof(Gate_NN_ARF_Test_Data);
 
   if (mTrainingModeFlag) {
-    // Write In and Out data
-    DD(mInData.size());
-    DD(mOutData.size());
-    for(unsigned int i=0; i<mInData.size(); i++) {
-      os.write(reinterpret_cast<char*>(&mInData[i]), s_in);
-      os.write(reinterpret_cast<char*>(&mOutData[i]), s_out);
-    }
+    for(unsigned int i=0; i<mTrainData.size(); i++)
+      os.write(reinterpret_cast<char*>(&mTrainData[i]), s_train);
   }
   else {
-    // Write In data only
-    for(unsigned int i=0; i<mInData.size(); i++) {
-      os.write(reinterpret_cast<char*>(&mInData[i]), s_in);
-    }
+    for(unsigned int i=0; i<mTestData.size(); i++)
+      os.write(reinterpret_cast<char*>(&mTestData[i]), s_test);
   }
   os.close();
 
+  // Root Output
+  mSaveFilename = mSaveFilename+".root";
+  auto pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file Gate_NN_ARF_Actor", 9);
+  if (mTrainingModeFlag) {
+    auto pListeVar = new TTree("ARF (training)", "ARF Training Dataset");
+    double t,p,e,w;//, weight;
+    pListeVar->Branch("Theta", &t, "Theta/D");
+    pListeVar->Branch("Phi", &p, "Phi/D");
+    pListeVar->Branch("E", &e, "E/D");
+    pListeVar->Branch("w", &w, "w/D");
+    // We dont store the weight because it is easily retrieve: 1.0 everywhere
+    // except if w == 0;
+    //if (mRRFactor != 0)
+    //  pListeVar->Branch("weight", &weight, "Weight/D");
+    for(unsigned int i=0; i<mTrainData.size(); i++) {
+      t = mTrainData[i].theta;
+      p = mTrainData[i].phi;
+      e = mTrainData[i].E;
+      w = mTrainData[i].w;
+      /*if (mRRFactor) {
+        if (w ==0) weight = mRRFactor;
+        else weight = 1.0;
+        }
+      */
+      pListeVar->Fill();
+    }
+  }
+  else {
+    auto pListeVar = new TTree("ARF (testing)", "ARF Testing Dataset Tree");
+    double x,y,t,p,e;
+    pListeVar->Branch("X", &x, "X/D");
+    pListeVar->Branch("Y", &y, "Y/D");
+    pListeVar->Branch("Theta", &t, "Theta/D");
+    pListeVar->Branch("Phi", &p, "Phi/D");
+    pListeVar->Branch("E", &e, "E/D");
+    for(unsigned int i=0; i<mTestData.size(); i++) {
+      x = mTestData[i].x;
+      y = mTestData[i].y;
+      t = mTestData[i].theta;
+      p = mTestData[i].phi;
+      e = mTestData[i].E;
+      pListeVar->Fill();
+    }
+  }
+  pFile->Write();
+  pFile->Close();
 }
 //-----------------------------------------------------------------------------
 
@@ -161,8 +217,8 @@ void Gate_NN_ARF_Actor::SaveData()
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::ResetData()
 {
-  mInData.clear();
-  mOutData.clear();
+  mTrainData.clear();
+  mTestData.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -217,46 +273,28 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
       mCurrentOutData.u = xProj;
       mCurrentOutData.v = yProj;
       */
-      mCurrentOutData.w = i;
+      mCurrentTrainData.w = i;
       isIn = true;
       ++mNumberOfDetectedEvent;
     }
     if (!isIn) {
       if (mRRFactor == 0 or russian_roulette_current == mRRFactor-1) {
-        mCurrentOutData.w = 0;               // windows 0 is 'outside'
-        russian_roulette_current = 0;        // reset current value
-        mOutData.push_back(mCurrentOutData); // store data
-        //mCurrentOutData.Print(std::cout);
+        mCurrentTrainData.w = 0;                   // windows 0 is 'outside'
+        russian_roulette_current = 0;              // reset current value
+        mTrainData.push_back(mCurrentTrainData);   // store data
       }
       else { // ignore this event
         ++russian_roulette_current;
-        mIgnoreCurrentData = true;
       }
     }
     else {
-      mOutData.push_back(mCurrentOutData);
-      //mCurrentOutData.Print(std::cout);
+      mTrainData.push_back(mCurrentTrainData);
     }
-  }
-
-  // Do not count event that never go to UserSteppingAction
-  double theta_center = 90.0;
-  double phi_center = -90.0;
-  if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
-    mInData.push_back(mCurrentInData);
-    //mCurrentInData.Print(std::cout);
-    // Check max angle
-    if (mCurrentOutData.w != 0) { // not outside
-      auto a = fabs(mCurrentInData.theta-theta_center);
-      if (a > mThetaMax) {
-        mThetaMax = a;
-        DD(mThetaMax);
-      }
-      auto b = fabs(mCurrentInData.phi-phi_center);
-      if (b > mPhiMax) {
-        mPhiMax = b;
-        DD(mPhiMax);
-      }
+  }// end mTrainingModeFlag
+  else {
+    // Do not count event that never go to UserSteppingAction
+    if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
+      mTestData.push_back(mCurrentTestData);
     }
   }
 }
@@ -287,9 +325,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /* v */, const G4
   double theta_center = 90.0;
   double phi_center = -90.0;
   mIgnoreCurrentData = false;
-  if (!mTrainingModeFlag
-      and mMaxAngle != 0.0
-      and // when test mode, check the angle max
+  if (mMaxAngle != 0.0 and
       (theta > theta_center+mMaxAngle or
        theta < theta_center-mMaxAngle or
        phi   > phi_center+mMaxAngle or
@@ -299,13 +335,18 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /* v */, const G4
     return;
   }
 
-  // Input
-  mCurrentInData.x = p.x();
-  mCurrentInData.y = p.y();
-  mCurrentInData.E = E;
-  mCurrentInData.theta = theta;
-  mCurrentInData.phi = phi;
-  //mCurrentInData.Print(std::cout);
+  if (mTrainingModeFlag) {
+    mCurrentTrainData.E = E;
+    mCurrentTrainData.theta = theta;
+    mCurrentTrainData.phi = phi;
+  }
+  else {
+    mCurrentTestData.x = p.x();
+    mCurrentTestData.y = p.y();
+    mCurrentTestData.E = E;
+    mCurrentTestData.theta = theta;
+    mCurrentTestData.phi = phi;
+  }
 
   // Output will be set EndOfEventAction
   mEventIsAlreadyStored = true;
