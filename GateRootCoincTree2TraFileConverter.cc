@@ -12,20 +12,19 @@
 
 using std::cout;
 using std::endl;
-void writeTraEvent(GateComptonCameraCones aCone, std::ofstream &oss){
+void writeTraEvent(GateComptonCameraCones aCone, int counter, std::ofstream &oss){
     oss<<"SE" <<'\n';
     oss<<"ET CO"<<'\n';
-    oss<<"ID 1"<<'\n';
+    oss<<"ID"<<" "<<counter<<'\n';
     oss<<"TI "<<0.000859089<<'\n';
     oss<<"SQ "<<2<<'\n';
     oss<<"CT 0 0"<<'\n';
     oss<<"TL 1"<<'\n';
     oss<<"TE 0"<<'\n';
-    oss<<"CE "<<aCone.GetEnergyR()/keV<<" "<<0<<"   "<<aCone.GetEnergy1()/keV<<0<<'\n';
+    oss<<"CE "<<aCone.GetEnergyR()/keV<<" "<<0<<"   "<<aCone.GetEnergy1()/keV<<" "<<0<<'\n';
     oss<<"CD "<<aCone.GetPosition1().getX()/cm<<" "<<aCone.GetPosition1().getY()/cm<<" "<<aCone.GetPosition1().getZ()/cm<<"   "<<0<<" "<<0<<" "<<0<<"   "<<aCone.GetPosition2().getX()/cm<<" "<<aCone.GetPosition2().getY()/cm<<" "<<aCone.GetPosition2().getZ()/cm<<"   "<<0<<" "<<0<<" "<<0<<"   "<<0<<" "<<0<<" "<<0<<"   "<<0<<" "<<0<<" "<<0<<"   "<<'\n';
     oss<<"LA 8.67643 "<<'\n';
 }
-
 
 
 int main(int argc, char *argv[])
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
     std::ofstream ossCones;
     OpenFileOutput(outputFilename, ossCones);
 
-
+   int coincCounter=0;
     GateCoincidenceTreeReader* m_coincFileReader= new GateCoincidenceTreeReader(input_filePathName);
          m_coincFileReader->PrepareAcquisition();
          //Saca un pulseList por cada eventID with the corresponfing number of pulses
@@ -63,7 +62,8 @@ int main(int argc, char *argv[])
              //cout<<"prepareNext"<<endl;
               int isgood=m_coincFileReader->PrepareNextEvent();
              if(isgood==1){
-                writeTraEvent( m_coincFileReader->PrepareEndOfEvent(),ossCones);
+                 coincCounter++;
+                writeTraEvent( m_coincFileReader->PrepareEndOfEvent(), coincCounter,ossCones);
              }
            }
     return 0;
