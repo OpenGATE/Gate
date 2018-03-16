@@ -151,7 +151,8 @@ public:
   inline virtual ~GateCCRootSingleBuffer() {} 	      	  //!< Public destructor
 
   void Clear();     	      	      	      	  //!< Reset the fields of the structure
-  void Fill(GateSingleDigi* aDigi, int slayerID);
+  //void Fill(GateSingleDigi* aDigi, int slayerID);
+  void Fill(GateSingleDigi* aDigi);
   GateSingleDigi* CreateSingle();
 
   //! Returns the time in G4 units (conversion from seconds)
@@ -171,7 +172,7 @@ public:
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;
-  Int_t    layerID;
+  //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
    Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
@@ -222,6 +223,8 @@ public:
   Int_t    eventID;
   Double_t time;
   Float_t  energy;
+  Float_t  energyFin;
+  Float_t  energyIni;
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;
@@ -245,6 +248,7 @@ public:
   virtual inline ~GateCCCoincTree() {}
 
   void Init(GateCCRootCoincBuffer& buffer);
+  static void SetBranchAddresses(TTree* ,GateCCRootCoincBuffer& buffer);
 };
 //-----------------------------------------------------------------------------
 

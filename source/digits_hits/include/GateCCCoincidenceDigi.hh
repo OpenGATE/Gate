@@ -63,6 +63,13 @@ public:
       inline void     SetCoincidenceID(G4int value)         	      { coincID=value; }
       inline G4double GetCoincidenceID() const                      	      { return coincID; }
 
+      //AE:Ef for AdderComptPhotIdeal Megalib comparison
+      inline void     SetFinalEnergy(G4double value)      { m_pulse.SetEnergyFin(value); }
+      inline G4double GetFinalEnergy() const                   { return m_pulse.GetEnergyFin(); }
+
+	inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
+      inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+
 
 
 private:
