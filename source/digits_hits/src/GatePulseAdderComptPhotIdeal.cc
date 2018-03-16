@@ -13,6 +13,7 @@ GatePulseAdderComptPhotIdeal::GatePulseAdderComptPhotIdeal(GatePulseProcessorCha
 											 : GateVPulseProcessor(itsChain,itsName)
 {
 	m_messenger = new GatePulseAdderComptPhotIdealMessenger(this);
+
 }
 
 GatePulseAdderComptPhotIdeal::~GatePulseAdderComptPhotIdeal()
@@ -21,7 +22,7 @@ GatePulseAdderComptPhotIdeal::~GatePulseAdderComptPhotIdeal()
 }
 
 
-///REESCRIBIR!!!!!!!!!!!!!!!!!!
+
 void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
 #ifdef GATE_USE_OPTICAL
@@ -32,13 +33,15 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 
         //  G4cout << "Entering adder";
 
+
         if(inputPulse->GetParentID()==0)
         {
             if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot"  ){
                 PulsePushBack(inputPulse, outputPulseList);
-                lastTrackID.push_back(inputPulse->GetTrackID());
+                lastTrackID.push_back(inputPulse->GetTrackID());            
                 //G4cout << "inserting a pulse";
             }
+            //. La Eini de los primaries es su Eini antes de la primera interacci'on en SD of the layers no la Eini del track. This has been changed in the comptoncameraactor in where the hit coletion is saved
 
 
         }
@@ -73,7 +76,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                        EmaxDepos=(*(iter+1))->GetEnergyFin()- (*iter)->GetEnergyFin();
                    }
 
-                    if ( (inputPulse->GetVolumeID() == (*iter)->GetVolumeID()) && (inputPulse->GetEventID() == (*iter)->GetEventID()) && inputPulse->GetEnergyIniTrack()< EmaxDepos)
+                    if ( (inputPulse->GetVolumeID() == (*iter)->GetVolumeID()) && (inputPulse->GetEventID() == (*iter)->GetEventID()) && inputPulse->GetEnergyIniTrack()<= EmaxDepos)
                     {
                         //first order secondaries
                         if(inputPulse->GetParentID()==1 && inputPulse->GetProcessCreator()==(*iter)->GetPostStepProcess()){
@@ -86,6 +89,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                                 //anadir que lo llne solo si inputPulse->GetTrackID()
 
                                 //---Pegote final
+                                //Look if there is an output pulse already with the trackId of the inputPulse
                                 bool isgood=true;
                                  GatePulseList::iterator iterIntern;
                                 for (iterIntern = outputPulseList.begin() ; iterIntern != outputPulseList.end() ; ++iterIntern ){
@@ -102,6 +106,9 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                                 break;
                             }
                             else{
+                                //(*iter)->CentroidMergeComptPhotIdeal(inputPulse);;
+                               // break;
+                                //Esto funiiona para EMlivermore pero no para stantdard
                                 if((*iter)->GetTrackID()==inputPulse->GetTrackID()){
                                     //first secondary for the pulse
                                    (*iter)->CentroidMergeComptPhotIdeal(inputPulse);;

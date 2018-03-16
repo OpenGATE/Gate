@@ -32,6 +32,7 @@ class GatePulseAdderComptPhotIdeal : public GateVPulseProcessor
     //GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
     std::vector<G4int> lastTrackID;
 
+
   protected:
     //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
     //! This methods processes one input-pulse
