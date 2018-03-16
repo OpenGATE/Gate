@@ -49,10 +49,14 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   slayerID=-1;
   coincID=0;
 
+  //Default values
   mSaveSinglesManualTreeFlag=false;
-
-  mSaveSinglesTextFlag=true;
-  mSaveCoincTextFlag=true;
+  mNumberTotScattLayers=0;
+  mNameOfAbsorberSDVol="absorber";
+  mNameOfScattererSDVol="scatterer";
+  mSaveSinglesTextFlag=false;
+  mSaveCoincTextFlag=false;
+  //Messenger load values
    pMessenger = new GateComptonCameraActorMessenger(this);
 
   emcalc = new G4EmCalculator;
@@ -67,6 +71,8 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
    G4double coincidenceWindow = 10.* ns;
   bool IsCCSorter=1;
   coincidenceSorter = new GateCoincidenceSorter(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
+
+
   m_digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
 
 
@@ -94,6 +100,7 @@ void GateComptonCameraActor::Construct()
 {
   GateVActor::Construct();
 
+
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
@@ -102,7 +109,20 @@ void GateComptonCameraActor::Construct()
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
 
-  nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
+  coincidenceSorter->SetAbsorberdepth2VolumeName(mNameOfAbsorberDepth2Vol);
+
+
+  if(mNumberTotScattLayers==0){//I am not using the messenger to specify number of layer and names
+
+    // nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
+      //By default one absorber one scatter (scatterer all the copies that you want) but one kind
+      nDaughterBB=2;
+      //mVolume->GetLogicalVolume()->GetDaughter(mNumberTotScattLayers)
+
+  }
+  else{
+    nDaughterBB=mNumberTotScattLayers+1;
+  }
   attachPhysVolumeName=mVolume->GetPhysicalVolumeName();
 
   //Arrays created to test singles outputs
@@ -111,19 +131,49 @@ void GateComptonCameraActor::Construct()
   yPos_InEachLayerEvt=new double [nDaughterBB];
   zPos_InEachLayerEvt=new double [nDaughterBB];
 
-  //Get the names of the physical volumes of the layers
-  int daughter_cpN=0;
-  for(unsigned int i=0; i < nDaughterBB; i++) {
-    edepInEachLayerEvt[i]=0.0;
-    daughter_cpN=mVolume->GetLogicalVolume()->GetDaughter(i)->GetCopyNo();
+  if(mNumberTotScattLayers==0){//I am not using the messenger to specify number of layer and names
 
-    if(daughter_cpN==0){
-      layerNames.push_back(mVolume->GetLogicalVolume()->GetDaughter(i)->GetName());
-    }
-    else{
-      layerNames.push_back( mVolume->GetLogicalVolume()->GetDaughter(i)->GetName()+std::to_string(daughter_cpN) );
-    }
+      //Get the names of the physical volumes of the layers
+      //
+      int daughter_cpN=0;
+      G4String name;
+      for(unsigned int i=0; i < nDaughterBB; i++) {
+        edepInEachLayerEvt[i]=0.0;
+        daughter_cpN=mVolume->GetLogicalVolume()->GetDaughter(i)->GetCopyNo();
+         name=mVolume->GetLogicalVolume()->GetDaughter(i)->GetName();
+        unsigned extPos=name.rfind("_phys");
+        name=name.substr(0,extPos);
+
+        if(daughter_cpN==0){
+          layerNames.push_back(name);
+          G4cout<<"layerN="<< layerNames.back()<<G4endl;
+        }
+        else{
+          layerNames.push_back( name+std::to_string(daughter_cpN) );
+           G4cout<<"layerN="<< layerNames.back()<<G4endl;
+        }
+      }
   }
+  else{
+      for(unsigned int i=0; i < nDaughterBB; i++) {
+              edepInEachLayerEvt[i]=0.0;
+              if(i==(nDaughterBB-1)){
+                    layerNames.push_back(mNameOfAbsorberSDVol);
+              }
+              else{
+                  if(i==0){
+                     layerNames.push_back(mNameOfScattererSDVol);
+                  }
+                  else{
+                      layerNames.push_back(mNameOfScattererSDVol+std::to_string(i));
+
+                  }
+              }
+      }
+
+  }
+
+
 
   //############################3
   //root file
@@ -240,6 +290,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
  // G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
   newEvt = true;
   edepEvt = 0.;
+   Ef_oldPrimary=0;
   //edepInEachLayerEvt.assign(nDaughterBB,0.0);
   for(unsigned int i=0;i<nDaughterBB;i++){
     edepInEachLayerEvt[i]=0.0;
@@ -288,8 +339,11 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
     if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
    // G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<< "  edep  "<<edepEvt <<G4endl;
     if(crystalCollection->entries()>0){
+      //  G4cout<<"digitize"<<G4endl;
         m_digitizer->Digitize(crystalCollection);
+          // G4cout<<"Singles"<<G4endl;
         processPulsesIntoSinglesTree();
+         // G4cout<<"findcoinc"<<G4endl;
         std::vector<GateCoincidencePulse*> coincidencePulseV = m_digitizer->FindCoincidencePulse(thedigitizerSorterName);
        // G4cout<<"coincidenceVectorPulse size="<<coincidencePulseV.size()<<G4endl;
         if(coincidencePulseV.size()>0){
@@ -410,14 +464,18 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   hitPrePos = step->GetPreStepPoint()->GetPosition()/mm;
   hitEdep=step->GetTotalEnergyDeposit()/MeV;
 
-  //Volume name od the step
+  //Volume name od the step tosave only the hits in SD of the layers
   G4TouchableHandle touchable=step->GetPreStepPoint()->GetTouchableHandle();
   int copyNumberStep=touchable->GetVolume(0)->GetCopyNo();
+  G4String nameCurrentV=touchable->GetVolume(0)->GetName();
+  unsigned extPos=nameCurrentV.rfind("_phys");
+   nameCurrentV=nameCurrentV.substr(0,extPos);
+   VolNameStep=nameCurrentV;
   if(copyNumberStep==0){
-    VolNameStep=touchable->GetVolume(0)->GetName();
+    VolNameStep=nameCurrentV;
   }
   else{
-    VolNameStep=touchable->GetVolume(0)->GetName()+std::to_string(copyNumberStep);
+    VolNameStep=nameCurrentV+std::to_string(copyNumberStep);
   }
 
   const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
@@ -490,7 +548,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     newTrack=false;
   }
 
-  if(evtID==30548){
+  if(evtID==37245 || evtID==62051 ||  evtID==79924  ){
       G4cout<<"parentID="<<parentID <<"  PDGEN="<<PDGEncoding<<"  processTrackCreatro"<<processName<<" volStepName="<<VolNameStep<<"  hitedep="<<hitEdep<<"  trackID="<<trackID<<G4endl;
       G4cout<<" Prepos="<<hitPrePos.getX()<<"  "<<hitPrePos.getY()<<"   "<<hitPrePos.getZ()<<G4endl;
       G4cout<< " Postpos="<<hitPostPos.getX()<<"  "<<hitPostPos.getY()<<"   "<<hitPostPos.getZ()<<G4endl;
@@ -503,6 +561,12 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
           G4cout<<"postStepprocess="<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
       }
 
+  }
+
+  if(parentID==0){
+      //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
+      if(Ef_oldPrimary!=0)Ei=Ef_oldPrimary;
+      Ef_oldPrimary=Ef;
   }
    if (it != layerNames.end()){
   //if (hitEdep!=0.){
@@ -553,6 +617,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     crystalCollection->insert(aHit);
     //G4cout<<"inserting a hit"<<G4endl;
     // G4cout<<"layer+"<<VolNameStep<<G4endl;
+
+
 
         if(mSaveHitsTreeFlag){
             m_hitsBuffer.Fill(aHit,VolNameStep);
@@ -630,22 +696,22 @@ if(pPulseList){
     //G4cout << "PDGsummedPulse="<<inputPulse->GetPDGEncoding()<<G4endl;
      //G4cout << "PDGsummedPulse="<<inputPulse->GetNCrystalCompton()<<G4endl;
 
-    ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
-    /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
-    if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
-    //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()!="scatterer_phys"){
-     // slayerID=nDaughterBB-1;
-        slayerID=0;
-    }
-    else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="scatterer_phys"){
-      slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()+1;
-    }
-    else{
-      G4cout << "problems of layer identification"<<G4endl;
-    }
+//    ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
+//    /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
+//    if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
+//     // slayerID=nDaughterBB-1;
+//        slayerID=0;
+//    }
+//    else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()==("scatterer_phys")){
+//      slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()+1;
+//    }
+//    else{
+//      G4cout << "problems of layer identification"<<G4endl;
+//    }
 
-    //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"){
-    m_SinglesBuffer.Fill(aSingleDigi,slayerID);
+
+    //m_SinglesBuffer.Fill(aSingleDigi,slayerID);
+    m_SinglesBuffer.Fill(aSingleDigi);
     // G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
     m_SingleTree->Fill();
     m_SinglesBuffer.Clear();
@@ -654,7 +720,7 @@ if(pPulseList){
     }
 
 
-    //}
+
   }
     }
 }
@@ -704,7 +770,7 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 
 
 
-     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
+     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(5)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
 
 
 }
@@ -729,7 +795,7 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
     }
 
 
-     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
+     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(5)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
 
 
 }

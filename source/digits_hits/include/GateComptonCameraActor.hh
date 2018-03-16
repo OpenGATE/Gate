@@ -79,7 +79,11 @@ public:
   void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
   void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
 
-
+  void SetNumberOfDiffScattererLayers( int numS){mNumberDiffScattLayers=numS;}
+  void SetNumberOfTotScattererLayers( int numS){mNumberTotScattLayers=numS;}
+  void SetNameOfScattererSDVol(G4String name){mNameOfScattererSDVol=name;}
+  void SetNameOfAbsorberSDVol(G4String name ) {mNameOfAbsorberSDVol=name;}
+void SetNameOfAbsorberDepth2Vol(G4String name ) {mNameOfAbsorberDepth2Vol=name;}
   //! Get the digitizer
   inline GateDigitizer*   GetDigitizer()
   { return m_digitizer; }
@@ -138,6 +142,7 @@ protected:
   G4int runID;
 
   G4double hitEdep;
+   G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
   G4ThreeVector hitPrePos;
   G4int trackID;
@@ -175,6 +180,14 @@ protected:
   bool mSaveHitsTreeFlag;
   bool mSaveSinglesTextFlag;
   bool mSaveCoincTextFlag;
+
+  int mNumberDiffScattLayers;
+   int mNumberTotScattLayers;
+  G4String  mNameOfScattererSDVol;
+  G4String  mNameOfAbsorberSDVol;
+  G4String mNameOfAbsorberDepth2Vol;
+
+
 
   std::ofstream ossSingles;
   std::ofstream ossCoincidences;

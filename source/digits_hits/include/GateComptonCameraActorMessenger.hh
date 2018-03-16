@@ -48,6 +48,12 @@ protected:
   G4UIcmdWithABool          * pSaveHitsTree;
   G4UIcmdWithABool          *pSaveCoincidenceText;
   G4UIcmdWithABool          * pSaveSinglesText;
+  //
+  G4UIcmdWithAString        * pNameOfAbsorberSDVol;
+  G4UIcmdWithAString        * pNameOfScattererSDVol;
+  G4UIcmdWithAnInteger      * pNumberofDiffScattererLayers;
+    G4UIcmdWithAnInteger      * pNumberofTotScattererLayers;
+ G4UIcmdWithAString        * pNameOfAbsorberDepth2Vol;
 
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------
