@@ -21,13 +21,11 @@
 #include "Gate_NN_ARF_ActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
-struct Gate_NN_ARF_Input_Data {
-  // Input parameters
-  double x;     // in mm
-  double y;     // in mm
+struct Gate_NN_ARF_Train_Data {
   double theta; // in deg, angle along X
   double phi;   // in deg, angle along Y
   double E;     // in MeV
+  double w;     // windows id (0 if outside)
   // Helper
   void Print(std::ostream & os);
 };
@@ -35,9 +33,12 @@ struct Gate_NN_ARF_Input_Data {
 
 
 //-----------------------------------------------------------------------------
-struct Gate_NN_ARF_Output_Data {
-  // Output parameters
-  double w;     // windows id (0 if outside)
+struct Gate_NN_ARF_Test_Data {
+  double x;     // in mm
+  double y;     // in mm
+  double theta; // in deg, angle along X
+  double phi;   // in deg, angle along Y
+  double E;     // in MeV
   // Helper
   void Print(std::ostream & os);
 };
@@ -80,11 +81,11 @@ protected:
 
   bool mTrainingModeFlag;
   bool mIgnoreCurrentData;
-  std::vector<Gate_NN_ARF_Output_Data> mOutData;
-  std::vector<Gate_NN_ARF_Input_Data> mInData;
+  std::vector<Gate_NN_ARF_Test_Data>  mTestData;
+  std::vector<Gate_NN_ARF_Train_Data> mTrainData;
   bool mEventIsAlreadyStored;
-  Gate_NN_ARF_Output_Data mCurrentOutData;
-  Gate_NN_ARF_Input_Data mCurrentInData;
+  Gate_NN_ARF_Test_Data mCurrentTestData;
+  Gate_NN_ARF_Train_Data mCurrentTrainData;
   std::vector<G4String> mListOfWindowNames;
   std::vector<int> mListOfWindowIds;
   int mNumberOfDetectedEvent;
