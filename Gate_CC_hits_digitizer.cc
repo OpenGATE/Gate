@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
             // G4cout << "eventID"<< inputPulse->GetEventID()<<G4endl;
             GateSingleDigi* aSingleDigi=new GateSingleDigi(inputPulse);
 
-            int slayerID=-1;
+            /*int slayerID=-1;
             //LAYER NAMES Maybe should BE INTRODUCED AS INPUT IN ACTOR MESSENGER ang HERE some generalization.
             //Here I couls save layer ID insted of layer name
             //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
@@ -133,8 +133,8 @@ int main(int argc, char *argv[])
             }
             else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="scatterer_phys"){
                 slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()+1;
-            }
-            m_SinglesBuffer.Fill(aSingleDigi,slayerID);
+            }*/
+            m_SinglesBuffer.Fill(aSingleDigi);
             m_SingleTree->Fill();
             m_SinglesBuffer.Clear();
         }

@@ -105,6 +105,7 @@ public:
       // HDS : septal penetration
       inline void  SetNSeptal(G4int n)    { m_pulse.SetNSeptal(n); }
       inline G4int GetNSeptal() const     { return m_pulse.GetNSeptal(); }
+     
 
 private:
       GatePulse m_pulse;
