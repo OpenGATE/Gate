@@ -117,6 +117,10 @@ class GateCoincidenceSorter : public GateClockDependent
      void SetPresortBufferSize(G4int size)
        { m_presortBufferSize = size; }
 
+     inline void SetAbsorberdepth2VolumeName(G4String val)
+     { m_absorberDepth2Name = val;}
+
+
      //@}
 
      //! \name Methods for coincidence sorting
@@ -163,6 +167,9 @@ class GateCoincidenceSorter : public GateClockDependent
     G4bool                m_presortWarning;     // avoid repeat warnings
 
     bool                m_CCSorter;     // compton camera sorter
+    G4String m_absorberDepth2Name;// absorber "SD' volume name CC
+
+
 
     std::deque<GateCoincidencePulse*> m_coincidencePulses;  // open coincidence windows
 

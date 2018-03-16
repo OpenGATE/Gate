@@ -281,10 +281,10 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidence
             // Introduce some conditions to check if  is good
             m_digitizer->StoreCoincidencePulse(coincidence);
             // delete coincidence; // ?
-
             return;
         }
        else{
+             //G4cout<<"bad coinc"<<G4endl;
             delete coincidence;
             return;
 
@@ -523,8 +523,14 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
       G4bool isTriggAbsorber=false;
       G4bool isSingleInAnotherLayer=false;
       unsigned int numCoincPulses=coincidence->size();
+      G4String absorptionPhysName=m_absorberDepth2Name+"_phys";
+    // G4cout<<absorptionPhysName<<G4endl;
+      //G4cout<<"npulses"<<numCoincPulses<<G4endl;
+    //G4cout<<"0"<<coincidence->at(0)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()<<G4endl;
       for(unsigned int i=0;i<numCoincPulses;i++){
-          if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"  ){
+          //Cuando es un pulso de scatterer no existe esa depht
+          //if( coincidence->at(i)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()==absorptionPhysName  ){
+           if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()==absorptionPhysName ){
               isTriggAbsorber=true;
 
           }
