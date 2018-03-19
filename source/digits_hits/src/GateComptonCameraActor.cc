@@ -111,7 +111,7 @@ void GateComptonCameraActor::Construct()
 
   coincidenceSorter->SetAbsorberdepth2VolumeName(mNameOfAbsorberDepth2Vol);
 
-
+  G4cout<<"GAteComptonCameraActor:Construct  numTotScatt"<<mNumberTotScattLayers<<G4endl;
   if(mNumberTotScattLayers==0){//I am not using the messenger to specify number of layer and names
 
     // nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
@@ -169,6 +169,7 @@ void GateComptonCameraActor::Construct()
 
                   }
               }
+             // G4cout<<"layerNames "<<layerNames.back()<<G4endl;
       }
 
   }
@@ -470,14 +471,16 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   G4String nameCurrentV=touchable->GetVolume(0)->GetName();
   unsigned extPos=nameCurrentV.rfind("_phys");
    nameCurrentV=nameCurrentV.substr(0,extPos);
-   VolNameStep=nameCurrentV;
-  if(copyNumberStep==0){
-    VolNameStep=nameCurrentV;
+   //VolNameStep=nameCurrentV;
+  if(copyNumberStep!=0 && nameCurrentV!=mNameOfAbsorberSDVol){
+        VolNameStep=nameCurrentV+std::to_string(copyNumberStep);
   }
   else{
-    VolNameStep=nameCurrentV+std::to_string(copyNumberStep);
+
+      VolNameStep=nameCurrentV;
   }
 
+  //G4cout<<VolNameStep<<G4endl;
   const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
   GateVolumeID volumeID(touchableH);
   hitPreLocalPos=volumeID.MoveToBottomVolumeFrame(hitPrePos);
