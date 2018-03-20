@@ -28,6 +28,10 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
 
   mIsLastHitEventImageEnabled     = false;
 
+  mIsEdepImageEnabled             = false;
+  mIsEdepSquaredImageEnabled      = false;
+  mIsEdepUncertaintyImageEnabled  = false;
+
   mIsDoseImageEnabled             = false;
   mIsDoseSquaredImageEnabled      = false;
   mIsDoseUncertaintyImageEnabled  = false;
@@ -70,21 +74,34 @@ void GateNTLEDoseActor::Construct() {
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
-  if (!mIsDoseImageEnabled)
+  if (!mIsEdepImageEnabled && !mIsDoseImageEnabled)
     GateError("The NTLEDoseActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableDose true' for example)");
 
   // Output Filename
+  mEdepFilename = G4String(removeExtension(mSaveFilename)) + "-Edep." + G4String(getExtension(mSaveFilename));
   mDoseFilename = G4String(removeExtension(mSaveFilename)) + "-Dose." + G4String(getExtension(mSaveFilename));
   mFluxFilename = G4String(removeExtension(mSaveFilename)) + "-Flux." + G4String(getExtension(mSaveFilename));
 
+  SetOriginTransformAndFlagToImage(mEdepImage);
   SetOriginTransformAndFlagToImage(mDoseImage);
   SetOriginTransformAndFlagToImage(mLastHitEventImage);
 
-  if (mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled) {
+  if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
+      mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled) {
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mLastHitEventImage.Allocate();
     mIsLastHitEventImageEnabled = true;
     mLastHitEventImage.SetOrigin(mOrigin);
+  }
+
+  if (mIsEdepImageEnabled) {
+    mEdepImage.EnableSquaredImage       (mIsEdepSquaredImageEnabled);
+    mEdepImage.EnableUncertaintyImage   (mIsEdepUncertaintyImageEnabled);
+    mEdepImage.SetResolutionAndHalfSize (mResolution, mHalfSize, mPosition);
+    mEdepImage.Allocate();
+    mEdepImage.SetFilename(mEdepFilename);
+    mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+    mEdepImage.SetOrigin(mOrigin);
   }
 
   if (mIsDoseImageEnabled) {
@@ -120,6 +137,10 @@ void GateNTLEDoseActor::Construct() {
 
   GateMessage("Actor", 1,
               "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
+              "\tEdep image        = " << mIsEdepImageEnabled << Gateendl <<
+              "\tEdep squared      = " << mIsEdepSquaredImageEnabled << Gateendl <<
+              "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
+              "\tEdep filename     = " << mEdepFilename << Gateendl <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
@@ -145,6 +166,7 @@ void GateNTLEDoseActor::Construct() {
 void GateNTLEDoseActor::SaveData() {
   GateVActor::SaveData();
 
+  if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent + 1, false);
   if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
   if (mIsFluxImageEnabled) mFluxImage.SaveData(mCurrentEvent + 1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
@@ -165,6 +187,7 @@ void GateNTLEDoseActor::SaveData() {
 
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::ResetData() {
+  if (mIsEdepImageEnabled) mEdepImage.Reset();
   if (mIsDoseImageEnabled) mDoseImage.Reset();
   if (mIsFluxImageEnabled) mFluxImage.Reset();
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
@@ -212,6 +235,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
     mKFHandler->SetDistance   (step->GetStepLength());
     mKFHandler->SetCubicVolume(GetDoselVolume());
 
+    double edep(0.);
     double dose(0.);
     double flux(0.);
 
@@ -227,6 +251,8 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       dose = mKFHandler->GetDoseCorrectedTLE();
       flux = mKFHandler->GetFlux();
     }
+
+    edep = dose * GetDoselVolume() * step->GetPreStepPoint()->GetMaterial()->GetDensity();
 
     bool sameEvent = true;
 
@@ -245,9 +271,18 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
          << " Particle       = " << step->GetTrack()->GetDefinition()->GetParticleName() << Gateendl
          << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
          << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
+         << " Edep           = " << G4BestUnit(edep, "Energy") << Gateendl
          << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl
          << " Flux           = " << flux << " part./m²" << Gateendl);
 
+    if (mIsEdepImageEnabled) {
+      if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
+        if (sameEvent) mEdepImage.AddTempValue(index, dose);
+        else mEdepImage.AddValueAndUpdate(index, dose);
+      }
+      else
+        mEdepImage.AddValue(index, dose);
+    }
 
     if (mIsDoseImageEnabled) {
       if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {

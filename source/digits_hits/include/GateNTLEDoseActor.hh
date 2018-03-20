@@ -39,6 +39,10 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
+  void EnableEdepImage            (bool b) { mIsEdepImageEnabled              = b; }
+  void EnableEdepSquaredImage     (bool b) { mIsEdepSquaredImageEnabled       = b; }
+  void EnableEdepUncertaintyImage (bool b) { mIsEdepUncertaintyImageEnabled   = b; }
+
   void EnableDoseImage            (bool b) { mIsDoseImageEnabled              = b; }
   void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled       = b; }
   void EnableDoseUncertaintyImage (bool b) { mIsDoseUncertaintyImageEnabled   = b; }
@@ -80,6 +84,7 @@ protected:
   GateNTLEDoseActor(G4String name, G4int depth=0);
   GateNTLEDoseActorMessenger * pMessenger;
 
+  GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mFluxImage;
 
@@ -87,10 +92,15 @@ protected:
 
   GateKermaFactorHandler* mKFHandler;
 
+  G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mFluxFilename;
 
   bool mIsLastHitEventImageEnabled;
+
+  bool mIsEdepImageEnabled;
+  bool mIsEdepSquaredImageEnabled;
+  bool mIsEdepUncertaintyImageEnabled;
 
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;

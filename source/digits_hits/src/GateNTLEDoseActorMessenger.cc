@@ -17,6 +17,10 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   :GateImageActorMessenger(sensor),
    pDoseActor(sensor)
 {
+  pEnableEdepCmd                        = 0;
+  pEnableEdepSquaredCmd                 = 0;
+  pEnableEdepUncertaintyCmd             = 0;
+
   pEnableDoseCmd                        = 0;
   pEnableDoseSquaredCmd                 = 0;
   pEnableDoseUncertaintyCmd             = 0;
@@ -44,6 +48,10 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
 //-----------------------------------------------------------------------------
 GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
 {
+  if(pEnableEdepCmd)                  delete pEnableEdepCmd;
+  if(pEnableEdepSquaredCmd)           delete pEnableEdepSquaredCmd;
+  if(pEnableEdepUncertaintyCmd)       delete pEnableEdepUncertaintyCmd;
+
   if(pEnableDoseCmd)                  delete pEnableDoseCmd;
   if(pEnableDoseSquaredCmd)           delete pEnableDoseSquaredCmd;
   if(pEnableDoseUncertaintyCmd)       delete pEnableDoseUncertaintyCmd;
@@ -69,9 +77,25 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
 {
-  G4String n = base+"/enableDose";
+  G4String n = base+"/enableEdep";
+  pEnableEdepCmd = new G4UIcmdWithABool(n, this);
+  G4String guid = G4String("Enable Edep computation");
+  pEnableEdepCmd->SetGuidance(guid);
+
+  n = base+"/enableSquaredEdep";
+  pEnableEdepSquaredCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable squared Edep computation");
+  pEnableEdepSquaredCmd->SetGuidance(guid);
+
+  n = base+"/enableUncertaintyEdep";
+  pEnableEdepUncertaintyCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable uncertainty Edep computation");
+  pEnableEdepUncertaintyCmd->SetGuidance(guid);
+
+
+  n = base+"/enableDose";
   pEnableDoseCmd = new G4UIcmdWithABool(n, this);
-  G4String guid = G4String("Enable dose computation");
+  guid = G4String("Enable dose computation");
   pEnableDoseCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredDose";

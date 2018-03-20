@@ -31,6 +31,10 @@ class GateNTLEDoseActorMessenger : public GateImageActorMessenger
   protected:
     GateNTLEDoseActor* pDoseActor;
 
+    G4UIcmdWithABool* pEnableEdepCmd;
+    G4UIcmdWithABool* pEnableEdepSquaredCmd;
+    G4UIcmdWithABool* pEnableEdepUncertaintyCmd;
+
     G4UIcmdWithABool* pEnableDoseCmd;
     G4UIcmdWithABool* pEnableDoseSquaredCmd;
     G4UIcmdWithABool* pEnableDoseUncertaintyCmd;
