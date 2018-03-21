@@ -28,6 +28,7 @@ See LICENSE.md for further details
 #include "GateUpholder.hh"
 #include "GateDeadTime.hh"
 #include "GateBlurring.hh"
+#include "GateLocalTimeDelay.hh"
 #include "GateLocalBlurring.hh"
 #include "GateLocalEfficiency.hh"
 #include "GateEnergyEfficiency.hh"
@@ -91,7 +92,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
+   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
   return theList;
 }
 
@@ -125,6 +126,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBlurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="localBlurring")
     newProcessor = new GateLocalBlurring(GetProcessorChain(),newInsertionName);
+ else if (childTypeName=="localTimeDelay")
+    newProcessor = new GateLocalTimeDelay(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="transferEfficiency")
     newProcessor = GateTransferEfficiency::GetInstance(GetProcessorChain(),newInsertionName); 
   else if (childTypeName=="lightYield")
