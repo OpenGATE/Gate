@@ -32,7 +32,6 @@ GateComptonCameraActorMessenger::~GateComptonCameraActorMessenger()
     delete pSaveSinglesText;
     delete pSaveCoincidenceText;
     delete pNameOfAbsorberSDVol;
-    delete pNameOfAbsorberDepth2Vol;
     delete pNameOfScattererSDVol;
     delete pNumberofDiffScattererLayers;
     delete pNumberofTotScattererLayers;
@@ -77,11 +76,6 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   pNameOfScattererSDVol->SetGuidance(guidance);
   //pNameOfScattererSDVol->SetParameterName(" scatterer SD Volume name",false);
 
-  bb = base+"/absorberDepth2Volume";
-  pNameOfAbsorberDepth2Vol = new G4UIcmdWithAString(bb,this);
-  guidance = "Specifies name of the depth2 (children of BB)  for the absorber";
-   pNameOfAbsorberDepth2Vol->SetGuidance(guidance);
-  //pNameOfScattererSDVol->SetParameterName(" scatterer SD Volume name",false);
 
   bb = base+"/numberOfDiffScatterers";
   pNumberofDiffScattererLayers = new G4UIcmdWithAnInteger(bb,this);
@@ -113,7 +107,6 @@ void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
    if(cmd == pNumberofTotScattererLayers) pActor->SetNumberOfTotScattererLayers( pNumberofTotScattererLayers->GetNewIntValue(newValue)  ) ;
   if(cmd == pNameOfScattererSDVol) pActor->SetNameOfScattererSDVol(newValue) ;
   if(cmd == pNameOfAbsorberSDVol) pActor->SetNameOfAbsorberSDVol( newValue ) ;
-  if(cmd == pNameOfAbsorberDepth2Vol) pActor->SetNameOfAbsorberDepth2Vol( newValue ) ;
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------

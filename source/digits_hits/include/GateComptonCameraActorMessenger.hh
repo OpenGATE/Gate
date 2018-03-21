@@ -53,7 +53,7 @@ protected:
   G4UIcmdWithAString        * pNameOfScattererSDVol;
   G4UIcmdWithAnInteger      * pNumberofDiffScattererLayers;
     G4UIcmdWithAnInteger      * pNumberofTotScattererLayers;
- G4UIcmdWithAString        * pNameOfAbsorberDepth2Vol;
+
 
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------

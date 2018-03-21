@@ -100,7 +100,7 @@ void GateComptonCameraActor::Construct()
 {
   GateVActor::Construct();
 
-
+  coincidenceSorter->SetAbsorberSDVol(mNameOfAbsorberSDVol);
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
@@ -109,7 +109,7 @@ void GateComptonCameraActor::Construct()
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
 
-  coincidenceSorter->SetAbsorberdepth2VolumeName(mNameOfAbsorberDepth2Vol);
+
 
   G4cout<<"GAteComptonCameraActor:Construct  numTotScatt"<<mNumberTotScattLayers<<G4endl;
   if(mNumberTotScattLayers==0){//I am not using the messenger to specify number of layer and names
@@ -773,7 +773,7 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 
 
 
-     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(5)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
+     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(8)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
 
 
 }
@@ -798,7 +798,7 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
     }
 
 
-     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(5)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
+     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(8)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
 
 
 }

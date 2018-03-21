@@ -106,6 +106,12 @@ class GateCoincidenceSorter : public GateClockDependent
     inline void SetAllPulseOpenCoincGate(G4bool b)
         { m_allPulseOpenCoincGate = b; }
 
+
+    inline G4bool GetIfTriggerOnlyByAbsorber() const
+        { return m_triggerOnlyByAbsorber; }
+    inline void SetIfTriggerOnlyByAbsorber(G4bool b)
+        { m_triggerOnlyByAbsorber = b; }
+
      const G4String& GetInputName() const
        { return m_inputName; }
      void SetInputName(const G4String& anInputName)
@@ -117,8 +123,10 @@ class GateCoincidenceSorter : public GateClockDependent
      void SetPresortBufferSize(G4int size)
        { m_presortBufferSize = size; }
 
-     inline void SetAbsorberdepth2VolumeName(G4String val)
-     { m_absorberDepth2Name = val;}
+     inline void SetAbsorberSDVol(G4String val)
+     { m_absorberSD = val;
+        // G4cout<<"m_absorDepth2 "<<m_absorberDepth2Name<<G4endl;
+     }
 
 
      //@}
@@ -154,6 +162,7 @@ class GateCoincidenceSorter : public GateClockDependent
     G4int               m_minSectorDifference;          //!< Minimum sector difference for valid coincidences
     multiple_policy_t   m_multiplesPolicy;              //!< Do what if multiples?
     G4bool              m_allPulseOpenCoincGate;        //!< can a pulse be part of two coincs?
+    G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
     G4int               m_depth;                        //!< Depth of system-level for coincidences
 
     //@}
@@ -167,7 +176,7 @@ class GateCoincidenceSorter : public GateClockDependent
     G4bool                m_presortWarning;     // avoid repeat warnings
 
     bool                m_CCSorter;     // compton camera sorter
-    G4String m_absorberDepth2Name;// absorber "SD' volume name CC
+    G4String  m_absorberSD;// absorber "SD' volume name CC
 
 
 

@@ -234,6 +234,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     while( coince_iter != m_coincidencePulses.end() && (*coince_iter)->IsInCoincidence(pulse) )
     {
       inCoincidence = true;
+       //AE here fill coincidence
       (*coince_iter)->push_back(new GatePulse(pulse)); // add a copy so we can delete safely
       coince_iter++;
     }
@@ -254,8 +255,21 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
       else
         offset = m_offset;
 
-      coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
-      m_coincidencePulses.push_back(coincidence);
+      if(m_triggerOnlyByAbsorber==1){
+
+          if(((pulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
+          //if(pulse->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
+              coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+               //AE here open coincidence
+               m_coincidencePulses.push_back(coincidence);
+
+          }
+      }
+      else{
+        coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+         //AE here open window with the pulse
+         m_coincidencePulses.push_back(coincidence);
+      }
     }
     else
       delete pulse; // pulses that don't open a coincidence window can be discarded
@@ -523,14 +537,15 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
       G4bool isTriggAbsorber=false;
       G4bool isSingleInAnotherLayer=false;
       unsigned int numCoincPulses=coincidence->size();
-      G4String absorptionPhysName=m_absorberDepth2Name+"_phys";
+      //G4String absorptionPhysName=m_absorberDepth2Name+"_phys";
     // G4cout<<absorptionPhysName<<G4endl;
       //G4cout<<"npulses"<<numCoincPulses<<G4endl;
     //G4cout<<"0"<<coincidence->at(0)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()<<G4endl;
       for(unsigned int i=0;i<numCoincPulses;i++){
           //Cuando es un pulso de scatterer no existe esa depht
           //if( coincidence->at(i)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()==absorptionPhysName  ){
-           if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()==absorptionPhysName ){
+           //if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name ){
+           if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
               isTriggAbsorber=true;
 
           }

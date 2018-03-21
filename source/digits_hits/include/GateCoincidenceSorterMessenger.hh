@@ -67,6 +67,10 @@ class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
     G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "MultiplesPolicy"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
+
+    G4UIcmdWithABool            *SetTriggerOnlyByAbsorberCmd;
+
+
 };
 
 #endif

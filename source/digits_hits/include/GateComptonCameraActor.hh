@@ -83,7 +83,7 @@ public:
   void SetNumberOfTotScattererLayers( int numS){mNumberTotScattLayers=numS;}
   void SetNameOfScattererSDVol(G4String name){mNameOfScattererSDVol=name;}
   void SetNameOfAbsorberSDVol(G4String name ) {mNameOfAbsorberSDVol=name;}
-void SetNameOfAbsorberDepth2Vol(G4String name ) {mNameOfAbsorberDepth2Vol=name;}
+
   //! Get the digitizer
   inline GateDigitizer*   GetDigitizer()
   { return m_digitizer; }
@@ -185,7 +185,7 @@ protected:
    int mNumberTotScattLayers;
   G4String  mNameOfScattererSDVol;
   G4String  mNameOfAbsorberSDVol;
-  G4String mNameOfAbsorberDepth2Vol;
+
 
 
 
