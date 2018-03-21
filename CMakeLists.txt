@@ -128,7 +128,7 @@ IF(GATE_USE_XRAYLIB)
   INCLUDE_DIRECTORIES(${LIBXRL_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${LIBXRL_LIBRARIES})
   IF(NOT LIBXRL_INCLUDE_DIR)
-    MESSAGE("xraylib not found! Please install xraylib and make it available in PATH")
+    MESSAGE("xraylib not found! Please install xraylib and make it available in PATH or manually set the LIBXRL_LIBRARY and LIBXRL_INCLUDE variables.")
   ENDIF()
 ENDIF(GATE_USE_XRAYLIB)
 
