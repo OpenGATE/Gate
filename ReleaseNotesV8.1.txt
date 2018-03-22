@@ -1,6 +1,6 @@
 #  *ooooOOOO0000OOOOoooooo*  #
 #  *                    *  #
-#  *    GATE_v8.1       *  #
+#  *    GATE v8.1       *  #
 #  *                    *  #
 #  *ooooOOOO0000OOOOoooooo*  #
 
@@ -23,30 +23,29 @@ Check the README file to have all informations related to the installation and c
 
 -> For collimator design, the Fan Beam option is out of order and should be debug ASAP <-
 
------------------------------
-New developments and features:
------------------------------
+------------------------------
+New developments and features
+------------------------------
 
 - DOSE BY REGION
-#http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Dose_by_regions
+http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Dose_by_regions
 
 - TETRAHEDRON MESH VOLUME AND DOSE ACTOR ASSOCIATED
-#http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#How_to_build_a_.22TetMeshBox.22_volume
-#http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Tet-Mesh_Dose_Actor
+http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#How_to_build_a_.22TetMeshBox.22_volume
+http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Tet-Mesh_Dose_Actor
 
 - GENERIC VOLUME REPEATER
-#http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#Generic_repeater
+http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#Generic_repeater
 
 - X-RAY AT BOUNDARY
-#http://wiki.opengatecollaboration.org/index.php/Users_Guide:Setting_up_the_physics#X-ray_at_boundary
+http://wiki.opengatecollaboration.org/index.php/Users_Guide:Setting_up_the_physics#X-ray_at_boundary
 
 - X-RAY PHASE CONTRAST
-#For details:
-#https://github.com/OpenGATE/GateContrib/tree/master/imaging/CT/Fresnel_FFD
+https://github.com/OpenGATE/GateContrib/tree/master/imaging/CT/Fresnel_FFD
 
 
 -----------------------------
-Major bugs fixes
+Bugs fixes
 -----------------------------
 
 - doseToWater code cleaned in GateDoseActor
