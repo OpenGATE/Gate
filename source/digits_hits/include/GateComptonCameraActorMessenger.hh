@@ -46,13 +46,20 @@ protected:
 
   /// Command objects
   G4UIcmdWithABool          * pSaveHitsTree;
-  G4UIcmdWithABool          *pSaveCoincidenceText;
+  G4UIcmdWithABool          * pSaveSinglesTree;
+  G4UIcmdWithABool          * pSaveCoincidencesTree;
+  G4UIcmdWithABool          * pSaveCoincidenceChainsTree;
+
+
+  //G4UIcmdWithABool          * pSaveHitsText;
   G4UIcmdWithABool          * pSaveSinglesText;
+  G4UIcmdWithABool          * pSaveCoincidencesText;
+  G4UIcmdWithABool          * pSaveCoincidenceChainsText;
   //
   G4UIcmdWithAString        * pNameOfAbsorberSDVol;
   G4UIcmdWithAString        * pNameOfScattererSDVol;
   G4UIcmdWithAnInteger      * pNumberofDiffScattererLayers;
-    G4UIcmdWithAnInteger      * pNumberofTotScattererLayers;
+  G4UIcmdWithAnInteger      * pNumberofTotScattererLayers;
 
 
 }; // end class GateComptonCameraActorMessenger

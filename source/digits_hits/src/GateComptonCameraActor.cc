@@ -49,13 +49,20 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   slayerID=-1;
   coincID=0;
 
+
+
   //Default values
   mSaveSinglesManualTreeFlag=false;
   mNumberTotScattLayers=0;
   mNameOfAbsorberSDVol="absorber";
   mNameOfScattererSDVol="scatterer";
+  mSaveHitsTreeFlag=0;
+  mSaveSinglesTreeFlag=1;
+  mSaveCoincidencesTreeFlag=1;
+  mSaveCoincidenceChainsTreeFlag=1;
   mSaveSinglesTextFlag=false;
   mSaveCoincTextFlag=false;
+  mSaveCoinChainsTextFlag=false;
   //Messenger load values
    pMessenger = new GateComptonCameraActorMessenger(this);
 
@@ -188,13 +195,40 @@ void GateComptonCameraActor::Construct()
     m_hitsScatTree=new GateCCHitTree("ScattererHits");
     m_hitsScatTree->Init(m_hitsScatBuffer);
   }
-  // singles tree
-  m_SingleTree=new GateCCSingleTree("Singles");
-  m_SingleTree->Init(m_SinglesBuffer);
 
-  // coincidence tree
-  m_CoincTree=new GateCCCoincTree("Coincidences");
-  m_CoincTree->Init(m_CoincBuffer);
+  if(mSaveSinglesTreeFlag){
+      // singles tree
+      m_SingleTree=new GateCCSingleTree("Singles");
+      m_SingleTree->Init(m_SinglesBuffer);
+  }
+
+  if(mSaveCoincidencesTreeFlag){
+      // coincidence tree
+      m_CoincTree=new GateCCCoincTree("Coincidences");
+      m_CoincTree->Init(m_CoincBuffer);
+  }
+
+
+  if(mSaveCoincidenceChainsTreeFlag){
+      for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
+          m_coincChainTree.emplace_back(new GateCCCoincTree(m_digitizer->GetCoincChain(i)->GetOutputName(), "CoincidenceChain tree"));
+          m_coincIDChain.emplace_back(0);
+          m_coincChainTree.back()->Init(m_CoincBuffer);
+          coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
+
+      }
+  }
+
+
+  if(mSaveSinglesTextFlag){
+      OpenTextFile(mSaveFilename,"Singles", ossSingles);
+  }
+  if(mSaveCoincTextFlag){
+      OpenTextFile(mSaveFilename,"Coincidences", ossCoincidences);
+  }
+  if(mSaveCoinChainsTextFlag){
+     OpenTextFile(mSaveFilename, coincidenceChainNames, ossCoincidenceChains);
+  }
 
   //output for the manual singles ree
   //A tree for each layer
@@ -209,12 +243,6 @@ void GateComptonCameraActor::Construct()
       }
       //This line does not work I do not know how to put the units in the histograms of the branch
       //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (mm)");
-  }
-  if(mSaveSinglesTextFlag){
-      OpenTextFile4Singles(mSaveFilename);
-  }
-  if(mSaveCoincTextFlag){
-      OpenTextFile4Coinc(mSaveFilename);
   }
 
   ResetData();
@@ -231,12 +259,13 @@ void GateComptonCameraActor::SaveData()
 
   pTfile->Write();
 
-  if(mSaveSinglesTextFlag){
-      closeTextFile4Singles();
-  }
-  if(mSaveCoincTextFlag){
-      closeTextFile4Coinc();
-  }
+//  if(mSaveSinglesTextFlag){
+//      closeTextFile4Singles();
+//  }
+//  if(mSaveCoincTextFlag){
+//      closeTextFile4Coinc();
+//  }
+  closeTextFiles();
 
 
   //pTfile->Close();
@@ -361,11 +390,13 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
                     GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
                     //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
                     if(mSaveCoincTextFlag){
-                        SaveAsTextCoincEvt(aCoinDigi);
+                        SaveAsTextCoincEvt(aCoinDigi, ossCoincidences);
                     }
-                    m_CoincBuffer.Fill(aCoinDigi);
-                    m_CoincTree->Fill();
-                    m_CoincBuffer.Clear();
+                    if(mSaveCoincidencesTreeFlag){
+                        m_CoincBuffer.Fill(aCoinDigi);
+                        m_CoincTree->Fill();
+                        m_CoincBuffer.Clear();
+                    }
 
                 }
 
@@ -382,24 +413,41 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 
                 coincID++;
             }
+         }
+            //Find sequence coincidences or other coincidences after applying coincidenceChain If any coincidenceChain has been applied
+           for(unsigned int iChain=0; iChain<m_digitizer->GetmCoincChainListSize(); iChain++){
+                    std::vector<GateCoincidencePulse*> coincidencePulseChain = m_digitizer->FindCoincidencePulse(m_digitizer->GetCoincChain(iChain)->GetOutputName());
+                   if(coincidencePulseChain.size()>0){
+                        for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseChain.begin();it != coincidencePulseChain.end() ; ++it){
+                            GateCoincidencePulse* coincPulse=*it;
+                            unsigned int numCoincPulses=coincPulse->size();
+                            for(unsigned int i=0;i<numCoincPulses;i++){
+                               // G4cout<<"coincID of chain"<<m_coincIDChain.at(iChain)<<G4endl;
+                                GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),m_coincIDChain.at(iChain));
+                                if(mSaveCoinChainsTextFlag){
+                                    SaveAsTextCoincEvt(aCoinDigi, *(ossCoincidenceChains.at(iChain)));
+                                }
+                                if(mSaveCoincidenceChainsTreeFlag){
+                                    m_CoincBuffer.Fill(aCoinDigi);
+                                    m_coincChainTree.at(iChain)->Fill();
+                                    m_CoincBuffer.Clear();
+                                }
+
+                            }
+
+
+
+
+                           m_coincIDChain.at(iChain)=m_coincIDChain.at(iChain)+1;
+                        }
+
+
+
+           }
+
+
         }
-//        else if(m_digitizer->FindCoincidencePulse(thedigitizerSorterName).size()>1){
-//            //What does it mean to have two coincidence pulses
-//         GateCoincidencePulse* coincPulse_1= m_digitizer->m_coincidencePulseVector.at(0);
-//          GateCoincidencePulse* coincPulse_2=m_digitizer->m_coincidencePulseVector.at(1);
-//          G4cout<<"evtID del primer pulso de la primer coinc"<<coincPulse_1->at(0)->GetEventID()<<"time "<<coincPulse_1->at(0)->GetTime()<<G4endl;
-//          G4cout<<"evtID del primer pulso de la segunda coinc"<<coincPulse_2->at(0)->GetEventID()<<"time "<<coincPulse_2->at(0)->GetTime()<<G4endl;
-//          //separadas por mas que la ventana temp
-//          //size null
-//         // G4cout<<"size alias vector="<<m_digitizer->m_coincidencePulseListAliasVector.size()<<G4endl;
 
-//            G4cout<<"###############################################################"<<G4endl;
-//            G4cout<<"More than one coincidencePulse in the vector . If I have defined only the sorter PROBLEMS"<<G4endl;
-//            G4cout<<"###############################################################"<<G4endl;
-//            //para que se salga con un break (PASA PCO PERO PUEDE PASAR)
-//           // m_digitizer->FindCoincidencePulse(thedigitizerSorterName).at(15);
-
-//        }
     }
     else{
         G4cout<<"#########################################"<<G4endl;
@@ -713,11 +761,12 @@ if(pPulseList){
 //    }
 
 
-    //m_SinglesBuffer.Fill(aSingleDigi,slayerID);
-    m_SinglesBuffer.Fill(aSingleDigi);
-    // G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
-    m_SingleTree->Fill();
-    m_SinglesBuffer.Clear();
+    if(mSaveSinglesTreeFlag){
+        m_SinglesBuffer.Fill(aSingleDigi);
+        // G4cout<< " unidades del tiempo tras Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
+        m_SingleTree->Fill();
+        m_SinglesBuffer.Clear();
+    }
     if(mSaveSinglesTextFlag){
         SaveAsTextSingleEvt(aSingleDigi);
     }
@@ -731,28 +780,62 @@ if(pPulseList){
 //-----------------------------------------------------------------------------
 
 
-void GateComptonCameraActor::OpenTextFile4Singles(G4String initial_filename){
-    // Compute new filename: remove extension, add name of the histo, add txt extension
+///Pensar en algo asi
+//void GateComptonCameraActor::writeCoincidences(std::vector<GateCoincidencePulse*> coincidencePulseV){
+
+
+//    if(coincidencePulseV.size()>0){
+//        for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseV.begin();it != coincidencePulseV.end() ; ++it){
+//            GateCoincidencePulse* coincPulse=*it;
+
+//            //GAteCoincidencePulse compose of several GatePulse
+
+//            unsigned int numCoincPulses=coincPulse->size();
+//            for(unsigned int i=0;i<numCoincPulses;i++){
+//                GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
+//                //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
+//                if(mSaveCoincTextFlag){
+//                    SaveAsTextCoincEvt(aCoinDigi);
+//                }
+//                m_CoincBuffer.Fill(aCoinDigi);
+//                m_CoincTree->Fill();
+//                m_CoincBuffer.Clear();
+
+//            }
+
+
+
+
+//            coincID++;
+//        }
+
+//    }
+//}
+
+//---------------------------------------------------------------
+
+
+void GateComptonCameraActor::OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss){
+
     std::string filename = removeExtension(initial_filename);
-    filename = filename + "_Singles.txt";
-
-    // Create output file
-
-    OpenFileOutput(filename, ossSingles);
-    G4cout<<"Open Singles FILE  "<<filename<<G4endl;
+    filename = filename + "_"+specificName+".txt";
+    OpenFileOutput(filename, oss);
+    G4cout<<"Open "<<filename<<G4endl;
 }
 
-void GateComptonCameraActor::OpenTextFile4Coinc(G4String initial_filename){
-    // Compute new filename: remove extension, add name of the histo, add txt extension
-    std::string filename = removeExtension(initial_filename);
-    filename = filename + "_Coincidences.txt";
+void GateComptonCameraActor::OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> >  &oss){
+     std::string filename = removeExtension(initial_filename);
+     std::string name;
+     for(unsigned int i=0; i<specificN.size(); i++){
+         name=filename + "_"+specificN.at(i)+".txt";
+         std::shared_ptr<std::ofstream> out(new std::ofstream);
+         out->open(name.c_str());
+         oss.push_back(out);
+         //OpenFileOutput(filename, *oss.at(i));
+          G4cout<<"Open "<<filename<<G4endl;
 
-    // Create output file
-
-    OpenFileOutput(filename, ossCoincidences);
+     }
 }
-
-
 
 void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 {
@@ -780,11 +863,10 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 
 
 
-void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
+void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin, std::ofstream& ossC)
 {
 
 
-   //ossCoincidences << "# coincID   " <<" # EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
 
 
 
@@ -798,16 +880,24 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin)
     }
 
 
-     ossCoincidences<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(8)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
+     ossC<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(8)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
 
 
 }
 
-void GateComptonCameraActor::closeTextFile4Singles(){
-    ossSingles.close();
-}
-void GateComptonCameraActor::closeTextFile4Coinc(){
-    ossSingles.close();
+//void GateComptonCameraActor::closeTextFile4Singles(){
+//    ossSingles.close();
+//}
+//void GateComptonCameraActor::closeTextFile4Coinc(){
+//    ossSingles.close();
+//}
+void GateComptonCameraActor::closeTextFiles(){
+    if(ossSingles.is_open())ossSingles.close();
+     if(ossCoincidences.is_open())ossCoincidences.close();
+     for(unsigned int i =0; i<ossCoincidenceChains.size(); i++){
+         if(ossCoincidenceChains.at(i)->is_open())ossCoincidenceChains.at(i)->close();
+
+     }
 }
 
 //-----------------------------------------------------------------------------

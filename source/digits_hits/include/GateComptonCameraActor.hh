@@ -76,8 +76,14 @@ public:
 
   //Messenger flags
   void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
+  void SetSaveSinglesTreeFlag( bool b ){  mSaveSinglesTreeFlag= b; }
+  void SetSaveCoincidencesTreeFlag( bool b ){  mSaveCoincidencesTreeFlag= b; }
+  void SetSaveCoincidenceChainsTreeFlag( bool b ){  mSaveCoincidenceChainsTreeFlag= b; }
+
+  //void SetSaveHitsTextFlag( bool b ){  mSaveHitsTextFlag= b; }
   void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
   void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
+  void SetSaveCoincidenceChainsTextFlag( bool b ){  mSaveCoinChainsTextFlag= b; }
 
   void SetNumberOfDiffScattererLayers( int numS){mNumberDiffScattLayers=numS;}
   void SetNumberOfTotScattererLayers( int numS){mNumberTotScattLayers=numS;}
@@ -91,12 +97,19 @@ public:
 protected:
   GateComptonCameraActor(G4String name, G4int depth=0);
 
-  void OpenTextFile4Singles(G4String initial_filename);
+
+
+  void OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss);
+  void OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> > &ss);
   void SaveAsTextSingleEvt(GateSingleDigi *aSin);
-  void closeTextFile4Singles();
-  void OpenTextFile4Coinc(G4String initial_filename);
-  void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin);
-  void closeTextFile4Coinc();
+  void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin,std::ofstream& ossC);
+  ///UNIFY
+  void closeTextFiles();
+//   void closeTextFile4Singles();
+//  void closeTextFile4Coinc();
+  //void writeCoincidences(std::vector<GateCoincidencePulse*>);
+
+
 
   TFile * pTfile;
 
@@ -116,8 +129,13 @@ protected:
   GateCCSingleTree*  m_SingleTree;
   GateCCRootSingleBuffer  m_SinglesBuffer;
 
-  GateCCCoincTree*  m_CoincTree;
   GateCCRootCoincBuffer  m_CoincBuffer;
+  G4int coincID;
+  GateCCCoincTree*  m_CoincTree;
+  std::vector<G4int> m_coincIDChain;
+  std::vector<std::unique_ptr<GateCCCoincTree>> m_coincChainTree;
+
+
 
   int slayerID;
   G4String mHistName;
@@ -152,7 +170,7 @@ protected:
   G4ThreeVector hitPreLocalPos;
    G4ThreeVector hitPostLocalPos;
 
-  G4int coincID;
+
 
   //Test for readout output (Manual singles)
   double* edepInEachLayerEvt;
@@ -178,8 +196,14 @@ protected:
 
   //messenger
   bool mSaveHitsTreeFlag;
+  bool mSaveSinglesTreeFlag;
+  bool mSaveCoincidencesTreeFlag;
+  bool mSaveCoincidenceChainsTreeFlag;
+
+  //bool mSaveHitsTextFlag;
   bool mSaveSinglesTextFlag;
   bool mSaveCoincTextFlag;
+  bool mSaveCoinChainsTextFlag;
 
   int mNumberDiffScattLayers;
    int mNumberTotScattLayers;
@@ -191,6 +215,9 @@ protected:
 
   std::ofstream ossSingles;
   std::ofstream ossCoincidences;
+  //std::vector<std::ofstream> ossCoincidenceChains;
+  std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
+  std::vector<G4String> coincidenceChainNames;
 
   G4EmCalculator * emcalc;
   GateDigitizer* m_digitizer;

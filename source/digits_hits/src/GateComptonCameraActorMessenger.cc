@@ -29,8 +29,16 @@ GateComptonCameraActorMessenger::GateComptonCameraActorMessenger(GateComptonCame
 GateComptonCameraActorMessenger::~GateComptonCameraActorMessenger()
 {
     delete pSaveHitsTree;
+    delete pSaveSinglesTree;
+    delete pSaveCoincidencesTree;
+    delete pSaveCoincidenceChainsTree;
+
+    //delete pSaveHitsText;
     delete pSaveSinglesText;
-    delete pSaveCoincidenceText;
+    delete pSaveCoincidencesText;
+    delete pSaveCoincidenceChainsText;
+
+
     delete pNameOfAbsorberSDVol;
     delete pNameOfScattererSDVol;
     delete pNumberofDiffScattererLayers;
@@ -46,10 +54,32 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   G4String bb;
 
 
-  bb = base+"/saveHitRootTree";
+  bb = base+"/saveHitsRootTree";
   pSaveHitsTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree wit the hit info inside the attachedVolume");
   pSaveHitsTree->SetGuidance(guidance);
+
+  bb = base+"/saveSinglesRootTree";
+  pSaveSinglesTree = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a root tree wit the singles info inside the attachedVolume");
+  pSaveSinglesTree->SetGuidance(guidance);
+
+  bb = base+"/saveCoincidencesRootTree";
+  pSaveCoincidencesTree = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a root tree with the coincidences info inside the attachedVolume");
+  pSaveCoincidencesTree->SetGuidance(guidance);
+
+  bb = base+"/saveCoincidenceChainsRootTree";
+  pSaveCoincidenceChainsTree = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a root tree wit the coincidence chain info inside the attachedVolume");
+  pSaveCoincidenceChainsTree->SetGuidance(guidance);
+
+
+
+//  bb = base+"/saveHitsText";
+//  pSaveHitsText = new G4UIcmdWithABool(bb, this);
+//  guidance = G4String("In addition  save a text file with hits info");
+//  pSaveHitsText->SetGuidance(guidance);
 
   bb = base+"/saveSinglesText";
   pSaveSinglesText = new G4UIcmdWithABool(bb, this);
@@ -57,9 +87,17 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   pSaveSinglesText->SetGuidance(guidance);
 
   bb = base+"/saveCoincidencesText";
-  pSaveCoincidenceText= new G4UIcmdWithABool(bb, this);
+  pSaveCoincidencesText= new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a text file with coincidence info");
-  pSaveCoincidenceText->SetGuidance(guidance);
+  pSaveCoincidencesText->SetGuidance(guidance);
+
+  bb = base+"/saveCoincidenceChainsText";
+  pSaveCoincidenceChainsText= new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a text file with coincidence chains info");
+  pSaveCoincidenceChainsText->SetGuidance(guidance);
+
+
+
 
   bb = base+"/absorberSDVolume";
   pNameOfAbsorberSDVol = new G4UIcmdWithAString(bb,this);
@@ -97,11 +135,14 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
 void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if(cmd == pSaveHitsTree) pActor->SetSaveHitsTreeFlag(  pSaveHitsTree->GetNewBoolValue(newValue)  ) ;
-  if(cmd == pSaveSinglesText){
-       G4cout<<"entra en comando singles"<<G4endl;
-      pActor->SetSaveSinglesTextFlag(  pSaveSinglesText->GetNewBoolValue(newValue)  ) ;
-  }
-  if(cmd == pSaveCoincidenceText) pActor->SetSaveCoincidenceTextFlag(  pSaveCoincidenceText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveSinglesTree) pActor->SetSaveSinglesTreeFlag(  pSaveSinglesTree->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveCoincidencesTree) pActor->SetSaveCoincidencesTreeFlag(  pSaveCoincidencesTree->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveCoincidenceChainsTree) pActor->SetSaveCoincidenceChainsTreeFlag(  pSaveCoincidenceChainsTree->GetNewBoolValue(newValue)  ) ;
+
+  //if(cmd == pSaveHitsText) pActor->SetSaveHitsTextFlag(  pSaveHitsText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveSinglesText) pActor->SetSaveSinglesTextFlag(  pSaveSinglesText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveCoincidencesText) pActor->SetSaveCoincidenceTextFlag(  pSaveCoincidencesText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveCoincidenceChainsText) pActor->SetSaveCoincidenceChainsTextFlag(  pSaveCoincidenceChainsText->GetNewBoolValue(newValue)  ) ;
 
   if(cmd == pNumberofDiffScattererLayers) pActor->SetNumberOfDiffScattererLayers( pNumberofDiffScattererLayers->GetNewIntValue(newValue)  ) ;
    if(cmd == pNumberofTotScattererLayers) pActor->SetNumberOfTotScattererLayers( pNumberofTotScattererLayers->GetNewIntValue(newValue)  ) ;
