@@ -5,7 +5,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -48,6 +48,11 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the resolution of the detector (2D).";
   pSetDetectorResolCmd->SetGuidance(guidance);
 
+  bb = base + "/binningFactor";
+  pSetBinningFactorCmd = new GateUIcmdWith2Vector(bb, this);
+  guidance = "Set u and v binning factor for computing several rays per pixel.";
+  pSetBinningFactorCmd->SetGuidance(guidance);
+
   bb = base + "/geometryFilename";
   pSetGeometryFilenameCmd = new G4UIcmdWithAString(bb, this);
   guidance = "Set the file name for the output RTK geometry filename corresponding to primary projections.";
@@ -67,6 +72,16 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetAttenuationFilenameCmd = new G4UIcmdWithAString(bb, this);
   guidance = "Set the file name for the attenuation image (printf format with runId as a single parameter).";
   pSetAttenuationFilenameCmd->SetGuidance(guidance);
+
+  bb = base + "/materialDeltaFilename";
+  pSetMaterialDeltaFilenameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Set the output file name for the refractive index decrement lookup table. Two paramaters: material index and energy.";
+  pSetMaterialDeltaFilenameCmd->SetGuidance(guidance);
+
+  bb = base + "/fresnelFilename";
+  pSetFresnelFilenameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Set the output file name for the Fresnel diffraction image (printf format with runId as a single parameter).";
+  pSetFresnelFilenameCmd->SetGuidance(guidance);
 
   bb = base + "/responseDetectorFilename";
   pSetResponseDetectorFilenameCmd = new G4UIcmdWithAString(bb, this);
@@ -167,6 +182,11 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
     pActor->SetDetectorResolution(pSetDetectorResolCmd->GetNew2VectorValue(param)[0],
                                   pSetDetectorResolCmd->GetNew2VectorValue(param)[1]);
     }
+  if (command == pSetBinningFactorCmd)
+    {
+    pActor->SetBinningFactor(pSetBinningFactorCmd->GetNew2VectorValue(param)[0],
+                                  pSetBinningFactorCmd->GetNew2VectorValue(param)[1]);
+    }
   if (command == pSetGeometryFilenameCmd)
     {
     pActor->SetGeometryFilename(param);
@@ -182,6 +202,14 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
   if (command == pSetAttenuationFilenameCmd)
     {
     pActor->SetAttenuationFilename(param);
+    }
+  if (command == pSetMaterialDeltaFilenameCmd)
+    {
+    pActor->SetMaterialDeltaFilename(param);
+    }
+  if (command == pSetFresnelFilenameCmd)
+    {
+    pActor->SetFresnelFilename(param);
     }
   if (command == pSetFlatFieldFilenameCmd)
     {

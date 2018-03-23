@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GatePhaseSpaceActorMessenger.hh"
@@ -14,8 +14,9 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
-
+#include "G4UIcmdWith3VectorAndUnit.hh"
 #include "GatePhaseSpaceActor.hh"
+
 
 //-----------------------------------------------------------------------------
 GatePhaseSpaceActorMessenger::GatePhaseSpaceActorMessenger(GatePhaseSpaceActor* sensor)
@@ -28,12 +29,10 @@ GatePhaseSpaceActorMessenger::GatePhaseSpaceActorMessenger(GatePhaseSpaceActor* 
 
 //-----------------------------------------------------------------------------
 GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
-{ 
-  //____________________
+{
   delete pEnableChargeCmd;
   delete pEnableElectronicDEDXCmd;
   delete pEnableTotalDEDXCmd;
-  //___________________
   delete pEnableMassCmd;
   delete pEnableEkineCmd;
   delete pEnablePositionXCmd;
@@ -59,6 +58,9 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bEnableCompactCmd;
   delete bEnableEmissionPointCmd;
   delete bEnablePDGCodeCmd;
+  delete bEnableSphereProjection;
+  delete bSetSphereProjectionCenter;
+  delete bSetSphereProjectionRadius;
 }
 //-----------------------------------------------------------------------------
 
@@ -68,27 +70,25 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
-  
-  //________________________________
+
   bb = base+"/enableCharge";
   pEnableChargeCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save electric charge of particles in the phase space file.";
   pEnableChargeCmd->SetGuidance(guidance);
   pEnableChargeCmd->SetParameterName("State",false);
-//____
 
   bb = base+"/enableElectronicDEDX";
   pEnableElectronicDEDXCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save electronic energy loss de/dx of particles in the phase space file.";
   pEnableElectronicDEDXCmd->SetGuidance(guidance);
   pEnableElectronicDEDXCmd->SetParameterName("State",false);
-  
+
   bb = base+"/enableTotalDEDX";
   pEnableTotalDEDXCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save total energy loss de/dx  of particles in the phase space file.";
   pEnableTotalDEDXCmd->SetGuidance(guidance);
   pEnableTotalDEDXCmd->SetParameterName("State",false);
-  
+
   bb = base+"/enableEkine";
   pEnableEkineCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save kinetic energy of particles in the phase space file.";
@@ -232,7 +232,20 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   guidance = "Output the PDGCode instead of the ParticleName.";
   bEnablePDGCodeCmd->SetGuidance(guidance);
 
+  bb = base+"/enableSphereProjection";
+  bEnableSphereProjection = new G4UIcmdWithABool(bb, this);
+  guidance = "Change the particle position point: project it on a sphere";
+  bEnableSphereProjection->SetGuidance(guidance);
 
+  bb = base+"/setSphereProjectionCenter";
+  bSetSphereProjectionCenter = new G4UIcmdWith3VectorAndUnit(bb, this);
+  guidance = "Set the center of the sphere where the points are projected";
+  bSetSphereProjectionCenter->SetGuidance(guidance);
+
+  bb = base+"/setSphereProjectionRadius";
+  bSetSphereProjectionRadius = new G4UIcmdWithADoubleAndUnit(bb, this);
+  guidance = "Set the radius of the sphere where the points are projected";
+  bSetSphereProjectionRadius->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -240,11 +253,9 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
-//______________________________________
   if(command == pEnableChargeCmd) pActor->SetIsChargeEnabled(pEnableChargeCmd->GetNewBoolValue(param));
   if(command == pEnableElectronicDEDXCmd) pActor->SetIsElectronicDEDXEnabled(pEnableElectronicDEDXCmd->GetNewBoolValue(param));
   if(command == pEnableTotalDEDXCmd) pActor->SetIsTotalDEDXEnabled(pEnableTotalDEDXCmd->GetNewBoolValue(param));
-//
   if(command == pEnableEkineCmd) pActor->SetIsEkineEnabled(pEnableEkineCmd->GetNewBoolValue(param));
   if(command == pEnablePositionXCmd) pActor->SetIsXPositionEnabled(pEnablePositionXCmd->GetNewBoolValue(param));
   if(command == pEnableDirectionXCmd) pActor->SetIsXDirectionEnabled(pEnableDirectionXCmd->GetNewBoolValue(param));
@@ -262,7 +273,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pInOrOutGoingParticlesCmd) pActor->SetStoreOutgoingParticles(pInOrOutGoingParticlesCmd->GetNewBoolValue(param));
   if(command == pEnableStoreAllStepCmd) pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
-  if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
+  if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)
+    GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
   if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
   if(command == bEnablePrimaryEnergyCmd) pActor->SetIsPrimaryEnergyEnabled(bEnablePrimaryEnergyCmd->GetNewBoolValue(param));
   if(command == bEnableEmissionPointCmd) pActor->SetIsEmissionPointEnabled(bEnableEmissionPointCmd->GetNewBoolValue(param));
@@ -271,6 +283,9 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == bSpotIDFromSourceCmd) {pActor->SetSpotIDFromSource(param);pActor->SetIsSpotIDEnabled();};
   if(command == bEnablePDGCodeCmd) pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
   if(command == bEnableCompactCmd) pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
+  if(command == bEnableSphereProjection) pActor->SetEnabledSphereProjection(bEnableSphereProjection->GetNewBoolValue(param));
+  if(command == bSetSphereProjectionCenter) pActor->SetSphereProjectionCenter(bSetSphereProjectionCenter->GetNew3VectorValue(param));
+  if(command == bSetSphereProjectionRadius) pActor->SetSphereProjectionRadius(bSetSphereProjectionRadius->GetNewDoubleValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

@@ -1,9 +1,9 @@
 This reference was created by launching a Gate simulation on
-Thu Mar 23 14:28:23 UTC 2017
+Mon Nov 27 21:18:45 CET 2017
 with the configuration file benchmarks/benchRT/mac/gamma.mac
 from the commit
-commit 2c971277537a0392b183b526b3b9785082a9a8be
+commit 12dd4c4f4267d10cda6ee6bed70ac869c903b28e
 with the version of gcc
-gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
+gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 on the architecture Linux
-Linux IMNC-EURYDICE 4.4.0-59-generic #80~14.04.1-Ubuntu SMP Fri Jan 6 18:02:02 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+Linux IMNC-EURYDICE 4.4.0-96-generic #119-Ubuntu SMP Tue Sep 12 14:59:54 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
