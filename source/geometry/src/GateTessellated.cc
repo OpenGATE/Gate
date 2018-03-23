@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "G4Material.hh"
@@ -22,7 +22,7 @@ GateTessellated::GateTessellated( G4String const& itsName, G4String const& itsMa
   : GateVVolume( itsName, false, 0 ),
     m_tessellated_solid( NULL ),
     m_tessellated_log( NULL ),
-    m_tessellated_phys( NULL ),
+    // m_tessellated_phys( NULL ), not used
     m_PathToSTLFile( "" ),
     m_Messenger( NULL )
 {
@@ -34,7 +34,7 @@ GateTessellated::GateTessellated( G4String const& itsName, G4bool itsFlagAcceptC
   : GateVVolume( itsName, itsFlagAcceptChildren, depth ),
     m_tessellated_solid( NULL ),
     m_tessellated_log( NULL ),
-    m_tessellated_phys( NULL ),
+    // m_tessellated_phys( NULL ), not used 
     m_PathToSTLFile( "" ),
     m_Messenger( NULL )
 {
@@ -50,42 +50,42 @@ GateTessellated::~GateTessellated()
 G4LogicalVolume* GateTessellated::ConstructOwnSolidAndLogicalVolume( G4Material* mater, G4bool flagUpdateOnly )
 {
   if (GetVerbosity()>=2)
-  {
-    G4cout << "GateTessellated::ConstructOwnSolidAndLogicalVolume" << G4endl;
-    DescribeMyself(1);
-  }
+    {
+      G4cout << "GateTessellated::ConstructOwnSolidAndLogicalVolume" << G4endl;
+      DescribeMyself(1);
+    }
 
   if( !flagUpdateOnly || !m_tessellated_solid )
-  {
-    // Build mode: build the solid, then the logical volume
-    m_tessellated_solid = new G4TessellatedSolid( GetSolidName() );
-
-    std::ifstream STLFile( m_PathToSTLFile, std::ios::in );
-    std::string line1, line2;
-
-    if( !STLFile )
     {
-      G4cerr << "No STL file: " << m_PathToSTLFile << G4endl;
-    }
-    else
-    {
-      std::getline(STLFile, line1);
-      std::getline(STLFile, line2);
-      STLFile.close();
-      // Check the first two line contents to determine file type and read accordingly
-      if ( ( line1.find("solid") != std::string::npos ) && ( line2.find("facet") != std::string::npos ) )
-      {
-        ReadSTL_ASCII();
-      }
+      // Build mode: build the solid, then the logical volume
+      m_tessellated_solid = new G4TessellatedSolid( GetSolidName() );
+
+      std::ifstream STLFile( m_PathToSTLFile, std::ios::in );
+      std::string line1, line2;
+
+      if( !STLFile )
+        {
+          G4cerr << "No STL file: " << m_PathToSTLFile << G4endl;
+        }
       else
-      {
-        ReadSTL_Binary();
-      }
+        {
+          std::getline(STLFile, line1);
+          std::getline(STLFile, line2);
+          STLFile.close();
+          // Check the first two line contents to determine file type and read accordingly
+          if ( ( line1.find("solid") != std::string::npos ) && ( line2.find("facet") != std::string::npos ) )
+            {
+              ReadSTL_ASCII();
+            }
+          else
+            {
+              ReadSTL_Binary();
+            }
 
-      m_tessellated_log = new G4LogicalVolume( m_tessellated_solid, mater, GetLogicalVolumeName() );
+          m_tessellated_log = new G4LogicalVolume( m_tessellated_solid, mater, GetLogicalVolumeName() );
 
+        }
     }
-  }
   else {
     // Update mode: refresh the dimensions of the solid
     GateMessage("Warning", 0, "GateTessellated::ConstructOwnSolidAndLogicalVolume update mode not implemented" << G4endl);
@@ -119,47 +119,47 @@ void GateTessellated::ReadSTL_ASCII()
 
   nbFacets = 0;
   while ( !STLFile.eof() )
-  {
-    std::getline(STLFile, line);
-    // A new facet has been found
-    if ( line.find("outer loop") != std::string::npos )
     {
-      nbFacets++;
       std::getline(STLFile, line);
-      while ( line.find("vertex") != std::string::npos )
-      {
-        vertexline.str(line);
-        vertexline.clear();
-        vertexline >> dummy >> v[0] >> v[1] >> v[2];
-        vertices.push_back(v);
-        std::getline(STLFile, line);
-      }
-      // Check if the facet is correctly defined
-      if ( vertices.size() == 3 )
-      {
-        FacetType = "Triangular";
-        //G4cout << "New triangular facet found in the STL ASCII file" << G4endl;
-        //G4cout << vertices[0] << vertices[1] << vertices[2] << G4endl;
-        // Create the new facet
-        G4TriangularFacet *facet = new G4TriangularFacet( vertices[0]*mm, vertices[1]*mm, vertices[2]*mm, ABSOLUTE );
-        m_tessellated_solid->AddFacet( (G4VFacet*)facet );
-      }
-      else if ( vertices.size() == 4 )
-      {
-        FacetType = "Quadrangular";
-        //G4cout << "New quadrangular facet found in the STL ASCII file" << vertices.data() << G4endl;
-        //G4cout << vertices[0] << vertices[1] << vertices[2] << vertices[3] << G4endl;
-        // Create the new facet
-        G4QuadrangularFacet *facet = new G4QuadrangularFacet( vertices[0]*mm, vertices[1]*mm, vertices[2]*mm, vertices[3]*mm, ABSOLUTE );
-        m_tessellated_solid->AddFacet( (G4VFacet*)facet );
-      }
-      else
-      {
-        G4cerr << "STL read error: ascii file contains unsupported number of vertices: " << vertices.size() << G4endl;
-      }
-      vertices.clear();
+      // A new facet has been found
+      if ( line.find("outer loop") != std::string::npos )
+        {
+          nbFacets++;
+          std::getline(STLFile, line);
+          while ( line.find("vertex") != std::string::npos )
+            {
+              vertexline.str(line);
+              vertexline.clear();
+              vertexline >> dummy >> v[0] >> v[1] >> v[2];
+              vertices.push_back(v);
+              std::getline(STLFile, line);
+            }
+          // Check if the facet is correctly defined
+          if ( vertices.size() == 3 )
+            {
+              FacetType = "Triangular";
+              //G4cout << "New triangular facet found in the STL ASCII file" << G4endl;
+              //G4cout << vertices[0] << vertices[1] << vertices[2] << G4endl;
+              // Create the new facet
+              G4TriangularFacet *facet = new G4TriangularFacet( vertices[0]*mm, vertices[1]*mm, vertices[2]*mm, ABSOLUTE );
+              m_tessellated_solid->AddFacet( (G4VFacet*)facet );
+            }
+          else if ( vertices.size() == 4 )
+            {
+              FacetType = "Quadrangular";
+              //G4cout << "New quadrangular facet found in the STL ASCII file" << vertices.data() << G4endl;
+              //G4cout << vertices[0] << vertices[1] << vertices[2] << vertices[3] << G4endl;
+              // Create the new facet
+              G4QuadrangularFacet *facet = new G4QuadrangularFacet( vertices[0]*mm, vertices[1]*mm, vertices[2]*mm, vertices[3]*mm, ABSOLUTE );
+              m_tessellated_solid->AddFacet( (G4VFacet*)facet );
+            }
+          else
+            {
+              G4cerr << "STL read error: ascii file contains unsupported number of vertices: " << vertices.size() << G4endl;
+            }
+          vertices.clear();
+        }
     }
-  }
 
   STLFile.close();
 
@@ -185,17 +185,17 @@ void GateTessellated::ReadSTL_Binary()
 
   // Check if the facets are correctly defined
   if ( (int)nbFacets == (fileSize-84)/50 )
-  {
-    FacetType = "Triangular";
-  }
+    {
+      FacetType = "Triangular";
+    }
   else if ( (int)nbFacets == (fileSize-84)/62 )
-  {
-    FacetType = "Quadrangular";
-  }
+    {
+      FacetType = "Quadrangular";
+    }
   else
-  {
-    G4cerr << "STL file corrupted: number of facets do not correspond to file size." << G4endl;
-  }
+    {
+      G4cerr << "STL file corrupted: number of facets do not correspond to file size." << G4endl;
+    }
   //G4cout << "STL file info:" << G4endl;
   //G4cout << "File size: " << fileSize << G4endl;
   //G4cout << "Header: " << header << G4endl;
@@ -204,33 +204,33 @@ void GateTessellated::ReadSTL_Binary()
 
   // Read and create all the facets
   while ( true )
-  {
-    if ( FacetType == "Triangular" )
     {
-      TFacet_t TFacet;
-      STLFile.read((char *)&TFacet, 50);
-      if ( STLFile.eof() ) break;
-      // Create the new facet
-      G4ThreeVector vertice1 = G4ThreeVector(TFacet.v1[0], TFacet.v1[1], TFacet.v1[2]);
-      G4ThreeVector vertice2 = G4ThreeVector(TFacet.v2[0], TFacet.v2[1], TFacet.v2[2]);
-      G4ThreeVector vertice3 = G4ThreeVector(TFacet.v3[0], TFacet.v3[1], TFacet.v3[2]);
-      G4TriangularFacet *facet = new G4TriangularFacet( vertice1*mm, vertice2*mm, vertice3*mm, ABSOLUTE );
-      m_tessellated_solid->AddFacet( (G4VFacet*)facet );
+      if ( FacetType == "Triangular" )
+        {
+          TFacet_t TFacet;
+          STLFile.read((char *)&TFacet, 50);
+          if ( STLFile.eof() ) break;
+          // Create the new facet
+          G4ThreeVector vertice1 = G4ThreeVector(TFacet.v1[0], TFacet.v1[1], TFacet.v1[2]);
+          G4ThreeVector vertice2 = G4ThreeVector(TFacet.v2[0], TFacet.v2[1], TFacet.v2[2]);
+          G4ThreeVector vertice3 = G4ThreeVector(TFacet.v3[0], TFacet.v3[1], TFacet.v3[2]);
+          G4TriangularFacet *facet = new G4TriangularFacet( vertice1*mm, vertice2*mm, vertice3*mm, ABSOLUTE );
+          m_tessellated_solid->AddFacet( (G4VFacet*)facet );
+        }
+      else if ( FacetType == "Quadrangular" )
+        {
+          QFacet_t QFacet;
+          STLFile.read((char *)&QFacet, 62);
+          if ( STLFile.eof() ) break;
+          // Create the new facet
+          G4ThreeVector vertice1 = G4ThreeVector(QFacet.v1[0], QFacet.v1[1], QFacet.v1[2]);
+          G4ThreeVector vertice2 = G4ThreeVector(QFacet.v2[0], QFacet.v2[1], QFacet.v2[2]);
+          G4ThreeVector vertice3 = G4ThreeVector(QFacet.v3[0], QFacet.v3[1], QFacet.v3[2]);
+          G4ThreeVector vertice4 = G4ThreeVector(QFacet.v4[0], QFacet.v4[1], QFacet.v4[2]);
+          G4QuadrangularFacet *facet = new G4QuadrangularFacet( vertice1*mm, vertice2*mm, vertice3*mm, vertice4*mm, ABSOLUTE );
+          m_tessellated_solid->AddFacet( (G4VFacet*)facet );
+        }
     }
-    else if ( FacetType == "Quadrangular" )
-    {
-      QFacet_t QFacet;
-      STLFile.read((char *)&QFacet, 62);
-      if ( STLFile.eof() ) break;
-      // Create the new facet
-      G4ThreeVector vertice1 = G4ThreeVector(QFacet.v1[0], QFacet.v1[1], QFacet.v1[2]);
-      G4ThreeVector vertice2 = G4ThreeVector(QFacet.v2[0], QFacet.v2[1], QFacet.v2[2]);
-      G4ThreeVector vertice3 = G4ThreeVector(QFacet.v3[0], QFacet.v3[1], QFacet.v3[2]);
-      G4ThreeVector vertice4 = G4ThreeVector(QFacet.v4[0], QFacet.v4[1], QFacet.v4[2]);
-      G4QuadrangularFacet *facet = new G4QuadrangularFacet( vertice1*mm, vertice2*mm, vertice3*mm, vertice4*mm, ABSOLUTE );
-      m_tessellated_solid->AddFacet( (G4VFacet*)facet );
-    }
-  }
 
   STLFile.close();
 

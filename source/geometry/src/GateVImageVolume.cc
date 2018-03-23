@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -41,6 +41,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   pImage=0;
   mHalfSize = G4ThreeVector(0,0,0);
   mIsoCenterIsSetByUser = false;
+  mIsoCenterRotationFlag = false;
   pOwnMaterial = theMaterialDatabase.GetMaterial("Air");
   mBuildDistanceTransfo = false;
   mLoadImageMaterialsFromHounsfieldTable = false;
@@ -112,11 +113,17 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
 
     // Compute translation
     G4ThreeVector q = mIsoCenter - GetOrigin(); // translation from the image corner
-    q -= GetHalfSize(); // translation from the image center
-    q = tcurrent - q; // add to previous translation
-
-    // Apply rotation if isocenter is given, consider rotation from this isocenter
-    q = mTransformMatrix*q;
+    if (mIsoCenterRotationFlag) {
+      q -= GetHalfSize(); // translation from the image center
+      q = tcurrent - q; // add to previous translation
+      // Apply rotation if isocenter is given, consider rotation from this isocenter
+      q = mTransformMatrix*q;
+    }
+    else {
+      // Compute translation
+      q -= mTransformMatrix*GetHalfSize();
+      q = tcurrent - q;
+    }
     GetVolumePlacement()->SetTranslation(q);
   }
 }
@@ -560,7 +567,6 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 {
-  DD("LoadImageMaterialsFromRangeTable");
   m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;

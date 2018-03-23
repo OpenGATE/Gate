@@ -158,13 +158,14 @@ void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UIma
 void welcome()
 {
   GateMessage("Core", 0, G4endl);
-  GateMessage("Core", 0, "**********************************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version name: gate_v8.0                                         " << G4endl);
-  GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
-  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
-  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
-  GateMessage("Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl);
-  GateMessage("Core", 0, "**********************************************************************" << G4endl);
+  GateMessage("Core", 0, "*************************************************" << G4endl);
+  GateMessage("Core", 0, " GATE version 8.1 (April 2018)" << G4endl);
+  GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
+  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << G4endl);
+  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << G4endl);
+  GateMessage("Core", 0, " Reference : Med. Phys. 41(6)    (2014)" << G4endl);
+  GateMessage("Core", 0, " http://www.opengatecollaboration.org        " << G4endl);
+  GateMessage("Core", 0, "*************************************************" << G4endl);
 #ifdef GATE_USE_GPU
   GateMessage("Core", 0, "GPU support activated" << G4endl );
 #endif
@@ -218,14 +219,14 @@ int main( int argc, char* argv[] )
       };
 
 #ifdef __APPLE__
-/*
- * If the program was started by double-clicking on the application bundle on Mac OS X
- * rather than from the command-line, enable Qt and don't try to process other options;
- * argv[1] contains a process serial number in the form -psn_0_1234567
- * OS X <= 10.8 have a -psn_XXX argument given by the system
- * OS X >= 10.9 does not have one, so we use the "TERM" environment variable
- * to distinguish between launched by the Terminal or by the system.
- */
+      /*
+       * If the program was started by double-clicking on the application bundle on Mac OS X
+       * rather than from the command-line, enable Qt and don't try to process other options;
+       * argv[1] contains a process serial number in the form -psn_0_1234567
+       * OS X <= 10.8 have a -psn_XXX argument given by the system
+       * OS X >= 10.9 does not have one, so we use the "TERM" environment variable
+       * to distinguish between launched by the Terminal or by the system.
+       */
       if ( (argc>1 && strncmp( argv[1], "-psn", 4 ) == 0) || getenv("TERM") == NULL ) {
         argc = 1;
         isQt = 1;
@@ -233,10 +234,10 @@ int main( int argc, char* argv[] )
       }
       else
 #endif
-      {
-        // Getting the option
-        c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
-      }
+        {
+          // Getting the option
+          c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
+        }
 
       // Exit the loop if -1
       if( c == -1 ) break;
@@ -339,15 +340,15 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
-	#ifdef G4UI_USE_QT
-    	#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
-	ui = new G4UIExecutive( argc, argv );
-        G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
-        if (qui) {
+#ifdef G4UI_USE_QT
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
+      ui = new G4UIExecutive( argc, argv );
+      G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
+      if (qui) {
         qui->GetMainWindow()->setVisible(true);
-        }
-	#endif
-	#endif
+      }
+#endif
+#endif
 #else
 #ifdef G4UI_USE_TCSH
       session = new GateUIterminal( new G4UItcsh );
@@ -403,14 +404,14 @@ int main( int argc, char* argv[] )
   }
 
 #ifdef G4UI_USE
-    if (ui) // Launching interactive mode // Qt
-      {
-        ui->SessionStart();
-        delete ui;
-      }
-    else
+  if (ui) // Launching interactive mode // Qt
+    {
+      ui->SessionStart();
+      delete ui;
+    }
+  else
 #endif
-      {
+    {
       if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;
@@ -428,16 +429,14 @@ int main( int argc, char* argv[] )
 
   delete sourceMgr;
   delete appMgr;
-  delete UImanager;
   delete randomEngine;
   delete controlMessenger;
 #ifdef G4ANALYSIS_USE_ROOT
   delete myRecords;
 #endif
   delete verbosity;
-  
-  //TODO: figure out why runmanager can't and isn't deleted.
-  //delete runManager;
+
+  delete runManager;
 
   return 0;
 }

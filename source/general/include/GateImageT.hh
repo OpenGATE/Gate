@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -29,7 +29,9 @@
 #include "GateVImage.hh"
 #include "GateMachine.hh"
 #include "GateMHDImage.hh"
+#ifndef __CUDACC__
 #include "GateDICOMImage.hh"
+#endif
 #include "GateMiscFunctions.hh"
 
 // root

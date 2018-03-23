@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -71,6 +71,7 @@ private:
   G4UIcmdWithADoubleAndUnit*  Shift6Cmd;
   G4UIcmdWithADoubleAndUnit*  Shift7Cmd;
   G4UIcmdWithADoubleAndUnit*  Shift8Cmd;
+  G4UIcmdWithABool*           CombineWithRotationFirstCmd;
 };
 
 #endif

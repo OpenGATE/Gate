@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -36,7 +36,7 @@ GateRotationMove::GateRotationMove(GateVVolume* itsObjectInserter,
 
 //-------------------------------------------------------------------------------------------------
 GateRotationMove::~GateRotationMove()
-{  
+{
   delete m_Messenger;
 }
 //-------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void GateRotationMove::PushMyPlacements(const G4RotationMatrix& currentRotationM
   newRotationMatrix.rotate(-m_currentAngle, m_rotationAxis);
 
   PushBackPlacement(GatePlacement(newRotationMatrix,currentPosition));
-    
+
   // return GatePlacement(newRotationMatrix,currentPosition);
 }
 //-------------------------------------------------------------------------------------------------
