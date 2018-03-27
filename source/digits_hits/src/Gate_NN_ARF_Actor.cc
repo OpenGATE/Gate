@@ -82,7 +82,6 @@ void Gate_NN_ARF_Actor::SetEnergyWindowNames(std::string & names)
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SetMode(std::string m)
 {
-  DD(m);
   if (m == "train") mTrainingModeFlag = true;
   else {
     if (m == "test") mTrainingModeFlag = false;
@@ -90,7 +89,7 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
       GateError("Error in Gate_NN_ARF_Actor macro 'setMode', must be 'train' or 'test', while read " << m);
     }
   }
-  DD(mTrainingModeFlag);
+  GateMessage("Actor", 1, "Gate_NN_ARF_Actor mode = " << m);
 }
 //-----------------------------------------------------------------------------
 
@@ -302,34 +301,34 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
 
 
 //-----------------------------------------------------------------------------
-void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /* v */, const G4Step* step)
+void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4Step* step)
 {
   if (mEventIsAlreadyStored) return;
 
   // Get coordinate in the current volume coordinate system
   G4TouchableHistory* theTouchable = (G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable());
-  int maxDepth = theTouchable->GetHistoryDepth();
 
   // Get information
-  auto pre= step->GetPreStepPoint();
-  auto p = theTouchable->GetHistory()->GetTransform(maxDepth).TransformPoint(pre->GetPosition());
+  auto pre = step->GetPreStepPoint();
+  // auto post = step->GetPostStepPoint();
+  auto p = theTouchable->GetHistory()->GetTopTransform().TransformPoint(pre->GetPosition());
   auto E = pre->GetKineticEnergy();
-  auto dir = pre->GetMomentumDirection();
 
-  // which dimension ?? ask SPECThead system FIXME
+  //The momentum direction is defined with respect to the world frame. Convert to detector frame.
+  auto dir = pre->GetMomentumDirection();
+  dir = theTouchable->GetHistory()->GetTopTransform().TransformAxis(dir);
+
+  // which dimension ?? ask SPECThead system ?
   // https://en.wikipedia.org/wiki/Spherical_coordinate_system
-  auto theta = acos(dir.z())/degree;
-  auto phi = atan2(dir.y(),dir.x())/degree;
+  // https://mathinsight.org/spherical_coordinates
+  auto theta = acos(dir.y())/degree;
+  auto phi = acos(dir.x())/degree;
 
   // Threshold on angles: do not store if larger
-  double theta_center = 90.0;
-  double phi_center = -90.0;
   mIgnoreCurrentData = false;
   if (mMaxAngle != 0.0 and
-      (theta > theta_center+mMaxAngle or
-       theta < theta_center-mMaxAngle or
-       phi   > phi_center+mMaxAngle or
-       phi   < phi_center-mMaxAngle)) {
+      (fabs(theta) > mMaxAngle or
+       fabs(phi)   > mMaxAngle)) {
     mIgnoreCurrentData = true;
     mEventIsAlreadyStored = true;
     return;
