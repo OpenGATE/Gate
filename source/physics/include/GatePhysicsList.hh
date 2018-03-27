@@ -20,7 +20,7 @@
 #include "G4ProductionCutsTable.hh"
 #include "G4UnitsTable.hh"
 #include "G4ProductionCuts.hh"
-#include "G4EmProcessOptions.hh"
+#include "G4EmParameters.hh"
 
 #include "GateMessageManager.hh"
 #include "GateVProcess.hh"
@@ -125,7 +125,7 @@ protected:
   G4String mListOfPhysicsLists;
   G4double mLowEnergyRangeLimit;
 
-  G4EmProcessOptions *opt;
+  G4EmParameters *emPar;
 };
 
 
