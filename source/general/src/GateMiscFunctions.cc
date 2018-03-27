@@ -695,6 +695,7 @@ std::string ReadNextContentLine( std::istream& input, int& lineno, const std::st
 }
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 
 // ----------------------------------------------------------------------------
 //http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
@@ -732,4 +733,6 @@ void GetWords(std::vector<std::string> & words, const std::string & phrase) {
 }
 // ---------------------------------------------------------------------------
 
+=======
+>>>>>>> develop
 #endif // GATEMISCFUNCTIONS_CC
