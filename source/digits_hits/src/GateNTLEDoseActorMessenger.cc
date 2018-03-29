@@ -169,9 +169,9 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pEnableEdepCmd)                  pEdepActor->EnableEdepImage(pEnableEdepCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableEdepSquaredCmd)           pEdepActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableEdepUncertaintyCmd)       pEdepActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableEdepCmd)                  pDoseActor->EnableEdepImage(pEnableEdepCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableEdepSquaredCmd)           pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableEdepUncertaintyCmd)       pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
 
   if (cmd == pEnableDoseCmd)                  pDoseActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseSquaredCmd)           pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
