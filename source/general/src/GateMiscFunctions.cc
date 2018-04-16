@@ -443,7 +443,6 @@ double ReadDouble(std::istream & is) {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 bool ReadColNameAndUnit(std::istream & is, std::string name, double & unit) {
   skipComment(is);
@@ -465,7 +464,6 @@ bool ReadColNameAndUnit(std::istream & is, std::string name, double & unit) {
   return true;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 int ReadColNameAndInteger(std::istream & is, std::string name) {
@@ -525,7 +523,6 @@ GatePlacement & ReadPlacement(std::istream & is,
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void ReadTimePlacements(std::string filename,
                         std::vector<double> & timesList,
@@ -559,7 +556,6 @@ void ReadTimePlacements(std::string filename,
   is.close();
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void ReadTimePlacementsRepeat(std::string filename,
@@ -599,7 +595,6 @@ void ReadTimePlacementsRepeat(std::string filename,
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void ReadTimeDoubleValue(std::string filename, std::string name,
                          std::vector<double> & timesList,
@@ -633,7 +628,6 @@ void ReadTimeDoubleValue(std::string filename, std::string name,
   is.close();
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
@@ -678,10 +672,9 @@ G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
   G4String mSaveCurrentFilename = G4String(removeExtension(mSaveFilename))+oss.str()+extension;
   return mSaveCurrentFilename;
 }
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
 
-
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
 std::string ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
   while ( input ){
     std::string line;
@@ -695,7 +688,6 @@ std::string ReadNextContentLine( std::istream& input, int& lineno, const std::st
 }
 //-----------------------------------------------------------------------------
 
-<<<<<<< HEAD
 
 // ----------------------------------------------------------------------------
 //http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
@@ -733,6 +725,4 @@ void GetWords(std::vector<std::string> & words, const std::string & phrase) {
 }
 // ---------------------------------------------------------------------------
 
-=======
->>>>>>> develop
 #endif // GATEMISCFUNCTIONS_CC

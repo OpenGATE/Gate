@@ -39,7 +39,7 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
 
   n = base + "/setMode";
   pSetModeFlagCmd = new G4UIcmdWithAString(n, this);
-  guid = G4String("If 'train': store [theta phi E w]. If 'test': store [x y theta phi E]");
+  guid = G4String("If 'train': store [theta phi E w]. if 'trainE', store [theta phi E Ew]. If 'test': store [x y theta phi E]");
   pSetModeFlagCmd->SetGuidance(guid);
 
   n = base + "/setMaxAngle";

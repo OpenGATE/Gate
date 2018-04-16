@@ -52,6 +52,7 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   GateDebugMessageInc("Actor",4,"Gate_NN_ARF_Actor() -- begin\n");
   pMessenger = new Gate_NN_ARF_ActorMessenger(this);
   mTrainingModeFlag = false;
+  mEnergyModeFlag = false;
   mMaxAngle = 0.0; // no max angle
   mRRFactor = 0;   // no Russian Roulette factor
   mThetaMax = 0.0;
@@ -82,13 +83,27 @@ void Gate_NN_ARF_Actor::SetEnergyWindowNames(std::string & names)
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SetMode(std::string m)
 {
-  if (m == "train") mTrainingModeFlag = true;
-  else {
-    if (m == "test") mTrainingModeFlag = false;
-    else {
-      GateError("Error in Gate_NN_ARF_Actor macro 'setMode', must be 'train' or 'test', while read " << m);
-    }
+  bool found = false;
+  if (m == "train") {
+    mTrainingModeFlag = true;
+    mEnergyModeFlag = false;
+    found = true;
   }
+  if (m == "trainE") {
+    mTrainingModeFlag = true;
+    mEnergyModeFlag = true;
+    found = true;
+  }
+
+  if (m == "test") {
+    mTrainingModeFlag = false;
+    found = true;
+  }
+
+  if (!found) {
+    GateError("Error in Gate_NN_ARF_Actor macro 'setMode', must be 'train' or 'trainE' or test', while read " << m);
+  }
+
   GateMessage("Actor", 1, "Gate_NN_ARF_Actor mode = " << m);
 }
 //-----------------------------------------------------------------------------
@@ -265,6 +280,13 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
       ++i;
       auto SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(id));
       if (!SDC) continue;
+
+      /*
+        DD(SDC->GetSize());
+        DD(i);
+        DD((*SDC)[0]->GetEnergy());
+      */
+
       /*
       // ==> No need for u,v coordinates
       G4double xProj = (*SDC)[0]->GetLocalPos()[0]; // X FIXME ?
@@ -272,7 +294,11 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
       mCurrentOutData.u = xProj;
       mCurrentOutData.v = yProj;
       */
-      mCurrentTrainData.w = i;
+      if (mEnergyModeFlag)
+        mCurrentTrainData.w = (*SDC)[0]->GetEnergy();
+      else
+        mCurrentTrainData.w = i;
+
       isIn = true;
       ++mNumberOfDetectedEvent;
     }
