@@ -80,6 +80,7 @@ protected:
   Gate_NN_ARF_ActorMessenger * pMessenger;
 
   bool mTrainingModeFlag;
+  bool mEnergyModeFlag;
   bool mIgnoreCurrentData;
   std::vector<Gate_NN_ARF_Test_Data>  mTestData;
   std::vector<Gate_NN_ARF_Train_Data> mTrainData;
