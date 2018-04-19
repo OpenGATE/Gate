@@ -49,6 +49,7 @@ See LICENSE.md for further details
 #include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GatePulseAdderGPUSpect.hh"
+#include "GateStripSpatialDiscretization.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -92,7 +93,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
+   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
   return theList;
 }
 
@@ -166,6 +167,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
   else if (childTypeName=="systemFilter")
      newProcessor = new GateSystemFilter(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="stripSpDiscretization")
+     newProcessor = new GateStripSpatialDiscretization(GetProcessorChain(),newInsertionName);
 #ifdef GATE_USE_OPTICAL
   else if (childTypeName=="opticaladder")
     newProcessor = new GateOpticalAdder(GetProcessorChain(), newInsertionName);
