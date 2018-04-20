@@ -252,7 +252,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       flux = mKFHandler->GetFlux();
     }
 
-    edep = dose * GetDoselVolume() * step->GetPreStepPoint()->GetMaterial()->GetDensity();
+    edep = (dose * gray) * (GetDoselVolume() * step->GetPreStepPoint()->GetMaterial()->GetDensity());
 
     bool sameEvent = true;
 
@@ -266,8 +266,9 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
 
     GateMessage("Actor", 2,  "GateNTLEDoseActor -- UserSteppingActionInVoxel:" << Gateendl
          << " Dosel index    = " << index << Gateendl
-         << " Dosel volume   = " << G4BestUnit(GetDoselVolume(), "Volume") << Gateendl
          << " Dosel material = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+         << " Dosel volume   = " << G4BestUnit(GetDoselVolume(), "Volume") << Gateendl
+         << " Dosel mass     = " << G4BestUnit(GetDoselVolume() * step->GetPreStepPoint()->GetMaterial()->GetDensity(), "Mass") << Gateendl
          << " Particle       = " << step->GetTrack()->GetDefinition()->GetParticleName() << Gateendl
          << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
          << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
