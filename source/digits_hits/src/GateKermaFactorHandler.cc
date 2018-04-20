@@ -221,7 +221,7 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
   std::vector<double> energyTable;
 
   if      (kfTable.size() == energy_tableau.size() && !mKermaEquivalentFactor)
-    energyTable = energy_tableau;
+    energyTable = energy_tableau; // MeV
   else if (kfTable.size() == energy_table_DA.size() && !mKermaEquivalentFactor)
     energyTable = energy_table_DA; // MeV
   else if (kfTable.size() == energy_table_KermaEquivalentFactor.size() && mKermaEquivalentFactor)
@@ -234,25 +234,34 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
     exit(EXIT_FAILURE);
   }
 
-  if (eEnergy/MeV < energyTable[0] && eEnergy/MeV >= 1e-10)
+  // KF EXTRAPOLATION /////////////////////////////////////////////////////////
+  const double extrapEnergyThreshold = 1. * eV;
+  if (mKFExtrapolation && eEnergy <= extrapEnergyThreshold)
+  {
+    // FINDING TABLE ENTRY > EXTRAPENERGYTHRESHOLD ////////////////////////////
+    size_t entry = 0;
+    for(size_t i = 0; i < energyTable.size(); i++)
+      if (entry == 0 && energyTable[i] * MeV >= extrapEnergyThreshold)
+        entry = i;
+    ///////////////////////////////////////////////////////////////////////////
+
+    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] First energyTable entry > extrapEnergyThreshold: " << entry << " (energyTable[" << entry << "]: " << energyTable[entry] * MeV / eV << " eV, extrapEnergyThreshold: " << extrapEnergyThreshold / eV << " eV)" << Gateendl);
+
+    //OLD//const double extrapolatedKF = 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
+    //OLD//const double extrapolatedKF = kfTable[0] * sqrt(energyTable[0] / (eEnergy / MeV));
+    const double extrapolatedKF = kfTable[entry] * sqrt(energyTable[entry] / (eEnergy / MeV));
+
+    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation ! (Energy: " << eEnergy/MeV << " MeV, ExtrapolatedKF: " << extrapolatedKF << ")" << Gateendl);
+
+    return extrapolatedKF;
+  }
+  /////////////////////////////////////////////////////////////////////////////
+  else if (eEnergy/MeV < energyTable[0]) // && eEnergy/MeV >= 1e-10)
   {
     GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] Neutron energy (" << eEnergy/MeV << " MeV) is inferior to minimum energy of kfTable (" << energyTable[0] << " MeV) !" << Gateendl);
+    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Returning " << energyTable[0] << " MeV Kerma Factor ! (" << kfTable[0] << ")" << Gateendl);
 
-    if (mKFExtrapolation)
-    {
-      //OLD//const double extrapolatedKF = 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
-      const double extrapolatedKF = kfTable[0] * sqrt(energyTable[0]/(eEnergy/MeV));
-
-      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation ! (Energy: " << eEnergy/MeV << " MeV, ExtrapolatedKF: " << extrapolatedKF << ")" << Gateendl);
-
-      return extrapolatedKF;
-    }
-    else
-    {
-      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Returning " << energyTable[0] << " MeV Kerma Factor ! (" << kfTable[0] << ")" << Gateendl);
-
-      return kfTable[0];
-    }
+    return kfTable[0];
   }
 
   for (size_t i=1; i<energyTable.size(); i++)
