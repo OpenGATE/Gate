@@ -253,7 +253,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 8.0" << std::endl;
+          std::cout << "Gate version is 8.1" << std::endl;
           exit(0);
           break;
         case 'a':
