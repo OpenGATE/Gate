@@ -49,6 +49,7 @@ void GateLocalTimeDelay::ProcessOnePulse(const GatePulse* inputPulse,GatePulseLi
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     if(im != m_table.end()){
         outputPulse->SetTime(inputPulse->GetTime()+(*im).second.delay);
+        G4cout<<"Time delay applied "<<(*im).second.delay<<G4endl;
     }
     outputPulseList.push_back(outputPulse);
 }

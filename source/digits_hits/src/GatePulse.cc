@@ -100,14 +100,14 @@ const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
   // source-position: identical for both pulses, nothing to do
 
   // time: store the minimum time
-  //m_time = std::min ( m_time , right->m_time ) ;
+  m_time = std::min ( m_time , right->m_time ) ;
 
   // energy: we compute the sum
   G4double totalEnergy = m_energy + right->m_energy;
 
   // Local and global positions: keep the original Position
 
-  // Now that the centroids are stored, we can store the energy
+  // n store the energy
   m_energy   = totalEnergy;
 
   // # of compton process: store the max nb

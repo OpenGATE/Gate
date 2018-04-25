@@ -31,7 +31,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 #endif
     {
 
-        //  G4cout << "Entering adder";
+          //G4cout << " Ideal adder outputPulseSize"<<outputPulseList.size()<<G4endl;
 
 
         if(inputPulse->GetParentID()==0)

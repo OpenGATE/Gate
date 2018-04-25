@@ -248,6 +248,8 @@ GatePulseList* GateDigitizer::FindPulseList(const G4String& pulseListName)
 // Find a pulse-list from the array of pulse-list
 std::vector<GateCoincidencePulse*> GateDigitizer::FindCoincidencePulse(const G4String& pulseName)
 {
+
+
   std::vector<GateCoincidencePulse*> ans;
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::FindCoincidencePulse]: Looking for coincidence pulse '" << pulseName << "'"<< Gateendl;
