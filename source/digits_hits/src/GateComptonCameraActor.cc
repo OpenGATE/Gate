@@ -316,6 +316,12 @@ void GateComptonCameraActor::BeginOfRunAction(const G4Run * run)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 {
+
+
+   // sourcePos= G4EventManager::GetEventManager()->GetConstCurrentEvent()->G
+  // G4cout<<evt->GetPrimaryVertex()->GetPosition()<<G4endl;
+    sourcePos=evt->GetPrimaryVertex()->GetPosition();
+
   GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Event\n");
  // G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
   newEvt = true;
@@ -576,6 +582,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
   //  //First hit of a new event tof (time) and for the rest ltof
   if (newEvt) {
+
     //      double pretof = step->GetPreStepPoint()->GetGlobalTime();
     //      double posttof = step->GetPostStepPoint()->GetGlobalTime();
     //      tof = pretof + posttof;
@@ -599,20 +606,20 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     newTrack=false;
   }
 
-  if(evtID==37245 || evtID==62051 ||  evtID==79924  ){
-      G4cout<<"parentID="<<parentID <<"  PDGEN="<<PDGEncoding<<"  processTrackCreatro"<<processName<<" volStepName="<<VolNameStep<<"  hitedep="<<hitEdep<<"  trackID="<<trackID<<G4endl;
-      G4cout<<" Prepos="<<hitPrePos.getX()<<"  "<<hitPrePos.getY()<<"   "<<hitPrePos.getZ()<<G4endl;
-      G4cout<< " Postpos="<<hitPostPos.getX()<<"  "<<hitPostPos.getY()<<"   "<<hitPostPos.getZ()<<G4endl;
-      G4cout<< " EiniTrack="<<Ei<<"  Efinal= "<<Ef<<G4endl;
+//  if(evtID==37245 || evtID==62051 ||  evtID==79924  ){
+//      G4cout<<"parentID="<<parentID <<"  PDGEN="<<PDGEncoding<<"  processTrackCreatro"<<processName<<" volStepName="<<VolNameStep<<"  hitedep="<<hitEdep<<"  trackID="<<trackID<<G4endl;
+//      G4cout<<" Prepos="<<hitPrePos.getX()<<"  "<<hitPrePos.getY()<<"   "<<hitPrePos.getZ()<<G4endl;
+//      G4cout<< " Postpos="<<hitPostPos.getX()<<"  "<<hitPostPos.getY()<<"   "<<hitPostPos.getZ()<<G4endl;
+//      G4cout<< " EiniTrack="<<Ei<<"  Efinal= "<<Ef<<G4endl;
 
-      if(step->GetPreStepPoint()->GetProcessDefinedStep()!=0){
-          G4cout<<"preStepprocess="<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
-      }
-      if(step->GetPostStepPoint()->GetProcessDefinedStep()!=0){
-          G4cout<<"postStepprocess="<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
-      }
+//      if(step->GetPreStepPoint()->GetProcessDefinedStep()!=0){
+//          G4cout<<"preStepprocess="<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
+//      }
+//      if(step->GetPostStepPoint()->GetProcessDefinedStep()!=0){
+//          G4cout<<"postStepprocess="<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
+//      }
 
-  }
+//  }
 
   if(parentID==0){
       //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
@@ -652,8 +659,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     aHit->SetPDGEncoding(PDGEncoding);
     aHit->SetPostStepProcess( processPostStep);
 
-
-
+    //Try to obtain information of the source (I DO NOT FROM WHERE SD SYS TAKE IT)
+    aHit->SetSourcePosition(sourcePos);
     //track creator
     aHit->SetProcess(processName);
     aHit->SetStepLength(step->GetStepLength());
@@ -745,7 +752,8 @@ if(pPulseList){
     //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
     //G4cout << "vol name nivel 2"<<inputPulse->GetVolumeID().GetVolume(2)->GetName()<<G4endl;
     //G4cout << "PDGsummedPulse="<<inputPulse->GetPDGEncoding()<<G4endl;
-     //G4cout << "PDGsummedPulse="<<inputPulse->GetNCrystalCompton()<<G4endl;
+     //G4cout << "PosZ="<<inputPulse->GetSourcePosition().getZ()<<G4endl;
+      //rooG4cout << "PosZ="<<aSingleDigi->GetSourcePosition().getZ()<<G4endl;
 
 //    ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
 //    /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger

@@ -167,6 +167,9 @@ void GateCCRootSingleBuffer::Clear()
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
+  sourcePosX       = 0./mm;
+  sourcePosY       = 0./mm;
+  sourcePosZ       = 0./mm;
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
@@ -187,6 +190,9 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
     globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
     globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
+    sourcePosX    = (aDigi->GetSourcePosition().getX())/mm;
+    sourcePosY    = (aDigi->GetSourcePosition().getY())/mm;
+    sourcePosZ    = (aDigi->GetSourcePosition().getZ())/mm;
  // layerID=slayerID;//it was as a second argument of the function.
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
@@ -229,6 +235,10 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
   if ( GateSingleDigi::GetSingleASCIIMask(11) )
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
 
+   Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
+    Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
+     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+
   Branch("layerName",    (void *)buffer.layerName,"layername/C");
   //Branch("layerID",     &buffer.layerID,"layerID/I");
   Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
@@ -248,6 +258,9 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
     singlesTree->SetBranchAddress("globalPosX",&buffer.globalPosX);
     singlesTree->SetBranchAddress("globalPosY",&buffer.globalPosY);
     singlesTree->SetBranchAddress("globalPosZ",&buffer.globalPosZ);
+    singlesTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
+    singlesTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
+    singlesTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
 
 
 
@@ -280,6 +293,12 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
   globalPos.setZ(globalPosZ);
 
   aSingle->SetGlobalPos(globalPos);
+
+  G4ThreeVector sPos;
+  sPos.setX(sourcePosX);
+  sPos.setY(sourcePosY);
+  sPos.setZ(sourcePosZ);
+  aSingle->SetSourcePosition(sPos);
 
 
 

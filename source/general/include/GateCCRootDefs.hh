@@ -172,6 +172,9 @@ public:
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;
+  Float_t  sourcePosX;
+  Float_t  sourcePosY;
+  Float_t  sourcePosZ;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;

@@ -17,6 +17,7 @@
 #include "GateActorMessenger.hh"
 #include "GateVolumeID.hh"
 #include "GateCCRootDefs.hh"
+#include "G4EventManager.hh"
 
 #include "GateCrystalHit.hh"
 #include "GateHitConvertor.hh"
@@ -163,6 +164,7 @@ protected:
    G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
   G4ThreeVector hitPrePos;
+   G4ThreeVector sourcePos;
   G4int trackID;
   G4int  parentID;
   G4double trackLength;
