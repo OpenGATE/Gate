@@ -81,7 +81,7 @@ public:
   void SetSaveCoincidencesTreeFlag( bool b ){  mSaveCoincidencesTreeFlag= b; }
   void SetSaveCoincidenceChainsTreeFlag( bool b ){  mSaveCoincidenceChainsTreeFlag= b; }
 
-  //void SetSaveHitsTextFlag( bool b ){  mSaveHitsTextFlag= b; }
+  void SetSaveHitsTextFlag( bool b ){  mSaveHitsTextFlag= b; }
   void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
   void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
   void SetSaveCoincidenceChainsTextFlag( bool b ){  mSaveCoinChainsTextFlag= b; }
@@ -102,6 +102,8 @@ protected:
 
   void OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss);
   void OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> > &ss);
+
+  void SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string layerN);
   void SaveAsTextSingleEvt(GateSingleDigi *aSin);
   void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin,std::ofstream& ossC);
   ///UNIFY
@@ -202,7 +204,7 @@ protected:
   bool mSaveCoincidencesTreeFlag;
   bool mSaveCoincidenceChainsTreeFlag;
 
-  //bool mSaveHitsTextFlag;
+  bool mSaveHitsTextFlag;
   bool mSaveSinglesTextFlag;
   bool mSaveCoincTextFlag;
   bool mSaveCoinChainsTextFlag;
@@ -214,7 +216,7 @@ protected:
 
 
 
-
+  std::ofstream ossHits;
   std::ofstream ossSingles;
   std::ofstream ossCoincidences;
   //std::vector<std::ofstream> ossCoincidenceChains;

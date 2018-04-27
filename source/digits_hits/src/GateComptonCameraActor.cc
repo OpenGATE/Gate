@@ -219,7 +219,9 @@ void GateComptonCameraActor::Construct()
       }
   }
 
-
+  if(mSaveHitsTextFlag){
+      OpenTextFile(mSaveFilename,"Hits", ossHits);
+  }
   if(mSaveSinglesTextFlag){
       OpenTextFile(mSaveFilename,"Singles", ossSingles);
   }
@@ -703,6 +705,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
                 G4cout<<"problems our CC has less than two layers"<<G4endl;
             }
         }
+        if(mSaveHitsTextFlag){
+            SaveAsTextHitsEvt(aHit,VolNameStep);
+        }
     }
   }
   // G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
@@ -845,6 +850,26 @@ void GateComptonCameraActor::OpenTextFile(G4String initial_filename, std::vector
      }
 }
 
+
+void GateComptonCameraActor::SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string layerN)
+{
+
+
+ //  ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+
+
+int copyCrys=-1;
+ if(layerN=="absorberBlocks"){
+     copyCrys=aHit->GetVolumeID().GetVolume(4)->GetCopyNo();
+ }
+
+
+     ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost"<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     E="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
+
+
+}
+
+
 void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 {
 
@@ -900,6 +925,7 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin, st
 //    ossSingles.close();
 //}
 void GateComptonCameraActor::closeTextFiles(){
+    if(ossHits.is_open())ossHits.close();
     if(ossSingles.is_open())ossSingles.close();
      if(ossCoincidences.is_open())ossCoincidences.close();
      for(unsigned int i =0; i<ossCoincidenceChains.size(); i++){

@@ -51,7 +51,7 @@ protected:
   G4UIcmdWithABool          * pSaveCoincidenceChainsTree;
 
 
-  //G4UIcmdWithABool          * pSaveHitsText;
+  G4UIcmdWithABool          * pSaveHitsText;
   G4UIcmdWithABool          * pSaveSinglesText;
   G4UIcmdWithABool          * pSaveCoincidencesText;
   G4UIcmdWithABool          * pSaveCoincidenceChainsText;

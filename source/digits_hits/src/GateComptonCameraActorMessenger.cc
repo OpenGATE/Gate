@@ -33,7 +33,7 @@ GateComptonCameraActorMessenger::~GateComptonCameraActorMessenger()
     delete pSaveCoincidencesTree;
     delete pSaveCoincidenceChainsTree;
 
-    //delete pSaveHitsText;
+    delete pSaveHitsText;
     delete pSaveSinglesText;
     delete pSaveCoincidencesText;
     delete pSaveCoincidenceChainsText;
@@ -76,10 +76,10 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
 
 
 
-//  bb = base+"/saveHitsText";
-//  pSaveHitsText = new G4UIcmdWithABool(bb, this);
-//  guidance = G4String("In addition  save a text file with hits info");
-//  pSaveHitsText->SetGuidance(guidance);
+  bb = base+"/saveHitsText";
+ pSaveHitsText = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a text file with hits info");
+  pSaveHitsText->SetGuidance(guidance);
 
   bb = base+"/saveSinglesText";
   pSaveSinglesText = new G4UIcmdWithABool(bb, this);
@@ -139,7 +139,7 @@ void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
   if(cmd == pSaveCoincidencesTree) pActor->SetSaveCoincidencesTreeFlag(  pSaveCoincidencesTree->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveCoincidenceChainsTree) pActor->SetSaveCoincidenceChainsTreeFlag(  pSaveCoincidenceChainsTree->GetNewBoolValue(newValue)  ) ;
 
-  //if(cmd == pSaveHitsText) pActor->SetSaveHitsTextFlag(  pSaveHitsText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveHitsText) pActor->SetSaveHitsTextFlag(  pSaveHitsText->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveSinglesText) pActor->SetSaveSinglesTextFlag(  pSaveSinglesText->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveCoincidencesText) pActor->SetSaveCoincidenceTextFlag(  pSaveCoincidencesText->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveCoincidenceChainsText) pActor->SetSaveCoincidenceChainsTextFlag(  pSaveCoincidenceChainsText->GetNewBoolValue(newValue)  ) ;
