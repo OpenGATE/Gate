@@ -263,7 +263,7 @@ public:
                                GateVImageVolume* gate_image_volume,
                                unsigned int & nPixOneSlice);
 
-  void CalculatePropagatorImage(const double D, std::vector<double> & energyList);
+  void CalculatePropagatorImage(const double D, double magnification, std::vector<double> & energyList);
 
   void CreateProjectionImages();
   void GeneratePhotons(const unsigned int & numberOfThreads,
