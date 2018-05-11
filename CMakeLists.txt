@@ -1,5 +1,6 @@
 #=========================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
 
 #=========================================================
@@ -45,6 +46,9 @@ ENDIF()
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
+IF(Geant4_multithreaded_FOUND)
+    MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+ENDIF()
 #OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
 #IF(Geant4_multithreaded_FOUND)
     #IF(GATE_ALLOW_MT_GEANT4)
@@ -71,8 +75,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.2 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.3)
-  MESSAGE("Warning! GATE version 8.0 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.2 or 10.3 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.3 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4)
+  MESSAGE("Warning! GATE version 8.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.3 or 10.4 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -82,6 +86,7 @@ SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
 
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
+OPTION(GATE_USE_XRAYLIB "Option for XRAYLIB use" OFF)
 OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
@@ -115,6 +120,17 @@ IF(GATE_USE_OPTICAL)
   INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
+
+#=========================================================
+# Option for XRAYLIB use
+IF(GATE_USE_XRAYLIB)
+  FIND_PACKAGE(LIBXRL REQUIRED)
+  INCLUDE_DIRECTORIES(${LIBXRL_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${LIBXRL_LIBRARIES})
+  IF(NOT LIBXRL_INCLUDE_DIR)
+    MESSAGE("xraylib not found! Please install xraylib and make it available in PATH or manually set the LIBXRL_LIBRARY and LIBXRL_INCLUDE variables.")
+  ENDIF()
+ENDIF(GATE_USE_XRAYLIB)
 
 #=========================================================
 # Option for Davis model
@@ -194,8 +210,7 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/Matrix/*.cc
-  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc
-  ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc)
 
 FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
@@ -210,8 +225,8 @@ FILE(GLOB headers
 # RTK
 IF(GATE_USE_RTK)
    FIND_PACKAGE(RTK REQUIRED)
-   IF("${RTK_VERSION_MAJOR}.${RTK_VERSION_MINOR}" VERSION_LESS 1.2)
-       MESSAGE(FATAL_ERROR "RTK version 1.2 is required")
+   IF("${RTK_VERSION_MAJOR}.${RTK_VERSION_MINOR}" VERSION_LESS 1.4)
+       MESSAGE(FATAL_ERROR "RTK version 1.4 is required")
    ENDIF()
    INCLUDE(${RTK_USE_FILE})
    STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
@@ -233,20 +248,19 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_20,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
+  SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${RTK_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-#option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
 IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
   INCLUDE(cmake-modules/GateExternalData.cmake)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
@@ -254,10 +268,6 @@ IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
   ADD_SUBDIRECTORY(benchmarks)
   ExternalData_add_target(GateBenchmarkData)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-#IF(GATE_DOWNLOAD_EXAMPLES_DATA)
-  #ADD_SUBDIRECTORY(examples)
-  #ExternalData_add_target(GateExampleData)
-#ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 #=========================================================
 
 
