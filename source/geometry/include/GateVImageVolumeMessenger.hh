@@ -51,6 +51,7 @@ private:
   G4UIcmdWithAString        * pBuildDistanceTransfoCmd;
   G4UIcmdWithAString        * pBuildLabeledImageCmd;
   G4UIcmdWithAString        * pBuildDensityImageCmd;
+  G4UIcmdWithAString        * pBuildMassImageCmd;
   G4UIcmdWithABool          * pDoNotBuildVoxelsCmd;
 };
 //-----------------------------------------------------------------------------

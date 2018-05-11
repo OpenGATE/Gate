@@ -49,9 +49,11 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mLabelToImageMaterialTableFilename = "none";
   mHounsfieldToImageMaterialTableFilename = "none";
   mRangeToImageMaterialTableFilename = "none";
-  mWriteHLabelImage = false;
-  mWriteDensityImage = false;
-  mHLabelImageFilename = "none";
+  mWriteHLabelImage     = false;
+  mWriteDensityImage    = false;
+  mHLabelImageFilename  = "none";
+  mDensityImageFilename = "none";
+  mMassImageFilename    = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
   GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")\n");
@@ -316,7 +318,6 @@ void GateVImageVolume::LoadImageMaterialsTable()
 }
 //--------------------------------------------------------------------
 
-
 //--------------------------------------------------------------------
 void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
   mHLabelImageFilename = filename;
@@ -333,8 +334,7 @@ void GateVImageVolume::SetDensityImageFilename(G4String filename) {
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
-{
+void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
   GateMessageInc("Volume",5,"Begin GateVImageVolume::LoadImageMaterialsFromHounsfieldTable("
                  <<mHounsfieldToImageMaterialTableFilename<<")\n");
 
@@ -434,8 +434,10 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
 
   // Dump label image if needed
   mImageMaterialsFromHounsfieldTableDone = true;
+
   DumpHLabelImage();
   DumpDensityImage();
+  DumpMassImage();
 }
 //--------------------------------------------------------------------
 
@@ -473,7 +475,6 @@ void GateVImageVolume::DumpHLabelImage() {
     output.Write(mHLabelImageFilename);
   }
 }
-
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -514,8 +515,38 @@ void GateVImageVolume::DumpDensityImage() {
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-void GateVImageVolume::LoadImageMaterialsFromLabelTable()
-{
+void GateVImageVolume::DumpMassImage() {
+  // Dump image if needed
+  if (mMassImageFilename != "none") {
+    ImageType output;
+    output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
+    output.SetOrigin(pImage->GetOrigin());
+    output.Allocate();
+
+    ImageType::const_iterator pi = pImage->begin();
+    ImageType::iterator       po = output.begin();
+
+    while (pi != pImage->end()) {
+      double density = mLoadImageMaterialsFromHounsfieldTable ?
+                       mHounsfieldMaterialTable[(int)lrint(*pi)].md1 :
+                       mRangeMaterialTable     [(int)lrint(*pi)].md1;
+
+      double mass    = density * pImage->GetVoxelVolume();
+
+      *po = mass / g; // dump mass in grams
+
+      ++po;
+      ++pi;
+    }
+
+    // Write image
+    output.Write(mMassImageFilename);
+  }
+}
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+void GateVImageVolume::LoadImageMaterialsFromLabelTable() {
   // Never call
   //GateError("GateVImageVolume::LoadImageMaterialsFromLabelTable : disabled! \n");
 
@@ -565,8 +596,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 
 
 //--------------------------------------------------------------------
-void GateVImageVolume::LoadImageMaterialsFromRangeTable()
-{
+void GateVImageVolume::LoadImageMaterialsFromRangeTable() {
   m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
@@ -673,7 +703,9 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     ++iter;
   }
   mImageMaterialsFromRangeTableDone = true;
+
   DumpDensityImage();
+  DumpMassImage();
 }
 //--------------------------------------------------------------------
 
