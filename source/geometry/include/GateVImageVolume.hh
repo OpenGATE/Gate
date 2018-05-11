@@ -163,6 +163,7 @@ public:
   void SetBuildDistanceTransfoFilename(G4String filename);
   void SetLabeledImageFilename(G4String filename);
   void SetDensityImageFilename(G4String filename);
+  void SetMassImageFilename   (G4String filename) {mMassImageFilename = filename;}
   void EnableBoundingBoxOnly(bool b);
 
 protected:
@@ -208,6 +209,8 @@ protected:
   bool mWriteDensityImage;
   G4String mDensityImageFilename;
   void DumpDensityImage();
+  G4String mMassImageFilename;
+  void DumpMassImage();
   bool mImageMaterialsFromHounsfieldTableDone;
   bool mImageMaterialsFromRangeTableDone;
 
