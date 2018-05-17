@@ -17,6 +17,7 @@ See LICENSE.md for further details
 #include <algorithm>    // std::shuffle
 #include <random>       // std::default_random_engine
 #include <chrono>       // std::chrono::system_clock
+#include <algorithm>
 
 #include "G4ThreeVector.hh"
 #include "GateVPulseProcessor.hh"
@@ -65,7 +66,7 @@ protected:
 
 
 private:
-
+ const static int INVALID_Qf=100000;
 
   GateCCCoincidenceSequenceReconMessenger *m_messenger;    //!< Messenger
 

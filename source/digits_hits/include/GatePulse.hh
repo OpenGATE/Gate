@@ -154,6 +154,12 @@ class GatePulse
 
 
  
+
+	bool operator <( const GatePulse& rhs )
+       {
+                return  GetGlobalPos().getZ() <= rhs.GetGlobalPos().getZ() ;
+        	
+    	}
    //--------------------------------------------------------------------------------
 
     //@}
