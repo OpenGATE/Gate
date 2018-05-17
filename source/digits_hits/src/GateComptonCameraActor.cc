@@ -47,7 +47,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   nTrack=0;
   edepEvt = 0.;
   slayerID=-1;
-  coincID=0;
+  //coincID=0;
 
 
 
@@ -87,6 +87,8 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
 
   GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
   G4cout<< "Singles save flag"<<mSaveSinglesTextFlag<<G4endl;
+  G4cout<< "CoincChain save txt flag"<<mSaveCoinChainsTextFlag<<G4endl;
+
 }
 //-----------------------------------------------------------------------------
 
@@ -208,13 +210,15 @@ void GateComptonCameraActor::Construct()
       m_CoincTree->Init(m_CoincBuffer);
   }
 
-
+    for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
+         coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
+    }
+//m_coincIDChain.emplace_back(0);
   if(mSaveCoincidenceChainsTreeFlag){
       for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
-          m_coincChainTree.emplace_back(new GateCCCoincTree(m_digitizer->GetCoincChain(i)->GetOutputName(), "CoincidenceChain tree"));
-          m_coincIDChain.emplace_back(0);
+          m_coincChainTree.emplace_back(new GateCCCoincTree(coincidenceChainNames.at(i), "CoincidenceChain tree"));
           m_coincChainTree.back()->Init(m_CoincBuffer);
-          coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
+
 
       }
   }
@@ -358,7 +362,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 {
-  //G4cout<<"######start of  :END OF EVENT ACTION####################################"<<G4endl;
+  //G4cout<<"######start of  :END OF EVENT ACTION####################################   "<<nEvent<<G4endl;
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
   if (edepEvt > 0) {
     //Manually constructed singles
@@ -395,7 +399,8 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 
                 unsigned int numCoincPulses=coincPulse->size();
                 for(unsigned int i=0;i<numCoincPulses;i++){
-                    GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincID);
+                    //coincPulse->SetCoincID(coincID);
+                    GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i), coincPulse->GetCoincID());
                     //Me falta crear su tree su buffer  y llenarlo con todos los pulsos de la coincidencia Muchos seran pares otros no
                     if(mSaveCoincTextFlag){
                         SaveAsTextCoincEvt(aCoinDigi, ossCoincidences);
@@ -419,42 +424,58 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
                 //}
 
 
-                coincID++;
+                //coincID++;
             }
          }
             //Find sequence coincidences or other coincidences after applying coincidenceChain If any coincidenceChain has been applied
            for(unsigned int iChain=0; iChain<m_digitizer->GetmCoincChainListSize(); iChain++){
+               // G4cout<<"list size"<<m_digitizer->GetmCoincChainListSize()<<G4endl;
+
                     std::vector<GateCoincidencePulse*> coincidencePulseChain = m_digitizer->FindCoincidencePulse(m_digitizer->GetCoincChain(iChain)->GetOutputName());
-                   if(coincidencePulseChain.size()>0){
-                        for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseChain.begin();it != coincidencePulseChain.end() ; ++it){
-                            GateCoincidencePulse* coincPulse=*it;
-                            unsigned int numCoincPulses=coincPulse->size();
-                            for(unsigned int i=0;i<numCoincPulses;i++){
-                               // G4cout<<"coincID of chain"<<m_coincIDChain.at(iChain)<<G4endl;
-                                GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),m_coincIDChain.at(iChain));
-                                if(mSaveCoinChainsTextFlag){
-                                    SaveAsTextCoincEvt(aCoinDigi, *(ossCoincidenceChains.at(iChain)));
-                                }
-                                if(mSaveCoincidenceChainsTreeFlag){
-                                    m_CoincBuffer.Fill(aCoinDigi);
-                                    m_coincChainTree.at(iChain)->Fill();
-                                    m_CoincBuffer.Clear();
-                                }
 
-                            }
+                    //G4cout<<"Find coinc in digitiazer for output"<<G4endl;
+                     // G4cout<<"vector size "<<coincidencePulseChain.size()<<G4endl;
+
+                      if(coincidencePulseChain.size()>0){
+                          for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulseChain.begin();it < coincidencePulseChain.end() ; it++){
+                              //G4cout<<"1"<<G4endl;
+                              GateCoincidencePulse* coincPulse=*it;
+
+                              unsigned int numCoincPulses=coincPulse->size();
+                             // G4cout<<" coinIDchain "<<coincPulse->GetCoincID()<<G4endl;
+
+                              for(unsigned int i=0;i<numCoincPulses;i++){
+                                  //G4cout<<"coincID of chain"<<m_coincIDChain.at(iChain)<<G4endl;
+
+                                 //GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),m_coincIDChain.at(iChain));
+                                  GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincPulse->GetCoincID());
+
+                                  if(mSaveCoinChainsTextFlag){
+                                      SaveAsTextCoincEvt(aCoinDigi, *(ossCoincidenceChains.at(iChain)));
+                                  }
+                                  if(mSaveCoincidenceChainsTreeFlag){
+                                      m_CoincBuffer.Fill(aCoinDigi);
+                                      m_coincChainTree.at(iChain)->Fill();
+                                      m_CoincBuffer.Clear();
+                                  }
+
+                              }
 
 
 
 
-                           m_coincIDChain.at(iChain)=m_coincIDChain.at(iChain)+1;
-                        }
+                              //m_coincIDChain.at(iChain)=m_coincIDChain.at(iChain)+1;
+                          }
+
+
+                          // G4cout<<"Size the input pCoin pulse non zero"<<G4endl;
+
+                      }
+
 
 
 
            }
-
-
-        }
 
     }
     else{
@@ -848,6 +869,7 @@ void GateComptonCameraActor::OpenTextFile(G4String initial_filename, std::vector
           G4cout<<"Open "<<filename<<G4endl;
 
      }
+     if(specificN.size()==0)G4cout<<"Text output asked for a coincidence Pulse processor but no processor is applied "<<filename<<G4endl;
 }
 
 
@@ -855,16 +877,18 @@ void GateComptonCameraActor::SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string
 {
 
 
- //  ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
+    //  ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
 
 
-int copyCrys=-1;
- if(layerN=="absorberBlocks"){
-     copyCrys=aHit->GetVolumeID().GetVolume(4)->GetCopyNo();
- }
+    int copyCrys=-1;
+    //if(layerN=="absorberBlocks"){
+    // copyCrys=aHit->GetVolumeID().GetVolume(4)->GetCopyNo();
+    copyCrys=aHit->GetVolumeID().GetBottomCreator()->GetPhysicalVolume()->GetCopyNo();
+
+    //}
 
 
-     ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost"<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     E="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
+    ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost"<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     E="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
 
 
 }
@@ -877,8 +901,8 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
  //  ossSingles << "# EventID" <<"    Energy (MeV) "<<"    layerName"<<std::endl;
 
 
-
-    int copyN=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    int copyN=aSin->GetPulse().GetVolumeID().GetBottomVolume()->GetCopyNo();
+    //int copyN=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
     std::string layerName;
     if(copyN==0){
     layerName=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
@@ -900,16 +924,17 @@ void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin, st
 {
 
 
+      int copyN=aCoin->GetPulse().GetVolumeID().GetBottomVolume()->GetCopyNo();
 
-
-
-    int copyN=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
+    //int copyN=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetCopyNo();
     std::string layerName;
     if(copyN==0){
-    layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
+        //layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
+        layerName=aCoin->GetPulse().GetVolumeID().GetBottomCreator()->GetObjectName();
     }
      else{
-       layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+       //layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
+       layerName=aCoin->GetPulse().GetVolumeID().GetBottomCreator()->GetObjectName()+std::to_string(copyN);
     }
 
 
