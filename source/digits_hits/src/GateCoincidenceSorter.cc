@@ -48,13 +48,15 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_depth(1),
     m_presortBufferSize(256),
     m_presortWarning(false),
-    m_CCSorter(IsCCSorter)
+    m_CCSorter(IsCCSorter),
+    m_triggerOnlyByAbsorber(0)
 {
 
   // Create the messenger
   m_messenger = new GateCoincidenceSorterMessenger(this);
   //if(m_CCSorter==true)
 
+  coincID_CC=0;
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
@@ -293,7 +295,9 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidence
 
         if(IsCoincidenceGood4CC(coincidence)==true){
             // Introduce some conditions to check if  is good
+            coincidence->SetCoincID(coincID_CC);
             m_digitizer->StoreCoincidencePulse(coincidence);
+            coincID_CC++;
             // delete coincidence; // ?
             return;
         }

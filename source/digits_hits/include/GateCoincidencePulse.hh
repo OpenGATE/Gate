@@ -26,6 +26,7 @@ class GateCoincidencePulse : public GatePulseList
       : GatePulseList(itsName)
     {
         push_back(firstPulse);
+        m_coincID=-1;
         m_startTime = firstPulse->GetTime() + itsOffsetWindow;
         m_endTime = m_startTime + itsCoincidenceWindow;
         if(itsOffsetWindow > 0.0)
@@ -44,6 +45,11 @@ class GateCoincidencePulse : public GatePulseList
     inline G4double GetTime() const
       { return m_endTime; }
 
+   inline G4int GetCoincID() const
+      { return m_coincID; }
+   inline void SetCoincID(int coincID) 
+      { m_coincID=coincID; }
+
     virtual G4bool IsInCoincidence(const GatePulse* newPulse) const;
     virtual G4bool IsAfterWindow(const GatePulse* newPulse) const;
 
@@ -58,6 +64,7 @@ class GateCoincidencePulse : public GatePulseList
     G4double m_startTime;
     G4double m_endTime;
     G4bool m_delayed;
+    G4int m_coincID;
 };
 
 #endif

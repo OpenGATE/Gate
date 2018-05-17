@@ -20,6 +20,7 @@ See LICENSE.md for further details
 #include "GateClockDependent.hh"
 
 
+
 class GateCoincidenceSorterMessenger;
 class GateVSystem;
 class GateDigitizer;
@@ -164,6 +165,8 @@ class GateCoincidenceSorter : public GateClockDependent
     G4bool              m_allPulseOpenCoincGate;        //!< can a pulse be part of two coincs?
     G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
     G4int               m_depth;                        //!< Depth of system-level for coincidences
+
+    G4int coincID_CC;
 
     //@}
 
