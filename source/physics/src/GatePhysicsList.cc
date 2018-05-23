@@ -190,7 +190,7 @@ void GatePhysicsList::ConstructProcess()
   if ((mLoadState==1) && (mUserPhysicListName == "")) {
     GateMessage("Physic", 0, "WARNING: manual physic lists are being deprecated.\n"
                 << "Please, use physic list builder mechanism instead. Related documentation can be found at:\n"
-                << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.0:Setting_up_the_physics\n");
+                << "http://wiki.opengatecollaboration.org/index.php/Users_Guide:Setting_up_the_physics\n");
   }
 
   if(mLoadState==0)
