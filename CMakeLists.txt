@@ -7,6 +7,7 @@ CMAKE_POLICY(SET CMP0025 NEW)
 PROJECT(Gate)
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
+SET(GATE_VERSION_TAG "GateRTion 1.0, based on GATE 8.1 (April/May 2018)")
 
 #=========================================================
 # Configure Dart testing support.  This should be done before any
@@ -49,14 +50,6 @@ ENDIF()
 IF(Geant4_multithreaded_FOUND)
     MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
 ENDIF()
-#OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
-#IF(Geant4_multithreaded_FOUND)
-    #IF(GATE_ALLOW_MT_GEANT4)
-        #MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
-    #ELSE()
-        #MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
-    #ENDIF()
-#ENDIF()
 
 # Check if OpenGL headers are still available
 IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
@@ -71,12 +64,13 @@ ENDIF()
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\1" G4VERSION_MAJOR ${Geant4_VERSION})
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\2" G4VERSION_MINOR ${Geant4_VERSION})
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION})
-#MESSAGE(${Geant4_VERSION})
-#MESSAGE(${G4VERSION_MAJOR})
-#MESSAGE(${G4VERSION_MINOR})
-#MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.3 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4)
-  MESSAGE("Warning! GATE version 8.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.3 or 10.4 distribution instead.")
+
+#MESSAGE("Geant4_VERSION=${Geant4_VERSION}")
+#MESSAGE("G4VERSION_MAJOR=${G4VERSION_MAJOR}")
+#MESSAGE("G4VERSION_MINOR=${G4VERSION_MINOR}")
+#MESSAGE("G4VERSION_PATCH=${G4VERSION_PATCH}")
+IF( NOT ${Geant4_VERSION} STREQUAL "10.3.3" )
+  MESSAGE(FATAL_ERROR "Warning! GateRTion version 1.0 is not validated for the Geant4 ${Geant4_VERSION} distribution. Please use the Geant4 10.3.3 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -84,12 +78,12 @@ ENDIF()
 SET(GATE_USE_ROOT ON)
 SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
+SET(GATE_USE_LMF OFF)
+SET(GATE_USE_ECAT7 OFF)
 
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_XRAYLIB "Option for XRAYLIB use" OFF)
 OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
-OPTION(GATE_USE_LMF "Gate use LMF" OFF)
-OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
 
@@ -160,29 +154,6 @@ IF(GATE_USE_GPU)
     )
 ENDIF(GATE_USE_GPU)
 
-#=========================================================
-# Option for LMF use
-IF(GATE_USE_LMF)
-  FIND_PATH(LMF_HOME lmf /usr /usr/local)
-  SET(LMF_INCLUDE_DIR "${LMF_HOME}/includes")
-  SET(LMF_LIBRARIES "${LMF_HOME}/lib")
-  SET(LMF_LIBRARY "-L${LMF_LIBRARIES} -lLMF")
-  INCLUDE_DIRECTORIES(${LMF_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${LMF_LIBRARIES})
-  #MESSAGE("Found Lmf in ${LMF_INCLUDE_DIR} ${LMF_LIBRARIES} ${LMF_LIBRARY}")
-ENDIF(GATE_USE_LMF)
-
-#=========================================================
-# Option for ECAT7 use
-IF(GATE_USE_ECAT7)
-  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
-  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
-  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
-  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
-  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
-  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
-ENDIF(GATE_USE_ECAT7)
 
 #=========================================================
 # Create configuration file
