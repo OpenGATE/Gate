@@ -5,6 +5,7 @@
 //This file is interpreted by cmake, to define macros based on the cmake configuration options
 // Check : GATE_ANALYSIS_USE_FILE        = @GATE_ANALYSIS_USE_FILE@
 
+#cmakedefine GATE_VERSION_TAG              "@GATE_VERSION_TAG@"
 #cmakedefine GATE_USE_ROOT                 @GATE_USE_ROOT@
 #cmakedefine GATE_USE_OPTICAL              @GATE_USE_OPTICAL@
 #cmakedefine GATE_USE_XRAYLIB              @GATE_USE_XRAYLIB@
