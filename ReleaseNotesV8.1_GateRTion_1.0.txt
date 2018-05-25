@@ -1,11 +1,11 @@
-#  *ooooOOOO0000OOOOoooo*  #
-#  *                    *  #
-#  *     GATE v8.1      *  #
-#  *                    *  #
-#  *ooooOOOO0000OOOOoooo*  #
+#  *ooooOOOO00000000000000000000000000000000000OOOOoooo*  #
+#  *                                                   *  #
+#  * GateRTion 1.0, based on GATE 8.1 (April/May 2018) *  #
+#  *                                                   *  #
+#  *ooooOOOO00000000000000000000000000000000000OOOOoooo*  #
 
 # *--------------* #
-# *  04/23/2018  * #
+# *  05/25/2018  * #
 # *--------------* #
 
 
@@ -14,58 +14,34 @@ General set-up and installation
 -------------------------------
 
 Check the README file to have all informations related to the installation and compilation for this version.
+This first version of GateRTion is basically identical to GATE 8.1, with minor changes.
 
 ----------------------
 --I M P O R T A N T --
 ----------------------
 
--> In the main macro file configuration, the sources MUST be defined AFTER /gate/run/initialize command line <-
-
--> For collimator design, the Fan Beam option is out of order and should be debugged ASAP <-
+For Gate 8.1, the "recommended" geant4 version is 10.3 or 10.4.
+GateRTion is based on Gate v8.1, but it won't build unless you compile it with geant4 10.3.p03.
 
 ------------------------------
 New developments and features
 ------------------------------
 
-- DOSE BY REGION
-http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Dose_by_regions
-
-- TETRAHEDRON MESH VOLUME AND DOSE ACTOR ASSOCIATED
-http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#How_to_build_a_.22TetMeshBox.22_volume
-http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Tet-Mesh_Dose_Actor
-
-- GENERIC VOLUME REPEATER
-http://wiki.opengatecollaboration.org/index.php/Users_Guide:Defining_a_geometry#Generic_repeater
-
-- X-RAY AT BOUNDARY
-http://wiki.opengatecollaboration.org/index.php/Users_Guide:Setting_up_the_physics#X-ray_at_boundary
-
-- X-RAY PHASE CONTRAST
-https://github.com/OpenGATE/GateContrib/tree/master/imaging/CT/Fresnel_FFD
-
+This release serves as a starting point for the project.
+New features may appear in the following releases.
 
 -----------------------------
 Bugs fixed
 -----------------------------
 
-- Various corrected (and still open) bugs: see the "issues" section on the GitHub
-- DoseToWater code cleaned in GateDoseActor
-- DoseActor NumberOfHits + setOverWriteFilesFlag now corrected
-- License files updated
-- Volume rotation with isocenter (isocenter rotation is now optional via messenger)
-- Allow GPS energy range with ene/min & ene/max
-- Revisited voxelized source
-- PhaseSpace: no branch PDGCode if not needed
-- PhaseSpace: allow to start with a given particle id
-- PhaseSpace: add option to project particle on a sphere
-- Write head/energy/run info in mhd header of interfile projection
-- Allow to perform volume rotation *before* repeater rotation (messenger)
-- Default voxel source scale is 1.0
-
+The ECAT and LMF options are disabled.
 
 ---------------------
 Documentation updates:
 ---------------------
+
+Temporary GateRTion home page: https://github.com/OpenGATE/Gate/wiki/Gate-RTion-project
+A page dedicated to GateRTion should soon be added to the OpenGATE collaboration home page.
 
 GATE home page:	        http://www.opengatecollaboration.org
 GATE wiki:              http://wiki.opengatecollaboration.org/index.php/Main_Page
