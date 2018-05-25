@@ -1,6 +1,13 @@
+GateRTion is a special release of Gate, part of a project to start using Gate
+as an independent dose calculator in a clinical setting at MedAustron and other
+light ion beam radiotherapy clinics.
+
+Temporary GateRTion home page:
+https://github.com/OpenGATE/Gate/wiki/Gate-RTion-project
 
 
-https://github.com/OpenGATE/Gate is the public repository of the GATE software. 
+The public repository of the GATE software is:
+https://github.com/OpenGATE/Gate
 
 More details on: http://www.opengatecollaboration.org
 
