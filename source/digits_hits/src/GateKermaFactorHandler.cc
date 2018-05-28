@@ -235,7 +235,9 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
   }
 
   // KF EXTRAPOLATION /////////////////////////////////////////////////////////
-  const double extrapEnergyThreshold = 1. * eV;
+  const double extrapEnergyThreshold = 0.025 * eV;
+  //const double extrapEnergyThreshold = 1. * eV;
+
   if (mKFExtrapolation && eEnergy <= extrapEnergyThreshold)
   {
     // FINDING TABLE ENTRY > EXTRAPENERGYTHRESHOLD ////////////////////////////
