@@ -71,13 +71,9 @@ public:
   G4int PrepareNextEvent();
   G4bool HasNextEvent();
 
-  //! This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
-  //! It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
-  GateCrystalHitsCollection* PrepareEndOfEvent();
+  //GateCrystalHitsCollection* PrepareEndOfEvent();
+ std::vector<GateCrystalHit> PrepareEndOfEvent();
 
-
-  //! This method must be called (normally by the application manager) after completion of a DigiGate acquisition
-  //! It closes the ROOT input file
   void TerminateAfterAcquisition();
 
   //! Get the hit file name
@@ -121,8 +117,8 @@ protected:
   GateCCHitFileReaderMessenger *m_messenger;    //!< Messenger;
 
 
-  GateCrystalHitsCollection* crystalCollection; //Hit collection
-  static const G4String theCrystalCollectionName;//name of the hit collection
+  std::vector<GateCrystalHit> vHitsCollection; //Hit collection
+
 
 private:
   static GateCCHitFileReader*   instance;       //!< Instance of the GateHitFielReader singleton

@@ -31,7 +31,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 #endif
     {
 
-          //G4cout << " Ideal adder outputPulseSize"<<outputPulseList.size()<<G4endl;
+          //G4cout << " Ideal adder "<<outputPulseList.size()<<G4endl;
 
 
         if(inputPulse->GetParentID()==0)
@@ -115,7 +115,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                                    break;
                                 }
                                 else{
-                                    iter++;
+                                    ++iter;
                                     if (iter == outputPulseList.rend())
                                     {
                                         //G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list\n";
@@ -141,7 +141,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                         else{
                             //firs secondary without  process creator corresponding to  the saved one. Keep looking
 
-                            iter++;
+                            ++iter;
                             if (iter == outputPulseList.rend())
                             {
                                 //G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list\n";
@@ -154,7 +154,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 
                     }
                     else{
-                        iter++;
+                        ++iter;
                         if (iter == outputPulseList.rend())
                         {
                             //G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list\n";

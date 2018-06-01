@@ -20,7 +20,7 @@
 #include "GateCCRootDefs.hh"
 
 GateCCHitFileReader* GateCCHitFileReader::instance = 0;
-const G4String GateCCHitFileReader::theCrystalCollectionName="crystalCollection";
+
 
 
 // Private constructor: this function should only be called from GetInstance()
@@ -145,10 +145,13 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
   // Store the current runID and eventID
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
-  if(crystalCollection){
-    delete crystalCollection;
+
+
+  while (vHitsCollection.size()) {
+   vHitsCollection.erase(vHitsCollection.end()-1);
   }
-  crystalCollection = new GateCrystalHitsCollection("CCActorVolume",theCrystalCollectionName);
+
+
 
   // We've reached the end-of-file
   if ( (currentEventID==-1) && (currentRunID==-1) )
@@ -179,17 +182,18 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
 
 // This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
 // It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
-GateCrystalHitsCollection*  GateCCHitFileReader::PrepareEndOfEvent()
+std::vector<GateCrystalHit> GateCCHitFileReader::PrepareEndOfEvent()
 {
   // We loop until the hit-queue is empty
   // Each hit is inserted into the crystalSD hit-collection, then removed from the queue
+    //Duplciatinf thing puting from a vector to another vector ?? To be fixed
   while (m_hitQueue.size()) {
 
-
-    crystalCollection->insert(m_hitQueue.front());
+    vHitsCollection.push_back(*m_hitQueue.front());
+    //crystalCollection->insert(m_hitQueue.front());
     m_hitQueue.pop();
   }
-  return crystalCollection;
+  return vHitsCollection;
 }
 
 

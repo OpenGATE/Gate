@@ -169,7 +169,9 @@ void GateDigitizer::StorePulseList(GatePulseList* newPulseList)
   if (newPulseList) {
     if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::StorePulseList]: Storing new pulse-list '" << newPulseList->GetListName() << "'\n";
+       if(newPulseList->size()>0){
     m_pulseListVector.push_back(newPulseList);
+       }
   }
 }
 //-----------------------------------------------------------------
@@ -398,13 +400,6 @@ void GateDigitizer::Digitize()
 
   GateCrystalHitsCollection* CHC;
   CHC = GateOutputMgr::GetInstance()->GetCrystalHitCollection();
-  Digitize(CHC);
-}
-
-void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
-
-  if ( !IsEnabled() )
-    return;
 
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: starting\n";
@@ -415,13 +410,48 @@ void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
   //If I do not erase pulse list I lossinfo of evtID, time,.. at singles level pulse
   ErasePulseListVector();
 
+  m_hitConvertor->ProcessHits(CHC);
 
-  //G4cout << "[GateDigitizer::Digitize]: crystal collection entries  "<<hitCollection->entries()<<"\n";
-  //G4cout << "[GateDigitizer::Digitize]: launching hit conversion\n";
-  m_hitConvertor->ProcessHits(hitCollection);
+  DigitizePulses();
 
-  //G4cout << "[GateDigitizer::Digitize]:  hitconvertor pulse vector size+ "<<m_pulseListVector.size()<<G4endl;
-  // Have the hits processed by the pulse-processor chains
+
+ for (size_t i=0; i<m_digiMakerList.size() ; ++i) {
+    if (nVerboseLevel>1)
+      G4cout << "[GateDigitizer::Digitize]: launching digitizer module '" << m_digiMakerList[i]->GetObjectName() << "'\n";
+    m_digiMakerList[i]->Digitize();
+  }
+
+  if (nVerboseLevel>1)
+    G4cout << "[GateDigitizer::Digitize]: completed\n";
+
+}
+
+
+void GateDigitizer::Digitize(std::vector<GateCrystalHit> vHitsCollection)
+{
+  if ( !IsEnabled() )
+    return;
+
+
+  if (nVerboseLevel>1)
+    G4cout << "[GateDigitizer::Digitize]: starting\n";
+
+  //if (nVerboseLevel>1)
+    //G4cout << "[GateDigitizer::Digitize]: erasing pulse-lists\n";
+
+  //If I do not erase pulse list I lossinfo of evtID, time,.. at singles level pulse
+  ErasePulseListVector();
+
+  m_hitConvertor->ProcessHits(vHitsCollection);
+
+  //G4cout << "hitconvertor finished";
+  DigitizePulses();
+
+}
+
+void GateDigitizer::DigitizePulses()  {
+
+
   size_t i;
  // G4cout << "[GateDigitizer::Digitize]:Gate chain number"<<GetChainNumber()<<"\n";
   for (i=0; i<GetChainNumber() ; ++i) {
@@ -449,15 +479,6 @@ void GateDigitizer::Digitize(GateCrystalHitsCollection * hitCollection)  {
   }
 
 
-
-  for (i=0; i<m_digiMakerList.size() ; ++i) {
-    if (nVerboseLevel>1)
-      G4cout << "[GateDigitizer::Digitize]: launching digitizer module '" << m_digiMakerList[i]->GetObjectName() << "'\n";
-    m_digiMakerList[i]->Digitize();
-  }
-
-  if (nVerboseLevel>1)
-    G4cout << "[GateDigitizer::Digitize]: completed\n";
 }
 //-----------------------------------------------------------------
 

@@ -62,7 +62,7 @@ public:
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
+
   virtual void EndOfEventAction(const G4Event*);
 
   //-----------------------------------------------------------------------------
@@ -70,8 +70,8 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
-  virtual void Initialize(G4HCofThisEvent* HCE);
-  virtual void EndOfEvent(G4HCofThisEvent*);
+  virtual void Initialize(G4HCofThisEvent* ){};
+  virtual void EndOfEvent(G4HCofThisEvent*){};
 
   int GetNDaughtersBB() {return nDaughterBB;}
 
@@ -101,47 +101,35 @@ protected:
 
 
   void OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss);
-  void OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> > &ss);
+ void OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> > &ss);
 
   void SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string layerN);
   void SaveAsTextSingleEvt(GateSingleDigi *aSin);
   void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin,std::ofstream& ossC);
-  ///UNIFY
   void closeTextFiles();
-//   void closeTextFile4Singles();
-//  void closeTextFile4Coinc();
-  //void writeCoincidences(std::vector<GateCoincidencePulse*>);
 
-
+  std::vector<G4String> layerNames;
+  int slayerID;
+  G4String mHistName;
 
   TFile * pTfile;
 
   GateCCHitTree*  m_hitsTree;
   GateCCRootHitBuffer  m_hitsBuffer;
 
-  GateCCHitTree*  m_hitsAbsTree;
-  GateCCRootHitBuffer  m_hitsAbsBuffer;
-
-  GateCCHitTree*  m_hitsScatTree;
-  GateCCRootHitBuffer  m_hitsScatBuffer;
-
-  std::vector<G4String> layerNames;
-  bool mSaveSinglesManualTreeFlag;
-  std::vector<std::unique_ptr<TTree>> pSingles;
-
   GateCCSingleTree*  m_SingleTree;
   GateCCRootSingleBuffer  m_SinglesBuffer;
 
   GateCCRootCoincBuffer  m_CoincBuffer;
-  G4int coincID;
   GateCCCoincTree*  m_CoincTree;
-  std::vector<G4int> m_coincIDChain;
+
+
   std::vector<std::unique_ptr<GateCCCoincTree>> m_coincChainTree;
+   // I think thath I can use the sam ebuffer maybe ?
+    //std::vector<GateCCRootCoincBuffer> m_coincChainBuffer;
 
 
 
-  int slayerID;
-  G4String mHistName;
 
   unsigned int nDaughterBB;
   G4String attachPhysVolumeName;
@@ -175,28 +163,21 @@ protected:
    G4ThreeVector hitPostLocalPos;
 
 
+   //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
+   std::vector<GateCrystalHit> hitsList;
 
-  //Test for readout output (Manual singles)
-  double* edepInEachLayerEvt;
 
-  double* xPos_InEachLayerEvt;
-  double* yPos_InEachLayerEvt;
-  double* zPos_InEachLayerEvt;
 
-  GateCrystalHitsCollection* crystalCollection; //Hit collection
-  static const G4String theCrystalCollectionName;//name of the hit collection
-  // int m_collectionID;
 
-  GatePulseList* crystalPulseList;
-  static const G4String thedigitizerName;
-  GatePulseProcessorChain* chain;
-  static const G4String thedigitizerSorterName;
-  GateCoincidenceSorter* coincidenceSorter;
+ // GatePulseList* crystalPulseList;
+   static const G4String thedigitizerName;
+     GatePulseProcessorChain* chain;
+    static const G4String thedigitizerSorterName;
+     GateCoincidenceSorter* coincidenceSorter;
 
-  void readPulses(GatePulseList* pPulseList);
-  void processPulsesIntoSinglesTree();
+     void readPulses(GatePulseList* pPulseList);
+     void processPulsesIntoSinglesTree();
 
-  GateActorMessenger* pMessenger;
 
   //messenger
   bool mSaveHitsTreeFlag;
@@ -219,12 +200,16 @@ protected:
   std::ofstream ossHits;
   std::ofstream ossSingles;
   std::ofstream ossCoincidences;
-  //std::vector<std::ofstream> ossCoincidenceChains;
   std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
   std::vector<G4String> coincidenceChainNames;
 
+
+
+
+ GateActorMessenger* pMessenger;
   G4EmCalculator * emcalc;
   GateDigitizer* m_digitizer;
+
 };
 
 MAKE_AUTO_CREATOR_ACTOR(ComptonCameraActor,GateComptonCameraActor)
