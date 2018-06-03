@@ -46,6 +46,9 @@ ENDIF()
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
+IF(Geant4_multithreaded_FOUND)
+    MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+ENDIF()
 #OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
 #IF(Geant4_multithreaded_FOUND)
     #IF(GATE_ALLOW_MT_GEANT4)
@@ -72,8 +75,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.2 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.3)
-  MESSAGE("Warning! GATE version 8.0 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.2 or 10.3 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4)
+  MESSAGE("Warning! GATE version 8.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.4 or 10.4 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -207,8 +210,7 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/Matrix/*.cc
-  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc
-  ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc)
 
 FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
@@ -246,7 +248,7 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_20,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
+  SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
@@ -259,7 +261,6 @@ INSTALL(TARGETS Gate DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-#option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
 IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
   INCLUDE(cmake-modules/GateExternalData.cmake)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
@@ -267,10 +268,6 @@ IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
   ADD_SUBDIRECTORY(benchmarks)
   ExternalData_add_target(GateBenchmarkData)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-#IF(GATE_DOWNLOAD_EXAMPLES_DATA)
-  #ADD_SUBDIRECTORY(examples)
-  #ExternalData_add_target(GateExampleData)
-#ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 #=========================================================
 
 

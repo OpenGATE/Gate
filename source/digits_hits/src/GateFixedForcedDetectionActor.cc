@@ -416,10 +416,15 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
   const double sdd = oneProjGeometry->GetSourceToDetectorDistances()[0];
   const double sid = oneProjGeometry->GetSourceToIsocenterDistances()[0];
-  CalculatePropagatorImage(sdd-sid, energyList);
+  double magnification = 1.;
+  if (sdd != 0.) // Divergent geometry
+    {
+      magnification = sdd / sid;
+    }
+  CalculatePropagatorImage((sdd-sid)/magnification, magnification, energyList);
 }
 
-void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
+void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, double magnification, std::vector<double> & energyList)
 {
   /* creator propagator complex image */
   InputImageType::Pointer propagatorImageRe;
@@ -439,8 +444,8 @@ void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std
 
   InputPixelType wavelength = h_Planck * c_light / energyList[0];
 
-  InputPixelType fsamplex = 1./mPropagatorImage->GetSpacing()[0];
-  InputPixelType fsampley = 1./mPropagatorImage->GetSpacing()[1];
+  InputPixelType fsamplex = magnification / mPropagatorImage->GetSpacing()[0];
+  InputPixelType fsampley = magnification / mPropagatorImage->GetSpacing()[1];
   unsigned int mf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[0];
   unsigned int nf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[1];
   InputPixelType fx;
