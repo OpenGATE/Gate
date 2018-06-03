@@ -147,8 +147,8 @@ G4bool GateMergedVolumeActor::ProcessHits(G4Step * step , G4TouchableHistory* )
       // Kill the track and set the position of the new track on the merged volume
       theStepMgr->GetTrack()->SetWeight( 0 );
       // theStepMgr->GetTrack()->SetKineticEnergy( 0.0 );
-      // theStepMgr->GetTrack()->SetTrackStatus( fStopAndKill );
-      theStepMgr->GetTrack()->SetTrackStatus( fKillTrackAndSecondaries );
+      theStepMgr->GetTrack()->SetTrackStatus( fStopAndKill );
+      // theStepMgr->GetTrack()->SetTrackStatus( fKillTrackAndSecondaries );
 
       // Create a new particle
       G4DynamicParticle* dynParticle = new G4DynamicParticle( particleDefinition, preStepDir, trackEnergy );
@@ -190,8 +190,8 @@ G4bool GateMergedVolumeActor::ProcessHits(G4Step * step , G4TouchableHistory* )
       // Kill the track and set the position of the new track on the merged volume
       theStepMgr->GetTrack()->SetWeight( 0 );
       // theStepMgr->GetTrack()->SetKineticEnergy( 0.0 );
-      // theStepMgr->GetTrack()->SetTrackStatus( fStopAndKill );
-      theStepMgr->GetTrack()->SetTrackStatus( fKillTrackAndSecondaries );
+      theStepMgr->GetTrack()->SetTrackStatus( fStopAndKill );
+      // theStepMgr->GetTrack()->SetTrackStatus( fKillTrackAndSecondaries );
 
       // Create a new particle
       G4DynamicParticle* dynParticle = new G4DynamicParticle( particleDefinition, preStepDir, trackEnergy );
