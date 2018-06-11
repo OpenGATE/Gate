@@ -426,7 +426,8 @@ See LICENSE.md for further details
 
 //-----------------------------------------------------------
 #define DD(a) GateMessage("Core", 0 , #a " = [ " << a << " ]\n");
-#define DDV(a,n) { GateMessage("Core", 0 , #a " = [ "; for(unsigned int _i_=0; _i_<n; _i_++) { std::cout << a[_i_] << " "; }; std::cout << " ]\n");}
+#define DDV(a,n) { GateMessage("Core", 0 , << #a " = [ "; for(unsigned int _i_=0; _i_<n; _i_++) { std::cout << a[_i_] << " "; }; std::cout << " ]\n");}
+#define DDF() { std::cout << "--> Function " << __func__ << std::endl; }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
