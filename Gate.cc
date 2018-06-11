@@ -159,7 +159,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "*************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version 8.1 (April 2018)" << G4endl);
+  GateMessage("Core", 0, " GATE version 8.1.p01 (April 2018)" << G4endl);
   GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << G4endl);
@@ -253,7 +253,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 8.0" << std::endl;
+          std::cout << "Gate version is 8.1.p01" << std::endl;
           exit(0);
           break;
         case 'a':
