@@ -338,18 +338,22 @@ void GateProjectionSet::Fill(G4int energyWindowID, G4int headID, G4double x, G4d
   ProjectionDataType& dest = m_data[energyWindowID][headID][binX + binY * m_pixelNbX];
   if (dest < USHRT_MAX)
     dest++;
-  else
-    G4cerr << "[GateProjectionSet]: bin ("
-           << binX
-           << ","
-           << binY
-           << ") of energy window "
-           << energyWindowID
-           << "and head "
-           << headID
-           << " has reached its maximum value ("
-           << USHRT_MAX
-           << "): hit will be lost!\n";
+  else {
+    static bool already_here = false;
+    if (!already_here)
+      G4cerr << "[GateProjectionSet]: bin ("
+             << binX
+             << ","
+             << binY
+             << ") of energy window "
+             << energyWindowID
+             << "and head "
+             << headID
+             << " has reached its maximum value ("
+             << USHRT_MAX
+             << "): hit will be lost!\n";
+    already_here = true;
+  }
 
   // Update the maximum-counter for this energy window and this head
   if (dest > m_dataMax[energyWindowID][headID])
