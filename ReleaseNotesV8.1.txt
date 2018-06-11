@@ -1,16 +1,16 @@
-#  *ooooOOOO0000OOOOoooooo*  #
+#  *ooooOOOO0000OOOOoooo*  #
 #  *                    *  #
-#  *    GATE v8.1       *  #
+#  *     GATE v8.1      *  #
 #  *                    *  #
-#  *ooooOOOO0000OOOOoooooo*  #
+#  *ooooOOOO0000OOOOoooo*  #
 
 # *--------------* #
-# * 03/19/2018 * #
+# *  04/23/2018  * #
 # *--------------* #
 
 
 -------------------------------
-General set-up and installation:
+General set-up and installation
 -------------------------------
 
 Check the README file to have all informations related to the installation and compilation for this version.
@@ -19,9 +19,9 @@ Check the README file to have all informations related to the installation and c
 --I M P O R T A N T --
 ----------------------
 
--> In the main macro file configuration, the sources MUST be define AFTER /gate/run/initialize command line <-
+-> In the main macro file configuration, the sources MUST be defined AFTER /gate/run/initialize command line <-
 
--> For collimator design, the Fan Beam option is out of order and should be debug ASAP <-
+-> For collimator design, the Fan Beam option is out of order and should be debugged ASAP <-
 
 ------------------------------
 New developments and features
@@ -45,32 +45,32 @@ https://github.com/OpenGATE/GateContrib/tree/master/imaging/CT/Fresnel_FFD
 
 
 -----------------------------
-Bugs fixes
+Bugs fixed
 -----------------------------
 
-- doseToWater code cleaned in GateDoseActor
-- Divers corrected bugs: see the "issues" section on the GitHub
+- Various corrected (and still open) bugs: see the "issues" section on the GitHub
+- DoseToWater code cleaned in GateDoseActor
 - DoseActor NumberOfHits + setOverWriteFilesFlag now corrected
-- Licence files updated
+- License files updated
 - Volume rotation with isocenter (isocenter rotation is now optional via messenger)
-- allow GPS energy range with ene/min & ene/max
-- PhaseSpace : no branch PDGCode if not needed
-- Revisited voxellized source
+- Allow GPS energy range with ene/min & ene/max
+- Revisited voxelized source
+- PhaseSpace: no branch PDGCode if not needed
 - PhaseSpace: allow to start with a given particle id
 - PhaseSpace: add option to project particle on a sphere
-- write head/energy/run info in mhd header of interfile projection
-- allow to perform volume rotation *before* repeater rotation (messenger)
-- default voxel source scale is 1.0
-
+- Write head/energy/run info in mhd header of interfile projection
+- Allow to perform volume rotation *before* repeater rotation (messenger)
+- Default voxel source scale is 1.0
 
 
 ---------------------
 Documentation updates:
 ---------------------
 
-Generic page: 		        http://www.opengatecollaboration.org/index.php/Main_Page
-Dedicated wiki page: 	    http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.1
-Installation guide:       http://wiki.opengatecollaboration.org/index.php/Installation_Guide_V8.0
+GATE home page:	        http://www.opengatecollaboration.org
+GATE wiki:              http://wiki.opengatecollaboration.org/index.php/Main_Page
+Dedicated wiki page:    http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.1
+Installation guide:     http://wiki.opengatecollaboration.org/index.php/Installation_Guide_V8.1
 
 
 -------------------------
@@ -79,5 +79,3 @@ Examples and other stuffs:
 
 All examples are available on the github repository:
 https://github.com/OpenGATE/GateContrib
- 
-
