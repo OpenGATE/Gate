@@ -49,6 +49,11 @@ GateTessellated::~GateTessellated()
 
 G4LogicalVolume* GateTessellated::ConstructOwnSolidAndLogicalVolume( G4Material* mater, G4bool flagUpdateOnly )
 {
+  // Update: Occurs when clock has changed, to trigger movement. Movement is implemented
+  //         on the GateVVolume level, therefore we don't need to do anything.
+  if (flagUpdateOnly && m_tessellated_log)
+    return m_tessellated_log;
+
   if (GetVerbosity()>=2)
     {
       G4cout << "GateTessellated::ConstructOwnSolidAndLogicalVolume" << G4endl;
@@ -86,10 +91,10 @@ G4LogicalVolume* GateTessellated::ConstructOwnSolidAndLogicalVolume( G4Material*
 
         }
     }
-  else {
-    // Update mode: refresh the dimensions of the solid
-    GateMessage("Warning", 0, "GateTessellated::ConstructOwnSolidAndLogicalVolume update mode not implemented" << G4endl);
-  }
+//  else {
+//    // Update mode: refresh the dimensions of the solid
+//    GateMessage("Warning", 0, "GateTessellated::ConstructOwnSolidAndLogicalVolume update mode not implemented" << G4endl);
+//  }
 
   return m_tessellated_log;
 }
