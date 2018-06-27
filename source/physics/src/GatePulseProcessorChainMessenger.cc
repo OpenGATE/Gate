@@ -53,6 +53,7 @@ See LICENSE.md for further details
 #include "GateStripSpatialDiscretization.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
+#include "GateEnergyThresholder.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -96,7 +97,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
+   static G4String theList = "readout pileup thresholder energyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
   return theList;
 }
 
@@ -122,6 +123,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateDiscretizer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="thresholder")
     newProcessor = new GateThresholder(GetProcessorChain(),newInsertionName,50.*keV);
+ else if (childTypeName=="energyThresholder")
+    newProcessor = new GateEnergyThresholder(GetProcessorChain(),newInsertionName,50.*keV);
   else if (childTypeName=="upholder")
     newProcessor = new GateUpholder(GetProcessorChain(),newInsertionName,150.*keV);
   else if (childTypeName=="deadtime")
