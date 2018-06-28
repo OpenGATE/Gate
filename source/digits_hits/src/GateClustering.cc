@@ -124,7 +124,7 @@ if(m_flgMRejection==1){
 
      for(unsigned int i=0; i<outputPulseList->size()-1; i++){
               for(unsigned int k=i+1;k<outputPulseList->size(); k++){
-                  if(outputPulseList->at(i)->GetVolumeID() == outputPulseList->at(i)->GetVolumeID()){
+                  if(outputPulseList->at(i)->GetVolumeID() == outputPulseList->at(k)->GetVolumeID()){
                       flagM=1;
                       break;
 
