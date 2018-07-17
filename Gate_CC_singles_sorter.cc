@@ -31,18 +31,20 @@ int main(int argc, char *argv[])
           << "Gate_CC_singles_sorter" << std::endl
           << "Gate for Compton Camera" << std::endl
           << "Process single to provide coincidences" << std::endl
-          << "Usage : " << argv[0] << " <singlesInput.root> <coincidenceOutput.root> <options.mac>" << std::endl;
+          << "Usage : " << argv[0] << " <singlesInput.root> <coincidenceOutput.root> <options.mac> absorberSDVolName" << std::endl;
 
 
     // Get user parameters
-    if (argc != 4) {
-        std::cout << "Need 4 parameters" << std::endl
+    if (argc != 5) {
+        std::cout << "Need 5 parameters" << std::endl
                   << usage.str() << std::endl;
         exit(0);
     }
     std::string singles_filePathName=argv[1];
     std::string coinc_filePathName = argv[2];
     std::string options_macrofile = argv[3];
+    std::string absorberSDName = argv[4];
+
 
 
     // GATE Initialisation
@@ -81,6 +83,8 @@ int main(int argc, char *argv[])
     G4String command = "/control/execute ";
     UImanager->ApplyCommand( command + options_macrofile );
     std::cout << "Done" << std::endl;
+
+     coincidenceSorter->SetAbsorberSDVol(absorberSDName);
 
 
      //Prepare output file
