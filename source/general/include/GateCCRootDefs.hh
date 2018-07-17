@@ -65,6 +65,21 @@ public:
   inline void SetEdep(G4double anEnergy)
   { edep = anEnergy / MeV;}
 
+
+  //! Returns the energy deposition in G4 units (conversion from MeVs)
+  inline G4double GetEnergyIniT() const
+  { return energyIniT * MeV;}
+  //! Set the energy deposition from a value given in G4 units (conversion into MeVs)
+  inline void SetEnergyIniT(G4double aEini)
+  { energyIniT = aEini / MeV;}
+
+  //! Returns the energy deposition in G4 units (conversion from MeVs)
+  inline G4double GetEnergyFin() const
+  { return energyFin * MeV;}
+  //! Set the energy deposition from a value given in G4 units (conversion into MeVs)
+  inline void SetEnergyFin(G4double aEnergy)
+  { energyFin = aEnergy / MeV;}
+
   //! Returns the step length in G4 units (conversion from millimeters)
   inline G4double GetStepLength() const
   { return stepLength * mm;}
@@ -120,6 +135,11 @@ public:
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
   Char_t  layerName[40];
   Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
+
+    Float_t  energyFin;
+    Float_t  energyIniT;
+    Char_t   postStepProcess[40];
+
   //@}
 
 };
@@ -169,6 +189,8 @@ public:
   Int_t    eventID;
   Double_t time;
   Float_t  energy;
+  Float_t  energyFin;
+  Float_t  energyIni;
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;

@@ -28,6 +28,8 @@ void GateCCRootHitBuffer::Clear()
   time            = 0./s;
   trackLocalTime  = 0./s;
   edep            = 0./MeV;
+  energyFin           = 0./MeV;
+  energyIniT            = 0./MeV;
   stepLength      = 0./mm;
   trackLength      = 0./mm;
   posX            = 0./mm;
@@ -40,6 +42,7 @@ void GateCCRootHitBuffer::Clear()
   runID           = -1;
   strcpy (layerName, " ");
   strcpy (processName, " ");
+   strcpy (postStepProcess, " ");
 
   size_t d;
   for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
@@ -69,6 +72,11 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
   strcpy (processName, aHit->GetProcess().c_str());
   strcpy (layerName, layerN.c_str());
    aHit->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
+
+    strcpy (postStepProcess, aHit->GetPostStepProcess().c_str());
+    SetEnergyFin(aHit->GetEnergyFin());
+    SetEnergyIniT(aHit->GetEnergyIniTrack());
+
 }
 //-----------------------------------------------------------------------------
 
@@ -94,6 +102,11 @@ GateCrystalHit* GateCCRootHitBuffer::CreateHit()
   aHit->SetRunID(runID);
   aHit->SetProcess(processName);
    aHit->SetVolumeID(	      	aVolumeID);
+
+   aHit->SetPostStepProcess( postStepProcess);
+   aHit->SetEnergyFin(GetEnergyFin());
+   aHit->SetEnergyIniTrack(GetEnergyIniT());
+
   return aHit;
 }
 //-----------------------------------------------------------------------------
@@ -127,6 +140,12 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("processName",    (void *)buffer.processName,"processName/C");
   Branch("layerName",     (void *)buffer.layerName,"layername/C");
   Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+
+
+   Branch("energyFinal",           &buffer.energyFin,"energyFinal/F");
+   Branch("energyIniT",           &buffer.energyIniT,"energyIniT/F");
+   Branch("postStepProcess",      (void *)buffer.postStepProcess,"postStepProcess/C");
+
 }
 //-----------------------------------------------------------------------------
 
@@ -153,6 +172,10 @@ void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffe
   hitTree->SetBranchAddress("processName",&buffer.processName);
   hitTree->SetBranchAddress("layerName",&buffer.layerName);
    hitTree->SetBranchAddress("volumeID",buffer.volumeID);
+
+   hitTree->SetBranchAddress("energyFinal",&buffer.energyFin);
+   hitTree->SetBranchAddress("energyIniT",&buffer.energyIniT);
+   hitTree->SetBranchAddress("postStepProcess",&buffer.postStepProcess);
 }
 //-----------------------------------------------------------------------------
 
@@ -164,6 +187,8 @@ void GateCCRootSingleBuffer::Clear()
   eventID          = -1;
   time             = 0./s;
   energy           = 0./MeV;
+  energyIni           = 0./MeV;
+  energyFin           = 0./MeV;
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
@@ -187,6 +212,8 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     eventID       =  aDigi->GetEventID();
     time          =  aDigi->GetTime()/s;
     energy        =  aDigi->GetEnergy()/MeV;
+    energyIni     =  aDigi->GetIniEnergy()/MeV;
+    energyFin     =  aDigi->GetFinalEnergy()/MeV;
     globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
     globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
     globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
@@ -243,6 +270,9 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
   //Branch("layerID",     &buffer.layerID,"layerID/I");
   Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
    Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+
+   Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
+    Branch("energyIni",         &buffer.energyIni,"energyIni/F");
 }
 //-----------------------------------------------------------------------------
 
@@ -255,6 +285,8 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
     singlesTree->SetBranchAddress("eventID",&buffer.eventID);
     singlesTree->SetBranchAddress("time",&buffer.time);
     singlesTree->SetBranchAddress("energy",&buffer.energy);
+    singlesTree->SetBranchAddress("energyFinal",&buffer.energyFin);
+    singlesTree->SetBranchAddress("energyIni",&buffer.energyIni);
     singlesTree->SetBranchAddress("globalPosX",&buffer.globalPosX);
     singlesTree->SetBranchAddress("globalPosY",&buffer.globalPosY);
     singlesTree->SetBranchAddress("globalPosZ",&buffer.globalPosZ);
@@ -303,6 +335,8 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
 
 
   aSingle->SetEnergy(energy);
+  aSingle->SetIniEnergy(energyIni);
+  aSingle->SetFinalEnergy(energyFin);
   //G4cout<<"antes del setvolID to the aSingle"<<G4endl;
   aSingle->SetVolumeID(aVolumeID);
 
@@ -318,6 +352,8 @@ void GateCCRootCoincBuffer::Clear()
   eventID          = -1;
   time             = 0./s;
   energy           = 0./MeV;
+  energyFin     =  0./MeV;
+   energyIni     = 0./MeV;
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;

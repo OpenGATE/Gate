@@ -105,6 +105,17 @@ public:
       // HDS : septal penetration
       inline void  SetNSeptal(G4int n)    { m_pulse.SetNSeptal(n); }
       inline G4int GetNSeptal() const     { return m_pulse.GetNSeptal(); }
+
+	//AE: to use offline the idealAdderComptPhot and recover the initial energy of the photon (initial energy of the primary track) and the energy after the interaction (Megalib comparison)
+      inline void     SetFinalEnergy(G4double value)      { m_pulse.SetEnergyFin(value); }
+      inline G4double GetFinalEnergy() const                   { return m_pulse.GetEnergyFin(); }
+
+      inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
+        inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+
+
+
+  
      
 
 private:
