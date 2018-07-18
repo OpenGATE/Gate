@@ -74,8 +74,12 @@ public:
   std::vector<G4String> listOfActorName;
   std::vector<G4String> listOfEnabledActorType;
   std::vector<G4String> listOfEnabledActorName;
+  // Add alias
+  std::vector<G4String> listOfAliases;
+  std::vector<bool> listOfUsedAliases;
   // Member functions
   void InsertAliases();
+  void AddAliases();
   void InsertSubMacros(std::ofstream& output,G4int splitNumber,std::ofstream& splitfile);
   void DealWithTimeCommands(std::ofstream& output,G4int splitNumber,std::ofstream& splitfile);
   void IgnoreRandomEngineCommand();

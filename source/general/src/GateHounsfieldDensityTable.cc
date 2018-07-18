@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -49,7 +49,7 @@ double GateHounsfieldDensityTable::FindMaxDensityDifference(double HMin, double 
   int j=0;
   while (j<n && HMax>mH[j]) j++;
   j--;
-  for(int x=i; x<j; x++) {
+  for(int x=i; x<=j; x++) {
     // DD(G4BestUnit(mD[x], "Volumic Mass"));
     if (mD[x] < dMin) dMin = mD[x];
     if (mD[x] > dMax) dMax = mD[x];

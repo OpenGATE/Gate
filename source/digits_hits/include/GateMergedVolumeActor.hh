@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 
@@ -53,6 +53,7 @@ class GateMergedVolumeActor : public GateVActor
     std::vector<G4String>             mVolToMerge;
     std::vector<G4VSolid*>            mSolidVolToMerge;
     std::vector<G4VPhysicalVolume*>   mPhysicalVolToMerge;
+    std::vector<G4LogicalVolume*>     mLogicalVolToMerge;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(MergedVolumeActor,GateMergedVolumeActor)

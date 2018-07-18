@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 
@@ -40,8 +40,13 @@ GatePulseProcessorChain::GatePulseProcessorChain( GateDigitizer* itsDigitizer,
 
 
 GatePulseProcessorChain::~GatePulseProcessorChain()
-{  
-    delete m_messenger;
+{
+  for (auto processor = theListOfNamedObject.begin(); processor != theListOfNamedObject.end(); ++processor)
+  {
+    GateMessage("Core", 5, "~GatePulseProcessorChain -- delete module: " << (*processor)->GetObjectName() << Gateendl );
+    delete (*processor);
+  }
+  delete m_messenger;
 }
 
 
