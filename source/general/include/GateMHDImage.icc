@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -20,6 +20,10 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
+  // Convert to Int
+  if (typeid(PixelType) == typeid(int)) {
+    m_MetaImage.ConvertElementDataToIntensityData(MET_INT);
+  }
   // Convert to Float
   if (typeid(PixelType) == typeid(float)) {
     m_MetaImage.ConvertElementDataToIntensityData(MET_FLOAT);
@@ -37,7 +41,12 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData,bool  changeExtension,bool isARF,int numberOfARFFFDHeads)
+void GateMHDImage::WriteHeader(std::string filename,
+                               GateImageT<PixelType> * image,
+                               bool writeData,
+                               bool changeExtension,
+                               bool isARF,
+                               int numberOfARFFFDHeads)
 {
   MetaImage m_MetaImage;
   int ds[3];

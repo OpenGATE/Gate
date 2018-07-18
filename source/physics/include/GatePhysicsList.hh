@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
 
   Modified version 11-10-13 for physics mixed with dna
   Author: LPC Clermont-Fd
@@ -20,7 +20,7 @@
 #include "G4ProductionCutsTable.hh"
 #include "G4UnitsTable.hh"
 #include "G4ProductionCuts.hh"
-#include "G4EmProcessOptions.hh"
+#include "G4EmParameters.hh"
 
 #include "GateMessageManager.hh"
 #include "GateVProcess.hh"
@@ -125,7 +125,7 @@ protected:
   G4String mListOfPhysicsLists;
   G4double mLowEnergyRangeLimit;
 
-  G4EmProcessOptions *opt;
+  G4EmParameters *emPar;
 };
 
 

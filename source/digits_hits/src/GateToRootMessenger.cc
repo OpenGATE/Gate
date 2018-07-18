@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 /*  Optical Photons: V. Cuplov -  2012
@@ -18,6 +18,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateToRoot.hh"
 #include "GateOutputMgr.hh"
+#include "GateCoincidenceDigi.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
@@ -74,6 +75,30 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   SaveRndmCmd->SetGuidance("Set the flag for change the seed at each Run");
   SaveRndmCmd->SetGuidance("1. true/false");
 
+  cmdName = GetDirectoryName()+"setCoincidenceMask";
+  CoincidenceMaskCmd = new G4UIcommand(cmdName,this);
+  CoincidenceMaskCmd->SetGuidance("Set the mask for the coincidence ASCII output");
+  CoincidenceMaskCmd->SetGuidance("Sequence of 0 / 1");
+
+  m_coincidenceMaskLength = 100;
+  for (G4int iMask=0; iMask<m_coincidenceMaskLength; iMask++) {
+    G4UIparameter* MaskParam = new G4UIparameter("mask",'b',true);
+    MaskParam->SetDefaultValue(false);
+    CoincidenceMaskCmd->SetParameter(MaskParam);
+  }
+
+  cmdName = GetDirectoryName()+"setSingleMask";
+  SingleMaskCmd = new G4UIcommand(cmdName,this);
+  SingleMaskCmd->SetGuidance("Set the mask for the single ASCII output");
+  SingleMaskCmd->SetGuidance("Sequence of 0 / 1");
+
+  m_singleMaskLength = 100;
+  for (G4int iMask=0; iMask<m_singleMaskLength; iMask++) {
+    G4UIparameter* MaskParam = new G4UIparameter("mask",'b',true);
+    MaskParam->SetDefaultValue(false);
+    SingleMaskCmd->SetParameter(MaskParam);
+  }
+
 }
 //--------------------------------------------------------------------------
 
@@ -87,6 +112,8 @@ GateToRootMessenger::~GateToRootMessenger()
   delete RootNtupleCmd;
   delete RootOpticalCmd;
   delete SetFileNameCmd;
+  delete CoincidenceMaskCmd;
+  delete SingleMaskCmd;
   delete SaveRndmCmd;
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     delete OutputChannelCmdList[i];
@@ -115,6 +142,44 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 	} else if ( IsAnOutputChannelCmd(command) ) {
 
     ExecuteOutputChannelCmd(command,newValue);
+	}else if( command == CoincidenceMaskCmd ) {
+
+    std::vector<G4bool> maskVector;
+    const char* newValueChar = newValue;
+    //LF
+    //std::istrstream is((char*)newValueChar);
+    std::istringstream is((char*)newValueChar);
+    //
+    G4int tempIntBool;
+    G4int tempBool;
+    maskVector.clear();
+    for (G4int iMask=0; iMask<m_coincidenceMaskLength; iMask++) {
+      is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
+      tempBool = tempIntBool;
+      maskVector.push_back(tempBool);
+      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
+    }
+    GateCoincidenceDigi::SetCoincidenceASCIIMask( maskVector );
+
+  } else if (command == SingleMaskCmd) {
+
+    std::vector<G4bool> maskVector;
+    const char* newValueChar = newValue;
+    //LF
+    //std::istrstream is((char*)newValueChar);
+    std::istringstream is((char*)newValueChar);
+    //
+    G4int tempIntBool;
+    G4int tempBool;
+    maskVector.clear();
+    for (G4int iMask=0; iMask<m_singleMaskLength; iMask++) {
+      is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
+      tempBool = tempIntBool;
+      maskVector.push_back(tempBool);
+      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
+    }
+    GateSingleDigi::SetSingleASCIIMask( maskVector );
+  
   } else {
     GateOutputModuleMessenger::SetNewValue(command,newValue);
   }

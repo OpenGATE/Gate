@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -69,8 +69,8 @@ void GateImageWithStatistic::SetScaleFactor(double s) {
 
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::SetResolutionAndHalfSize(const G4ThreeVector & resolution,
-						      const G4ThreeVector & halfSize,
-						      const G4ThreeVector & position)  {
+                                                      const G4ThreeVector & halfSize,
+                                                      const G4ThreeVector & position)  {
 
   mValueImage.SetResolutionAndHalfSize(resolution, halfSize, position);
   if (mIsUncertaintyImageEnabled) {
@@ -94,7 +94,7 @@ void GateImageWithStatistic::SetResolutionAndHalfSize(const G4ThreeVector & reso
 
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::SetResolutionAndHalfSize(const G4ThreeVector & resolution,
-						      const G4ThreeVector & halfSize)  {
+                                                      const G4ThreeVector & halfSize)  {
   G4ThreeVector mPosition = G4ThreeVector(0.0, 0.0, 0.0);
   SetResolutionAndHalfSize(resolution, halfSize, mPosition);
 }
@@ -216,14 +216,19 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     mUncertaintyFilename = GetSaveCurrentFilename(mUncertaintyInitialFilename);
   }
 
-  static double factor=1.0;
-  if (mIsSquaredImageEnabled || mIsUncertaintyImageEnabled) {UpdateImage();}
+  double factor=1.0;
+  if (mIsSquaredImageEnabled || mIsUncertaintyImageEnabled) { UpdateImage(); }
+  if (mIsSquaredImageEnabled) { UpdateSquaredImage(); }
+  if (mIsUncertaintyImageEnabled) {
+    if (!mIsSquaredImageEnabled) UpdateSquaredImage();
+    UpdateUncertaintyImage(numberOfEvents);
+  }
 
   if (mIsValuesMustBeScaled == true) {
-    //DD(mScaleFactor);
     factor = mScaleFactor;
   }
 
+  // If normalize, change the scale factor according to max or sum
   if (normalise) {
     mIsValuesMustBeScaled = true;
     double sum = 0.0;
@@ -239,37 +244,31 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     if (mNormalizedToIntegral) SetScaleFactor(factor*1.0/sum);
   }
 
-  GateMessage("Actor", 2, "Save " << mFilename << " with scaling = "
-	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")\n");
+  GateMessage("Actor", 1, "Save " << mFilename << " with scaling = "
+              << mScaleFactor << "(" << mIsValuesMustBeScaled << ")\n");
 
-  if (!mIsValuesMustBeScaled) mValueImage.Write(mFilename);
+  if (!mIsValuesMustBeScaled) {
+    mValueImage.Write(mFilename);
+    if (mIsSquaredImageEnabled) mSquaredImage.Write(mSquaredFilename);
+  }
   else {
     GateImageDouble::iterator po = mScaledValueImage.begin();
+    GateImageDouble::iterator poo = mScaledSquaredImage.begin();
     GateImageDouble::iterator pi = mValueImage.begin();
     GateImageDouble::const_iterator pe = mValueImage.end();
     while (pi != pe) {
       *po = (*pi)*mScaleFactor;
+      *poo = (*pi)*mScaleFactor*mScaleFactor;
       ++pi;
       ++po;
+      ++poo;
     }
     mScaledValueImage.Write(mFilename);
-    SetScaleFactor(factor);
+    if (mIsSquaredImageEnabled) mScaledSquaredImage.Write(mSquaredFilename);
+    SetScaleFactor(factor); // set back previous scaling factor
   }
 
-  if (mIsSquaredImageEnabled) {
-    UpdateSquaredImage();
-    if (!mIsUncertaintyImageEnabled) { // only write if square enable and no uncertainty
-      if(!mIsValuesMustBeScaled)  mSquaredImage.Write(mSquaredFilename);
-      else mScaledSquaredImage.Write(mSquaredFilename);
-    }
-  }
-  if (mIsUncertaintyImageEnabled) {
-    if (!mIsSquaredImageEnabled) UpdateSquaredImage();
-    UpdateUncertaintyImage(numberOfEvents);
-    mUncertaintyImage.Write(mUncertaintyFilename);
-    mSquaredImage.Write(mSquaredFilename); // force output of squared dose for grid
-  }
-
+  if (mIsUncertaintyImageEnabled) mUncertaintyImage.Write(mUncertaintyFilename);
 }
 //-----------------------------------------------------------------------------
 
@@ -293,14 +292,8 @@ void GateImageWithStatistic::UpdateSquaredImage() {
   GateImageDouble::iterator pi = mSquaredImage.begin();
   GateImageDouble::iterator pt = mTempImage.begin();
   GateImageDouble::const_iterator pe = mSquaredImage.end();
-  GateImageDouble::iterator po;
-
-  if(mIsValuesMustBeScaled) po = mScaledSquaredImage.begin();
-
-  double fact = mScaleFactor*mScaleFactor;
   while (pi != pe) {
     *pi += (*pt)*(*pt);
-    if(mIsValuesMustBeScaled)  {  *po = (*pi)*fact;++po;}
     *pt = 0;
     ++pt;
     ++pi;
@@ -312,20 +305,14 @@ void GateImageWithStatistic::UpdateSquaredImage() {
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::UpdateUncertaintyImage(int numberOfEvents)
 {
-
   GateImageDouble::iterator po = mUncertaintyImage.begin();
   GateImageDouble::iterator pi;
   GateImageDouble::iterator pii;
   GateImageDouble::const_iterator pe;
 
-  if(mIsValuesMustBeScaled)  pi = mScaledValueImage.begin();
-  else pi = mValueImage.begin();
-
-  if(mIsValuesMustBeScaled) pii = mScaledSquaredImage.begin();
-  else pii = mSquaredImage.begin();
-
-  if(mIsValuesMustBeScaled)  pe = mScaledValueImage.end();
-  else pe = mValueImage.end();
+  pi = mValueImage.begin();
+  pii = mSquaredImage.begin();
+  pe = mValueImage.end();
 
   int N = numberOfEvents;
 
@@ -333,12 +320,10 @@ void GateImageWithStatistic::UpdateUncertaintyImage(int numberOfEvents)
     double squared = (*pii);
     double mean = (*pi);
 
-
     // Ma2002 p1679 : relative statistical uncertainty
     /*	if (mean != 0.0)
      *po = sqrt( (N*squared - mean*mean) / ((N-1)*(mean*mean)) );
      else *po = 1;*/
-
 
     // Chetty2006 p1250 : relative statistical uncertainty
     // exactly same than Ma2002

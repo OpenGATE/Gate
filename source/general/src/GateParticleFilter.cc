@@ -1,9 +1,8 @@
 /*----------------------
   Copyright (C): OpenGATE Collaboration
-
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GateParticleFilter.hh"
@@ -33,74 +32,109 @@ GateParticleFilter::~GateParticleFilter()
 //---------------------------------------------------------------------------
 G4bool GateParticleFilter::Accept(const G4Track *aTrack)
 {
-  G4bool accept = true;
+  std::vector<bool> acceptTemp;
 
-  // Test the particle type
+  // Test the particle name, keep the particle if the name is in the list
+  acceptTemp.push_back(true);
   if (!thePdef.empty()) {
-    accept = false;
+    acceptTemp.back()=false;
     for (size_t i = 0; i < thePdef.size(); i++) {
       if (thePdef[i] == aTrack->GetDefinition()->GetParticleName() ||
           (aTrack->GetDefinition()->GetParticleSubType() == "generic" && thePdef[i] == "GenericIon") ) {
         nFilteredParticles++;
-        accept = true;
+        acceptTemp.back()=true;
         break;
       }
     }
   } // end thePdef !empty
-  if (!accept) return false;
+  if (!acceptTemp.back()) return false;
 
-  // Test the particle Z
+  // Test the particle Z, keep the particle if Z is in the list
+  acceptTemp.push_back(true);
   if (!thePdefZ.empty()) {
-    accept = false;
+    acceptTemp.back()=false;
     for (size_t i = 0; i < thePdefZ.size(); i++) {
       if (thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber()) {
         nFilteredParticles++;
-        accept = true;
+        acceptTemp.back()=true;
         break;
       }
     }
   } // end thePdefZ !empty
-  if (!accept) return false;
+  if (!acceptTemp.back()) return false;
+
+  //// Test the particle A
+  acceptTemp.push_back(true);
+  if (!thePdefA.empty()) {
+    acceptTemp.back()=false;
+    for (size_t i = 0; i < thePdefA.size(); i++) {
+      if (thePdefA[i] == aTrack->GetDefinition()->GetAtomicMass()) {
+        nFilteredParticles++;
+        acceptTemp.back()=true;
+        break;
+      }
+    }
+  } // end thePdefA !empty
+  if (!acceptTemp.back()) return false;
+
+  // Test the particle PDG
+  acceptTemp.push_back(true);
+  if (!thePdefPDG.empty()) {
+    acceptTemp.back()=false;
+    for (size_t i = 0; i < thePdefPDG.size(); i++) {
+      if (thePdefPDG[i] == aTrack->GetDefinition()->GetPDGEncoding()) {
+        nFilteredParticles++;
+        acceptTemp.back()=true;
+        break;
+      }
+    }
+  } // end thePdefPFG !empty
+  if (!acceptTemp.back()) return false;
 
   // Test the parent
+  acceptTemp.push_back(true);
   if (!theParentPdef.empty()) {
-    accept = false;
+    acceptTemp.back()=false;
     GateTrackIDInfo * trackInfo =
       GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
     while (trackInfo) {
       for (size_t i = 0; i < theParentPdef.size(); i++) {
         if (theParentPdef[i] == trackInfo->GetParticleName()) {
           nFilteredParticles++;
-          accept = true;
+          acceptTemp.back()=true;
           break;
         }
       }
-      if (accept == true) break;
+      if (acceptTemp.back() == true) break;
       int id = trackInfo->GetParentID();
       trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(id);
     }
   } // end theParentPdef !empty
-  if (!accept) return false;
-
+  if (!acceptTemp.back()) return false;
 
   // Test the directParent
+  acceptTemp.push_back(true);
   if (!theDirectParentPdef.empty()) {
-    accept = false;
+    acceptTemp.back()=false;
     GateTrackIDInfo * trackInfo =
       GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
     if (trackInfo) {
       for (size_t i = 0; i < theDirectParentPdef.size(); i++) {
         if (theDirectParentPdef[i] == trackInfo->GetParticleName()) {
           nFilteredParticles++;
-          accept = true;
+          acceptTemp.back()=true;
           break;
         }
       }
     }
   } // end theDirectParentPdef !empty
+  if (!acceptTemp.back()) return false;
 
-  return accept;
+  // Keep the track !
+  return true;
 }
+//---------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::Add(const G4String &particleName)
@@ -110,6 +144,8 @@ void GateParticleFilter::Add(const G4String &particleName)
   }
   thePdef.push_back(particleName);
 }
+//---------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::AddZ(const G4int &particleZ)
@@ -121,6 +157,30 @@ void GateParticleFilter::AddZ(const G4int &particleZ)
 }
 //---------------------------------------------------------------------------
 
+
+//---------------------------------------------------------------------------
+void GateParticleFilter::AddA(const G4int &particleA)
+{
+  for (size_t i = 0; i < thePdefA.size(); i++) {
+    if (thePdefA[i] == particleA ) return;
+  }
+  thePdefA.push_back(particleA);
+}
+//---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
+void GateParticleFilter::AddPDG(const G4int &particlePDG)
+{
+  for (size_t i = 0; i < thePdefPDG.size(); i++) {
+    if (thePdefPDG[i] == particlePDG ) return;
+  }
+  thePdefPDG.push_back(particlePDG);
+}
+//---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
 void GateParticleFilter::AddParent(const G4String &particleName)
 {
   for (size_t i = 0; i < theParentPdef.size(); i++) {
@@ -130,6 +190,8 @@ void GateParticleFilter::AddParent(const G4String &particleName)
 }
 //---------------------------------------------------------------------------
 
+
+//---------------------------------------------------------------------------
 void GateParticleFilter::AddDirectParent(const G4String &particleName)
 {
   for (size_t i = 0; i < theDirectParentPdef.size(); i++) {
@@ -137,6 +199,8 @@ void GateParticleFilter::AddDirectParent(const G4String &particleName)
   }
   theDirectParentPdef.push_back(particleName);
 }
+//---------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::show() {

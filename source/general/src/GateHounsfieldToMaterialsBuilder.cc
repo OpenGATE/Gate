@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -107,7 +107,15 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
     double n = std::max(1.,dDiffMax/dTol);
-    // GateMessage("Core", 0, "n = " << n << Gateendl);
+    double nNaive = std::max(1.,(dMax-dMin)/dTol);
+    G4String alert = (n==nNaive) ? "" : G4String(" ***** ");
+    GateMessage("Core", 2, alert << "i=" << i
+                                 << " (HMin,dMin)=(" << HMin << "," << G4BestUnit(dMin,"Volumic Mass") << "),"
+                                 << " (HMax,dMax)=(" << HMax << "," << G4BestUnit(dMax,"Volumic Mass") << "),"
+                                 << " dDiffMax=" << G4BestUnit(dDiffMax,"Volumic Mass") << ","
+                                 << " n = " << n
+                                 << " nNaive = " << nNaive
+                                 << alert << Gateendl);
 
     //If material is Air divide into only one range
     if (mHounsfieldMaterialPropertiesVector[i]->GetName() == "Air") n = 1;

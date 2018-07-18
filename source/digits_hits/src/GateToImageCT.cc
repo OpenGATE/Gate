@@ -8,7 +8,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 #include <cmath>
 #include <vector>
@@ -255,7 +255,8 @@ void GateToImageCT::RecordBeginOfAcquisition()
 
   //Define the number of the first frame, and check the multiplicity of the
   //frame
-  if( fmod( GetTotalDuration(), GetFrameDuration() ) != 0 )
+  G4double fsliceNumber = GetTotalDuration() / GetFrameDuration();
+  if ( fabs(fsliceNumber -rint(fsliceNumber)) >= 1.e-5 )
     {
       G4cerr << "[GateToImageCT::RecordBeginOfAcquisition] : \n"
              << "The study duration ( "

@@ -5,7 +5,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
 
   2015-03-06 Brent Huisman: Added GammaZ and Ngamma TH2Ds, to provide output that corresponds 1:1 to Jean Michels formalism.
                             In addition, the final step in the computation of GammaZ (dividing EpEpgNorm by EpInelatsic) was moved from GatePromptGammaData to here.

@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -218,6 +218,13 @@ void GateCrossSectionProductionActor::Construct() {
   SetOriginTransformAndFlagToImage(mEnergyImage_secondary);
   SetOriginTransformAndFlagToImage(mStatImage_secondary);
 
+  mStepLengthImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mStepLengthImage.Allocate();
+
+  mStepLengthImage_secondary.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mStepLengthImage_secondary.Allocate();
+
+
   mEnergyImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mEnergyImage.Allocate();
 
@@ -343,7 +350,6 @@ void GateCrossSectionProductionActor::BeginOfEventAction(const G4Event * e) {
 void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel - begin\n");
 
-  //double edep = step->GetTotalEnergyDeposit();
   double energy=0.;
   double density=0.;
 
@@ -376,10 +382,12 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
           if(energy>max_energy_cross_section){
             GateError("The CrossSectionActor " << GetObjectName() << " does not have this energy in data, please lower the energy or add data, the current limit is : " << max_energy_cross_section << " MeV, current energy is " << energy);
           }
+          mStepLengthImage.AddValue(index, step->GetStepLength());
           mEnergyImage.AddValue(index, energy);
           PixelValuePerEvent.insert(std::pair<int,int>(index,0));
           mStatImage.AddValue(index, 1);
         }else{
+          mStepLengthImage_secondary.AddValue(index, step->GetStepLength());
           mEnergyImage_secondary.AddValue(index, energy);
           PixelValuePerEvent_secondary.insert(std::pair<int,int>(index,0));
           mStatImage_secondary.AddValue(index, 1);
@@ -393,10 +401,12 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
       energy = step->GetTrack()->GetKineticEnergy()/MeV;
       if(energy>=threshold_energy_C12){
         if(aTrack->GetTrackID()==1){
+          mStepLengthImage.AddValue(index, step->GetStepLength());
           mEnergyImage.AddValue(index, energy);
           PixelValuePerEvent.insert(std::pair<int,int>(index,0));
           mStatImage.AddValue(index, 1);
         }else{
+          mStepLengthImage_secondary.AddValue(index, step->GetStepLength());
           mEnergyImage_secondary.AddValue(index, energy);
           PixelValuePerEvent_secondary.insert(std::pair<int,int>(index,0));
           mStatImage_secondary.AddValue(index, 1);
@@ -429,10 +439,8 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 {
   GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- End of Event\n");
-  double volume_vox=mIsotopeImage->GetValueImage().GetVoxelVolume() *millimeter3/centimeter3; //switch from mm3 to cm3
 
   G4double prod =0.;
-  G4double beam_entrance_section=mIsotopeImage->GetValueImage().GetVoxelSize().getX()*mIsotopeImage->GetValueImage().GetVoxelSize().getY() / centimeter2; //in cm2
 
   for(std::map<int,int>::iterator i =PixelValuePerEvent.begin() ; i!=PixelValuePerEvent.end(); ++i){
     //in this condition either the pixel has already been treater or no detection in the voxel
@@ -442,29 +450,29 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
       G4double energy_in_vox = mEnergyImage.GetValue(vox_id);
       G4double mean_energy= energy_in_vox/((G4double)stat_in_vox);
       G4double density_in_vox = mDensityImage.GetValue(vox_id );
+      G4double step_length_in_vox=mStepLengthImage.GetValue(vox_id);
 
       G4double f_C12 = mfractionC12Image.GetValue(vox_id );
       G4double f_O16 = mfractionO16Image.GetValue(vox_id );
 
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_C12_in_table !=1*/){
-        prod= volume_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3;
         mIsotopeImage->AddValue(vox_id,prod);
 
       }
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsO15 && mean_energy >=threshold_energy_O16 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3;
         mIsotopeImage_O15->AddValue(vox_id,prod);
       }
-      /*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
-	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << Gateendl;
-      */
-      //reset des images a l'index donné
+
+      //reset of the images at the given index
       mEnergyImage.SetValue(vox_id,0.);
       mStatImage.SetValue(vox_id,0.);
+      mStepLengthImage.SetValue(vox_id, 0.);
     }
   }
 
@@ -477,28 +485,27 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
       G4double energy_in_vox = mEnergyImage_secondary.GetValue(vox_id);
       G4double mean_energy= energy_in_vox/((G4double)stat_in_vox);
       G4double density_in_vox = mDensityImage.GetValue(vox_id );
-
+      G4double step_length_in_vox=mStepLengthImage_secondary.GetValue(vox_id);
       G4double f_C12 = mfractionC12Image.GetValue(vox_id );
       G4double f_O16 = mfractionO16Image.GetValue(vox_id );
 
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_C12_in_table !=1*/){
-        prod= volume_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsO15 && mean_energy >=threshold_energy_O16 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=step_length_in_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3;
         mIsotopeImage_O15->AddValue(vox_id,prod);
       }
 
-      /*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
-	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << Gateendl;*/
 
       //reset images at a given index
       mEnergyImage_secondary.SetValue(vox_id,0.);
+      mStepLengthImage_secondary.SetValue(vox_id, 0.);
       mStatImage_secondary.SetValue(vox_id,0.);
     }
   }
