@@ -129,6 +129,7 @@ protected:
   bool     NeutronParent  (const G4Step*);
   int      GetParentID    (const int);
   G4String GetParticleName(const int);
+  void     DumpTrackVector();
 
   struct sTrack
   {

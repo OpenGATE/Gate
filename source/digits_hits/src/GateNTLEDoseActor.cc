@@ -331,7 +331,14 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
 void GateNTLEDoseActor::TrackHandler(const G4Step* step) {
   if (step->GetTrack()->GetTrackID() == 0)
   {
-    GateError("Track ID = 0 !");
+    GateError("Track ID == 0 !");
+    exit(EXIT_FAILURE);
+  }
+  else if (step->GetTrack()->GetParentID() != 0 &&
+           step->GetTrack()->GetTrackID()  == 1)
+  {
+    DumpTrackVector();
+    GateError("Track ID == 1 and Parent ID != 0 !");
     exit(EXIT_FAILURE);
   }
 
@@ -368,11 +375,31 @@ void GateNTLEDoseActor::TrackHandler(const G4Step* step) {
 bool GateNTLEDoseActor::NeutronParent(const G4Step* step) {
   if (step->GetTrack()->GetTrackID() == 0)
   {
-    GateError("Track ID = 0 !");
+    GateError("Track ID == 0 !");
+    exit(EXIT_FAILURE);
+  }
+  else if (mTrackVector.size() == 0)
+  {
+    GateError("mTrackVector size == 0 !");
+    exit(EXIT_FAILURE);
+  }
+  else if (mTrackVector.size()            == 1 &&
+           step->GetTrack()->GetTrackID() != 1)
+  {
+    DumpTrackVector();
+    GateError("mTrackVector size == 1 and Track ID != 1 !");
+    exit(EXIT_FAILURE);
+  }
+  else if (step->GetTrack()->GetParentID() != 0 &&
+           step->GetTrack()->GetTrackID()  == 1)
+  {
+    DumpTrackVector();
+    GateError("Track ID == 1 and Parent ID != 0 !");
     exit(EXIT_FAILURE);
   }
 
-  if (step->GetTrack()->GetParentID() == 0)
+  if (step->GetTrack()->GetParentID() == 0 &&
+      step->GetTrack()->GetTrackID()  == 1)
     return false;
 
   if (GetParticleName(step->GetTrack()->GetParentID()) == "neutron")
@@ -409,6 +436,7 @@ int GateNTLEDoseActor::GetParentID(const int ID) {
     if ((*iter).trackID == ID)
       return (*iter).parentID;
 
+  DumpTrackVector();
   GateError("Cannot find ID n°" << ID << " into mTrackVector !");
   exit(EXIT_FAILURE);
 
@@ -424,9 +452,20 @@ G4String GateNTLEDoseActor::GetParticleName(const int ID) {
     if ((*iter).trackID == ID)
       return (*iter).particleName;
 
+  DumpTrackVector();
   GateError("Cannot find ID n°" << ID << " into mTrackVector ! (mTrackVector size: " << mTrackVector.size() << ")");
   exit(EXIT_FAILURE);
 
   return "";
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateNTLEDoseActor::DumpTrackVector() {
+  G4cout << " !!! Dumping mTrackVector ! (size: " << mTrackVector.size() << ") !!!" << G4endl;
+  std::vector<sTrack>::iterator iter;
+  for (iter = mTrackVector.begin(); iter != mTrackVector.end(); iter++)
+    G4cout << "   Track ID n°" << (*iter).trackID << ", Parent ID n°" << (*iter).parentID << ", Particle name: " << (*iter).particleName << G4endl;
 }
 //-----------------------------------------------------------------------------
