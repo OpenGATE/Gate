@@ -202,6 +202,7 @@ void GateNTLEDoseActor::ResetData() {
 
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::UserSteppingAction(const GateVVolume*, const G4Step* step) {
+  TrackHandler(step);
   const int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
 }
@@ -221,6 +222,8 @@ void GateNTLEDoseActor::BeginOfEventAction(const G4Event* e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateNTLEDoseActor -- Begin of Event: "<< mCurrentEvent << Gateendl);
+
+  mTrackVector.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -229,7 +232,8 @@ void GateNTLEDoseActor::BeginOfEventAction(const G4Event* e) {
 void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   if ( step->GetTrack()->GetDefinition()->GetParticleName() == "neutron" ||
       (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma"   &&
-       mIsDoseCorrectionTLEEnabled)) {
+       mIsDoseCorrectionTLEEnabled                                       &&
+       NeutronParent(step))) {
     mKFHandler->SetEnergy     (step->GetPreStepPoint()->GetKineticEnergy());
     mKFHandler->SetMaterial   (step->GetPreStepPoint()->GetMaterial());
     mKFHandler->SetDistance   (step->GetStepLength());
@@ -319,5 +323,110 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
   }
   else if (mIsKillSecondaryEnabled)
     step->GetTrack()->SetTrackStatus(fStopAndKill);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateNTLEDoseActor::TrackHandler(const G4Step* step) {
+  if (step->GetTrack()->GetTrackID() == 0)
+  {
+    GateError("Track ID = 0 !");
+    exit(EXIT_FAILURE);
+  }
+
+  sTrack Track;
+  Track.trackID      = step->GetTrack()->GetTrackID();
+  Track.parentID     = step->GetTrack()->GetParentID();
+  Track.particleName = step->GetTrack()->GetDefinition()->GetParticleName();
+
+  if (mTrackVector.size() > 0)
+  {
+    std::vector<sTrack>::iterator iter;
+    bool present = false;
+
+    for (iter = mTrackVector.begin(); iter != mTrackVector.end(); iter++)
+      if ((*iter).trackID == step->GetTrack()->GetTrackID())
+        present = true;
+
+    if (!present)
+    {
+      mTrackVector.push_back(Track);
+      //G4cout << "Adding " << step->GetTrack()->GetDefinition()->GetParticleName() << " track ID n°" << step->GetTrack()->GetTrackID() << Gateendl;
+    }
+  }
+  else
+  {
+    mTrackVector.push_back(Track);
+    //G4cout << "Adding " << step->GetTrack()->GetDefinition()->GetParticleName() << " track ID n°" << step->GetTrack()->GetTrackID() << Gateendl;
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateNTLEDoseActor::NeutronParent(const G4Step* step) {
+  if (step->GetTrack()->GetTrackID() == 0)
+  {
+    GateError("Track ID = 0 !");
+    exit(EXIT_FAILURE);
+  }
+
+  if (step->GetTrack()->GetParentID() == 0)
+    return false;
+
+  if (GetParticleName(step->GetTrack()->GetParentID()) == "neutron")
+  {
+    //G4cout << "Neutron parent of ID n°" << step->GetTrack()->GetTrackID() << " finded at ID n°" << step->GetTrack()->GetParentID() << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ")" << Gateendl;
+    return true;
+  }
+
+  int parentID = step->GetTrack()->GetParentID();
+  G4String particleName = "";
+  while (parentID > 0 && particleName != "neutron")
+  {
+    particleName = GetParticleName(parentID);
+    if (particleName != "neutron")
+      parentID = GetParentID(parentID);
+  }
+
+  if (particleName == "neutron")
+  {
+    //G4cout << "Neutron parent of ID n°" << step->GetTrack()->GetTrackID() << " finded at ID n°" << parentID << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ")" << Gateendl;
+    return true;
+  }
+
+  //G4cout << "No neutron parent finded for ID n°" << step->GetTrack()->GetTrackID() << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ")" << Gateendl;
+  return false;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+int GateNTLEDoseActor::GetParentID(const int ID) {
+  std::vector<sTrack>::iterator iter;
+  for (iter = mTrackVector.begin(); iter != mTrackVector.end(); iter++)
+    if ((*iter).trackID == ID)
+      return (*iter).parentID;
+
+  GateError("Cannot find ID n°" << ID << " into mTrackVector !");
+  exit(EXIT_FAILURE);
+
+  return 0;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4String GateNTLEDoseActor::GetParticleName(const int ID) {
+  std::vector<sTrack>::iterator iter;
+  for (iter = mTrackVector.begin(); iter != mTrackVector.end(); iter++)
+    if ((*iter).trackID == ID)
+      return (*iter).particleName;
+
+  GateError("Cannot find ID n°" << ID << " into mTrackVector ! (mTrackVector size: " << mTrackVector.size() << ")");
+  exit(EXIT_FAILURE);
+
+  return "";
 }
 //-----------------------------------------------------------------------------

@@ -125,6 +125,20 @@ protected:
 
   std::vector<G4String> mMaterialList;
 
+  void     TrackHandler   (const G4Step*);
+  bool     NeutronParent  (const G4Step*);
+  int      GetParentID    (const int);
+  G4String GetParticleName(const int);
+
+  struct sTrack
+  {
+    int trackID = -1;
+    int parentID = -1;
+    G4String particleName = "";
+  };
+
+  std::vector<sTrack> mTrackVector;
+
   TMultiGraph* mg;
 };
 
