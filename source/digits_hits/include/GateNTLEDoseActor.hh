@@ -125,6 +125,8 @@ protected:
 
   std::vector<G4String> mMaterialList;
 
+  bool NeutronParent(const G4Step*);
+
   TMultiGraph* mg;
 };
 
