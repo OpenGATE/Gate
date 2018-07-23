@@ -13,6 +13,7 @@
 
 #include "GateNTLEDoseActor.hh"
 #include "GateMiscFunctions.hh"
+#include "GateUserActions.hh"
 
 #include <G4PhysicalConstants.hh>
 
@@ -229,7 +230,8 @@ void GateNTLEDoseActor::BeginOfEventAction(const G4Event* e) {
 void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   if ( step->GetTrack()->GetDefinition()->GetParticleName() == "neutron" ||
       (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma"   &&
-       mIsDoseCorrectionTLEEnabled)) {
+       mIsDoseCorrectionTLEEnabled                                       &&
+       NeutronParent(step))) {
     mKFHandler->SetEnergy     (step->GetPreStepPoint()->GetKineticEnergy());
     mKFHandler->SetMaterial   (step->GetPreStepPoint()->GetMaterial());
     mKFHandler->SetDistance   (step->GetStepLength());
@@ -264,7 +266,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
     }
 
 
-    GateMessage("Actor", 2,  "GateNTLEDoseActor -- UserSteppingActionInVoxel:" << Gateendl
+    GateMessage("Actor", 3,  "GateNTLEDoseActor -- UserSteppingActionInVoxel:" << Gateendl
          << " Dosel index    = " << index << Gateendl
          << " Dosel material = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
          << " Dosel volume   = " << G4BestUnit(GetDoselVolume(), "Volume") << Gateendl
@@ -319,5 +321,34 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
   }
   else if (mIsKillSecondaryEnabled)
     step->GetTrack()->SetTrackStatus(fStopAndKill);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateNTLEDoseActor::NeutronParent(const G4Step* step) {
+  int parentID = step->GetTrack()->GetParentID();
+
+  if (parentID == 0)
+  {
+    GateMessage("Actor", 2,  "GateNTLEDoseActor -- NeutronParent: ID n°" << step->GetTrack()->GetTrackID() << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ") is a primary particle !" << Gateendl);
+    return false;
+  }
+
+  while (parentID > 0)
+  {
+    GateTrackIDInfo* parentInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(parentID);
+
+    if (parentInfo->GetParticleName() == "neutron")
+    {
+      GateMessage("Actor", 2,  "GateNTLEDoseActor -- NeutronParent: Neutron parent of ID n°" << step->GetTrack()->GetTrackID() << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ")" << " finded at ID n°" << parentID << " (" << parentInfo->GetParticleName() << ")" << Gateendl);
+      return true;
+    }
+    else
+      parentID = parentInfo->GetParentID();
+  }
+
+  GateMessage("Actor", 2,  "GateNTLEDoseActor -- NeutronParent: No neutron parent finded for ID n°" << step->GetTrack()->GetTrackID() << " (" << step->GetTrack()->GetDefinition()->GetParticleName() << ")" << Gateendl);
+  return false;
 }
 //-----------------------------------------------------------------------------
