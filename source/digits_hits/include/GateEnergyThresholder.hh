@@ -52,9 +52,10 @@ class GateEnergyThresholder : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&  outputPulseList);
-
+    GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
   private:
 
+    bool flgTriggerAW;
     GateVEffectiveEnergyLaw* m_effectiveEnergyLaw;
     G4double m_threshold;     	      	      //!< Threshold value
     GateEnergyThresholderMessenger *m_messenger;    //!< Messenger
