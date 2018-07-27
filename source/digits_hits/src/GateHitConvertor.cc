@@ -80,7 +80,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
 }
 
 
- GatePulseList* GateHitConvertor::ProcessHits(std::vector<GateCrystalHit> vhitCollection){
+ GatePulseList* GateHitConvertor::ProcessHits(std::vector<GateCrystalHit*> vhitCollection){
 
     size_t n_hit = vhitCollection.size();
     if (nVerboseLevel==1)
@@ -98,7 +98,8 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
           //Aqui otra vez problema de memoria I do not why
          // ProcessOneHit( &vhitCollection.at(i), pulseList);
           //Here no problem
-          ProcessOneHit( (std::make_shared<GateCrystalHit>(vhitCollection.at(i))).get(), pulseList);
+         // ProcessOneHit( (std::make_shared<GateCrystalHit>(vhitCollection.at(i))).get(), pulseList);
+          ProcessOneHit(vhitCollection.at(i), pulseList);
     }
 
    if (nVerboseLevel==1) {

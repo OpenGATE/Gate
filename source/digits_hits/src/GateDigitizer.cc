@@ -427,7 +427,7 @@ void GateDigitizer::Digitize()
 }
 
 
-void GateDigitizer::Digitize(std::vector<GateCrystalHit> vHitsCollection)
+void GateDigitizer::Digitize(std::vector<GateCrystalHit*> vHitsCollection)
 {
   if ( !IsEnabled() )
     return;

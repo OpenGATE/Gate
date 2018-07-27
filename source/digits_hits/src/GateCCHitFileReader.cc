@@ -147,8 +147,10 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
   G4int currentRunID = m_hitBuffer.runID;
 
 
+
   while (vHitsCollection.size()) {
-   vHitsCollection.erase(vHitsCollection.end()-1);
+      delete vHitsCollection.back();
+      vHitsCollection.erase(vHitsCollection.end()-1);
   }
 
 
@@ -163,7 +165,10 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
 
       // Create a new hit and store it into the hit-queue
       GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
-      m_hitQueue.push(aHit);
+      //GateCrystalHit aHit = *m_hitBuffer.CreateHit();
+
+     // m_hitQueue.push(aHit);
+      vHitsCollection.push_back(aHit);
       // Load the next set of hit-data into the root-hit structure
       LoadHitData();
   }
@@ -182,17 +187,19 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
 
 // This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
 // It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
-std::vector<GateCrystalHit> GateCCHitFileReader::PrepareEndOfEvent()
+std::vector<GateCrystalHit*> GateCCHitFileReader::PrepareEndOfEvent()
 {
   // We loop until the hit-queue is empty
   // Each hit is inserted into the crystalSD hit-collection, then removed from the queue
     //Duplciatinf thing puting from a vector to another vector ?? To be fixed
-  while (m_hitQueue.size()) {
+//  while (m_hitQueue.size()) {
 
-    vHitsCollection.push_back(*m_hitQueue.front());
-    //crystalCollection->insert(m_hitQueue.front());
-    m_hitQueue.pop();
-  }
+//    vHitsCollection.push_back(m_hitQueue.front());
+//    //crystalCollection->insert(m_hitQueue.front());
+//    //AEJ
+//    //delete m_hitQueue.front();
+//    m_hitQueue.pop();
+//  }
   return vHitsCollection;
 }
 
@@ -209,10 +216,16 @@ void GateCCHitFileReader::TerminateAfterAcquisition()
   }
 
   // If the hit queue was not empty (it should be), clear it up
-  while (m_hitQueue.size()) {
-    delete m_hitQueue.front();
-    m_hitQueue.pop();
-  }
+//  while (m_hitQueue.size()) {
+//    //delete m_hitQueue.front();
+//    m_hitQueue.pop();
+//  }
+
+  while (vHitsCollection.size()) {
+     //delete m_hitQueue.front();
+     // delete vHitsCollection.back();
+     vHitsCollection.erase(vHitsCollection.end()-1);
+   }
 
   // Note that we don't delete the tree: it was based on the file so
   // I assume it was destroyed at the same time as the file was closed (true?)

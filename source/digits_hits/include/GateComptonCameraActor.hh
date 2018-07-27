@@ -164,7 +164,7 @@ protected:
 
 
    //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
-   std::vector<GateCrystalHit> hitsList;
+   std::vector<GateCrystalHit*> hitsList;
 
 
 

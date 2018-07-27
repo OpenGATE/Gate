@@ -116,30 +116,20 @@ int main(int argc, char *argv[])
             if(pPulseList->size()>0){
 
 
-                GatePulseConstIterator iterIn;
+               GatePulseConstIterator iterIn;
                 for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
-                    GatePulse* inputPulse = *iterIn;
-                    // G4cout << "eventID"<< inputPulse->GetEventID()<<G4endl;
-                    GateSingleDigi* aSingleDigi=new GateSingleDigi(inputPulse);
 
-                    /*int slayerID=-1;
-                //LAYER NAMES Maybe should BE INTRODUCED AS INPUT IN ACTOR MESSENGER ang HERE some generalization.
-                //Here I couls save layer ID insted of layer name
-                 //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
-                 ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
-                 /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
-                 //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
-                 if(inputPulse->GetVolumeID().GetVolume(2)->GetName()!="scatterer_phys"){
-                   //slayerID=nDaughterBB-1;
-                  //Id 0 to the absorber but all must the layers must be called scatterer  except teh absorber
-                  slayerID=0;
-                 }
-                 else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="scatterer_phys"){
-                  slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()+1;
-                 }*/
+                    GateSingleDigi* aSingleDigi=new GateSingleDigi(*iterIn);
+
+
                     m_SinglesBuffer.Fill(aSingleDigi);
                     m_SingleTree->Fill();
                     m_SinglesBuffer.Clear();
+
+	             if(aSingleDigi){
+                        delete aSingleDigi;
+                        aSingleDigi=0;
+                    }
                 }
             }
         }
@@ -149,6 +139,8 @@ int main(int argc, char *argv[])
     m_hitFileReader->TerminateAfterAcquisition();
 
     delete runManager;
+    delete digitizer;
+
 
 
     return 0;

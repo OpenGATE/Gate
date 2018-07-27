@@ -107,7 +107,7 @@ public:
   { m_coincidenceSorterList[i]->ProcessSinglePulseList();}
 
   virtual void Digitize();
-  void Digitize(std::vector<GateCrystalHit> vHitsCollection);
+  void Digitize(std::vector<GateCrystalHit*> vHitsCollection);
   void DigitizePulses();
 
 

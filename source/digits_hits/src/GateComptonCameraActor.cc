@@ -112,7 +112,7 @@ GateComptonCameraActor::~GateComptonCameraActor(){
 
 
 //-----------------------------------------------------------------------------
-/// Construct
+/// Construct`
 void GateComptonCameraActor::Construct()
 {
 
@@ -307,7 +307,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 
 
     while (hitsList.size()) {
-      //delete hitsList.back();
+      delete hitsList.back();
      hitsList.erase(hitsList.end()-1);
     }
 
@@ -503,6 +503,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //G4cout<<VolNameStep<<G4endl;
   const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
   GateVolumeID volumeID(touchableH);
+
   hitPreLocalPos=volumeID.MoveToBottomVolumeFrame(hitPrePos);
    hitPostLocalPos=volumeID.MoveToBottomVolumeFrame(hitPostPos);
    G4ThreeVector hitMeanLocalPos=(hitPreLocalPos+hitPostLocalPos)/2;
@@ -563,6 +564,10 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     newTrack=false;
   }
 
+//  if(evtID==79){
+
+ //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<G4endl;
+//  }
 
 
   if(parentID==0){
@@ -573,45 +578,46 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
    if (it != layerNames.end()){
   //if (hitEdep!=0.){
     // Create a new crystal hit (maybe better an object hit
-         // GateCrystalHit aHit;
-   GateCrystalHit aHit;
+         GateCrystalHit* aHit=new GateCrystalHit();
+   //GateCrystalHit aHit;
     //std::shared_ptr<GateCrystalHit> aHit(new GateCrystalHit());
-    aHit.SetEdep(hitEdep);
-    aHit.SetEnergyFin(Ef);
-    aHit.SetEnergyIniTrack(Ei);
+    aHit->SetEdep(hitEdep);
+    aHit->SetEnergyFin(Ef);
+    aHit->SetEnergyIniTrack(Ei);
     G4ThreeVector hitPos;
     hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
     hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
     hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
     //aHit.SetGlobalPos(hitPos);
-    aHit.SetGlobalPos(hitPostPos);
+    aHit->SetGlobalPos(hitPostPos);
    //aHit.SetGlobalPos(hitPrePos);
     //aHit.SetLocalPos(hitPreLocalPos);
-   aHit.SetLocalPos( hitPostLocalPos);
+   aHit->SetLocalPos( hitPostLocalPos);
     //aHit.SetLocalPos(hitMeanLocalPos);
     //step.GetPreStepPoint()->GetGlobalTime()
     /////Which time do I need to save. Prestep or the time of the track?
     /// also possiblitiy of track local time.
     /// Singles takes the time of the first hit
     /// Track global time
-    aHit.SetTime(aTrack->GetGlobalTime());
-    aHit.SetTrackID(trackID );
-    aHit.SetParentID(parentID );
-    aHit.SetTrackLength(trackLength );
-    aHit.SetTrackLocalTime(trackLocalTime );
-    aHit.SetVolumeID(volumeID);
-    aHit.SetEventID(evtID);
-    aHit.SetRunID(runID);
-    aHit.SetPDGEncoding(PDGEncoding);
-    aHit.SetPostStepProcess( processPostStep);
+    aHit->SetTime(aTrack->GetGlobalTime());
+    aHit->SetTrackID(trackID );
+    aHit->SetParentID(parentID );
+    aHit->SetTrackLength(trackLength );
+    aHit->SetTrackLocalTime(trackLocalTime );
+    aHit->SetVolumeID(volumeID);
+    aHit->SetEventID(evtID);
+    aHit->SetRunID(runID);
+    aHit->SetPDGEncoding(PDGEncoding);
+    aHit->SetPostStepProcess( processPostStep);
 
     //Try to obtain information of the source (I DO NOT FROM WHERE SD SYS TAKE IT)
-    aHit.SetSourcePosition(sourcePos);
+    aHit->SetSourcePosition(sourcePos);
     //track creator
-    aHit.SetProcess(processName);
-    aHit.SetStepLength(step->GetStepLength());
-    aHit.SetMomentumDir( aTrack->GetMomentumDirection());
-    //Except for this volume related information (volume, touchable, material, ...) the information kept by 'track' is same as one kept by 'PostStepPoint'.
+    aHit->SetProcess(processName);
+    aHit->SetStepLength(step->GetStepLength());
+    aHit->SetMomentumDir( aTrack->GetMomentumDirection());
+    //Except for this volume related information (volume, touchable, material, ...)
+    //the information kept by 'track' is same as one kept by 'PostStepPoint'.
 
     //Only hits in the layer are saved
     //if(aHit->GetProcess()!="Transportation"){
@@ -620,14 +626,16 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
      if(hitEdep!=0. ||(parentID==0 && processPostStep!="Transportation")){
          hitsList.push_back(aHit);
         if(mSaveHitsTreeFlag){
-            m_hitsBuffer.Fill(&aHit,VolNameStep);
+            m_hitsBuffer.Fill(aHit,VolNameStep);
+            //m_hitsBuffer.Fill(&aHit,VolNameStep);
             // m_hitsBuffer.Fill(aHit.get(),VolNameStep);
             m_hitsTree->Fill();
             m_hitsBuffer.Clear();
 
         }
         if(mSaveHitsTextFlag){
-            SaveAsTextHitsEvt(&aHit,VolNameStep);
+            //SaveAsTextHitsEvt(&aHit,VolNameStep);
+              SaveAsTextHitsEvt(aHit,VolNameStep);
         }
     }
 
