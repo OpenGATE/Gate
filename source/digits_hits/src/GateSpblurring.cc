@@ -51,10 +51,22 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 	G4double PyNew = G4RandGauss::shoot(Py,m_spresolution/GateConstants::fwhm_to_sigma);
 	G4double PzNew = G4RandGauss::shoot(Pz,m_spresolution/GateConstants::fwhm_to_sigma); //TC
 	//TC G4double PzNew = Pz;
+    //AE
+    inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, Xmin, Xmax);
+    inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
+    inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
+    if(PxNew<Xmin) PxNew=Xmin;
+    if(PxNew<Ymin) PyNew=Ymin;
+    if(PzNew<Zmin) PzNew=Zmin;
+    if(PxNew>Xmax) PxNew=Xmax;
+    if(PyNew>Ymax) PyNew=Ymax;
+    if(PzNew>Zmax) PzNew=Zmax;
+    //
 	outputPulse->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
 	outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos())); //TC
 	//TC outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));
 	outputPulseList.push_back(outputPulse);
+
 }
 
 void GateSpblurring::DescribeMyself(size_t indent)
