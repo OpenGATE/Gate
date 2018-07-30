@@ -68,6 +68,9 @@ void GateClustering::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
                          if(dist.at(posMin)< m_acceptedDistance){
                              //Sum the hit to the cluster. sum of energies, position (global and local) weighted in energies, min time
                              outputPulseList.at( index4ClustSameVol.at(posMin))->CentroidMerge(outputPulse);
+                             //maybe deelte pulse
+                             delete outputPulse;
+
 
                          }
                          else{
@@ -219,9 +222,11 @@ void  GateClustering::checkClusterCentersDistance(GatePulseList& outputPulseList
 
         }
 
-        for(unsigned int i=0; i<pos2Delete.size(); i++){
 
+        for(unsigned int i=0; i<pos2Delete.size(); i++){
+            delete outputPulseList.at(pos2Delete.at(i)-i);
             outputPulseList.erase(outputPulseList.begin()+pos2Delete.at(i)-i);
+
 
         }
     }

@@ -95,6 +95,7 @@ void GateLocalClustering::ProcessOnePulse(const GatePulse* inputPulse,GatePulseL
                           if(dist.at(posMin)< (*im).second.distance){
                               //Sum the hit to the cluster. sum of energies, position (global and local) weighted in energies, min time
                               outputPulseList.at( index4ClustSameVol.at(posMin))->CentroidMerge(outputPulse);
+                              delete outputPulse;
 
                           }
                           else{
