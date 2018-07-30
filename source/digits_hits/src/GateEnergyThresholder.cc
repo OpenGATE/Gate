@@ -52,22 +52,44 @@ GatePulseList* GateEnergyThresholder::ProcessPulseList(const GatePulseList* inpu
   GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
 
    flgTriggerAW=0;
+   while(vID.size()){
+       vID.erase(vID.end()-1);
+   }
 
   GatePulseConstIterator iter;
   for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; ++iter)
       ProcessOnePulse( *iter, *outputPulseList);
 
 
-  if(m_effectiveEnergyLaw->GetObjectName()=="digitizer/layers/energyThresholder/solidAngleWeighted" &&  flgTriggerAW==0){
-      //REJECT THE EVENT
-      if(!outputPulseList->empty()){
+  if(m_effectiveEnergyLaw->GetObjectName()=="digitizer/layers/energyThresholder/solidAngleWeighted" ){
+      if(flgTriggerAW==0){
+          //REJECT THE EVENT
+          if(!outputPulseList->empty()){
 
-          while ( outputPulseList->size() ) {
-            delete outputPulseList->back();
-            outputPulseList->erase(outputPulseList->end()-1);
+              while ( outputPulseList->size() ) {
+                delete outputPulseList->back();
+                outputPulseList->erase(outputPulseList->end()-1);
+              }
+
           }
-
-      }
+     }
+     else if(flgTriggerAW==1){
+            G4cout<<"nuevo evento"<<G4endl;
+          GatePulseIterator iter;
+          std::vector<GateVolumeID>::iterator  it;
+          for (iter=outputPulseList->begin(); iter!= outputPulseList->end() ; ++iter){
+               G4cout<<"tamano "<<outputPulseList->size()<<G4endl;
+                G4cout<<"distanci que leo  "<<std::distance(outputPulseList->begin(),iter)<<G4endl;
+               it= find (vID.begin(), vID.end(), (*iter)->GetVolumeID());
+               if (it == vID.end()){
+                   G4cout<<"tiro el de la position "<<std::distance(outputPulseList->begin(),iter)<<G4endl;
+               //reject pulse
+                  delete (*iter);
+                 outputPulseList->erase(iter);
+                 --iter;
+               }
+          }
+     }
   }
 
   if (nVerboseLevel==1) {
@@ -102,7 +124,9 @@ void GateEnergyThresholder::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
       if (nVerboseLevel>1)
           G4cout << "Copied pulse to output:\n"
                  << *outputPulse << Gateendl << Gateendl ;
+      vID.push_back(outputPulse->GetVolumeID());
       flgTriggerAW=1;
+
   }
   else {
       if (nVerboseLevel>1)
@@ -111,6 +135,9 @@ void GateEnergyThresholder::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
       if( m_effectiveEnergyLaw->GetObjectName()=="digitizer/layers/energyThresholder/solidAngleWeighted"){
 
           outputPulseList.push_back(outputPulse);
+      }
+      else{
+          delete outputPulse;
       }
 
   }

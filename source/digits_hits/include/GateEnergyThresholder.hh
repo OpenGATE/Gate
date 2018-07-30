@@ -56,6 +56,8 @@ class GateEnergyThresholder : public GateVPulseProcessor
   private:
 
     bool flgTriggerAW;
+    std::vector<GateVolumeID> vID;
+
     GateVEffectiveEnergyLaw* m_effectiveEnergyLaw;
     G4double m_threshold;     	      	      //!< Threshold value
     GateEnergyThresholderMessenger *m_messenger;    //!< Messenger
