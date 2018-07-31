@@ -154,8 +154,6 @@ void GateLocalEnergyThresholder::ProcessOnePulse(const GatePulse* inputPulse,Gat
       std::size_t pos = lawP.rfind("/");
       lawP=lawP.substr(pos+1);
       //G4cout<<lawP<<G4endl;
-
-      GatePulse* outputPulse = new GatePulse(*inputPulse);
       //G4cout << "eventID"<<inputPulse->GetEventID()<<"  effectEnergy="<<m_effectiveEnergyLaw->ComputeEffectiveEnergy(*outputPulse)<<G4endl;
       if ((*im).second.m_effectiveEnergyLaw->ComputeEffectiveEnergy(*outputPulse)>= (*im).second.m_threshold ) {
 
