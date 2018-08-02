@@ -536,34 +536,58 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
     return ans;
 }
 //------------------------------------------------------------------------------------------------------
+//  G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
+//      //Check if the absorber has trigger (Necessary that the layer name is absorber and daugther of BB daughter of wordl)
+//      G4bool isTriggAbsorber=false;
+//      G4bool isSingleInAnotherLayer=false;
+//      unsigned int numCoincPulses=coincidence->size();
+//      //G4String absorptionPhysName=m_absorberDepth2Name+"_phys";
+//    // G4cout<<absorptionPhysName<<G4endl;
+//      //G4cout<<"npulses"<<numCoincPulses<<G4endl;
+//    //G4cout<<"0"<<coincidence->at(0)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()<<G4endl;
+//      for(unsigned int i=0;i<numCoincPulses;i++){
+//          //Cuando es un pulso de scatterer no existe esa depht
+//          //if( coincidence->at(i)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()==absorptionPhysName  ){
+//           //if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name ){
+//           if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
+//              isTriggAbsorber=true;
+
+//          }
+//          else{
+//              isSingleInAnotherLayer=true;
+//          }
+//      }
+//      if(isSingleInAnotherLayer==true && isTriggAbsorber==true){
+//      return isTriggAbsorber;
+//      }
+//      else{
+//          return false;
+//      }
+
+//  }
+
+//------------------------------------------------------------------------------------------------------
   G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
-      //Check if the absorber has trigger (Necessary that the layer name is absorber and daugther of BB daughter of wordl)
-      G4bool isTriggAbsorber=false;
-      G4bool isSingleInAnotherLayer=false;
+      //G4int counterDiffVID=1;
+      //std::vector<GateVolumeID> diffVID;
+      //diffVID.push_back(coincidence->at(0)->GetVolumeID());
+      GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
+      G4bool isGood=false;
+      //Restriction at least coincidence in two different volumesID
+        //std::vector<GateVolumeID>::iterator  it;
       unsigned int numCoincPulses=coincidence->size();
-      //G4String absorptionPhysName=m_absorberDepth2Name+"_phys";
-    // G4cout<<absorptionPhysName<<G4endl;
-      //G4cout<<"npulses"<<numCoincPulses<<G4endl;
-    //G4cout<<"0"<<coincidence->at(0)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()<<G4endl;
-      for(unsigned int i=0;i<numCoincPulses;i++){
-          //Cuando es un pulso de scatterer no existe esa depht
-          //if( coincidence->at(i)->GetVolumeID().GetVolume(m_absorberDepth)->GetName()==absorptionPhysName  ){
-           //if( coincidence->at(i)->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name ){
-           if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
-              isTriggAbsorber=true;
 
-          }
-          else{
-              isSingleInAnotherLayer=true;
-          }
-      }
-      if(isSingleInAnotherLayer==true && isTriggAbsorber==true){
-      return isTriggAbsorber;
-      }
-      else{
-          return false;
+      for(unsigned int i=1;i<numCoincPulses;i++){
+           //find in the vector
+            //it= find (diffVID.begin(),diffVID.end(), coincidence->at(i)->GetVolumeID());
+            if(coincidence->at(i)->GetVolumeID()!=volID1) {
+                isGood=true;
+                break;
+            }
+
       }
 
+     return isGood;
   }
 
 //------------------------------------------------------------------------------------------------------

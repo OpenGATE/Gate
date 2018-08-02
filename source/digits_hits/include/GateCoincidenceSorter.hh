@@ -163,7 +163,6 @@ class GateCoincidenceSorter : public GateClockDependent
     G4int               m_minSectorDifference;          //!< Minimum sector difference for valid coincidences
     multiple_policy_t   m_multiplesPolicy;              //!< Do what if multiples?
     G4bool              m_allPulseOpenCoincGate;        //!< can a pulse be part of two coincs?
-    G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
     G4int               m_depth;                        //!< Depth of system-level for coincidences
 
     G4int coincID_CC;
@@ -177,9 +176,9 @@ class GateCoincidenceSorter : public GateClockDependent
     std::list<GatePulse*> m_presortBuffer;      // incoming pulses are presorted and buffered
     G4int                 m_presortBufferSize;
     G4bool                m_presortWarning;     // avoid repeat warnings
-
     bool                m_CCSorter;     // compton camera sorter
-    G4String  m_absorberSD;// absorber "SD' volume name CC
+    G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
+    G4String      m_absorberSD;// absorber "SD' volume name CC
 
 
 
