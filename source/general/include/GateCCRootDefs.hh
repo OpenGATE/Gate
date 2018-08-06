@@ -194,6 +194,7 @@ public:
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;
+  Float_t  localPosX, localPosY, localPosZ;
   Float_t  sourcePosX;
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
@@ -232,7 +233,7 @@ public:
   void Clear();     	      	      	      	  //!< Reset the fields of the structure
   void Fill(GateCCCoincidenceDigi* aDigi);
 
-
+    GateCCCoincidenceDigi* CreateCoincidence();
 
   //! Returns the time in G4 units (conversion from seconds)
   inline G4double GetTime() const
@@ -253,6 +254,10 @@ public:
   Float_t  globalPosX;
   Float_t  globalPosY;
   Float_t  globalPosZ;
+  Float_t  localPosX, localPosY, localPosZ;
+  Float_t  sourcePosX;
+  Float_t  sourcePosY;
+  Float_t  sourcePosZ;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;

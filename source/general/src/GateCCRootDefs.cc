@@ -192,6 +192,9 @@ void GateCCRootSingleBuffer::Clear()
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
+  localPosX       = 0./mm;
+  localPosY       = 0./mm;
+  localPosZ       = 0./mm;
   sourcePosX       = 0./mm;
   sourcePosY       = 0./mm;
   sourcePosZ       = 0./mm;
@@ -214,6 +217,9 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     energy        =  aDigi->GetEnergy()/MeV;
     energyIni     =  aDigi->GetIniEnergy()/MeV;
     energyFin     =  aDigi->GetFinalEnergy()/MeV;
+    localPosX    = (aDigi->GetLocalPos()).x()/mm;
+    localPosY    = (aDigi->GetLocalPos()).y()/mm;
+    localPosZ    = (aDigi->GetLocalPos()).z()/mm;
     globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
     globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
     globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
@@ -265,6 +271,9 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
    Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
      Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
+     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
 
   Branch("layerName",    (void *)buffer.layerName,"layername/C");
   //Branch("layerID",     &buffer.layerID,"layerID/I");
@@ -293,9 +302,9 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
     singlesTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
     singlesTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
     singlesTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
-
-
-
+    singlesTree->SetBranchAddress("localPosX",&buffer.localPosX);
+    singlesTree->SetBranchAddress("localPosY",&buffer.localPosY);
+   singlesTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
     singlesTree->SetBranchAddress("layerName",&buffer.layerName);
  //   singlesTree->SetBranchAddress("layerID",&buffer.layerID);
     singlesTree->SetBranchAddress("sublayerID",&buffer.sublayerID);
@@ -325,6 +334,12 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
   globalPos.setZ(globalPosZ);
 
   aSingle->SetGlobalPos(globalPos);
+
+  G4ThreeVector lPos;
+  lPos.setX(localPosX);
+  lPos.setY(localPosY);
+  lPos.setZ(localPosZ);
+  aSingle->SetLocalPos(lPos);
 
   G4ThreeVector sPos;
   sPos.setX(sourcePosX);
@@ -357,6 +372,12 @@ void GateCCRootCoincBuffer::Clear()
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
+  localPosX       = 0./mm;
+  localPosY       = 0./mm;
+  localPosZ       = 0./mm;
+  sourcePosX       = 0./mm;
+  sourcePosY       = 0./mm;
+  sourcePosZ       = 0./mm;
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
@@ -381,6 +402,14 @@ void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
     globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
     globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
     globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
+
+    localPosX    = (aDigi->GetLocalPos()).x()/mm;
+    localPosY    = (aDigi->GetLocalPos()).y()/mm;
+    localPosZ    = (aDigi->GetLocalPos()).z()/mm;
+
+    sourcePosX    = (aDigi->GetSourcePosition().getX())/mm;
+    sourcePosY    = (aDigi->GetSourcePosition().getY())/mm;
+    sourcePosZ    = (aDigi->GetSourcePosition().getZ())/mm;
     //layerID=slayerID;
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
@@ -414,6 +443,13 @@ void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
     Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
     Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
+    Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
+     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
+      Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+      Branch("localPosX",      &buffer.localPosX,"localPosX/F");
+      Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+      Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+
      Branch("layerName",    (void *)buffer.layerName,"layername/C");
     //Branch("layerID",     &buffer.layerID,"layerID/I");
     Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
@@ -436,6 +472,13 @@ void GateCCCoincTree::SetBranchAddresses(TTree* coinTree,GateCCRootCoincBuffer& 
     coinTree->SetBranchAddress("globalPosY",&buffer.globalPosY);
     coinTree->SetBranchAddress("globalPosZ",&buffer.globalPosZ);
 
+    coinTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
+    coinTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
+    coinTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
+   coinTree->SetBranchAddress("localPosX",&buffer.localPosX);
+    coinTree->SetBranchAddress("localPosY",&buffer.localPosY);
+   coinTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
+
 
 
     coinTree->SetBranchAddress("layerName",&buffer.layerName);
@@ -445,4 +488,50 @@ void GateCCCoincTree::SetBranchAddresses(TTree* coinTree,GateCCRootCoincBuffer& 
 
 
 
+}
+
+GateCCCoincidenceDigi* GateCCRootCoincBuffer::CreateCoincidence()
+{
+
+
+    GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
+
+    GateCCCoincidenceDigi* aCoin = new GateCCCoincidenceDigi();
+
+    aCoin->SetCoincidenceID(coincID);
+    aCoin->SetRunID(runID);
+    aCoin->SetEventID(eventID);
+    aCoin->SetTime(GetTime());
+
+
+  G4ThreeVector globalPos;
+  globalPos.setX(globalPosX);
+  globalPos.setY(globalPosY);
+  globalPos.setZ(globalPosZ);
+
+  aCoin->SetGlobalPos(globalPos);
+
+  G4ThreeVector lPos;
+  lPos.setX(localPosX);
+  lPos.setY(localPosY);
+  lPos.setZ(localPosZ);
+  aCoin->SetLocalPos(lPos);
+
+  G4ThreeVector sPos;
+  sPos.setX(sourcePosX);
+  sPos.setY(sourcePosY);
+  sPos.setZ(sourcePosZ);
+  aCoin->SetSourcePosition(sPos);
+
+
+
+  aCoin->SetEnergy(energy);
+  aCoin->SetIniEnergy(energyIni);
+  aCoin->SetFinalEnergy(energyFin);
+  //G4cout<<"antes del setvolID to the aSingle"<<G4endl;
+  aCoin->SetVolumeID(aVolumeID);
+
+  //Set the paremeters
+
+  return aCoin;
 }
