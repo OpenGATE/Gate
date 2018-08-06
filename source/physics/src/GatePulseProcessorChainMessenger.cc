@@ -54,6 +54,7 @@ See LICENSE.md for further details
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
+#include "GateLocalEnergyThresholder.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -97,7 +98,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
   return theList;
 }
 
@@ -123,8 +124,10 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateDiscretizer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="thresholder")
     newProcessor = new GateThresholder(GetProcessorChain(),newInsertionName,50.*keV);
- else if (childTypeName=="energyThresholder")
+  else if (childTypeName=="energyThresholder")
     newProcessor = new GateEnergyThresholder(GetProcessorChain(),newInsertionName,50.*keV);
+  else if (childTypeName=="localEnergyThresholder")
+    newProcessor = new GateLocalEnergyThresholder(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="upholder")
     newProcessor = new GateUpholder(GetProcessorChain(),newInsertionName,150.*keV);
   else if (childTypeName=="deadtime")
@@ -133,7 +136,7 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBlurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="localBlurring")
     newProcessor = new GateLocalBlurring(GetProcessorChain(),newInsertionName);
- else if (childTypeName=="localTimeDelay")
+  else if (childTypeName=="localTimeDelay")
     newProcessor = new GateLocalTimeDelay(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="transferEfficiency")
     newProcessor = GateTransferEfficiency::GetInstance(GetProcessorChain(),newInsertionName); 
@@ -155,13 +158,13 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GatePulseAdder(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderCompton")
     newProcessor = new GatePulseAdderCompton(GetProcessorChain(),newInsertionName);
- else if (childTypeName=="adderComptPhotIdeal")
+  else if (childTypeName=="adderComptPhotIdeal")
     newProcessor = new GatePulseAdderComptPhotIdeal(GetProcessorChain(),newInsertionName);
- else if (childTypeName=="adderComptPhotIdealLocal")
+  else if (childTypeName=="adderComptPhotIdealLocal")
     newProcessor = new GatePulseAdderComptPhotIdealLocal(GetProcessorChain(),newInsertionName);
- else if (childTypeName=="localClustering")
+  else if (childTypeName=="localClustering")
     newProcessor = new GateLocalClustering(GetProcessorChain(),newInsertionName);
- else if (childTypeName=="clustering")
+  else if (childTypeName=="clustering")
     newProcessor = new GateClustering(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderGPUSpect")
 		newProcessor = new GatePulseAdderGPUSpect(GetProcessorChain(),newInsertionName);
