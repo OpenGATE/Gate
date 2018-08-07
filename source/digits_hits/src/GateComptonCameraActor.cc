@@ -318,6 +318,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     }
 
     evtID = evt->GetEventID();
+    //std::cout<<"eventID="<<evtID<<std::endl;
 
  // G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
 }
@@ -524,6 +525,27 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   }
   //=================================================
 
+//  //check volumeID diff with crystalSD
+//  std::cout << "posStepZG: " << hitPostPos.getZ() <<"  preStepZG: " << hitPrePos.getZ()<<'\n';
+//  std::cout << "posSteprocess " <<processPostStep  <<  "energy: " << hitEdep<<'\n';
+//  std::cout << "volume name cogido del pre  "<<  VolNameStep<<std::endl;
+//  std::cout << "volume name cogido del post "<<  step->GetPostStepPoint()->GetTouchableHandle()->GetVolume(0)->GetName()<<std::endl;
+//  std::cout << "volume name Hitroey pre "<<std::endl;
+
+//  for(unsigned int i=0;i<volumeID.size(); i++){
+//      std::cout<< volumeID.at(i);
+//  }
+// std::cout << " " << '\n';
+//  std::cout << "volume name Hitroey post "<<std::endl;
+
+//  const G4TouchableHistory*  touchableHTest = (const G4TouchableHistory*)(step->GetPostStepPoint()->GetTouchable() );
+//  GateVolumeID volumeIDTest(touchableHTest);
+//  for(unsigned int i=0;i<volumeIDTest.size(); i++){
+//      std::cout<< volumeIDTest.at(i);
+//  }
+//  std::cout << " " << '\n';
+
+
   //To check if  step ends in the  boundary
   // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
@@ -584,10 +606,10 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     aHit->SetEdep(hitEdep);
     aHit->SetEnergyFin(Ef);
     aHit->SetEnergyIniTrack(Ei);
-    G4ThreeVector hitPos;
-    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
-    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
-    hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
+//    G4ThreeVector hitPos;
+//    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
+//    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
+//    hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
     //aHit.SetGlobalPos(hitPos);
     aHit->SetGlobalPos(hitPostPos);
    //aHit.SetGlobalPos(hitPrePos);
@@ -638,9 +660,12 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
               SaveAsTextHitsEvt(aHit,VolNameStep);
         }
     }
+     else{
+           delete aHit;
+     }
 
 
-  //delete aHit;
+
    }
 
   // G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
