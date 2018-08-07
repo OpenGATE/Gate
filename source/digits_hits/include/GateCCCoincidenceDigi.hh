@@ -58,7 +58,13 @@ public:
       inline const G4ThreeVector& GetGlobalPos() const             { return m_pulse.GetGlobalPos(); }
 
 
+      inline void  SetSourcePosition(const G4ThreeVector& xyz)	{ m_pulse.SetSourcePosition(xyz); }
+      inline const G4ThreeVector& GetSourcePosition() const          { return m_pulse.GetSourcePosition(); }
+
+
       inline GatePulse& GetPulse()             { return m_pulse; }
+
+       inline void     SetVolumeID(const GateVolumeID& v) {  m_pulse.SetVolumeID(v); }
 
       inline void     SetCoincidenceID(G4int value)         	      { coincID=value; }
       inline G4double GetCoincidenceID() const                      	      { return coincID; }
@@ -67,8 +73,8 @@ public:
       inline void     SetFinalEnergy(G4double value)      { m_pulse.SetEnergyFin(value); }
       inline G4double GetFinalEnergy() const                   { return m_pulse.GetEnergyFin(); }
 
-	inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
-      inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+      inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
+        inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
 
 
 
