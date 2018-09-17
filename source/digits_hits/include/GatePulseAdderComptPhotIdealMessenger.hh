@@ -22,12 +22,14 @@ class GatePulseAdderComptPhotIdealMessenger: public GatePulseProcessorMessenger
 {
   public:
     GatePulseAdderComptPhotIdealMessenger(GatePulseAdderComptPhotIdeal* itsPulseAdder);
-    inline ~GatePulseAdderComptPhotIdealMessenger() {}
+    virtual ~GatePulseAdderComptPhotIdealMessenger();
 
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
     inline GatePulseAdderComptPhotIdeal* GetPulseAdderComptPhotIdeal()
       { return (GatePulseAdderComptPhotIdeal*) GetPulseProcessor(); }
+private:
+      G4UIcmdWithABool* pRejectionPolicyCmd;
 
 };
 

@@ -31,7 +31,8 @@ class GatePulseAdderComptPhotIdeal : public GateVPulseProcessor
 	//redefined because need to call repack() after last pulse
     //GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
     std::vector<G4int> lastTrackID;
-
+    bool flgEvtRej;
+    void SetEvtRejectionPolicy(G4bool flgval){m_flgRejActPolicy=flgval;};
 
   protected:
     //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
@@ -39,7 +40,7 @@ class GatePulseAdderComptPhotIdeal : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-
+    GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
   private:
     GatePulseAdderComptPhotIdealMessenger *m_messenger;     //!< Messenger
 
@@ -47,6 +48,7 @@ class GatePulseAdderComptPhotIdeal : public GateVPulseProcessor
 	void PulsePushBack(const GatePulse* inputPulse, GatePulseList& outputPulseList);
 	//void DifferentVolumeIDs(const GatePulse* InputPulse, GatePulseList& outputPulseList);
 	//void repackLastVolumeID(GatePulseList& outputPulseList);
+    G4bool m_flgRejActPolicy;
 
 };
 

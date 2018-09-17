@@ -12,12 +12,14 @@ GatePulseAdderComptPhotIdeal::GatePulseAdderComptPhotIdeal(GatePulseProcessorCha
 											 const G4String& itsName)
 											 : GateVPulseProcessor(itsChain,itsName)
 {
+    m_flgRejActPolicy=0;
 	m_messenger = new GatePulseAdderComptPhotIdealMessenger(this);
 
 }
 
 GatePulseAdderComptPhotIdeal::~GatePulseAdderComptPhotIdeal()
 {
+    G4cout<<"value taken for flgRejActPolicy="<<m_flgRejActPolicy<<G4endl;
 	delete m_messenger;
 }
 
@@ -36,10 +38,16 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 
         if(inputPulse->GetParentID()==0)
         {
-            if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot"  ){
+            if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot" ||inputPulse->GetPostStepProcess()=="conv"  ){
+                if(inputPulse->GetPostStepProcess()=="conv"){
+                    flgEvtRej=1;
+                }
                 PulsePushBack(inputPulse, outputPulseList);
                 lastTrackID.push_back(inputPulse->GetTrackID());            
                 //G4cout << "inserting a pulse";
+            }
+            else{
+                if(inputPulse->GetPostStepProcess()!="Transportation" )flgEvtRej=1;
             }
             //. La Eini de los primaries es su Eini antes de la primera interacci'on en SD of the layers no la Eini del track. This has been changed in the comptoncameraactor in where the hit coletion is saved
 
@@ -173,6 +181,48 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 
 }
 
+
+
+GatePulseList* GatePulseAdderComptPhotIdeal::ProcessPulseList(const GatePulseList* inputPulseList)
+{
+  if (!inputPulseList)
+    return 0;
+   flgEvtRej=0;
+  size_t n_pulses = inputPulseList->size();
+  if (nVerboseLevel==1)
+        G4cout << "[" << GetObjectName() << "::ProcessPulseList]: processing input list with " << n_pulses << " entries\n";
+  if (!n_pulses)
+    return 0;
+
+  GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
+
+  GatePulseConstIterator iter;
+
+
+  for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; ++iter){
+        ProcessOnePulse( *iter, *outputPulseList);
+        if(m_flgRejActPolicy==1 && flgEvtRej==1)break;
+  }
+  if(m_flgRejActPolicy==1 && flgEvtRej==1){
+      //vaciar el outputLisr
+     // G4cout<<"Rejecting the eventID ="<<outputPulseList->at(0)->GetEventID()<<G4endl;
+      while (outputPulseList->size()) {
+          delete outputPulseList->back();
+          outputPulseList->erase(outputPulseList->end()-1);
+      }
+      return 0;
+  }
+
+
+  if (nVerboseLevel==1) {
+      G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << outputPulseList->size() << " entries\n";
+      for (iter = outputPulseList->begin() ; iter != outputPulseList->end() ; ++iter)
+        G4cout << **iter << Gateendl;
+      G4cout << Gateendl;
+  }
+
+  return outputPulseList;
+}
 
 
 
