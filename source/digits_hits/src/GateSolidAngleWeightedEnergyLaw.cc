@@ -34,7 +34,7 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
     pulse.GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
 
     double crystalThicknes=max-min;
-    double zProp;
+    double zProp=0;
     if(m_zSense4Readout==1){
          zProp=crystalThicknes/2 -pulse.GetLocalPos().getZ();
     }
@@ -47,12 +47,16 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
         G4Exception( "GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy", "ComputeEffectiveEnergy", FatalException, "You must set the direction to 1 or -1 \n");
     }
 
-
-    double alfap=m_szX/ (2*zProp);
-     double betap=m_szY/ (2*zProp);
-     double fSolidAngle=(acos(sqrt((1+alfap*alfap+betap*betap)/((1+alfap*alfap)*(1+betap*betap)))))/pi;
-     G4cout<<"zProp="<<zProp<<"  fsolidA="<<fSolidAngle<<"  Energy="<<pulse.GetEnergy()<<"  effectiveEnergy="<<pulse.GetEnergy()*fSolidAngle<<G4endl;
-
+    double fSolidAngle;
+    if(zProp!=0){
+        double alfap=m_szX/ (2*zProp);
+        double betap=m_szY/ (2*zProp);
+        fSolidAngle=(acos(sqrt((1+alfap*alfap+betap*betap)/((1+alfap*alfap)*(1+betap*betap)))))/pi;
+        // G4cout<<"zProp="<<zProp<<"  fsolidA="<<fSolidAngle<<"  Energy="<<pulse.GetEnergy()<<"  effectiveEnergy="<<pulse.GetEnergy()*fSolidAngle<<G4endl;
+    }
+    else{
+        fSolidAngle=0.5;
+    }
 
     return (pulse.GetEnergy())*fSolidAngle;
 
