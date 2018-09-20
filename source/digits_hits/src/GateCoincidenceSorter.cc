@@ -568,10 +568,10 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 
 //------------------------------------------------------------------------------------------------------
   G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
-      //G4int counterDiffVID=1;
-      //std::vector<GateVolumeID> diffVID;
-      //diffVID.push_back(coincidence->at(0)->GetVolumeID());
+
       GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
+      G4String volBName1=((coincidence->at(0)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+     // G4cout<<"volBName1="<<volBName1<<G4endl;
       G4bool isGood=false;
       //Restriction at least coincidence in two different volumesID
         //std::vector<GateVolumeID>::iterator  it;
@@ -580,7 +580,9 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
       for(unsigned int i=1;i<numCoincPulses;i++){
            //find in the vector
             //it= find (diffVID.begin(),diffVID.end(), coincidence->at(i)->GetVolumeID());
-            if(coincidence->at(i)->GetVolumeID()!=volID1) {
+            //if(coincidence->at(i)->GetVolumeID()!=volID1) {
+            if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()!=volBName1){
+                 // G4cout<<"volBName="<<((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()<<G4endl;
                 isGood=true;
                 break;
             }
