@@ -63,7 +63,16 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
   for (i=0;i<n_hit;i++) {
         if (nVerboseLevel>1)
       		G4cout << "[GateHitConvertor::ProcessHits]: processing hit[" << i << "]\n";
-      	ProcessOneHit( (*hitCollection)[i], pulseList);
+
+        if((*hitCollection)[i]->GetEdep()==0){
+            if (nVerboseLevel>1)
+                G4cout << "[GateHitConvertor::ProcessOneHit]: energy is null for " << *(*hitCollection)[i] << " -> hit ignored\n\n";
+        }
+        else{
+            ProcessOneHit( (*hitCollection)[i], pulseList);
+        }
+
+
   }
 
  if (nVerboseLevel>1) {
@@ -95,8 +104,6 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
     for (i=0;i<n_hit;i++) {
           if (nVerboseLevel>1)
               G4cout << "[GateHitConvertor::ProcessHits]: processing hit[" << i << "]\n";
-          //Aqui otra vez problema de memoria I do not why
-         // ProcessOneHit( &vhitCollection.at(i), pulseList);
           //Here no problem
          // ProcessOneHit( (std::make_shared<GateCrystalHit>(vhitCollection.at(i))).get(), pulseList);
           ProcessOneHit(vhitCollection.at(i), pulseList);
@@ -117,11 +124,11 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
 
 void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pulseList)
 {
- if (hit->GetEdep()==0) {
+ /*if (hit->GetEdep()==0) {
     if (nVerboseLevel>1)
       	G4cout << "[GateHitConvertor::ProcessOneHit]: energy is null for " << *hit << " -> hit ignored\n\n";
     return;
-  }
+  }*/
 
   GatePulse* pulse = new GatePulse(hit);
 
