@@ -49,6 +49,7 @@ class GatePulseAdderComptPhotIdeal : public GateVPulseProcessor
 	//void DifferentVolumeIDs(const GatePulse* InputPulse, GatePulseList& outputPulseList);
 	//void repackLastVolumeID(GatePulseList& outputPulseList);
     G4bool m_flgRejActPolicy;
+     constexpr static double epsilonEnergy=0.00001;//MeV
 
 };
 

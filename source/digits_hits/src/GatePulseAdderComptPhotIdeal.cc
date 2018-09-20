@@ -33,7 +33,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
 #endif
     {
 
-          //G4cout << " Ideal adder "<<outputPulseList.size()<<G4endl;
+         //G4cout << " Input hit pulse "<<"parentID="<<inputPulse->GetParentID()<<"  posStep"<<inputPulse->GetPostStepProcess()<<"  trackID="<<inputPulse->GetTrackID()<<"   energy="<<inputPulse->GetEnergy()<<" processCreator="<<inputPulse->GetProcessCreator()<<"  eIni"<<inputPulse->GetEnergyIniTrack()<<"  eFin="<<inputPulse->GetEnergyFin()<<G4endl;
 
 
         if(inputPulse->GetParentID()==0)
@@ -84,8 +84,9 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                        EmaxDepos=(*(iter+1))->GetEnergyFin()- (*iter)->GetEnergyFin();
                    }
 
-                    if ( (inputPulse->GetVolumeID() == (*iter)->GetVolumeID()) && (inputPulse->GetEventID() == (*iter)->GetEventID()) && inputPulse->GetEnergyIniTrack()<= EmaxDepos)
+                    if ( (inputPulse->GetVolumeID() == (*iter)->GetVolumeID()) && (inputPulse->GetEventID() == (*iter)->GetEventID()) && inputPulse->GetEnergyIniTrack()<=(EmaxDepos+epsilonEnergy))
                     {
+
                         //first order secondaries
                         if(inputPulse->GetParentID()==1 && inputPulse->GetProcessCreator()==(*iter)->GetPostStepProcess()){
                             if( (*iter)->GetTrackID()==1){
@@ -105,7 +106,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                                          isgood=false;
                                      }
                                 }
-                                if(isgood==true){
+                                if(isgood==true){                             
                                  (*iter)->CentroidMergeComptPhotIdeal(inputPulse);
                                  (*iter)->SetTrackID(inputPulse->GetTrackID());
                                 }
@@ -123,6 +124,7 @@ void GatePulseAdderComptPhotIdeal::ProcessOnePulse(const GatePulse* inputPulse,G
                                    break;
                                 }
                                 else{
+
                                     ++iter;
                                     if (iter == outputPulseList.rend())
                                     {
@@ -194,6 +196,7 @@ GatePulseList* GatePulseAdderComptPhotIdeal::ProcessPulseList(const GatePulseLis
   if (!n_pulses)
     return 0;
 
+
   GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
 
   GatePulseConstIterator iter;
@@ -201,7 +204,7 @@ GatePulseList* GatePulseAdderComptPhotIdeal::ProcessPulseList(const GatePulseLis
 
   for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; ++iter){
         ProcessOnePulse( *iter, *outputPulseList);
-        if(m_flgRejActPolicy==1 && flgEvtRej==1)break;
+        //if(m_flgRejActPolicy==1 && flgEvtRej==1)break;
   }
   if(m_flgRejActPolicy==1 && flgEvtRej==1){
       //vaciar el outputLisr

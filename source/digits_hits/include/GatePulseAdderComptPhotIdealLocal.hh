@@ -62,6 +62,7 @@ class GatePulseAdderComptPhotIdealLocal : public GateVPulseProcessor
 	void PulsePushBack(const GatePulse* inputPulse, GatePulseList& outputPulseList);
 	//void DifferentVolumeIDs(const GatePulse* InputPulse, GatePulseList& outputPulseList);
 	//void repackLastVolumeID(GatePulseList& outputPulseList);
+     constexpr static double epsilonEnergy=0.00001;//MeV
 
 };
 

@@ -13,6 +13,7 @@ GatePulseAdderComptPhotIdealLocal::GatePulseAdderComptPhotIdealLocal(GatePulsePr
 											 const G4String& itsName)
 											 : GateVPulseProcessor(itsChain,itsName)
 {
+
     m_messenger = new GatePulseAdderComptPhotIdealLocalMessenger(this);
 
 }
@@ -97,7 +98,7 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
     {
         if(inputPulse->GetParentID()==0)
         {
-            if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot"  ){
+            if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot" || inputPulse->GetPostStepProcess()=="conv"  ){
                 primaryPulses.push_back(*inputPulse);
                 if(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_name){
                     indexPrimVInPrim.push_back( primaryPulses.size()-1);
@@ -123,7 +124,7 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
 
             if(inputPulse->GetParentID()==0)
             {
-                if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot"  ){
+                if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot" ||inputPulse->GetPostStepProcess()=="conv"   ){
                     PulsePushBack(inputPulse, outputPulseList);
                     primaryPulsesVol.push_back(*inputPulse);
                     indexPrimVInOut.push_back(outputPulseList.size()-1);
@@ -144,7 +145,7 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
                     std::vector<GatePulse>::reverse_iterator iter = primaryPulsesVol.rbegin();
                     while (1){
 
-                        if ( (inputPulse->GetVolumeID() == (*iter).GetVolumeID()) && (inputPulse->GetEventID() == (*iter).GetEventID())  && inputPulse->GetEnergyIniTrack()<= EDepmaxPrimV.at((EDepmaxPrimV.size()-1- (iter-primaryPulsesVol.rbegin()))) )
+                        if ( (inputPulse->GetVolumeID() == (*iter).GetVolumeID()) && (inputPulse->GetEventID() == (*iter).GetEventID())  && inputPulse->GetEnergyIniTrack()<=( EDepmaxPrimV.at((EDepmaxPrimV.size()-1- (iter-primaryPulsesVol.rbegin())))+epsilonEnergy) )
                         //if ( (inputPulse->GetVolumeID() == (*iter).GetVolumeID()) && (inputPulse->GetEventID() == (*iter).GetEventID()) )
                         {
 
