@@ -718,7 +718,7 @@ void GateComptonCameraActor::SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string
     //}
 
 
-    ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost"<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     E="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
+    ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost="<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     edep="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
 
 
 }
@@ -850,7 +850,8 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
         }
     }
     else{
-        std::cout<<"No pulse list"<<std::endl;
+        //after digitizer applied there is not a pulse list. Rejected
+        //std::cout<<"No pulse list"<<std::endl;
     }
 }
 //----------------------------------------------------------------------------
