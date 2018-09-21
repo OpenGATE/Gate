@@ -55,6 +55,9 @@ See LICENSE.md for further details
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
 #include "GateLocalEnergyThresholder.hh"
+#include "GateCC3DlocalSpblurring.hh"
+
+
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -98,7 +101,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
   return theList;
 }
 
@@ -154,6 +157,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateCalibration(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="spblurring")
     newProcessor = new GateSpblurring(GetProcessorChain(),newInsertionName,0.1);
+  else if (childTypeName=="sp3Dlocalblurring")
+    newProcessor = new GateCC3DlocalSpblurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adder")
     newProcessor = new GatePulseAdder(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderCompton")
