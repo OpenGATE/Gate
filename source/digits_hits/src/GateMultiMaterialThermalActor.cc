@@ -649,9 +649,9 @@ void GateMultiMaterialThermalActor::ConstructRegionMasks(GateVImageVolume *gateI
            << " mm2.s-1 | period = " << itTmp->second.period / s
            << " s | timer = " << itTmp->second.timer / s << " s " << G4endl;
            
-    std::ostringstream temp;
-    temp << itTmp->first->GetName();
-    SaveITKimage(itTmp->second.mask, "output/itkMask_" + temp.str() + ".mhd");
+//     std::ostringstream temp;
+//     temp << itTmp->first->GetName();
+//     SaveITKimage(itTmp->second.mask, "output/itkMask_" + temp.str() + ".mhd");
   }
 
   // Construct conversion map (eV->Kelvin) with dimensions of heat map (MANDATORY)
@@ -694,7 +694,7 @@ void GateMultiMaterialThermalActor::ConstructRegionMasks(GateVImageVolume *gateI
     if(mUserBloodHeatCapacity<=0.0) { GateError("Error: Please, set the 'bloodHeatCapacity' in order to use the blood perfusion process."); }
 
     // - if perfusion image is provided by the user, read it
-    DoubleImageType *tmpPerfusionRateMap = DoubleImageType::New();
+    DoubleImageType::Pointer tmpPerfusionRateMap = DoubleImageType::New();
     if(mIsPerfusionByImage)
     {
       DoubleReaderType::Pointer doubleReaderFilter = DoubleReaderType::New();
