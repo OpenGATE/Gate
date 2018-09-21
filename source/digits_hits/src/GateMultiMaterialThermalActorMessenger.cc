@@ -114,6 +114,6 @@ void GateMultiMaterialThermalActorMessenger::SetNewValue(G4UIcommand* cmd, G4Str
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEThermalActorMESSENGER_CC */
+#endif /* end #define GATEMULTIMATERIALTHERMALACTORMESSENGER_CC */
 
 #endif /* end #define USE_ITK */

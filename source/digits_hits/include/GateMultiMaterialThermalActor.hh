@@ -254,6 +254,6 @@ protected:
   
 };
 
-MAKE_AUTO_CREATOR_ACTOR(FSThermalActor,GateMultiMaterialThermalActor)
+MAKE_AUTO_CREATOR_ACTOR(MultiMaterialThermalActor,GateMultiMaterialThermalActor)
 
 #endif /* end #define GATEMULTIMATERIALTHERMALACTOR_HH */
