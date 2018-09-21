@@ -32,8 +32,11 @@
 #include "GateFixedForcedDetectionProjector.h"
 #include "GateFixedForcedDetectionProcessType.hh"
 #include "GateARFSD.hh"
+
 /* itk */
 #include <itkTimeProbe.h>
+#include <itkBinShrinkImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 /* rtk */
 #include <rtkConstantImageSource.h>
@@ -65,6 +68,21 @@ public:
   virtual void SaveData(const G4String prefix);
   virtual void ResetData();
 
+  /* Typedef for rtk */
+  static const unsigned int Dimension = 3;
+  typedef float InputPixelType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
+  typedef itk::Image<int, Dimension> IntegerImageType;
+  typedef itk::Image<double, Dimension> DoubleImageType;
+  typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
+  typedef float OutputPixelType;
+  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
+  typedef rtk::Reg23ProjectionGeometry GeometryType;
+  typedef rtk::Reg23ProjectionGeometry::PointType PointType;
+  typedef rtk::Reg23ProjectionGeometry::VectorType VectorType;
+  typedef rtk::ConstantImageSource<OutputImageType> ConstantImageSourceType;
+  typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
+
   /* Resolution of the detector plane (2D only, z=1); */
   const G4ThreeVector & GetDetectorResolution() const
     {
@@ -94,6 +112,14 @@ public:
   void SetAttenuationFilename(G4String name)
     {
     mAttenuationFilename = name;
+    }
+  void SetMaterialDeltaFilename(G4String name)
+    {
+    mMaterialDeltaFilename = name;
+    }
+  void SetFresnelFilename(G4String name)
+    {
+    mFresnelFilename = name;
     }
   void SetResponseDetectorFilename(G4String name)
     {
@@ -162,6 +188,16 @@ public:
     {
     mNoisePrimary = n;
     }
+  const BinShrinkFilterType::ShrinkFactorsType & GetBinningFactor() const
+    {
+    return mBinningFactor;
+    }
+  void SetBinningFactor(G4int x, G4int y)
+    {
+    mBinningFactor[0] = x;
+    mBinningFactor[1] = y;
+    mBinShrinkFilter->SetShrinkFactors(mBinningFactor);
+    }
   void SetInputRTKGeometryFilename(G4String name)
     {
     mInputRTKGeometryFilename = name;
@@ -170,19 +206,6 @@ public:
     {
     mEnergyResolvedBinSize = e;
     }
-
-  /* Typedef for rtk */
-  static const unsigned int Dimension = 3;
-  typedef float InputPixelType;
-  typedef itk::Image<InputPixelType, Dimension> InputImageType;
-  typedef itk::Image<int, Dimension> IntegerImageType;
-  typedef itk::Image<double, Dimension> DoubleImageType;
-  typedef float OutputPixelType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
-  typedef rtk::Reg23ProjectionGeometry GeometryType;
-  typedef rtk::Reg23ProjectionGeometry::PointType PointType;
-  typedef rtk::Reg23ProjectionGeometry::VectorType VectorType;
-  typedef rtk::ConstantImageSource<OutputImageType> ConstantImageSourceType;
 
   void SetGeometryFromInputRTKGeometryFile(GateVSource *source,
                                            GateVVolume *detector,
@@ -239,6 +262,9 @@ public:
                                std::vector<double> & energyWeightList,
                                GateVImageVolume* gate_image_volume,
                                unsigned int & nPixOneSlice);
+
+  void CalculatePropagatorImage(const double D, std::vector<double> & energyList);
+
   void CreateProjectionImages();
   void GeneratePhotons(const unsigned int & numberOfThreads,
                        const std::vector<std::vector<newPhoton> > & photonList);
@@ -259,6 +285,8 @@ protected:
   G4String mPrimaryFilename;
   G4String mMaterialMuFilename;
   G4String mAttenuationFilename;
+  G4String mMaterialDeltaFilename;
+  G4String mFresnelFilename;
   G4String mResponseFilename;
   G4String mFlatFieldFilename;
   G4String mSecondaryFilename;
@@ -269,6 +297,8 @@ protected:
 
   /* Parameter for statistical noise */
   G4int mNoisePrimary;
+  /* Parameter for modeling pixel-binning */
+  BinShrinkFilterType::ShrinkFactorsType mBinningFactor;
 
   G4double mMinPrimaryEnergy;
   G4double mMaxPrimaryEnergy;
@@ -283,7 +313,10 @@ protected:
   InputImageType::Pointer mGateVolumeImage;
   rtk::ImportImageFilter<InputImageType>::Pointer mGateToITKImageFilter;
   InputImageType::Pointer mPrimaryImage;
+  InputImageType::Pointer mDeltaImage;
+  ComplexImageType::Pointer mPropagatorImage;
   InputImageType::Pointer mFlatFieldImage;
+  InputImageType::Pointer mFlatFieldDeltaImage;
   std::map<ProcessType, InputImageType::Pointer> mProcessImage;
   std::map<ProcessType, InputImageType::Pointer> mSquaredImage;
   std::map<ProcessType, InputImageType::Pointer> mEventImage;
@@ -336,6 +369,11 @@ protected:
       GateFixedForcedDetectionFunctor::IsotropicPrimaryValueAccumulation> IsotropicPrimaryProjectionType;
   IsotropicPrimaryProjectionType::Pointer mIsotropicPrimaryProjector;
 
+  /* Pixel-binning stuff */
+  BinShrinkFilterType::Pointer mBinShrinkFilter;
+  typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> BinMultiplyFilterType;
+  BinMultiplyFilterType::Pointer mBinMultiplyFilter;
+
   /* Phase space variables */
   G4String mPhaseSpaceFilename;
   TFile *mPhaseSpaceFile;
@@ -355,14 +393,19 @@ protected:
   double mInteractionSquaredIntegralOverDetector;
   G4String mSourceType;
   bool mGeneratePhotons;
+
   bool mARF;
   unsigned int mNumberOfProcessedPrimaries;
   unsigned int mNumberOfProcessedSecondaries;
   unsigned int mNumberOfProcessedCompton;
   unsigned int mNumberOfProcessedRayleigh;
   unsigned int mNumberOfProcessedPE;
+
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
+
+  /* Account for pixel-binning */
+  InputImageType::Pointer PixelBinning(const InputImageType::Pointer input, bool bSum = true, bool bSQRT = false);
 
   G4String AddPrefix(G4String prefix, G4String filename);
   };

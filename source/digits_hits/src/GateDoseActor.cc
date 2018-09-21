@@ -295,7 +295,8 @@ void GateDoseActor::Construct() {
   if (mDoseByRegionsFlag) {
     mDoseByRegionsLabelImage.Read(mDoseByRegionsInputFilename);
     SetOriginTransformAndFlagToImage(mDoseByRegionsLabelImage);
-    double tol = 0.00000001;
+    // double tol = 0.00000001;
+    double tol = 0.000001; // under this value regularMatrix size may not match
     if (!IsEqual(mDoseByRegionsLabelImage.GetResolution(), mResolution, tol) ||
         !IsEqual(mDoseByRegionsLabelImage.GetVoxelSize(), mVoxelSize, tol) ||
         !IsEqual(mDoseByRegionsLabelImage.GetOrigin(), mOrigin, tol)) {
@@ -369,7 +370,11 @@ void GateDoseActor::SaveData() {
   }
 
   if (mIsNumberOfHitsImageEnabled) {
-    mNumberOfHitsImage.Write(mNbOfHitsFilename);
+    G4String f = mNbOfHitsFilename;
+    if (!mOverWriteFilesFlag) {
+      f = GetSaveCurrentFilename(mNbOfHitsFilename);
+    }
+    mNumberOfHitsImage.Write(f);
   }
 
   if (mDoseByRegionsFlag) {
