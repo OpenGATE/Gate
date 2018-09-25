@@ -89,11 +89,11 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
     mEnergyModeFlag = false;
     found = true;
   }
-  if (m == "trainE") {
-    mTrainingModeFlag = true;
-    mEnergyModeFlag = true;
-    found = true;
-  }
+  /* if (m == "trainE") {
+     mTrainingModeFlag = true;
+     mEnergyModeFlag = true;
+     found = true;
+     }*/
 
   if (m == "test") {
     mTrainingModeFlag = false;
@@ -101,7 +101,7 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
   }
 
   if (!found) {
-    GateError("Error in Gate_NN_ARF_Actor macro 'setMode', must be 'train' or 'trainE' or test', while read " << m);
+    GateError("Error in Gate_NN_ARF_Actor macro 'setMode', must be 'train' or test', while read " << m);
   }
 
   GateMessage("Actor", 1, "Gate_NN_ARF_Actor mode = " << m);
@@ -162,24 +162,8 @@ void Gate_NN_ARF_Actor::SaveData()
   GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> max angles "
               << mThetaMax << " " << mPhiMax << std::endl);
 
-  // Output simple binary file
-  std::ofstream os;
-  os.open(mSaveFilename, std::ios::out | std::ios::binary);
-  auto s_train = sizeof(Gate_NN_ARF_Train_Data);
-  auto s_test = sizeof(Gate_NN_ARF_Test_Data);
-
-  if (mTrainingModeFlag) {
-    for(unsigned int i=0; i<mTrainData.size(); i++)
-      os.write(reinterpret_cast<char*>(&mTrainData[i]), s_train);
-  }
-  else {
-    for(unsigned int i=0; i<mTestData.size(); i++)
-      os.write(reinterpret_cast<char*>(&mTestData[i]), s_test);
-  }
-  os.close();
-
   // Root Output
-  mSaveFilename = mSaveFilename+".root";
+  mSaveFilename = mSaveFilename;
   auto pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file Gate_NN_ARF_Actor", 9);
   if (mTrainingModeFlag) {
     auto pListeVar = new TTree("ARF (training)", "ARF Training Dataset");
@@ -187,7 +171,7 @@ void Gate_NN_ARF_Actor::SaveData()
     pListeVar->Branch("Theta", &t, "Theta/D");
     pListeVar->Branch("Phi", &p, "Phi/D");
     pListeVar->Branch("E", &e, "E/D");
-    pListeVar->Branch("w", &w, "w/D");
+    pListeVar->Branch("window", &w, "w/D");
     // We dont store the weight because it is easily retrieve: 1.0 everywhere
     // except if w == 0;
     //if (mRRFactor != 0)
@@ -280,21 +264,14 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
       ++i;
       auto SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(id));
       if (!SDC) continue;
-
-      /*
-        DD(SDC->GetSize());
-        DD(i);
-        DD((*SDC)[0]->GetEnergy());
-      */
-
       /*
       // ==> No need for u,v coordinates
-      G4double xProj = (*SDC)[0]->GetLocalPos()[0]; // X FIXME ?
-      G4double yProj = (*SDC)[0]->GetLocalPos()[1]; // Z FIXME ?
+      G4double xProj = (*SDC)[0]->GetLocalPos()[0];
+      G4double yProj = (*SDC)[0]->GetLocalPos()[1];
       mCurrentOutData.u = xProj;
       mCurrentOutData.v = yProj;
       */
-      if (mEnergyModeFlag)
+      if (mEnergyModeFlag) // Currently never true (experimental)
         mCurrentTrainData.w = (*SDC)[0]->GetEnergy();
       else
         mCurrentTrainData.w = i;
@@ -336,7 +313,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
 
   // Get information
   auto pre = step->GetPreStepPoint();
-  // auto post = step->GetPostStepPoint();
+  //auto post = step->GetPostStepPoint();
   auto p = theTouchable->GetHistory()->GetTopTransform().TransformPoint(pre->GetPosition());
   auto E = pre->GetKineticEnergy();
 
