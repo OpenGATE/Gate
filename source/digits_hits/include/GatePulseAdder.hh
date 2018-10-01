@@ -30,6 +30,10 @@ class GatePulseAdderMessenger;
 
       \sa GateVPulseProcessor
 */
+
+typedef enum {kenergyWeightedCentroid,
+              kTakeEnergyWin} position_policy_t;
+
 class GatePulseAdder : public GateVPulseProcessor
 {
   public:
@@ -43,13 +47,14 @@ class GatePulseAdder : public GateVPulseProcessor
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the pulse adder
     virtual void DescribeMyself(size_t indent);
-
+     void SetPositionPolicy(const G4String& policy);
   protected:
     //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
     //! This methods processes one input-pulse
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
+    position_policy_t   m_positionPolicy;
 
   private:
     GatePulseAdderMessenger *m_messenger;     //!< Messenger
