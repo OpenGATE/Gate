@@ -57,9 +57,13 @@ void GateCC3DlocalSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePu
             G4double Px = P.x();
             G4double Py = P.y();
             G4double Pz = P.z();
-            G4double PxNew = G4RandGauss::shoot(Px,(*im).second.sigmaSpblurr.x()/GateConstants::fwhm_to_sigma);
-            G4double PyNew = G4RandGauss::shoot(Py,(*im).second.sigmaSpblurr.y()/GateConstants::fwhm_to_sigma);
-            G4double PzNew = G4RandGauss::shoot(Pz,(*im).second.sigmaSpblurr.z()/GateConstants::fwhm_to_sigma); //
+           // G4cout<<"eventID "<<inputPulse->GetEventID()<<"vX"<<(*im).second.sigmaSpblurr.x()/GateConstants::fwhm_to_sigma<<G4endl;
+           // G4cout<<"shoots "<<G4RandGauss::shoot(0.,(*im).second.sigmaSpblurr.x()/GateConstants::fwhm_to_sigma)<<G4endl;
+            //G4cout<<"shoots "<<G4RandGauss::shoot(0.,(*im).second.sigmaSpblurr.y()/GateConstants::fwhm_to_sigma)<<G4endl;
+             //G4cout<<"shoots "<<G4RandGauss::shoot(0.,(*im).second.sigmaSpblurr.z()/GateConstants::fwhm_to_sigma)<<G4endl;
+            G4double PxNew = G4RandGauss::shoot(Px,(*im).second.sigmaSpblurr.x());
+            G4double PyNew = G4RandGauss::shoot(Py,(*im).second.sigmaSpblurr.y());
+            G4double PzNew = G4RandGauss::shoot(Pz,(*im).second.sigmaSpblurr.z()); //
             //Limits calculated for the bottom volume of the pulse) Maybe could  be done one for ecah volume and try to associate
                inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, Xmin, Xmax);
                inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
