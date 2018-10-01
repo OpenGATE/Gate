@@ -60,6 +60,8 @@ public:
 
       inline void  SetSourcePosition(const G4ThreeVector& xyz)	{ m_pulse.SetSourcePosition(xyz); }
       inline const G4ThreeVector& GetSourcePosition() const          { return m_pulse.GetSourcePosition(); }
+      inline void SetSourceEkine(G4double value)           	      { m_pulse.SetSourceEkine(value); }
+      inline G4double GetSourceEkine() const                    	      { return m_pulse.GetSourceEkine(); }
 
 
       inline GatePulse& GetPulse()             { return m_pulse; }

@@ -27,7 +27,8 @@ GateCrystalHit::GateCrystalHit()
   m_PDGEncoding(0),
   m_trackID(0),
   m_parentID(0),
-  m_systemID(-1)
+  m_systemID(-1),
+  m_sourceEkine(0)
 {;}
 //---------------------------------------------------------------------
 

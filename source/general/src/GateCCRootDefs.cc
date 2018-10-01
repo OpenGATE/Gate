@@ -38,6 +38,10 @@ void GateCCRootHitBuffer::Clear()
   localPosX       = 0./mm;
   localPosY       = 0./mm;
   localPosZ       = 0./mm;
+  sPosX       = 0./mm;
+  sPosY       = 0./mm;
+  sPosZ       = 0./mm;
+  sourceEkine      = 0./MeV;
   eventID         = -1;
   runID           = -1;
   strcpy (layerName, " ");
@@ -66,6 +70,8 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
   SetTrackLength(    aHit->GetTrackLength() );
   SetPos(           aHit->GetGlobalPos() );
   SetLocalPos(      aHit->GetLocalPos() );
+  SetsourcePos(      aHit->GetSourcePosition() );
+  SetSourceEkine(aHit->GetSourceEkine());
   parentID        = aHit->GetParentID();
   eventID         = aHit->GetEventID();
   runID           = aHit->GetRunID();
@@ -98,11 +104,12 @@ GateCrystalHit* GateCCRootHitBuffer::CreateHit()
   aHit->SetTrackLength(GetTrackLength());
   aHit->SetGlobalPos(GetPos());
   aHit->SetLocalPos(GetLocalPos());
+  aHit->SetSourcePosition(GetsourcePos());
+  aHit->SetSourceEkine(GetSourceEkine());
   aHit->SetEventID(eventID);
   aHit->SetRunID(runID);
   aHit->SetProcess(processName);
    aHit->SetVolumeID(	      	aVolumeID);
-
    aHit->SetPostStepProcess( postStepProcess);
    aHit->SetEnergyFin(GetEnergyFin());
    aHit->SetEnergyIniTrack(GetEnergyIniT());
@@ -134,6 +141,9 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("posZ",           &buffer.posZ,"posZ/F");
   Branch("localPosX",      &buffer.localPosX,"localPosX/F");
   Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+  Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+  Branch("sPosX",      &buffer.localPosX,"localPosX/F");
+  Branch("lPosY",      &buffer.localPosY,"localPosY/F");
   Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
   Branch("eventID",        &buffer.eventID,"eventID/I");
   Branch("runID",          &buffer.runID,"runID/I");
@@ -167,6 +177,10 @@ void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffe
   hitTree->SetBranchAddress("localPosX",&buffer.localPosX);
   hitTree->SetBranchAddress("localPosY",&buffer.localPosY);
   hitTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
+  hitTree->SetBranchAddress("sourcePosX",&buffer.sPosX);
+  hitTree->SetBranchAddress("sourcePosY",&buffer.sPosY);
+  hitTree->SetBranchAddress("sourcePosZ",&buffer.sPosZ);
+  hitTree->SetBranchAddress("sourceEkine",&buffer.sourceEkine);
   hitTree->SetBranchAddress("eventID",&buffer.eventID);
   hitTree->SetBranchAddress("runID",&buffer.runID);
   hitTree->SetBranchAddress("processName",&buffer.processName);
@@ -198,6 +212,8 @@ void GateCCRootSingleBuffer::Clear()
   sourcePosX       = 0./mm;
   sourcePosY       = 0./mm;
   sourcePosZ       = 0./mm;
+  sourceEkine      = 0./MeV;
+
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
@@ -226,6 +242,7 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     sourcePosX    = (aDigi->GetSourcePosition().getX())/mm;
     sourcePosY    = (aDigi->GetSourcePosition().getY())/mm;
     sourcePosZ    = (aDigi->GetSourcePosition().getZ())/mm;
+    sourceEkine    =aDigi->GetSourceEkine()/MeV;
  // layerID=slayerID;//it was as a second argument of the function.
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
@@ -252,35 +269,36 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 //-----------------------------------------------------------------------------
 void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
 {
-  SetAutoSave(2000);
-  if ( GateSingleDigi::GetSingleASCIIMask(0) )
-    Branch("runID",          &buffer.runID,"runID/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(1) )
-    Branch("eventID",        &buffer.eventID,"eventID/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(7) )
-    Branch("time",           &buffer.time,"time/D");
-  if ( GateSingleDigi::GetSingleASCIIMask(8) )
-    Branch("energy",         &buffer.energy,"energy/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(9) )
-    Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(10) )
-    Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(11) )
-    Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
+    SetAutoSave(2000);
+    if ( GateSingleDigi::GetSingleASCIIMask(0) )
+        Branch("runID",          &buffer.runID,"runID/I");
+    if ( GateSingleDigi::GetSingleASCIIMask(1) )
+        Branch("eventID",        &buffer.eventID,"eventID/I");
+    if ( GateSingleDigi::GetSingleASCIIMask(7) )
+        Branch("time",           &buffer.time,"time/D");
+    if ( GateSingleDigi::GetSingleASCIIMask(8) )
+        Branch("energy",         &buffer.energy,"energy/F");
+    if ( GateSingleDigi::GetSingleASCIIMask(9) )
+        Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
+    if ( GateSingleDigi::GetSingleASCIIMask(10) )
+        Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
+    if ( GateSingleDigi::GetSingleASCIIMask(11) )
+        Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
 
-   Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
+    Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
-     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
-     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
-     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
-     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+    Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+    Branch("sourceEkine",     &buffer.sourceEkine,"sourceEkine/F");
+    Branch("localPosX",      &buffer.localPosX,"localPosX/F");
+    Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+    Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
 
-  Branch("layerName",    (void *)buffer.layerName,"layername/C");
-  //Branch("layerID",     &buffer.layerID,"layerID/I");
-  Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
-   Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+    Branch("layerName",    (void *)buffer.layerName,"layername/C");
+    //Branch("layerID",     &buffer.layerID,"layerID/I");
+    Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
+    Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 
-   Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
+    Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
     Branch("energyIni",         &buffer.energyIni,"energyIni/F");
 }
 //-----------------------------------------------------------------------------
@@ -302,11 +320,12 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
     singlesTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
     singlesTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
     singlesTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
+    singlesTree->SetBranchAddress("sourceEkine",&buffer.sourceEkine);
     singlesTree->SetBranchAddress("localPosX",&buffer.localPosX);
     singlesTree->SetBranchAddress("localPosY",&buffer.localPosY);
-   singlesTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
+    singlesTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
     singlesTree->SetBranchAddress("layerName",&buffer.layerName);
- //   singlesTree->SetBranchAddress("layerID",&buffer.layerID);
+    //   singlesTree->SetBranchAddress("layerID",&buffer.layerID);
     singlesTree->SetBranchAddress("sublayerID",&buffer.sublayerID);
     singlesTree->SetBranchAddress("volumeID",buffer.volumeID);
 
@@ -346,6 +365,7 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
   sPos.setY(sourcePosY);
   sPos.setZ(sourcePosZ);
   aSingle->SetSourcePosition(sPos);
+  aSingle->SetSourceEkine(sourceEkine);
 
 
 
@@ -367,17 +387,18 @@ void GateCCRootCoincBuffer::Clear()
   eventID          = -1;
   time             = 0./s;
   energy           = 0./MeV;
-  energyFin     =  0./MeV;
-   energyIni     = 0./MeV;
+  energyFin        =  0./MeV;
+  energyIni        = 0./MeV;
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
-  localPosX       = 0./mm;
-  localPosY       = 0./mm;
-  localPosZ       = 0./mm;
+  localPosX        = 0./mm;
+  localPosY        = 0./mm;
+  localPosZ        = 0./mm;
   sourcePosX       = 0./mm;
   sourcePosY       = 0./mm;
   sourcePosZ       = 0./mm;
+  sourceEkine      =  0./MeV;
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
@@ -410,6 +431,9 @@ void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
     sourcePosX    = (aDigi->GetSourcePosition().getX())/mm;
     sourcePosY    = (aDigi->GetSourcePosition().getY())/mm;
     sourcePosZ    = (aDigi->GetSourcePosition().getZ())/mm;
+
+    sourceEkine   =aDigi->GetSourceEkine()/MeV;
+
     //layerID=slayerID;
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
@@ -438,22 +462,23 @@ void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
     Branch("eventID",        &buffer.eventID,"eventID/I");
     Branch("time",           &buffer.time,"time/D");
     Branch("energy",         &buffer.energy,"energy/F");
-     Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
-      Branch("energyIni",         &buffer.energyIni,"energyIni/F");
+    Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
+    Branch("energyIni",         &buffer.energyIni,"energyIni/F");
     Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
     Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
     Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
-     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
-      Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
-      Branch("localPosX",      &buffer.localPosX,"localPosX/F");
-      Branch("localPosY",      &buffer.localPosY,"localPosY/F");
-      Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+    Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
+    Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+    Branch("sourceEkine",    &buffer.sourceEkine,"sourceEkine/F");
+    Branch("localPosX",      &buffer.localPosX,"localPosX/F");
+    Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+    Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
 
-     Branch("layerName",    (void *)buffer.layerName,"layername/C");
+    Branch("layerName",    (void *)buffer.layerName,"layername/C");
     //Branch("layerID",     &buffer.layerID,"layerID/I");
     Branch("sublayerID",     &buffer.sublayerID,"sublayerID/I");
-     Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+    Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 //-----------------------------------------------------------------------------
 
@@ -461,13 +486,13 @@ void GateCCCoincTree::SetBranchAddresses(TTree* coinTree,GateCCRootCoincBuffer& 
 {
 
 
-     coinTree->SetBranchAddress("coincID",&buffer.coincID);
+    coinTree->SetBranchAddress("coincID",&buffer.coincID);
     coinTree->SetBranchAddress("runID",&buffer.runID);
     coinTree->SetBranchAddress("eventID",&buffer.eventID);
     coinTree->SetBranchAddress("time",&buffer.time);
     coinTree->SetBranchAddress("energy",&buffer.energy);
     coinTree->SetBranchAddress("energyFinal",&buffer.energyFin);
-     coinTree->SetBranchAddress("energyIni",&buffer.energyIni);
+    coinTree->SetBranchAddress("energyIni",&buffer.energyIni);
     coinTree->SetBranchAddress("globalPosX",&buffer.globalPosX);
     coinTree->SetBranchAddress("globalPosY",&buffer.globalPosY);
     coinTree->SetBranchAddress("globalPosZ",&buffer.globalPosZ);
@@ -475,9 +500,10 @@ void GateCCCoincTree::SetBranchAddresses(TTree* coinTree,GateCCRootCoincBuffer& 
     coinTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
     coinTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
     coinTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
-   coinTree->SetBranchAddress("localPosX",&buffer.localPosX);
+    coinTree->SetBranchAddress("sourceEkine",&buffer.sourceEkine);
+    coinTree->SetBranchAddress("localPosX",&buffer.localPosX);
     coinTree->SetBranchAddress("localPosY",&buffer.localPosY);
-   coinTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
+    coinTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
 
 
 
@@ -523,6 +549,7 @@ GateCCCoincidenceDigi* GateCCRootCoincBuffer::CreateCoincidence()
   sPos.setZ(sourcePosZ);
   aCoin->SetSourcePosition(sPos);
 
+  aCoin->SetSourceEkine(sourceEkine);
 
 
   aCoin->SetEnergy(energy);

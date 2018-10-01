@@ -116,6 +116,21 @@ public:
     localPosZ = aPosition.z() / mm;
   }
 
+
+  //! Returns the local position in G4 units (conversion from millimeters)
+  inline G4ThreeVector GetsourcePos() const
+  { return G4ThreeVector(sPosX,sPosY,sPosZ) * mm ;}
+  //! Set the local position from a value given in G4 units (conversion into millimeters)
+  inline void SetsourcePos(const G4ThreeVector& sPosition)
+  {
+    sPosX = sPosition.x() / mm;
+    sPosY = sPosition.y() / mm;
+    sPosZ = sPosition.z() / mm;
+  }
+  inline G4double GetSourceEkine() const
+  { return sourceEkine* MeV;}
+  inline void SetSourceEkine(G4double sEnergy)
+  { sourceEkine = sEnergy / MeV;}
   //@}
 
   //! \name Data fields
@@ -130,6 +145,8 @@ public:
   Float_t  trackLength;      	      	      	//!< Track length (in millimeters)
   Float_t  posX,posY,posZ;  	      	      	//!< Global hit position (in millimeters)
   Float_t  localPosX, localPosY, localPosZ; 	//!< Local hit position (in millimeters)
+  Float_t  sPosX, sPosY, sPosZ; 	//!< Local hit position (in millimeters)
+  Float_t sourceEkine;
   Int_t    eventID; 	      	      	      	//!< Event ID
   Int_t    runID;   	      	      	      	//!< Run ID
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
@@ -198,6 +215,7 @@ public:
   Float_t  sourcePosX;
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
+  Float_t  sourceEkine;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
@@ -258,6 +276,7 @@ public:
   Float_t  sourcePosX;
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
+  Float_t  sourceEkine;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;

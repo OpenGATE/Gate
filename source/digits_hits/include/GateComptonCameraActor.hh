@@ -151,10 +151,11 @@ protected:
   G4int runID;
 
   G4double hitEdep;
-   G4double Ef_oldPrimary;
+  G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
   G4ThreeVector hitPrePos;
-   G4ThreeVector sourcePos;
+  G4ThreeVector sourcePos;
+  G4double sourceEkine;
   G4int trackID;
   G4int  parentID;
   G4double trackLength;

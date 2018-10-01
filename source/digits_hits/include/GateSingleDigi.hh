@@ -111,7 +111,11 @@ public:
       inline G4double GetFinalEnergy() const                   { return m_pulse.GetEnergyFin(); }
 
       inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
-        inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+      inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+
+
+      inline void SetSourceEkine(G4double value)           	      { m_pulse.SetSourceEkine(value); }
+      inline G4double GetSourceEkine() const                    	      { return m_pulse.GetSourceEkine(); }
 
 
 

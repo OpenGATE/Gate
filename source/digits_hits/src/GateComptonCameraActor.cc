@@ -295,11 +295,13 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 {
 
 
+    G4PrimaryVertex* pvertex=evt->GetPrimaryVertex();
+    sourcePos=pvertex->GetPosition();
+    sourceEkine=pvertex->GetPrimary()->GetKineticEnergy();
 
-    sourcePos=evt->GetPrimaryVertex()->GetPosition();
 
     GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Event\n");
-   // G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
+    // G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
     newEvt = true;
     edepEvt = 0.;
     Ef_oldPrimary=0;
@@ -600,44 +602,43 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
    if (it != layerNames.end()){
   //if (hitEdep!=0.){
     // Create a new crystal hit (maybe better an object hit
-         GateCrystalHit* aHit=new GateCrystalHit();
-   //GateCrystalHit aHit;
-    //std::shared_ptr<GateCrystalHit> aHit(new GateCrystalHit());
-    aHit->SetEdep(hitEdep);
-    aHit->SetEnergyFin(Ef);
-    aHit->SetEnergyIniTrack(Ei);
-//    G4ThreeVector hitPos;
-//    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
-//    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
-//    hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
-    //aHit.SetGlobalPos(hitPos);
-    aHit->SetGlobalPos(hitPostPos);
-   //aHit.SetGlobalPos(hitPrePos);
-    //aHit.SetLocalPos(hitPreLocalPos);
-   aHit->SetLocalPos( hitPostLocalPos);
-    //aHit.SetLocalPos(hitMeanLocalPos);
-    //step.GetPreStepPoint()->GetGlobalTime()
-    /////Which time do I need to save. Prestep or the time of the track?
-    /// also possiblitiy of track local time.
-    /// Singles takes the time of the first hit
-    /// Track global time
-    aHit->SetTime(aTrack->GetGlobalTime());
-    aHit->SetTrackID(trackID );
-    aHit->SetParentID(parentID );
-    aHit->SetTrackLength(trackLength );
-    aHit->SetTrackLocalTime(trackLocalTime );
-    aHit->SetVolumeID(volumeID);
-    aHit->SetEventID(evtID);
-    aHit->SetRunID(runID);
-    aHit->SetPDGEncoding(PDGEncoding);
-    aHit->SetPostStepProcess( processPostStep);
-
-    //Try to obtain information of the source (I DO NOT FROM WHERE SD SYS TAKE IT)
-    aHit->SetSourcePosition(sourcePos);
-    //track creator
-    aHit->SetProcess(processName);
-    aHit->SetStepLength(step->GetStepLength());
-    aHit->SetMomentumDir( aTrack->GetMomentumDirection());
+       GateCrystalHit* aHit=new GateCrystalHit();
+       //GateCrystalHit aHit;
+       //std::shared_ptr<GateCrystalHit> aHit(new GateCrystalHit());
+       aHit->SetEdep(hitEdep);
+       aHit->SetEnergyFin(Ef);
+       aHit->SetEnergyIniTrack(Ei);
+       //    G4ThreeVector hitPos;
+       //    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
+       //    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
+       //    hitPos.setZ((hitPrePos.getZ()+hitPostPos.getZ())/2);
+       //aHit.SetGlobalPos(hitPos);
+       aHit->SetGlobalPos(hitPostPos);
+       //aHit.SetGlobalPos(hitPrePos);
+       //aHit.SetLocalPos(hitPreLocalPos);
+       aHit->SetLocalPos( hitPostLocalPos);
+       //aHit.SetLocalPos(hitMeanLocalPos);
+       //step.GetPreStepPoint()->GetGlobalTime()
+       /////Which time do I need to save. Prestep or the time of the track?
+       /// also possiblitiy of track local time.
+       /// Singles takes the time of the first hit
+       /// Track global time
+       aHit->SetTime(aTrack->GetGlobalTime());
+       aHit->SetTrackID(trackID );
+       aHit->SetParentID(parentID );
+       aHit->SetTrackLength(trackLength );
+       aHit->SetTrackLocalTime(trackLocalTime );
+       aHit->SetVolumeID(volumeID);
+       aHit->SetEventID(evtID);
+       aHit->SetRunID(runID);
+       aHit->SetPDGEncoding(PDGEncoding);
+       aHit->SetPostStepProcess( processPostStep);
+       aHit->SetSourceEkine(sourceEkine);
+       aHit->SetSourcePosition(sourcePos);
+       //track creator
+       aHit->SetProcess(processName);
+       aHit->SetStepLength(step->GetStepLength());
+       aHit->SetMomentumDir( aTrack->GetMomentumDirection());
     //Except for this volume related information (volume, touchable, material, ...)
     //the information kept by 'track' is same as one kept by 'PostStepPoint'.
 

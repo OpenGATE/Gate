@@ -70,6 +70,7 @@ private:
   G4int m_parentID;           // parent track ID
   G4int m_sourceID;           // source progressive number
   G4ThreeVector m_sourcePosition; // position of the source (NOT the positron) that generated the hit
+  G4double m_sourceEkine;//AE
   G4int m_photonID;           // photon ID (1 or 2, 0 if not caused by one of the 2 gammas)
   G4int m_nPhantomCompton;    // # of compton processes in the phantom occurred to the photon
   G4int m_nCrystalCompton;    // # of compton processes in the crystal occurred to the photon
@@ -145,6 +146,10 @@ private:
 
       inline void  SetSourcePosition(const G4ThreeVector& xyz)     { m_sourcePosition = xyz; }
       inline const G4ThreeVector& GetSourcePosition() const        { return m_sourcePosition; }
+
+      //AE
+      inline void  SetSourceEkine(G4double value)     { m_sourceEkine = value; }
+      inline  G4double GetSourceEkine() const        { return m_sourceEkine; }
 
       inline void  SetPhotonID(G4int j)         { m_photonID = j; }
       inline G4int GetPhotonID() const               {  return m_photonID; }
