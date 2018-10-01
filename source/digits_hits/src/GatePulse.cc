@@ -18,6 +18,7 @@ GatePulse::GatePulse(const void* itsMother)
     m_sourceID(-1),
     m_time(0),
     m_energy(0),
+    m_energyError(0),
     m_nPhantomCompton(-1),
     m_nPhantomRayleigh(-1),
 #ifdef GATE_USE_OPTICAL
@@ -87,8 +88,60 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   return *this;
 }
 
+const GatePulse & GatePulse::MergePositionEnergyWin(const GatePulse* right){
 
 
+   // AE : Added in a real pulse no sense
+       m_Postprocess="NULL";         // PostStep process
+       m_energyIniTrack=0;         // Initial energy of the track
+       m_energyFin=0;         // final energy of the particle
+       m_processCreator="NULL";
+       m_trackID=0;
+   //-----------------
+
+     // time: store the minimum time
+     m_time = std::min ( m_time , right->m_time ) ;
+
+
+
+     if( right->m_energy>m_energy){
+         // Local and global positions: store the controids
+         m_localPos  =   right->m_localPos;
+         m_globalPos =   right->m_globalPos;
+
+     }
+
+      m_energy = m_energy + right->m_energy;
+
+
+     // # of compton process: store the max nb
+     if ( right->m_nPhantomCompton > m_nPhantomCompton )
+     {
+       m_nPhantomCompton 	= right->m_nPhantomCompton;
+       m_comptonVolumeName = right->m_comptonVolumeName;
+     }
+
+     // # of Rayleigh process: store the max nb
+     if ( right->m_nPhantomRayleigh > m_nPhantomRayleigh )
+     {
+       m_nPhantomRayleigh 	= right->m_nPhantomRayleigh;
+       m_RayleighVolumeName = right->m_RayleighVolumeName;
+     }
+
+     // HDS : # of septal hits: store the max nb
+       if ( right->m_nSeptal > m_nSeptal )
+       {
+           m_nSeptal 	= right->m_nSeptal;
+       }
+
+     // VolumeID: should be identical for both pulses, we do nothing
+     // m_scannerPos: identical for both pulses, nothing to do
+     // m_scannerRotAngle: identical for both pulses, nothing to do
+     // m_outputVolumeID: should be identical for both pulses, we do nothing
+
+     return *this;
+
+}
 
 const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
 {

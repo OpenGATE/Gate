@@ -144,7 +144,11 @@ class GatePulse
       inline void SetEnergyFin(G4double eFin)          { m_energyFin = eFin; }
       inline G4double GetEnergyFin() const                { return m_energyFin; }
 
-       inline void     SetProcessCreator(G4String proc) { m_processCreator = proc; }
+      inline void SetSourceEkine(G4double eValue)          { m_sourceEkine = eValue; }
+      inline G4double GetSourceEkine() const                { return m_sourceEkine; }
+
+
+      inline void     SetProcessCreator(G4String proc) { m_processCreator = proc; }
       inline G4String GetProcessCreator() const             { return m_processCreator; }
 
       inline void SetTrackID(G4int trkID)          { m_trackID = trkID; }
@@ -152,9 +156,20 @@ class GatePulse
       inline void SetParentID(G4int parentID)          { m_parentID = parentID; }
       inline G4int GetParentID() const                { return m_parentID; }
 
+     //AE
+      inline G4double GetEnergyError()   const                  	      { return m_energyError; }
+      inline void SetEnergyError(G4double value)           	      { m_energyError = value; }
+
+      inline void  SetLocalPosError(const G4ThreeVector& xyz)      { m_localPosError = xyz; }
+      inline const G4ThreeVector& GetLocalPosError() const              { return m_localPosError; }
+
+      inline void  SetGlobalPosError(const G4ThreeVector& xyz)     { m_globalPosError = xyz; }
+      inline const G4ThreeVector& GetGlobalPosError()  const            { return m_globalPosError; }
+
 
  
 
+     //AE (cereo, tengo derecho a poner eso? Me hace falta? Creo que lo puse para CSR
 	bool operator <( const GatePulse& rhs )
        {
                 return  GetGlobalPos().getZ() <= rhs.GetGlobalPos().getZ() ;
@@ -167,6 +182,8 @@ class GatePulse
       virtual const GatePulse& CentroidMerge(const GatePulse* secondaryPulse);
       virtual const GatePulse& CentroidMergeCompton(const GatePulse* right);
    virtual const GatePulse& CentroidMergeComptPhotIdeal(const GatePulse* right);
+    virtual const GatePulse& MergePositionEnergyWin(const GatePulse* right);
+
     //! printing methods
     friend std::ostream& operator<<(std::ostream&, const GatePulse&);
 
@@ -205,6 +222,11 @@ private:
   G4String m_processCreator;
   G4int m_trackID;
   G4int m_parentID;
+
+  G4double m_sourceEkine;
+  G4double m_energyError;          	  //!< energy error
+  G4ThreeVector m_localPosError;   	  //!<
+  G4ThreeVector m_globalPosError;      //!<
 //--------------------
 
 
