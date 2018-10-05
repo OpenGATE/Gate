@@ -56,6 +56,7 @@ See LICENSE.md for further details
 #include "GateEnergyThresholder.hh"
 #include "GateLocalEnergyThresholder.hh"
 #include "GateCC3DlocalSpblurring.hh"
+#include "GateDoIModels.hh"
 
 
 
@@ -101,7 +102,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization";
   return theList;
 }
 
@@ -131,6 +132,9 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateEnergyThresholder(GetProcessorChain(),newInsertionName,50.*keV);
   else if (childTypeName=="localEnergyThresholder")
     newProcessor = new GateLocalEnergyThresholder(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="DoImodel")
+    //newProcessor = new GateDoIModels(GetProcessorChain(),newInsertionName,G4ThreeVector(0.,0.,1.));
+    newProcessor = new GateDoIModels(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="upholder")
     newProcessor = new GateUpholder(GetProcessorChain(),newInsertionName,150.*keV);
   else if (childTypeName=="deadtime")
