@@ -142,19 +142,19 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("localPosX",      &buffer.localPosX,"localPosX/F");
   Branch("localPosY",      &buffer.localPosY,"localPosY/F");
   Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
-  Branch("sPosX",      &buffer.localPosX,"localPosX/F");
-  Branch("lPosY",      &buffer.localPosY,"localPosY/F");
-  Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+  Branch("sourcePosX",     &buffer.sPosX,"sourcePosX/F");
+  Branch("sourcePosY",     &buffer.sPosY,"sourcePosY/F");
+  Branch("sourcePosZ",     &buffer.sPosZ,"sourcePosZ/F");
   Branch("eventID",        &buffer.eventID,"eventID/I");
   Branch("runID",          &buffer.runID,"runID/I");
   Branch("processName",    (void *)buffer.processName,"processName/C");
-  Branch("layerName",     (void *)buffer.layerName,"layername/C");
+  Branch("layerName",      (void *)buffer.layerName,"layername/C");
   Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
-
-
-   Branch("energyFinal",           &buffer.energyFin,"energyFinal/F");
-   Branch("energyIniT",           &buffer.energyIniT,"energyIniT/F");
-   Branch("postStepProcess",      (void *)buffer.postStepProcess,"postStepProcess/C");
+  Branch("sourceEkine",    &buffer.sourceEkine,"sourceEKine/F");
+  Branch("energyFinal",    &buffer.energyFin,"energyFinal/F");
+  Branch("energyFinal",    &buffer.energyFin,"energyFinal/F");
+  Branch("energyIniT",     &buffer.energyIniT,"energyIniT/F");
+  Branch("postStepProcess", (void *)buffer.postStepProcess,"postStepProcess/C");
 
 }
 //-----------------------------------------------------------------------------
