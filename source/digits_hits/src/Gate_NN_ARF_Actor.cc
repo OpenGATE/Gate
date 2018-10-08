@@ -89,12 +89,6 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
     mEnergyModeFlag = false;
     found = true;
   }
-  /* if (m == "trainE") {
-     mTrainingModeFlag = true;
-     mEnergyModeFlag = true;
-     found = true;
-     }*/
-
   if (m == "test") {
     mTrainingModeFlag = false;
     found = true;
@@ -265,7 +259,7 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
       auto SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(id));
       if (!SDC) continue;
       /*
-      // ==> No need for u,v coordinates
+      // ==> No need for u,v coordinates. Keep this comments for future ref.
       G4double xProj = (*SDC)[0]->GetLocalPos()[0];
       G4double yProj = (*SDC)[0]->GetLocalPos()[1];
       mCurrentOutData.u = xProj;
@@ -321,13 +315,13 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
   auto dir = pre->GetMomentumDirection();
   dir = theTouchable->GetHistory()->GetTopTransform().TransformAxis(dir);
 
-  // which dimension ?? ask SPECThead system ?
+  // Spherical coordinates
   // https://en.wikipedia.org/wiki/Spherical_coordinate_system
   // https://mathinsight.org/spherical_coordinates
   auto theta = acos(dir.y())/degree;
   auto phi = acos(dir.x())/degree;
 
-  // Threshold on angles: do not store if larger
+  // Threshold on angles: do not store if larger (for debug)
   mIgnoreCurrentData = false;
   if (mMaxAngle != 0.0 and
       (fabs(theta) > mMaxAngle or
