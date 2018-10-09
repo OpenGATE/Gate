@@ -266,7 +266,7 @@ void GateVImageActor::SetStepHitType(G4String t)
 
 //-----------------------------------------------------------------------------
 /// Gets the voxel size (vc)
-G4ThreeVector GateVImageActor::GetVoxelSize() 
+G4ThreeVector GateVImageActor::GetVoxelSize()
 {
   return mVoxelSize;
 }
@@ -307,7 +307,7 @@ void GateVImageActor::UserSteppingAction(const GateVVolume* , const G4Step * ste
 
 /*TODO BRENT
 if (custmframe)
-    
+
 else*/
   int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
