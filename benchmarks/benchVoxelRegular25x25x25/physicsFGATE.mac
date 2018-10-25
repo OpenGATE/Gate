@@ -1,7 +1,7 @@
 #############
 #  Physics  #
 #############
-/gate/physics/addProcess Fictitious
+#/gate/physics/addProcess Fictitious ### BROKEN AS OF 20171029 - DO NOT USE ###
 
 /gate/physics/addProcess PhotoElectric
 /gate/physics/addProcess Compton
