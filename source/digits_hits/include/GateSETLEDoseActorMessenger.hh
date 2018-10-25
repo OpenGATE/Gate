@@ -28,7 +28,7 @@ class GateSETLEDoseActorMessenger : public GateImageActorMessenger
 public:
   GateSETLEDoseActorMessenger(GateSETLEDoseActor* sensor);
   virtual ~GateSETLEDoseActorMessenger();
-
+  
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
@@ -45,10 +45,7 @@ protected:
   G4UIcmdWithABool * pEnableHybridinoCmd;
   G4UIcmdWithAnInteger * pSetPrimaryMultiplicityCmd;
   G4UIcmdWithAnInteger * pSetSecondaryMultiplicityCmd;
-  GateUIcmdWithTwoDouble * pSetSecondaryMultiplicityCmd2;
-
-  G4UIcmdWithAString * pSetDoseAlgorithmCmd;
-  G4UIcmdWithAString * pMaterialFilterCmd;
+  GateUIcmdWithTwoDouble *pSetSecondaryMultiplicityCmd2;
 };
 
 #endif /* end #define GATESETLEDOSEACTORMESSENGER_HH*/
