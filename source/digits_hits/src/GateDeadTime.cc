@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #include "GateDeadTime.hh"
@@ -22,7 +22,7 @@ See LICENSE.md for further details
 
 
 GateDeadTime::GateDeadTime(GatePulseProcessorChain* itsChain,
-			   const G4String& itsName)
+                           const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName)
   , m_bufferSize(0)
   , m_bufferMode(0)
@@ -56,19 +56,19 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 
       m_doneOnce = 1;
       if(!m_testVolume)
-	{
-	  G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:\n"
-		 <<   "Sorry, but you don't have chosen any volume !\n";
-	}
+        {
+          G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:\n"
+                 <<   "Sorry, but you don't have chosen any volume !\n";
+        }
 
 
 
       if (nVerboseLevel>1)
-	{
-	  G4cout << "first pass in dead time pulse process\n" ;
-	  G4cout << "deadtime set at  " << m_deadTime << " ps"<< Gateendl ;
-	  G4cout << "mode = " << (m_isParalysable ? "paralysable":"non-paralysable") << Gateendl ;
-	}
+        {
+          G4cout << "first pass in dead time pulse process\n" ;
+          G4cout << "deadtime set at  " << m_deadTime << " ps"<< Gateendl ;
+          G4cout << "mode = " << (m_isParalysable ? "paralysable":"non-paralysable") << Gateendl ;
+        }
 
     }
   if (!inputPulse)
@@ -81,7 +81,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   if (inputPulse->GetEnergy()==0)
     {
       if (nVerboseLevel>1)
-	G4cout << "[GateDeadTime::ProcessOneHit]: energy is null for " << inputPulse << " -> pulse ignored\n\n";
+        G4cout << "[GateDeadTime::ProcessOneHit]: energy is null for " << inputPulse << " -> pulse ignored\n\n";
       return;
     }
 
@@ -94,37 +94,37 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   size_t m_depth = (size_t)(aVolumeID->GetCreatorDepth(m_volumeName));
 
   m_generalDetId = aVolumeID->GetCopyNo(m_depth);
-   //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<< Gateendl;
-   //G4cout<<"m_depth  = "<<m_depth<< Gateendl;
+  //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<< Gateendl;
+  //G4cout<<"m_depth  = "<<m_depth<< Gateendl;
 
 
-/////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
-/*
+  /////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
+  /*
 
-for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+    for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     {
-      m_generalDetId += aVolumeID->GetCopyNo(m_depth-i) * numberOfComponentForLevel[i-1];
+    m_generalDetId += aVolumeID->GetCopyNo(m_depth-i) * numberOfComponentForLevel[i-1];
 
 
     }
-*/
-    G4int multFactor = 1;
-     for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+  */
+  G4int multFactor = 1;
+  for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     {
-          multFactor *= numberOfComponentForLevel[i-1];
-          m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
+      multFactor *= numberOfComponentForLevel[i-1];
+      m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
 
-  //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<< Gateendl;
-  //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<< Gateendl;
-  //G4cout<<"multFactor"<<multFactor<< Gateendl;
+      //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<< Gateendl;
+      //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<< Gateendl;
+      //G4cout<<"multFactor"<<multFactor<< Gateendl;
     }
-//////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
   // FIND TIME OF PULSE
   unsigned long long int currentTime = (unsigned long long int)((inputPulse->GetTime())/picosecond);
   if (nVerboseLevel>5)
     {
       G4cout << "A new pulse is processed by dead time time : " << (inputPulse->GetTime())/picosecond
-	     << " =  "<< currentTime  << Gateendl  ;
+             << " =  "<< currentTime  << Gateendl  ;
       G4cout << "ID elt = " <<  m_generalDetId << Gateendl ;
       G4cout << "Rebirth time for elt " << m_generalDetId << " = " << m_deadTimeTable[m_generalDetId]<< Gateendl ;
 
@@ -138,38 +138,38 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
       GatePulse* outputPulse = new GatePulse(*inputPulse);
       outputPulseList.push_back(outputPulse);
 
-//      m_deadTimeTable[m_generalDetId] = currentTime + m_deadTime;
+      //      m_deadTimeTable[m_generalDetId] = currentTime + m_deadTime;
       if (m_bufferSize>1){
       	m_bufferCurrentSize[m_generalDetId]++;
-	if (m_bufferCurrentSize[m_generalDetId]==m_bufferSize){
-	    m_deadTimeTable[m_generalDetId] = currentTime + m_deadTime;
-	    m_bufferCurrentSize[m_generalDetId]=0;
-	}
+        if (m_bufferCurrentSize[m_generalDetId]==m_bufferSize){
+          m_deadTimeTable[m_generalDetId] = currentTime + m_deadTime;
+          m_bufferCurrentSize[m_generalDetId]=0;
+        }
       } else {
       	m_deadTimeTable[m_generalDetId] = currentTime + m_deadTime;
       }
       if (nVerboseLevel>5){
-	  G4cout << "We have accept " << currentTime << " a pulse in element " << m_generalDetId <<
-	    "\trebirth time\t" << m_deadTimeTable[m_generalDetId] << Gateendl;
-	  G4cout << "Copied pulse to output:\n"
-		 << *outputPulse << Gateendl << Gateendl ;
+        G4cout << "We have accept " << currentTime << " a pulse in element " << m_generalDetId <<
+          "\trebirth time\t" << m_deadTimeTable[m_generalDetId] << Gateendl;
+        G4cout << "Copied pulse to output:\n"
+               << *outputPulse << Gateendl << Gateendl ;
       }
     }
   else
     {
       // YES DETECTOR IS DEAD : REMOVE PULSE
       if (nVerboseLevel>5)
-	G4cout << "Removed pulse, due to dead time:\n";
+        G4cout << "Removed pulse, due to dead time:\n";
       // AND IF "PARALYSABLE" DEAD TIME, MAKE THE DEATH OF DETECTOR LONGER
       if ((m_bufferSize>1) && (m_bufferMode==1)){
-	if (m_bufferCurrentSize[m_generalDetId]<m_bufferSize-1) {
-      	    m_bufferCurrentSize[m_generalDetId]++;
-      	    outputPulseList.push_back(new GatePulse(*inputPulse));
-	}
+        if (m_bufferCurrentSize[m_generalDetId]<m_bufferSize-1) {
+          m_bufferCurrentSize[m_generalDetId]++;
+          outputPulseList.push_back(new GatePulse(*inputPulse));
+        }
       } else {
       	if(m_isParalysable && (m_bufferSize<2)){
-	    m_deadTimeTable[m_generalDetId]  = currentTime + m_deadTime;
-	}
+          m_deadTimeTable[m_generalDetId]  = currentTime + m_deadTime;
+        }
       }
     }
   if (nVerboseLevel>99)
@@ -183,7 +183,7 @@ void GateDeadTime::SetDeadTimeMode(G4String val)
   if((val!="paralysable")&&(val!="nonparalysable"))
     G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
-   m_isParalysable = (val=="paralysable");
+    m_isParalysable = (val=="paralysable");
 
 }
 
@@ -253,13 +253,13 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   for(G4int i2 = 0 ; i2 < numberOfHigherLevels ; i2++)
     {
       numberTotalOfComponentInSystem = numberTotalOfComponentInSystem * numberOfComponentForLevel[i2];
-       if(nVerboseLevel>5)
-	G4cout << "Level : " << i2 << " has "
-	       << numberOfComponentForLevel[i2] << " elements\n";
+      if(nVerboseLevel>5)
+        G4cout << "Level : " << i2 << " has "
+               << numberOfComponentForLevel[i2] << " elements\n";
     }
 
-//G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<< Gateendl;
-//G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<< Gateendl;
+  //G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<< Gateendl;
+  //G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<< Gateendl;
 
 
   if(nVerboseLevel>5)
@@ -274,15 +274,15 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
 
 
   if( (!m_deadTimeTable) || (!m_bufferCurrentSize)){
-      G4cout << "[GateDeadTime::FindLevelsParams]: malloc failed\n\n";
-      return;
-    } else {
-      for(G4int i=0;i<numberTotalOfComponentInSystem;i++){
-	m_deadTimeTable[i] = 0;
-	m_bufferCurrentSize[i] = 0.;
+    G4cout << "[GateDeadTime::FindLevelsParams]: malloc failed\n\n";
+    return;
+  } else {
+    for(G4int i=0;i<numberTotalOfComponentInSystem;i++){
+      m_deadTimeTable[i] = 0;
+      m_bufferCurrentSize[i] = 0.;
 
-      }
     }
+  }
 }
 
 

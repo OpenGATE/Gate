@@ -9,8 +9,6 @@
 
 #include "GateAngleFilter.hh"
 
-
-
 //---------------------------------------------------------------------------
 GateAngleFilter::GateAngleFilter(G4String name)
   :GateVFilter(name)
@@ -23,22 +21,22 @@ GateAngleFilter::GateAngleFilter(G4String name)
 //---------------------------------------------------------------------------
 
 
-
 //---------------------------------------------------------------------------
-G4bool GateAngleFilter::Accept(const G4Track* aTrack) 
+G4bool GateAngleFilter::Accept(const G4Track* aTrack)
 {
-
   G4ThreeVector stepdirection = aTrack->GetMomentumDirection();
-  if(stepdirection.x()*mDirection.x() 
-     + stepdirection.y()*mDirection.y() 
+  if(stepdirection.x()*mDirection.x()
+     + stepdirection.y()*mDirection.y()
      + stepdirection.z()*mDirection.z() < std::cos(mAngle) ) return false;
 
   return true;
 }
 //---------------------------------------------------------------------------
 
+
 //---------------------------------------------------------------------------
-void GateAngleFilter::show(){
+void GateAngleFilter::show()
+{
   G4cout << "------Filter: "<<GetObjectName()<<" particle list------\n";
   G4cout << " Direction   "<< mDirection  << Gateendl;
   G4cout << " Angle   "<< mAngle  << Gateendl;
@@ -48,17 +46,19 @@ void GateAngleFilter::show(){
 
 
 //---------------------------------------------------------------------------
-void GateAngleFilter::SetMomentum(G4ThreeVector direction){
+void GateAngleFilter::SetMomentum(G4ThreeVector direction)
+{
   G4double norm = std::sqrt(direction.x()*direction.x() + direction.y()*direction.y() + direction.z()*direction.z());
-
   mDirection.setX( direction.x()/norm );
   mDirection.setY( direction.y()/norm );
   mDirection.setZ( direction.z()/norm );
 }
 //---------------------------------------------------------------------------
 
+
 //---------------------------------------------------------------------------
-void GateAngleFilter::SetAngle(G4double angle){
+void GateAngleFilter::SetAngle(G4double angle)
+{
   mAngle = angle;
 }
 //---------------------------------------------------------------------------
