@@ -62,6 +62,10 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
   TimeActivTablesCmd = new G4UIcmdWithAString(cmdName,this);
 
+  cmdName = GetDirectoryName()+"DumpActivityImage";
+  ActivityImageCmd = new G4UIcmdWithAString(cmdName,this);
+  ActivityImageCmd->SetGuidance("Dump the activity Image");
+
   cmdName = GetDirectoryName()+"SetTimeSampling";
   SetTimeSamplingCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
 }
@@ -76,6 +80,7 @@ GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
   delete VoxelSizeCmd;
   delete PositionCmd;
   delete VerboseCmd;
+  delete ActivityImageCmd;
   delete TimeActivTablesCmd;
   delete SetTimeSamplingCmd;
 }
@@ -92,6 +97,7 @@ void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String 
   if (command == InsertTranslatorCmd) m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
   if (command == RemoveTranslatorCmd) m_voxelReader->RemoveTranslator();
   if (command == VerboseCmd) m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
+  if (command == ActivityImageCmd) m_voxelReader->DumpSourceActivityImage(newValue);
   GateMessenger::SetNewValue(command, newValue);
 }
 //-----------------------------------------------------------------------------

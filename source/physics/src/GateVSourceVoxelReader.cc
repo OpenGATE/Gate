@@ -11,6 +11,7 @@
 #include "GateSourceVoxelLinearTranslator.hh"
 #include "GateSourceVoxelRangeTranslator.hh"
 #include "GateSourceMgr.hh"
+#include "GateImage.hh"
 
 //-------------------------------------------------------------------------------------------------
 GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
@@ -72,6 +73,31 @@ void GateVSourceVoxelReader::Dump(G4int level)
 //-------------------------------------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------------------------------------
+void GateVSourceVoxelReader::DumpSourceActivityImage(G4String activityImageFileName)
+{
+    if(!activityImageFileName.empty() && m_sourceVoxelActivities.size()!=0)
+    {
+        GateImage output;
+        output.SetResolutionAndVoxelSize(G4ThreeVector(m_voxelNx,m_voxelNy,m_voxelNz),m_voxelSize);
+        output.SetOrigin(m_image_origin);
+        output.Allocate();
+
+        GateImage::iterator po;
+        po = output.begin();
+        for(size_t i =0;i<m_sourceVoxelActivities.size();i++)
+        {
+            if(po != output.end()) {
+                    *po = m_sourceVoxelActivities[i] / becquerel;
+                    ++po;
+            }
+        }
+        // Write image
+        output.Write(activityImageFileName);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 G4int GateVSourceVoxelReader::GetNextSource()
 {
