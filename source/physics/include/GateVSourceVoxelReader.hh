@@ -76,6 +76,7 @@ public:
   void RemoveTranslator();
 
   virtual void Dump(G4int level);
+  void ExportSourceActivityImage(G4String activityImageFileName);
 
   typedef std::vector<G4double> GateSourceActivityMap;
 
