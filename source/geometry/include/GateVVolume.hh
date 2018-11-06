@@ -201,6 +201,9 @@ public :
 
   void AttachARFSD(); /* PY Descourt 08/09/2009 */
 
+  void DumpVoxelizedVolume(G4ThreeVector);
+  void SetDumpPath(G4String b) { mDumpPath = b; }
+
   virtual void AttachOutputToVolume();
 
   virtual G4bool CheckOutputExistence();
@@ -308,6 +311,8 @@ private :
   GateVolumeMessenger* pMessenger;
 
   GateVVolume * mParent;
+
+  G4String mDumpPath;
 };
 //-------------------------------------------------------------------------------------------------
 

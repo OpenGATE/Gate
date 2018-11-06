@@ -11,11 +11,9 @@
   \brief
 */
 
-#ifndef GATEKERMAACTOR_CC
-#define GATEKERMAACTOR_CC
-
 #include "GateKermaActor.hh"
 #include "GateMiscFunctions.hh"
+
 #include <G4EmCalculator.hh>
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
@@ -25,9 +23,9 @@
 GateKermaActor::GateKermaActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateKermaActor() -- begin\n");
+
   mCurrentEvent=-1;
   mIsEdepImageEnabled = false;
-  mIsLastHitEventImageEnabled = false;
   mIsEdepSquaredImageEnabled = false;
   mIsEdepUncertaintyImageEnabled = false;
   mIsDoseImageEnabled = true;
@@ -36,9 +34,15 @@ GateKermaActor::GateKermaActor(G4String name, G4int depth):
   mIsDoseToWaterImageEnabled = false;
   mIsDoseToWaterSquaredImageEnabled = false;
   mIsDoseToWaterUncertaintyImageEnabled = false;
+  mIsLastHitEventImageEnabled = false;
   mIsNumberOfHitsImageEnabled = false;
   mIsDoseNormalisationEnabled = false;
   mIsDoseToWaterNormalisationEnabled = false;
+  mDoseAlgorithmType = "VolumeWeighting";
+  mImportMassImage = "";
+  mExportMassImage = "";
+  mVolumeFilter = "";
+  mMaterialFilter = "";
 
   pMessenger = new GateKermaActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateKermaActor() -- end\n");
@@ -161,6 +165,32 @@ void GateKermaActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
+  if (mIsDoseImageEnabled &&
+      (mExportMassImage != "" || mDoseAlgorithmType == "MassWeighting" ||
+       mVolumeFilter != ""    || mMaterialFilter != "")) {
+    mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
+    mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
+    mVoxelizedMass.SetExternalMassImage(mImportMassImage);
+    mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
+
+    if (mExportMassImage != "") {
+      mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mMassImage.Allocate();
+      mVoxelizedMass.UpdateImage(&mMassImage);
+      mMassImage.Write(mExportMassImage);
+    }
+  }
+
+  if (mExportMassImage!="" && mImportMassImage!="")
+    GateWarning("Exported mass image will be the same as the imported one.");
+
+  if (mDoseAlgorithmType != "MassWeighting") {
+    mDoseAlgorithmType = "VolumeWeighting";
+
+    if (mImportMassImage != "")
+      GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
+  }
+
   // Print information
   GateMessage("Actor", 1,
               "\tDose KermaActor    = '" << GetObjectName() << "'\n" <<
@@ -175,8 +205,11 @@ void GateKermaActor::Construct() {
               "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
               "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
               "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
-              "\tedepFilename      = " << mEdepFilename << Gateendl <<
-              "\tdoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tDose algorithm    = " << mDoseAlgorithmType << Gateendl <<
+              "\tMass image (import) = " << mImportMassImage << Gateendl <<
+              "\tMass image (export) = " << mExportMassImage << Gateendl <<
+              "\tEdepFilename      = " << mEdepFilename << Gateendl <<
+              "\tDoseFilename      = " << mDoseFilename << Gateendl <<
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -245,24 +278,24 @@ void GateKermaActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel - begin\n");
-  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
-  GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
+
   const double weight = step->GetTrack()->GetWeight();
-  // const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
-  double edep(0.0);
-  G4String particleName(step->GetTrack()->GetDefinition()->GetParticleName());
-  if (particleName == "gamma") {
+  double       edep   = 0.0;
+
+  if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma") {
     edep = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
+
     G4TrackVector* fSecondary = (const_cast<G4Step *>(step))->GetfSecondary();
-    for(int idx=0; idx < (G4int) ((*fSecondary).size()); idx++) {
+    for(int idx=0; idx < (G4int) ((*fSecondary).size()); idx++)
       if ((*fSecondary)[idx]->GetDefinition()->GetParticleName() == "gamma") {
-	edep -= (*fSecondary)[idx]->GetKineticEnergy();
-	GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
-	std::cout << "YES\n";
+        edep -= (*fSecondary)[idx]->GetKineticEnergy();
+
+        GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
       }
-    }
   }
 
+  GateDebugMessageInc("Actor", 4, "weight  = " << step->GetTrack()->GetWeight() << Gateendl);
+  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0.0) {
@@ -275,6 +308,12 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
     GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
+
+  if (mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName())
+    return;
+
+  if (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName())
+    return;
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
@@ -292,13 +331,11 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
   if (mIsDoseImageEnabled) {
     double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
 
+    if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "" || mVolumeFilter != "")
+      density = mVoxelizedMass.GetDoselMass(index)/mDoseImage.GetVoxelVolume();
+
     // ------------------------------------
     // Convert deposited energy into Gray
-
-    // OLD version (correct but not clear)
-    // dose = edep/density*1e12/mDoseImage.GetVoxelVolume();
-
-    // NEW version (same results but more clear)
     dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
     // ------------------------------------
 
@@ -392,7 +429,3 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
   GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-#endif /* end #define GATEDOSEACTOR_CC */
