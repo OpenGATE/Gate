@@ -409,8 +409,8 @@ void GateDoseActor::SaveData() {
          << dose << "\t"
          << std_dose << "\t"
          << sq_dose << "\t"
-         << region->nb_hits << "\t"
-         << region->nb_event_hits << std::endl;
+         << region->nb_hits-1 << "\t"
+         << region->nb_event_hits-1 << std::endl;
     }
     os.close();
   }
