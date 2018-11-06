@@ -25,19 +25,18 @@ See LICENSE.md for further details
 GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String& itsDirectoryName)
   //: GateClockDependentMessenger(itsCreator, itsCreator->GetObjectName()+"/geometry"),
   : GateClockDependentMessenger(itsCreator, itsDirectoryName)
-{ 
-    
+{
   G4String guidance = G4String("Controls the geometry for '") + GetVolumeCreator()->GetObjectName() +"'";
 
   GetDirectory()->SetGuidance(guidance.c_str());
 
-  //  G4cout << " before new GateVisAttributesMessenger creating GetVolumeCreator() ="  << GetVolumeCreator()->GetObjectName() << Gateendl;  
-  pVisAttributesMessenger  = 
-      	new GateVisAttributesMessenger(GetVolumeCreator()->GetVisAttributes(), GetVolumeCreator()->GetObjectName()+"/vis");
-  
+  //  G4cout << " before new GateVisAttributesMessenger creating GetVolumeCreator() ="  << GetVolumeCreator()->GetObjectName() << Gateendl;
+  pVisAttributesMessenger  =
+    new GateVisAttributesMessenger(GetVolumeCreator()->GetVisAttributes(), GetVolumeCreator()->GetObjectName()+"/vis");
+
   G4String cmdName;
-  cmdName = GetDirectoryName()+"setMaterial"; 
-  
+  cmdName = GetDirectoryName()+"setMaterial";
+
   pSetMaterCmd = new G4UIcmdWithAString(cmdName.c_str(),this);
   pSetMaterCmd->SetGuidance("Select Material of the detector");
   pSetMaterCmd->SetParameterName("choice",false);
@@ -51,6 +50,15 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
   pAttachPhantomSDCmd = new G4UIcmdWithoutParameter(cmdName,this);
   pAttachPhantomSDCmd->SetGuidance("Attach the phantom-SD to the object.");
 
+  cmdName = GetDirectoryName()+"saveGeometryAsVoxelizedImage";
+  pDumpVoxelizedVolumeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
+  pDumpVoxelizedVolumeCmd->SetGuidance("Select the voxel size and save the voxelized image of the geometry.");
+  pDumpVoxelizedVolumeCmd->SetParameterName("Spacingx", "Spacingy", "Spacingz", false);
+  pDumpVoxelizedVolumeCmd->SetUnitCategory("Length");
+
+  cmdName = GetDirectoryName()+"setSaveImageDirectory";
+  pSetDumpPathCmd = new G4UIcmdWithAString(cmdName,this);
+  pSetDumpPathCmd->SetGuidance("Select voxelized image saving directory.");
 }
 //-------------------------------------------------------------------------------------
 
@@ -61,26 +69,25 @@ GateVolumeMessenger::~GateVolumeMessenger()
    delete pSetMaterCmd;
    delete pAttachCrystalSDCmd;
    delete pAttachPhantomSDCmd;
+   delete pDumpVoxelizedVolumeCmd;
+   delete pSetDumpPathCmd;
 }
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
 void GateVolumeMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{     
-    if( command == pSetMaterCmd )
-   { 
+{
+  if( command == pSetMaterCmd )
     GetVolumeCreator()->SetMaterialName(newValue);
-   }
-   else if( command==pAttachCrystalSDCmd )
-    { 
-      GetVolumeCreator()->AttachCrystalSD();
-    } 
-   else if( command==pAttachPhantomSDCmd )
-    { 
-      GetVolumeCreator()->AttachPhantomSD();
-    }  
-   else{
+  else if( command == pAttachCrystalSDCmd )
+    GetVolumeCreator()->AttachCrystalSD();
+  else if( command == pAttachPhantomSDCmd )
+    GetVolumeCreator()->AttachPhantomSD();
+  else if( command == pDumpVoxelizedVolumeCmd )
+    GetVolumeCreator()->DumpVoxelizedVolume(pDumpVoxelizedVolumeCmd->GetNew3VectorValue(newValue));
+  else if( command == pSetDumpPathCmd )
+    GetVolumeCreator()->SetDumpPath(newValue);
+  else
     GateClockDependentMessenger::SetNewValue(command,newValue);
-   }
 }
 //-------------------------------------------------------------------------------------
