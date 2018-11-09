@@ -40,6 +40,7 @@ protected:
   G4UIcmdWithoutParameter*            RemoveTranslatorCmd;
   G4UIcmdWithAnInteger*               VerboseCmd;
   G4UIcmdWithAString*                 TimeActivTablesCmd;
+  G4UIcmdWithAString*                 ActivityImageCmd;
   G4UIcmdWithADoubleAndUnit*          SetTimeSamplingCmd;
 };
 //-----------------------------------------------------------------------------

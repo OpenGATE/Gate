@@ -129,7 +129,6 @@ echo "Here is a 'git status':"
 git status
 echo "Don't forget to commit and push the local modifications, especially the new files."
 echo
-echo "Don't forget to upload your data $1_$2-reference.tgz (from $1/reference folder) in http://midas3.kitware.com/midas/community/28"
-echo "To do so, login, select Public/benchmarks/$1/reference/$1_$2-reference.tgz (without checking it), click on 'View' and then 'Upload new revision'."
+echo "Don't forget to upload your data $1_$2-reference.tgz (from $1/reference folder) in https://data.kitware.com/#collection/5be2bffb8d777f21798e28bb/folder/5be2c0298d777f21798e28d3"
 
 exit 0

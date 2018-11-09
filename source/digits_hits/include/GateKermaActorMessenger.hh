@@ -17,6 +17,8 @@ See LICENSE.md for further details
 #define GATEKERMAACTORMESSENGER_HH
 
 #include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithAString.hh"
+
 #include "GateImageActorMessenger.hh"
 
 class GateKermaActor;
@@ -44,6 +46,12 @@ protected:
   G4UIcmdWithABool * pEnableNumberOfHitsCmd;
   G4UIcmdWithABool * pEnableDoseNormCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
+
+  G4UIcmdWithAString * pSetDoseAlgorithmCmd;
+  G4UIcmdWithAString * pImportMassImageCmd;
+  G4UIcmdWithAString * pExportMassImageCmd;
+  G4UIcmdWithAString * pVolumeFilterCmd;
+  G4UIcmdWithAString * pMaterialFilterCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/
