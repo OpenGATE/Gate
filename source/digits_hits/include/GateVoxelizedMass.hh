@@ -23,6 +23,7 @@ See LICENSE.md for further details
 #include "GateActorManager.hh"
 #include "GateImageWithStatistic.hh"
 
+using namespace std;
 
 class GateVoxelizedMass
 {
@@ -37,8 +38,8 @@ class GateVoxelizedMass
 
   std::vector<double> GetDoselMassVector();
 
-  G4String GetVoxelMatName(int x, int y, int z);
-  G4double GetVoxelMass(int x, int y, int z);
+  G4String GetVoxelMatName(const unsigned long int x, const unsigned long int y, const unsigned long int z);
+  G4double GetVoxelMass   (const unsigned long int x, const unsigned long int y, const unsigned long int z);
   G4double GetVoxelVolume();
 
   G4double GetDoselMass(int index);
@@ -55,8 +56,13 @@ class GateVoxelizedMass
   void    SetEdep(int index,G4String,double);
   void    SetMaterialFilter   (G4String);
   void    SetVolumeFilter     (G4String);
-
   void    SetExternalMassImage(G4String);
+
+  pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
+
+  const G4VPhysicalVolume* GetDAPV() const {return DAPV;}
+
+  GateImage* Copy(GateImage*);
 
  protected:
 
@@ -66,8 +72,7 @@ class GateVoxelizedMass
   void GenerateVoxels();
   void GenerateDosels(int index);
 
-  std::pair<double,double> ParameterizedVolume(int index);
-  std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
+  pair<double,double> ParameterizedVolume(int index);
 
   GateVImageVolume* imageVolume;
   const G4VPhysicalVolume* DAPV;
@@ -77,6 +82,8 @@ class GateVoxelizedMass
 
   const GateVImage* mImage;
   GateImageDouble* mMassImage;
+
+  GateImage* imageVoxel;
 
   double doselReconstructedTotalCubicVolume;
   double doselReconstructedTotalMass;

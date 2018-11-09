@@ -25,44 +25,45 @@ GateAddBenchmarkData("DATA{benchImageNavigators/rt/data/patient-2mm.raw}")
 
 GateAddBenchmarkData("DATA{benchImaging/data/brain_phantom.i33}")
 
+SET(GATE_BINARY ${Gate_BINARY_DIR}/Gate) 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchRT/reference/benchRT_gamma-reference.tgz}")
   ADD_TEST(NAME benchRT_gamma
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT gamma ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT gamma ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchRT/reference/benchRT_proton-reference.tgz}")
   ADD_TEST(NAME benchRT_proton
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT proton ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT proton ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchRT/reference/benchRT_carbon-reference.tgz}")
   ADD_TEST(NAME benchRT_carbon
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT carbon ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT carbon ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_ct-reference.tgz}")
   ADD_TEST(NAME benchImaging_ct
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging ct ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging ct ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING AND GATE_USE_OPTICAL)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_optical-reference.tgz}")
   ADD_TEST(NAME benchImaging_optical
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging optical ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging optical ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING AND GATE_USE_OPTICAL)
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_spect-reference.tgz}")
   ADD_TEST(NAME benchImaging_spect
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging spect ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging spect ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING AND GATE_USE_ECAT7)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_pet-reference.tgz}")
   ADD_TEST(NAME benchImaging_pet
-    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging pet ${Gate_SOURCE_DIR})
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging pet ${Gate_SOURCE_DIR} ${GATE_BINARY})
 endif(BUILD_TESTING AND GATE_USE_ECAT7)

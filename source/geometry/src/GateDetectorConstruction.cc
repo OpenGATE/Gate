@@ -29,7 +29,7 @@
 #include "G4Navigator.hh"
 #include "G4SDManager.hh"
 #include "G4Material.hh"
-#include "G4Material.hh"
+#include "G4NistManager.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"

@@ -23,6 +23,7 @@ See LICENSE.md for further details
 #include "G4UnitsTable.hh"
 #include "GateKermaActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
+#include "GateVoxelizedMass.hh"
 
 class G4EmCalculator;
 
@@ -52,6 +53,11 @@ class GateKermaActor : public GateVImageActor
   void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
   void EnableDoseNormalisation(bool b) { mIsDoseNormalisationEnabled = b; mDoseImage.SetScaleFactor(1.0); }
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
+  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
+  void ImportMassImage(G4String b)      { mImportMassImage = b; }
+  void ExportMassImage(G4String b)      { mExportMassImage = b; }
+  void VolumeFilter(G4String b)         { mVolumeFilter = b; }
+  void MaterialFilter(G4String b)       { mMaterialFilter = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -72,6 +78,7 @@ class GateKermaActor : public GateVImageActor
 protected:
   GateKermaActor(G4String name, G4int depth=0);
   GateKermaActorMessenger * pMessenger;
+  GateVoxelizedMass mVoxelizedMass;
 
   int mCurrentEvent;
 
@@ -94,11 +101,17 @@ protected:
   GateImageWithStatistic mDoseToWaterImage;
   GateImage mNumberOfHitsImage;
   GateImage mLastHitEventImage;
+  GateImageDouble mMassImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
+  G4String mDoseAlgorithmType;
+  G4String mImportMassImage;
+  G4String mExportMassImage;
+  G4String mVolumeFilter;
+  G4String mMaterialFilter;
 
   G4EmCalculator * emcalc;
 };
