@@ -172,7 +172,7 @@ protected:
   float ekPost;
   float ekPre;
   float w;
-  float t;//t is either time or local time.
+  double t;//t is either time or local time.
   G4int m;
   Char_t vol[256];
 
