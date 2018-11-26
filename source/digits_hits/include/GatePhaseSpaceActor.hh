@@ -95,6 +95,7 @@ public:
   G4String GetSpotIDFromSource(){return bSpotIDFromSource;}
   void SetEnabledCompact(bool b){bEnableCompact = b;}
   void SetEnablePDGCode(bool b){bEnablePDGCode = b;}
+  void SetIsNuclearFlagEnabled(bool b){EnableNuclearFlag = b;}
 
   void SetEnabledSphereProjection(bool b) { mSphereProjectionFlag = b; }
   void SetSphereProjectionCenter(G4ThreeVector c) { mSphereProjectionCenter = c; }
@@ -130,6 +131,7 @@ protected:
   bool EnableAllStep;
   bool mUseVolFrame;
   bool mStoreOutPart;
+  bool EnableNuclearFlag;
 
   bool mSphereProjectionFlag;
   G4ThreeVector mSphereProjectionCenter;
@@ -184,6 +186,9 @@ protected:
   int eventid;
   int runid;
 
+  int creator;
+  int nucprocess;
+  int order;
 
   G4EmCalculator * emcalc;
   GatePhaseSpaceActorMessenger* pMessenger;

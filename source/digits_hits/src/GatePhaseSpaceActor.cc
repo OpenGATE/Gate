@@ -29,6 +29,7 @@
 #include "GateIAEARecord.h"
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
+#include "GateProtonNuclearInformationActor.hh"
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
@@ -166,6 +167,13 @@ void GatePhaseSpaceActor::Construct()
       pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
     }
     if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
+    if (EnableNuclearFlag)
+    {    
+      pListeVar->Branch("CreatorProcess", &creator, "CreatorProcess/I");
+      pListeVar->Branch("NuclearProcess", &nucprocess, "NuclearProcess/I");
+      pListeVar->Branch("Order", &order, "Order/I");
+    }
 
   } else if (mFileType == "IAEAFile") {
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
@@ -352,6 +360,43 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   y = localPosition.y();
   z = localPosition.z();
 
+  //===============================================================================================================
+  // ctq: Flags for proton nuclear processes
+  // no process = 0
+  // hadElastic = 1
+  // protonInelastic = 2
+  //===============================================================================================================
+ 
+  if(EnableNuclearFlag)
+  {
+    GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
+    if(info == NULL)
+      GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
+    else
+    {
+      creator = 0;
+      nucprocess = 0;
+      order = info->GetScatterOrder(); 
+
+      if (!step->GetTrack()->GetCreatorProcess())
+        creator = 0;
+
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
+        creator = 1;
+
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
+        creator = 2;
+
+      if (!info->GetScatterProcess())
+        nucprocess =  0;
+
+      if (info->GetScatterProcess() == "hadElastic")
+        nucprocess =  1;
+
+      if (info->GetScatterProcess() == "protonInelastic")
+        nucprocess = 2;
+    }
+  }
 
   // particle momentum
   // pc = sqrt(Ek^2 + 2*Ek*m_0*c^2)
