@@ -126,6 +126,7 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
       q -= mTransformMatrix*GetHalfSize();
       q = tcurrent - q;
     }
+    GateMessage("Volume",3," Translation = " << q << Gateendl);
     GetVolumePlacement()->SetTranslation(q);
   }
 }
