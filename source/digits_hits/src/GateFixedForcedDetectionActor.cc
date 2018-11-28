@@ -635,7 +635,7 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
     MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
 
     /* First: accumulate contribution to event, square and add to total squared */
-    InputImageType::Pointer totalContribEvent(NULL);
+    InputImageType::Pointer totalContribEvent(ITK_NULLPTR);
     for (unsigned int i = 0; i < PRIMARY; i++)
       {
       if (mEventImage[ProcessType(i)]->GetTimeStamp()

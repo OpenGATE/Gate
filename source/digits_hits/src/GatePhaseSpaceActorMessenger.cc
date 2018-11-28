@@ -58,6 +58,7 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bEnableCompactCmd;
   delete bEnableEmissionPointCmd;
   delete bEnablePDGCodeCmd;
+  delete pEnableNuclearFlagCmd;
   delete bEnableSphereProjection;
   delete bSetSphereProjectionCenter;
   delete bSetSphereProjectionRadius;
@@ -234,6 +235,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   guidance = "Output the PDGCode instead of the ParticleName.";
   bEnablePDGCodeCmd->SetGuidance(guidance);
 
+  bb = base+"/enableNuclearFlag";
+  pEnableNuclearFlagCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save nuclear flags of particles in the phase space file.";
+  pEnableNuclearFlagCmd->SetGuidance(guidance);
+  pEnableNuclearFlagCmd->SetParameterName("State",false);
+
   bb = base+"/enableSphereProjection";
   bEnableSphereProjection = new G4UIcmdWithABool(bb, this);
   guidance = "Change the particle position point: project it on a sphere";
@@ -297,6 +304,7 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == bSpotIDFromSourceCmd) {pActor->SetSpotIDFromSource(param);pActor->SetIsSpotIDEnabled();};
   if(command == bEnablePDGCodeCmd) pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
   if(command == bEnableCompactCmd) pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
+  if(command == pEnableNuclearFlagCmd) pActor->SetIsNuclearFlagEnabled(pEnableNuclearFlagCmd->GetNewBoolValue(param));
   if(command == bEnableSphereProjection) pActor->SetEnabledSphereProjection(bEnableSphereProjection->GetNewBoolValue(param));
   if(command == bSetSphereProjectionCenter) pActor->SetSphereProjectionCenter(bSetSphereProjectionCenter->GetNew3VectorValue(param));
   if(command == bSetSphereProjectionRadius) pActor->SetSphereProjectionRadius(bSetSphereProjectionRadius->GetNewDoubleValue(param));
