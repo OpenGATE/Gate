@@ -100,6 +100,9 @@ public:
   void SetSphereProjectionCenter(G4ThreeVector c) { mSphereProjectionCenter = c; }
   void SetSphereProjectionRadius(double r) { mSphereProjectionRadius = r; }
 
+  void SetEnabledTranslationAlongDirection(bool b) { mTranslateAlongDirectionFlag = b; }
+  void SetTranslationAlongDirectionLength(double r) { mTranslationLength = r; }
+
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
 
@@ -134,6 +137,9 @@ protected:
   bool mSphereProjectionFlag;
   G4ThreeVector mSphereProjectionCenter;
   double mSphereProjectionRadius;
+
+  bool mTranslateAlongDirectionFlag;
+  double mTranslationLength;
 
   bool bEnableCoordFrame;
   G4String bCoordFrame;

@@ -64,6 +64,9 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mSphereProjectionCenter = G4ThreeVector(0);
   mSphereProjectionRadius = 0.0;
 
+  mTranslateAlongDirectionFlag = false;
+  mTranslationLength = 0.0;
+
   bEnableCoordFrame = false;
   bEnablePrimaryEnergy = false;
   bEnableSpotID = false;
@@ -423,6 +426,20 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     x = x+dx*d;
     y = y+dy*d;
     z = z+dz*d;
+  }
+
+  /*
+    Translate the particle point along the direction by a given value
+   */
+  if (mTranslateAlongDirectionFlag) {
+
+    // move point along its direction by a length d (may be negative)
+    G4ThreeVector o(x,y,z);
+    G4ThreeVector l(dx,dy,dz);
+
+    x = x+dx*mTranslationLength;
+    y = y+dy*mTranslationLength;
+    z = z+dz*mTranslationLength;
   }
 
   //-------------Write weight of the steps presents at the simulation-------------
