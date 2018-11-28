@@ -61,6 +61,8 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bEnableSphereProjection;
   delete bSetSphereProjectionCenter;
   delete bSetSphereProjectionRadius;
+  delete bEnableTranslationAlongDirection;
+  delete bSetTranslationAlongDirectionLength;
 }
 //-----------------------------------------------------------------------------
 
@@ -246,6 +248,18 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   bSetSphereProjectionRadius = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = "Set the radius of the sphere where the points are projected";
   bSetSphereProjectionRadius->SetGuidance(guidance);
+
+  bb = base+"/enableTranslationAlongDirection";
+  bEnableTranslationAlongDirection = new G4UIcmdWithABool(bb, this);
+  guidance = "Change the particle position point: translate along the direction";
+  bEnableTranslationAlongDirection->SetGuidance(guidance);
+
+  bb = base+"/setTranslationAlongDirectionLength";
+  bSetTranslationAlongDirectionLength = new G4UIcmdWithADoubleAndUnit(bb, this);
+  guidance = "Set the translation length";
+  bSetTranslationAlongDirectionLength->SetGuidance(guidance);
+
+
 }
 //-----------------------------------------------------------------------------
 
@@ -286,6 +300,9 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == bEnableSphereProjection) pActor->SetEnabledSphereProjection(bEnableSphereProjection->GetNewBoolValue(param));
   if(command == bSetSphereProjectionCenter) pActor->SetSphereProjectionCenter(bSetSphereProjectionCenter->GetNew3VectorValue(param));
   if(command == bSetSphereProjectionRadius) pActor->SetSphereProjectionRadius(bSetSphereProjectionRadius->GetNewDoubleValue(param));
+
+  if(command == bEnableTranslationAlongDirection) pActor->SetEnabledTranslationAlongDirection(bEnableTranslationAlongDirection->GetNewBoolValue(param));
+  if(command == bSetTranslationAlongDirectionLength) pActor->SetTranslationAlongDirectionLength(bSetTranslationAlongDirectionLength->GetNewDoubleValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }
