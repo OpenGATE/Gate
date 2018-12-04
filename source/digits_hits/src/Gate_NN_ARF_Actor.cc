@@ -141,6 +141,8 @@ void Gate_NN_ARF_Actor::Construct()
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SaveData()
 {
+  GateVActor::SaveData(); // Need to change filename if ask by user (OoverwriteFileFlag)
+
   if (mTrainingModeFlag) {
     GateMessage("Actor", 1, "Gate_NN_ARF_Actor -> Detected "
                 << mNumberOfDetectedEvent

@@ -656,19 +656,22 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
 //-----------------------------------------------------------------------------
 G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
   int nr=0;
-  int ne=0;
+  // int ne=0;
   const G4Run * run = GateRunManager::GetRunManager()->GetCurrentRun();
   if (run) nr = run->GetRunID();
   else {
     nr = 0;
   }
-  ne = GateActorManager::GetInstance()->GetCurrentEventId();
+  // ne = GateActorManager::GetInstance()->GetCurrentEventId();
 
   G4String extension = "."+getExtension(mSaveFilename);
 
-  std::ostringstream oss;
+  /*std::ostringstream oss;
   oss << "_R" << std::setfill('0') << std::setw(4) << nr;
   oss << "_E" << std::setfill('0') << std::setw(15) << ne;
+  */
+  std::ostringstream oss;
+  oss << "_" << nr;
   G4String mSaveCurrentFilename = G4String(removeExtension(mSaveFilename))+oss.str()+extension;
   return mSaveCurrentFilename;
 }
