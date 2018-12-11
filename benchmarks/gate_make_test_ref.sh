@@ -86,16 +86,16 @@ cd reference
 
 echo
 echo "----------------------------------------------------"
-echo "md5sum creation."
+echo "sha512sum creation."
 
 if test "$(uname)" = "Darwin"
 then
-    md5 -q $1_$2-reference.tgz >$1_$2-reference.tgz.md5
+    sha512 -q $1_$2-reference.tgz >$1_$2-reference.tgz.sha512
 else
-    echo $(md5sum $1_$2-reference.tgz | cut -f 1-1 -d ' ') >$1_$2-reference.tgz.md5
+    echo $(sha512sum $1_$2-reference.tgz | cut -f 1-1 -d ' ') >$1_$2-reference.tgz.sha512
 fi
 
-git add $1_$2-reference.tgz.md5
+git add $1_$2-reference.tgz.sha512
 echo "----------------------------------------------------"
 
 echo
@@ -104,7 +104,7 @@ if [ `grep $1_$2 ../../CMakeLists.txt |grep ADD_TEST|wc -l` -eq 0 ];
 then
     echo "Addition of a new external reference data."
 
-    echo "$1_$2-reference.tgz.md5-stamp" >> .gitignore
+    echo "$1_$2-reference.tgz.sha512-stamp" >> .gitignore
     echo "$1_$2-reference.tgz"           >> .gitignore
     git add .gitignore
 
