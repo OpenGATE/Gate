@@ -17,7 +17,7 @@ echo "Current directory:"
 pwd
 echo
 
-echo "Printing the three parameters for debugging:"
+echo "Printing the four parameters for debugging:"
 echo $1
 echo $2
 echo $3
