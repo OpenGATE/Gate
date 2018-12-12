@@ -25,6 +25,8 @@
 #include "GatePulseAdder.hh"
 #include "GateCCCoincidenceDigi.hh"
 
+#include "GatePrimTrackInformation.hh"
+
 #include <TROOT.h>
 #include <TFile.h>
 #include <TH1.h>
@@ -62,7 +64,8 @@ public:
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-
+  //test nov
+  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
   virtual void EndOfEventAction(const G4Event*);
 
   //-----------------------------------------------------------------------------
@@ -150,6 +153,9 @@ protected:
   G4int evtID;
   G4int runID;
 
+
+
+
   G4double hitEdep;
   G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
@@ -205,7 +211,7 @@ protected:
   std::vector<G4String> coincidenceChainNames;
 
 
-
+GatePrimTrackInformation* trackInfo;
 
  GateActorMessenger* pMessenger;
   G4EmCalculator * emcalc;

@@ -53,6 +53,8 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   // (storing it now would mess up the centroid computations)
   G4double totalEnergy = m_energy + right->m_energy;
 
+  if (m_sourceEkine != right->m_sourceEkine) m_sourceEkine=-1;
+
   // Local and global positions: store the controids
   m_localPos  =  ( m_localPos  * m_energy  + right->m_localPos  * right->m_energy ) / totalEnergy ;
   m_globalPos =  ( m_globalPos * m_energy  + right->m_globalPos * right->m_energy ) / totalEnergy ;

@@ -168,6 +168,8 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
     pulse->SetProcessCreator(hit->GetProcess());
     pulse->SetTrackID(hit->GetTrackID());
    pulse->SetParentID(hit->GetParentID());
+    pulse->SetSourceEkine(hit->GetSourceEkine());
+
 
     
 //-------------------------------------------------
