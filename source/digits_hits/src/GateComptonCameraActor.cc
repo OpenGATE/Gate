@@ -579,7 +579,7 @@ void GateComptonCameraActor::PostUserTrackingAction(const GateVVolume *, const G
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4Step* step)
 {
-  G4cout<<"######START OF :UserSteppingAction####################################"<<G4endl;
+  //G4cout<<"######START OF :UserSteppingAction####################################"<<G4endl;
   assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
 
   //======================== info of the track ==========================
@@ -699,7 +699,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
 //  if(evtID==79){
 
- G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<G4endl;
+ //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<G4endl;
 //  }
 
 
