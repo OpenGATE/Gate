@@ -45,6 +45,7 @@ public:
   virtual void ResetData();
 
   void SetEnergy(G4double energy);
+  void SetMuUnit(G4double unit);
 
 protected:
 
@@ -55,6 +56,7 @@ protected:
   GateImageInt mSourceMapImage;
 
   G4double  mEnergy;
+  G4double  mMuUnit;
   G4String mMuMapFilename;
   G4String mSourceMapFilename;
 };

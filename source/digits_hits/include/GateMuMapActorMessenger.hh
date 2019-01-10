@@ -32,6 +32,7 @@ protected:
   GateMuMapActor * pMuMapActor;
 
   G4UIcmdWithADoubleAndUnit* pSetEnergyCmd;
+  G4UIcmdWithADoubleAndUnit* pSetMuUnitCmd;
 };
 
 #endif /* end #define GATEMUMAPACTORMESSENGER_HH*/
