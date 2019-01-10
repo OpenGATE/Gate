@@ -22,7 +22,7 @@
 
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
-
+#include "G4UnitsTable.hh"
 //-----------------------------------------------------------------------------
 
 GateMuMapActor::GateMuMapActor(G4String name, G4int depth):
@@ -30,6 +30,7 @@ GateMuMapActor::GateMuMapActor(G4String name, G4int depth):
         GateDebugMessageInc("Actor",4,"GateMuMapActor() -- begin"<<G4endl);
 
         mEnergy = 0.511*MeV;
+        mMuUnit= 1.0*(1.0/cm);
         pMessenger = new GateMuMapActorMessenger(this);
         GateDebugMessageDec("Actor",4,"GateMuMapActor() -- end"<<G4endl);
     }
@@ -46,6 +47,12 @@ GateMuMapActor::~GateMuMapActor()  {
 void GateMuMapActor::SetEnergy(G4double energy)
 {
     mEnergy=energy;
+}
+//-----------------------------------------------------------------------------
+
+void GateMuMapActor::SetMuUnit(G4double unit)
+{
+    mMuUnit=unit;
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -124,8 +131,8 @@ void GateMuMapActor::BeginOfRunAction(const G4Run * r) {
         {
         G4LogicalVolume* lVolume= pVolume->GetLogicalVolume();
 
-        // Get the Mu value ,unit(cm-1)
-        double mu= GateMaterialMuHandler::GetInstance()->GetMu(lVolume->GetMaterialCutsCouple(),mEnergy);
+        // Get the Mu value ,default unit(cm-1)
+        double mu= GateMaterialMuHandler::GetInstance()->GetMu(lVolume->GetMaterialCutsCouple(),mEnergy)*(1/cm)/mMuUnit;
 
         mMuMapImage.SetValue(index,(float)mu);
         }
