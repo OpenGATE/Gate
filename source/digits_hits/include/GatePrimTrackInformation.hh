@@ -29,6 +29,7 @@ public:
 public:
   
   inline G4double GetSourceEini() const {return m_energyPrimaryTrack;}
+  inline int GetSourcePDG() const {return m_PDGPrimaryTrack;}
 
 
   
@@ -43,6 +44,7 @@ private:
   G4double              fOriginalTime;
 
   G4double             m_energyPrimaryTrack;
+  G4int                m_PDGPrimaryTrack;
 
 
 

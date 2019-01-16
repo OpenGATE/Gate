@@ -18,7 +18,8 @@ GatePrimTrackInformation::GatePrimTrackInformation()
     fOriginalEnergy = 0.;
     fOriginalTime = 0.;
 
-    m_energyPrimaryTrack=0;
+    m_energyPrimaryTrack=-1;
+    m_PDGPrimaryTrack=0;
 
 
 
@@ -38,7 +39,8 @@ GatePrimTrackInformation::GatePrimTrackInformation(const G4Track* aTrack)
 
 
     //MAybe include some other parameter to set my an specific track
-    m_energyPrimaryTrack=0;
+    m_energyPrimaryTrack=-1;
+     m_PDGPrimaryTrack=0;
 }
 
 
@@ -55,6 +57,7 @@ GatePrimTrackInformation
 
 
     m_energyPrimaryTrack=aTrackInfo->m_energyPrimaryTrack;
+    m_PDGPrimaryTrack=aTrackInfo->m_PDGPrimaryTrack;
 
 
 
@@ -78,8 +81,8 @@ GatePrimTrackInformation& GatePrimTrackInformation
     fOriginalTime = aTrackInfo.fOriginalTime;
 
 
-     m_energyPrimaryTrack=aTrackInfo.m_energyPrimaryTrack;
-
+    m_energyPrimaryTrack=aTrackInfo.m_energyPrimaryTrack;
+    m_PDGPrimaryTrack=aTrackInfo.m_PDGPrimaryTrack;
     return *this;
 }
 
@@ -87,9 +90,11 @@ GatePrimTrackInformation& GatePrimTrackInformation
 void GatePrimTrackInformation::SetEPrimTrackInformation(const G4Track* aTrack)
 {
 
+
     //Meter la track con la info de la source ? (creo que en este caso era la detectada)si uso la primaria
     //creo qeu eso me sobra
      m_energyPrimaryTrack= aTrack->GetTotalEnergy();
+     m_PDGPrimaryTrack=aTrack->GetParticleDefinition()->GetPDGEncoding();
 
 }
 
