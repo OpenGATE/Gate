@@ -147,6 +147,9 @@ class GatePulse
       inline void SetSourceEkine(G4double eValue)          { m_sourceEkine = eValue; }
       inline G4double GetSourceEkine() const                { return m_sourceEkine; }
 
+      inline void SetSourcePDG(G4int PDGEncoding)          { m_sourcePDG = PDGEncoding; }
+      inline G4int GetSourcePDG() const                { return m_sourcePDG; }
+
 
       inline void     SetProcessCreator(G4String proc) { m_processCreator = proc; }
       inline G4String GetProcessCreator() const             { return m_processCreator; }
@@ -223,10 +226,13 @@ private:
   G4int m_trackID;
   G4int m_parentID;
 
-  G4double m_sourceEkine;
+
   G4double m_energyError;          	  //!< energy error
   G4ThreeVector m_localPosError;   	  //!<
   G4ThreeVector m_globalPosError;      //!<
+
+  G4double m_sourceEkine;
+  G4int m_sourcePDG;
 //--------------------
 
 
