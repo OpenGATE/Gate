@@ -117,6 +117,9 @@ public:
       inline void SetSourceEkine(G4double value)           	      { m_pulse.SetSourceEkine(value); }
       inline G4double GetSourceEkine() const                    	      { return m_pulse.GetSourceEkine(); }
 
+      inline void SetSourcePDG(G4int value)           	              { m_pulse.SetSourcePDG(value); }
+      inline G4int GetSourcePDG() const                    	      	      { return m_pulse.GetSourcePDG(); }
+
 
 
   

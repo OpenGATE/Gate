@@ -131,6 +131,11 @@ public:
   { return sourceEkine* MeV;}
   inline void SetSourceEkine(G4double sEnergy)
   { sourceEkine = sEnergy / MeV;}
+
+  inline G4int GetSourcePDG() const
+  { return sourcePDG;}
+  inline void SetSourcePDG(G4double sPDG)
+  { sourcePDG = sPDG;}
   //@}
 
   //! \name Data fields
@@ -147,6 +152,7 @@ public:
   Float_t  localPosX, localPosY, localPosZ; 	//!< Local hit position (in millimeters)
   Float_t  sPosX, sPosY, sPosZ; 	//!< Local hit position (in millimeters)
   Float_t sourceEkine;
+  Int_t   sourcePDG;
   Int_t    eventID; 	      	      	      	//!< Event ID
   Int_t    runID;   	      	      	      	//!< Run ID
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
@@ -216,6 +222,7 @@ public:
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
   Float_t  sourceEkine;
+  Int_t    sourcePDG;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
@@ -277,6 +284,7 @@ public:
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
   Float_t  sourceEkine;
+  Int_t    sourcePDG;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
