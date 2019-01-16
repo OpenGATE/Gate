@@ -62,6 +62,10 @@ protected:
   G4UIcmdWithAnInteger      * pNumberofTotScattererLayers;
 
 
+  G4UIcmdWithABool          * pSourceParentIDSpecification;
+  G4UIcmdWithAString        * pFileName4SourceParentID;
+
+
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------
 

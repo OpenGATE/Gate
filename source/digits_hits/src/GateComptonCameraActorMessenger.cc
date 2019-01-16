@@ -21,6 +21,8 @@ GateComptonCameraActorMessenger::GateComptonCameraActorMessenger(GateComptonCame
 {
     G4cout<<"buildCommand ComptonCamera messenger"<<G4endl;
   BuildCommands(baseName+pActor->GetObjectName());
+
+
 }
 //-----------------------------------------------------------------------------
 
@@ -43,6 +45,9 @@ GateComptonCameraActorMessenger::~GateComptonCameraActorMessenger()
     delete pNameOfScattererSDVol;
     delete pNumberofDiffScattererLayers;
     delete pNumberofTotScattererLayers;
+
+    delete   pSourceParentIDSpecification;
+    delete   pFileName4SourceParentID;
 }
 //-----------------------------------------------------------------------------
 
@@ -127,6 +132,18 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   guidance = "Specifies the number of different  scatterer layers non repeaters.";
   pNumberofTotScattererLayers->SetGuidance(guidance);
 
+
+
+  bb = base+"/specifysourceParentID";
+  pSourceParentIDSpecification= new G4UIcmdWithABool(bb, this);
+  guidance = G4String("By deflaut set to zero and parentID=0 particles are considered to register sourceEkine and sourcePDG information");
+  pSourceParentIDSpecification->SetGuidance(guidance);
+
+  bb = base+"/parentIDFileName";
+  pFileName4SourceParentID =new G4UIcmdWithAString(bb,this);
+  guidance = "File name where the parentID are specified. One integer number per line.";
+  pFileName4SourceParentID->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -148,6 +165,9 @@ void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
    if(cmd == pNumberofTotScattererLayers) pActor->SetNumberOfTotScattererLayers( pNumberofTotScattererLayers->GetNewIntValue(newValue)  ) ;
   if(cmd == pNameOfScattererSDVol) pActor->SetNameOfScattererSDVol(newValue) ;
   if(cmd == pNameOfAbsorberSDVol) pActor->SetNameOfAbsorberSDVol( newValue ) ;
+
+  if(cmd ==  pSourceParentIDSpecification) pActor->SetParentIDSpecificationFlag( pSourceParentIDSpecification->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pFileName4SourceParentID) pActor->SetParentIDFileName(newValue) ;
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------
