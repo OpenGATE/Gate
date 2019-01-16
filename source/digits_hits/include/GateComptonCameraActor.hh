@@ -94,6 +94,9 @@ public:
   void SetNameOfScattererSDVol(G4String name){mNameOfScattererSDVol=name;}
   void SetNameOfAbsorberSDVol(G4String name ) {mNameOfAbsorberSDVol=name;}
 
+  void SetParentIDSpecificationFlag( bool b ){  mParentIDSpecificationFlag= b; }
+  void SetParentIDFileName(G4String name ) {mParentIDFileName=name;}
+
   //! Get the digitizer
   inline GateDigitizer*   GetDigitizer()
   { return m_digitizer; }
@@ -138,7 +141,7 @@ protected:
   G4String attachPhysVolumeName;
 
   double Ei,Ef;
-  int nTrack;
+
   int nEvent;
   bool newEvt;
   bool newTrack;
@@ -156,12 +159,14 @@ protected:
 
 
 
+
   G4double hitEdep;
   G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
   G4ThreeVector hitPrePos;
   G4ThreeVector sourcePos;
   G4double sourceEkine;
+  G4int sourcePDG;
   G4int trackID;
   G4int  parentID;
   G4double trackLength;
@@ -202,7 +207,10 @@ protected:
   G4String  mNameOfScattererSDVol;
   G4String  mNameOfAbsorberSDVol;
 
-
+   bool mParentIDSpecificationFlag;
+   G4String  mParentIDFileName;
+   std::vector<G4int> specfParentID;
+     std::vector<G4int>::iterator itPrtID;
 
   std::ofstream ossHits;
   std::ofstream ossSingles;

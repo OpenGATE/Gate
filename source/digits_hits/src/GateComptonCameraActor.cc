@@ -54,7 +54,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   newEvt = true;
   newTrack = true;
 
-  nTrack=0;
+
   edepEvt = 0.;
   slayerID=-1;
 
@@ -70,6 +70,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   mSaveSinglesTextFlag=false;
   mSaveCoincTextFlag=false;
   mSaveCoinChainsTextFlag=false;
+  mParentIDSpecificationFlag=false;
 
   //Messenger load values
    pMessenger = new GateComptonCameraActorMessenger(this);
@@ -193,7 +194,33 @@ void GateComptonCameraActor::Construct()
   }
 
 
+//
+  if(mParentIDSpecificationFlag){
+     // Read the file and load the values in the vector called mParentIDFileName
+      std::ifstream textfile;
+      std::string line;
+      textfile.open(mParentIDFileName.c_str(), std::ios_base::in);  // open data
+      if(textfile.is_open()!=true) G4cout<<"[GateComptonCameraActor::Construct]: parentID specification file not correctly opened"<<G4endl;
+      int tmpParentID;
+       //while(textfile.eof()==false){
+       while(textfile.is_open()){
+            getline(textfile,line); //read stream line by line
+            std::istringstream in(line);//make a stream for the line itself
+              in >> tmpParentID;
+              if(textfile.eof()){
+                  textfile.close();
+                  break;
+              }
+              specfParentID.push_back(tmpParentID);
 
+         }
+
+         G4cout<<"vector parentID size"<< specfParentID.size()<<G4endl;
+         for(unsigned int i=0; i<specfParentID.size(); i++){
+              G4cout<<"value="<< specfParentID.at(i)<<G4endl;
+
+         }
+  }
   //############################3
    G4cout<<"files"<<G4endl;
   //root file
@@ -302,6 +329,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     sourcePos=pvertex->GetPosition();
     //For ion sources No useful info
     //sourceEkine=pvertex->GetPrimary()->GetKineticEnergy();
+    //G4cout<<"PDGEncoding= "<<pvertex->GetPrimary()->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
 
         //pvertex->GetPrimary()->GetDaughter()->GetKineticEnergy()
     GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Event\n");
@@ -326,9 +354,11 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     }
 
     evtID = evt->GetEventID();
+
     //std::cout<<"eventID="<<evtID<<std::endl;
 
- // G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
+  //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
+
 }
 //-----------------------------------------------------------------------------
 
@@ -460,64 +490,44 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::PreUserTrackingAction(const GateVVolume * , const G4Track* t)
 {
-  //G4cout<<"#####BEGIN OF :PreuserTrackingAction####################################"<<G4endl;
-  GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track\n");
-  newTrack = true;
+    //G4cout<<"#####BEGIN OF :PreuserTrackingAction####################################"<<G4endl;
+    GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track\n");
+    newTrack = true;
 
 
-  //zero if not ions OtherWise see how to include it in messenger
-
-  //if(t->GetParentID()==4||t->GetParentID()==2||t->GetParentID()==3){
- //if(t->GetParentID()==0){ // Primary particle
-  //If I put trackinfo only to primarie sI have a problme I think that it is because I try to access to it
-   //G4cout<<"#####BEG"<<G4endl;
-        /*if(trackInfo){
-            delete trackInfo;
-            trackInfo=0;
-        }*/
- // G4cout<<"#####BEG"<<G4endl;
-  //if(t->GetParentID()==4||t->GetParentID()==2){
-  //If I do not put to everything I think that it tries to acced to the info of a track that it is not set in UsserStepping aCtion and breaks Or the cause is another. But it breaks
-        //AQUI PROBLEMA QUE RESETEO
-
-
-
-  GatePrimTrackInformation* trackInfo1 = new  GatePrimTrackInformation(t);
-        //USe a messager to check parent ID by default 0 otherwise the inserted. (where to put messenger)
-        //Easiest in the C actor messenger but more related with source
-        if((t->GetParentID()==4||t->GetParentID()==2)&& t->GetParticleDefinition()->GetPDGEncoding()==22){
-                   trackInfo1->SetEPrimTrackInformation(t);
-                   t->SetUserInformation(trackInfo1);
-        }
-        else{
-            if(t->GetUserInformation()){
-                //Si ya tiene nada xq  sera secundarui //si no se la pongo
-                //G4cout<<"Already set the user info of the track"<<G4endl;
+    if(t->GetUserInformation()==0){
+        //real primary notr UserInfoSet. PrimarySetInfo to secondaires. This is equivalent to do it for tracks with parentID=0
+        GatePrimTrackInformation* trackInfo1 = new  GatePrimTrackInformation(t);
+       // G4cout<<"setInfo from this track"<<G4endl;
+        trackInfo1->SetEPrimTrackInformation(t);
+        t->SetUserInformation(trackInfo1);
+    }
+    else{
+        if(mParentIDSpecificationFlag){
+            itPrtID = find ( specfParentID.begin(),  specfParentID.end(), t->GetParentID());
+            if (itPrtID !=  specfParentID.end()){
+                 //Need to change the info but not to set a new one
+                 ((GatePrimTrackInformation*)(t->GetUserInformation()))->SetEPrimTrackInformation(t);
+                //G4cout<<"<modifying tracks info"<<G4endl;
 
             }
-            else{
-                //Only enters here when he have a primary track with the paretnID different that what we are interested
-                trackInfo1->SetEPrimTrackInformation(t);
-                t->SetUserInformation(trackInfo1);
-            }
-
         }
+
+    }
 
 
 
        // G4cout<<"eventID="<<evtID<<G4endl;
-       // G4cout<<"CCActor::PreUserTrackingAction: energy from trackInfo "<<((GatePrimTrackInformation*)t->GetUserInformation())->GetSourceEini()<<G4endl;
-        // G4cout<<"CCActor::PreUserTrackingAction: total energy  from track "<<t->GetTotalEnergy()<<G4endl;
-        // G4cout<<"CCActor::PreUserTrackingAction: track parentID  "<<t->GetParentID() <<G4endl;
-        // G4cout<<"CCActor::PreUserTrackingAction: track PDGEncoding  "<<t->GetParticleDefinition()->GetPDGEncoding() <<G4endl;
+     //  G4cout<<"CCActor::PreUserTrackingAction: energy from trackInfo "<<((GatePrimTrackInformation*)t->GetUserInformation())->GetSourceEini()<<G4endl;
+      // G4cout<<"CCActor::PreUserTrackingAction: PDG from trackInfo "<<((GatePrimTrackInformation*)t->GetUserInformation())->GetSourcePDG()<<G4endl;
+      //   G4cout<<"CCActor::PreUserTrackingAction: total energy  from track "<<t->GetTotalEnergy()<<G4endl;
+       //  G4cout<<"CCActor::PreUserTrackingAction: track parentID  "<<t->GetParentID() <<G4endl;
+       //  G4cout<<"CCActor::PreUserTrackingAction: track PDGEncoding  "<<t->GetParticleDefinition()->GetPDGEncoding() <<G4endl;
 
 
-//}
-       //G4Track* theTrack = (G4Track*)t;
-       //theTrack->SetUserInformation(trackInfo1);
 
-  //AE  no hace nada con esto
-  if (t->GetParentID()==1) nTrack++;
+
+
   edepTrack = 0.;
   //G4cout<<"######END OF :PreuserTrackingAction####################################"<<G4endl;
 }
@@ -557,20 +567,27 @@ void GateComptonCameraActor::PostUserTrackingAction(const GateVVolume *, const G
 
         size_t nSecon = secondaries->size();
         if(nSecon>0){
-            GatePrimTrackInformation* info =  (GatePrimTrackInformation*)(atrack->GetUserInformation());
-            //G4cout<<"CCActor:PostUserTracking: energy value in the info of secondary tracks= "<<info->GetSourceEini()<<G4endl;
+            GatePrimTrackInformation info=  *((GatePrimTrackInformation*)(atrack->GetUserInformation()));
+          // GatePrimTrackInformation* info =  (GatePrimTrackInformation*)(atrack->GetUserInformation());
+            // GatePrimTrackInformation* infoNew=(GatePrimTrackInformation*)(atrack->GetUserInformation());
+            //G4cout<<"CCActor:PostUserTracking: energy value in the info of secondary tracks= "<<info.GetSourceEini()<<G4endl;
             // G4cout<<"eventID="<<evtID<<G4endl;
             //G4cout<<"nseconSize="<<nSecon<<G4endl;
+             GatePrimTrackInformation* infoNew;
           for(size_t i=0;i<nSecon;i++){
-            GatePrimTrackInformation* infoNew = new GatePrimTrackInformation(info);
-            //G4cout<<"parentID secon="<<((*secondaries)[i])->GetParentID()<<G4endl;
-            //G4cout<<"energy secon="<<(*secondaries)[i]->GetTotalEnergy()<<G4endl;
-             // G4cout<<"PDG secon="<<(*secondaries)[i]->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
-            (*secondaries)[i]->SetUserInformation(infoNew);
+             // std::shared_ptr<GatePrimTrackInformation> infoNew( new GatePrimTrackInformation(info));
+            infoNew = new GatePrimTrackInformation(info);
+           // G4cout<<"parentID secon="<<((*secondaries)[i])->GetParentID()<<G4endl;
+           // G4cout<<"energy secon="<<(*secondaries)[i]->GetTotalEnergy()<<G4endl;
+            // G4cout<<"PDG secon="<<(*secondaries)[i]->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
+            //  (*secondaries)[i]->SetUserInformation(&info);
+           // (*secondaries)[i]->SetUserInformation(infoNew.get());
+               (*secondaries)[i]->SetUserInformation(infoNew);
             //G4cout<<"sourceiniAl secudnario"<<infoNew->GetSourceEini()<<G4endl;
 
+
           }
-          // G4cout<<"Info set to secondaries"<<G4endl;
+
         }
       }
 
@@ -697,10 +714,13 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     newTrack=false;
   }
 
-//  if(evtID==79){
+  //if(evtID==1741||evtID==6254 ||evtID==7647||evtID==23650||evtID==43942 ||evtID==11962){
+  // if(evtID==692930||evtID==847511 ||evtID==1591796){
 
- //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<G4endl;
-//  }
+  //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<"  time="<<aTrack->GetGlobalTime()<<G4endl;
+  //G4cout<<"CCActor::UserSteppingAction: sourceEkine= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
+  //G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
+  //}
 
 
   if(parentID==0){
@@ -715,7 +735,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
    if (it != layerNames.end()){
        sourceEkine=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini();
-      // G4cout<<"CCActor::UserSteppingAction: sourceEkine= "<<sourceEkine<<G4endl;
+       sourcePDG=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG();
+
   //if (hitEdep!=0.){
     // Create a new crystal hit (maybe better an object hit
        GateCrystalHit* aHit=new GateCrystalHit();
@@ -750,6 +771,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
        aHit->SetPDGEncoding(PDGEncoding);
        aHit->SetPostStepProcess( processPostStep);
        aHit->SetSourceEkine(sourceEkine);
+       aHit->SetSourcePDG(sourcePDG);
        aHit->SetSourcePosition(sourcePos);
        //track creator
        aHit->SetProcess(processName);
