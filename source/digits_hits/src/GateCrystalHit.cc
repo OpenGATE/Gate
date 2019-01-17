@@ -28,7 +28,7 @@ GateCrystalHit::GateCrystalHit()
   m_trackID(0),
   m_parentID(0),
   m_systemID(-1),
-  m_sourceEkine(-1),
+  m_sourceEnergy(-1),
   m_sourcePDG(0)
 {;}
 //---------------------------------------------------------------------

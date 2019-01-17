@@ -127,10 +127,10 @@ public:
     sPosY = sPosition.y() / mm;
     sPosZ = sPosition.z() / mm;
   }
-  inline G4double GetSourceEkine() const
-  { return sourceEkine* MeV;}
-  inline void SetSourceEkine(G4double sEnergy)
-  { sourceEkine = sEnergy / MeV;}
+  inline G4double GetSourceEnergy() const
+  { return sourceEnergy* MeV;}
+  inline void SetSourceEnergy(G4double sEnergy)
+  { sourceEnergy = sEnergy / MeV;}
 
   inline G4int GetSourcePDG() const
   { return sourcePDG;}
@@ -151,7 +151,7 @@ public:
   Float_t  posX,posY,posZ;  	      	      	//!< Global hit position (in millimeters)
   Float_t  localPosX, localPosY, localPosZ; 	//!< Local hit position (in millimeters)
   Float_t  sPosX, sPosY, sPosZ; 	//!< Local hit position (in millimeters)
-  Float_t sourceEkine;
+  Float_t sourceEnergy;
   Int_t   sourcePDG;
   Int_t    eventID; 	      	      	      	//!< Event ID
   Int_t    runID;   	      	      	      	//!< Run ID
@@ -221,7 +221,7 @@ public:
   Float_t  sourcePosX;
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
-  Float_t  sourceEkine;
+  Float_t  sourceEnergy;
   Int_t    sourcePDG;
   //Int_t    layerID;
   Char_t   layerName[40];
@@ -283,7 +283,7 @@ public:
   Float_t  sourcePosX;
   Float_t  sourcePosY;
   Float_t  sourcePosZ;
-  Float_t  sourceEkine;
+  Float_t  sourceEnergy;
   Int_t    sourcePDG;
   //Int_t    layerID;
   Char_t   layerName[40];

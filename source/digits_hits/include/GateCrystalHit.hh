@@ -97,7 +97,7 @@ private:
    G4String m_Postprocess;         // PostStep process 
    G4double m_energyIniTrack;         // Initial energy of the track
    G4double m_energyFin;         // final energy of the particle
-   G4double m_sourceEkine;//AE
+   G4double m_sourceEnergy;//AE
    G4int m_sourcePDG;//AE
 
   public:
@@ -216,8 +216,8 @@ private:
 
 
       //------AE-------------------------------------------------------------------------
-      inline void  SetSourceEkine(G4double value)     { m_sourceEkine = value; }
-      inline  G4double GetSourceEkine() const        { return m_sourceEkine; }
+      inline void  SetSourceEnergy(G4double value)     { m_sourceEnergy = value; }
+      inline  G4double GetSourceEnergy() const        { return m_sourceEnergy; }
 
       inline void  SetSourcePDG(G4int value)     { m_sourcePDG = value; }
       inline  G4int GetSourcePDG() const        { return m_sourcePDG; }

@@ -328,7 +328,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     G4PrimaryVertex* pvertex=evt->GetPrimaryVertex();
     sourcePos=pvertex->GetPosition();
     //For ion sources No useful info
-    //sourceEkine=pvertex->GetPrimary()->GetKineticEnergy();
+    //sourceEnergy=pvertex->GetPrimary()->GetKineticEnergy();
     //G4cout<<"PDGEncoding= "<<pvertex->GetPrimary()->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
 
         //pvertex->GetPrimary()->GetDaughter()->GetKineticEnergy()
@@ -338,7 +338,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     edepEvt = 0.;
     Ef_oldPrimary=0;
 
-    sourceEkine=-1;
+    sourceEnergy=-1;
 
 
 
@@ -717,9 +717,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //if(evtID==1741||evtID==6254 ||evtID==7647||evtID==23650||evtID==43942 ||evtID==11962){
   // if(evtID==692930||evtID==847511 ||evtID==1591796){
 
-  //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<"  time="<<aTrack->GetGlobalTime()<<G4endl;
-  //G4cout<<"CCActor::UserSteppingAction: sourceEkine= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
-  //G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
+  G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<"  time="<<aTrack->GetGlobalTime()<<G4endl;
+  G4cout<<"CCActor::UserSteppingAction: sourceEnergy= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
+  G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
   //}
 
 
@@ -728,13 +728,13 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
       if(Ef_oldPrimary!=0)Ei=Ef_oldPrimary;
       Ef_oldPrimary=Ef;
   }
- // if( sourceEkine==0 &&(parentID==4 ||parentID==2)){
+ // if( sourceEnergy==0 &&(parentID==4 ||parentID==2)){
  //
-  //        sourceEkine=Ei;
+  //        sourceEnergy=Ei;
   //}
 
    if (it != layerNames.end()){
-       sourceEkine=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini();
+       sourceEnergy=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini();
        sourcePDG=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG();
 
   //if (hitEdep!=0.){
@@ -770,7 +770,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
        aHit->SetRunID(runID);
        aHit->SetPDGEncoding(PDGEncoding);
        aHit->SetPostStepProcess( processPostStep);
-       aHit->SetSourceEkine(sourceEkine);
+       aHit->SetSourceEnergy(sourceEnergy);
        aHit->SetSourcePDG(sourcePDG);
        aHit->SetSourcePosition(sourcePos);
        //track creator

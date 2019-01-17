@@ -53,7 +53,7 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   // (storing it now would mess up the centroid computations)
   G4double totalEnergy = m_energy + right->m_energy;
 
-  if (m_sourceEkine != right->m_sourceEkine) m_sourceEkine=-1;
+  if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
   if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
 
   // Local and global positions: store the controids
@@ -158,7 +158,7 @@ const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
   // time: store the minimum time
   m_time = std::min ( m_time , right->m_time ) ;
 
-  if (m_sourceEkine != right->m_sourceEkine) m_sourceEkine=-1;
+  if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
   if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
 
   // energy: we compute the sum
@@ -206,7 +206,7 @@ const GatePulse& GatePulse::CentroidMergeCompton(const GatePulse* right)
   // sourceID: identical for both pulses, nothing to do
   // source-position: identical for both pulses, nothing to do
 
-    if (m_sourceEkine != right->m_sourceEkine) m_sourceEkine=-1;
+    if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
     if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
     m_energyIniTrack=-1;         // Initial energy of the track
     m_energyFin=-1;

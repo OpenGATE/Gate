@@ -144,8 +144,8 @@ class GatePulse
       inline void SetEnergyFin(G4double eFin)          { m_energyFin = eFin; }
       inline G4double GetEnergyFin() const                { return m_energyFin; }
 
-      inline void SetSourceEkine(G4double eValue)          { m_sourceEkine = eValue; }
-      inline G4double GetSourceEkine() const                { return m_sourceEkine; }
+      inline void SetSourceEnergy(G4double eValue)          { m_sourceEnergy = eValue; }
+      inline G4double GetSourceEnergy() const                { return m_sourceEnergy; }
 
       inline void SetSourcePDG(G4int PDGEncoding)          { m_sourcePDG = PDGEncoding; }
       inline G4int GetSourcePDG() const                { return m_sourcePDG; }
@@ -231,7 +231,7 @@ private:
   G4ThreeVector m_localPosError;   	  //!<
   G4ThreeVector m_globalPosError;      //!<
 
-  G4double m_sourceEkine;
+  G4double m_sourceEnergy;
   G4int m_sourcePDG;
 //--------------------
 

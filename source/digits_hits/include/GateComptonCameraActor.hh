@@ -165,7 +165,7 @@ protected:
   G4ThreeVector hitPostPos;
   G4ThreeVector hitPrePos;
   G4ThreeVector sourcePos;
-  G4double sourceEkine;
+  G4double sourceEnergy;
   G4int sourcePDG;
   G4int trackID;
   G4int  parentID;
@@ -219,7 +219,7 @@ protected:
   std::vector<G4String> coincidenceChainNames;
 
 
-GatePrimTrackInformation* trackInfo;
+//GatePrimTrackInformation* trackInfo;
 
  GateActorMessenger* pMessenger;
   G4EmCalculator * emcalc;
