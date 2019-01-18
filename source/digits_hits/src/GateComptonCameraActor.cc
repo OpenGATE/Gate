@@ -215,11 +215,11 @@ void GateComptonCameraActor::Construct()
 
          }
 
-         G4cout<<"vector parentID size"<< specfParentID.size()<<G4endl;
-         for(unsigned int i=0; i<specfParentID.size(); i++){
-              G4cout<<"value="<< specfParentID.at(i)<<G4endl;
+        // G4cout<<"vector parentID size"<< specfParentID.size()<<G4endl;
+         //for(unsigned int i=0; i<specfParentID.size(); i++){
+         //     G4cout<<"value="<< specfParentID.at(i)<<G4endl;
 
-         }
+        // }
   }
   //############################3
    G4cout<<"files"<<G4endl;
@@ -717,9 +717,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //if(evtID==1741||evtID==6254 ||evtID==7647||evtID==23650||evtID==43942 ||evtID==11962){
   // if(evtID==692930||evtID==847511 ||evtID==1591796){
 
-  G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<"  time="<<aTrack->GetGlobalTime()<<G4endl;
-  G4cout<<"CCActor::UserSteppingAction: sourceEnergy= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
-  G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
+  //G4cout<<"evtID="<<evtID<<"  PDGEncoding="<<PDGEncoding<<" parentID="<<parentID<<" trackID="<<trackID<<" energyDep"<<hitEdep<<"  Ei="<<Ei<<" EF="<<Ef<<"  volName="<<VolNameStep<<" posPosZ="<<hitPostPos<<"  posStepProcess="<<processPostStep<<"  trackCreator="<<processName<<"  time="<<aTrack->GetGlobalTime()<<G4endl;
+  //G4cout<<"CCActor::UserSteppingAction: sourceEnergy= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
+  //G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
   //}
 
 
