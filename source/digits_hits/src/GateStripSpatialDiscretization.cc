@@ -34,12 +34,12 @@ GateStripSpatialDiscretization::GateStripSpatialDiscretization(GatePulseProcesso
 
     sizeVol=new double [2];
 
-   G4cout<<"access to m_name in constructor"<< m_name<<G4endl;
+  // G4cout<<"access to m_name in constructor"<< m_name<<G4endl;
 
 //Es como que lo guarda mas tarde
    im=m_table.begin();
 
-   G4cout<<(*im).second.numberStripsX<<G4endl;
+  // G4cout<<(*im).second.numberStripsX<<G4endl;
 
    // G4cout<<(G4String)(*im).first<<G4endl;
     //No tengo ahi acceso a los parameteros
@@ -102,82 +102,84 @@ void GateStripSpatialDiscretization::ProcessOnePulse(const GatePulse* inputPulse
 
     if(im != m_table.end()){//Be careful repeated volumes have the same name
         //Meter checks sobre los parametrps
-       // G4cout<<"Name finded"<<((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()<<G4endl;
-         //AQUI SI SE CARGA EL VALOR
+        // G4cout<<"Name finded"<<((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()<<G4endl;
+        //AQUI SI SE CARGA EL VALOR
         //G4cout<<"Numb stripsX"<<(*im).second.numberStripsX<<G4endl;
 
-              //I have change the pulse position for the corresponding position in the grid
-              G4ThreeVector PosLocal = outputPulse->GetVolumeID().MoveToBottomVolumeFrame(outputPulse->GetGlobalPos()); //local (deberia ser igual que la local guardada)
-             //G4cout<<" X posiiton antes"<<PosLocal.getX()<<G4endl;
-             current_indexX=GetXIndex(PosLocal.getX());
-             current_indexY=GetYIndex(PosLocal.getY());
-             SetGridPoints2D(current_indexX, current_indexY, PosLocal);
-             //GetGridPoints2D(PosLocal);
-             outputPulse->SetLocalPos(PosLocal);
-             outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos()));
+        outputPulse->SetEnergyIniTrack(-1);
+        outputPulse->SetEnergyFin(-1);
+        //I have change the pulse position for the corresponding position in the grid
+        G4ThreeVector PosLocal = outputPulse->GetVolumeID().MoveToBottomVolumeFrame(outputPulse->GetGlobalPos()); //local (deberia ser igual que la local guardada)
+        //G4cout<<" X posiiton antes"<<PosLocal.getX()<<G4endl;
+        current_indexX=GetXIndex(PosLocal.getX());
+        current_indexY=GetYIndex(PosLocal.getY());
+        SetGridPoints2D(current_indexX, current_indexY, PosLocal);
+        //GetGridPoints2D(PosLocal);
+        outputPulse->SetLocalPos(PosLocal);
+        outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos()));
 
-             if(current_indexX>=0 &&current_indexY>=0){
-                 //Check output pulses from the end if there is a pulse with the same indexX an Y are summed in energy otherwise  a new input
-                 //time of the pulse maybe also should be changed (time, energy,volume, position ane eventID are the same)
-                 if(outputPulseList.empty()){
-                     outputPulseList.push_back(outputPulse);
-                     index_X_list.push_back(current_indexX);
-                     index_Y_list.push_back(current_indexY);
+        if(current_indexX>=0 &&current_indexY>=0){
+            //Check output pulses from the end if there is a pulse with the same indexX an Y are summed in energy otherwise  a new input
+            //time of the pulse maybe also should be changed (time, energy,volume, position ane eventID are the same)
+            if(outputPulseList.empty()){
+                outputPulseList.push_back(outputPulse);
+                index_X_list.push_back(current_indexX);
+                index_Y_list.push_back(current_indexY);
 
-                 }
-                 else{
+            }
+            else{
 
-                     std::vector<G4int>::iterator it_indexX = std::find (index_X_list.begin(), index_X_list.end(), current_indexX);
-                     if (it_indexX != index_X_list.end()){
-                         //Coincidnecia en indices en X
-                         int posListX=std::distance(index_X_list.begin(),it_indexX);
-                         //G4cout<<"pos="<<posListX<<"number of pulses "<<outputPulseList.size()<<G4endl;
-                         //See if I have also coincidence in Y indexes (in the same position)
-                        if(index_Y_list.at(posListX)==current_indexY){
-                             //Tengo que sumar la energia y toma min de los tiempos
-                             //This does not change the posiiton
-                             // (*iter)->CentroidMergeComptPhotIdeal(inputPulse);
-                               //This sum the energy and cmpute the centroid of positio but being the same position the resutls should be the same
-                            if(outputPulseList.at(posListX)->GetVolumeID()==outputPulse->GetVolumeID()){// tengo que checkear que estemos en el mismo volumen y no en una copia
-                                outputPulseList.at(posListX)->CentroidMerge(outputPulse);
+                std::vector<G4int>::iterator it_indexX = std::find (index_X_list.begin(), index_X_list.end(), current_indexX);
+                if (it_indexX != index_X_list.end()){
+                    //Coincidnecia en indices en X
+                    int posListX=std::distance(index_X_list.begin(),it_indexX);
+                    //G4cout<<"pos="<<posListX<<"number of pulses "<<outputPulseList.size()<<G4endl;
+                    //See if I have also coincidence in Y indexes (in the same position)
+                    if(index_Y_list.at(posListX)==current_indexY){
+                        //Tengo que sumar la energia y toma min de los tiempos
+                        //This does not change the posiiton
+                        // (*iter)->CentroidMergeComptPhotIdeal(inputPulse);
+                        //This sum the energy and cmpute the centroid of positio but being the same position the resutls should be the same
+                        if(outputPulseList.at(posListX)->GetVolumeID()==outputPulse->GetVolumeID()){// tengo que checkear que estemos en el mismo volumen y no en una copia
+                            outputPulseList.at(posListX)->CentroidMerge(outputPulse);
 
-                            }
-                            else{
-                                outputPulseList.push_back(outputPulse);
-                                index_X_list.push_back(current_indexX);
-                                index_Y_list.push_back(current_indexY);
-                            }
-
-
-                         }
-                         else{
-                             outputPulseList.push_back(outputPulse);
-                             index_X_list.push_back(current_indexX);
-                             index_Y_list.push_back(current_indexY);
-                         }
-
-                     }
-                     else{
-
-                         outputPulseList.push_back(outputPulse);
-                         index_X_list.push_back(current_indexX);
-                         index_Y_list.push_back(current_indexY);
-                     }
+                        }
+                        else{
+                            outputPulseList.push_back(outputPulse);
+                            index_X_list.push_back(current_indexX);
+                            index_Y_list.push_back(current_indexY);
+                        }
 
 
+                    }
+                    else{
+                        outputPulseList.push_back(outputPulse);
+                        index_X_list.push_back(current_indexX);
+                        index_Y_list.push_back(current_indexY);
+                    }
 
-                 }
+                }
+                else{
+
+                    outputPulseList.push_back(outputPulse);
+                    index_X_list.push_back(current_indexX);
+                    index_Y_list.push_back(current_indexY);
+                }
 
 
-             }
-             else{
-                 //Problems identifying the indexes
-             }
+
+            }
+
+
+        }
+        else{
+            //Problems identifying the indexes
+        }
 
     }
     else{
 
-        //If the pulse is not in the selected volume we do not process it
+        //If the pulse is not in the selected volume we do not process it, but we save it in the list
         outputPulseList.push_back(outputPulse);
         index_X_list.push_back(current_indexX);
         index_Y_list.push_back(current_indexY);
@@ -282,6 +284,8 @@ void GateStripSpatialDiscretization::ApplyEnergyThreshold( GatePulseList& output
              copyNumberLocalV.push_back(-1);
              im=m_table.find((((*iterIntern)->GetVolumeID()).GetBottomCreator())->GetObjectName());
             //G4cout<<"volume copy number"<< ((*iterIntern)->GetVolumeID()).GetBottomVolume()->GetCopyNo()<<G4endl;
+             //If the pulse is from a Volumen in which the discretization is applied  replace the associated -1 by the copy number of the Volume.
+             //Like that we can identify if the module was applied to repeated modules.WHEN REGROUPING HITS ALSO A THING TO CHECK
              if(im != m_table.end()){
                  copyNumberLocalV.at(std::distance(outputPulseList.begin(),iterIntern))=((*iterIntern)->GetVolumeID()).GetBottomVolume()->GetCopyNo();
 
@@ -292,7 +296,7 @@ void GateStripSpatialDiscretization::ApplyEnergyThreshold( GatePulseList& output
          for(int i=0; i<NumCopies; i++){
 
              if( mymultiset.count(i)>=2){
-                 //two pulses in the same strip volume we throw the event
+                 // If two pulses (two different strip intersections activated) in the same  volume, all the pulses are thrown
                  //Alguna condicion para utilizar senales en strips continuos en vez de tirar todo
                  //        //Quiza lo logico permitir 4 puntos alrededor de strips (differencia  indices en X e Y  (en mabos) menor o igual que 1)
                  flagDeleteoutList=true;

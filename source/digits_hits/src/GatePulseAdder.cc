@@ -67,6 +67,8 @@ void GatePulseAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
     if ( iter == outputPulseList.end() )
     {
       GatePulse* outputPulse = new GatePulse(*inputPulse);
+      outputPulse->SetEnergyIniTrack(-1);
+      outputPulse->SetEnergyFin(-1);
       if (nVerboseLevel>1)
 	  G4cout << "Created new pulse for volume " << inputPulse->GetVolumeID() << ".\n"
 		 << "Resulting pulse is: \n"

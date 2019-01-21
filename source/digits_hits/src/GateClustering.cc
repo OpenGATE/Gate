@@ -44,6 +44,8 @@ void GateClustering::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 
 
     GatePulse* outputPulse = new GatePulse(*inputPulse);
+    outputPulse->SetEnergyFin(-1);
+    outputPulse->SetEnergyIniTrack(-1);
     std::vector<double> dist;
     std::vector<int> index4ClustSameVol;
 

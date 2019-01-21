@@ -70,6 +70,8 @@ void GateLocalClustering::ProcessOnePulse(const GatePulse* inputPulse,GatePulseL
     GatePulse* outputPulse = new GatePulse(*inputPulse);
 
     if(im != m_table.end()){
+        outputPulse->SetEnergyFin(-1);
+        outputPulse->SetEnergyIniTrack(-1);
          //G4cout<<"pulso al que aplicar el cluster"<<G4endl;
                 std::vector<double> dist;
                  std::vector<int> index4ClustSameVol;

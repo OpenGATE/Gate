@@ -111,6 +111,8 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
         //Check for diff volID with same name (repeaters)
         //value here is loaded Not in the constructor
         //G4cout<<"Numb stripsX"<<(*im).second.numberStripsX<<G4endl;
+        outputPulse->SetEnergyIniTrack(-1);
+        outputPulse->SetEnergyFin(-1);
 
         //G4ThreeVector PosLocal = outputPulse->GetVolumeID().MoveToBottomVolumeFrame(outputPulse->GetGlobalPos()); //local (deberia ser igual que la local guardada)
         G4ThreeVector PosLocal = outputPulse->GetLocalPos();
