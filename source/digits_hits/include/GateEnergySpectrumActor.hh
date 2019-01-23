@@ -31,6 +31,8 @@
 #include <TH2.h>
 #include <TMath.h>
 
+#include <list>
+
 class G4EmCalculator;
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
@@ -136,6 +138,8 @@ protected:
   TH1D * pEdep;
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
+  
+  std::list<TH1D*> allEnabledTH1DHistograms;
 
   TH1D * pLETSpectrum;
   G4double mLETmin;
