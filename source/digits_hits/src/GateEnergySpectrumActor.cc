@@ -54,7 +54,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   sumM3=0.;
   edep = 0.;
   
-  mSaveAsTextFlag = false;
+  mSaveAsTextFlag = true;
   mSaveAsDiscreteSpectrumTextFlag = false;
   
   mEnableLETSpectrumFlag = false;
@@ -107,10 +107,10 @@ void GateEnergySpectrumActor::Construct()
 
   
   if (mEnableLogBinning){
-      double mEminLog = mEmin;
+      G4double mEminLog = mEmin/MeV; // MeV is the default unit for energy in this actor
       if (mEminLog < 0.000001) mEminLog = 0.000001;
-      double energyLogBinV_LB = TMath::Log10(mEminLog);
-      double energyLogBinV_UB = TMath::Log10(mEmax); 
+      double energyLogBinV_LB = TMath::Log10(mEminLog/MeV);
+      double energyLogBinV_UB = TMath::Log10(mEmax/MeV); 
       dEn = (energyLogBinV_UB - energyLogBinV_LB)/((double)mENBins );
       eBinV = new double[mENBins+1];
       for (int j = 0; j < (mENBins+1); j++) {
@@ -125,15 +125,28 @@ void GateEnergySpectrumActor::Construct()
       if (mEnableEnergySpectrumNbPartFlag){
           pEnergySpectrumNbPart = new TH1D("energySpectrumNbPart","Energy Spectrum Number of particles",GetENBins(),GetEmin() ,GetEmax() );
           pEnergySpectrumNbPart->SetXTitle("Energy (MeV)");  
+          pEnergySpectrumNbPart->SetYTitle("Number of particles");
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumNbPart);
       }
       if (mEnableEnergySpectrumFluenceCosFlag){
           pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos",GetENBins(),GetEmin() ,GetEmax() );
           pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
+          pEnergySpectrumFluenceCos->SetYTitle("Fluence [cm^-2]");
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);
       }
 
       if (mEnableEnergySpectrumFluenceTrackFlag){
           pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track",GetENBins(),GetEmin() ,GetEmax() );
           pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
+          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [cm]");
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
+      } 
+        
+      if (mEnableEnergySpectrumEdepFlag){
+          pEnergyEdepSpectrum = new TH1D("energyEdepSpectrum","Energy Edep Spectrum",GetENBins(),GetEmin() ,GetEmax() );
+          pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
+          pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
+          allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
       } 
   }
   else
@@ -141,34 +154,47 @@ void GateEnergySpectrumActor::Construct()
       if (mEnableEnergySpectrumNbPartFlag){
           pEnergySpectrumNbPart = new TH1D("energySpectrumNbPart","Energy Spectrum Number of particles",mENBins,eBinV);
           pEnergySpectrumNbPart->SetXTitle("Energy (MeV)");  
+          pEnergySpectrumNbPart->SetYTitle("Number of particles");
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumNbPart);
           }
       if (mEnableEnergySpectrumFluenceCosFlag){
           pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos", mENBins,eBinV );
-          pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");        
+          pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
+          pEnergySpectrumFluenceCos->SetYTitle("Fluence [cm^-2]");   
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);   
           }
       if (mEnableEnergySpectrumFluenceTrackFlag){
           pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track", mENBins,eBinV );
           pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
+          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [cm]");
+          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
           } 
+      if (mEnableEnergySpectrumEdepFlag){
+          pEnergyEdepSpectrum = new TH1D("energyEdepSpectrum","Energy Edep Spectrum", mENBins,eBinV);
+          pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
+          pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
+          allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
+      } 
   }
 
-  
-  if (mEnableEnergySpectrumEdepFlag){
-      pEnergyEdepSpectrum = new TH1D("energyEdepSpectrum","Energy Edep Spectrum",GetENBins(),GetEmin() ,GetEmax() );
-      pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
-  } 
+
   if (mEnableLETSpectrumFlag) {
       pLETSpectrum = new TH1D("LETSpectrum","LET Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
       pLETSpectrum->SetXTitle("LET (keV/um)");
+      pLETSpectrum->SetYTitle("Energy deposition (MeV)");
+      allEnabledTH1DHistograms.push_back(pLETSpectrum);
   }
   if (mEnableQSpectrumFlag) {
       pQSpectrum = new TH1D("QSpectrum","Q Spectrum",GetNQBins(),GetQmin() ,GetQmax() );
       pQSpectrum->SetXTitle("Q (qq/MeV)");
+      pQSpectrum->SetYTitle("Energy deposition (MeV)");
+      allEnabledTH1DHistograms.push_back(pQSpectrum);
   }
   
   if (mEnableEdepHistoFlag){
       pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
       pEdep->SetXTitle("E_{dep} (MeV)");
+      allEnabledTH1DHistograms.push_back(pEdep);
   } 
 
   if (mEnableEdepTimeHistoFlag){
@@ -176,16 +202,19 @@ void GateEnergySpectrumActor::Construct()
                             GetEdepNBins(),0,20,GetEdepNBins(),GetEdepmin(),GetEdepmax());
       pEdepTime->SetXTitle("t (ns)");
       pEdepTime->SetYTitle("E_{dep} (MeV)");
+
   } 
 
   if (mEnableEdepTrackHistoFlag){
       pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
       pEdepTrack->SetXTitle("E_{dep} (MeV)");
+      allEnabledTH1DHistograms.push_back(pEdepTrack);
   } 
 
   if (mEnableElossHistoFlag){
       pDeltaEc = new TH1D("eLossHisto","Energy loss",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
       pDeltaEc ->SetXTitle("E_{loss} (MeV)");
+      allEnabledTH1DHistograms.push_back(pDeltaEc);
   } 
   ResetData();
 }
@@ -199,19 +228,23 @@ void GateEnergySpectrumActor::SaveData()
     
   GateVActor::SaveData();
   pTfile->Write();
-  pTfile->Close();
   
    //Also output data as txt if enabled
   if (mSaveAsTextFlag) {
-    SaveAsText(pEnergySpectrumNbPart, mSaveFilename);
-    SaveAsText(pEnergySpectrumFluenceCos, mSaveFilename);
-    SaveAsText(pEnergySpectrumFluenceTrack, mSaveFilename);
-    SaveAsText(pEnergyEdepSpectrum, mSaveFilename);
-    SaveAsText(pEdep, mSaveFilename);
-    // SaveAsText(pEdepTime, mSaveFilename); no TH2D
-    SaveAsText(pEdepTrack, mSaveFilename);
-    SaveAsText(pDeltaEc, mSaveFilename);
+      for(std::list<TH1D*>::iterator it=allEnabledTH1DHistograms.begin();it!=allEnabledTH1DHistograms.end();++it)
+      {
+          SaveAsText((*it),mSaveFilename);
+      }
+    ////SaveAsText(pEnergySpectrumNbPart, mSaveFilename);
+    ////SaveAsText(pEnergySpectrumFluenceCos, mSaveFilename);
+    //SaveAsText(pEnergySpectrumFluenceTrack, mSaveFilename);
+    ////SaveAsText(pEnergyEdepSpectrum, mSaveFilename);
+    ////SaveAsText(pEdep, mSaveFilename);
+    ////// SaveAsText(pEdepTime, mSaveFilename); no TH2D
+    ////SaveAsText(pEdepTrack, mSaveFilename);
+    ////SaveAsText(pDeltaEc, mSaveFilename);
   }
+  pTfile->Close();
 }
 //-----------------------------------------------------------------------------
 
@@ -219,43 +252,47 @@ void GateEnergySpectrumActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::ResetData()
 {
-  if (mEnableEnergySpectrumNbPartFlag){
-    pEnergySpectrumNbPart->Reset();
-  }
+    for(std::list<TH1D*>::iterator it=allEnabledTH1DHistograms.begin();it!=allEnabledTH1DHistograms.end();++it)
+      {
+          (*it)->Reset();
+      }
+  //if (mEnableEnergySpectrumNbPartFlag){
+    //pEnergySpectrumNbPart->Reset();
+  //}
   
-  if (mEnableEnergySpectrumFluenceCosFlag){
-      pEnergySpectrumFluenceCos->Reset();
-  }
+  //if (mEnableEnergySpectrumFluenceCosFlag){
+      //pEnergySpectrumFluenceCos->Reset();
+  //}
   
-  if (mEnableEnergySpectrumFluenceTrackFlag){
-      pEnergySpectrumFluenceTrack->Reset();
-  }
-  if (mEnableEnergySpectrumEdepFlag){
-      pEnergyEdepSpectrum->Reset();
-  }
+  //if (mEnableEnergySpectrumFluenceTrackFlag){
+      //pEnergySpectrumFluenceTrack->Reset();
+  //}
+  //if (mEnableEnergySpectrumEdepFlag){
+      //pEnergyEdepSpectrum->Reset();
+  //}
    
-
-  if (mEnableLETSpectrumFlag) {
-      pLETSpectrum->Reset();
-  }
-  if (mEnableQSpectrumFlag){
-      pQSpectrum->Reset();
-  }
+  //if (mEnableLETSpectrumFlag) {
+      //pLETSpectrum->Reset();
+  //}
+  //if (mEnableQSpectrumFlag){
+      //pQSpectrum->Reset();
+  //}
   
-  if (mEnableEdepHistoFlag){
-      pEdep->Reset();
-  }
+  //if (mEnableEdepHistoFlag){
+      //pEdep->Reset();
+  //}
+  // timeHisto is a 2D hist - others are 1D
   if (mEnableEdepTimeHistoFlag){
       pEdepTime->Reset();
   }
   
-  if (mEnableEdepTrackHistoFlag){
-      pEdepTrack->Reset();
-  }
+  //if (mEnableEdepTrackHistoFlag){
+      //pEdepTrack->Reset();
+  //}
   
-  if (mEnableElossHistoFlag){
-      pDeltaEc->Reset();
-  }
+  //if (mEnableElossHistoFlag){
+      //pDeltaEc->Reset();
+  //}
   nEvent = 0;
 }
 //-----------------------------------------------------------------------------
@@ -358,7 +395,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     Ei=step->GetPreStepPoint()->GetKineticEnergy();
      
     if (mEnableEnergySpectrumNbPartFlag){
-        pEnergySpectrumNbPart->Fill((Ei+Ef)/2/MeV,step->GetTrack()->GetWeight());
+        pEnergySpectrumNbPart->Fill(Ei/MeV,step->GetTrack()->GetWeight());
     }
     
     G4ThreeVector momentumDir = step->GetTrack()->GetMomentumDirection(); 
@@ -366,10 +403,10 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     if (mEnableEnergySpectrumFluenceCosFlag){
         double dz = TMath::Abs( momentumDir.z());
         if (dz > 0){
-            double Emean = (Ei+Ef)/2/MeV;
+            //double Emean = (Ei+Ef)/2/MeV;
             double invAngle = 1/dz;
             //if (invAngle > 10) invAngle = 10;
-            pEnergySpectrumFluenceCos->Fill(Emean,step->GetTrack()->GetWeight()*invAngle);
+            pEnergySpectrumFluenceCos->Fill(Ei,step->GetTrack()->GetWeight()*invAngle);
         }
     }
     // uncommented A.Resch 30.Nov 2018
@@ -381,11 +418,11 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   
    if (mEnableEnergySpectrumFluenceTrackFlag){
        G4double stepLength = step->GetStepLength();
-       pEnergySpectrumFluenceTrack->Fill((Ei+Ef)/2/MeV,step->GetTrack()->GetWeight()*stepLength);
+       pEnergySpectrumFluenceTrack->Fill(Ei/MeV,step->GetTrack()->GetWeight()*stepLength);
        
    }
    if (mEnableEnergySpectrumEdepFlag){
-       pEnergyEdepSpectrum->Fill((Ei+Ef)/2/MeV,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
+       pEnergyEdepSpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
    }
   if(mEnableLETSpectrumFlag) {
       G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 
@@ -437,7 +474,7 @@ void GateEnergySpectrumActor::SaveAsText(TH1D * histo, G4String initial_filename
         << "# Number of events: " << nEvent << std::endl
         << "1 0" << std::endl;
     for(int i=0; i<mDiscreteSpectrum.size(); i++) {
-      oss << mDiscreteSpectrum.GetEnergy(i) << " " << mDiscreteSpectrum.GetValue(i)/nEvent << std::endl;
+      oss << mDiscreteSpectrum.GetEnergy(i) << " " << mDiscreteSpectrum.GetValue(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
     }
     oss.close();
   }
@@ -464,7 +501,7 @@ void GateEnergySpectrumActor::SaveAsText(TH1D * histo, G4String initial_filename
         << "# Number of events: " << nEvent << std::endl
         << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
     for(int i=1; i<histo->GetNbinsX()+1; i++) {
-      oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i)/nEvent << std::endl;
+      oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
     }
     oss.close();
   }
