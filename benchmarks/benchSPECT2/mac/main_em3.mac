@@ -1,0 +1,4 @@
+
+
+/control/alias PHYSIC_LIST mac/physics_list_em3.mac
+/control/execute mac/main.mac

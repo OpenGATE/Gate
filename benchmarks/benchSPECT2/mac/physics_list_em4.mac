@@ -1,0 +1,8 @@
+
+
+/gate/physics/addPhysicsList emstandard_opt4
+# alternative: opt2 opt3 opt4 (slowest + most accurate)
+
+# add the following line if source is decaying ion (no need if gamma source)
+#/gate/physics/addProcess RadioactiveDecay
+

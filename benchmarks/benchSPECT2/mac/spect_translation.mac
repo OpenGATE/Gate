@@ -1,0 +1,14 @@
+
+# Translation is according to collimator type and radius
+# The following lines compute the correct position of the head volume for this
+# collimator. 
+
+/control/add TRANSLATION {SPECT_RADIUS_CM} {SPECT_PSD_POSITION}
+/control/multiply TRANSLATION {TRANSLATION} -1
+
+/gate/SPECThead/placement/setTranslation 0. {TRANSLATION} 0.  cm
+/gate/SPECThead/placement/setRotationAxis  1 0 0
+/gate/SPECThead/placement/setRotationAngle -90 deg
+
+
+

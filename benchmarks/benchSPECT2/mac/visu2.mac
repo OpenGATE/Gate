@@ -1,0 +1,8 @@
+
+/vis/open VRML2FILE
+/vis/viewer/reset
+/vis/drawVolume
+/tracking/storeTrajectory           0
+/vis/scene/add/trajectories
+/vis/scene/endOfEventAction         accumulate  1
+

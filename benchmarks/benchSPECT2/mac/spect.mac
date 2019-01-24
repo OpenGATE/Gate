@@ -1,0 +1,14 @@
+
+# Collimator LEHR: Low Energy High Resolution    (for Tc99m)
+# Collimator MEGP: Medium Energy General Purpose (for In111, Lu177)
+# Collimator HEGP: High Energy General Purpose    (for I131)
+# 
+# the collimator define SPECT_PSD_POSITION variable which is used in spect_translation
+
+/control/execute mac/nm670/spect_alias_{RADIONUCLIDE}.mac
+/control/execute mac/nm670/spect_head.mac
+/control/execute mac/nm670/spect_collimator_{COLLIMATOR}.mac
+/control/execute mac/nm670/spect_digitizer_{RADIONUCLIDE}.mac
+/control/execute mac/nm670/spect_translation.mac
+
+/control/listAlias

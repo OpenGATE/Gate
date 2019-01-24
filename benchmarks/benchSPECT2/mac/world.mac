@@ -1,0 +1,18 @@
+
+# ---------------------------------------------
+# Verbose
+#/control/execute mac/verbose.mac
+
+# ---------------------------------------------
+# Material Database
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# ---------------------------------------------
+# World
+/gate/world/geometry/setXLength 3 m
+/gate/world/geometry/setYLength 3 m
+/gate/world/geometry/setZLength 3 m
+/gate/world/vis/setColor white
+/gate/world/vis/forceWireframe
+/gate/world/setMaterial Air
+

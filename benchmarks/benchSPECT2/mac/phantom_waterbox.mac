@@ -1,0 +1,11 @@
+
+# Water Box
+/gate/world/daughters/name             phantom
+/gate/world/daughters/insert           box
+/gate/phantom/geometry/setXLength      500 mm
+/gate/phantom/geometry/setYLength      100 mm
+/gate/phantom/geometry/setZLength      200 mm
+/gate/phantom/placement/setTranslation 0 0 0 cm
+/gate/phantom/setMaterial Water
+/gate/phantom/vis/setVisible 1
+/gate/phantom/vis/setColor blue

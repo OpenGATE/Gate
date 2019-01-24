@@ -1,0 +1,18 @@
+
+# Output: projection images
+/gate/output/projection/enable
+/gate/output/projection/setFileName output/projection
+
+/gate/output/projection/addInputDataName scatter1
+/gate/output/projection/addInputDataName peak171
+/gate/output/projection/addInputDataName scatter2
+/gate/output/projection/addInputDataName scatter3
+/gate/output/projection/addInputDataName peak245
+/gate/output/projection/addInputDataName spectrum
+
+/gate/output/projection/pixelSizeX 4.41806 mm
+/gate/output/projection/pixelSizeY 4.41806 mm
+/gate/output/projection/pixelNumberX 128
+/gate/output/projection/pixelNumberY 128
+/gate/output/projection/projectionPlane XY
+

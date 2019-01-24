@@ -1,0 +1,114 @@
+# -------------------
+# GE Discovery 670
+# Medium Energy General Purpose (MEGP) collimator
+
+# Holes are regular hexagons
+# Holes length     : 58   mm
+# Holes diam       : 3    mm
+# Septal thickness : 1.05 mm
+
+# The SPECT_PSD_POSITION is determined as the lowest coordinate of the PSD volume in
+# the head box. It is used latter to compute the head position
+/control/alias SPECT_PSD_POSITION 8.41
+
+# -------------------
+
+# Collimator: main volume
+/gate/SPECThead/daughters/name collimator
+/gate/SPECThead/daughters/insert trpd
+/gate/collimator/geometry/setX2Length 56.8 cm
+/gate/collimator/geometry/setY2Length 42.8 cm
+/gate/collimator/geometry/setX1Length 57.6 cm
+/gate/collimator/geometry/setY1Length 44.6 cm
+/gate/collimator/geometry/setZLength 6.48 cm
+/gate/collimator/geometry/setXBoxPos 0. cm
+/gate/collimator/geometry/setYBoxPos 21.3 cm
+/gate/collimator/geometry/setZBoxPos 3.2 cm
+/gate/collimator/geometry/setXBoxLength 0.01 cm
+/gate/collimator/geometry/setYBoxLength 0.01 cm
+/gate/collimator/geometry/setZBoxLength 0.01 cm
+/gate/collimator/setMaterial Air
+/gate/collimator/attachPhantomSD
+/gate/collimator/placement/setTranslation 0. 0. 5.17 cm
+/gate/collimator/vis/setColor red
+#/gate/collimator/vis/forceWireframe
+
+# Collimator: aluminum PSD (Position Sensitive Detection)
+/gate/collimator/daughters/name aluminiumPSD
+/gate/collimator/daughters/insert box
+/gate/aluminiumPSD/geometry/setXLength 54.6 cm
+/gate/aluminiumPSD/geometry/setYLength 40.6 cm
+/gate/aluminiumPSD/geometry/setZLength 0.1 cm
+/gate/aluminiumPSD/placement/setTranslation 0. 0. 3.190 cm
+/gate/aluminiumPSD/setMaterial Aluminium
+/gate/aluminiumPSD/vis/setColor green
+#/gate/aluminiumPSD/vis/forceWireframe
+
+
+# Collimator: PVC layer
+/gate/collimator/daughters/name collimator_pvc_layer
+/gate/collimator/daughters/insert box
+/gate/collimator_pvc_layer/geometry/setXLength 54.6 cm
+/gate/collimator_pvc_layer/geometry/setYLength 40.6 cm
+/gate/collimator_pvc_layer/geometry/setZLength 0.15 cm
+/gate/collimator_pvc_layer/placement/setTranslation 0. 0. 3.065 cm
+/gate/collimator_pvc_layer/setMaterial PVC
+/gate/collimator_pvc_layer/vis/setColor red
+#/gate/collimator_pvc_layer/vis/forceWireframe
+
+
+# Collimator: air gap
+/gate/collimator/daughters/name collimator_air_gap
+/gate/collimator/daughters/insert box
+/gate/collimator_air_gap/geometry/setXLength 54.6 cm
+/gate/collimator_air_gap/geometry/setYLength 40.6 cm
+/gate/collimator_air_gap/geometry/setZLength 0.38 cm
+/gate/collimator_air_gap/placement/setTranslation 0. 0. 2.80 cm
+/gate/collimator_air_gap/setMaterial Air
+/gate/collimator_air_gap/vis/setColor blue
+#/gate/collimator_air_gap/vis/forceWireframe
+
+
+# Collimator: core
+/gate/collimator/daughters/name collimator_core
+/gate/collimator/daughters/insert box
+/gate/collimator_core/geometry/setXLength 54.6 cm
+/gate/collimator_core/geometry/setYLength 40.6 cm
+/gate/collimator_core/geometry/setZLength 5.8 cm
+/gate/collimator_core/placement/setTranslation 0. 0. -0.29 cm
+/gate/collimator_core/setMaterial Lead
+/gate/collimator_core/vis/setColor blue
+#/gate/collimator_core/vis/forceWireframe
+
+
+# Collimator: holes
+# Insert a first hole
+/gate/collimator_core/daughters/name collimator_hole
+/gate/collimator_core/daughters/insert hexagone
+/gate/collimator_hole/geometry/setHeight 5.8 cm
+/gate/collimator_hole/geometry/setRadius 0.15 cm
+/gate/collimator_hole/setMaterial Air
+
+# Repeat the first hole in an array
+/gate/collimator_hole/repeaters/insert cubicArray
+/gate/collimator_hole/cubicArray/setRepeatNumberX 77
+/gate/collimator_hole/cubicArray/setRepeatNumberY 100
+/gate/collimator_hole/cubicArray/setRepeatNumberZ 1
+/gate/collimator_hole/cubicArray/setRepeatVector 7.01481 4.05  0. mm
+
+# Repeat these holes in a linear
+/gate/collimator_hole/repeaters/insert linear
+/gate/collimator_hole/linear/setRepeatNumber 2
+/gate/collimator_hole/linear/setRepeatVector 3.50704 2.025 0. mm
+
+# Collimator: aluminum cover 2
+/gate/collimator/daughters/name collimator_aluminium_cover2
+/gate/collimator/daughters/insert box
+/gate/collimator_aluminium_cover2/geometry/setXLength 54.6 cm
+/gate/collimator_aluminium_cover2/geometry/setYLength 40.6 cm
+/gate/collimator_aluminium_cover2/geometry/setZLength 0.05 cm
+/gate/collimator_aluminium_cover2/placement/setTranslation 0. 0. -3.215 cm
+/gate/collimator_aluminium_cover2/setMaterial Aluminium
+/gate/collimator_aluminium_cover2/vis/setColor blue
+/gate/collimator_aluminium_cover2/vis/forceWireframe
+

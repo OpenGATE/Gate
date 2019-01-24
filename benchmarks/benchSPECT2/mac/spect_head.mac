@@ -1,0 +1,108 @@
+
+# -------------------
+# GE Discovery NM 670
+
+# Default orientation is towards Z axis.
+# According to CT image: need a rotation around X to start looking towards Y.
+
+# Lengths: X is slightly larger than Y, like indicated on the collimator plane
+
+# Width: arbitrary but must be larger than the larger collimator. Not too much
+# to avoid intersection with phantom.
+
+# Crystal width varies between device.
+# Crystal is NaI (not Thallium-doped sodium iodide NaI(Tl))
+# thickness is 3/8 of inch (depends on device)
+
+# -------------------
+
+# Default orientation is collimator look towards Z axis (photon going towards collimator are -Z)
+# Rotation around X to start looking towards Y, like CT image.
+
+# SPECT Head: main volume, everything is included in SPECThead
+# the name MUST be SPECThead
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+/gate/SPECThead/geometry/setXLength 57.6 cm
+/gate/SPECThead/geometry/setYLength 44.6 cm
+/gate/SPECThead/geometry/setZLength {SPECT_LENGTH_CM} cm
+/gate/SPECThead/vis/setColor white
+/gate/SPECThead/setMaterial Air
+/gate/SPECThead/vis/forceWireframe
+
+# Shielding: main volume
+/gate/SPECThead/daughters/name shielding
+/gate/SPECThead/daughters/insert box
+/gate/shielding/geometry/setXLength 57.6 cm
+/gate/shielding/geometry/setYLength 44.6 cm
+/gate/shielding/geometry/setZLength 11.1375 cm
+/gate/shielding/placement/setTranslation 0. 0. -3.64 cm
+/gate/shielding/setMaterial Steel
+/gate/shielding/vis/setColor yellow
+/gate/shielding/vis/forceWireframe
+
+
+# Shielding: first layer of the lead cover
+/gate/shielding/daughters/name shielding_lead_cover
+/gate/shielding/daughters/insert box
+/gate/shielding_lead_cover/geometry/setXLength 57.6 cm
+/gate/shielding_lead_cover/geometry/setYLength 40.6 cm
+/gate/shielding_lead_cover/geometry/setZLength  10.1375 cm
+/gate/shielding_lead_cover/placement/setTranslation 0. 0. 0.5 cm
+/gate/shielding_lead_cover/setMaterial Lead
+/gate/shielding_lead_cover/vis/setColor grey
+/gate/shielding_lead_cover/vis/forceWireframe
+
+
+# Shielding: Aluminium Cover
+/gate/shielding_lead_cover/daughters/name shielding_aluminium_cover
+/gate/shielding_lead_cover/daughters/insert box
+/gate/shielding_aluminium_cover/geometry/setXLength 54. cm
+/gate/shielding_aluminium_cover/geometry/setYLength 40. cm
+/gate/shielding_aluminium_cover/geometry/setZLength 0.13 cm
+/gate/shielding_aluminium_cover/placement/setTranslation 0. 0. 5.00375 cm
+/gate/shielding_aluminium_cover/setMaterial Aluminium
+/gate/shielding_aluminium_cover/vis/setColor blue
+/gate/shielding_aluminium_cover/vis/forceWireframe
+
+
+# Shielding: reflector TiO2
+/gate/shielding_lead_cover/daughters/name shielding_reflector
+/gate/shielding_lead_cover/daughters/insert box
+/gate/shielding_reflector/geometry/setXLength 54. cm
+/gate/shielding_reflector/geometry/setYLength 40. cm
+/gate/shielding_reflector/geometry/setZLength  0.12 cm
+/gate/shielding_reflector/placement/setTranslation 0. 0. 3.92625 cm
+/gate/shielding_reflector/setMaterial TiO2
+/gate/shielding_reflector/vis/setColor green
+/gate/shielding_reflector/vis/forceWireframe
+
+
+# Shielding: crystal
+/gate/shielding_lead_cover/daughters/name crystal_volume
+/gate/shielding_lead_cover/daughters/insert box
+/gate/crystal_volume/geometry/setXLength 54. cm
+/gate/crystal_volume/geometry/setYLength 40. cm
+# crystal thickness 3/8 of inch check on CLB device on April 2017
+/gate/crystal_volume/geometry/setZLength  0.9525 cm
+/gate/crystal_volume/placement/setTranslation  0 0 4.4625 cm
+/gate/crystal_volume/setMaterial NaITl
+/gate/crystal_volume/vis/setColor yellow
+# special command to say that this volume is the crystal
+/gate/systems/SPECThead/crystal/attach crystal_volume
+
+# This is needed !
+/gate/crystal_volume/attachCrystalSD
+
+
+# Shielding: Backside
+# The back-side is fairly complex, and may have a strong influence on the
+# spectrum: the model shown here is simplified
+/gate/shielding_lead_cover/daughters/name shielding_backside
+/gate/shielding_lead_cover/daughters/insert box
+/gate/shielding_backside/geometry/setXLength 54. cm
+/gate/shielding_backside/geometry/setYLength 40. cm
+/gate/shielding_backside/geometry/setZLength  8. cm
+/gate/shielding_backside/placement/setTranslation 0. 0. -0.13375 cm
+/gate/shielding_backside/setMaterial Pyrex66
+/gate/shielding_backside/vis/setColor cyan

@@ -1,0 +1,72 @@
+
+# debug 
+#/control/execute mac/visu.mac
+#/control/execute mac/visu2.mac
+
+# -----------------------------------------------------------------------------
+# World definition
+/control/execute mac/world.mac
+
+# insert waterbox
+/control/execute mac/phantom_waterbox.mac
+
+# -----------------------------------------------------------------------------
+# SPECT
+
+/control/alias SPECT_RADIUS_CM 16
+
+# Collimator LEHR: Low Energy High Resolution     (for Tc99m)
+# Collimator MEGP: Medium Energy General Purpose  (for In111, Lu177)
+# Collimator HEGP: High Energy General Purpose    (for I131)
+# SPECT_LENGTH_CM is different wrt collimator type
+/control/alias SPECT_LENGTH_CM 18
+
+/control/execute mac/spect_head.mac
+/control/execute mac/spect_collimator_megp.mac
+/control/execute mac/spect_digitizer_In111.mac
+/control/execute mac/spect_translation.mac
+
+/control/listAlias
+
+# -----------------------------------------------------------------------------
+# Physics
+
+/control/execute {PHYSIC_LIST}
+/control/execute mac/physics_cuts.mac
+
+
+# -----------------------------------------------------------------------------
+# OUTPUT
+
+/control/execute mac/output_stat.mac
+/control/execute mac/output_projections_In111.mac
+
+
+# -----------------------------------------------------------------------------
+# INITIALISATION
+
+/gate/run/initialize
+
+
+# -----------------------------------------------------------------------------
+# SOURCE
+
+/control/alias SOURCE_GAMMA_SPECTRUM_FILE mac/energy_spectrum_In111.txt
+/control/alias SOURCE_ACTIVITY1_BQ 2e7
+/control/multiply SOURCE_ACTIVITY1_BQ {SOURCE_ACTIVITY1_BQ} 1.8475
+/control/execute mac/source_one_sphere.mac
+
+# -----------------------------------------------------------------------------
+# START
+#
+
+#/tracking/verbose 2
+/control/verbose 0
+
+/control/alias TIME_START 0
+/control/alias TIME_SLICE 1
+/control/alias TIME_STOP 1
+/control/execute mac/start_time.mac
+
+
+

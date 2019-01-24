@@ -1,0 +1,16 @@
+
+
+
+/gate/source/addSource source1
+/gate/source/source1/gps/centre 0 0 0 cm
+/gate/source/source1/gps/type Volume
+/gate/source/source1/gps/shape Sphere
+/gate/source/source1/gps/radius 20 mm
+/gate/source/source1/gps/angtype iso
+/gate/source/source1/gps/particle gamma
+/gate/source/source1/gps/energytype UserSpectrum
+/gate/source/source1/gps/setSpectrumFile {SOURCE_GAMMA_SPECTRUM_FILE}
+
+/gate/source/source1/setActivity {SOURCE_ACTIVITY1_BQ} Bq
+
+

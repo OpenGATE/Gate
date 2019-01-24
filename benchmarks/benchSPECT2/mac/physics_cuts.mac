@@ -1,0 +1,16 @@
+
+# High cut everywhere by default
+/gate/physics/Gamma/SetCutInRegion      world 1 km
+/gate/physics/Electron/SetCutInRegion   world 1 km
+/gate/physics/Positron/SetCutInRegion   world 1 km
+
+# High cut in the phantom -> no bremstrahlung
+# do not compute absorbed dose with this parameters
+/gate/physics/Gamma/SetCutInRegion      phantom 1 mm
+/gate/physics/Electron/SetCutInRegion   phantom 1 mm
+/gate/physics/Positron/SetCutInRegion   phantom 1 mm
+
+# Lower cut in the spect head
+/gate/physics/Gamma/SetCutInRegion      SPECThead 1 mm
+/gate/physics/Electron/SetCutInRegion   SPECThead 1 mm
+/gate/physics/Positron/SetCutInRegion   SPECThead 1 mm
