@@ -75,9 +75,7 @@ def plot_dose(folders):
 
         # plot sensitivity
         a = ax[1]#[0]
-        a.bar(0, sensitivity, width=0.2, alpha=0.3, label=f)
-        a.bar(-0.5, 0)
-        a.bar(0.5, 0)
+        a.bar(i, sensitivity, width=0.2, alpha=0.3, label=f)
         a.legend()
 
         i = i+1
