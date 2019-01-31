@@ -13,6 +13,7 @@ Welcome to GATE's documentation!
 
    introduction
    getting_started
+   defining_a_geometry
 
 Indices and tables
 ==================
