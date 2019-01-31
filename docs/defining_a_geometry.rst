@@ -94,7 +94,7 @@ volume <#Placing_a_volume>`__, `#Moving a volume <#Moving_a_volume>`__.
 Units
 ~~~~~
 
-Different units are predefined in GATE (see Table 3.1) and shall be
+Different units are predefined in GATE (see :numref:`units_tab`) and shall be
 referred to using the corresponding abbreviation. Inside the GATE
 environment, the list of units available in GATE can be edited using::
 
