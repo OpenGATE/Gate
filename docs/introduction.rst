@@ -128,7 +128,7 @@ physics models, sophisticated geometry description, and powerful visualization
 and 3D rendering tools with original features specific to emission tomography.
 It consists of several hundred C++ classes. Mechanisms used to manage time,
 geometry, and radioactive sources form a core layer of C++ classes close to the
-GEANT4 kernel :nameref:`gate_layers`. An application layer allows for the
+GEANT4 kernel :numref:`gate_layers`. An application layer allows for the
 implementation of user classes derived from the core layer classes, e.g.
 building specific geometrical volume shapes and/or specifying operations on
 these volumes like rotations or translations. Since the application layer
