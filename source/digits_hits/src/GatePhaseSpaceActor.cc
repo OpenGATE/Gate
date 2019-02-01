@@ -56,6 +56,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableLocalTime = false;
   EnableMass = true;
   EnableSec = false;
+  EnableNuclearFlag = false;
   mIsFistStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
