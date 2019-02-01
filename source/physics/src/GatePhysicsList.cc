@@ -89,6 +89,9 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
   pMessenger->BuildCommands("/gate/physics");
 
   emPar= G4EmParameters::Instance();
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  mUseICRU90Data = false;
+#endif
 }
 //-----------------------------------------------------------------------------------------
 
@@ -735,6 +738,9 @@ void GatePhysicsList::SetEmProcessOptions()
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
   emPar->SetSpline(mSplineFlag);
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  emPar->SetUseICRU90Data(mUseICRU90Data);
+#endif
   emPar->SetApplyCuts(true);
 
   // Fluorescence processes
@@ -1252,6 +1258,17 @@ void GatePhysicsList::SetOptSplineFlag(G4bool val)
   emPar->SetSpline(mSplineFlag);
 }
 //-----------------------------------------------------------------------------
+
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+//-----------------------------------------------------------------------------
+void GatePhysicsList::SetUseICRU90DataFlag(G4bool val)
+{
+  GateMessage("Physic",1,"SetUseICRU90DataFlag set to " << (val?"TRUE":"FALSE"));
+  mUseICRU90Data = val;
+  emPar->SetUseICRU90Data(val);
+}
+//-----------------------------------------------------------------------------
+#endif
 
 
 //-----------------------------------------------------------------------------
