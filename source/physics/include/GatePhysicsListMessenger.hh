@@ -68,6 +68,9 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMin;
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  G4UIcmdWithABool * pSetUseICRU90DataFlag;
+#endif
 
   // Mu Handler tools
   G4UIcmdWithAString * pMuHandlerSetDatabase;
