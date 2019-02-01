@@ -117,7 +117,9 @@ protected:
   double mEmin;
   double mEmax;
   bool mSplineFlag;
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   bool mUseICRU90Data;
+#endif
   G4UserLimits * userlimits;
 
   // Physic list management
