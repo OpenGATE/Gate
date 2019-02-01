@@ -165,6 +165,7 @@ public:
   void SetDensityImageFilename(G4String filename);
   void SetMassImageFilename   (G4String filename) {mMassImageFilename = filename;}
   void EnableBoundingBoxOnly(bool b);
+  void SetMaxOutOfRangeFraction(double f);
 
 protected:
 
@@ -250,6 +251,9 @@ protected:
 
   //-----------------------------------------------------------------------------
   bool mIsBoundingBoxOnlyModeEnabled;
+  unsigned int mUnderflow;
+  unsigned int mOverflow;
+  double mMaxOutOfRangeFraction;
 };
 // EO class GateVImageVolume
 //-----------------------------------------------------------------------------
