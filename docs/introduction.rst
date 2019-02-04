@@ -36,7 +36,7 @@ Wieers, C. Morel
 
 Special Thanks: Geant4 Collaboration and LOW energy WG
 
-The GATE mailing list
+The GATE mailing list 
 ~~~~~~~~~~~~~~~~~~~~~
 
 You are encouraged to participate in the dialog and post your
