@@ -361,8 +361,10 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
 
   //FIXME: remove these two lines, we should load the HU-file as-is. It's up to the user to make sure it works.
   // GetOutsideValue returns the lowest value found in the image - 1. NOT the lowest value in mHounsfieldToImageMaterialTableFilename
-  // G4String parentMat = GetParentVolume()->GetMaterialName();
-  // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
+  // DS/LG/DB Feb 2019: we keep these two lines for now because we suspect that they may be essential for
+  // the extra layer of voxels in the "regionalized volumes".
+  G4String parentMat = GetParentVolume()->GetMaterialName();
+  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   double low  =  1e6; //must start oppositely for the comparisons to work.
   double high = -1e6;
