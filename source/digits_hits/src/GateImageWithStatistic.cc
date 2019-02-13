@@ -256,16 +256,19 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     GateImageDouble::iterator pi = mValueImage.begin();
     GateImageDouble::const_iterator pe = mValueImage.end();
     if (mIsSquaredImageEnabled){
+      GateImageDouble::iterator pii = mSquaredImage.begin();
       GateImageDouble::iterator poo = mScaledSquaredImage.begin();
       while (pi != pe) {
 	*po = (*pi)*mScaleFactor;
-	*poo = (*pi)*mScaleFactor*mScaleFactor;
+	*poo = (*pii)*mScaleFactor*mScaleFactor;
 	++pi;
 	++po;
+	++pii;
 	++poo;
       }
       mScaledSquaredImage.Write(mSquaredFilename);
-    } else {
+    }
+    else {
       while (pi != pe) {
 	*po = (*pi)*mScaleFactor;
 	++pi;
