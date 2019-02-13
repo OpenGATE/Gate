@@ -64,7 +64,6 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
   pIAEARecordType = 0;
   pIAEAheader = 0;
 
-
   pParticleDefinition = 0;
   pParticle = 0;
   pVertex = 0;
@@ -76,7 +75,9 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
   mParticleMomentum2 = G4ThreeVector();
 
   x = y = z = dx = dy = dz = px = py = pz = energy  = 0.;
-  t= -1.;
+  dtime= -1.;
+  ftime= -1.;
+  time_type = EDataType::kOther_t;
   weight = 1.;
   strcpy(particleName, "");
 
@@ -137,8 +138,15 @@ void GateSourcePhaseSpace::Initialize()
     if (T->GetListOfBranches()->FindObject("Weight")) {
       T->SetBranchAddress("Weight",&weight);
     }
-    if (T->GetListOfBranches()->FindObject("Time")) {
-      T->SetBranchAddress("Time",&t);
+    auto tob = T->GetListOfBranches()->FindObject("Time");
+    if (tob) {
+      auto tt = dynamic_cast<TBranch*>(tob);
+      TClass * expectedClass;
+      tt-> GetExpectedType(expectedClass, time_type);
+      if (time_type == EDataType::kDouble_t)
+        T->SetBranchAddress("Time",&dtime);
+      else
+        T->SetBranchAddress("Time",&ftime);
     }
 
     if (mRmax>0){
@@ -223,7 +231,8 @@ void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 
   mParticleMomentum = G4ThreeVector(px,py,pz);
 
-  if (t>0) mParticleTime = t;
+  if (time_type == EDataType::kDouble_t and dtime>0) mParticleTime = dtime;
+  if (time_type == EDataType::kFloat_t and ftime>0) mParticleTime = ftime;
 }
 // ----------------------------------------------------------------------------------
 
