@@ -33,6 +33,10 @@
 #  endif
 #endif
 
+#ifndef ITK_MAX_THREADS
+using itk::ITK_MAX_THREADS;
+#endif
+
 struct newPhoton
   {
   G4ThreeVector direction;
@@ -107,7 +111,7 @@ namespace GateFixedForcedDetectionFunctor
           m_generatePhotons(false),
           m_ARF(false)
         {
-        for (int i = 0; i < ITK_MAX_THREADS; i++)
+        for (itk::ThreadIdType i = 0; i < ITK_MAX_THREADS; i++)
           {
           m_IntegralOverDetector[i] = 0.;
           m_SquaredIntegralOverDetector[i] = 0.;
@@ -365,7 +369,7 @@ namespace GateFixedForcedDetectionFunctor
       double GetIntegralOverDetectorAndReset()
         {
         double result = 0.;
-        for (int i = 0; i < ITK_MAX_THREADS; i++)
+        for (itk::ThreadIdType i = 0; i < ITK_MAX_THREADS; i++)
           {
           result += m_IntegralOverDetector[i];
           m_IntegralOverDetector[i] = 0.;
@@ -376,7 +380,7 @@ namespace GateFixedForcedDetectionFunctor
       double GetSquaredIntegralOverDetectorAndReset()
         {
         double result = 0.;
-        for (int i = 0; i < ITK_MAX_THREADS; i++)
+        for (itk::ThreadIdType i = 0; i < ITK_MAX_THREADS; i++)
           {
           result += m_SquaredIntegralOverDetector[i];
           m_SquaredIntegralOverDetector[i] = 0.;
@@ -563,7 +567,7 @@ namespace GateFixedForcedDetectionFunctor
           /* Statistical noise added */
           if (m_NumberOfPrimaries != 0)
             {
-            double a = vcl_exp(-rayIntegral);
+            double a = std::exp(-rayIntegral);
             double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
             double n = ((nprimE)?G4Poisson(nprimE*a)/nprimE:0.);
             this->Accumulate(threadId,
@@ -575,7 +579,7 @@ namespace GateFixedForcedDetectionFunctor
             {
             this->Accumulate(threadId,
                              output,
-                             vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
+                             std::exp(-rayIntegral) * (*m_EnergyWeightList)[i],
                              m_EnergyList[i]);
             }
 
@@ -596,7 +600,7 @@ namespace GateFixedForcedDetectionFunctor
             wavelength = wavelength * (m/mm); // To use the same unit as Geant4
             rayIntegral *= (-2*itk::Math::pi/wavelength);
             this->AccumulatePhase(output,
-                                  rayIntegral + vcl_log((*m_EnergyWeightList)[i])/2.,
+                                  rayIntegral + std::log((*m_EnergyWeightList)[i])/2.,
                                   m_EnergyList[i]);
             }
           }
@@ -694,8 +698,8 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        // double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy);
-        double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
+        // double weight = std::exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy);
+        double weight = std::exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
         if (m_generatePhotons)
           {
           //Accumulate(threadId, output, weight, m_Energy);
@@ -831,7 +835,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
+        double weight = std::exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
         if (m_generatePhotons)
           {
           VectorType photonDirection;
@@ -950,7 +954,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
           VectorType photonDirection;
@@ -1063,7 +1067,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
           VectorType photonDirection;

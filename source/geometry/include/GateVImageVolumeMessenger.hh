@@ -26,6 +26,7 @@ class GateVImageVolume;
 class G4UIcmdWithAString;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithABool;
+class G4UIcmdWithADouble;
 
 //-----------------------------------------------------------------------------
 /// \brief Messenger of GateVImageVolume
@@ -53,6 +54,7 @@ private:
   G4UIcmdWithAString        * pBuildDensityImageCmd;
   G4UIcmdWithAString        * pBuildMassImageCmd;
   G4UIcmdWithABool          * pDoNotBuildVoxelsCmd;
+  G4UIcmdWithADouble        * pSetMaxOutOfRangeFractionCmd;
 };
 //-----------------------------------------------------------------------------
 
