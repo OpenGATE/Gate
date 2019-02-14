@@ -71,6 +71,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableElossHistoFlag = false;
   
   mEnableLogBinning = false;  
+  mEnableEnergyPerUnitMass = true;
   
   emcalc = new G4EmCalculator;
 
@@ -389,13 +390,17 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     ltof /= 2;
     //cout << "****************** diff tof=" << ltof << " edep=" << edep << endl;
   }
-
+    G4double atomicMassScaleFactor = 1.;
+    if (mEnableEnergyPerUnitMass){
+        atomicMassScaleFactor = (double)(step->GetTrack()->GetParticleDefinition()->GetAtomicMass());
+    }
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   if(newTrack){
     Ei=step->GetPreStepPoint()->GetKineticEnergy();
-     
+    //G4int atomicNumber = step->GetTrack()->GetParticleDefinition()->GetAtomicNumber();
+    
     if (mEnableEnergySpectrumNbPartFlag){
-        pEnergySpectrumNbPart->Fill(Ei/MeV,step->GetTrack()->GetWeight());
+        pEnergySpectrumNbPart->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight());
     }
     
     G4ThreeVector momentumDir = step->GetTrack()->GetMomentumDirection(); 
@@ -406,7 +411,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
             //double Emean = (Ei+Ef)/2/MeV;
             double invAngle = 1/dz;
             //if (invAngle > 10) invAngle = 10;
-            pEnergySpectrumFluenceCos->Fill(Ei,step->GetTrack()->GetWeight()*invAngle);
+            pEnergySpectrumFluenceCos->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*invAngle);
         }
     }
     // uncommented A.Resch 30.Nov 2018
@@ -418,11 +423,11 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   
    if (mEnableEnergySpectrumFluenceTrackFlag){
        G4double stepLength = step->GetStepLength();
-       pEnergySpectrumFluenceTrack->Fill(Ei/MeV,step->GetTrack()->GetWeight()*stepLength);
+       pEnergySpectrumFluenceTrack->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*stepLength);
        
    }
    if (mEnableEnergySpectrumEdepFlag){
-       pEnergyEdepSpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
+       pEnergyEdepSpectrum->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
    }
   if(mEnableLETSpectrumFlag) {
       G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 
