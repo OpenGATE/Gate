@@ -71,7 +71,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableElossHistoFlag = false;
   
   mEnableLogBinning = false;  
-  mEnableEnergyPerUnitMass = true;
+  mEnableEnergyPerUnitMass = false;
   
   emcalc = new G4EmCalculator;
 
