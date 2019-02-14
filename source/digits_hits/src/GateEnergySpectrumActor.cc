@@ -397,7 +397,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   if(newTrack){
     Ei=step->GetPreStepPoint()->GetKineticEnergy();
-    //G4int atomicNumber = step->GetTrack()->GetParticleDefinition()->GetAtomicNumber();
+
     
     if (mEnableEnergySpectrumNbPartFlag){
         pEnergySpectrumNbPart->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight());
