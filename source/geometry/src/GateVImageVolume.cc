@@ -56,6 +56,9 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mMassImageFilename    = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
+  mUnderflow = 0;
+  mOverflow = 0;
+  mMaxOutOfRangeFraction = 0.0;
   GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")\n");
 
   // do not display all voxels, only bounding box
@@ -81,6 +84,17 @@ GateVImageVolume::~GateVImageVolume()
 //--------------------------------------------------------------------
 void GateVImageVolume::EnableBoundingBoxOnly(bool b) {
   mIsBoundingBoxOnlyModeEnabled = b;
+}
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+void GateVImageVolume::SetMaxOutOfRangeFraction(double f){
+  GateMessage("Volume",3,"setting a new threshold for the fraction of voxels with out-of-range HU values: " << f);
+  if ( (f>=0.) && (f<=1.) ){
+    mMaxOutOfRangeFraction=f;
+    return;
+  }
+  GateError("Fraction should be given as a number between 0.0 and 1.0!!");
 }
 //--------------------------------------------------------------------
 
@@ -347,6 +361,8 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
 
   //FIXME: remove these two lines, we should load the HU-file as-is. It's up to the user to make sure it works.
   // GetOutsideValue returns the lowest value found in the image - 1. NOT the lowest value in mHounsfieldToImageMaterialTableFilename
+  // DS/LG/DB Feb 2019: we keep these two lines for now because we suspect that they may be essential for
+  // the extra layer of voxels in the "regionalized volumes".
   G4String parentMat = GetParentVolume()->GetMaterialName();
   mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
@@ -390,14 +406,13 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
   GateMessage("Volume",5,"HUMinValue   : " << low << ", HUMaxValue: " << high << Gateendl);
 
   if (pImage->GetMinValue() < low || pImage->GetMaxValue() > high) {
-    GateError("The image contains HU indices out of range of the HU range found in " <<
-              mHounsfieldToImageMaterialTableFilename << Gateendl <<
-              "HU    min, max: " << low << ", " << high << Gateendl <<
-              "Image min, max: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() << Gateendl <<
-              "Abort." << Gateendl);
+    GateWarning( "The image contains HU indices out of range of the HU range found in " <<
+                 mHounsfieldToImageMaterialTableFilename << Gateendl <<
+                 "HU    min, max: " << low << ", " << high << Gateendl <<
+                 "Image min, max: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() << Gateendl );
+    // GateError( "Abort." << Gateendl);
   }
-  //  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0) {
-  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 1 ) {//there is a default mat = worldDefaultAir
+  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0 ) {
     GateError("No Hounsfield material defined in the file "
               << mHounsfieldToImageMaterialTableFilename << ". Abort.\n");
   }
@@ -411,21 +426,48 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
   while (iter != pImage->end()) {
     double label = mHounsfieldMaterialTable.GetLabelFromH(*iter);
     if (label<0) {
-      GateError(" I find H=" << *iter
+      GateMessage("Volume",1," I find H=" << *iter
                 << " in the image, while Hounsfield range start at "
                 << mHounsfieldMaterialTable[0].mH1 << Gateendl);
+      label = 0;
+      ++mUnderflow;
     }
     if (label>=mHounsfieldMaterialTable.GetNumberOfMaterials()) {
-      GateError(" I find H=" << *iter
+      GateMessage("Volume",1," I find H=" << *iter
                 << " in the image, while Hounsfield range stop at "
                 << mHounsfieldMaterialTable[mHounsfieldMaterialTable.GetNumberOfMaterials()-1].mH2
                 << Gateendl);
+      label = mHounsfieldMaterialTable.GetNumberOfMaterials() - 1;
+      ++mOverflow;
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
     (*iter) = label;
     ++iter;
   }
 
+  assert( pImage->GetNumberOfValues() > 0 );
+  // double out_of_range_fraction = double(mUnderflow+mOverflow)/pImage->GetNumberOfValues(); // not yet
+  double out_of_range_fraction = double(mOverflow)/pImage->GetNumberOfValues();
+  if ( out_of_range_fraction > mMaxOutOfRangeFraction ){
+    int n_bad_max(std::floor(mMaxOutOfRangeFraction * pImage->GetNumberOfValues()));
+    GateMessage( "Volume", 0, "ERROR: too many HU values are out of the range of the materials table: " << Gateendl
+                 << "******** " << mUnderflow << " underflows (HU<" << low << ") ******** " << Gateendl
+                 << "******** " << mOverflow << " overflows (HU>" << high << ") ********" << Gateendl);
+    if ( (mUnderflow > 0) && ( std::abs( mHalfSize.x() - pImage->GetHalfSize().x()) > 0.1*pImage->GetVoxelSize().x() ) ){
+        const G4ThreeVector & size = pImage->GetResolution();
+        int n_margin = pImage->GetNumberOfValues() - (((int)lrint(size.x())-2)*((int)lrint(size.y())-2)*((int)lrint(size.z())-2));
+        GateMessage( "Volume", 0, "(" << n_margin << " of the " << mUnderflow << " underflows are in the 1 voxel extra margin.)" << Gateendl);
+    }
+    GateMessage( "Volume", 0,
+                 "(The maximum 'bad' fraction is " << mMaxOutOfRangeFraction
+              << " and the image has " << pImage->GetNumberOfValues() << " voxels, " << Gateendl
+              << "so maximum " << n_bad_max << " out-of-range HU values are allowed." << Gateendl
+              << "Possible solutions: fix your input image, "
+              << "or expand the HU range of the HU-to-materials table. "  << Gateendl
+              << "Or, if you really know what you are doing, "
+              << "you can set the 'setMaxOutOfRangeFraction' option to a nonzero value larger than " << out_of_range_fraction << " .)" << Gateendl );
+    GateError( "ABORT" );
+  }
   // Debug
   // for(uint i=0; i<mHounsfieldMaterialTable.GetH1Vector().size(); i++) {
   //     double h = mHounsfieldMaterialTable.GetH1Vector()[i];
@@ -846,6 +888,14 @@ void GateVImageVolume::DestroyOwnSolidAndLogicalVolume()
   pBoxLog = 0;
   if (pBoxSolid) delete pBoxSolid;
   pBoxSolid = 0;
+  // If I put these warnings in the destructor, then they will NEVER be displayed.
+  if (mUnderflow>0) GateMessage("Volume",0,"There were " << mUnderflow << " voxels with HU values less than the minimum HU value in the HU-to-materials table." << Gateendl);
+  if ( (mUnderflow > 0) && ( std::abs( mHalfSize.x() - pImage->GetHalfSize().x()) > 0.1*pImage->GetVoxelSize().x() ) ){
+    const G4ThreeVector & size = pImage->GetResolution();
+    int n_margin = pImage->GetNumberOfValues() - (((int)lrint(size.x())-2)*((int)lrint(size.y())-2)*((int)lrint(size.z())-2));
+    GateMessage( "Volume", 0, "(" << n_margin << " of the " << mUnderflow << " underflows are in the 1 voxel extra margin.)" << Gateendl);
+  }
+  if (mOverflow>0) GateMessage("Volume",0,"There were " << mOverflow << " voxels with HU values greater than the maximum HU value in the HU-to-materials table." << Gateendl);
 }
 //--------------------------------------------------------------------
 

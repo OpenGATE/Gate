@@ -253,18 +253,29 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
   }
   else {
     GateImageDouble::iterator po = mScaledValueImage.begin();
-    GateImageDouble::iterator poo = mScaledSquaredImage.begin();
     GateImageDouble::iterator pi = mValueImage.begin();
     GateImageDouble::const_iterator pe = mValueImage.end();
-    while (pi != pe) {
-      *po = (*pi)*mScaleFactor;
-      *poo = (*pi)*mScaleFactor*mScaleFactor;
-      ++pi;
-      ++po;
-      ++poo;
+    if (mIsSquaredImageEnabled){
+      GateImageDouble::iterator pii = mSquaredImage.begin();
+      GateImageDouble::iterator poo = mScaledSquaredImage.begin();
+      while (pi != pe) {
+	*po = (*pi)*mScaleFactor;
+	*poo = (*pii)*mScaleFactor*mScaleFactor;
+	++pi;
+	++po;
+	++pii;
+	++poo;
+      }
+      mScaledSquaredImage.Write(mSquaredFilename);
+    }
+    else {
+      while (pi != pe) {
+	*po = (*pi)*mScaleFactor;
+	++pi;
+	++po;
+      }
     }
     mScaledValueImage.Write(mFilename);
-    if (mIsSquaredImageEnabled) mScaledSquaredImage.Write(mSquaredFilename);
     SetScaleFactor(factor); // set back previous scaling factor
   }
 

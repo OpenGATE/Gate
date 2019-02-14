@@ -56,6 +56,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableLocalTime = false;
   EnableMass = true;
   EnableSec = false;
+  EnableNuclearFlag = false;
   mIsFistStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
@@ -146,7 +147,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
-    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
+    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");

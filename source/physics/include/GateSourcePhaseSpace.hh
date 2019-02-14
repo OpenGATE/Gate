@@ -108,12 +108,16 @@ protected:
 
   float energy;
   float x, y, z;
-  float dx, dy, dz, t;
+  float dx, dy, dz;
+  float ftime;
+  double dtime;
+  EDataType time_type;
   float weight;
+
   //  char volumeName;
   char particleName[64];
   G4String mParticleTypeNameGivenByUser;
-  float mParticleTime ;//m_source->GetTime();
+  double mParticleTime ;//m_source->GetTime();
   G4double mMomentum;
 
   bool mAlreadyLoad;

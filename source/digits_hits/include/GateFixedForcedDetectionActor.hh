@@ -40,7 +40,7 @@
 
 /* rtk */
 #include <rtkConstantImageSource.h>
-#include <rtkReg23ProjectionGeometry.h>
+#include <rtkThreeDCircularProjectionGeometry.h>
 #include <rtkImportImageFilter.h>
 
 class GateFixedForcedDetectionActorMessenger;
@@ -77,9 +77,9 @@ public:
   typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
   typedef float OutputPixelType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
-  typedef rtk::Reg23ProjectionGeometry GeometryType;
-  typedef rtk::Reg23ProjectionGeometry::PointType PointType;
-  typedef rtk::Reg23ProjectionGeometry::VectorType VectorType;
+  typedef rtk::ThreeDCircularProjectionGeometry GeometryType;
+  typedef GeometryType::PointType PointType;
+  typedef GeometryType::VectorType VectorType;
   typedef rtk::ConstantImageSource<OutputImageType> ConstantImageSourceType;
   typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
 
@@ -308,7 +308,7 @@ protected:
 
   G4String mInputRTKGeometryFilename;
   G4double mEnergyResolvedBinSize;
-  rtk::ThreeDCircularProjectionGeometry::Pointer mInputGeometry;
+  GeometryType::Pointer mInputGeometry;
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
   rtk::ImportImageFilter<InputImageType>::Pointer mGateToITKImageFilter;
