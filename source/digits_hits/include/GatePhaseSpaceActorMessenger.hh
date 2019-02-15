@@ -78,6 +78,9 @@ protected:
   G4UIcmdWithABool* bEnableTranslationAlongDirection;
   G4UIcmdWithADoubleAndUnit* bSetTranslationAlongDirectionLength;
 
+  G4UIcmdWithABool* pEnableTOutCmd;
+  G4UIcmdWithABool* pEnableTProdCmd;
+
 };
 
 #endif /* end #define GATESOURCEACTORMESSENGER_HH*/
