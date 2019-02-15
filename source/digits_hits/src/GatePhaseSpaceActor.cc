@@ -61,6 +61,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
+  EnableTOut = true ;
+  EnableTProd = true ;
 
   mSphereProjectionFlag = false;
   mSphereProjectionCenter = G4ThreeVector(0);
@@ -75,6 +77,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bEnableCompact = false;
   bEnableEmissionPoint = false;
   bEnablePDGCode = false;
+  bEnableTOut = true;
+  bEnableTProd = true;
 
   bSpotID = 0;
   bSpotIDFromSource = " ";
@@ -171,6 +175,9 @@ void GatePhaseSpaceActor::Construct()
       pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
     }
     if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
+    if (EnableTOut) pListeVar->Branch("TOut", &tOut, "TOut/F");
+    if (EnableTProd) pListeVar->Branch("TProd", &tProd, "TProd/F");
 
     if (EnableNuclearFlag)
     {    
@@ -436,7 +443,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   dy = localMomentum.y();
   dz = localMomentum.z();
 
-
+  tOut = step->GetTrack()->GetLocalTime();
+  tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
   //------------- Option to project position on a sphere
 
   /* Sometimes it is useful to store the particle position on a different
