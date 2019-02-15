@@ -43,6 +43,7 @@ typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, co
            << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
     throw std::runtime_error(errMsg.str());
   }
+  GateMessage("Beam", 5, "[TPSPencilBeam] successfully read " << N << " values of type " << typeid(T).name() << Gateendl );
   return vecT;
 }
 
