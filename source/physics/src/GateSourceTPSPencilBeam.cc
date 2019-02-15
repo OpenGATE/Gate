@@ -323,21 +323,35 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 //------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
   double energy = mSpotEnergy[mCurrentSpot];
+  GateMessage("Beam", 5, "[TPSPencilBeam] configuring pencil beam with E= " << energy << Gateendl );
     //Particle Type
     mPencilBeam->SetParticleType(mParticleType);
   if (mIsGenericIon==true){
     //Particle Properties If GenericIon
+    GateMessage("Beam", 5, "[TPSPencilBeam] configuring pencil beam with generic ion with parameters \"" << mParticleParameters << "\"" << Gateendl );
     mPencilBeam->SetIonParameter(mParticleParameters);
   }
   //Energy
+  GateMessage("Beam", 5, "[TPSPencilBeam] configuring pencil beam with E= " << energy << Gateendl );
   mPencilBeam->SetEnergy(GetEnergy(energy));
   if ( mSigmaEnergyInMeVFlag ){
-    mPencilBeam->SetEnergy(GetEnergy(energy));
-    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+    GateMessage("Beam", 5, "[TPSPencilBeam] sigma energy from polynomial in MEV" << Gateendl );
+    double sourceE = GetEnergy(energy);
+    mPencilBeam->SetEnergy(sourceE);
+    double sigmaE = GetSigmaEnergy(energy);
+    GateMessage("Beam", 5, "[TPSPencilBeam] : E=" << energy << " sourceE=" << sourceE << " sigmaE=" << sigmaE << Gateendl );
+    mPencilBeam->SetSigmaEnergy(sigmaE);
   } else {
-    double source_energy = GetEnergy(energy);
-    mPencilBeam->SetEnergy(source_energy);
-    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy)*source_energy/100.);
+    GateMessage("Beam", 5, "[TPSPencilBeam] sigma energy in PERCENT" << Gateendl );
+    double sourceE = GetEnergy(energy);
+    mPencilBeam->SetEnergy(sourceE);
+    double sigmaEPCT = GetSigmaEnergy(energy);
+    double sigmaEMEV = sigmaEPCT*sourceE/100.;
+    GateMessage("Beam", 5, "[TPSPencilBeam] : E=" << energy
+		                   << " sourceE=" << sourceE
+				   << " sigmaEPCT=" << sigmaEPCT
+				   << " sigmaEMEV=" << sigmaEMEV << Gateendl );
+    mPencilBeam->SetSigmaEnergy(sigmaEMEV);
   }
   //Weight
   if (mFlatGenerationFlag) {
@@ -372,6 +386,10 @@ void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
     GateMessage("Beam", 0, "SetSigmaPhi\t" << GetSigmaPhi(energy) << Gateendl);
     GateMessage("Beam", 0, "SetEllipseXThetaArea\t" << GetEllipseXThetaArea(energy) << Gateendl);
     GateMessage("Beam", 0, "SetEllipseYPhiArea\t" << GetEllipseYPhiArea(energy) << Gateendl);
+    GateMessage("Beam", 0, "FlatGenerationFlag\t" << (mFlatGenerationFlag?"TRUE":"FALSE") << Gateendl);
+    GateMessage("Beam", 0, "ParticleType\t\"" << mParticleType << "\"" << Gateendl);
+    GateMessage("Beam", 0, "ParticleParameters\t\"" << mParticleParameters << "\"" << Gateendl);
+  
   }
 }
 
@@ -398,20 +416,21 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
       MyVal=ParseNextContentLine<double,1>(inFile,lineno,mSourceDescriptionFile)[0];
       mEnergy.push_back(MyVal);
   }
-  for (int i=0; i<4; i++) std::getline(inFile,oneline);
+  // for (int i=0; i<4; i++) std::getline(inFile,oneline);
+  oneline = ReadNextContentLine( inFile, lineno, mSourceDescriptionFile);
   // Energy Spread
   if (oneline == "MeV"){
     mSigmaEnergyInMeVFlag = true;
     GateMessage("Beam",0,"source description file specifies energy spread in MeV" << Gateendl);
     GateMessage("Beam",0,"(This overrides whatever you configured for the 'setSigmaEnergyInMeVFlag' in the configuration of TPSPencilBeam.)" << Gateendl);
-    std::getline(inFile,oneline);
+    oneline = ReadNextContentLine( inFile, lineno, mSourceDescriptionFile);
   } else if ( (oneline == "PERCENT") || (oneline == "percent") || (oneline == "%") ){
     mSigmaEnergyInMeVFlag = false;
     GateMessage("Beam",0,"source description file specifies energy spread in PERCENT (%)" << Gateendl);
     GateMessage("Beam",0,"(This overrides whatever you configured for the 'setSigmaEnergyInMeVFlag' in the configuration of TPSPencilBeam.)" << Gateendl);
-    std::getline(inFile,oneline);
+    oneline = ReadNextContentLine( inFile, lineno, mSourceDescriptionFile);
   }
-  PolOrder=atoi(oneline.c_str());
+  PolOrder = parse_N_values_of_type_T<int,1>(oneline,lineno,mSourceDescriptionFile)[0];
   mEnergySpread.push_back(PolOrder);
   for (int i=0; i<=PolOrder; i++) {
     MyVal=ParseNextContentLine<double,1>(inFile,lineno,mSourceDescriptionFile)[0];
@@ -461,12 +480,22 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
     }
     
   if(!mSpotIntensityAsNbIons){
-  //MonitorCalibration
-  PolOrder=ParseNextContentLine<int,1>(inFile,lineno,mSourceDescriptionFile)[0];
-  mMonitorCalibration.push_back(PolOrder);
-    for (int i=0; i<=PolOrder; i++) {
-        MyVal=ParseNextContentLine<double,1>(inFile,lineno,mSourceDescriptionFile)[0];
-        mMonitorCalibration.push_back(MyVal);
+    try {
+      //MonitorCalibration
+      PolOrder=ParseNextContentLine<int,1>(inFile,lineno,mSourceDescriptionFile)[0];
+      mMonitorCalibration.push_back(PolOrder);
+      for (int i=0; i<=PolOrder; i++) {
+          MyVal=ParseNextContentLine<double,1>(inFile,lineno,mSourceDescriptionFile)[0];
+          mMonitorCalibration.push_back(MyVal);
+      }
+    } catch ( const std::runtime_error& oops ){
+      GateMessage("Beam",0,"The 'setSpotIntensityAsNbIons' flag for TPS Pencil Beam Source was set to 'false'.");
+      GateMessage("Beam",0,"This means that we need a MU calibration polynomial, which as of Gate v8.1 should");
+      GateMessage("Beam",0,"be provided at the end of the 'source properties file' (it used to be hardcoded).");
+      GateMessage("Beam",0,"It looks like you still have an old style source properties file without that MU");
+      GateMessage("Beam",0,"calibration info. Please update your source properties file, and/or prepare your ");
+      GateMessage("Beam",0,"'plan description file' with spot weights given as #protons instead of MU.");
+      GateError("Error while parsing source properties file \"" << mSourceDescriptionFile << "\": " << Gateendl << oops.what() << Gateendl );
     }
   }
   //TestFlag
