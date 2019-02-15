@@ -266,6 +266,18 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   guidance = "Set the translation length";
   bSetTranslationAlongDirectionLength->SetGuidance(guidance);
 
+  bb = base+"/enableTOut";
+  pEnableTOutCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save the leaving time of the particle (defined as a LocalTime) in the phase space file. Usefull only for the outgoing mode";
+  pEnableTOutCmd->SetGuidance(guidance);
+  pEnableTOutCmd->SetParameterName("State",false);
+
+  bb = base+"/enableTProd";
+  pEnableTProdCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save the production time of the particle (defined as a GlobalTime - LocalTime) in the phase space file.";
+  pEnableTProdCmd->SetGuidance(guidance);
+  pEnableTProdCmd->SetParameterName("State",false);
+
 
 }
 //-----------------------------------------------------------------------------
@@ -311,6 +323,9 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
 
   if(command == bEnableTranslationAlongDirection) pActor->SetEnabledTranslationAlongDirection(bEnableTranslationAlongDirection->GetNewBoolValue(param));
   if(command == bSetTranslationAlongDirectionLength) pActor->SetTranslationAlongDirectionLength(bSetTranslationAlongDirectionLength->GetNewDoubleValue(param));
+
+  if(command == pEnableTOutCmd) pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
+  if(command == pEnableTProdCmd) pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }
