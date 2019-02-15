@@ -197,6 +197,11 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   pEnableLogBinningCMD = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Set logarithmic binning in energy");
   pEnableLogBinningCMD->SetGuidance(guidance);
+  
+  bb = base+"/setEnergyPerUnitMass";
+  pEnableEnergyPerUnitMassCMD = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Set energy per nucleus");
+  pEnableEnergyPerUnitMassCMD->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -238,6 +243,7 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
   if(cmd == pEnableElossHistoCmd) pActor->SetElossHistoCalc(  pEnableElossHistoCmd->GetNewBoolValue(newValue)  ) ;
   
   if(cmd == pEnableLogBinningCMD) pActor->SetLogBinning(  pEnableLogBinningCMD->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pEnableEnergyPerUnitMassCMD) pActor->SetEnergyPerUnitMass(  pEnableEnergyPerUnitMassCMD->GetNewBoolValue(newValue)  ) ;
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------
