@@ -7,7 +7,7 @@
  *	- 'Gate' or 'Gate --qt' using the Qt visualization
  *	- 'Gate your_macro.mac' or 'Gate --qt your_macro.mac' using the Qt visualization
  *	- 'Gate -d your_macro.mac' using the DigiGate
- *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
+ *	- 'Gate -a [activity,10]' using the parameterized macro creating an alias in your macro
  */
 
 #include "G4PhysicalConstants.hh"
