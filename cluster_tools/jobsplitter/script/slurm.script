@@ -1,0 +1,72 @@
+#!/bin/bash
+##############################################################
+#
+#  Template SLRUM submission script 
+#  This script will be proccessed by gjs. The
+#  following keywords 
+#   GC_JOBNAME
+#   GC_LOG
+#   GC_ERR
+#   GC_GATE
+#   GC_WORKDIR
+#  will be replaced by actual values.
+#  Do not remove any of them!
+#
+#  The user m u s t edit the 
+#   QUEUE
+#   CLUSTER
+# 
+#  entry and the name of the my_environment file
+#
+#    
+##############################################################
+#
+###                            Queue to submit to  <<<<<<<<<< queue and cluster name must be adapted to your system
+#SBATCH --partition=QUEUE
+#SBATCH --clusters=CLUSTER
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=250
+#
+###                   batch job stderr and stdout
+#SBATCH --output=GC_WORKDIR/GC_LOG
+#SBATCH --error=GC_WORKDIR/GC_ERR
+###                                      Job name
+#SBATCH --job-name=GC_JOBNAME
+#
+###                     Declare job non-rerunable
+#SBATCH --no-requeue
+
+
+# FYI
+echo
+echo ---------------------- Job Info ------------------------------
+echo
+echo -e "Name of the working queue \t"    $SLURM_JOB_PARTITION
+echo -e "Job name                  \t"    $SLURM_JOB_NAME
+echo -e "Job identifier            \t"    $SLURM_JOB_ID
+echo -e "Working directory is      \t"    $SLURM_SUBMIT_DIR
+echo -e "Running on host           \t"    $SLURM_JOB_NODELIST
+echo -e "Start time                \t"    `date`
+echo
+cd $SLURM_SUBMIT_DIR 
+echo $CLUSTERWORKDIR
+
+echo
+echo ---------------------- Job Output ----------------------------
+echo
+
+# H E R E you may set up your environment      <<<<<<<<<<  see include/my_environment.example
+. my_environment
+# executable 
+srun GC_GATE 
+
+echo
+echo ----------------------- DONE ---------------------------------
+echo
+echo -e "Time after job execution \t"     `date`
+
+exit 0
+
+
