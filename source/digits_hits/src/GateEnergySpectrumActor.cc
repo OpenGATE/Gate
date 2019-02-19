@@ -72,6 +72,8 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   
   mEnableLogBinning = false;  
   mEnableEnergyPerUnitMass = false;
+  mEnableRelativePrimEvents = false;
+  
   
   emcalc = new G4EmCalculator;
 
@@ -226,7 +228,14 @@ void GateEnergySpectrumActor::Construct()
 /// Save data
 void GateEnergySpectrumActor::SaveData()
 {
-    
+   if (mEnableRelativePrimEvents){
+    for(std::list<TH1D*>::iterator it=allEnabledTH1DHistograms.begin();it!=allEnabledTH1DHistograms.end();++it)
+      {
+          (*it)->Scale(1./nEvent);
+      }
+       //pEnergySpectrumFluenceTrack->Scale(1./nEvent);
+   }
+  
   GateVActor::SaveData();
   pTfile->Write();
   
