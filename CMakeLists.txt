@@ -1,4 +1,14 @@
 #=========================================================
+# WORK IN PROGRESS: modernize this CMakeLists.txt file
+#
+# Watch the youtube video referenced in GitHub issue #211 (mojca's comment on January 13, 2019).
+# From what I understood and still remember (need to watch it again):
+# * avoid setting compiler flags by editing CMAKE_CXX_FLAGS
+# * avoid defining (and using) your own cmake variables with SET
+# * use target_* commands instead
+#=========================================================
+
+#=========================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
@@ -11,14 +21,30 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
 #=========================================================
 # Configure Dart testing support.  This should be done before any
 # MESSAGE(FATAL_ERROR ...) commands are invoked.
-OPTION(BUILD_TESTING "Build the testing tree." OFF)
-INCLUDE(CTest)
+option(GATE_UNIT_TESTS "Compile (and run) unit tests based on Catch2" OFF)
+option(GATE_BENCHMARKS "Run the 'benchmarks'; this may also cause the download of reference data from Kitware." OFF)
 
-IF(BUILD_TESTING)
+IF(GATE_UNIT_TESTS OR GATE_BENCHMARKS)
+  INCLUDE(CTest)
   ENABLE_TESTING()
   SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
   MARK_AS_ADVANCED(BUILDNAME)
-ENDIF(BUILD_TESTING)
+ENDIF(GATE_UNIT_TESTS OR GATE_BENCHMARKS)
+#=========================================================
+
+#=========================================================
+IF(GATE_BENCHMARKS)
+  INCLUDE(cmake-modules/GateExternalData.cmake)
+  ADD_SUBDIRECTORY(benchmarks)
+  ExternalData_add_target(GateBenchmarkData)
+ENDIF(GATE_BENCHMARKS)
+#=========================================================
+
+
+#=========================================================
+IF(GATE_UNIT_TESTS)
+  ADD_SUBDIRECTORY(unit_tests)
+ENDIF(GATE_UNIT_TESTS)
 #=========================================================
 
 #=========================================================
@@ -76,7 +102,7 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
 IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.5)
-  MESSAGE("Warning! GATE version 8.2 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.4 or 10.5 distribution instead.")
+  MESSAGE("Warning! This GATE version is not validated for Geant4 version ${G4VERSION_MAJOR}.${G4VERSION_MINOR}. Please use Geant4 10.4 or 10.5 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -90,8 +116,10 @@ OPTION(GATE_USE_XRAYLIB "Option for XRAYLIB use" OFF)
 OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
+# the GATE_USE_SYSTEM_CLHEP option description is a lie!!!!
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
-OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
+#GPU stuff has not been supported for quite some time now.
+#OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
 
 #=========================================================
 # RTK / ITK
@@ -152,13 +180,13 @@ ENDIF()
 
 #=========================================================
 # Option for GPU use
-IF(GATE_USE_GPU)
-  FIND_PACKAGE(CUDA)
-  INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
-  FILE(GLOB sourcesGPU
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu
-    )
-ENDIF(GATE_USE_GPU)
+#IF(GATE_USE_GPU)
+#FIND_PACKAGE(CUDA)
+#INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
+#FILE(GLOB sourcesGPU
+#${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu
+#)
+#ENDIF(GATE_USE_GPU)
 
 #=========================================================
 # Option for LMF use
@@ -222,6 +250,31 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
+# GateImpl library
+#=========================================================
+# everything except GPU and main
+ADD_LIBRARY(GateImpl STATIC ${sources} ${headers})
+target_include_directories(GateImpl INTERFACE
+	${PROJECT_SOURCE_DIR}/source/general/include
+	${PROJECT_SOURCE_DIR}/source/physics/include
+	${PROJECT_SOURCE_DIR}/source/geometry/include
+	${PROJECT_SOURCE_DIR}/source/digits_hits/include
+	${PROJECT_SOURCE_DIR}/source/arf/include )
+
+# for GateConfiguration.h:
+target_include_directories(GateImpl PUBLIC ${Gate_BINARY_DIR} )
+
+IF(GATE_USE_ROOT)
+  target_include_directories(GateImpl PUBLIC ${ROOT_INCLUDE_DIR})
+ENDIF(GATE_USE_ROOT)
+
+IF(GATE_USE_SYSTEM_CLHEP)
+  target_include_directories(GateImpl PUBLIC ${CLHEP_INCLUDE_DIR} )
+ELSE()
+  target_include_directories(GateImpl PUBLIC ${PROJECT_SOURCE_DIR}/source/externals/clhep/include )
+ENDIF(GATE_USE_SYSTEM_CLHEP)
+
+#=========================================================
 # RTK
 IF(GATE_USE_RTK OR GATE_USE_ITK)
   SET(ITK_MINIMAL_VERSION 4.9)
@@ -239,45 +292,60 @@ IF(GATE_USE_RTK OR GATE_USE_ITK)
 ELSE()
   ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
   SET(ITK_LIBRARIES MetaIO itkzlib)
-  INCLUDE_DIRECTORIES(
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
-    ${PROJECT_BINARY_DIR}/itk-mhd/)
-  SET(ITKMHD_LIBS MetaIO itkzlib)
+  #INCLUDE_DIRECTORIES(
+  #${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+  #${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+  #${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
+  #${PROJECT_BINARY_DIR}/itk-mhd/)
+  #SET(ITKMHD_LIBS MetaIO itkzlib)
+  target_include_directories(GateImpl PUBLIC
+	  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+	  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+	  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
+          ${PROJECT_BINARY_DIR}/itk-mhd/)
 ENDIF()
 
+
+#=========================================================
+# GPU code: cool, but on its way out. :-(
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
-IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
-  CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
-ELSE(GATE_USE_GPU AND CUDA_FOUND)
-  ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
-ENDIF(GATE_USE_GPU AND CUDA_FOUND)
+#IF(GATE_USE_GPU AND CUDA_FOUND)
+#  SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
+#  CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sourcesGPU} ${headers})
+#ELSE(GATE_USE_GPU AND CUDA_FOUND)
+#  ADD_EXECUTABLE(Gate Gate.cc ${headers})
+#ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+# The following does not work: Gate compiles and runs, but actors are undefined.
+# Looks like static code does not get run, in particular all the MAKE_AUTO_CREATOR_ACTOR statements.
+# ADD_EXECUTABLE(Gate Gate.cc) 
+#target_include_directories(Gate PRIVATE 
+#	${PROJECT_SOURCE_DIR}/source/general/include
+#	${PROJECT_SOURCE_DIR}/source/physics/include
+#	${PROJECT_SOURCE_DIR}/source/geometry/include
+#	${PROJECT_SOURCE_DIR}/source/digits_hits/include
+#	${PROJECT_SOURCE_DIR}/source/arf/include
+#        ${Gate_BINARY_DIR} )
+
+# So we do it like this, but that is kind of silly when we have libGateImpl.a already available.
+ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
+SET(EXTRA_GATE_LINK_LIBRARIES ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}  )
+MESSAGE("Gate links to: ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}"  )
+TARGET_LINK_LIBRARIES(Gate GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
+#TARGET_LINK_LIBRARIES(Gate GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}  )
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
 #=========================================================
-option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-  INCLUDE(cmake-modules/GateExternalData.cmake)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-  ADD_SUBDIRECTORY(benchmarks)
-  ExternalData_add_target(GateBenchmarkData)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-#=========================================================
-
-
-#=========================================================
 # We remove the warning option "shadow", because there are tons of
-# such warning related to clhep/g4 system of units. Additionally,
-# we force the c++11 std. This is mandatory for Geant4 >= 10.2.
+# such warning related to clhep/g4 system of units.
+# TODO: get a newer version of CLHEP in our externals which does not commit the sin of putting 'using namespace CLHEP' in a *header file*.
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
+# Additionally, we force the c++11 std. This is mandatory for Geant4 >= 10.2.
+# TODO: see github issue #211
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #=========================================================
 
