@@ -131,27 +131,28 @@ GatePhysicsList::~GatePhysicsList()
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){//&& !isTransportationDelete){
     G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
-    for(int i = 0; i<vect->size();i++)
-      {
-        if((*vect)[i]->GetProcessName()=="Transportation" )//&& !isTransportationDelete)
-          {
-            if(!isTransportationDelete) delete (*vect)[i];
-            isTransportationDelete = true;
-            (*vect)[i]=0;
+    if (particle->GetProcessManager()) {
+        G4ProcessVector *vect = particle->GetProcessManager()->GetProcessList();
+        for (int i = 0; i < vect->size(); i++) {
+            if ((*vect)[i]->GetProcessName() == "Transportation")//&& !isTransportationDelete)
+            {
+                if (!isTransportationDelete) delete (*vect)[i];
+                isTransportationDelete = true;
+                (*vect)[i] = 0;
+            }
+            /*else {
+              if( (*vect)[i] ){
+              if((*vect)[i]->GetProcessName()=="Decay" ){
+              G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<< Gateendl;
+              delete (*vect)[i];
           }
-        /*else {
-          if( (*vect)[i] ){
-          if((*vect)[i]->GetProcessName()=="Decay" ){
-          G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<< Gateendl;
-          delete (*vect)[i];
-	  }
-          }
-          }*/
-        //else if((*vect)[i]) delete (*vect)[i];
-        //(*vect)[i]=0;
+              }
+              }*/
+            //else if((*vect)[i]) delete (*vect)[i];
+            //(*vect)[i]=0;
 
-      }
+        }
+    }
   }
   // Transportation process deleted
 
