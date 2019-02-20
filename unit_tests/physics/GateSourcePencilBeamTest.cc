@@ -77,23 +77,23 @@ class varstat2D {
 TEST_CASE("pencil beam test","[example][physics]"){
 
   INFO("create geant4 environment for particle sources");
-  auto runManager = new GateRunManager;
-  runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
+  GateRunManager runManager;
+  runManager.SetUserInitialization( GatePhysicsList::GetInstance() );
 
   INFO("create pencil beam source");
-  auto gpb = new GateSourcePencilBeam("test",false);
+  GateSourcePencilBeam gpb("test",false);
 
   INFO("set kinematics");
-  gpb->SetIonParameter("proton");
-  gpb->SetPosition(G4ThreeVector(10.*mm,20.*mm,5.*mm));
-  gpb->SetSigmaX(1. * mm);
-  gpb->SetSigmaY(1. * mm);
-  gpb->SetSigmaTheta(1. * mrad);
-  gpb->SetSigmaPhi(1. * mrad);
-  gpb->SetEllipseXThetaArea(1.*mm*mrad);
-  gpb->SetEllipseYPhiArea(1.*mm*mrad);
-  gpb->SetEnergy(100 * MeV);
-  gpb->SetSigmaEnergy(0.1 * MeV);
+  gpb.SetIonParameter("proton");
+  gpb.SetPosition(G4ThreeVector(10.*mm,20.*mm,5.*mm));
+  gpb.SetSigmaX(1. * mm);
+  gpb.SetSigmaY(1. * mm);
+  gpb.SetSigmaTheta(1. * mrad);
+  gpb.SetSigmaPhi(1. * mrad);
+  gpb.SetEllipseXThetaArea(1.*mm*mrad);
+  gpb.SetEllipseYPhiArea(1.*mm*mrad);
+  gpb.SetEnergy(100 * MeV);
+  gpb.SetSigmaEnergy(0.1 * MeV);
 
   varstat1D Estat("E");
   varstat2D XYstat("X","Y");
@@ -101,18 +101,18 @@ TEST_CASE("pencil beam test","[example][physics]"){
   varstat2D YDYstat("Y","DY");
   for (int i=0; i<1000; ++i){
     INFO("create event");
-    auto event = new G4Event;
+    G4Event event;
 
     INFO("generate primaries");
-    G4int nret = gpb->GeneratePrimaries(event);
+    G4int nret = gpb.GeneratePrimaries(&event);
 
     INFO("number of generated primaries should be 1");
     REQUIRE(nret == 1);
 
     INFO("number of vertices in event should also be 1");
-    G4int nvertex = event->GetNumberOfPrimaryVertex();
+    G4int nvertex = event.GetNumberOfPrimaryVertex();
     REQUIRE(nvertex == 1);
-    const G4PrimaryVertex *v = event->GetPrimaryVertex();
+    const G4PrimaryVertex *v = event.GetPrimaryVertex();
     double x = v->GetX0();
     double y = v->GetY0();
     double z = v->GetZ0();
@@ -131,7 +131,6 @@ TEST_CASE("pencil beam test","[example][physics]"){
     XYstat.add_value(x,y);
     XDXstat.add_value(x,atan(dx));
     YDYstat.add_value(y,atan(dy));
-    delete event;
   }
   INFO("energy spread should be 0.1 MeV");
   CHECK(Estat.rms()/MeV == Approx(0.1).margin(0.01));
