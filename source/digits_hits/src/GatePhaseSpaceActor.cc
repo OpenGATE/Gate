@@ -29,6 +29,7 @@
 #include "GateIAEARecord.h"
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
+#include "GateProtonNuclearInformationActor.hh"
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
@@ -55,14 +56,20 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableLocalTime = false;
   EnableMass = true;
   EnableSec = false;
+  EnableNuclearFlag = false;
   mIsFistStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
+  EnableTOut = true ;
+  EnableTProd = true ;
 
   mSphereProjectionFlag = false;
   mSphereProjectionCenter = G4ThreeVector(0);
   mSphereProjectionRadius = 0.0;
+
+  mTranslateAlongDirectionFlag = false;
+  mTranslationLength = 0.0;
 
   bEnableCoordFrame = false;
   bEnablePrimaryEnergy = false;
@@ -70,6 +77,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bEnableCompact = false;
   bEnableEmissionPoint = false;
   bEnablePDGCode = false;
+  bEnableTOut = true;
+  bEnableTProd = true;
 
   bSpotID = 0;
   bSpotIDFromSource = " ";
@@ -142,7 +151,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
-    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
+    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
@@ -166,6 +175,16 @@ void GatePhaseSpaceActor::Construct()
       pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
     }
     if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
+    if (EnableTOut) pListeVar->Branch("TOut", &tOut, "TOut/F");
+    if (EnableTProd) pListeVar->Branch("TProd", &tProd, "TProd/F");
+
+    if (EnableNuclearFlag)
+    {    
+      pListeVar->Branch("CreatorProcess", &creator, "CreatorProcess/I");
+      pListeVar->Branch("NuclearProcess", &nucprocess, "NuclearProcess/I");
+      pListeVar->Branch("Order", &order, "Order/I");
+    }
 
   } else if (mFileType == "IAEAFile") {
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
@@ -352,6 +371,43 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   y = localPosition.y();
   z = localPosition.z();
 
+  //===============================================================================================================
+  // ctq: Flags for proton nuclear processes
+  // no process = 0
+  // hadElastic = 1
+  // protonInelastic = 2
+  //===============================================================================================================
+ 
+  if(EnableNuclearFlag)
+  {
+    GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
+    if(info == NULL)
+      GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
+    else
+    {
+      creator = 0;
+      nucprocess = 0;
+      order = info->GetScatterOrder(); 
+
+      if (!step->GetTrack()->GetCreatorProcess())
+        creator = 0;
+
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
+        creator = 1;
+
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
+        creator = 2;
+
+      if (!info->GetScatterProcess())
+        nucprocess =  0;
+
+      if (info->GetScatterProcess() == "hadElastic")
+        nucprocess =  1;
+
+      if (info->GetScatterProcess() == "protonInelastic")
+        nucprocess = 2;
+    }
+  }
 
   // particle momentum
   // pc = sqrt(Ek^2 + 2*Ek*m_0*c^2)
@@ -387,7 +443,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   dy = localMomentum.y();
   dz = localMomentum.z();
 
-
+  tOut = step->GetTrack()->GetLocalTime();
+  tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
   //------------- Option to project position on a sphere
 
   /* Sometimes it is useful to store the particle position on a different
@@ -423,6 +480,20 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     x = x+dx*d;
     y = y+dy*d;
     z = z+dz*d;
+  }
+
+  /*
+    Translate the particle point along the direction by a given value
+   */
+  if (mTranslateAlongDirectionFlag) {
+
+    // move point along its direction by a length d (may be negative)
+    G4ThreeVector o(x,y,z);
+    G4ThreeVector l(dx,dy,dz);
+
+    x = x+dx*mTranslationLength;
+    y = y+dy*mTranslationLength;
+    z = z+dz*mTranslationLength;
   }
 
   //-------------Write weight of the steps presents at the simulation-------------

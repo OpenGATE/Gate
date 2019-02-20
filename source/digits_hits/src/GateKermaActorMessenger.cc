@@ -18,7 +18,6 @@ GateKermaActorMessenger::GateKermaActorMessenger(GateKermaActor* sensor)
   :GateImageActorMessenger(sensor),
   pKermaActor(sensor)
 {
-
   pEnableDoseCmd = 0;
   pEnableDoseNormCmd= 0;
   pEnableDoseSquaredCmd= 0;
@@ -31,6 +30,11 @@ GateKermaActorMessenger::GateKermaActorMessenger(GateKermaActor* sensor)
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
+  pSetDoseAlgorithmCmd= 0;
+  pImportMassImageCmd= 0;
+  pExportMassImageCmd= 0;
+  pVolumeFilterCmd= 0;
+  pMaterialFilterCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -52,6 +56,11 @@ GateKermaActorMessenger::~GateKermaActorMessenger()
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
+  if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
+  if(pImportMassImageCmd) delete pImportMassImageCmd;
+  if(pExportMassImageCmd) delete pExportMassImageCmd;
+  if(pVolumeFilterCmd) delete pVolumeFilterCmd;
+  if(pMaterialFilterCmd) delete pMaterialFilterCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -59,7 +68,6 @@ GateKermaActorMessenger::~GateKermaActorMessenger()
 //-----------------------------------------------------------------------------
 void GateKermaActorMessenger::BuildCommands(G4String base)
 {
-
   G4String  n = base+"/enableDose";
   pEnableDoseCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable dose computation");
@@ -119,6 +127,31 @@ void GateKermaActorMessenger::BuildCommands(G4String base)
   pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
+
+  n = base+"/setDoseAlgorithm";
+  pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set the alogrithm used in the dose calculation");
+  pSetDoseAlgorithmCmd->SetGuidance(guid);
+
+  n = base+"/importMassImage";
+  pImportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Import mass image");
+  pImportMassImageCmd->SetGuidance(guid);
+
+  n = base+"/exportMassImage";
+  pExportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Export mass image");
+  pExportMassImageCmd->SetGuidance(guid);
+
+  n = base+"/setVolumeFilter";
+  pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Volume filter");
+  pVolumeFilterCmd->SetGuidance(guid);
+
+  n = base+"/setMaterialFilter";
+  pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Material filter");
+  pMaterialFilterCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -138,6 +171,11 @@ void GateKermaActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableNumberOfHitsCmd) pKermaActor->EnableNumberOfHitsImage(pEnableNumberOfHitsCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormCmd) pKermaActor->EnableDoseNormalisation(pEnableDoseNormCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pKermaActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
+  if (cmd == pSetDoseAlgorithmCmd) pKermaActor->SetDoseAlgorithmType(newValue);
+  if (cmd == pImportMassImageCmd)  pKermaActor->ImportMassImage(newValue);
+  if (cmd == pExportMassImageCmd)  pKermaActor->ExportMassImage(newValue);
+  if (cmd == pVolumeFilterCmd)     pKermaActor->VolumeFilter(newValue);
+  if (cmd == pMaterialFilterCmd)   pKermaActor->MaterialFilter(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

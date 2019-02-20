@@ -130,22 +130,22 @@ int ReadColNameAndInteger(std::istream & is, std::string name);
 
 //-----------------------------------------------------------------------------
 GatePlacement & ReadPlacement(std::istream & is,
-                              bool mUseTranslation, bool mUseRotation, 
+                              bool mUseTranslation, bool mUseRotation,
                               double translationUnit, double angleUnit);
 
 //-----------------------------------------------------------------------------
-void ReadTimePlacements(std::string filename, 
+void ReadTimePlacements(std::string filename,
                         std::vector<double> & timesList,
-                        std::vector<GatePlacement> & placementsList, 
+                        std::vector<GatePlacement> & placementsList,
                         bool & mUseRotation, bool & mUseTranslation);
 
 //-----------------------------------------------------------------------------
-void ReadTimePlacementsRepeat(std::string filename, 
+void ReadTimePlacementsRepeat(std::string filename,
                               std::vector<double> & timesList,
                               std::vector<std::vector<GatePlacement> > & listOfPlacementsList);
 
 //-----------------------------------------------------------------------------
-void ReadTimeDoubleValue(std::string filename, std::string name, 
+void ReadTimeDoubleValue(std::string filename, std::string name,
                          std::vector<double> & timesList,
                          std::vector<double> & nameList);
 
@@ -176,8 +176,10 @@ template<typename T, int N>
 typename std::vector<T>  ParseNextContentLine( std::istream& input, int& lineno, const std::string& fname );
 
 
+//------------------------------------------------------------------------------------------------------
+// Split words separated by spaces
+void GetWords(std::vector<std::string> & words, const std::string & phrase);
 
 #include "GateMiscFunctions.icc"
 
 #endif // GATEMISCFUNCTIONS_HH
-

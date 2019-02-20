@@ -71,9 +71,15 @@ protected:
   G4UIcmdWithAString* bSpotIDFromSourceCmd;
   G4UIcmdWithABool* bEnablePDGCodeCmd;
   G4UIcmdWithABool* bEnableCompactCmd;
+  G4UIcmdWithABool* pEnableNuclearFlagCmd;
   G4UIcmdWithABool* bEnableSphereProjection;
   G4UIcmdWith3VectorAndUnit* bSetSphereProjectionCenter;
   G4UIcmdWithADoubleAndUnit* bSetSphereProjectionRadius;
+  G4UIcmdWithABool* bEnableTranslationAlongDirection;
+  G4UIcmdWithADoubleAndUnit* bSetTranslationAlongDirectionLength;
+
+  G4UIcmdWithABool* pEnableTOutCmd;
+  G4UIcmdWithABool* pEnableTProdCmd;
 
 };
 

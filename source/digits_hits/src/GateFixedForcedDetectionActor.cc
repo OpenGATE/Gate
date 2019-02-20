@@ -401,7 +401,12 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
                                                                               gate_image_volume);
     }
 
-  mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = mPrimaryProjector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = mPrimaryProjector->GetNumberOfWorkUnits();
+#endif
+  mPrimaryProjector->GetProjectedValueAccumulation().Init(nThreads);
   if (mFresnelFilename != "" && mNoisePrimary)
     {
     GateError("Adding noise to Fresnel image is not possible (yet).");
@@ -416,10 +421,15 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
   const double sdd = oneProjGeometry->GetSourceToDetectorDistances()[0];
   const double sid = oneProjGeometry->GetSourceToIsocenterDistances()[0];
-  CalculatePropagatorImage(sdd-sid, energyList);
+  double magnification = 1.;
+  if (sdd != 0.) // Divergent geometry
+    {
+      magnification = sdd / sid;
+    }
+  CalculatePropagatorImage((sdd-sid)/magnification, magnification, energyList);
 }
 
-void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
+void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, double magnification, std::vector<double> & energyList)
 {
   /* creator propagator complex image */
   InputImageType::Pointer propagatorImageRe;
@@ -439,8 +449,8 @@ void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std
 
   InputPixelType wavelength = h_Planck * c_light / energyList[0];
 
-  InputPixelType fsamplex = 1./mPropagatorImage->GetSpacing()[0];
-  InputPixelType fsampley = 1./mPropagatorImage->GetSpacing()[1];
+  InputPixelType fsamplex = magnification / mPropagatorImage->GetSpacing()[0];
+  InputPixelType fsampley = magnification / mPropagatorImage->GetSpacing()[1];
   unsigned int mf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[0];
   unsigned int nf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[1];
   InputPixelType fx;
@@ -477,11 +487,16 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
                                                             GeometryType::Pointer oneProjGeometry)
 {
   mComptonProjector = ComptonProjectionType::New();
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = mComptonProjector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = mComptonProjector->GetNumberOfWorkUnits();
+#endif
   mComptonProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mComptonProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
   if (mGeneratePhotons || mARF)
     {
-    mComptonProjector->GetProjectedValueAccumulation().PreparePhotonsList(mComptonProjector->GetNumberOfThreads());
+    mComptonProjector->GetProjectedValueAccumulation().PreparePhotonsList(nThreads);
     }
   mComptonProjector->InPlaceOn();
   mComptonProjector->SetInput(1, mGateVolumeImage);
@@ -499,7 +514,7 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
                                                                          1. * keV,
                                                                          mMaxPrimaryEnergy,
                                                                          gate_image_volume);
-  mComptonProjector->GetProjectedValueAccumulation().Init(mComptonProjector->GetNumberOfThreads());
+  mComptonProjector->GetProjectedValueAccumulation().Init(nThreads);
   mComptonProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
 }
@@ -509,11 +524,16 @@ void GateFixedForcedDetectionActor::PrepareRayleighProjector(GateVImageVolume* g
                                                              GeometryType::Pointer oneProjGeometry)
 {
   mRayleighProjector = RayleighProjectionType::New();
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = mRayleighProjector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = mRayleighProjector->GetNumberOfWorkUnits();
+#endif
   mRayleighProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mRayleighProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
   if (mGeneratePhotons || mARF)
     {
-    mRayleighProjector->GetProjectedValueAccumulation().PreparePhotonsList(mRayleighProjector->GetNumberOfThreads());
+    mRayleighProjector->GetProjectedValueAccumulation().PreparePhotonsList(nThreads);
     }
   mRayleighProjector->InPlaceOn();
   mRayleighProjector->SetInput(1, mGateVolumeImage);
@@ -527,7 +547,7 @@ void GateFixedForcedDetectionActor::PrepareRayleighProjector(GateVImageVolume* g
                                                                           1. * keV,
                                                                           mMaxPrimaryEnergy,
                                                                           gate_image_volume);
-  mRayleighProjector->GetProjectedValueAccumulation().Init(mRayleighProjector->GetNumberOfThreads());
+  mRayleighProjector->GetProjectedValueAccumulation().Init(nThreads);
   mRayleighProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                   nPixOneSlice);
 
@@ -538,11 +558,16 @@ void GateFixedForcedDetectionActor::PrepareFluorescenceProjector(GateVImageVolum
                                                                  GeometryType::Pointer oneProjGeometry)
 {
   mFluorescenceProjector = FluorescenceProjectionType::New();
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = mFluorescenceProjector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = mFluorescenceProjector->GetNumberOfWorkUnits();
+#endif
   mFluorescenceProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mFluorescenceProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
   if (mGeneratePhotons || mARF)
     {
-    mFluorescenceProjector->GetProjectedValueAccumulation().PreparePhotonsList(mFluorescenceProjector->GetNumberOfThreads());
+    mFluorescenceProjector->GetProjectedValueAccumulation().PreparePhotonsList(nThreads);
     }
 
   mFluorescenceProjector->InPlaceOn();
@@ -557,7 +582,7 @@ void GateFixedForcedDetectionActor::PrepareFluorescenceProjector(GateVImageVolum
                                                                               1. * keV,
                                                                               mMaxPrimaryEnergy,
                                                                               gate_image_volume);
-  mFluorescenceProjector->GetProjectedValueAccumulation().Init(mFluorescenceProjector->GetNumberOfThreads());
+  mFluorescenceProjector->GetProjectedValueAccumulation().Init(nThreads);
   mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                       nPixOneSlice);
 }
@@ -567,6 +592,11 @@ void GateFixedForcedDetectionActor::PrepareIsotropicPrimaryProjector(GateVImageV
                                                                      GeometryType::Pointer oneProjGeometry)
 {
   mIsotropicPrimaryProjector = IsotropicPrimaryProjectionType::New();
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = mIsotropicPrimaryProjector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = mIsotropicPrimaryProjector->GetNumberOfWorkUnits();
+#endif
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
   if (mARF)
@@ -576,7 +606,7 @@ void GateFixedForcedDetectionActor::PrepareIsotropicPrimaryProjector(GateVImageV
     }
   if (mGeneratePhotons || mARF)
     {
-    mIsotropicPrimaryProjector->GetProjectedValueAccumulation().PreparePhotonsList(mIsotropicPrimaryProjector->GetNumberOfThreads());
+    mIsotropicPrimaryProjector->GetProjectedValueAccumulation().PreparePhotonsList(nThreads);
     }
   mIsotropicPrimaryProjector->InPlaceOn();
   mIsotropicPrimaryProjector->SetInput(1, mGateVolumeImage);
@@ -591,7 +621,7 @@ void GateFixedForcedDetectionActor::PrepareIsotropicPrimaryProjector(GateVImageV
                                                                                   mMaxPrimaryEnergy,
                                                                                   gateImageVolume);
 
-  mIsotropicPrimaryProjector->GetProjectedValueAccumulation().Init(mIsotropicPrimaryProjector->GetNumberOfThreads());
+  mIsotropicPrimaryProjector->GetProjectedValueAccumulation().Init(nThreads);
 
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                           nPixOneSlice);
@@ -630,7 +660,7 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
     MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
 
     /* First: accumulate contribution to event, square and add to total squared */
-    InputImageType::Pointer totalContribEvent(NULL);
+    InputImageType::Pointer totalContribEvent(ITK_NULLPTR);
     for (unsigned int i = 0; i < PRIMARY; i++)
       {
       if (mEventImage[ProcessType(i)]->GetTimeStamp()
@@ -958,6 +988,11 @@ template<ProcessType VProcess, class TProjectorType>
 void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *projector,
                                                                 InputImageType::Pointer & input)
 {
+#if ITK_VERSION_MAJOR<5
+  const itk::ThreadIdType nThreads = projector->GetNumberOfThreads();
+#else
+  const itk::ThreadIdType nThreads = projector->GetNumberOfWorkUnits();
+#endif
   if (!mDoFFDForThisProcess[VProcess])
     {
     return;
@@ -975,10 +1010,10 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
 
   /* Create interaction geometry */
   GeometryType::Pointer oneProjGeometry = GeometryType::New();
-  oneProjGeometry->AddReg23Projection(mInteractionITKPosition,
-                                      mDetectorPosition,
-                                      mDetectorRowVector,
-                                      mDetectorColVector);
+  oneProjGeometry->AddProjection(mInteractionITKPosition,
+                                 mDetectorPosition,
+                                 mDetectorRowVector,
+                                 mDetectorColVector);
   mProcessTimeProbe[VProcess].Start();
   projector->SetInput(FirstSliceProjection(input));
   projector->SetGeometry(oneProjGeometry.GetPointer());
@@ -992,12 +1027,12 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
   if (mGeneratePhotons)
     {
-    GeneratePhotons(projector->GetNumberOfThreads(),
+    GeneratePhotons(nThreads,
                     projector->GetProjectedValueAccumulation().GetPhotonList());
     }
   if (mARF)
     {
-    ConnectARF(projector->GetNumberOfThreads(),
+    ConnectARF(nThreads,
                projector->GetProjectedValueAccumulation().GetPhotonList(),
                VProcess);
 
@@ -1330,7 +1365,7 @@ void GateFixedForcedDetectionActor::SetGeometryFromInputRTKGeometryFile(GateVSou
     geometryReader = rtk::ThreeDCircularProjectionGeometryXMLFileReader::New();
     geometryReader->SetFilename(mInputRTKGeometryFilename);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(geometryReader->GenerateOutputInformation());
-    mInputGeometry = geometryReader->GetGeometry();
+    mInputGeometry = geometryReader->GetOutputObject();
     }
 
   if (run->GetRunID() >= (int) mInputGeometry->GetGantryAngles().size())

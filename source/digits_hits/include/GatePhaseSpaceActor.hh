@@ -70,6 +70,9 @@ public:
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
 
+  void SetIsTOutEnabled(bool b){EnableTOut = b;}
+  void SetIsTProdEnabled(bool b){EnableTProd = b;}
+
   void SetIsChargeEnabled(bool b){EnableCharge = b;}
   void SetIsElectronicDEDXEnabled(bool b) {EnableElectronicDEDX = b;}
   void SetIsTotalDEDXEnabled(bool b) {EnableTotalDEDX = b;}
@@ -95,10 +98,14 @@ public:
   G4String GetSpotIDFromSource(){return bSpotIDFromSource;}
   void SetEnabledCompact(bool b){bEnableCompact = b;}
   void SetEnablePDGCode(bool b){bEnablePDGCode = b;}
+  void SetIsNuclearFlagEnabled(bool b){EnableNuclearFlag = b;}
 
   void SetEnabledSphereProjection(bool b) { mSphereProjectionFlag = b; }
   void SetSphereProjectionCenter(G4ThreeVector c) { mSphereProjectionCenter = c; }
   void SetSphereProjectionRadius(double r) { mSphereProjectionRadius = r; }
+
+  void SetEnabledTranslationAlongDirection(bool b) { mTranslateAlongDirectionFlag = b; }
+  void SetTranslationAlongDirectionLength(double r) { mTranslationLength = r; }
 
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
@@ -130,10 +137,17 @@ protected:
   bool EnableAllStep;
   bool mUseVolFrame;
   bool mStoreOutPart;
+  bool EnableNuclearFlag;
+
+  bool EnableTOut;
+  bool EnableTProd;
 
   bool mSphereProjectionFlag;
   G4ThreeVector mSphereProjectionCenter;
   double mSphereProjectionRadius;
+
+  bool mTranslateAlongDirectionFlag;
+  double mTranslationLength;
 
   bool bEnableCoordFrame;
   G4String bCoordFrame;
@@ -147,6 +161,9 @@ protected:
   bool bEnableCompact;
   bool bEnablePDGCode;
   long int bPDGCode;
+
+  bool bEnableTOut;
+  bool bEnableTProd;
 
   double mFileSize;
 
@@ -172,7 +189,9 @@ protected:
   float ekPost;
   float ekPre;
   float w;
-  float t;//t is either time or local time.
+  float tOut;
+  float tProd;
+  double t;//t is either time or local time.
   G4int m;
   Char_t vol[256];
 
@@ -184,6 +203,9 @@ protected:
   int eventid;
   int runid;
 
+  int creator;
+  int nucprocess;
+  int order;
 
   G4EmCalculator * emcalc;
   GatePhaseSpaceActorMessenger* pMessenger;

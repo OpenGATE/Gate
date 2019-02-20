@@ -6,7 +6,7 @@ echo
 
 # 2 or 3 parameters should be provided, exit otherwise
 # 3rd parameter is the path used by Nightly dashboard and 'make test'
-if [ "$#" -le 1 ] || [ "$#" -ge 4 ]
+if [ "$#" -le 1 ] || [ "$#" -gt 4 ]
 then
     echo "Usage (example): `basename $0` benchRT gamma"
     exit 1
@@ -17,11 +17,17 @@ echo "Current directory:"
 pwd
 echo
 
-echo "Printing the three parameters for debugging:"
+echo "Printing the four parameters for debugging:"
 echo $1
 echo $2
 echo $3
+echo $4
 echo
+
+if [ ! -z ${4+x} ]; then
+    GATE_BINARY=$4
+fi
+
 echo "Gate binary location:"
 # GATE_BINARY is unset
 if [ -z ${GATE_BINARY+x} ]; then

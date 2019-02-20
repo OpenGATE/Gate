@@ -62,7 +62,7 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setRmaxCmd->SetParameterName("R value",false);
 
   cmdName = GetDirectoryName()+"setStartingParticleId";
-  setStartIdCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  setStartIdCmd = new G4UIcmdWithADouble(cmdName,this);
   setStartIdCmd->SetGuidance("set the id of the particle to start with");
 
 }
@@ -96,7 +96,7 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
   if (command == setUseNbParticleAsIntensityCmd)
     pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
-  if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewIntValue(newValue));
+  if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
 }
 //----------------------------------------------------------------------------------------
 

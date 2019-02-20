@@ -19,6 +19,8 @@
 #include "G4VisAttributes.hh"
 #include "G4Region.hh"
 #include "G4VoxelLimits.hh"
+#include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
 
 #include "GateVolumeMessenger.hh"
 #include "GateBox.hh"
@@ -35,6 +37,7 @@
 #include "GateVActor.hh"
 #include "GateOutputMgr.hh"
 #include "GateMessageManager.hh"
+#include "GateImage.hh"
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"
 #endif
@@ -75,9 +78,9 @@ GateVVolume::GateVVolume(const G4String& itsName,
     pMotherLogicalVolume(0),
     m_creator(0),
     m_sensitiveDetector(0),
-    mParent(0)
+    mParent(0),
+    mDumpPath("")
 {
-
   SetCreator(this);
 
   // Create a new vis-attributes object
@@ -636,4 +639,106 @@ void GateVVolume::AttachARFSD()
   m_sensitiveDetector = arfSD;
 }
 /* PY Descourt 08/09/2009 */
+//------------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------------------
+void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
+{
+  time_t tStart, tEnd;
+  time(&tStart);
+
+  G4Navigator* navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+
+  G4VPhysicalVolume* WorldVolume = navigator->GetWorldVolume();
+  G4cout << "Current world volume: " << navigator->GetWorldVolume()->GetName() << G4endl;
+
+  navigator->SetWorldVolume(GetPhysicalVolume());
+
+  G4cout << "Current world volume: " << navigator->GetWorldVolume()->GetName() << G4endl;
+
+  G4VoxelLimits limits;
+  G4double min, max;
+  G4AffineTransform at;
+  G4ThreeVector size;
+  GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
+  size.setX(max-min);
+  GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+  size.setY(max-min);
+  GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
+  size.setZ(max-min);
+
+  const G4ThreeVector resolution (std::round(size.x()/spacing.x()),std::round(size.y()/spacing.y()),std::round(size.z()/spacing.z()));
+
+  spacing.set(size.x()/resolution.x(),size.y()/resolution.y(),size.z()/resolution.z());
+
+  GateImageInt* image = new GateImageInt();
+  image->SetResolutionAndVoxelSize(resolution,spacing);
+  image->Allocate();
+
+  GateMessage("Geometry",0,"[GateVVolume::" << __FUNCTION__ << "] DEBUG: Voxelized image informations:" << Gateendl
+  << "      resolution: " << resolution.x() << "," <<resolution.y()<<"," << resolution.z() << Gateendl
+  << "      size      : " << size.x() << "," <<size.y()<<"," << size.z() << " mm" << Gateendl
+  << "      spacing   : " << spacing.x() << "," <<spacing.y()<<"," << spacing.z() << " mm" << Gateendl
+  << "      voxels    : " << image->GetNumberOfValues() << Gateendl);
+
+  std::vector<G4String> name;
+
+  if (mDumpPath == "")
+    mDumpPath = "data/";
+
+  G4String HU2MatPath = mDumpPath+"/"+GetPhysicalVolume()->GetName()+"-HU2Mat.txt";
+  std::ofstream file(HU2MatPath, std::ofstream::out | std::ofstream::trunc);
+
+  for(signed long int index=0;index<image->GetNumberOfValues();index++)
+  {
+    const G4ThreeVector doselCoordinates = image->GetVoxelCenterFromIndex(index);
+    const G4VPhysicalVolume* PV = navigator->LocateGlobalPointAndSetup(doselCoordinates);
+
+    bool OK = false;
+    int nb = 0;
+    for(size_t i=0;i<name.size();i++)
+      if (name[i] == PV->GetLogicalVolume()->GetMaterial()->GetName())
+      {
+        OK = true;
+        nb = i;
+      }
+
+    if (!OK)
+    {
+      name.push_back(PV->GetLogicalVolume()->GetMaterial()->GetName());
+      nb = name.size()-1;
+      std::ostringstream a,b;
+      a << nb;
+      b << nb+1;
+      file << a.str() << " " << a.str() << " " << PV->GetLogicalVolume()->GetMaterial()->GetName() << std::endl;
+    }
+
+    //G4cout << "Index: " << index << " , Mat name is: " << PV->GetLogicalVolume()->GetMaterial()->GetName() << " (" << nb << ")" << G4endl;
+
+    image->SetValue(index,nb);
+  }
+
+  file.close();
+
+  GateMessage("Geometry",0,"[GateVVolume::" << __FUNCTION__ << "] " << HU2MatPath << " written" << Gateendl);
+
+  std::ostringstream sx,sy,sz;
+  sx << spacing.x();
+  sy << spacing.y();
+  sz << spacing.z();
+
+  G4String imagePath = mDumpPath+"/"+GetPhysicalVolume()->GetName()+"-"+sx.str()+"-"+sy.str()+"-"+sz.str()+"mm.mhd";
+
+  image->Write(imagePath);
+
+  navigator->SetWorldVolume(WorldVolume);
+  G4cout << "Current world volume: " << navigator->GetWorldVolume()->GetName() << G4endl;
+
+  GateMessage("Geometry",0,"[GateVVolume::" << __FUNCTION__ << "] " << imagePath << " written" << Gateendl);
+
+  time(&tEnd);
+
+  GateMessage("Geometry", 0, "[GateVVolume::" << __FUNCTION__ << "] DEBUG: Computing time: " << difftime(tEnd,tStart) << " s" << Gateendl);
+}
 //------------------------------------------------------------------------------------------

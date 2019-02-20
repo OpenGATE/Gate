@@ -86,16 +86,16 @@ cd reference
 
 echo
 echo "----------------------------------------------------"
-echo "md5sum creation."
+echo "sha512sum creation."
 
 if test "$(uname)" = "Darwin"
 then
-    md5 -q $1_$2-reference.tgz >$1_$2-reference.tgz.md5
+    sha512 -q $1_$2-reference.tgz >$1_$2-reference.tgz.sha512
 else
-    echo $(md5sum $1_$2-reference.tgz | cut -f 1-1 -d ' ') >$1_$2-reference.tgz.md5
+    echo $(sha512sum $1_$2-reference.tgz | cut -f 1-1 -d ' ') >$1_$2-reference.tgz.sha512
 fi
 
-git add $1_$2-reference.tgz.md5
+git add $1_$2-reference.tgz.sha512
 echo "----------------------------------------------------"
 
 echo
@@ -104,7 +104,7 @@ if [ `grep $1_$2 ../../CMakeLists.txt |grep ADD_TEST|wc -l` -eq 0 ];
 then
     echo "Addition of a new external reference data."
 
-    echo "$1_$2-reference.tgz.md5-stamp" >> .gitignore
+    echo "$1_$2-reference.tgz.sha512-stamp" >> .gitignore
     echo "$1_$2-reference.tgz"           >> .gitignore
     git add .gitignore
 
@@ -129,7 +129,6 @@ echo "Here is a 'git status':"
 git status
 echo "Don't forget to commit and push the local modifications, especially the new files."
 echo
-echo "Don't forget to upload your data $1_$2-reference.tgz (from $1/reference folder) in http://midas3.kitware.com/midas/community/28"
-echo "To do so, login, select Public/benchmarks/$1/reference/$1_$2-reference.tgz (without checking it), click on 'View' and then 'Upload new revision'."
+echo "Don't forget to upload your data $1_$2-reference.tgz (from $1/reference folder) in https://data.kitware.com/#collection/5be2bffb8d777f21798e28bb/folder/5be2c0298d777f21798e28d3"
 
 exit 0

@@ -68,6 +68,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mVolumeFilter = "";
   mMaterialFilter = "";
   mTestFlag = false;
+  mDoseByRegionsFlag = false;
 
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
@@ -293,6 +294,10 @@ void GateDoseActor::Construct() {
   }
 
   if (mDoseByRegionsFlag) {
+    if(mDoseByRegionsInputFilename == "")
+    {
+      GateError("Please set DoseByRegionsInputFilename if you want to use DoseByRegions");
+    }
     mDoseByRegionsLabelImage.Read(mDoseByRegionsInputFilename);
     SetOriginTransformAndFlagToImage(mDoseByRegionsLabelImage);
     // double tol = 0.00000001;
@@ -409,8 +414,8 @@ void GateDoseActor::SaveData() {
          << dose << "\t"
          << std_dose << "\t"
          << sq_dose << "\t"
-         << region->nb_hits << "\t"
-         << region->nb_event_hits << std::endl;
+         << region->nb_hits-1 << "\t"
+         << region->nb_event_hits-1 << std::endl;
     }
     os.close();
   }

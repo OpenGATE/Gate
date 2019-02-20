@@ -49,7 +49,7 @@ private:
   G4UIcmdWithoutParameter*   RandomSymmetryCmd;
   G4UIcmdWithABool*          setUseNbParticleAsIntensityCmd;
   G4UIcmdWithADoubleAndUnit* setRmaxCmd;
-  G4UIcmdWithAnInteger*      setStartIdCmd;
+  G4UIcmdWithADouble*        setStartIdCmd;
 };
 //----------------------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
+  See GATE/LICENSE.txt for further details
   ----------------------*/
 
 #include "GateConfiguration.h"
@@ -15,6 +15,7 @@
   laurent.guigues@creatis.insa-lyon.fr
   david.sarrut@creatis.insa-lyon.fr
   pierre.gueth@creatis.insa-lyon.fr
+  andreas.resch@meduniwien.ac.at
 */
 
 #ifndef GATEENERGYSPECTRUMACTOR_HH
@@ -28,6 +29,9 @@
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TMath.h>
+
+#include <list>
 
 class G4EmCalculator;
 //-----------------------------------------------------------------------------
@@ -75,6 +79,13 @@ public:
   void SetLETmin(double v) {mLETmin = v;}
   void SetLETmax(double v) {mLETmax = v;}
   void SetNLETBins(double v) {mLETBins = v;}
+  
+  G4double GetQmin() {return mQmin; }
+  G4double GetQmax() {return mQmax; }
+  int GetNQBins() {return mQBins; }
+  void SetQmin(double v) {mQmin = v;}
+  void SetQmax(double v) {mQmax = v;}
+  void SetNQBins(double v) {mQBins = v;}
 
   void SetEmin(double v) {mEmin = v;}
   void SetEmax(double v) {mEmax = v;}
@@ -88,9 +99,23 @@ public:
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
   void SetLETSpectrumCalc(bool b) {mEnableLETSpectrumFlag = b; }
+  void SetQSpectrumCalc(bool b) {mEnableQSpectrumFlag = b; }
   void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
   void SetSaveAsTextDiscreteEnergySpectrumFlag(bool b) { mSaveAsDiscreteSpectrumTextFlag = b; if (b) SetSaveAsTextFlag(b); }
 
+  void SetESpectrumNbPartCalc(bool b) {mEnableEnergySpectrumNbPartFlag = b; }
+  void SetESpectrumFluenceCosCalc(bool b) {mEnableEnergySpectrumFluenceCosFlag = b; }
+  void SetESpectrumFluenceTrackCalc(bool b) {mEnableEnergySpectrumFluenceTrackFlag = b; }
+  void SetESpectrumEdepCalc(bool b) {mEnableEnergySpectrumEdepFlag = b; }
+
+  void SetEdepHistoCalc(bool b) {mEnableEdepHistoFlag = b; }
+  void SetEdepTimeHistoCalc(bool b) {mEnableEdepTimeHistoFlag= b; }
+  void SetEdepTrackHistoCalc(bool b) {mEnableEdepTrackHistoFlag = b; }
+  void SetElossHistoCalc(bool b) {mEnableElossHistoFlag = b; }
+  
+  
+  void SetLogBinning(bool b) {mEnableLogBinning = b; }
+  void SetEnergyPerUnitMass(bool b) {mEnableEnergyPerUnitMass = b; }
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
 
@@ -98,15 +123,38 @@ protected:
   G4String mHistName;
 
   TH1D * pEnergySpectrum;
+  TH1D * pEnergySpectrumFluence;
+  TH1D * pEnergySpectrumTrack;
+  //TH1D * ;
+  //TH1D * ;
+  //TH1D * ;
+  TH1D * pEnergySpectrumNbPart;
+  TH1D * pEnergySpectrumFluenceCos;
+  TH1D * pEnergySpectrumFluenceTrack;
+  TH1D * pEnergySpectrumLET;
+  TH1D * pEnergySpectrumLETdoseWeighted;
+  
+  TH1D * pEnergyEdepSpectrum;
   TH1D * pDeltaEc;
   TH1D * pEdep;
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
+  
+  std::list<TH1D*> allEnabledTH1DHistograms;
 
   TH1D * pLETSpectrum;
   G4double mLETmin;
   G4double mLETmax;
   int mLETBins;
+  G4double pEnergySpectrumTrackNorm;
+
+  TH1D * pQSpectrum;
+  G4double mQmin;
+  G4double mQmax;
+  int mQBins;
+  
+  double * eBinV;
+  double dEn;
   
   double mEmin;
   double mEmax;
@@ -138,6 +186,18 @@ protected:
   bool mSaveAsTextFlag;
   bool mSaveAsDiscreteSpectrumTextFlag;
   bool mEnableLETSpectrumFlag;
+  bool mEnableQSpectrumFlag;
+  bool mEnableEnergySpectrumNbPartFlag;
+  bool mEnableEnergySpectrumFluenceCosFlag;
+  bool mEnableEnergySpectrumFluenceTrackFlag;
+  bool mEnableEnergySpectrumEdepFlag;
+  bool mEnableEdepHistoFlag;
+  bool mEnableEdepTimeHistoFlag;
+  bool mEnableEdepTrackHistoFlag;
+  bool mEnableElossHistoFlag;
+  bool mEnableLogBinning;
+  bool mEnableEnergyPerUnitMass;
+  
   
   G4EmCalculator * emcalc;
 };
