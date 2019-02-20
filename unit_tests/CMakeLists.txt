@@ -14,6 +14,7 @@ set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/catch)
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 
+include_directories(utils/include)
 
 # test labels
 # fast: less than 10 seconds per test case (on a fast computer)
@@ -41,7 +42,7 @@ target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 #set_tests_properties(HU_density_table_tests PROPERTIES LABELS "fast;general" )
 
 # Make pencil beam source test executable
-add_executable(PB_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/physics/GateSourcePencilBeamTest.cc)
+add_executable(PB_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/physics/GateSourcePencilBeamTest.cc ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc)
 target_link_libraries(PB_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
 add_test(NAME PB_tests
          COMMAND PB_tests -d yes)
