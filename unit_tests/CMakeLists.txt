@@ -41,9 +41,10 @@ include_directories(utils/include)
 #         COMMAND HU_density_table_tests -d yes)
 #set_tests_properties(HU_density_table_tests PROPERTIES LABELS "fast;general" )
 
-# Make pencil beam source test executable
-add_executable(PB_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/physics/GateSourcePencilBeamTest.cc ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc)
-target_link_libraries(PB_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
-add_test(NAME PB_tests
-         COMMAND PB_tests -d yes)
-set_tests_properties(PB_tests PROPERTIES LABELS "fast;physics" )
+# Make physics tests executable
+add_executable(Physics_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/physics/GateSourcePencilBeamTest.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/physics/GateSPSPosDistributionTest.cc  ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc)
+target_link_libraries(Physics_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
+add_test(NAME Physics_tests
+         COMMAND Physics_tests -d yes)
+set_tests_properties(Physics_tests PROPERTIES LABELS "fast;physics" )
