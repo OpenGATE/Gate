@@ -10,7 +10,7 @@ INCLUDE(${Geant4_USE_FILE})
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 
 # Prepare "Catch" library for other executables
-set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/catch)
+set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../external/catch)
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 
@@ -25,7 +25,7 @@ set(TEST_MODULES_LIST physics digits_hits general)
 foreach(NAME IN LISTS TEST_MODULES_LIST)
     set(TARGET ${NAME}_tests)
     file(GLOB TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}/*.cc) # todo: replace with better method
-    add_executable(${TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc ${TEST_SRCS})
+    add_executable(${TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc ${TEST_SRCS})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/utils/include) # todo: move to sources directory? (out of unit_tests)
     target_link_libraries(${TARGET} Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
     add_test(NAME ${TARGET}
