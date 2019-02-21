@@ -233,7 +233,6 @@ void GateEnergySpectrumActor::SaveData()
       {
           (*it)->Scale(1./nEvent);
       }
-       //pEnergySpectrumFluenceTrack->Scale(1./nEvent);
    }
   
   GateVActor::SaveData();
