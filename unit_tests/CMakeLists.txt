@@ -56,3 +56,11 @@ target_link_libraries(Digits_hits_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROO
 add_test(NAME Digits_hits_tests
         COMMAND Digits_hits_tests -d yes)
 set_tests_properties(Digits_hits_tests PROPERTIES LABELS "fast;digits_hits" )
+
+# Make general tests executable
+add_executable(General_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/general/GateHounsfieldDensityTableTest.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc)
+target_link_libraries(General_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
+add_test(NAME General_tests
+        COMMAND General_tests -d yes)
+set_tests_properties(General_tests PROPERTIES LABELS "fast;general" )
