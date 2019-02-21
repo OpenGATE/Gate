@@ -200,13 +200,13 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   
   bb = base+"/setEnergyPerUnitMass";
   pEnableEnergyPerUnitMassCMD = new G4UIcmdWithABool(bb, this);
-  guidance = G4String("Set energy per nucleus");
+  guidance = G4String("Score energy per nucleus instead of total energy");
   pEnableEnergyPerUnitMassCMD->SetGuidance(guidance);
   
   
-  bb = base+"/setRelativeToNbPrimaryEvents";
+  bb = base+"/normalizeToNbPrimaryEvents";
   pEnableRelativePrimEventsCMD = new G4UIcmdWithABool(bb, this);
-  guidance = G4String("Set values relative to number of primary events");
+  guidance = G4String("Normalize all enabled 1D histograms to the number of primary events");
   pEnableRelativePrimEventsCMD->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
