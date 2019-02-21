@@ -48,3 +48,11 @@ target_link_libraries(Physics_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LI
 add_test(NAME Physics_tests
          COMMAND Physics_tests -d yes)
 set_tests_properties(Physics_tests PROPERTIES LABELS "fast;physics" )
+
+# Make digits_hits tests executable
+add_executable(Digits_hits_tests ${CMAKE_CURRENT_SOURCE_DIR}/catch/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/digits_hits/GatePulseTest.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/src/Stat.cc)
+target_link_libraries(Digits_hits_tests Catch GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES} )
+add_test(NAME Digits_hits_tests
+        COMMAND Digits_hits_tests -d yes)
+set_tests_properties(Digits_hits_tests PROPERTIES LABELS "fast;digits_hits" )
