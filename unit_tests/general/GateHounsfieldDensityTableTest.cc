@@ -5,28 +5,31 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <sstream>
 
 TEST_CASE("Density table reads input correctly and can interpolate","[HU][density][CT][interpolation][GateRTion]"){
+// todo; suggestion, one could do two different tests here, one that tests that input is read correctly
+// for different separators, and a second test that tests that it interpolates the data correctly. In that way each test
+// tests a single piece of functionality
 
-  std::string dfilename("tmp_hu_density.txt");
   std::vector<std::string> separators{" ","  ","\t","\t "," \t"," \t "};
 
   for (auto sep : separators){
     SECTION(std::string("test density table with sep='") + sep + std::string("' in input file") ){
 
-      // generate input file
+      // generate input data
+      std::stringstream in_stream;
+
       std::string ws; // "random" initial/final whitespace
-      std::ofstream dfile(dfilename);
       std::vector< std::pair<int,double> > hud_input{{-1000,0},{0,1.},{1000,3.}};
       for ( auto hud_value : hud_input ){
-        dfile << ws << hud_value.first << sep << hud_value.second << ws << std::endl;
+        in_stream << ws << hud_value.first << sep << hud_value.second << ws << std::endl;
         ws += " \t";
       }
-      dfile.close();
 
       // create density table
       GateHounsfieldDensityTable dtable;
-      dtable.Read(dfilename);
+      dtable.ReadFromStream(in_stream, G4String("unittest stream"));
 
       // reproduce input values
       for ( auto hud_value : hud_input ){
@@ -54,6 +57,34 @@ TEST_CASE("Density table reads input correctly and can interpolate","[HU][densit
       CHECK( dtable.GetDensityFromH(+2001)/(g/cm3) == 3. );
     }
   }
+}
+
+TEST_CASE("GateHounsfield table can deal with comments in input data","[HU][density][CT][interpolation][GateRTion]"){
+
+  std::stringstream in_stream;
+  in_stream << "# ======== " << std::endl
+            << "-1000 1.21e-3" << std::endl
+            << "# another comment" << std::endl
+            << "0 1" << std::endl
+            << "# final comment" << std::endl;
+
+  GateHounsfieldDensityTable dtable;
+  dtable.ReadFromStream(in_stream, G4String("unittest stream"));
+
+  REQUIRE(dtable.GetDensityFromH(-1000)/(g/cm3) == Approx(1.21e-3).epsilon(0.001));
+  REQUIRE(dtable.GetDensityFromH(0)/(g/cm3) == Approx(1.0).epsilon(0.001));
+}
+
+TEST_CASE("GateHounsfield table throws exception if input data is not ordered","[HU][density][CT][interpolation][GateRTion]"){
+
+  std::stringstream in_stream;
+  in_stream << "-1000 1.21e-3" << std::endl
+            << "0 1" << std::endl
+            << "-100 0.1" << std::endl;
+
+  GateHounsfieldDensityTable dtable;
+  // REQUIRE_THROWS(dtable.ReadFromStream(in_stream, G4String("unittest stream")));
+  // TODO: Implement a way to catch GateErrors
 }
 
 // vim: et:sw=2:ai:smartindent
