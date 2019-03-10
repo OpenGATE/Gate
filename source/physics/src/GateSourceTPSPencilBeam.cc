@@ -31,7 +31,7 @@
 GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mPencilBeam(NULL), mDistriGeneral(NULL)
 {
   //Particle Type
-  strcpy(mParticleType,"proton");
+  mParticleType="proton";
   //Particle Properties if GenericIon
   mIsGenericIon=false;
   //others

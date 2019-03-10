@@ -49,9 +49,9 @@ public:
   G4int GeneratePrimaries( G4Event* event );
   void GenerateVertex( G4Event* );
   //Particle Type
-  void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
+  void SetParticleType(G4String ParticleType) {mParticleType=ParticleType;}
   //Particle Properties If GenericIon
-  void SetIonParameter(G4String ParticleParameters) {strcpy(mParticleParameters, ParticleParameters);}
+  void SetIonParameter(G4String ParticleParameters) {mParticleParameters=ParticleParameters;}
   //Specify how to define the particle type
   void SetIsGenericIon(bool IsGenericIon) {mIsGenericIon=IsGenericIon;}
   //Test Flag
@@ -119,9 +119,9 @@ protected:
   double mDistanceSourcePatient;
 
   //Particle Type
-  char mParticleType[64];
+  G4String mParticleType;
   //Particle Properties If GenericIon
-  char mParticleParameters[64];
+  G4String mParticleParameters;
   //ParticleDefinitionMethod;
   bool mIsGenericIon;
   //Test flag (for verbosity)
