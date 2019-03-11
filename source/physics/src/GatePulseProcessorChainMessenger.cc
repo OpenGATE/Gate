@@ -50,7 +50,6 @@ See LICENSE.md for further details
 #include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GatePulseAdderGPUSpect.hh"
-#include "GateStripSpatialDiscretization.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
@@ -102,7 +101,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect stripSpDiscretization gridDiscretization";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect  gridDiscretization";
   return theList;
 }
 
@@ -191,8 +190,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
   else if (childTypeName=="systemFilter")
      newProcessor = new GateSystemFilter(GetProcessorChain(),newInsertionName);
-  else if (childTypeName=="stripSpDiscretization")
-     newProcessor = new GateStripSpatialDiscretization(GetProcessorChain(),newInsertionName);
+ // else if (childTypeName=="stripSpDiscretization")
+  //   newProcessor = new GateStripSpatialDiscretization(GetProcessorChain(),newInsertionName);
 else if (childTypeName=="gridDiscretization")
      newProcessor = new GateGridDiscretization(GetProcessorChain(),newInsertionName);
 #ifdef GATE_USE_OPTICAL
