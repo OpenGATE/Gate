@@ -57,8 +57,14 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
 
   // Local and global positions: store the controids
-  m_localPos  =  ( m_localPos  * m_energy  + right->m_localPos  * right->m_energy ) / totalEnergy ;
-  m_globalPos =  ( m_globalPos * m_energy  + right->m_globalPos * right->m_energy ) / totalEnergy ;
+  if(totalEnergy>0){
+    m_localPos  =  ( m_localPos  * m_energy  + right->m_localPos  * right->m_energy ) / totalEnergy ;
+    m_globalPos =  ( m_globalPos * m_energy  + right->m_globalPos * right->m_energy ) / totalEnergy ;
+  }
+  else{
+       m_localPos  =  ( m_localPos  + right->m_localPos)/2;
+       m_globalPos =  ( m_globalPos + right->m_globalPos)/2 ;
+  }
 
   // Now that the centroids are stored, we can store the energy
   m_energy   = totalEnergy;
