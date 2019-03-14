@@ -360,7 +360,7 @@ Third step: Setting-up the physics processes
 
 Once the volumes and corresponding sensitive detectors are described, the
 interaction processes of interest in the simulation have to be specified. Gate
-uses the GEANT4 models for physical processes. The user has to choose among
+uses the GEANT4 models for physical processes. The user has to choose among 
 these processes for each particle. Then, user can customize the simulation by
 setting the production thresholds, the cuts, the electromagnetic options...
 
