@@ -5,7 +5,7 @@ The definition of a geometry is a key step in designing a simulation
 because it is through the geometry definition that the imaging device
 and object to be scanned are described. Particles are then tracked
 through the components of the geometry. This section explains how to
-define the different components of the geometry.
+define the different components of the geometry. 
 
 The world
 ---------
