@@ -74,6 +74,7 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
 
   GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
 
+ // PulsesIndexBelowSolidAngleTHR.erase(PulsesIndexBelowSolidAngleTHR.begin(), PulsesIndexBelowSolidAngleTHR.end());
    flgTriggerAW=0;
    while(vID.size()){
        vID.erase(vID.end()-1);
@@ -85,6 +86,55 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
 
 
   if(!outputPulseList->empty()){
+
+   /*  //checking if multiples in a volume  which
+      double EffEnergyM=0;
+
+      for (auto const& x : PulsesIndexBelowSolidAngleTHR ){
+
+          if(x.second.size()>1){
+               EffEnergyM=0;
+              //TEngo multiples. Si estan cerca suma sus energias pata ver si pasan el THR
+              //Posicon media  y energua media Y la mas grande la chequeo a ver si cambio el flga
+              im=m_table.find(((outputPulseList->at(x.second[0])->GetVolumeID()).GetBottomCreator())->GetObjectName());
+              double distX=0;
+              double distY=0;
+                if(im!=m_table.end()){
+                    GateSolidAngleWeightedEnergyLaw* a=dynamic_cast<GateSolidAngleWeightedEnergyLaw*> ((*im).second.m_effectiveEnergyLaw);
+                   distX=2*a->GetRectangleSzX();
+                    distY=2*a->GetRectangleSzY();
+                    G4cout<<"dist ="<< distY<<G4endl;
+                }
+                G4cout<<"size of vector="<<x.second.size() <<G4endl;
+              for(unsigned int i1=0; i1<x.second.size(); i1++){
+                  // outputPulseList.at(x.second[i1])
+                  EffEnergyM=0;
+                  for(unsigned int i2=i1+1; i2<x.second.size(); i2++){
+                      //aprox I only consider two  singles that can be next to each other
+
+                      if((outputPulseList->at(x.second[i1])->GetLocalPos().getX()-outputPulseList->at(x.second[i2])->GetLocalPos().getX())<distX){
+                           if((outputPulseList->at(x.second[i1])->GetLocalPos().getY()-outputPulseList->at(x.second[i2])->GetLocalPos().getY())<distY){
+                              EffEnergyM+=(*im).second.m_effectiveEnergyLaw->ComputeEffectiveEnergy(*outputPulseList->at(x.second[i1]))+(*im).second.m_effectiveEnergyLaw->ComputeEffectiveEnergy(*outputPulseList->at(x.second[i2]));
+                              G4cout<<"NewEffectiveE="<<EffEnergyM<<G4endl;
+                               G4cout<<"THR="<<(*im).second.m_threshold <<G4endl;
+                              if(EffEnergyM>= (*im).second.m_threshold ){
+                                  vID.push_back(outputPulseList->at(x.second[0])->GetVolumeID());
+                                  flgTriggerAW=1;
+                              }
+                              break;
+                           }
+                      }
+
+
+                  }
+                  if(EffEnergyM>0)break;
+              }
+          }
+
+      }*/
+
+
+
 
       GatePulseIterator iter;
       for (iter=outputPulseList->begin(); iter!= outputPulseList->end() ; ++iter){
@@ -98,6 +148,7 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
               if(lawP=="solidAngleWeighted" ){
                   if(flgTriggerAW==0){
                       //Reject the pulse and delte
+
                       delete (*iter);
                       outputPulseList->erase(iter);
                      --iter;
@@ -175,6 +226,17 @@ void GateLocalEnergyThresholder::ProcessOnePulse(const GatePulse* inputPulse,Gat
               G4cout << "Ignored pulse with energy below threshold except for solidAngleWeighted:\n"
                      << *outputPulse << Gateendl << Gateendl ;
           if( lawP=="solidAngleWeighted"){
+
+
+               /*G4String currentVolume=(outputPulse->GetVolumeID().GetBottomCreator())->GetObjectName()+std::to_string(outputPulse->GetVolumeID().GetBottomVolume()->GetCopyNo());
+
+               if(PulsesIndexBelowSolidAngleTHR.find(currentVolume)!=PulsesIndexBelowSolidAngleTHR.end()){;
+                    PulsesIndexBelowSolidAngleTHR[currentVolume].push_back(outputPulseList.size());
+               }
+               else{
+                   PulsesIndexBelowSolidAngleTHR.insert(std::pair<G4String,std::vector<int>> (currentVolume,{(int)(outputPulseList.size())}));
+               }*/
+
 
               outputPulseList.push_back(outputPulse);
           }

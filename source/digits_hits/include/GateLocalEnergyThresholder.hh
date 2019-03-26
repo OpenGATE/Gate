@@ -74,6 +74,10 @@ class GateLocalEnergyThresholder : public GateVPulseProcessor
         G4String m_name;                               //! Name of the volume
       GateMap<G4String,param> m_table ;  //! Table which contains the names of volume with their characteristics
       GateMap<G4String,param> ::iterator im;  //! iterator of the gatemap
+
+      //---------------test for multiples close to each other
+      // std::map<G4String, std::vector<int>> PulsesIndexBelowSolidAngleTHR;
+      //-------------------
 };
 
 

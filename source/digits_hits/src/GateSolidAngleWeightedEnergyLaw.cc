@@ -2,7 +2,7 @@
 
 #include "GateSolidAngleWeightedEnergyLaw.hh"
 
-
+#include "Randomize.hh"
 
 GateSolidAngleWeightedEnergyLaw::GateSolidAngleWeightedEnergyLaw(const G4String& itsName, G4double its_SzX, G4double its_SzY) :
     GateVEffectiveEnergyLaw(itsName),
@@ -58,7 +58,10 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
         fSolidAngle=0.5;
     }
 
-    return (pulse.GetEnergy())*fSolidAngle;
+
+    double energyf=(pulse.GetEnergy())*fSolidAngle;
+    // energyf=G4RandGauss::shoot(energyf,0.2*energyf);
+    return energyf;
 
 }
 
