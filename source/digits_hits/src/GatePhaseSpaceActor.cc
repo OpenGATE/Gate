@@ -61,8 +61,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
-  EnableTOut = true ;
-  EnableTProd = true ;
+  EnableTOut = false ;
+  EnableTProd = false ;
 
   mSphereProjectionFlag = false;
   mSphereProjectionCenter = G4ThreeVector(0);
