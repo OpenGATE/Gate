@@ -1,6 +1,9 @@
 Parallel computing
 !!!!!!!!!!!!!!!!!!
 
-.. include:: how_to_use_gate_on_a_cluster.rst
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
-.. include:: how_to_use_gate_on_a_gpu.rst
+   how_to_use_gate_on_a_cluster
+   how_to_use_gate_on_a_gpu

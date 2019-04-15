@@ -1,6 +1,9 @@
 Getting started
 !!!!!!!!!!!!!!!
 
-.. include:: introduction.rst
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
-.. include:: installation.rst
+   introduction
+   installation

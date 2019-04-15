@@ -1,8 +1,11 @@
 Radiotherapy and dosimetry applications
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-.. include:: general_concept_radiotherapy.rst
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
-.. include:: beam_modelling.rst
+   general_concept_radiotherapy
+   beam_modelling
 
 list of `exercises <https://davidsarrut.pages.in2p3.fr/gate-exercices-site/>`_ and `examples <https://github.com/OpenGATE/GateContrib/tree/master/dosimetry>`_

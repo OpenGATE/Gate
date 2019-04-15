@@ -8,7 +8,6 @@ Welcome to GATE's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
    general
    general_concept

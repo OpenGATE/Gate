@@ -1,5 +1,7 @@
 Thermal therapy application
 !!!!!!!!!!!!!!!!!!!!!!!!!!!
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
-.. include:: nanoparticle_mediated_hyperthermia.rst
-
+   nanoparticle_mediated_hyperthermia
