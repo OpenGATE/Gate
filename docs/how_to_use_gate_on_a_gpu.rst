@@ -3,6 +3,7 @@ How to use Gate on a GPU
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Installation of CUDA tools
 --------------------------

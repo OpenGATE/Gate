@@ -3,6 +3,7 @@ How to use Gate on a Cluster
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 To reduce the overall computing time of GATE experiments, a parallel computing platform for running simulations in a cluster of computers was developed which significantly shortens the setup time and provides fast data output handling. To use Gate in cluster mode you need 3 components:
 

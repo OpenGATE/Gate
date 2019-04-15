@@ -3,6 +3,7 @@ Beam modelling
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Photon beam : LINAC
 -------------------

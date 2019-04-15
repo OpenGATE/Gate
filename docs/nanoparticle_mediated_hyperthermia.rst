@@ -3,6 +3,7 @@ Nanoparticle mediated hyperthermia
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Pre-requisite
 -------------

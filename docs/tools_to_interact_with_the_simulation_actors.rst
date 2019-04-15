@@ -3,6 +3,7 @@ Tools to Interact with the Simulation : Actors
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Actors are tools which allow to interact with the simulation. They can collect information during the simulation, such as energy deposit, number of particles created in a given volume, etc. They can also modify the behavior of the simulation. Actors use hooks in the simulation : run (begin/end), event(begin/end), track(begin/end), step.
 

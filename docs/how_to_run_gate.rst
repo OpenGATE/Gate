@@ -3,6 +3,7 @@ How to run Gate
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Interactive mode
 ----------------

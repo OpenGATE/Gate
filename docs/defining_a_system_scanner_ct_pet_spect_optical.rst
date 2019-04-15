@@ -3,6 +3,7 @@ Defining a system
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Definition
 ----------

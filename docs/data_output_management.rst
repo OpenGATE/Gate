@@ -3,6 +3,7 @@ Data output
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 In GATE, there are several types of output format, which can be enabled. By default all outputs are disabled and moreover there is no default output file name. You **must** give a file name, otherwise the output module will be automatically disabled.
 

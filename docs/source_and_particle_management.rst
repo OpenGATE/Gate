@@ -3,6 +3,7 @@ Source
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 To introduce a source into a GATE simulation, the user has to define the type of source (voxelized, linacBeam, phaseSpace, PencilBeam, TPSPencilBeam or GPS) and its feature (angle, energy, and position). Many activity distributions are available in GATE. At each new event, the source manager decides randomly which source decays, and generates for it one or more primary particles.
 

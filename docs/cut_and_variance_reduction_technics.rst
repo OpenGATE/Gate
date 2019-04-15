@@ -3,6 +3,7 @@ Cut and Variance Reduction Technics
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Production threshold, step limiter and special cuts
 ---------------------------------------------------

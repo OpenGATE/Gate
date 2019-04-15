@@ -3,6 +3,7 @@ Attaching the sensitive detectors
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 General purpose
 ---------------

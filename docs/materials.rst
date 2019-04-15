@@ -3,6 +3,7 @@ Materials
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 The Gate material database
 --------------------------

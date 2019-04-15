@@ -3,6 +3,7 @@ Radiotherapy General Concept
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 General concept
 ---------------

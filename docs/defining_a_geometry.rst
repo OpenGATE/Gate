@@ -3,6 +3,7 @@ Defining a geometry
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 The definition of a geometry is a key step in designing a simulation
 because it is through the geometry definition that the imaging device

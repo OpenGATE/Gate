@@ -3,6 +3,7 @@ Digitizer and readout parameters
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 General Purpose
 ---------------

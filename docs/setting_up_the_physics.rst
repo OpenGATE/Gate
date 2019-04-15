@@ -3,6 +3,7 @@ Setting up the physics
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 New physics list mechanism
 --------------------------

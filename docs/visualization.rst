@@ -3,6 +3,7 @@ Visualization
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 Introduction
 ------------

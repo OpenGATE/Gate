@@ -3,6 +3,7 @@ Getting Started
 
 .. contents:: Table of Contents
    :depth: 15
+   :local:
 
 This section is an overview of the main steps one must go through to perform a
 simulation using Gate. It is presented in the form of a simple example that the
