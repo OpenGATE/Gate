@@ -1,6 +1,9 @@
 Getting Started
 ===============
 
+.. contents:: Table of Contents
+   :depth: 15
+
 This section is an overview of the main steps one must go through to perform a
 simulation using Gate. It is presented in the form of a simple example that the
 user is encouraged to try out, while reading this section. A more detailed
@@ -560,6 +563,12 @@ is weighted by the ratio between the time slice and the total simulation time::
 
   /gate/application/setNumberOfPrimariesPerRun [N]
 
+It also can be useful to set a different number of primaries for each run. This can be done using a file containing the number of primaries and with the command::
+
+   /gate/application/readNumberOfPrimariesInAFile [path/to/filename]
+
+An `example of use <https://github.com/OpenGATE/GateContrib/tree/master/dosimetry/Radiotherapy/example11>`_ can be found in GateContrib
+
 Regular time slice approach
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -672,3 +681,5 @@ beginning of run.
    :name: fig2.9
 
    GATE simulation architecture
+
+*last modification: 11/04/2019*

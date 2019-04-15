@@ -1,6 +1,9 @@
 Defining a geometry
 ===================
 
+.. contents:: Table of Contents
+   :depth: 15
+
 The definition of a geometry is a key step in designing a simulation
 because it is through the geometry definition that the imaging device
 and object to be scanned are described. Particles are then tracked
@@ -1372,3 +1375,4 @@ updated with the following command::
 .. |Figure 3.14: Illustration of the rotation placement| image:: avant_rot.jpg
 .. |Figure 3.14: Illustration of the rotation placement| image:: place_rot.jpg
 
+*last modification: 11/04/2019*
