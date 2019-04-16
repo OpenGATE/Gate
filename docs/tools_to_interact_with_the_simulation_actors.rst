@@ -186,10 +186,9 @@ This algorithm is used by default. The absorbed dose of each material is pondera
 Mass weighting algorithm
 ++++++++++++++++++++++++
 
-This algorithm calculates the dose of each dosels by taking the deposited energy and dividing it by its mass. 
+This algorithm calculates the dose of each dosels by taking the deposited energy and dividing it by its mass:: 
 
-
- /gate/actor/[Actor Name]/setDoseAlgorithm MassWeighting
+  /gate/actor/[Actor Name]/setDoseAlgorithm MassWeighting
 
 **Mass image :**
 
