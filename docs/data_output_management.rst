@@ -722,8 +722,9 @@ Data reduction
 The polar coordinate of a LOR is approximately defined by the crystal-ring index difference between
 the 2 rings in coincidence. For a scanner with N crystal rings, the total number of polar samples is given
 by 2 × N − 1. Usually, on ecat systems, not all crystal-ring differences are recorded. Only absolute
-crystal-ring differences up to a given value, referred to as the maximum ring difference, are recorded. In Gate, this maximum ring difference is defined using:
- /gate/output/ecat7/maxringdiff 22
+crystal-ring differences up to a given value, referred to as the maximum ring difference, are recorded. In Gate, this maximum ring difference is defined using::
+
+   /gate/output/ecat7/maxringdiff 22
 
 The value of the maximum ring difference should be smaller than N.
 
