@@ -1,3 +1,5 @@
+.. _defining_a_geometry-label:
+
 Defining a geometry
 ===================
 
@@ -41,7 +43,7 @@ edited using the following GATE command::
 
   /gate/world/describe
 
-The output of this command is shown in figure 3.1. The parameters
+The output of this command is shown in :numref:`World-updated`. The parameters
 associated with the *world* volume can be modified to be adapted to a
 specific simulation configuration. Only the shape of the *world* volume,
 which is a box, cannot be changed. For instance, the X length can be
@@ -90,10 +92,7 @@ volume *Volume_Name*. The available sub-trees are:
 -  moves: To 'move' the volume
 -  placement: To control the placement of the volume
 
-The commands available in each sub-tree will be described in `#Building
-a volume <#Building_a_volume>`__, `#Repeating a
-volume <#Repeating_a_volume>`__, `#Placing a
-volume <#Placing_a_volume>`__, `#Moving a volume <#Moving_a_volume>`__.
+The commands available in each sub-tree will be described in :ref:`building_a_volume-label`, :ref:`repeating_a_volume-label`, :ref:`placing_a_volume-label`, :ref:`moving_a_volume-label`.
 
 Units
 ~~~~~
@@ -190,6 +189,7 @@ using::
    |                     | atmosphere atm          |                        |                                           |
    +---------------------+-------------------------+------------------------+-------------------------------------------+
 
+.. _building_a_volume-label:
 
 Building a volume
 ~~~~~~~~~~~~~~~~~
@@ -217,8 +217,7 @@ This command prepares the creation of a new volume named *Volume_Name*
 which is the daughter of *mother_Volume_Name.*
 
 Some names should not be used as they have precise meanings in gate.
-These names are the names of the GATE systems (see `Users Guide:Defining
-a system <Users_Guide:Defining_a_system>`__) currently defined in GATE:
+These names are the names of the GATE systems (see :ref:`defining_a_system-label`) currently defined in GATE:
 *scanner*, *PETscanner*, *cylindricalPET*, *SPECTHead*, *ecat*, *CPET*,
 *OPET* and *OpticalSystem*.
 
@@ -276,7 +275,7 @@ dimensions associated with that shape. These default dimensions can be
 modified using the sub-tree /geometry/
 
 The commands available in the sub-tree depend on the shape. The
-different commands for each type of shape are listed in table 3.2
+different commands for each type of shape are listed in :numref:`shape_tab`
 
 These commands can be found in the directory::
 
@@ -376,8 +375,7 @@ along the X, Y and Z axes respectively.
 
 A material must be associated with each volume. The default material
 assigned to a new volume is Vacuum. The list of available materials is
-defined in the GateMaterials.db file. (see `Users
-Guide:Materials <Users_Guide:Materials>`__).
+defined in the GateMaterials.db file. (see :ref:`materials-label`).
 
 The following command fills the volume *Volume_Name* with a material
 called *Material*::
@@ -397,7 +395,7 @@ using the sub-tree /vis/
 
 The commands available in this sub-tree are: setColor, setVisible,
 setDaughtersInvisible, setLineStyle, setLineWidth, forceSolid and
-forceWireframe (see Table 3.3)
+forceWireframe (see :numref:`geometry_tab`)
 
 .. table:: List of commands of the GATE sub-tree geometry
    :widths: auto
@@ -509,7 +507,7 @@ An alternative way of describing complicated geometries is to use a
 so-called "boolean" volume in order to describe one piece using a single
 volume instead of using a mother-children couple. This can make the
 description easier and more synthetic. The example below describes how
-the shape shown in Figure 3.3 can be defined using a trpd shape, based
+the shape shown in :numref:`trapeze_name` can be defined using a trpd shape, based
 on a "boolean" volume consisting of a trapezoid "minus" a box::
 
   # V I S U A L I S A T I O N
@@ -566,7 +564,7 @@ which does not make it easy to use.
 
 To model "slanted" crystals, a new class called **GateWedgeCreator**
 (derived from **G4Trap**) builds right angular wedges. As shown in
-Figure 3.4, a wedge is defined by only three parameters that are easily
+:numref:`wedge2`, a wedge is defined by only three parameters that are easily
 understood:
 
 #. XLength: is the length of the wedge in the X direction.
@@ -677,6 +675,8 @@ The complete code used to generate this figure can be found in the
 GateContrib repository on Github under
 `misc/TetrahedralMeshGeometry <https://github.com/OpenGATE/GateContrib/tree/master/misc/TetrahedralMeshGeometry>`__.
 
+.. _repeating_a_volume-label:
+
 Repeating a volume
 ------------------
 
@@ -740,7 +740,7 @@ offset. The default option is true.
      /gate/hole/linear/setRepeatVector    0. 4. 0. cm
 
 The *hole* volume is repeated 12 times every 4 cm along the Y axis. The
-application of this linear repeater is illustrated in figure 3.5.
+application of this linear repeater is illustrated in :numref:`avant_linear`.
 
 Ring repeater
 ~~~~~~~~~~~~~
@@ -794,9 +794,8 @@ periodicity, use::
   /gate/Name_Volume/ring/setModuloNumber M
 
 When the volume auto-rotation option is enabled, the volume itself is
-rotated so that its axis remains tangential to the ring (see Figure
-3.6). If this option is disabled, all repeated volumes keep the same
-orientation (see Figure 3.7). The commands for enabling or disabling the
+rotated so that its axis remains tangential to the ring (see :numref:`autorotenable`). If this option is disabled, all repeated volumes keep the same
+orientation (see :numref:`autorotdisable`). The commands for enabling or disabling the
 auto-rotation option are::
 
   /gate/Name_Volume/ring/enableAutoRotation
@@ -858,7 +857,7 @@ output.
    /gate/hole/ring/setPoint2            0. 0. 0. mm
 
 The *hole* volume is repeated 10 times around the Y axis. The
-application of this ring repeater is illustrated in figure 3.8.
+application of this ring repeater is illustrated in :numref:`avant_ring`.
 
 .. figure:: avant_ring.jpg
    :alt: Figure 11: avant_ring
@@ -885,7 +884,7 @@ The *rsector* volume is repeated 20 times along a ring. The sequence
 length is 2, with the first and the second volume shifted by -3500 µ m
 and 3500 µ m respectively. The *rsector* volume could also include
 several volumes itself, each of them being duplicated, which is
-illustrated in figure 3.9.
+illustrated in :numref:`3ringscaps`.
 
 Cubic array repeater
 ~~~~~~~~~~~~~~~~~~~~
@@ -933,7 +932,7 @@ centered on P.
 
 The *hole* volume is repeated 5 times each 5 cm along the Y axis and
 twice each 15 cm along the Z axis. The application of this cubic array
-repeater is illustrated in figure 3.10.
+repeater is illustrated in figure :numref:`avant_cubic`.
 
 .. figure:: avant_cubic.jpg
    :alt: Figure 14: avant_cubic
@@ -987,7 +986,7 @@ your phantom
      /gate/hole/quadrant/setMaxRange       30 cm
 
 The *hole* volume is repeated in a triangle-like pattern. The
-application of this quadrant repeater is illustrated in figure 3.5.
+application of this quadrant repeater is illustrated in :numref:`avant_linear`.
 
 .. figure:: avant_quadrant.jpg
    :alt: Figure 16: avant_quadrant
@@ -1047,7 +1046,7 @@ axial direction, use::
 The replicates of the volume *Name_Volume* will be placed so that its
 axis remains tangential to the ring.
 
-Example 3.12::
+Example :numref:`sphere_lazaro_0`::
 
   /gate/block/repeaters/insert                   sphere
   /gate/block/sphere/setRadius                   25. cm
@@ -1061,6 +1060,8 @@ rotation angle between two neighbouring blocks of 36 deg, and is
 repeated 3 times in the axial direction with a rotation angle between
 two neighbouring blocks of 20 deg. The sphere defined here has a 25 cm
 radius.
+
+.. _generic_repeater-label:
 
 Generic repeater
 ~~~~~~~~~~~~~~~~
@@ -1096,8 +1097,9 @@ The text file "myvolume.placements" is composed as follows::
    0, the transformation is set as is (in the coordinate system of the
    mother volume).
 
-See example
-`here <GateRT#Example_n.C2.B05_:_using_generic_repeaters_and_move>`__
+See example :ref:`gatert-label`
+
+.. _placing_a_volume-label:
 
 Placing a volume
 ----------------
@@ -1140,7 +1142,7 @@ To set the magnitude of the translation vector, use::
 
 The *Phantom* volume is placed at 10 cm, 0 cm and 0 cm from the center
 of the mother volume (here the *world* volume). The application of this
-translation placement is illustrated in figure 3.13.
+translation placement is illustrated in :numref:`avant_place`.
 
 .. figure:: avant_place.jpg
    :alt: Figure 19: avant_place
@@ -1172,7 +1174,7 @@ The default rotation axis is the Z axis.
      /gate/Phantom/placement/setRotationAngle       90 deg
 
 The *Phantom* volume is rotated by 90 degrees around the Y axis. The
-application of this rotation placement is illustrated in figure 3.14.
+application of this rotation placement is illustrated in :numref:`Avant_rot`.
 
 .. figure:: Avant_rot.jpg
    :alt: Figure 21: Avant_rot
@@ -1218,7 +1220,7 @@ degree.
 Special example: Wedge volume and OPET scanner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The wedge is always created as shown in figure 3.4, that is with the
+The wedge is always created as shown in :numref:`wedge2`, that is with the
 slanted plane oriented towards the positive X direction. If one needs to
 have it oriented differently, one could, for instance, rotate it::
 
@@ -1234,7 +1236,7 @@ respectively. For the X direction, the center is located such that
 :math:`2 \Delta = \frac{setXLength + setNarrowerXLength}{2}`
 
 where Delta is the length of the wedge across the middle of the Y
-direction, as shown in Figure 3.15.
+direction, as shown in :numref:`wedge2d`.
 
 .. figure:: wedge2d.jpg
    :alt: Figure 23: wedge2d
@@ -1247,7 +1249,7 @@ ring geometry approximates a true circular ring.
 
 By knowing the radius gantry R and the length of the longest crystal, it
 is possible to arrange a series of 8 crystals with varying the lengths
-as shown in Figure 3.16.
+as shown in :numref:`opetblock`.
 
 .. figure:: opetblock.jpg
    :alt: Figure 24: opetblock
@@ -1304,7 +1306,9 @@ The last two steps are repeated for each crystal inside the module. Then
 the module is repeated along the Z axis and the block is repeated 6
 times around the center of the scanner.
 
-Figure 4.9 shows the final OPET scanner.
+:numref:`OPET2` shows the final OPET scanner.
+
+.. _moving_a_volume-label:
 
 Moving a volume
 ---------------
@@ -1492,7 +1496,7 @@ A volume can be move at given time value thanks to the following macros::
   /gate/myvolume/moves/insert                       genericMove
   /gate/myvolume/genericMove/setPlacementsFilename  data/myvolume.placements
 
-In the same idea than `GenericRepeater <#Generic_repeater>`__,the
+In the same idea than :ref:`generic_repeater-label`, the
 placements file contains the transformations (rotation, translation) and
 the time value where this transformations is applied::
 
@@ -1511,7 +1515,7 @@ the time value where this transformations is applied::
 
 *WARNING*. The time values given here do not necessarily correspond to
 simulation's *run*. The real runs are defined with the time slices (see
-`this section <#Eighth_step:_Starting_an_acquisition>`__ for example).
+:ref:`eighth_step_starting_an_acquisition-label` for example).
 At each new run, GATE looks into the time-placements list and chooses
 the one that corresponds to the starting time of the run. It leads that
 some placements can be not applied (if one run start before the
@@ -1519,7 +1523,7 @@ placement time and the next run start after the next placement time). If
 run time is after the last placements time in the list, the last
 placements is applied.
 
-See example `here <GateRT#ex5>`__
+See example :ref:`gatert-label`
 
 Generic repeater move
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1559,4 +1563,4 @@ updated with the following command::
 
   /gate/geometry/rebuild
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

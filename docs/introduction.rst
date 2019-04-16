@@ -2,13 +2,17 @@ Introduction
 ============
 
 .. figure:: GoldGate.jpg
-   :alt: GoldGate
+   :alt: Figure 1: GoldGate
    :name: GoldGate
+
+.. contents:: Table of Contents
+   :depth: 15
+   :local:
 
 Geant4 Application for Emission Tomography: a simulation toolkit for PET
 and SPECT
 
-`OpenGATE Collaboration: <http://www.opengatecollaboration.org>`_
+`OpenGATE Collaboration <http://www.opengatecollaboration.org>`_
 
 Authors
 -------
@@ -138,7 +142,7 @@ macro language - that extends the native command interpreter of GEANT4 makes it
 possible to perform and to control Monte Carlo simulations of realistic setups.
 
 .. figure:: GATE_layers.jpg
-   :alt: Figure 1: GATE_layers
+   :alt: Figure 2: GATE_layers
    :name: GATE_layers
 
    Structure of GATE
@@ -173,4 +177,4 @@ Chapter 11. Finally, Chapter 12 gives the principal material definitions
 available in GATE. Chapter 13 illustrates the interactive, bathc, or cluster
 modes of running GATE.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

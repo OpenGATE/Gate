@@ -184,5 +184,4 @@ Any position in the *world* is defined with respect to a three-axis system: X, Y
 
    /vis/scene/add/axes
 
-
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

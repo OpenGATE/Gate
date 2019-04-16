@@ -234,7 +234,7 @@ It is worth emphasizing the following points about aliases:
 How to launch *DigiGate*
 ------------------------
 
-GATE offers an operating mode dedicated to digitizer optimization, known as *DigiGate* (see [[Users Guide:Digitizer and readout parameters]]). *DigiGate* works by re-reading a previously generated ROOT hit-file. 
+GATE offers an operating mode dedicated to digitizer optimization, known as *DigiGate* (see :ref:`digitizer_and_readout_parameters-label`). *DigiGate* works by re-reading a previously generated ROOT hit-file.
 
 The use of **DigiGate** consists of two steps. 
 
@@ -360,4 +360,4 @@ When running multiple simulations simultaneously from the command line in batch 
 
 It is recommended (although not compulsory) to avoid running visualization commands in batch mode.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

@@ -1,3 +1,5 @@
+.. _getting_started-label:
+
 Getting Started
 ===============
 
@@ -65,10 +67,10 @@ mode, or build up macro files containing an ordered collection of commands.
 Each command performs a particular function, and may require one or more
 parameters. The Gate commands are organized following a tree structure, with
 respect to the function they represent. For example, all geometry-control
-commands start with :code:`geometry`, and they will all be found under the
-:code:`geometry` branch of the tree structure.
+commands start with *geometry*, and they will all be found under the
+*geometry* branch of the tree structure.
 
-When Gate is run, the :code:`Idle>` prompt appears. At this stage the command
+When Gate is run, the **Idle>** prompt appears. At this stage the command
 interpreter is active; i.e. all the Gate commands entered will be interpreted
 and processed on-line. All functions in Gate can be accessed to using command
 lines. The geometry of the system, the description of the radioactive source(s),
@@ -83,9 +85,9 @@ the software or when he/she is not sure how to construct the geometry, there
 remains a need for storing the set of commands that led to a successful
 simulation.
 
-Macros are ASCII files (with :code:`.mac` extension) in which each line contains
+Macros are ASCII files (with '.mac' extension) in which each line contains
 a command or a comment. Commands are GEANT4 or Gate scripted commands; comments
-start with the character ':code:`#`'. Macros can be executed from within the
+start with the character '#'. Macros can be executed from within the
 command interpreter in Gate, or by passing it as a command-line parameter to
 Gate, or by calling it from another macro. A macro or set of macros must include
 all commands describing the different components of a simulation in the right
@@ -102,7 +104,7 @@ execute a macro (mymacro.mac in this example) from the Linux prompt, just type::
   Gate mymacro.mac
 
 To execute a macro from inside the Gate environment, type after the
-:code:`Idle>` prompt::
+"Idle>" prompt::
 
   Idle>/control/execute mymacro.mac
 
@@ -128,16 +130,14 @@ The user needs to define the geometry of the simulation based on volumes. All
 volumes are linked together following a tree structure where each branch
 represents a volume. Each volume is characterized by shape, size, position, and
 material composition. The default material assigned to a new volume is Air. The
-list of available materials is defined in the GateMaterials.db file. (See `Users
-Guide:Materials <Users_Guide:Materials>`__). The location of the material
+list of available materials is defined in the GateMaterials.db file. (See :ref:`materials-label`). The location of the material
 database needs to be specified with the following command::
 
   /gate/geometry/setMaterialDatabase MyMaterialDatabase.db
 
 The base of the tree is represented by the world volume (:numref:`chap2-f1`) which
 sets the experimental framework of the simulation. All Gate commands related to
-the construction of the geometry are described in detail in `Users
-Guide:Defining a geometry <Users_Guide:Defining_a_geometry>`__. The world volume
+the construction of the geometry are described in detail in :ref:`defining_a_geometry-label`. The world volume
 is a box centered at the origin. It can be of any size and has to be large
 enough to include the entire simulation geometry. The tracking of any particle
 stops when it escapes from the world volume. The example given here simulates a
@@ -153,9 +153,8 @@ The world contains one or more sub volumes referred to as daughter volumes::
 
   /gate/world/daughters/name vol_name
 
-The name :code:`vol_name` of the first daughter of the world has a specific
-meaning and name. It specifies the type of scanner to be simulated. `Users
-Guide:Defining a system <Users_Guide:Defining_a_system>`__ gives the specifics
+The name vol_name of the first daughter of the world has a specific
+meaning and name. It specifies the type of scanner to be simulated. :ref:`defining_a_system-label` gives the specifics
 of each type of scanner, also called system. In the current example, the system
 is a CylindricalPET system. This system assumes that the scanner is based on a
 cylindrical configuration (:numref:`chap2-f2`) of blocks, each block containing a
@@ -200,8 +199,7 @@ command line for listing the visualization commands is::
 Let's assume that the scanner is made of 30 blocks (box1), each block containing
 8 times 8 LSO crystals (box2).
 
-The following command lines describe this scanner (see `Users Guide:Defining a
-geometry <Users_Guide:Defining_a_geometry>`__ to find a detailed explanation of
+The following command lines describe this scanner (see :ref:`defining_a_geometry-label` to find a detailed explanation of
 these commands). First, the geometry of each block needs to be defined as the
 daughter of the system (here cylindricalPET system)::
 
@@ -276,9 +274,7 @@ non-sensitive volumes are lost. A volume must belong to a system before it can
 be attached to a sensitive detector. Hits, occurring in a volume, cannot be
 scored in an output file if this volume is not connected to a system because
 this volume can not be attached to a sensitive detector. The concepts of system
-and sensitive detector are discussed in more detail in `Users Guide:Defining a
-system <Users_Guide:Defining_a_system>`__ and `Users Guide:Attaching the
-sensitive detectors <Users_Guide:Attaching_the_sensitive_detectors>`__
+and sensitive detector are discussed in more detail in :ref:`defining_a_system-label` and :ref:`attaching_the_sensitive_detectors-label`
 respectively.
 
 The following commands are used to connect the volumes to the system::
@@ -300,11 +296,9 @@ The following commands are used to connect the volumes to the system::
    Complete ring of 30 block detectors
 
 The names rsector and module are dedicated names and correspond to the first and
-the second levels of the CylindricalPET system (see `Users Guide:Defining a
-system <Users_Guide:Defining_a_system>`__).
+the second levels of the CylindricalPET system (see :ref:`defining_a_system-label`).
 
-In order to save the hits (see `Users Guide:Digitizer and readout parameters
-<Users_Guide:Digitizer_and_readout_parameters>`__) in the volumes corresponding
+In order to save the hits (see :ref:`digitizer_and_readout_parameters-label`) in the volumes corresponding
 to the crystals the appropriate command, in this example, is::
 
   # D E F I N E   A   S E N S I T I V E   D E T E C T O R
@@ -315,7 +309,7 @@ of the most distinctive features of Gate is the management of time-dependent
 phenomena, such as detector movements and source decay leading to a coherent
 description of the acquisition process. For simplicity, the simulation described
 in this tutorial does not take into account the motion of the detector or the
-phantom. `Users Guide:Defining a geometry <Users_Guide:Defining_a_geometry>`__
+phantom. :ref:`defining_a_geometry-label`
 describes the movement of volumes in detail.
 
 Second step: Defining a phantom geometry
@@ -356,8 +350,7 @@ collection:
 -  The name of the physical volume attached to the *phantomSD* in which
    the last interaction occurred.
 
-These concepts are further discussed in `Users Guide:Attaching the
-sensitive detectors <Users_Guide:Attaching_the_sensitive_detectors>`__.
+These concepts are further discussed in :ref:`attaching_the_sensitive_detectors-label`.
 
 Third step: Setting-up the physics processes
 --------------------------------------------
@@ -383,8 +376,7 @@ Some typical physics lists are available in the directory
    energy processes)
 
 The details of the interactions processes, cuts and options available in Gate
-are described in `Users Guide:Setting up the physics
-<Users_Guide:Setting_up_the_physics>`__.
+are described in :ref:`setting_up_the physics-label`.
 
 Fourth step: Initialization
 ---------------------------
@@ -458,9 +450,7 @@ For PET simulations, the coincidence sorter is also implemented at the
   # C O I N C I D E N C E   S O R T E R
   /gate/digitizer/Coincidences/setWindow 10. ns
 
-Other *digitizer* modules are available in Gate and are described in `Users
-Guide:Digitizer and readout parameters
-<Users_Guide:Digitizer_and_readout_parameters>`__.
+Other *digitizer* modules are available in Gate and are described in :ref:`digitizer_and_readout_parameters-label`.
 
 Sixth step: Setting-up the source
 ---------------------------------
@@ -474,8 +464,7 @@ the user.
 
 A voxelized phantom or a patient dataset can also be used to define the source,
 in order to simulate realistic acquisitions. For a complete description of all
-functions to define the sources, see `Users Guide:Voxelized Source and Phantom
-<Users_Guide:Voxelized_Source_and_Phantom>`__.
+functions to define the sources, see :ref:`voxelized_source_and_phantom-label`.
 
 In the current example, the source is a 1 MBq line source. The line source is
 defined as a cylinder with a radius of 0.5 mm and a length of 50 mm. The source
@@ -528,8 +517,7 @@ ROOT as described in the following command lines::
   /gate/output/root/setRootCoincidencesFlag 1
 
 Given this script, several ASCII files (.dat extension) and A ROOT file
-(test.root) will be created. `Users Guide:Data output
-<Users_Guide:Data_output>`__ explains how to read the resulting files.
+(test.root) will be created. :ref:`data_output-label` explains how to read the resulting files.
 
 For some scanner configurations, the events may be stored in a sinogram format
 or in List Mode Format (LMF). The sinogram output module stores the coincident
@@ -539,8 +527,9 @@ One 2D sinogram is created for each pair of crystal-rings. The sinograms are
 stored either in raw format or ecat7 format. The List Mode Format is the format
 developed by the Crystal Clear Collaboration (LGPL licence). A library has been
 incorporated in Gate to read, write, and analyze the LMF format. A complete
-description of all available outputs is given in `Users Guide:Data output
-<Users_Guide:Data_output>`__ .
+description of all available outputs is given in :ref:`data_output-label` .
+
+.. _eighth_step_starting_an_acquisition-label:
 
 Eighth step: Starting an acquisition
 ------------------------------------
@@ -628,7 +617,7 @@ In the current example, there is no motion, the acquisition time equals 1 second
 and the number of projections equals one.
 
 If you want to exit from the Gate program when the simulation time exceed the
-time duration, the last line of your program has to be :code:`exit`.
+time duration, the last line of your program has to be **exit**.
 
 As a Monte Carlo tool, GATE needs a random generator. The CLHEP libraries
 provide various ones. Three different random engines are currently available in
@@ -683,4 +672,4 @@ beginning of run.
 
    GATE simulation architecture
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

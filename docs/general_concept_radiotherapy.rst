@@ -12,7 +12,7 @@ The Radiotherapy and Dosimetry reference paper *GATE V6: a major enhancement of 
 
 A **list of radionuclides** is availabe at `NUCLEIDE.ORG <http://www.nucleide.org/DDEP_WG/DDEPdata.htm>`_.
 
-The concept of Actors is very important for the simulation of radiotherapy treatments and dosimetry. `Actors <http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors>`_ and `Filters <http://wiki.opengatecollaboration.org/index.php/Users_Guide:Tools_to_Interact_with_the_Simulation_:_Actors#Filters>`_ are tools which allow to interact with the simulation. They can collect information during the simulation, such as energy deposit, number of particles created in a given volume, etc. They can also modify the behavior of the simulation. There are different types of actors which collect different types of information, however some commands and behavior are common to all actors. To use selection criteria, it is possible to add filters.
+The concept of Actors is very important for the simulation of radiotherapy treatments and dosimetry. :ref:`tools_to_interact_with_the_simulation_actors-label` and :ref:`filters-label` are tools which allow to interact with the simulation. They can collect information during the simulation, such as energy deposit, number of particles created in a given volume, etc. They can also modify the behavior of the simulation. There are different types of actors which collect different types of information, however some commands and behavior are common to all actors. To use selection criteria, it is possible to add filters.
 
 Insert a CT image in the therapy simulation
 -------------------------------------------
@@ -51,7 +51,7 @@ Example::
 Dose distribution (Dosimetry)
 -----------------------------
 
-GATE allows to simulate the dose distribution in a phantom during radiotherapy (therapy with photons) and hadrontherapy (therapy with hadrons : proton, Carbon...). It also allows to perform other radiation simulations such as brachytherapy, dose deposited during x-ray imaging... **Figure 1** shows an example of a dose distribution map obtained after radiotherapy treatment on a phantom. 
+GATE allows to simulate the dose distribution in a phantom during radiotherapy (therapy with photons) and hadrontherapy (therapy with hadrons : proton, Carbon...). It also allows to perform other radiation simulations such as brachytherapy, dose deposited during x-ray imaging... :numref:`RadiotherapyWithGATE` shows an example of a dose distribution map obtained after radiotherapy treatment on a phantom.
 
 .. figure:: RadiotherapyWithGATE.png
    :alt: Figure 1: RadiotherapyWithGATE
@@ -59,6 +59,6 @@ GATE allows to simulate the dose distribution in a phantom during radiotherapy (
 
    Dose distribution after radiotherapy treatment on a phantom.
 
-The `DoseActor <http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.2:Readout_parameters_for_Radiotherapy_applications:_Actors#Dose_measurement>`_ is the tool that is used to store the **deposited dose in a 3D matrix** which size and resolution can be specified. It can also be used for 1D and 2D dose maps. It can store *dose*, *edep* or *number of hits* and computes associated statistical uncertainty. The **DoseActor** is attached to a volume which can be voxelized or not.
+The :ref:`dose_measurement_doseactor-label` is the tool that is used to store the **deposited dose in a 3D matrix** which size and resolution can be specified. It can also be used for 1D and 2D dose maps. It can store *dose*, *edep* or *number of hits* and computes associated statistical uncertainty. The **DoseActor** is attached to a volume which can be voxelized or not.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

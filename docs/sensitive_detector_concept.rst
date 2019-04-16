@@ -1,3 +1,5 @@
+.. _attaching_the_sensitive_detectors-label:
+
 Attaching the sensitive detectors
 =================================
 
@@ -8,7 +10,7 @@ Attaching the sensitive detectors
 General purpose
 ---------------
 
-Once a model has been defined for the scanner through the construction of a system (see Defining a system), the next step is to attach a **sensitive detector** (SD) to some volumes of the geometry. As in any Geant4 simulation, these sensitive detectors are used to store information regarding interactions of a particle in the matter (*hits*) using information from the steps occuring along the particle track. A hit is a snapshot of a physical interaction of a track in a sensitive region of the detector. Figure 5.1 illustrates these notions. Hits contain various pieces of information associated to a step object, such as the energy deposition of a step, geometrical information, position and time of a step, etc.
+Once a model has been defined for the scanner through the construction of a system (see :ref:`defining_a_system-label`), the next step is to attach a **sensitive detector** (SD) to some volumes of the geometry. As in any Geant4 simulation, these sensitive detectors are used to store information regarding interactions of a particle in the matter (*hits*) using information from the steps occuring along the particle track. A hit is a snapshot of a physical interaction of a track in a sensitive region of the detector. :numref:`Sensitive_detector` illustrates these notions. Hits contain various pieces of information associated to a step object, such as the energy deposition of a step, geometrical information, position and time of a step, etc.
 
 
 .. figure:: Sensitive_detector.jpg
@@ -18,6 +20,8 @@ Once a model has been defined for the scanner through the construction of a syst
    Particle interactions in a sensitive detector
 
 GATE records and stores information related to the hits only for those volumes that are attached to a sensitive detector. All information regarding the interactions occuring in *non-sensitive* volumes is lost.
+
+.. _the_crystalsd-label:
 
 The crystalSD
 ~~~~~~~~~~~~~
@@ -65,6 +69,6 @@ Finally, the last commands are used to attach the scintillation crystal to the d
    /systems/SPECThead/crystal/attachCrystalSD 
    /gate/crystal/attachCrystalSD 
 
-**In the case of a voxellized matrix:** Previous commands to attach sensitive detectors are used for the volumes created using the geometry commands of GATE (see Users Guide V7.2:Defining a geometry). In order to record the same information concerning the interactions occuring in a voxellized matrix, see Users Guide V7.2:Voxelized_Source_and_Phantom.
+**In the case of a voxellized matrix:** Previous commands to attach sensitive detectors are used for the volumes created using the geometry commands of GATE (see :ref:`defining_a_geometry-label`). In order to record the same information concerning the interactions occuring in a voxellized matrix, see :ref:`voxelized_source_and_phantom-label`.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

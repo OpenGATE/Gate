@@ -1,3 +1,5 @@
+.. _digitizer_and_readout_parameters-label:
+
 Digitizer and readout parameters
 ================================
 
@@ -63,10 +65,12 @@ If you want to disable the digitizer process and all output (that are already di
    /gate/output/analysis/disable
    /gate/output/digi/disable
 
+.. _digitizer_modules-label:
+
 Digitizer modules
 -----------------
 
-The digitization consists of a series of signal processors. The output at each step along the series is defined as a *pulse*. At the end of the chain, the output *pulses* are named *singles*. These *Singles* realistically simulate the physical observables of a detector response to a particle interacting with it. An example is shown in figure 8.1.
+The digitization consists of a series of signal processors. The output at each step along the series is defined as a *pulse*. At the end of the chain, the output *pulses* are named *singles*. These *Singles* realistically simulate the physical observables of a detector response to a particle interacting with it. An example is shown in :numref:`Digitizer`.
 
 .. figure:: Digitizer.jpg
    :alt: Figure 1: Digitizer
@@ -83,6 +87,8 @@ where **MODULE** is the name of the digitizer module. The order of the module de
 * insert adder before readout 
 * insert readout before thresholder/upholder 
 * insert blurring before thresholder/upholder 
+
+.. _Distributions-label:
 
 Distributions
 ~~~~~~~~~~~~~
@@ -172,7 +178,7 @@ The possible type name available corresponds to the five distributions described
 Adder
 ~~~~~
 
-One particle often creates multiple interactions, and consequently multiple *hits*, within a crystal. The first step of the digitizer is to sum all the *hits* that occur within the same crystal (i.e. the same volume). This is due to the fact that the electronics always measure an integrated signal, and do not have the time or energy resolution necessary to distinguish between the individual interactions of the particle within a crystal. This digitizer action is completed by a module called the adder. The adder should be the first module of a digitizer chain. It acts on the lowest level in the system hierarchy, as explained in Users Guide:Defining a system:
+One particle often creates multiple interactions, and consequently multiple *hits*, within a crystal. The first step of the digitizer is to sum all the *hits* that occur within the same crystal (i.e. the same volume). This is due to the fact that the electronics always measure an integrated signal, and do not have the time or energy resolution necessary to distinguish between the individual interactions of the particle within a crystal. This digitizer action is completed by a module called the adder. The adder should be the first module of a digitizer chain. It acts on the lowest level in the system hierarchy, as explained in :ref:`defining_a_system-label`:
 
 * A system must be used to describe the geometry (also the mother volume name must corresponds to a system name)
 * The lowest level of this system must be attached to the detector volume and must be declared as a *sensitive detector*
@@ -206,7 +212,7 @@ The readout module regroups pulses per block (group of *sensitive detectors*). F
 The parameter *myPolicy* can be *TakeEnergyWinner* for the winner-takes-all policy or *TakeEnergyCentroid* for the energy centroid policy.
 If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used. If the winner-takes-all policy is used, then the user must choose the *depth* at which the readout process takes place. If the *setPolicy* command is not set, then the winner-takes-all policy is chosen by default in order to be back-compatible with previous Gate releases.
 
-Figure 8.2 illustrates the actions of both the *adder* and *readout* modules. The *adder* module transforms the *hits* into a *pulse* in each individual volume and then the *readout* module sums a group of these *pulses* into a single *pulse* at the level of depth as defined by the user for the winner-takes-all policy.
+:numref:`Hittosingle` illustrates the actions of both the *adder* and *readout* modules. The *adder* module transforms the *hits* into a *pulse* in each individual volume and then the *readout* module sums a group of these *pulses* into a single *pulse* at the level of depth as defined by the user for the winner-takes-all policy.
 
 
 .. figure:: Hittosingle.jpg
@@ -215,17 +221,17 @@ Figure 8.2 illustrates the actions of both the *adder* and *readout* modules. Th
 
    Actions of the *it adder* and *it readout* modules
 
-The importance of the *setDepth* command line when using the winner-takes-all policy is illustrated through the following example from a PET system (see Users Guide:Defining a system). In a *cylindricalPET* system, where the first volume level is *rsector*, and the second volume level is *module*, as  shown in figure 8.3, the *readout* *depth* depends upon how the electronic readout functions.
+The importance of the *setDepth* command line when using the winner-takes-all policy is illustrated through the following example from a PET system (see :ref:`defining_a_system-label`). In a *cylindricalPET* system, where the first volume level is *rsector*, and the second volume level is *module*, as  shown in :numref:`Depth-p4`, the *readout* *depth* depends upon how the electronic readout functions.
 
 If one PMT reads the four modules in the axial direction, the *depth* should be set with the command::
 
    /gate/digitizer/Singles/readout/setDepth 1 
 
-The energy of this *single* event is the sum of the energy of the pulses inside the white rectangle (*rsector*) of figure 8.3. However, if individual PMTs read each module (group of crystals), the *depth* should be set with the command::
+The energy of this *single* event is the sum of the energy of the pulses inside the white rectangle (*rsector*) of :numref:`Depth-p4`. However, if individual PMTs read each module (group of crystals), the *depth* should be set with the command::
 
    /gate/digitizer/Singles/readout/setDepth 2 
 
-In this case, the energy of the *single* event is the sum of the energies of the pulses inside the red box (*module*) of figure 8.3.
+In this case, the energy of the *single* event is the sum of the energies of the pulses inside the red box (*module*) of :numref:`Depth-p4`.
 
 .. figure:: Depth-p4.jpg
    :alt: Figure 3: Depth-p4
@@ -373,7 +379,7 @@ After the introduction of the lightYield  (LY), transferEfficiency :math:`(\bar{
 
 :math:`N_{phe}={N}_{ph} \cdot \bar{\epsilon} \cdot \bar{p} = LY \cdot E \cdot \bar{\epsilon} \cdot \bar{p}`
 
-In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in Thresholder & Upholder. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
+In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in :ref:`thresholder_upholder-label`. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
 
 Calibration
 ~~~~~~~~~~~
@@ -399,6 +405,8 @@ In this example, a pulse is created in each neighbor of the crystal that receive
 
 **BEWARE:** this module works only for a chosen volume that is an array repeater!!!
 
+.. _thresholder_upholder-label:
+
 Thresholder & Upholder
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -412,7 +420,7 @@ The *Thresholder/Upholder* modules allow the user to apply an energy window to d
 Energy windows
 ~~~~~~~~~~~~~~
 
-In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated to each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and thresholds (see #Thresholder & Upholder)::
+In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated to each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and thresholds (see :ref:`thresholder_upholder-label`)::
 
    /gate/digitizer/name Window1
    /gate/digitizer/insert singleChain
@@ -438,7 +446,7 @@ In SPECT analysis, subtractive scatter correction methods such as the dual-energ
    /gate/digitizer/Window3/insert upholder
    /gate/digitizer/Window3/upholder/setUphold 416 keV 
 
-When specifying the interfile output (see Users Guide:Data output#Interfile output of projection set), the different window names must be added with the following commands::
+When specifying the interfile output (see :ref:`interfile_output_of_projection_set-label`), the different window names must be added with the following commands::
 
    /gate/output/projection/setInputDataName Window1
    /gate/output/projection/addInputDataName Window2
@@ -488,7 +496,7 @@ In PET analysis, coincidence events provide the lines of response (LOR) needed f
 Noise
 ~~~~~
 
-Different sources of background noise exist in a PET/SPECT architecture. For example, the electronics can introduce its own noise, or some crystals used for the detection, such as LSO, contains radioactive nucleus, which can contribute to the background detection count rate. Within GATE, the *noise* module adds such background events, in a totally generic way, so that any kind of source of noise can be simulated. To do so, the energy and the inter-event time interval are chosen randomly, for each event, into user defined distributions, by using the mechanism described in #Distributions.
+Different sources of background noise exist in a PET/SPECT architecture. For example, the electronics can introduce its own noise, or some crystals used for the detection, such as LSO, contains radioactive nucleus, which can contribute to the background detection count rate. Within GATE, the *noise* module adds such background events, in a totally generic way, so that any kind of source of noise can be simulated. To do so, the energy and the inter-event time interval are chosen randomly, for each event, into user defined distributions, by using the mechanism described in :ref:`Distributions-label`.
 
 In the following example, a noise source is introduced, whose energy is distributed according to a Gaussian law, and whose time distribution follows a Poisson process. To do this, one first defines the two necessary distributions. Since the noise description uses the distribution of the time interval between consecutive events, one has to define an exponential distribution. Indeed, if the probability of detecting k events in a time interval of t is distributed along a Poisson law :math:`P_1(k,t) = e^{-\lambda t }\frac{(\lambda t)^k}{k!}`, then the probability density of having a time interval in the range :math:`[t;t+dt]` between two consecutive events is given by :math:`dP_2(t) = \lambda e^{-\lambda t}dt`::
 
@@ -507,10 +515,12 @@ In the following example, a noise source is introduced, whose energy is distribu
 
 The special event ID, **event_ID=-2**, is assigned to these noise events.
 
+.. _local_efficiency-label:
+
 Local efficiency
 ~~~~~~~~~~~~~~~~
 
-The different crystals, or groups of crystals, composing a PET/SPECT system can be characterized by their own efficiency. GATE offers a method to describe such efficiency per crystal or volume. To define the efficiency distribution in the scanner, one can specify which level of the volume hierarchy of the system are differentiated (see the examples in #Command lines). Then the distribution of efficiency, for each differentiated volume, is specified via a generic distribution, as described in #Distributions.
+The different crystals, or groups of crystals, composing a PET/SPECT system can be characterized by their own efficiency. GATE offers a method to describe such efficiency per crystal or volume. To define the efficiency distribution in the scanner, one can specify which level of the volume hierarchy of the system are differentiated (see the examples in :ref:`command_line-label`). Then the distribution of efficiency, for each differentiated volume, is specified via a generic distribution, as described in :ref:`Distributions-label`.
 
 In the following examples, one assumes that the system is composed of 8 blocks (level1) of 64 crystals (level2). The first example shows how to specify one efficiency per block, defined in a file named **eff_per_block.dat**, containing 8 values (one per block)::
 
@@ -563,6 +573,8 @@ To mimic the effect of limited transfer rate, a module models the data loss due 
 
 The chain *Your_Single_chain* can be the default chain *Singles* or any of single chain that the user has defined. The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
 
+.. _pile-up-label:
+
 Pile-up
 ~~~~~~~
 
@@ -575,7 +587,7 @@ An important characteristic of a detector is its response time, which is the tim
 Dead time
 ~~~~~~~~~
 
-Due to the shaping time of signals or for any other reason, each detection of a single event can hide the subsequent single detected on the same electronic module. This loss lasts a certain amount of time, depending on the characteristics of the detectors used as well as of the readout electronics. The dead time can be modelled in GATE as shown below. Two models of the dead-time have been implemented in the digitizer: *paralysable* and *nonparalysable* response. These models can be implemented *event by event* during a simulation. The detailed method underlying these models can be found in Knoll 1979 (Radiation detection and measurement, John Wiley & Sons, New York). The fundamental assumptions made by these two models are illustrated in figure 8.4.
+Due to the shaping time of signals or for any other reason, each detection of a single event can hide the subsequent single detected on the same electronic module. This loss lasts a certain amount of time, depending on the characteristics of the detectors used as well as of the readout electronics. The dead time can be modelled in GATE as shown below. Two models of the dead-time have been implemented in the digitizer: *paralysable* and *nonparalysable* response. These models can be implemented *event by event* during a simulation. The detailed method underlying these models can be found in Knoll 1979 (Radiation detection and measurement, John Wiley & Sons, New York). The fundamental assumptions made by these two models are illustrated in :numref:`Like_knoll`.
 
 
 .. figure:: Like_knoll.jpg
@@ -598,7 +610,7 @@ To apply a dead-time to the volume_name (which has to be previously attached to 
    /gate/digitizer/Singles/deadtime/setMode paralysable 
    /gate/digitizer/Singles/deadtime/chooseDTVolume volume_name 
 
-The name *system_name* and its corresponding *system_level_name* do not exist and have to be chosen in the tables given in Users Guide V7.2:Defining a system. 
+The name *system_name* and its corresponding *system_level_name* do not exist and have to be chosen in the tables given in :ref:`defining_a_system-label`.
 
 In the second example, a dead time corresponding to a disk access of 1 µs for a memory buffer of 1 Mbyte is given. The *setMode* command specifies the behavior of the dead time during the disk access. If this mode is set to 0, the memory buffer is assumed to be a shared resource for the computer, and thus is not available during the disk writing. So, no data can fill the buffer during the disk access. On the other hand, in case of model 1, the buffer is immediately freed after being sent to the disk controller. Data are thus not rejected, unless the buffer is filled up again, before the disk access is finished. In such a case, the dead time module will be totally transparent (ie. will not reject any data), unless the counting rate is high enough to fill the buffer in a time lower than the disk access dead time::
 
@@ -658,7 +670,7 @@ These next commands create a high-energy chain branching from the output of the 
 Coincidence sorter
 ------------------
 
-The coincidence sorter searches, into the singles list, for pairs of coincident singles. Whenever two or more *singles* are found within a coincidence window, these *singles* are grouped to form a *Coincidence* event. Two methods are possible to find coincident singles within GATE. In the first method, when a single is detected, it opens a new coincidence window, and search for a second single occurring during the length of the window. In this method, as long as the window opened by the first single is not closed, no other single can open its own coincidence window. In the second method, all singles open their own coincidence window, and a logical OR is made between all the individual signals to find coincidences. The two methods are available in GATE, and can lead to slightly different results, for a given window width. A comparison of the difference of these two behaviors in a real case is sketched in figure 8.5.
+The coincidence sorter searches, into the singles list, for pairs of coincident singles. Whenever two or more *singles* are found within a coincidence window, these *singles* are grouped to form a *Coincidence* event. Two methods are possible to find coincident singles within GATE. In the first method, when a single is detected, it opens a new coincidence window, and search for a second single occurring during the length of the window. In this method, as long as the window opened by the first single is not closed, no other single can open its own coincidence window. In the second method, all singles open their own coincidence window, and a logical OR is made between all the individual signals to find coincidences. The two methods are available in GATE, and can lead to slightly different results, for a given window width. A comparison of the difference of these two behaviors in a real case is sketched in :numref:`Comp_allOpen_or_not`.
 
 .. figure:: Comp_allOpen_or_not.jpg
    :alt: Figure 4: Comp_allOpen_or_not
@@ -678,7 +690,7 @@ An experimental method used to estimate the number of random coincidences consis
 Multiple coincidences
 ~~~~~~~~~~~~~~~~~~~~~
 
-When more than two *singles* are found in coincidence, several type of behavior could be implemented. GATE allows to model 9 different rules that can be used in such a case. The list of rules along with their explanation are given in table 8.2, and a comparison of the effects of each processing rule for various cases of multiple coincidences is shown in figure 8.6. If no policy is specified, the default one used is: keepIfAllAreGoods.
+When more than two *singles* are found in coincidence, several type of behavior could be implemented. GATE allows to model 9 different rules that can be used in such a case. The list of rules along with their explanation are given in :numref:`policy_tab`, and a comparison of the effects of each processing rule for various cases of multiple coincidences is shown in :numref:`MultipleCases`. If no policy is specified, the default one used is: keepIfAllAreGoods.
 
 .. table:: Available multiple policy and associated meaning. When a multiple coincidence involving n *singles* is peocessed, it is first decomposed into a list of n·(n−1) pairs which are analyzed individually. In this table, the term "good" means that a pair of singles are in coincidence and that the 2 singles are separated by a number of blocks greater than or equal to the **minSectorDifference** parameter of the coincidence sorter. The prefix "take" means that 1 or more pairs of coincidences will be stored, while the prefix "keep" means that a unique coincidence, composed of at least three singles will be kept in the data flow and is called "multicoincidence". In the latter case, the multicoincidence will not be written to the disk, but may participate to a possible deadtime or bandwidth occupancy. The user may clear the multicoincidence at any desired step of the acquisition, by using the multipleKiller pulse processor (described in #Multiple coincidence removal). The "kill" prefix means that all events will be discarded and will not produce any coincidence.
    :widths: auto
@@ -712,7 +724,7 @@ When more than two *singles* are found in coincidence, several type of behavior 
 
    Comparison of the behavior of the available multiple processing policies, for various multiple coincidence situations. The stars represent the detected singles. The size of the star, as well as the number next to it, indicate the energy level of the single (ie. single no 1 has more energy than single no 2, which has itself more energy than the single no 3). The lines represent the possible good coincidences (ie. with a sector difference higher than or equal to the minSectorDifference of the coincidence sorter). In the table, a minus(-) sign indicates that the event is killed (ie. no coincidence is formed). The ⋆ sign indicates that all the singles are kept into a unique multicoincidence, which will not be written to disk, but which might participate to data loss via dead time or bandwidth occupancy. In the other cases, the list of pairs which are written to the disk (unless being removed thereafter by possible filter applied to the coincidences) is indicated
 
-.. table:: Table associated with Figure 8.6
+.. table:: Table associated with :numref:`MultipleCases`
    :widths: auto
    :name: case_tab
 
@@ -738,6 +750,8 @@ When more than two *singles* are found in coincidence, several type of behavior 
    | killAll                 | \-     | \-                  | \-           | \-           | 
    +-------------------------+--------+---------------------+--------------+--------------+
 
+.. _command_line-label:
+
 Command line
 ~~~~~~~~~~~~
 
@@ -757,7 +771,7 @@ To specify the depth of the system hierarchy for which the coincidences have to 
 
    /gate/digitizer/Coincidences/setDepth <system's depth (1 by default)> 
 
-As explained in figure 8.5, there are two methods for building coincidences. The default one is the method 1. To switch to method 2, one should use::
+As explained in :numref:`Comp_allOpen_or_not`, there are two methods for building coincidences. The default one is the method 1. To switch to method 2, one should use::
 
    /gate/digitizer/Coincidences/allPulseOpenCoincGate true
 
@@ -796,7 +810,7 @@ Multiple coincidence sorters can be used in GATE. To create a coincidence sorter
    /gate/digitizer/HECoincidences/setWindow 10. ns 
    /gate/digitizer/HECoincidences/setInputName HESingles 
 
-A schematic view corresponding to this example is shown in figure 8.7.
+A schematic view corresponding to this example is shown in :numref:`Readout_scheme1`.
 
 .. figure:: Readout_scheme1.jpg
    :alt: Figure 6: Readout_scheme1
@@ -834,14 +848,14 @@ To specify that two coincidences arriving with the same time flag have to be pro
 Coincidence dead time
 ~~~~~~~~~~~~~~~~~~~~~
 
-The dead time for coincidences works in the same way as that acting on the *singles* data flow. The only difference is that, for the *single* dead time, one can specify the hierarchical level to which the dead time is applied on (corresponding to the separation of detectors and electronic modules), while in the coincidence dead time, the possibility to simulate separate coincidence units (which may exist) is not implemented. Apart from this limitation, the command lines for coincidence dead time are identical to the ones for *singles* dead time, as described in #Pile-up. When more than one coincidence can occur for a unique GEANT4 event (if more than one coincidence line are added to the coincidence pulse processor, or if multiple coincidences are processed as many coincidences pairs), then the user can specify that the whole event is kept or rejected, depending on the arrival time of the first coincidence. To do so, one should use the command line: :
+The dead time for coincidences works in the same way as that acting on the *singles* data flow. The only difference is that, for the *single* dead time, one can specify the hierarchical level to which the dead time is applied on (corresponding to the separation of detectors and electronic modules), while in the coincidence dead time, the possibility to simulate separate coincidence units (which may exist) is not implemented. Apart from this limitation, the command lines for coincidence dead time are identical to the ones for *singles* dead time, as described in :ref:`pile-up-label`. When more than one coincidence can occur for a unique GEANT4 event (if more than one coincidence line are added to the coincidence pulse processor, or if multiple coincidences are processed as many coincidences pairs), then the user can specify that the whole event is kept or rejected, depending on the arrival time of the first coincidence. To do so, one should use the command line: :
 
    /gate/digitizer/myCoincChain/deadtime/conserveAllEvent true
 
 Coincidence buffers
 ~~~~~~~~~~~~~~~~~~~
 
-The buffer module for affecting coincidences uses exactly the same command lines and functionalities as the ones used for single pulse lists, and described in section #Local efficiency.
+The buffer module for affecting coincidences uses exactly the same command lines and functionalities as the ones used for single pulse lists, and described in section :ref:`local_efficiency-label`.
 
 Multiple coincidence removal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -853,7 +867,7 @@ If the multiple coincidences are kept and not splitted into pairs (ie. if any of
 Example of a digitizer setting
 ------------------------------
 
-Here, the digitizer section of a GATE macro file is analyzed line by line. The readout scheme produced by this macro, which is commented on below, is illustrated in Figure 8.8.
+Here, the digitizer section of a GATE macro file is analyzed line by line. The readout scheme produced by this macro, which is commented on below, is illustrated in :numref:`Schema_listing`.
 
 .. figure:: Schema_listing.jpg
    :alt: Figure 6: Schema_listing
@@ -975,6 +989,8 @@ Digitizer optimization
 In GATE standard operation mode, primary particles are generated by the source manager, and then propagated through the attenuating geometry before generating *hits* in the detectors, which feed into the digitizer chain. While this operation mode is suited for conventional simulations, it is inefficient when trying to optimize the parameters of the digitizer chain. In this case, the user needs to compare the results obtained for different sets of digitizer parameters that are based upon the same series of hits. Thus, repeating the particle generation and propagation stages of a simulation is unnecessary for tuning the digitizer setting.
 
 For this specific situation, GATE offers an operation mode dedicated to digitizer optimization, known as *DigiGATE*. In this mode, *hits* are no longer generated: instead, they are read from a hit data-file (obtained from an initial GATE run) and are fed directly into the digitizer chain. By bypassing the generation and propagation stages, the computation speed is significantly reduced, thus allowing the user to compare various sets of digitizer parameters quickly, and optimize the model of the detection electronics. *DigiGATE* is further explained in chapter 13.
+
+.. _angular_response_functions_to_speed-up_planar_or_spect_simulations-label:
 
 Angular Response Functions to speed-up planar or SPECT simulations
 ------------------------------------------------------------------
@@ -1138,4 +1154,4 @@ Finally, we call the 'triCoincProcessor' module and we plug on it the second sys
    /gate/digitizer/TriCoinc/triCoincProcessor/setSinglesBufferSize 40
 
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

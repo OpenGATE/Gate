@@ -1,3 +1,5 @@
+.. _materials-label:
+
 Materials
 =========
 
@@ -148,5 +150,5 @@ The ionization potential is the energy required to remove an electron to an atom
 
   /gate/geometry/setIonisationPotential Water 75 eV
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*
 

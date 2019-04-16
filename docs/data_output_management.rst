@@ -1,3 +1,5 @@
+.. _data_output-label:
+
 Data output
 ===========
 
@@ -31,7 +33,7 @@ The GateToASCII/GateToBinary classes enable the ASCII/**binary** file output. It
    # enable ascii(**binary**) output for singles (after a digitizer module)
    /gate/output/ascii(**binary**)/setOutFileSingles< name of the digitizer module >Flag   1
 
-The names of the digitizer module are : *Adder*, *Readout*, *Spblurring*, *Blurring*, *Thresholder*, *Upholder*. Their actions are explained in  Users Guide V7.2:Digitizer and readout parameters.
+The names of the digitizer module are : *Adder*, *Readout*, *Spblurring*, *Blurring*, *Thresholder*, *Upholder*. Their actions are explained in :ref:`digitizer_and_readout_parameters-label`.
 
 To disable these ASCII(**binary**) files which can be large, the macro should contain the following lines::
 
@@ -178,7 +180,7 @@ If the value is < 10000, no file swapping is made (to avoid creating thousands o
 For example, if one does not have any limit in the Operating System, one can put the number
 to 0, and there will be only one large (large) file at the end.
 
-In case of high statistics applications, one might consider enabling only the ROOT output (see #The Root output), which contains the same information as the binary one, but automatically compressed and ready for analysis.
+In case of high statistics applications, one might consider enabling only the ROOT output (see :ref:`root_output-label`), which contains the same information as the binary one, but automatically compressed and ready for analysis.
 
 What is the file gateRun.dat(**.bin**)?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,6 +195,8 @@ acquisition, due to the random character of the decay which governs the event
 generation (Poisson law). Gate generates the time delay from the 
 previous event, if it is out of the time slice it stops the event 
 processing for the current time slice and if needed it starts a new time slice.
+
+.. _root_output-label:
 
 Root output
 -----------
@@ -232,7 +236,7 @@ Using TBrowser To Browse ROOT Objects
 
 The ROOT graphical user interface TBrowser is a useful tool to interactively inspect and visualize produced simulation data. 
 
-Since Gate 8.0 new branches are included in the ROOT Hits Tree: trackLength, trackLocalTime, momDirX, momDirY and momDirZ. The additional information that is now available can be used for applications like timing resolution and surface treatment studies of scintillation crystals when surfaces are defined (see Users Guide:Generating_and_tracking_optical_photons#Defining_surfaces).
+Since Gate 8.0 new branches are included in the ROOT Hits Tree: trackLength, trackLocalTime, momDirX, momDirY and momDirZ. The additional information that is now available can be used for applications like timing resolution and surface treatment studies of scintillation crystals when surfaces are defined (see :ref:`defining_surfaces-label`).
 
 When launching ROOT with the command in a terminal::
 
@@ -443,13 +447,15 @@ This online analysis is available even if the root output is disabled in your ma
    /gate/output/plotter/addPlot tree Coincidences  energy1
    /gate/output/plotter/listPlots
 
-Figure 10.2 presents an example of online plotter, obtained with the above macro.
+:numref:`Root_output` presents an example of online plotter, obtained with the above macro.
 
 .. figure:: Root_output.jpg
    :alt: Figure 5: Root_output
    :name: Root_output
 
    The Online Plotter
+
+.. _interfile_output_of_projection_set-label:
 
 Interfile output of projection set
 ----------------------------------
@@ -605,10 +611,12 @@ the image size information is to be obtained in the .hdr files.
 * **IDL>** SizeImageZ = 128
 * **IDL>** data=READ_BINARY(file,DATA_DIMS=[SizeIMageX,SizeIMageY],DATA_TYPE=12,ENDIAN='Little')
 
+.. _sinogram_output-label:
+
 Sinogram output
 ---------------
 
-If the ecat system or the ecatAccel system have been selected (see Users Guide:Defining a system#Ecat), the sinogram output module can be enable with the following commands:
+If the ecat system or the ecatAccel system have been selected (see :ref:`ecat-label`), the sinogram output module can be enable with the following commands:
 
 For the **ecat** system::
 
@@ -687,6 +695,8 @@ and the axial position ring2 + ring1::
 In addition to the sinogram output module, there is a conversion of the 2D sinograms to an ecat7 formatted 3D sinogram in the ecat7 output module. This 3D sinogram is then written to an ecat7 matrix
 file.
 
+.. _ecat7_output-label:
+
 Ecat7 output
 ------------
 
@@ -739,7 +749,7 @@ grouping is called the span [reference]. Its minimum value is 3 and it should be
 
    Michelogram for a 16 crystal-ring scanner
 
-The *Michelogram* represented in Figure 10.3 graphically illustrates mashing 
+The *Michelogram* represented in :numref:`Michelogram` graphically illustrates mashing
 in the polar coordinate for a 16 crystal-ring scanner with a maximum ring difference set to 12 
 and a span factor of 5, resulting to 5 polar samples instead of 31. 
 Each dot represents a 2D sinogram for a given pair of crystal-rings.
@@ -779,7 +789,7 @@ regardless of the value of the /gate/output/sinogram/TruesOnly tag.
 For the scan sub-header, the value of the *prompts* field is correctly filled and the value of the *delayed* field is set to the actual number of random coincidences, and not to the number of delayed coincidences (not simulated).
 
 The radial bin size in the scan sub-header is set to half the value of the crystal transverse sampling and does not take into account the arc and depth-of-interaction (DOI) effects. 
-After arc correction, the radial bin size should be slightly increased to account for the DOI effect. Note that this correction is included in the reconstruction software provided with the*ECAT* scanners.
+After arc correction, the radial bin size should be slightly increased to account for the DOI effect. Note that this correction is included in the reconstruction software provided with the *ECAT* scanners.
 
 .. figure:: Arceffect.jpg
    :alt: Figure 8: Arceffect
@@ -787,10 +797,12 @@ After arc correction, the radial bin size should be slightly increased to accoun
 
    Increase of the radial bin size due to the DOI effect.
 
+.. _lmf_output-label:
+
 LMF output
 ----------
 
-The Crystal Clear Collaboration has developed a List Mode Format (LMF) to store the data of ClearPET prototypes. Monte Carlo data generated by GATE can also be stored under the same format using the class **GateToLMF**. This format is only available for the cylindricalPET system (see Users Guide:Defining a system) and GATE can only store  *single* events.
+The Crystal Clear Collaboration has developed a List Mode Format (LMF) to store the data of ClearPET prototypes. Monte Carlo data generated by GATE can also be stored under the same format using the class **GateToLMF**. This format is only available for the cylindricalPET system (see :ref:`defining_a_system-label`) and GATE can only store *single* events.
 
 Several tools enabling the reading of this format and the processing of events are implemented in the LMF library. As an example, coincidences can be created from GATE *single* events. It is also possible to apply different dead-times, and even to generate sinograms in the Interfile format as used by the STIR library, which implements several image reconstruction algorithms.
 
@@ -833,7 +845,7 @@ LMF data are composed of two files with the same base-name, but different extens
 * An ASCII file with a .cch extension contains general information about the scan and about the scanner, like the scan duration, the sizes of the detectors, or the angular rotation speed.
 * A binary file with a .ccs extension contains headers, which set the topology of the scanner, followed by fixed size records.
 
-The user can generate these two output files automatically by using the macro scripting. All pieces of information are optional, except time, which makes the ClearPET LMF quite versatile. Table 10.7.2 lists all options and memory requirements that can be stored in the **LMF event record** when using the cylindricalPET system::
+The user can generate these two output files automatically by using the macro scripting. All pieces of information are optional, except time, which makes the ClearPET LMF quite versatile. :numref:`size_tab` lists all options and memory requirements that can be stored in the **LMF event record** when using the cylindricalPET system::
 
    /gate/output/lmf/enable    ( or /gate/output/lmf/disable  to disable LMF output (but it is disable by default)
    /gate/output/lmf/setFileName           myLMFFile   <=== to set the LMF files name. Here the output files will be myLMFFile.ccs and myLMFFile.cch
@@ -874,7 +886,7 @@ In the case of the fast simulation mode, the number of pixels is set by::
  /gate/output/imageCT/numPixelX   80
  /gate/output/imageCT/numPixelY   80
 
-In the case of VRT simulation mode (see Users Guide:Defining a system#CTscanner), the VRT K factor is set by::
+In the case of VRT simulation mode (see :ref:`ctscanner-label`), the VRT K factor is set by::
 
  /gate/output/imageCT/vrtFactor   10
 
@@ -882,4 +894,4 @@ Finally the random seed can be defined using::
 
  /gate/output/imageCT/setStartSeed   676567
 
-*last modification: 15/04/2019*
+*last modification: 16/04/2019*

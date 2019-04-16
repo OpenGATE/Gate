@@ -20,7 +20,7 @@ The job splitter can be installed in the same directory as Gate. Two environment
     export GC_DOT_GATE_DIR=/somedir/
     export GC_GATE_EXE_DIR=/somedir/bin/Linux-g++/
 
-The first variable indicates the location of a hidden directory called .Gate. The directory will contain the split macros for each part of the simulation. Even when splitting the same macro several times, a new directory will be created for each instance (with an incremental number). In normal circumstances, one does not need to look into it. In case of an error, it can be used to run only a specific part of a simulation again (See What about errors?).
+The first variable indicates the location of a hidden directory called .Gate. The directory will contain the split macros for each part of the simulation. Even when splitting the same macro several times, a new directory will be created for each instance (with an incremental number). In normal circumstances, one does not need to look into it. In case of an error, it can be used to run only a specific part of a simulation again (See :ref:`what_about_errors-label`).
 
 The second environment variable indicates the location of the job splitter executable. As the Gate environment file will be used to compile the job splitter source code, the executable will likely be located in the same directory as the Gate executable. 
 
@@ -157,7 +157,7 @@ To merge the output files into a single file, just supply the split file to the 
    
     Combining: ./rootf1.root ./rootf2.root ./rootf3.root ./rootf4.root ./rootf5.root $->$ ./rootf.root 
 
-In case a single output file is not required, it is possible to use the option **fastMerge**. This way, the eventIDs in the ouput files are corrected locally. Figure 13.1 shows the newly created tree in each ROOT file.
+In case a single output file is not required, it is possible to use the option **fastMerge**. This way, the eventIDs in the ouput files are corrected locally. :numref:`Rootexample` shows the newly created tree in each ROOT file.
 
 .. figure:: Rootexample.jpg
    :alt: Figure 1: Rootexample
@@ -198,6 +198,8 @@ Root files can also be merged by using the **hadd** utility on the command line:
 
    hadd result.root file1.root file2.root ... filen.root
 
+.. _what_about_errors-label:
+
 What about errors?
 ------------------
 
@@ -205,4 +207,4 @@ If something went wrong during a simulation and a ROOT file is corrupted or inco
 
 The second option is to edit the split file, located in the .Gate directory. Once the reference to the corrupted root file is removed from it, it is possible to merge the files again. At this point, the eventIDs will not be valid anymore.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

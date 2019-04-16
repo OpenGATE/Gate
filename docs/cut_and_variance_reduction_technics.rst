@@ -146,6 +146,6 @@ There are several filters types: filters on particle, particle ID, energy, direc
 TLE and seTLE (Track Length Estimator)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the TLEDoseActor and SETLEDoseActor [[Users Guide:Readout parameters for Radiotherapy applications: Actors#TLE and seTLE (Track_Length_Estimator)|here]].
+See the TLEDoseActor and SETLEDoseActor :ref:`tle_and_setle_track_length_estimator-label`.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

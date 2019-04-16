@@ -8,7 +8,7 @@ Nanoparticle mediated hyperthermia
 Pre-requisite
 -------------
 
-To use the nanoparticle mediated hyperthermia capabilities of GATE, you have to install ITK and turn the CMake flag GATE_USE_ITK to ON in the configuration process using ccmake. Please find detailed instructions here: Compilation_Instructions_V8.0
+To use the nanoparticle mediated hyperthermia capabilities of GATE, you have to install ITK and turn the CMake flag GATE_USE_ITK to ON in the configuration process using ccmake. Please find detailed instructions here: :ref:`installation_guide-label`
 
 Theory
 ------
@@ -91,4 +91,4 @@ Density and heat capacity should just be in the same unit for both blood and tis
      /gate/actor/MyActor/setDiffusionTime              5 s
      /gate/actor/MyActor/setNumberOfTimeFrames         5
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

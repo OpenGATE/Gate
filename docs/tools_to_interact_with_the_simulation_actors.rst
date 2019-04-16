@@ -1,3 +1,5 @@
+.. _tools_to_interact_with_the_simulation_actors-label:
+
 Tools to Interact with the Simulation : Actors
 ==============================================
 
@@ -42,7 +44,7 @@ It is possible to save the output every N seconds with the command::
 3D matrix actor (Image actor)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some actors, such as the dose actor, can store some information into a 3D image (or matrix) according to the spatial position of the hit. User can specify the resolution of the 3D matrix (in this case, the size is equal to the size of the bounding box of the attached volume). Alternatively, user can specify the size to allow smaller matrices (never bigger).
+Some actors, such as the :ref:`dose_measurement_doseactor-label`, can store some information into a 3D image (or matrix) according to the spatial position of the hit. User can specify the resolution of the 3D matrix (in this case, the size is equal to the size of the bounding box of the attached volume). Alternatively, user can specify the size to allow smaller matrices (never bigger).
 
 * "attachTo" : the scoring value is stored in the 3D matrix only when a hit occur in the attached volume. If the size of the volume is greater than the 3D matrix, hit occurring out of the matrix are not recorded. Conversely, if the 3D matrix is larger than the attached volume, part which is outside the volume will never record hit (even if it occurs) because hit is performed out of the volume. 
 * "type" : In Geant4, when a hit occurs, the energy is deposited along a step line. A step is defined by two positions the 'PreStep' and the 'PostStep'. The user can choose at which position the actor have to store the information (edep, dose ...) : it can be at PreStep ('pre'), at PostStep ('post'), at the middle between PreStep and PostStep ('middle') or distributed from PreStep to PostStep ('random'). According to the matrix size, such line can be located inside a single dosel or cross several dosels. Preferred type of hit is "random", meaning that a random position is computed along this step line and all the energy is deposited inside the dosel that contains this point. 
@@ -86,6 +88,8 @@ EM properties are calculated relative to a specific particle type and energy, as
    /gate/actor/MyActor/setParticleName               proton
    /gate/actor/MyActor/setEnergy                     150 MeV
    /gate/actor/MyActor/save                          MyOutput.txt
+
+.. _dose_measurement_doseactor-label:
 
 Dose measurement (DoseActor)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,6 +239,8 @@ The output of the TetMeshDoseActor is a csv-file tabulating the results, e.g.::
     ...
 
 Each row corresponds to one tetrahedron. The region marker column identifies to which macroscopic structure a tetrahedron belongs to -- it is equal to the region attribute defined for this tetrahedron in the '.ele' file the TetMeshBox is constructed from.
+
+.. _kill_track-label:
 
 Kill track
 ~~~~~~~~~~
@@ -446,6 +452,7 @@ This actor counts the number of time a (new) particle is passing through a volum
    /gate/actor/Detector/setResolution     1 256 256
    /gate/actor/Detector/enableScatter     true
 
+.. _tle_and_setle_track_length_estimator-label:
 
 TLE and seTLE (Track Length Estimator)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -586,7 +593,7 @@ or::
 * **setDetector** ⇒ Set the name of the volume used for detector (must be a Box).
 * **setDetectorResolution** ⇒ Set the resolution of the detector (2D).
 * **generatePhotons** ⇒ Generates weighted photons outside of the volume directed at each pixel of the detector.
-* **connectARF** ⇒ Connects the output of the FFD to ARF tables (see Angular_Response_Functions_to_speed-up_planar_or_SPECT_simulations). 
+* **connectARF** ⇒ Connects the output of the FFD to ARF tables (see :ref:`angular_response_functions_to_speed-up_planar_or_spect_simulations-label`).
 
 An example is available at `GateContrib: SPECT_FFD <https://github.com/OpenGATE/GateContrib/tree/master/imaging/SPECT_FFD>`_
 
@@ -684,7 +691,7 @@ The last command allows to normalize the distribution by the number of incident 
 
 **Example**
 
-An  example  of  a TEPC actor  use  is  provided  in  the  example repository under `dosimetry/TEPCActor <https://github.com/OpenGATE/GateContrib/tree/master/dosimetry/TEPCActo>`_ folder.  In  this  example,  a  TEPC detector  is placed at different  positions  in  a  water  tank  and  irradiated  with a 155  MeV mono-energetic proton beam. This setup was used to validate the results against  the  TEPC measurements published  by  Kase  et  al.  2013. In  this  comparison,  our key  point  was  the  optimization  of  the particle cuts and step limiters. Indeed, the lineal energy distribution at the micrometric scale is highly sensible to these  two parameters. The particle cuts must be  low  enough to simulate  any significant contribution in the lineal energy distribution and the step limiters must bec correctly tuned in order to avoid  boundary  effects  on  geometry  elements,  while  keeping  the  global  simulation  time  as  low  as possible. More information regarding the geometry and the physical parameters that were tested to obtain the final macro files are available in the example repository (`TEPCactor.pdf <https://github.com/OpenGATE/GateContrib/blob/master/dosimetry/TEPCActor/TEPCactor.pdf>`_).
+An  example  of  a TEPC actor  use  is  provided  in  the  example repository under `dosimetry/TEPCActor <https://github.com/OpenGATE/GateContrib/tree/master/dosimetry/TEPCActor>`_ folder.  In  this  example,  a  TEPC detector  is placed at different  positions  in  a  water  tank  and  irradiated  with a 155  MeV mono-energetic proton beam. This setup was used to validate the results against  the  TEPC measurements published  by  Kase  et  al.  2013. In  this  comparison,  our key  point  was  the  optimization  of  the particle cuts and step limiters. Indeed, the lineal energy distribution at the micrometric scale is highly sensible to these  two parameters. The particle cuts must be  low  enough to simulate  any significant contribution in the lineal energy distribution and the step limiters must bec correctly tuned in order to avoid  boundary  effects  on  geometry  elements,  while  keeping  the  global  simulation  time  as  low  as possible. More information regarding the geometry and the physical parameters that were tested to obtain the final macro files are available in the example repository (`TEPCactor.pdf <https://github.com/OpenGATE/GateContrib/blob/master/dosimetry/TEPCActor/TEPCactor.pdf>`_).
 
 Phase Space Actor
 ~~~~~~~~~~~~~~~~~
@@ -889,6 +896,8 @@ Proton Nuclear Information Actor
 
 This actor records information on proton nuclear interactions (number and type). The information can be stored in a phase space file, as illustrated in `imaging/ProtonRadiography <https://github.com/OpenGATE/GateContrib/tree/master/imaging/ProtonRadiography>`_.
 
+.. _filters-label:
+
 Filters
 -------
 
@@ -1029,4 +1038,4 @@ Example: To kill particles in a cone of 20 degrees around x axis::
 
 
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

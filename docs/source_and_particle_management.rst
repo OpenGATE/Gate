@@ -757,4 +757,4 @@ The data file must be a raw binary containing data in IEEE 32-bit floating point
 
    gate/source/mySource/setVoxelizedPhantomPosition -3.5 6.0 -10.0 cm
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

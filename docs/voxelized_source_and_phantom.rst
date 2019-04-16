@@ -1,3 +1,5 @@
+.. _voxelized_source_and_phantom-label:
+
 Voxelized source and phantom
 ============================
 
@@ -132,7 +134,7 @@ In this example, the number of material subdivisions is 4. Material Air is assig
 Units to materials conversion descriptor
 ++++++++++++++++++++++++++++++++++++++++
 
-Units to materials conversion descriptor is a simple text file with three columns: Label or HU_start, Label or HU_end and material_name. It allows to associate a material to each label or HU voxel encoded value in the image. This text file can be written by hand or generated with the automated method, especially for HU values (see Automated HU stoichiometric calibration section) 
+Units to materials conversion descriptor is a simple text file with three columns: Label or HU_start, Label or HU_end and material_name. It allows to associate a material to each label or HU voxel encoded value in the image. This text file can be written by hand or generated with the automated method, especially for HU values (see :ref:`for_rt_applications_only_automated_hu_stoichiometric_calibration-label`)
 
 Example of a units to materials conversion descriptor (AttenuationRange.dat, for instance)::
 
@@ -224,6 +226,8 @@ Using such an image reader, digital phantom or patient data can be read in as vo
 
    attenuation map from digital Hoffman phantom (left:data - right: after translation to material definition).
 
+.. _for_rt_applications_only_automated_hu_stoichiometric_calibration-label:
+
 For RT applications only: Automated HU stoichiometric calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -243,7 +247,7 @@ In this case, you need to provide:
 * the parameter "DensityTolerance" allows the user to define the density tolerance. Even if it is possible to generate a new Geant4 material (atomic composition and density) for each different HU, it would lead to too much different materials, with a long initialization time. So we define a single material for a range of HU belonging to the same material range (in the first calibration Table) and with densities differing for less than the tolerance value. 
 * the files "patient-HUmaterials.db" and "patient-HU2mat.txt" are generated and can be used with setMaterialDatabase and SetHUToMaterialFile macros.
 
-Examples are available `here <http://wiki.opengatecollaboration.org/?title=GateRT>`_
+Examples are available :ref:`gatert-label`
 
 Voxelized sources
 -----------------
@@ -329,7 +333,7 @@ Example of voxelized source description macro reading in an InterFile image as s
 
 Using this image file reader any digital phantom or patient data, stored in any image format among ASCII, Interfile, Analyze, MetaImage and DICOM, can be read in as emission distribution. Afterwards, activity levels can be used to determine the number of primary particles for each voxel. 
 
-An example of the Hoffman brain phantom, where the gray scales have been translated to activity distributions is shown in Figure 7.2. 
+An example of the Hoffman brain phantom, where the gray scales have been translated to activity distributions is shown in :numref:`Emission_map`.
 
 .. figure:: Emission_map.jpg
    :alt: Figure 2: Emission map
@@ -586,4 +590,4 @@ Comparison between input formats can be made by the diff command::
    diff DA-[seriesA]-mhd-Dose.raw DA-[seriesA]-dcm-Dose.raw
 
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

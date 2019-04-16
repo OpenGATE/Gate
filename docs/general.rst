@@ -7,3 +7,8 @@ Getting started
 
    introduction
    installation
+   package_requirements
+   compilation_instructions
+   validating_installation
+   gatert
+   enabling_lut_davis_model

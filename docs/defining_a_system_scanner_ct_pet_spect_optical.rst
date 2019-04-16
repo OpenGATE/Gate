@@ -1,3 +1,5 @@
+.. _defining_a_system-label:
+
 Defining a system
 =================
 
@@ -10,7 +12,7 @@ Definition
 
 A System is a key-concept of GATE. It provides a *template* of a predefined geometry to simulate a scanner. A system can be used to model several scanners shating the same general geometrical characteristics. It can be considered as sort of a template described by key components organized in a certain way, what is called a *tree level structure*, each component having its own specific role or ordering.
 
-For instance, in the cylindricalPET scanner system, the geometrical *volumes* containing crystals are grouped in matrices, themselves assembled in submodules and modules. At the top level of this structure, the sectors composed of modules are *repeated* on a cylindrical surface to build up the whole device. Thus, a family of PET scanners obeying this structure can be described using this system, illustrated in figure 1, composed of volumes called *rsectors*, *modules*, *submodules*, *crystal* and finaly (crystal) *layer*.
+For instance, in the cylindricalPET scanner system, the geometrical *volumes* containing crystals are grouped in matrices, themselves assembled in submodules and modules. At the top level of this structure, the sectors composed of modules are *repeated* on a cylindrical surface to build up the whole device. Thus, a family of PET scanners obeying this structure can be described using this system, illustrated in :numref:`5sector`, composed of volumes called *rsectors*, *modules*, *submodules*, *crystal* and finaly (crystal) *layer*.
 
 Different systems are available in GATE : *scanner*, *SPECTHead*, *cylindricalPET*, *ecat*, *CPET*, *OPET* and *OpticalSystem*, which can be used to simulate most of the existing imaging devices. 
 
@@ -23,7 +25,7 @@ Different systems are available in GATE : *scanner*, *SPECTHead*, *cylindricalPE
 Choice of the system
 --------------------
 
-It is possible to use GATE without using a system, but in that case, no information regarding particle interaction in the detector will be available. The reason is that the volumes where the *hits* (interactions that occur inside the detector parts of the scanner, see Users Guide V7.2:Digitizer and readout parameters) are recorded only for volumes belonging to a defined system (those volumes are declared as *crystalS*, *SD* for *sensitive detector*, see Users Guide V7.2:Attaching the sensitive detectors). When the user is only testing a scanner geometry, the use of a predefined system is not necessary. But if the user wants to record information related to the particle history inside the detector, the geometry has to be associated with a system. This section explains the elements and rules to associate a geometry with a system.
+It is possible to use GATE without using a system, but in that case, no information regarding particle interaction in the detector will be available. The reason is that the volumes where the *hits* (interactions that occur inside the detector parts of the scanner, see :ref:`digitizer_and_readout_parameters-label`) are recorded only for volumes belonging to a defined system (those volumes are declared as *crystalS*, *SD* for *sensitive detector*, see :ref:`attaching_the_sensitive_detectors-label`). When the user is only testing a scanner geometry, the use of a predefined system is not necessary. But if the user wants to record information related to the particle history inside the detector, the geometry has to be associated with a system. This section explains the elements and rules to associate a geometry with a system.
 
 Geometry constraints
 ~~~~~~~~~~~~~~~~~~~~
@@ -32,22 +34,22 @@ Except for the general system *scanner*, one should first take into account the 
 
 Each *level* has to be assigned to a physical volume of the geometry. A level volume has to be fully enclosed in the upper level volume. 
 
-The number of levels has to be set and must conform to the specifications listed in table 4.1. The numbering of different sensitive volumes is completely set by the choice of the system and conforms to a specific output format. 
+The number of levels has to be set and must conform to the specifications listed in :numref:`system_tab`. The numbering of different sensitive volumes is completely set by the choice of the system and conforms to a specific output format.
 
-The maximum number of components in each level depends on the output format since it can be limited by the number of bits used for the numbering of the crystals. See Users Guide V7.2:Data output for further details. 
+The maximum number of components in each level depends on the output format since it can be limited by the number of bits used for the numbering of the crystals. See :ref:`data_output-label` for further details.
 
 Constraints related to the simulation of the DAQ electronics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Several points have to be considered when designing the simulation of the electronics cards. First, the whole readout electronic components should be analyzed in order to define its main components. This concerns not only the single channel simulation, with effects like thresholder response, but also the crosstalk between different channels including the electronic or the optical crosstalk among components in a same level. For a PET scanner, the coincidence between two channels have to be simulated, based on the *single component* simulations. In GATE, it is possible to introduce all these signal processing steps through the digitizer modules (see Users Guide V7.2:Digitizer and readout parameters), operating at different levels or depths, as shown in Table 4.2. The depth value is used here to tag a group of similar components operating at a certain level, which could be the scintillator block level (crystal with depth=5, or a group of crystal matrices with depth=1, depth values given in these examples refer to the cylindricalPET system).  
+Several points have to be considered when designing the simulation of the electronics cards. First, the whole readout electronic components should be analyzed in order to define its main components. This concerns not only the single channel simulation, with effects like thresholder response, but also the crosstalk between different channels including the electronic or the optical crosstalk among components in a same level. For a PET scanner, the coincidence between two channels have to be simulated, based on the *single component* simulations. In GATE, it is possible to introduce all these signal processing steps through the digitizer modules (see :ref:`digitizer_and_readout_parameters-label`), operating at different levels or depths, as shown in :numref:`keywords_tab`. The depth value is used here to tag a group of similar components operating at a certain level, which could be the scintillator block level (crystal with depth=5, or a group of crystal matrices with depth=1, depth values given in these examples refer to the cylindricalPET system).
 
 To simulate the electronic processing consistenly with the system used to model the detector, the following procedure should be used: 
 
 * Regroup the detector electronic components in different levels.
-* List the signal processing to be used for rach of the resulting groups (see *adder*, *readout*, *dead time* in Users Guide V7.2:Digitizer and readout parameters),
+* List the signal processing to be used for rach of the resulting groups (see *adder*, *readout*, *dead time* in :ref:`digitizer_and_readout_parameters-label`),
 * Combine the signals coming from different volumes with, for example, the readout module for the signals summation of a volume, or the crosstalk and/or the coincidence between signals and coincidence. 
 
-NOTE : One or several crosstalk processing can be applied to components of different levels, for instance crosstalk between crystals, followed by crosstalk between modules. Such processing involves components at the same level. For PET scanners, coincidences are validated by testing the number difference in the uppermost level (as defined as depth = 1 in table ). This test can reject accidental coincidence between adjacent logic structures. When the user builds a geometry, this logic organisation should correspond to the fisrt level of a system to use this coincidence sorting (see Users Guide V7.2:Digitizer and readout parameters).
+NOTE : One or several crosstalk processing can be applied to components of different levels, for instance crosstalk between crystals, followed by crosstalk between modules. Such processing involves components at the same level. For PET scanners, coincidences are validated by testing the number difference in the uppermost level (as defined as depth = 1 in table ). This test can reject accidental coincidence between adjacent logic structures. When the user builds a geometry, this logic organisation should correspond to the fisrt level of a system to use this coincidence sorting (see :ref:`digitizer_and_readout_parameters-label`).
 
 How to connect the geometry to a system
 ---------------------------------------
@@ -63,9 +65,9 @@ where :
 
   * *SystemName* is the specific name of the system (one of the entry in column 1),
   * *Level* is the specific name of the level (see column 2),
-  * *UserVolumeName* is the name the user gave to a volume, according to the conventions of Users Guide V7.2:Defining a geometry.
+  * *UserVolumeName* is the name the user gave to a volume, according to the conventions of :ref:`defining_a_geometry-label`.
 
-* Finally, the specific output corresponding to the system has to be defined for further data analysis (see Users Guide V7.2:Data output).
+* Finally, the specific output corresponding to the system has to be defined for further data analysis (see :ref:`data_output-label`).
 
 .. table:: Different systems available in GATE and their characteristics. In the second column are listed some of the keyword that are also used at in the macro (see also table 2 for a complete list). The shape in the third column describe the mother volume, composed of “daughter” volumes as described in Chap. 3 : a box means a box shaped mother volume containing an array of daughter boxes, a cylinder mother volumes will contains cylinders. Cylinders are understood here as tube sectors defined by an inner and outer radius.
    :widths: auto
@@ -229,9 +231,11 @@ The *scanner* system is the most generic system in Gate. There is no geometrical
 Use
 ^^^
 
-Different shapes of the volumes inside the tree level can be choosen, among those listed in table 2
+Different shapes of the volumes inside the tree level can be choosen, among those listed in :numref:`shape_tab`
 
-Figure 4 illustrates the kind of detector that can be simulated with this system without any geometry constraint. On the other hand, there is no specific output format associated with this system and information regarding the hits are only available in ROOT or ASCII format.
+:numref:`onesectorCPET` illustrates the kind of detector that can be simulated with this system without any geometry constraint. On the other hand, there is no specific output format associated with this system and information regarding the hits are only available in ROOT or ASCII format.
+
+.. _ctscanner-label:
 
 CTscanner
 ~~~~~~~~~
@@ -300,7 +304,6 @@ Use
 
 **example 1: complete CT simulation**::
 
-  <pre>
   ##############
   # CT SCANNER #
   ############## 
@@ -364,19 +367,15 @@ Use
 
   # ATTACH LAYER
   /gate/pixel/attachCrystalSD
-  </pre>
 
 **example 2: complete CT simulation with VRT**
 
 In the same way as the complete simulation, the difference is the output (K = 5)::
 
-  <pre>
   /gate/output/imageCT/vrtFactor 5
-  </pre>
 
 **Exemple 3 : Fast CT simulation**::
 
-  <pre>
   ##############
   # CT SCANNER #
   ############## 
@@ -437,7 +436,6 @@ In the same way as the complete simulation, the difference is the output (K = 5)
   /gate/output/imageCT/numFastPixelX 100
   /gate/output/imageCT/numFastPixelY 100
   /gate/output/imageCT/numFastPixelZ 1
-  </pre>
 
 CylindricalPET
 ~~~~~~~~~~~~~~
@@ -445,7 +443,7 @@ CylindricalPET
 Description
 ^^^^^^^^^^^
 
-**CylindricalPET** is a PET system that can describe most of the small animal PET scanners. The main specificity of *cylindricalPET* is the possibility to record output data in the List Mode Format (LMF) developed by the Crystal Clear Collaboration. A complete description of LMF is can be found in Users Guide V7.2:Data output#LMF output. 
+**CylindricalPET** is a PET system that can describe most of the small animal PET scanners. The main specificity of *cylindricalPET* is the possibility to record output data in the List Mode Format (LMF) developed by the Crystal Clear Collaboration. A complete description of LMF is can be found in :ref:`lmf_output-label`.
 
 A CylindricalPET is based on a cylindrical geometry, and consists of 5 hierarchic levels, from mother to daughter, as defined below:
 
@@ -458,11 +456,11 @@ A CylindricalPET is based on a cylindrical geometry, and consists of 5 hierarchi
 
    /attachCrystalSD
 
-The words in bold characters are dedicated. See also keywords in table 2.
+The words in bold characters are dedicated. See also keywords in :numref:`keywords_tab`.
 
 Material of *layer* (s) must be the material of the detector, for instance LSO or BGO + GSO for a double layer phoswich system. Materials of other levels (crystals, submodules, modules, rsectors, cylindricalPET) can be anything else. 
 
-**IMPORTANT :** Visualization should help you build this geometry with no overlap. GATE performs a test for detecting volume overlap, but with a limited precision. This test is performed at the end of the initialization of Gate (see Users Guide V7.2:Getting started)::
+**IMPORTANT :** Visualization should help you build this geometry with no overlap. GATE performs a test for detecting volume overlap, but with a limited precision. This test is performed at the end of the initialization of Gate (see :ref:`getting_started-label`)::
 
    /run/initialize
    /geometry/test/recursive_test 
@@ -571,7 +569,7 @@ This system was defined for the simulation of a CPET-like scanner (C-PET Plus, P
 Description
 ^^^^^^^^^^^
 
-This system has the particularity to have cylindrical shaped sector components, based on the *cylinder* shape (see figure 3 and Users Guide V7.2:Defining a geometry for definitions), whereas these components are generally boxes in other systems.
+This system has the particularity to have cylindrical shaped sector components, based on the *cylinder* shape (see :numref:`pie_sector` and :ref:`defining_a_geometry-label` for definitions), whereas these components are generally boxes in other systems.
 
 .. figure:: Pie_sector.jpg
    :alt: Figure 6: pie_sector
@@ -626,11 +624,13 @@ The object *crystal* is then attached to its corresponding component in the CPET
 
    /gate/systems/CPET/sector/attach crystal 
 
-The crystals are set as sensitive detectors (see Users Guide V7.2:Attaching the sensitive detectors#The crystalSD)::
+The crystals are set as sensitive detectors (see :ref:`the_crystalsd-label`)::
 
    /gate/crystal/attachCrystalSD 
 
-The digitizer part (see Users Guide V7.2:Digitizer and readout parameters#Digitizer modules) is made of the *adder* module and some blurring module (see Users Guide V7.2:Digitizer and readout parameters).
+The digitizer part (see :ref:`digitizer_modules-label`) is made of the *adder* module and some blurring module (see :ref:`digitizer_and_readout_parameters-label`).
+
+.. _ecat-label:
 
 Ecat
 ~~~~
@@ -646,14 +646,14 @@ An example of macro with an ecat definition is provided in:
 
 The ecat system has only three hierarchical levels: one is for the entire detector (*base*), one for the block (*block*), and one for the crystals within the block (*crystal*).
 
-In addition to the standard output modules (*ASCII* and *root*), two additional output modules are specifically associated to the *ecat* system, and correspond to sinogram formats. These are the *sinogram* and the *ecat7* output modules and are discussed in Sinogram output and Ecat7 output sections.
+In addition to the standard output modules (*ASCII* and *root*), two additional output modules are specifically associated to the *ecat* system, and correspond to sinogram formats. These are the *sinogram* and the *ecat7* output modules and are discussed in :ref:`sinogram_output-label` and :ref:`ecat7_output-label`.
 
 Use
 ^^^
 
 Described below is an example of code for modeling a four block-ring scanner.
 
-It has to be named after the selected system (*ecat* here) and is defined as a volume daughter of the *world*. It has a ring shape and should include all detectors (see Figure 4.6)::
+It has to be named after the selected system (*ecat* here) and is defined as a volume daughter of the *world*. It has a ring shape and should include all detectors (see :numref:`EcatBase`)::
 
    /gate/world/daughters/name ecat 
    /gate/world/daughters/insert cylinder 
@@ -675,7 +675,7 @@ It has to be named after the selected system (*ecat* here) and is defined as a v
    
    Definition of the block
 
-The following commands set the size and the position of the first block within the base *ecat*. It is a rectangular parallelepiped and should include all crystals within a block. For a multiple block-ring system centered axially on the base *ecat*, the axial position of this first block should be set to zero (see Figure 4.7)::
+The following commands set the size and the position of the first block within the base *ecat*. It is a rectangular parallelepiped and should include all crystals within a block. For a multiple block-ring system centered axially on the base *ecat*, the axial position of this first block should be set to zero (see :numref:`EcatBase`)::
 
    /gate/ecat/daughters/name block 
    /gate/ecat/daughters/insert box 
@@ -691,7 +691,7 @@ The following commands set the size and the position of the first block within t
    
    Definition of the crystal
 
-The next commands set the size and the position of the first crystal within the *block*. For a crystal array centered on the *block*, the position of this first crystal should be at the center of the block (see Figure 4.8)::
+The next commands set the size and the position of the first crystal within the *block*. For a crystal array centered on the *block*, the position of this first crystal should be at the center of the block (see :numref:`EcatCrystal`)::
 
    /gate/block/daughters/name crystal 
    /gate/block/daughters/insert box 
@@ -724,11 +724,11 @@ Command lines are then used to attach the objects *block* and *crystal* to their
    systems/ecat/block/attach block 
    systems/ecat/crystal/attach crystal 
 
-To detect events, the crystals are finally set as sensitive detectors (see Users Guide V7.2:Attaching the sensitive detectors#The crystalSD)::
+To detect events, the crystals are finally set as sensitive detectors (see :ref:`the_crystalsd-label`)::
 
    /gate/crystal/attachCrystalSD 
 
-The digitizer part (see Users Guide V7.2:Digitizer and readout parameters#Digitizer modules) can be the same as for the cylindricalPET system.
+The digitizer part (see :ref:`digitizer_modules-label`) can be the same as for the cylindricalPET system.
 
 ecatAccel
 ~~~~~~~~~
@@ -736,14 +736,14 @@ ecatAccel
 Description
 ^^^^^^^^^^^
 
-The ecatAccel system was introduced to model a new PET scanner family ECAT ACCEL (from CPS Innovations, Knoxville, TN, U.S.A.). The ecatAccel system differs from the ecat system by its geometrical shape : the detection blocks are arranged along a spherical ring whereas they are arranged along annular rings for the ecat system. As data processing and output format are highly dependent on the scanner geometry, it was necessary to introduce a new system even though it has many common features with the ecat system. The same hierarchical levels (base, block and crystal) as for the ecat system are used to describe the geometry of the ecatAccel system, and the same standard output modules (ASCII and root) and specific outputs (sinogram and ecat7) are also available. Please refer to Users Guide V7.2:Data output#Sinogram output and Users Guide V7.2:Data output#Ecat7 output for further information on sinogram and ecat7 outputs for the ecatAccel system.
+The ecatAccel system was introduced to model a new PET scanner family ECAT ACCEL (from CPS Innovations, Knoxville, TN, U.S.A.). The ecatAccel system differs from the ecat system by its geometrical shape : the detection blocks are arranged along a spherical ring whereas they are arranged along annular rings for the ecat system. As data processing and output format are highly dependent on the scanner geometry, it was necessary to introduce a new system even though it has many common features with the ecat system. The same hierarchical levels (base, block and crystal) as for the ecat system are used to describe the geometry of the ecatAccel system, and the same standard output modules (ASCII and root) and specific outputs (sinogram and ecat7) are also available. Please refer to :ref:`sinogram_output-label` and :ref:`ecat7_output-label` for further information on sinogram and ecat7 outputs for the ecatAccel system.
 
 Use
 ^^^
 
 Described below is an example of code for modeling the ACCEL PET scanner of the BIOGRAPH-LSO (SIEMENS - CTI) PET-CT scanner.
 
-The scanner is named after the selected system (ecatAccel here) and is defined as a volume daughter of the world. As for the ecat system, it has a ring shape and should include all detectors (see Figure 4.6). For the BIOGRAPH, it can be described as follows: 
+The scanner is named after the selected system (ecatAccel here) and is defined as a volume daughter of the world. As for the ecat system, it has a ring shape and should include all detectors (see :numref:`EcatBase`). For the BIOGRAPH, it can be described as follows:
  
 The base is described::
 
@@ -1065,7 +1065,7 @@ Described below is an example of code for modeling the OPET PET scanner::
    /gate/LSO6/attachCrystalSD 
    /gate/LSO7/attachCrystalSD
 
-Figure 4.9 shows the final OPET scanner.
+:numref:`OPET2-1` shows the final OPET scanner.
 
 .. figure:: OPET2.jpg
    :alt: Figure 12: OPET2-1
@@ -1079,7 +1079,7 @@ SPECTHead
 Description
 ^^^^^^^^^^^
 
-*SPECTHead* is a SPECT system appropriate to model SPECT dedicated scanners within GATE. The main reason for specifying SPECThead is that it can be coupled to the InterFile output which is discussed in Users Guide V7.2:Data output#Interfile output of projection set. An example macro defining a typical SPECT scanner can be found in:
+*SPECTHead* is a SPECT system appropriate to model SPECT dedicated scanners within GATE. The main reason for specifying SPECThead is that it can be coupled to the InterFile output which is discussed in :ref:`interfile_output_of_projection_set-label`. An example macro defining a typical SPECT scanner can be found in:
  
  https://github.com/OpenGATE/GateContrib/blob/master/imaging/SPECT/SPECT.mac
 
@@ -1285,6 +1285,8 @@ If one wants to record, for every photon detected, how many times they crossed t
 
 If the septal volume name does not exist, the simulation is aborted.
 
+.. _opticalsystem-label:
+
 OpticalSystem
 ~~~~~~~~~~~~~
 
@@ -1382,13 +1384,13 @@ The standard definition of a GATE system is done according to the command::
 
    /gate/world/daughters/name  SystemName
 
-Where SystemName must be one of available system names in GATE (see table 1). Unfortunately, defining a system with this command prevent you to insert more than one system of the same type.
+Where SystemName must be one of available system names in GATE (see :numref:`system_tab`). Unfortunately, defining a system with this command prevent you to insert more than one system of the same type.
 Another method has been inserted in GATE to define more than one system at a time. Using this more general method, users can simulate several systems simultaneously. A system is now defined by its own name and its type according to the next two command lines::
 
    /gate/world/daughters/name AnyName
    /gate/world/daughters/systemType SystemType
 
-Where AnyName can be any name as for any Geant4 volume name and SystemType must be one the names of GATE systems mentioned in table 1.
+Where AnyName can be any name as for any Geant4 volume name and SystemType must be one the names of GATE systems mentioned in :numref:`system_tab`.
 
 How to connect the geometry to the systems
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1578,8 +1580,8 @@ An example for the creation of three systems, one system of type “cylindricalP
 Notes
 ~~~~~
 
-1)	The command “systemType” is optional in case of using only one system, but the system name must be one GATE systems (first column in table 1) as for standard definition
+1)	The command “systemType” is optional in case of using only one system, but the system name must be one GATE systems (first column in :numref:`system_tab`) as for standard definition
 2)	Same remark, in the case where all systems have different types.
 3)	In general, one has to use the “systemType” command only for simulating more than one system of the same type.
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

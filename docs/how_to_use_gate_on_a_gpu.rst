@@ -89,4 +89,4 @@ For optical applications, the GPU manages the particle tracking within the voxel
     /gate/source/voxel/setGPUDeviceID 		1
     /gate/source/voxel/energy 			6.0 eV
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*

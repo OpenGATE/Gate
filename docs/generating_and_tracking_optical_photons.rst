@@ -1,3 +1,5 @@
+.. _generating_and_tracking_optical_photons-label:
+
 Generating and tracking optical photons
 =======================================
 
@@ -33,7 +35,7 @@ An optical photon which is not assigned a polarization at production may not be 
 Optical System
 --------------
 
-The GATE **OpticalSystem** is appropriate to model Optical Imaging systems. This system is defined in the following section of the Users Guide: Users Guide:Defining_a_system#OpticalSystem.
+The GATE **OpticalSystem** is appropriate to model Optical Imaging systems. This system is defined in the following section :ref:`opticalsystem-label`.
 
 Defining material properties
 ----------------------------
@@ -185,6 +187,8 @@ When a photon arrives at a medium boundary its behavior depends on the nature of
 In the case of two dielectric materials, the photon can undergo total internal reflection, refraction or reflection, depending on the photon’s wavelength, angle of incidence, and the refractive indices on both sides of the boundary. In the case of an interface between a dielectric and a metal, the photon can be absorbed by the metal or reflected back into the dielectric.
 When simulating a perfectly smooth surface, the user doesn't have to provide a G4Surface. The only relevant property is the refractive index (RINDEX) of the two materials on either side of the interface. Geant4 will calculate from Snell's Law the probabilities of refraction and reflections.
 
+.. _defining_surfaces-label:
+
 Defining surfaces
 -----------------
 
@@ -209,7 +213,7 @@ In Gate, two simulation models that are used at the boundary are available. The 
 LUT Davis Model
 ~~~~~~~~~~~~~~~
 
-**Please Note:** Necessary modifications in Geant4 are not implemented until Summer 2017. The user can manually modify the Geant4 code. Find detailed instructions here: Enabling LUT Davis Model
+**Please Note:** Necessary modifications in Geant4 are not implemented until Summer 2017. The user can manually modify the Geant4 code. Find detailed instructions here: :ref:`enabling_lut_davis_model-label`
 
 Available in GATE V8.0 is a model for optical transport called the LUT Davis model [Roncali& Cherry(2013)]. The model is based on measured surface data and allows the user to choose from a list of available surface finishes. Provided are a rough and a polished surface that can be used without reflector, or in combination with a specular reflector (e.g. ESR) or a Lambertian reflector (e.g. Teflon). The specular reflector can be coupled to the crystal with air or optical grease. Teflon tape is wrapped around the crystal with 4 layers.
 
@@ -369,7 +373,7 @@ Switching both on has no effect on the results, but only affects the speed of th
    /gate/digitizer/Singles/insert readout
    /gate/digitizer/Singles/readout/setDepth your_detector_readout_level
 
-Digitizer modules like **threshold** or **uphold** can be used (see Users Guide:Digitizer_and_readout_parameters#Thresholder_.26_Upholder). This is crucial when you do a fluorescence experience for example. If you want to detect only fluorescent photons you need to apply an energy cut (upholder) in order to discard high energy photons (non-fluorescent photons have higher energy than fluorescent 
+Digitizer modules like **threshold** or **uphold** can be used (see :ref:`thresholder_upholder-label`). This is crucial when you do a fluorescence experience for example. If you want to detect only fluorescent photons you need to apply an energy cut (upholder) in order to discard high energy photons (non-fluorescent photons have higher energy than fluorescent
 photons)::
 
    /gate/digitizer/Singles/insert upholder
@@ -377,7 +381,7 @@ photons)::
    /gate/digitizer/Singles/insert thresholder
    /gate/digitizer/Singles/thresholder/setThreshold 1.0 eV
 
-The **projection** (see #Binary output of projection set|Projection set) associated to this digitizer records only photons corresponding to the defined energy window. The projection image is therefore the fluorescence image.
+The **projection** (see :ref:`binary_output_of_projection_set-label`) associated to this digitizer records only photons corresponding to the defined energy window. The projection image is therefore the fluorescence image.
 
 Optical Imaging Simulation Outputs
 ----------------------------------
@@ -414,10 +418,12 @@ OpticalData tree is generated with the following information::
    MomentumDirectionx MomentumDirectiony MomentumDirectionz
    Optical photon momentum direction
 
+.. _binary_output_of_projection_set-label:
+
 Binary output of projection set
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to create a projection set (see Users Guide V7.2:Data output|Interfile output of projection set) using the Optical System in GATE, the following lines have to be added to the macro::
+In order to create a projection set (see :ref:`interfile_output_of_projection_set-label`) using the Optical System in GATE, the following lines have to be added to the macro::
 
    /gate/output/projection/enable
    /gate/output/projection/setFileName        your_name
@@ -516,4 +522,4 @@ Bibliography
 * Rolfe P 2000 Brain - In vivo near-infrared spectroscopy Annu. Rev. Biomed. Eng. 2 715-754
 * Roncali E & Cherry S 2013 - `Simulation of light transport in scintillators based on 3D characterization of crystal surfaces. <https://www.ncbi.nlm.nih.gov/pubmed/23475145>`_ Phys. Med. Biol., Volume 58(7), p. 2185–2198.
 
-*last modification: 15/04/2019*
+*last modification: 16/04/2019*

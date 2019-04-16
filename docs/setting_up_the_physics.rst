@@ -1,3 +1,5 @@
+.. _setting_up_the physics-label:
+
 Setting up the physics
 ======================
 
@@ -803,7 +805,7 @@ Particle decay is the spontaneous process of one elementary particle transformin
 Radioactive decay
 ^^^^^^^^^^^^^^^^^
 
-Radioactive decay is the process in which an unstable atomic nucleus spontaneously loses energy by emitting ionizing particles and radiation. In Geant4, the decay of radioactive nuclei by <math>\alpha</math>, <math>\beta+</math>, and <math>\beta</math> emission and by electron capture are taken into account. The simulation model is empirical and data-driven, and uses the Evaluated Nuclear Structure Data File (ENSDF).
+Radioactive decay is the process in which an unstable atomic nucleus spontaneously loses energy by emitting ionizing particles and radiation. In Geant4, the decay of radioactive nuclei by :math:`\alpha`, :math:`\beta+`, and :math:`\beta` emission and by electron capture are taken into account. The simulation model is empirical and data-driven, and uses the Evaluated Nuclear Structure Data File (ENSDF).
 
 **< ! > The download of radioactive decay data files is required.**:
 
@@ -813,7 +815,7 @@ Radioactive decay is the process in which an unstable atomic nucleus spontaneous
 Optical physics processes
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For detailed information, see :doc:`generating_and_tracking_optical_photons` .
+For detailed information, see :ref:`generating_and_tracking_optical_photons-label` .
 
 Bulk Absorption
 ^^^^^^^^^^^^^^^
@@ -900,4 +902,4 @@ Here is the help for the command::
     Default value   : tesla
     Candidates      : T kG G tesla kilogauss gauss
 
-*last modification: 11/04/2019*
+*last modification: 16/04/2019*
