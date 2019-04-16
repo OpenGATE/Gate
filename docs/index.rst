@@ -23,4 +23,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-*last modification: 15/04/2019*
+*last modification: 16/04/2019*
