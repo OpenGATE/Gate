@@ -430,7 +430,7 @@ The ROOT online plotter
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 GATE provides a very convenient tool called the online plotter, which enables online display of several variables.  
-This online analysis is available even if the root output is disabled in your macro, for instance  because the user does not want to save a large root file. **But Gate have to be compiled with certain options to have this output available.**The online plotter can be easily used with the following macro::
+This online analysis is available even if the root output is disabled in your macro, for instance  because the user does not want to save a large root file. **But Gate have to be compiled with certain options to have this output available.** The online plotter can be easily used with the following macro::
 
    /gate/output/plotter/enable
    /gate/output/plotter/showPlotter 
@@ -798,7 +798,7 @@ The LMF library and its documentation are available on the OpenGate web site.
 
 .. table:: Size of information to be stored in LMF.
    :widths: auto
-   :name: units_tab
+   :name: size_tab
 
    +--------------------------------+---------------------+---------------+------+
    | Information                    | Size (bytes/single) | Real machines | GATE |

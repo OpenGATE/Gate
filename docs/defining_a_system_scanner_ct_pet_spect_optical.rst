@@ -69,7 +69,7 @@ where :
 
 .. table:: Different systems available in GATE and their characteristics. In the second column are listed some of the keyword that are also used at in the macro (see also table 2 for a complete list). The shape in the third column describe the mother volume, composed of “daughter” volumes as described in Chap. 3 : a box means a box shaped mother volume containing an array of daughter boxes, a cylinder mother volumes will contains cylinders. Cylinders are understood here as tube sectors defined by an inner and outer radius.
    :widths: auto
-   :name: units_tab
+   :name: system_tab
 
    +----------------+--------------------------------+-----------------------------------------------------------------+
    | System         | Components and Shape           | Available Outputs                                               |
@@ -140,7 +140,7 @@ where :
 
 .. table:: Keywords corresponding to system components definition to be used with an “attach” command. At least one level has to be attached to the system. If necessary, these level’s names can be possibly used as input to digitizers modules: for example, different electronic dead times for each level’s electronics can be modelised. The two last lines, listed here for information, are related to “hits” which apply only for “sensitive” volume. Please refer to Chap. 5 for more details on this topic.
    :widths: auto
-   :name: units_tab
+   :name: keywords_tab
 
    +----------------+--------------------------------+--------------------------------+
    | System         | Attach Keyword Argument        | Depth for readout segmentation |
@@ -255,6 +255,7 @@ This variance reduction technique (VRT) has been developped with the aim to maki
 * **Generation and Propagation** of the particles through the World, then detection of those on the surface of the detector. The propagation of the particles through the detector are 'killed', in order to handle ourself the detection and not by Geant4.
 * **Computation of the mean free path** (MFP) of the particle through the detector with the standard model (the compatibility with the low energy model being not implemented yet)
 * **Computation of the path** of the particle in the detector:
+
 :math:`PATH = MFP * - log( 1 - R )`
 
 R being a distribution uniformly random number between 0 and 1
@@ -1067,8 +1068,8 @@ Described below is an example of code for modeling the OPET PET scanner::
 Figure 4.9 shows the final OPET scanner.
 
 .. figure:: OPET2.jpg
-   :alt: Figure 12: OPET2
-   :name: OPET2
+   :alt: Figure 12: OPET2-1
+   :name: OPET2-1
    
    The OPET scanner
 

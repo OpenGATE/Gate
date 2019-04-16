@@ -48,7 +48,7 @@ Hybrid Monte-Carlo and analytical simulation: a dynamic process
 During light illumination of a biological tissue, the thermal heat produced by the optical photons deposited energy does not accumulate locally in the tissue; it diffuses in biological tissues during illumination. This dynamic effect has been taken into account in the GATE code. The n seconds light illumination simulation is sampled into p time frame 3D images by setting the simulation parameter *setNumberOfTimeFrames* to p. Each of the p sample images is diffused for a duration of [1, 2, ..., p-1] x n/p seconds. The final voxelized image illustrating the heat distribution in the tissues at the end of the illumination time is obtained by adding all diffused images to the last n/p seconds illumination image. This thermal energy (or heat) map will then diffuse in the biological tissues by setting the simulation parameter *setDiffusionTime* to the value of interest. At a certain point in time after the initial temperature boost induced by nanoparticles, the temperature of the tissues will go back to its initial value due to diffusion. This boundary condition is taken into account in a post processing-step of the GATE simulation.
 
 Illustration of the heat diffusion 3D map obtained by the ThermalActor
----------------------------------------------------------------------
+----------------------------------------------------------------------
 
 In the following example, a cubic phantom made of a material defined with an absorption length :math:`L_a` and a thermal diffusivity is illuminated by a light source of optical photons with a certain photon flux (i.e. counts per second). The source direction is set perpendicular and positioned towards the phantom surface.  
 

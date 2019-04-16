@@ -94,7 +94,7 @@ In name of the OpenGATE Collaboration
 Christian MOREL CPPM CNRS/IN2P3, Marseille
 
 Member institutes of the OpenGATE Collaboration (May 2015):
-----------------------------------------------------------
+-----------------------------------------------------------
 
 *  CNRS Laboratory of Corpuscular Physics @ Clermont-Ferrand (LPC)
 *  CNRS Centre de Physique des Particules de Marseille (CPPM), Marseille

@@ -13,7 +13,7 @@ To reduce the overall computing time of GATE experiments, a parallel computing p
 
 
 Installation of the job splitter (gjs)
--------------------------------------
+--------------------------------------
 
 The job splitter can be installed in the same directory as Gate. Two environment variables are already added to the environment file used to compile Gate (but you can customize them)::
 
@@ -33,7 +33,7 @@ To install, load the Gate/Geant4 environment variables, go to the job splitter d
 By default, the executable will be created in the jobsplitter directory. If the GATEHOME variable is correctly defined, the executable will also be copied in the same directory as the Gate executable (same for the dynamic library).
 
 Installation of the file merger (gjm)
-------------------------------------
+-------------------------------------
 
 To install, it is the same way, go to the file merger directory and compile (bash example)::
 
@@ -192,14 +192,14 @@ Once all files are added to the chain, one can use the chain as a regular Ttree,
    root [1] Singles->Draw("energy")
 
 Alternative to the file merger
------------------------------
+------------------------------
 
 Root files can also be merged by using the **hadd** utility on the command line::
 
    hadd result.root file1.root file2.root ... filen.root
 
 What about errors?
------------------
+------------------
 
 If something went wrong during a simulation and a ROOT file is corrupted or incomplete, then this will be detected by the file merger. There are two options. First, one can restart only the specific part of the simulation that went wrong. This can be easily done, as the ROOT files are numbered and one can edit the submit file so it only launches that specific part. Alternatively, one can find the macro file that was used to start that part of the simulation in the .Gate directory and start the simulation directly with the macro file and its corresponding seed file.  
 

@@ -284,7 +284,7 @@ These commands can be found in the directory::
 
 .. table:: Commands of the sub-tree geometry for different shapes
    :widths: auto
-   :name: units_tab
+   :name: shape_tab
 
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
    | BOX                                                                         | TRPD                                                                                            |
@@ -401,7 +401,7 @@ forceWireframe (see Table 3.3)
 
 .. table:: List of commands of the GATE sub-tree geometry
    :widths: auto
-   :name: units_tab
+   :name: geometry_tab
 
    +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
    | Command               | Action                                          | Argument                                                       |
@@ -942,8 +942,8 @@ repeater is illustrated in figure 3.10.
    Illustration of the application of the cubic array repeater
 
 .. figure:: apres_cubic.jpg
-   :alt: Figure 15: avant_cubic
-   :name: avant_cubic
+   :alt: Figure 15: apres_cubic
+   :name: apres_cubic
 
    Illustration of the application of the cubic array repeater (after)
 

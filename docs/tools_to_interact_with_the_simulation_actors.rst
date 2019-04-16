@@ -40,7 +40,7 @@ It is possible to save the output every N seconds with the command::
   /gate/actor/[Actor Name]/saveEveryNSeconds [N]
 
 3D matrix actor (Image actor)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Some actors, such as the dose actor, can store some information into a 3D image (or matrix) according to the spatial position of the hit. User can specify the resolution of the 3D matrix (in this case, the size is equal to the size of the bounding box of the attached volume). Alternatively, user can specify the size to allow smaller matrices (never bigger).
 
@@ -88,7 +88,7 @@ EM properties are calculated relative to a specific particle type and energy, as
    /gate/actor/MyActor/save                          MyOutput.txt
 
 Dose measurement (DoseActor)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The DoseActor builds 3D images of the energy deposited (edep), dose deposited and the number of hits in a given volume. It takes into account the weight of particles. It can store multiple information into a 3D grid, each information can be enabled by using::
 
@@ -203,10 +203,9 @@ Mass images (.txt, .root, .mhd) can be imported and exported to be used by the m
    /gate/actor/[Actor Name]/importMassImage path/to/MassImage
 
 * The unit of mass images is kg.
-
 * When the mass weighting algorithm is used on a unvoxelized volume, depending on the dosel's resolution of the DoseActor the computation can take a very long time. 
-
 * **Important note :** If no mass image is imported when using the mass weighting algorithm Gate will calculate the mass during the simulation (this can take a lot of time).
+
 The command 'exportMassImage' can be used to generate the mass image of the DoseActor attached volume one time for all and import it with the 'importMassFile' command.
  
 **Limitations :**
@@ -361,7 +360,7 @@ This actor creates a root file and stores the number of secondaries in function 
 Delta kinetic energy
 ~~~~~~~~~~~~~~~~~~~~
 
-This actor sums the relative and absolute :math:`\Delta`(kinetic energy) and stores the results in two files (with suffixes "-RelStopPower" and "-StopPower"). It also stores the map of the hits to allow users to calculate the mean values::
+This actor sums the relative and absolute :math:`\Delta` (kinetic energy) and stores the results in two files (with suffixes "-RelStopPower" and "-StopPower"). It also stores the map of the hits to allow users to calculate the mean values::
 
    /gate/actor/addActor   StoppingPowerActor       MyActor
    /gate/actor/MyActor/save                        MyOutputFile.hdr
@@ -888,7 +887,7 @@ A complete example is provided here.
 Proton Nuclear Information Actor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This actor records information on proton nuclear interactions (number and type). The information can be stored in a phase space file, as illustrated in `imaging/ProtonRadiography <https://github.com/OpenGATE/GateContrib/tree/master/imaging/ProtonRadiography>.
+This actor records information on proton nuclear interactions (number and type). The information can be stored in a phase space file, as illustrated in `imaging/ProtonRadiography <https://github.com/OpenGATE/GateContrib/tree/master/imaging/ProtonRadiography>`_.
 
 Filters
 -------

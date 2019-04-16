@@ -110,7 +110,7 @@ The possible type name available corresponds to the five distributions described
 
 .. table:: Summary of the parameters for each distribution type
    :widths: auto
-   :name: units_tab
+   :name: distribution_tab
 
    +----------------+--------------------------------------------------------------------------------+
    | Parameter name | Description                                                                    |
@@ -682,7 +682,7 @@ When more than two *singles* are found in coincidence, several type of behavior 
 
 .. table:: Available multiple policy and associated meaning. When a multiple coincidence involving n *singles* is peocessed, it is first decomposed into a list of n·(n−1) pairs which are analyzed individually. In this table, the term "good" means that a pair of singles are in coincidence and that the 2 singles are separated by a number of blocks greater than or equal to the **minSectorDifference** parameter of the coincidence sorter. The prefix "take" means that 1 or more pairs of coincidences will be stored, while the prefix "keep" means that a unique coincidence, composed of at least three singles will be kept in the data flow and is called "multicoincidence". In the latter case, the multicoincidence will not be written to the disk, but may participate to a possible deadtime or bandwidth occupancy. The user may clear the multicoincidence at any desired step of the acquisition, by using the multipleKiller pulse processor (described in #Multiple coincidence removal). The "kill" prefix means that all events will be discarded and will not produce any coincidence.
    :widths: auto
-   :name: units_tab
+   :name: policy_tab
 
    +-------------------------+--------------------------------------------------------------------------------------------------------+
    | Policy name             | Description                                                                                            |
@@ -714,7 +714,7 @@ When more than two *singles* are found in coincidence, several type of behavior 
 
 .. table:: Table associated with Figure 8.6
    :widths: auto
-   :name: units_tab
+   :name: case_tab
 
    +-------------------------+--------+---------------------+--------------+--------------+
    | Policy name             | Case 1 | Case 2              | Case 3       | Case 4       |

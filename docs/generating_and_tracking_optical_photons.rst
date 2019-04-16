@@ -215,7 +215,7 @@ Available in GATE V8.0 is a model for optical transport called the LUT Davis mod
 
 .. table:: Surface names of available LUTs.
    :widths: auto
-   :name: units_tab
+   :name: surface_tab
 
    +----------+--------------+--------------------+-----------------+-----------------------+
    |          | BARE         | TEFLON             | ESR AIR         | ESR GREASE            |

@@ -32,6 +32,7 @@ Visualization with OpenGL
 The best method is to let Geant4 choose the best OpenGL mode with **/vis/open OGL** and not force a mode which can be present or not on user system.
 
 * All OpenGL commands are available here:
+
 http://geant4.slac.stanford.edu/Presentations/vis/G4OpenGLTutorial/G4OpenGLTutorial.html
 
 For example, if you wish to change the center of your simulation in order to zoom to a specific part of it, you can use the pan command and zoom in::
