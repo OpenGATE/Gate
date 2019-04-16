@@ -50,8 +50,8 @@ changed from 50 cm to 2 m using::
   /gate/world/geometry/setXLength 2. m
 
 .. figure:: World-updated.jpg
-   :alt: Figure 3.1: Description of the default parameters associated with the world
-   :name: fig3.1
+   :alt: Figure 1: World-updated
+   :name: World-updated
 
    Description of the default parameters associated with the world
 
@@ -114,29 +114,81 @@ using::
   /vis/scene/add/axes
 
 .. figure:: axis_figure.jpg
-   :alt: Figure 3.2:Three-axis system defined in GATE. The red, green and blue axes are the X, Y and Z axes respectively
-   :name: axis_fig
+   :alt: Figure 2: axis_figure
+   :name: axis_figure
 
    Three-axis system defined in GATE. The red, green and blue axes are the X, Y
    and Z axes respectively
 
-.. table:: Units available in GATE and corresponding abbreviations
+.. table:: List of units available in GATE and corresponding abbreviations
    :widths: auto
    :name: units_tab
 
-   +----------+-------------+--------------+
-   | Quantity | Unit        | Abbreviation |
-   +==========+=============+==============+
-   |Length    |parsec       |pc            |
-   |          +-------------+--------------+
-   |          |kilometer    |km            |
-   |          +-------------+--------------+
-   |          | meter       | m            |
-   +----------+-------------+--------------+
-   | Time     | second      | s            |
-   |          +-------------+--------------+
-   |          | millisecond | ms           |
-   +----------+-------------+--------------+
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | LENGTH              | SURFACE                 | VOLUME                 | ANGLE                                     |
+   +=====================+=========================+========================+===========================================+
+   | parsec pc           |                         |                        | radian rad                                |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | kilometer km        | kilometer2 km2          | kilometer3 km3         | milliradian mrad                          |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | meter m             | meter2 m2               | meter33 m3             | steradian sr                              |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | centimeter cm       | centimeter2 cm2         | centimeter3 cm3        | degre deg                                 |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | micrometer mum      | millimeter2 mm2         | millimeter3 mm3        |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | nanometer nm        |                         |                        |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | angstrom Ang        |                         |                        |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | **TIME**            | **SPEED**               | **ANGULAR SPEED**      | **ENERGY**                                |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | second s            | meter/s m/s             | radian/s rad/s         | electronvolt eV                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | millisecond ms      | centimeter/s cm/s       | degree/s deg/s         | kiloelectronvolt KeV                      |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | microsecond mus     | millimeter/s mm/s       | rotation/s rot/s       | megaelectronvolt MeV                      |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | nanosecond ns       | meter/min m/min         | radian/min rad/min     | gigaelectronvolt GeV                      |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | picosecond ps       | centimeter/min cm/min   | degree/min deg/min     | teraelectronvolt TeV                      |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | millimeter/min m/min    | rotation/min rot/min   | petaelectronvolt PeV                      |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | meter/h m/h             | radian/h rad/h         | joule j                                   |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | centimer/h cm/h         | degree/h deg/h         |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | millimeter/h mm/h       | rotation/h rot/h       |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | **ACTIVITY DOSE**   | **AMOUNT OF SUBSTANCE** | **MASS**               | **VOLUMIC MASS**                          |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | becquerel Bq        | mole mol                | milligram mg           | g/cm3 g/cm3                               |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | curie Ci            |                         |                        | mg/cm3 mg/cm3                             |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | gray Gy             |                         | kilogram kg            | kg/m3 kg/m3                               |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | **ELECTRIC CHARGE** | **ELECTRIC CURRENT**    | **ELECTRIC POTENTIAL** | **MAGNETIC FLUX - MAGNETIC FLUX DENSITY** |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | eplus e+            | ampere A                | volt V                 | weber Wb                                  |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | coulomb C           | milliamper mA           | kilovolt kV            | tesla T                                   |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | microampere muA     |                         | megavolt MV            | gauss G                                   |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | nanoampere nA       |                         | kilogauss kG           |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | **TEMPERATURE**     | **FORCE - PRESSURE**    | **POWER**              | **FREQUENCY**                             |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   | kelvin K            | newton N                | watt W                 | hertz Hz                                  |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | pascal Pa               |                        | kilohertz kHz                             |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | bar bar                 |                        | megaherz MHz                              |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
+   |                     | atmosphere atm          |                        |                                           |
+   +---------------------+-------------------------+------------------------+-------------------------------------------+
 
 
 Building a volume
@@ -226,11 +278,89 @@ modified using the sub-tree /geometry/
 The commands available in the sub-tree depend on the shape. The
 different commands for each type of shape are listed in table 3.2
 
-These commands can be found in the directory
+These commands can be found in the directory::
 
-``/gate/Volume_Name/geometry   (Some volumes visualisation are available here: ``\ ```http://gphysics.net/geant4/geant4-gdml-format.html`` <http://gphysics.net/geant4/geant4-gdml-format.html>`__\ ``)``
+  /gate/Volume_Name/geometry   (Some volumes visualisation are available here: http://gphysics.net/geant4/geant4-gdml-format.html )
 
-Shapes table goes here
+.. table:: Commands of the sub-tree geometry for different shapes
+   :widths: auto
+   :name: units_tab
+
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | BOX                                                                         | TRPD                                                                                            |
+   +=============================================================================+=================================================================================================+
+   | setXLength: Set the length of the box along the X axis                      | setX1Length: Set half length along X of the plane at -dz position                               |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setYLength: Set the length of the box along the Y axis                      | setY1Length: Set half length along Y of the plane at -dz position                               |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setZLength: Set the length of the box along the Z axis                      | setX2Length: Set half length along X of the plane at +dz position                               |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **SPHERE**                                                                  | setY2Length: Set half length along Y of the plane at +dz position                               |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmin: Set the internal radius of the sphere (0 for full sphere)          | setZLength: Set half length along Z of the trapezoid                                            |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmax: Set the external radius of the sphere                              | setXBoxLength: Set half length along X of the extruded box                                      |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setPhiStart: Set the start phi angle                                        | setYBoxLength: Set half length along Y of the extruded box                                      |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setDeltaPhi: Set the phi angular span (2PI for full sphere)                 | setZBoxLength: Set half length along Z of the extruded box                                      |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setThetaStart: Set the start theta angle                                    | setXBoxPos: Set center position X of the box                                                    |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setDeltaTheta: Set the theta angular span (2PI for full sphere)             | setYBoxPos: Set center position Y of the box                                                    |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **CYLINDER**                                                                | setZBoxPos: Set center position Z of the box                                                    |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmin: Set the internal radius of the cylinder (0 for full cylinder)      | **PARALLELEPIPED (... not yet implemented...)**                                                 |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmax: Set the external radius of the cylinder                            | setDx: Set Dx dimension of the parallelepiped                                                   |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setHeight: Set the height of the cylinder                                   | setDy: Set Dy dimension of the parallelepiped                                                   |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setPhiStart: Set the start phi angle                                        | setDz: Set Dz dimension of the parallelepiped                                                   |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setDeltaPhi: Set the phi angular span (2PI for full cylinder)               | setAlpha: Set Alpha angle                                                                       |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **CONE**                                                                    | setTheta: Set Theta angle                                                                       |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmin1: Set the internal radius of one side of the cone (0 for full cone) | setPhi: Set Phi angle                                                                           |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmax1: Set the external radius of one side of the cone                   | **POLYCONE (... not yet implemented...)**                                                       |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmin2: Set the internal radius of one side of the cone (0 for full cone) | setProfile: Set vectors of z, rInner, rOuter positions                                          |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setRmax2: Set the external radius of one side of the cone                   | setPhiStart: Set the start phi angle                                                            |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setHeight: Set the height of the cone                                       | setDeltaPhi: Set the phi angular span (2PI for full cone)                                       |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setPhiStart: Set the start phi angle                                        | **HEXAGONE**                                                                                    |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setDeltaPhi: Set the phi angular span (2PI for full cone)                   | setRadius: Set the radius of the hexagon                                                        |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **ELLIPSOID**                                                               | setHeight: Set the height of the hexagon                                                        |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setXLength: Set the half axis length in the X direction                     | **WEDGE**                                                                                       |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setYLength: Set the half axis length in the Y direction                     | NarrowerXLength: Set the length of the shorter side of the wedge in the X direction             |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setZLength: Set the half axis length in the Z direction                     | XLength: Set the length of the wedge in the X direction                                         |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setZBottomCut: To cut the ellipsoide along the Z axis                       | YLength: Set the length of the wedge in the Y direction                                         |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setZTopCut: To cut the ellipsoide along the Z axis                          | ZLength: Set the length of the wedge in the Z direction                                         |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **ELLIPTICAL TUBE**                                                         | **TET-MESH BOX**                                                                                |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setLong: Set the length of the semimajor axis                               | reader/setPathToELEFile: Set path to '.ele' input file, which describes a tetrahedral mesh      |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setShort: Set the length of the semiminor axis                              | reader/setUnitOfLength: Set unit of length for the values in the '.ele' input file              |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setHeight: Set the height of the tube                                       | setPathToAttributeMap: Set path to txt-file which defines material and colour of the tetrahedra |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | **TESSELLATED**                                                             |                                                                                                 |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+   | setPathToVerticesFile: Set the path to vertices text file                   |                                                                                                 |
+   +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
 
 For a box volume called *Phantom* , the X, Y and Z dimensions can be
 defined by::
@@ -269,7 +399,27 @@ The commands available in this sub-tree are: setColor, setVisible,
 setDaughtersInvisible, setLineStyle, setLineWidth, forceSolid and
 forceWireframe (see Table 3.3)
 
-Table 3.3: List of commands of the GATE sub-tree geometry goes here
+.. table:: List of commands of the GATE sub-tree geometry
+   :widths: auto
+   :name: units_tab
+
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | Command               | Action                                          | Argument                                                       |
+   +=======================+=================================================+================================================================+
+   | setColor              | Selects the color for the current volume        | white, gray, black, red, green, blue, cyan, magenta and yellow |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | setVisible            | Shows or hides the current volume               |                                                                |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | setDaughtersInvisible | Shows or hides the current volume daughters     |                                                                |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | setLineStyle          | Sets the current volume line-style              | dashed, dotted and unbroken                                    |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | setLineWidth          | Sets the current volume line-width              |                                                                |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | forceSolid            | Forces solid display for the current volume     |                                                                |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
+   | forceWireframe        | Forces wireframe display for the current volume |                                                                |
+   +-----------------------+-------------------------------------------------+----------------------------------------------------------------+
 
 These commands can be found in the tree /gate/Volume_Name/vis.
 
@@ -319,7 +469,8 @@ Examples
 ^^^^^^^^
 
 How to build a NaI crystal
-''''''''''''''''''''''''''
+++++++++++++++++++++++++++
+
 A volume named crystal is created as the daughter of a volume whose
 shape is defined as a box::
 
@@ -352,7 +503,7 @@ The crystal volume is disabled::
 
 
 How to build a "trpd" volume
-''''''''''''''''''''''''''''
+++++++++++++++++++++++++++++
 
 An alternative way of describing complicated geometries is to use a
 so-called "boolean" volume in order to describe one piece using a single
@@ -392,8 +543,8 @@ on a "boolean" volume consisting of a trapezoid "minus" a box::
   /gate/trapeze_name/geometry/setZBoxLength 4.501 mm
 
 .. figure:: trapeze_name.jpg
-   :alt: Figure 3.3 Side view of an extruded trapezoid based on a boolean solid. The contours in blue and dashed red represent the contours of the trapezoid and the box respectively
-   :name: trapeze_name_fig
+   :alt: Figure 3: trapeze_name
+   :name: trapeze_name
 
    Side view of an extruded trapezoid based on a boolean solid. The contours in
    blue and dashed red represent the contours of the trapezoid and the box
@@ -406,7 +557,7 @@ parameters relate to the trapezoid, whereas the last 6 parameters
 describe the extruded volume using a box shape.
 
 How to build a "wedge" volume
-'''''''''''''''''''''''''''''
++++++++++++++++++++++++++++++
 
 Gate provides the class **GateTrapCreator** to create and insert
 trapezoidal volumes into the geometry. To create a trapezoid, the user
@@ -425,8 +576,8 @@ understood:
 #. ZLength: is the length in the Z direction.
 
 .. figure:: wedge2.jpg
-   :alt: Figure 3.4: When a wedge is inserted, it is oriented as shown in this figure
-   :name: wedge2_fig
+   :alt: Figure 4: wedge2
+   :name: wedge2
 
    When a wedge is inserted, it is oriented as shown in this figure
 
@@ -443,7 +594,7 @@ daughter of a module::
   /gate/wedge0/vis/setColor                  yellow
 
 How to build a "tessellated" volume
-'''''''''''''''''''''''''''''''''''
++++++++++++++++++++++++++++++++++++
 
 In GATE, you have the possibility to create a tessellated volume from an
 STL file. STL is a common file format that uses triangular facets to
@@ -467,14 +618,17 @@ Label89.stl being the STL file containing the triangular facets.
 
 Declaring other tessellated volumes (including daughters), one can
 create a complex geometry (for example kidneys) for accurate dosimetry:
-|kidneys_STL.png|
+
+.. figure:: kidneys_STL.png
+   :alt: Figure 5: kidneys_STL
+   :name: kidneys_STL
 
 The complete code used to generate this figure can be found in the
 GateContrib GitHub repository under
 `misc/geometry_STL/kidneys <https://github.com/OpenGATE/GateContrib/tree/master/misc/geometry_STL/kidneys>`__.
 
 How to build a "TetMeshBox" volume
-''''''''''''''''''''''''''''''''''
+++++++++++++++++++++++++++++++++++
 
 The **TetMeshBox** volume is a box volume which contains a tetrahedral
 mesh. The tetrahedral mesh can be loaded from an '.ele/.node' file pair,
@@ -514,9 +668,8 @@ mesh and the material of the bounding box can be set via the
 'setMaterial'. Here, a visual example of the TetMeshBox volume:
 
 .. figure:: tet_mesh_box.png
-   :alt: tet_mesh_box.png
-   :height: 300px
-   :name: tet_mesh_box_fig
+   :alt: Figure 6: tet_mesh_box
+   :name: tet_mesh_box
 
    tet_mesh_box.png
 
@@ -568,8 +721,17 @@ The "false" option centers the first copy around the position of the
 initial volume that has been repeated. The other copies are created by
 offset. The default option is true.
 
-|Figure 3.5: Illustration of the application of the linear repeater|
-|Figure 3.5: Illustration of the application of the linear repeater|
+.. figure:: avant_linear.jpg
+   :alt: Figure 7: avant_linear
+   :name: avant_linear
+
+   Illustration of the application of the linear repeater
+
+.. figure:: apres_linear.jpg
+   :alt: Figure 8: apres_linear
+   :name: apres_linear
+
+   Illustration of the application of the linear repeater
 
 -  Example::
 
@@ -676,14 +838,14 @@ at 90 degree (a quarter of ring) will not be supported by the LMF
 output.
 
 .. figure:: autorotenable.jpg
-   :alt: Figure 3.6: Illustration of the application of the auto-rotation option
-   :name: auto_rot_enable_fig
+   :alt: Figure 9: autorotenable
+   :name: autorotenable
 
    Illustration of the application of the auto-rotation option
 
 .. figure:: autorotdisable.jpg
-   :alt: Figure 3.7: Illustration of the application of the ring-repeater when the auto-rotation option is disabled
-   :name: auto_rot_disable_fig
+   :alt: Figure 10: autorotdisable
+   :name: autorotdisable
 
    Illustration of the application of the ring-repeater when the auto-rotation
    option is disabled
@@ -698,8 +860,17 @@ output.
 The *hole* volume is repeated 10 times around the Y axis. The
 application of this ring repeater is illustrated in figure 3.8.
 
-|Figure 3.8: Illustration of the application of the ring repeater|
-|Figure 3.8b: Illustration of the application of the ring repeater|
+.. figure:: avant_ring.jpg
+   :alt: Figure 11: avant_ring
+   :name: avant_ring
+
+   Illustration of the application of the ring repeater
+
+.. figure:: apres_ring.jpg
+   :alt: Figure 12: apres_ring
+   :name: apres_ring
+
+   Illustration of the application of the ring repeater
 
 -  Example 2::
 
@@ -735,8 +906,8 @@ has to be repeated along the X, Y and Z axes respectively, use::
   /gate/hole/cubicArray/setRepeatNumberZ Nz
 
 .. figure:: 3ringscaps.jpg
-   :alt: Figure 3.9: Example of a ring repeater with a shift. An array of 3 crystal matrices has been repeated 20 times with a modulo N=2 shift
-   :name: 3_rings_caps_fig
+   :alt: Figure 13: 3ringscaps
+   :name: 3ringscaps
 
    Example of a ring repeater with a shift. An array of 3 crystal matrices has
    been repeated 20 times with a modulo N=2 shift
@@ -765,14 +936,14 @@ twice each 15 cm along the Z axis. The application of this cubic array
 repeater is illustrated in figure 3.10.
 
 .. figure:: avant_cubic.jpg
-   :alt: Figure 3.10: Illustration of the application of the cubic array repeater
-   :name: avant_cubic_fig
+   :alt: Figure 14: avant_cubic
+   :name: avant_cubic
 
    Illustration of the application of the cubic array repeater
 
 .. figure:: apres_cubic.jpg
-   :alt: Figure 3.10B: Illustration of the application of the cubic array repeater (after)
-   :name: apres_cubic_fig
+   :alt: Figure 15: avant_cubic
+   :name: avant_cubic
 
    Illustration of the application of the cubic array repeater (after)
 
@@ -818,9 +989,17 @@ your phantom
 The *hole* volume is repeated in a triangle-like pattern. The
 application of this quadrant repeater is illustrated in figure 3.5.
 
-|Figure 3.10: Illustration of the application of the cubic array
-repeater| |Figure 3.10b: Illustration of the application of the cubic
-array repeater (after)|
+.. figure:: avant_quadrant.jpg
+   :alt: Figure 16: avant_quadrant
+   :name: avant_quadrant
+
+   Illustration of the application of the cubic array repeater
+
+.. figure:: apres_quadrant.jpg
+   :alt: Figure 17: apres_quadrant
+   :name: apres_quadrant
+
+   Illustration of the application of the cubic array repeater (after)
 
 Remark: The repeaters that are applied to the *Name_Volume* volume can
 be listed using::
@@ -860,8 +1039,8 @@ axial direction, use::
   /gate/Name_Volume/sphere/setPhiAngle y deg
 
 .. figure:: sphere_lazaro_0.jpg
-   :alt: Figure 3.12: Illustration of the application of the sphere repeater
-   :name: sphere_laz_0_fig
+   :alt: Figure 18: sphere_lazaro_0
+   :name: sphere_lazaro_0
 
    Illustration of the application of the sphere repeater
 
@@ -963,8 +1142,17 @@ The *Phantom* volume is placed at 10 cm, 0 cm and 0 cm from the center
 of the mother volume (here the *world* volume). The application of this
 translation placement is illustrated in figure 3.13.
 
-|Center|Figure 3.13: Illustration of the translation placement|
-|Center\| Illustration of the translation placement|
+.. figure:: avant_place.jpg
+   :alt: Figure 19: avant_place
+   :name: avant_place
+
+   Illustration of the translation placement
+
+.. figure:: place_transl.jpg
+   :alt: Figure 20: place_transl
+   :name: place_transl
+
+   Illustration of the translation placement
 
 Rotation
 ~~~~~~~~
@@ -986,8 +1174,17 @@ The default rotation axis is the Z axis.
 The *Phantom* volume is rotated by 90 degrees around the Y axis. The
 application of this rotation placement is illustrated in figure 3.14.
 
-|Figure 3.14: Illustration of the rotation placement| |Figure 3.14:
-Illustration of the rotation placement|
+.. figure:: Avant_rot.jpg
+   :alt: Figure 21: Avant_rot
+   :name: Avant_rot
+
+   Illustration of the rotation placement
+
+.. figure:: place_rot.jpg
+   :alt: Figure 22: apres_rot
+   :name: apres_rot
+
+   Illustration of the rotation placement
 
 Alignment
 ~~~~~~~~~
@@ -1040,8 +1237,8 @@ where Delta is the length of the wedge across the middle of the Y
 direction, as shown in Figure 3.15.
 
 .. figure:: wedge2d.jpg
-   :alt: Figure 3.15: Center of wedge
-   :name: wedge_2d_fig
+   :alt: Figure 23: wedge2d
+   :name: wedge2d
 
    Center of wedge
 
@@ -1053,8 +1250,8 @@ is possible to arrange a series of 8 crystals with varying the lengths
 as shown in Figure 3.16.
 
 .. figure:: opetblock.jpg
-   :alt: Center|Figure 3.16: A block approximating a true circular geometry
-   :name: opet_block_fig
+   :alt: Figure 24: opetblock
+   :name: opetblock
 
    A block approximating a true circular geometry
 
@@ -1070,9 +1267,8 @@ one row of wedge crystals::
   /gate/module/setMaterial            Air
 
 .. figure:: OPET2.jpg
-   :alt: |Figure 3.17: The OPET scanner
-   :width: 400px
-   :name: opet_scanner_fig
+   :alt: Figure 25: OPET2
+   :name: OPET2
 
    The OPET scanner
 
@@ -1362,18 +1558,5 @@ geometry. It also refreshes the display window. The geometry can be
 updated with the following command::
 
   /gate/geometry/rebuild
-
-.. |kidneys_STL.png| image:: kidneys_STL.png
-   :height: 300px
-.. |Figure 3.5: Illustration of the application of the linear repeater| image:: avant_linear.jpg
-.. |Figure 3.5: Illustration of the application of the linear repeater| image:: apres_linear.jpg
-.. |Figure 3.8: Illustration of the application of the ring repeater| image:: avant_ring.jpg
-.. |Figure 3.8b: Illustration of the application of the ring repeater| image:: apres_ring.jpg
-.. |Figure 3.10: Illustration of the application of the cubic array repeater| image:: avant_quadrant.jpg
-.. |Figure 3.10b: Illustration of the application of the cubic array repeater (after)| image:: Apres_quadrant.jpg
-.. |Center|Figure 3.13: Illustration of the translation placement| image:: avant_place.jpg
-.. |Center\| Illustration of the translation placement| image:: place_transl.jpg
-.. |Figure 3.14: Illustration of the rotation placement| image:: avant_rot.jpg
-.. |Figure 3.14: Illustration of the rotation placement| image:: place_rot.jpg
 
 *last modification: 11/04/2019*

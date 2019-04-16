@@ -119,8 +119,8 @@ Step 1: Defining a scanner geometry
 -----------------------------------
 
 .. figure:: chap2-f1.jpg
-   :alt: Fig 2.1: World volume.
-   :name: fig2.1
+   :alt: Figure 1: chap2-f1
+   :name: chap2-f1
 
    World volume. 
 
@@ -134,7 +134,7 @@ database needs to be specified with the following command::
 
   /gate/geometry/setMaterialDatabase MyMaterialDatabase.db
 
-The base of the tree is represented by the world volume (:numref:`fig2.1`) which
+The base of the tree is represented by the world volume (:numref:`chap2-f1`) which
 sets the experimental framework of the simulation. All Gate commands related to
 the construction of the geometry are described in detail in `Users
 Guide:Defining a geometry <Users_Guide:Defining_a_geometry>`__. The world volume
@@ -158,7 +158,7 @@ meaning and name. It specifies the type of scanner to be simulated. `Users
 Guide:Defining a system <Users_Guide:Defining_a_system>`__ gives the specifics
 of each type of scanner, also called system. In the current example, the system
 is a CylindricalPET system. This system assumes that the scanner is based on a
-cylindrical configuration (:numref:`fig2.2`) of blocks, each block containing a
+cylindrical configuration (:numref:`chap2-f2`) of blocks, each block containing a
 set of crystals::
 
   #  S Y S T E M
@@ -172,8 +172,8 @@ set of crystals::
   /vis/viewer/zoom 3
 
 .. figure:: chap2-f2.jpg
-   :alt: Figure 2.2: Cylindrical scanner
-   :name: fig2.2
+   :alt: Figure 2: chap2-f2
+   :name: chap2-f2
 
    Cylindrical scanner
 
@@ -217,22 +217,22 @@ daughter of the system (here cylindricalPET system)::
   /gate/box1/vis/forceWireframe
 
 .. figure:: chap2-f3.jpg
-   :alt: Figure 2.3: first level of the scanner
-   :name: fig2.3
+   :alt: Figure 3: chap2-f3
+   :name: chap2-f3
 
    First level of the scanner
 
 
-Once the block is created (:numref:`fig2.3`), the crystal can be defined as a
-daughter of the block (:numref:`fig2.4`)
+Once the block is created (:numref:`chap2-f3`), the crystal can be defined as a
+daughter of the block (:numref:`chap2-f4`)
 
 The zoom command line in the script allows the user to zoom the geometry and the
 panTo command translates the viewer window in 60 mm in horizontal and 40 mm in
 vertical directions (the default is the origin of the world (0,0,0)).
 
 To obtain the complete matrix of crystals, the volume box2 needs to be repeated
-in the Y and Z directions (:numref:`fig2.5`). To obtain the complete ring
-detector, the original block is repeated 30 times (:numref:`fig2.6`)::
+in the Y and Z directions (:numref:`chap2-f5`). To obtain the complete ring
+detector, the original block is repeated 30 times (:numref:`chap2-f6`)::
 
   # C R Y S T A L
   /gate/box1/daughters/name box2
@@ -256,14 +256,14 @@ detector, the original block is repeated 30 times (:numref:`fig2.6`)::
   /gate/box2/cubicArray/setRepeatVector 0. 2.25 2.25 mm
 
 .. figure:: chap2-f4.jpg
-   :alt: Figure 2.4: crystal, daughter of the block
-   :name: fig2.4
+   :alt: Figure 4: chap2-f4
+   :name: chap2-f4
 
    Crystal, daughter of the block
 
 .. figure:: chap2-f5.jpg
-   :alt: Figure 2.5: matrix of crystals
-   :name: fig2.5
+   :alt: Figure 5: chap2-f5
+   :name: chap2-f5
 
    Matrix of crystals
 
@@ -294,8 +294,8 @@ The following commands are used to connect the volumes to the system::
   /gate/systems/cylindricalPET/module/attach box2
 
 .. figure:: chap2-f6.jpg
-   :alt: Figure 2.6: complete ring of 30 block detectors
-   :name: fig2.6
+   :alt: Figure 6: chap2-f6
+   :name: chap2-f6
 
    Complete ring of 30 block detectors
 
@@ -336,8 +336,8 @@ gray. This object represents the attenuation medium of the phantom::
   /gate/my_phantom/geometry/setHeight 30. mm
 
 .. figure:: chap2-f7.jpg
-   :alt: Figure 2.7: cylindrical phantom
-   :name: fig2.7
+   :alt: Figure 7: chap2-f7
+   :name: chap2-f7
 
    Cylindrical phantom
 
@@ -619,8 +619,8 @@ The number of projections or runs of the simulation is thus defined by:
 :math:`N run = \frac {setTimeStop-setTimeStart} {setTimeSlice}`
 
 .. figure:: chap2-f8.jpg
-   :alt: Figure 2.8: Simulation is started
-   :name: fig2.8
+   :alt: Figure 8: chap2-f8
+   :name: chap2-f8
 
    Simulation is started
 
@@ -678,8 +678,8 @@ beginning of the acquisition, and a value of 2 results in one printing at each
 beginning of run.
 
 .. figure:: Simtree.jpg
-   :alt: Figure 2.9: GATE simulation architecture
-   :name: fig2.9
+   :alt: Figure 9: Simtree
+   :name: Simtree
 
    GATE simulation architecture
 

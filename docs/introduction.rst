@@ -2,16 +2,16 @@ Introduction
 ============
 
 .. figure:: GoldGate.jpg
+   :alt: GoldGate
+   :name: GoldGate
 
 Geant4 Application for Emission Tomography: a simulation toolkit for PET
 and SPECT
 
-`OpenGATE Collaboration`_
-
-.. _`OpenGATE Collaboration`: http://www.opengatecollaboration.org
+`OpenGATE Collaboration: <http://www.opengatecollaboration.org>`_
 
 Authors
-~~~~~~~
+-------
 
 OpenGATE spokesperson: I. Buvat (IMIV UMR1023 Inserm-CEA-Université
 Paris Sud, ERL 9218 CNRS Orsay)
@@ -37,7 +37,7 @@ Wieers, C. Morel
 Special Thanks: Geant4 Collaboration and LOW energy WG
 
 The GATE mailing list 
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 You are encouraged to participate in the dialog and post your
 suggestions, questions and answers to colleagues' questions on the
@@ -51,7 +51,7 @@ engine to see if your question has already been answered before sending
 a mail to the GATE-users .
 
 Forewords
-~~~~~~~~~
+---------
 
 Monte Carlo simulation is an essential tool in emission tomography to
 assist in the design of new medical imaging devices, assess new
@@ -94,41 +94,41 @@ In name of the OpenGATE Collaboration
 Christian MOREL CPPM CNRS/IN2P3, Marseille
 
 Member institutes of the OpenGATE Collaboration (May 2015):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------------
 
--  CNRS Laboratory of Corpuscular Physics @ Clermont-Ferrand (LPC)
--  CNRS Centre de Physique des Particules de Marseille (CPPM), Marseille
--  CNRS Imaging and Modelling in Neurobiology and Cancerology lab @
+*  CNRS Laboratory of Corpuscular Physics @ Clermont-Ferrand (LPC)
+*  CNRS Centre de Physique des Particules de Marseille (CPPM), Marseille
+*  CNRS Imaging and Modelling in Neurobiology and Cancerology lab @
    Orsay (IMNC), Orsay
--  CNRS IRES, Centre Pluridisciplinaire Hubert Curien (CPHC) @
+*  CNRS IRES, Centre Pluridisciplinaire Hubert Curien (CPHC) @
    Strasbourg
--  CNRS Laboratoire de Physique Subatomique et des technologies
+*  CNRS Laboratoire de Physique Subatomique et des technologies
    associées (SUBATECH), Nantes
--  INSERM - CNRS CREATIS lab @ Lyon
--  U892 INSERM @ Nantes
--  LATIM, U1101 INSERM, Brest
--  IMIV, UMR1023 Inserm-CEA-Université Paris Sud, ERL 9218 CNRS, Service
+*  INSERM - CNRS CREATIS lab @ Lyon
+*  U892 INSERM @ Nantes
+*  LATIM, U1101 INSERM, Brest
+*  IMIV, UMR1023 Inserm-CEA-Université Paris Sud, ERL 9218 CNRS, Service
    Hospitalier Frédéric Joliot (SHFJ), Orsay
--  Sungkyunkwan University School of Medicine (DMN), Seoul
--  Forschungszentrum-Juelich (IME)
--  Memorial Sloan-Kettering Cancer Center (Department of Medical
+*  Sungkyunkwan University School of Medicine (DMN), Seoul
+*  Forschungszentrum-Juelich (IME)
+*  Memorial Sloan-Kettering Cancer Center (Department of Medical
    Physics), New York
--  University of Athens (IASA)
--  Delft University of Technology (IRI)
--  UC Davis, California
--  MedAustron, Wiener Neustadt
--  Medical University Vienna, Wien
--  UMR 1037 INSERM/UPS, Toulouse
+*  University of Athens (IASA)
+*  Delft University of Technology (IRI)
+*  UC Davis, California
+*  MedAustron, Wiener Neustadt
+*  Medical University Vienna, Wien
+*  UMR 1037 INSERM/UPS, Toulouse
 
 Overview
-~~~~~~~~
+--------
 
 GATE combines the advantages of the GEANT4 simulation toolkit well-validated
 physics models, sophisticated geometry description, and powerful visualization
 and 3D rendering tools with original features specific to emission tomography.
 It consists of several hundred C++ classes. Mechanisms used to manage time,
 geometry, and radioactive sources form a core layer of C++ classes close to the
-GEANT4 kernel :numref:`gate_layers`. An application layer allows for the
+GEANT4 kernel :numref:`GATE_layers`. An application layer allows for the
 implementation of user classes derived from the core layer classes, e.g.
 building specific geometrical volume shapes and/or specifying operations on
 these volumes like rotations or translations. Since the application layer
@@ -138,8 +138,8 @@ macro language - that extends the native command interpreter of GEANT4 makes it
 possible to perform and to control Monte Carlo simulations of realistic setups.
 
 .. figure:: GATE_layers.jpg
-   :alt: Figure 1: Structure of GATE
-   :name: gate_layers
+   :alt: Figure 1: GATE_layers
+   :name: GATE_layers
 
    Structure of GATE
 
