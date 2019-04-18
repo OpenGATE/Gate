@@ -9,8 +9,7 @@ Introduction
    :depth: 15
    :local:
 
-Geant4 Application for Emission Tomography: a simulation toolkit for PET
-and SPECT
+GATE a Monte-Carlo simulation toolkit for medical physics applications
 
 `OpenGATE Collaboration <http://www.opengatecollaboration.org>`_
 
