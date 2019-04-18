@@ -9,50 +9,17 @@ Introduction
    :depth: 15
    :local:
 
-Geant4 Application for Emission Tomography: a simulation toolkit for PET
-and SPECT
-
-`OpenGATE Collaboration <http://www.opengatecollaboration.org>`_
+GATE a Monte-Carlo simulation toolkit for medical physics applications
 
 Authors
 -------
 
-OpenGATE spokesperson: I. Buvat (IMIV UMR1023 Inserm-CEA-Université
-Paris Sud, ERL 9218 CNRS Orsay)
-
-OpenGATE technical coordinator: S. Jan (IMIV UMR1023
-Inserm-CEA-Université Paris Sud, ERL 9218 CNRS Orsay)
-
-Editorial board at the time of the first Users Guide version (2004) S.
-Glick (UMASS), S. Kerhoas (CEA Saclay), F. Mayet (CNRS-LPSC Grenoble)
-
-Authors of the first edition (2004) : S. Jan, G. Santin, D. Strul, S.
-Staelens, K. Assié, D. Autret, S. Avner, R. Barbier, M. Bardiès, P. M.
-Bloomfield, D. Brasse, V. Breton, P. Bruyndonckx, I. Buvat, A. F.
-Chatziioannou, Y. Choi, Y. H. Chung, C. Comtat, D. Donnarieix, L.
-Ferrer, S. J. Glick, C. J. Groiselle, D. Guez, P.-F. Honore, S.
-Kerhoas-Cavata, A. S. Kirov, V. Kohli, M. Koole, M. Krieguer, D. J. van
-der Laan, F. Lamare, G. Largeron, C. Lartizien, D. Lazaro, M. C. Maas,
-L. Maigne, F. Mayet, F. Melot, C. Merheb, E. Pennacchio, J. Perez, U.
-Pietrzyk, F. R. Rannou, M. Rey, D. R. Schaart, C. R. Schmidtlein, L.
-Simon, T. Y. Song, J.-M. Vieira, D. Visvikis, R. Van de Walle, E.
-Wieers, C. Morel
-
-Special Thanks: Geant4 Collaboration and LOW energy WG
-
-The GATE mailing list 
----------------------
-
-You are encouraged to participate in the dialog and post your
-suggestions, questions and answers to colleagues' questions on the
-gate-users mailing list, the GATE mailing list for users. You can
-subscribe to the gate-users mailing list, by registering at the GATE web
-site: http://www.opengatecollaboration.org
-
-If you have a question, it is very likely that it has already been asked
-and answered, and is now stored in the archives. Please use the search
-engine to see if your question has already been answered before sending
-a mail to the GATE-users .
+- OpenGATE collaboration : http://www.opengatecollaboration.org
+- OpenGATE spokesperson: L. Maigne (LPC UMR 6533 CNRS/IN2P3, Clermont-Ferrand, France)
+- OpenGATE technical coordinator: D. Sarrut (CREATIS UMR CNRS 5220, Lyon, France)
+- Gate authors: `authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
+- Members of the OpenGATE Collaboration: `members <http://www.opengatecollaboration.org/Members>`_
+- Special Thanks: `Geant4 Collaboration <https://geant4.web.cern.ch/>`_ and LOW energy WG
 
 Forewords
 ---------
@@ -95,34 +62,7 @@ standard for Monte Carlo simulation in nuclear medicine.
 
 In name of the OpenGATE Collaboration
 
-Christian MOREL CPPM CNRS/IN2P3, Marseille
-
-Member institutes of the OpenGATE Collaboration (May 2015):
------------------------------------------------------------
-
-*  CNRS Laboratory of Corpuscular Physics @ Clermont-Ferrand (LPC)
-*  CNRS Centre de Physique des Particules de Marseille (CPPM), Marseille
-*  CNRS Imaging and Modelling in Neurobiology and Cancerology lab @
-   Orsay (IMNC), Orsay
-*  CNRS IRES, Centre Pluridisciplinaire Hubert Curien (CPHC) @
-   Strasbourg
-*  CNRS Laboratoire de Physique Subatomique et des technologies
-   associées (SUBATECH), Nantes
-*  INSERM - CNRS CREATIS lab @ Lyon
-*  U892 INSERM @ Nantes
-*  LATIM, U1101 INSERM, Brest
-*  IMIV, UMR1023 Inserm-CEA-Université Paris Sud, ERL 9218 CNRS, Service
-   Hospitalier Frédéric Joliot (SHFJ), Orsay
-*  Sungkyunkwan University School of Medicine (DMN), Seoul
-*  Forschungszentrum-Juelich (IME)
-*  Memorial Sloan-Kettering Cancer Center (Department of Medical
-   Physics), New York
-*  University of Athens (IASA)
-*  Delft University of Technology (IRI)
-*  UC Davis, California
-*  MedAustron, Wiener Neustadt
-*  Medical University Vienna, Wien
-*  UMR 1037 INSERM/UPS, Toulouse
+Christian MOREL CPPM CNRS/IN2P3, Marseille, 2004
 
 Overview
 --------
