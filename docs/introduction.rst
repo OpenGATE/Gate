@@ -21,20 +21,6 @@ Authors
 - Members of the OpenGATE Collaboration: `members <http://www.opengatecollaboration.org/Members>`_
 - Special Thanks: `Geant4 Collaboration <https://geant4.web.cern.ch/>`_ and LOW energy WG
 
-The GATE mailing list 
----------------------
-
-You are encouraged to participate in the dialog and post your
-suggestions, questions and answers to colleagues' questions on the
-gate-users mailing list, the GATE mailing list for users. You can
-subscribe to the gate-users mailing list, by registering at the GATE web
-site: http://www.opengatecollaboration.org
-
-If you have a question, it is very likely that it has already been asked
-and answered, and is now stored in the archives. Please use the search
-engine to see if your question has already been answered before sending
-a mail to the GATE-users .
-
 Forewords
 ---------
 
@@ -76,7 +62,7 @@ standard for Monte Carlo simulation in nuclear medicine.
 
 In name of the OpenGATE Collaboration
 
-Christian MOREL CPPM CNRS/IN2P3, Marseille
+Christian MOREL CPPM CNRS/IN2P3, Marseille, 2004
 
 Overview
 --------
