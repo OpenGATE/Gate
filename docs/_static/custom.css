@@ -19,6 +19,6 @@ div.body {
     max-width: 100%; !important
 }
 
-.toc-backref { 
+div.toc-backref a { 
   border-bottom: none; !important
 }
