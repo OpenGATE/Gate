@@ -17,26 +17,11 @@ and SPECT
 Authors
 -------
 
-OpenGATE spokesperson: I. Buvat (IMIV UMR1023 Inserm-CEA-Université
-Paris Sud, ERL 9218 CNRS Orsay)
+OpenGATE spokesperson: L. Maigne (LPC UMR 6533 CNRS/IN2P3, Clermont-Ferrand, France)
 
-OpenGATE technical coordinator: S. Jan (IMIV UMR1023
-Inserm-CEA-Université Paris Sud, ERL 9218 CNRS Orsay)
+OpenGATE technical coordinator: D. Sarrut (CREATIS UMR CNRS 5220, Lyon, France)
 
-Editorial board at the time of the first Users Guide version (2004) S.
-Glick (UMASS), S. Kerhoas (CEA Saclay), F. Mayet (CNRS-LPSC Grenoble)
-
-Authors of the first edition (2004) : S. Jan, G. Santin, D. Strul, S.
-Staelens, K. Assié, D. Autret, S. Avner, R. Barbier, M. Bardiès, P. M.
-Bloomfield, D. Brasse, V. Breton, P. Bruyndonckx, I. Buvat, A. F.
-Chatziioannou, Y. Choi, Y. H. Chung, C. Comtat, D. Donnarieix, L.
-Ferrer, S. J. Glick, C. J. Groiselle, D. Guez, P.-F. Honore, S.
-Kerhoas-Cavata, A. S. Kirov, V. Kohli, M. Koole, M. Krieguer, D. J. van
-der Laan, F. Lamare, G. Largeron, C. Lartizien, D. Lazaro, M. C. Maas,
-L. Maigne, F. Mayet, F. Melot, C. Merheb, E. Pennacchio, J. Perez, U.
-Pietrzyk, F. R. Rannou, M. Rey, D. R. Schaart, C. R. Schmidtlein, L.
-Simon, T. Y. Song, J.-M. Vieira, D. Visvikis, R. Van de Walle, E.
-Wieers, C. Morel
+`GATE authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
 
 Special Thanks: Geant4 Collaboration and LOW energy WG
 
