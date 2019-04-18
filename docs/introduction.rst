@@ -21,9 +21,11 @@ OpenGATE spokesperson: L. Maigne (LPC UMR 6533 CNRS/IN2P3, Clermont-Ferrand, Fra
 
 OpenGATE technical coordinator: D. Sarrut (CREATIS UMR CNRS 5220, Lyon, France)
 
-`GATE authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
+Gate authors: `authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
 
-Special Thanks: Geant4 Collaboration and LOW energy WG
+Members of the OpenGATE Collaboration: `members <http://www.opengatecollaboration.org/Members>`_
+
+Special Thanks: `Geant4 Collaboration <https://geant4.web.cern.ch/>`_ and LOW energy WG
 
 The GATE mailing list 
 ---------------------
@@ -81,33 +83,6 @@ standard for Monte Carlo simulation in nuclear medicine.
 In name of the OpenGATE Collaboration
 
 Christian MOREL CPPM CNRS/IN2P3, Marseille
-
-Member institutes of the OpenGATE Collaboration (May 2015):
------------------------------------------------------------
-
-*  CNRS Laboratory of Corpuscular Physics @ Clermont-Ferrand (LPC)
-*  CNRS Centre de Physique des Particules de Marseille (CPPM), Marseille
-*  CNRS Imaging and Modelling in Neurobiology and Cancerology lab @
-   Orsay (IMNC), Orsay
-*  CNRS IRES, Centre Pluridisciplinaire Hubert Curien (CPHC) @
-   Strasbourg
-*  CNRS Laboratoire de Physique Subatomique et des technologies
-   associées (SUBATECH), Nantes
-*  INSERM - CNRS CREATIS lab @ Lyon
-*  U892 INSERM @ Nantes
-*  LATIM, U1101 INSERM, Brest
-*  IMIV, UMR1023 Inserm-CEA-Université Paris Sud, ERL 9218 CNRS, Service
-   Hospitalier Frédéric Joliot (SHFJ), Orsay
-*  Sungkyunkwan University School of Medicine (DMN), Seoul
-*  Forschungszentrum-Juelich (IME)
-*  Memorial Sloan-Kettering Cancer Center (Department of Medical
-   Physics), New York
-*  University of Athens (IASA)
-*  Delft University of Technology (IRI)
-*  UC Davis, California
-*  MedAustron, Wiener Neustadt
-*  Medical University Vienna, Wien
-*  UMR 1037 INSERM/UPS, Toulouse
 
 Overview
 --------
