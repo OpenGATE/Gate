@@ -18,7 +18,3 @@ div.documentwrapper {
 div.body {
     max-width: 100%; !important
 }
-
-div.toc-backref a { 
-  border-bottom: none; !important
-}
