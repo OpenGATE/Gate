@@ -11,20 +11,15 @@ Introduction
 
 GATE a Monte-Carlo simulation toolkit for medical physics applications
 
-`OpenGATE Collaboration <http://www.opengatecollaboration.org>`_
-
 Authors
 -------
 
-OpenGATE spokesperson: L. Maigne (LPC UMR 6533 CNRS/IN2P3, Clermont-Ferrand, France)
-
-OpenGATE technical coordinator: D. Sarrut (CREATIS UMR CNRS 5220, Lyon, France)
-
-Gate authors: `authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
-
-Members of the OpenGATE Collaboration: `members <http://www.opengatecollaboration.org/Members>`_
-
-Special Thanks: `Geant4 Collaboration <https://geant4.web.cern.ch/>`_ and LOW energy WG
+- OpenGATE collaboration : http://www.opengatecollaboration.org
+- OpenGATE spokesperson: L. Maigne (LPC UMR 6533 CNRS/IN2P3, Clermont-Ferrand, France)
+- OpenGATE technical coordinator: D. Sarrut (CREATIS UMR CNRS 5220, Lyon, France)
+- Gate authors: `authors <https://github.com/OpenGATE/Gate/blob/develop/AUTHORS>`_
+- Members of the OpenGATE Collaboration: `members <http://www.opengatecollaboration.org/Members>`_
+- Special Thanks: `Geant4 Collaboration <https://geant4.web.cern.ch/>`_ and LOW energy WG
 
 The GATE mailing list 
 ---------------------
