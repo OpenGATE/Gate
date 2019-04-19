@@ -2,7 +2,11 @@
 div.sphinxsidebar a {
     border-bottom: none; !important
 }
-  
+
+a {
+    text-decoration: none; !important
+}
+
 a.reference {
     border-bottom: none; !important
 }
