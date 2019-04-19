@@ -1,6 +1,6 @@
 .. _compilation_instructions-label:
 
-Compilation Instructions V8.2
+Compiling GATE (V8.2)
 =============================
 
 .. contents:: Table of Contents
