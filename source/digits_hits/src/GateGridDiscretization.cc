@@ -84,7 +84,7 @@ G4int GateGridDiscretization::ChooseVolume(G4String val)
      // G4AffineTransform at;
       //G4ThreeVector volSize;
       //G4cout<<"name"<<m_store->FindCreator(val)->GetLogicalVolumeName()<< G4endl;
-    //BErofre it was working. Now the Solid() volume does nnot exit at this stage It exits after the initialization
+    //BErofre it was working.After the new Gate realise 8.2  Now the Solid() volume does nnot exit at this stage It exits after the initialization
     // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
       //sizeVol[0] = max-min;
      //m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
@@ -163,7 +163,7 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
         outputPulse->SetEnergyFin(-1);
 
 
-        //Si es zero tengo porblme Que estoy metiendo por defecto ?.  No es obligatorio meter agp. Par defecto-1 Si es diff de invalid
+        //Si es zero tengo porblme  Par defecto-1 Si es diff de invalid
         if((*im).second.numberReadOutBlocksX>0 && (*im).second.numberReadOutBlocksY>0){
             NumberPB_X=int((*im).second.numberStripsX/(*im).second.numberReadOutBlocksX);
             NumberPB_Y=int((*im).second.numberStripsY/(*im).second.numberReadOutBlocksY);
@@ -366,7 +366,7 @@ void GateGridDiscretization::ApplyBlockReadOut( GatePulseList& outputPulseList){
                              G4String currentVolumeName=(outputPulseList.at(x.second[i1])->GetVolumeID().GetBottomCreator())->GetObjectName();
                              int currentNumber=outputPulseList.at(x.second[i1])->GetVolumeID().GetBottomVolume()->GetCopyNo();
                              currentVolumeName=currentVolumeName+std::to_string(currentNumber);
-                             if(posToMerge.find(currentVolumeName)!=posToMerge.end()){;
+                             if(posToMerge.find(currentVolumeName)!=posToMerge.end()){
                                  posToMerge[currentVolumeName].push_back(x.second[i1]);
 
                              }
@@ -527,6 +527,8 @@ int GateGridDiscretization::GetYIndex(G4double posY){
  void GateGridDiscretization::SetGridPoints2D( int indexX, int indexY, G4ThreeVector& pos ){
      double posX;
      double posY;
+     //Local coordinates, z centered that means at zero
+     double posZ=0;
      if(indexX>=0  && indexY>=0 ){
          //posX=indexX*pitchX-(sizeVol[0]-(*im).second.stripWidthX-2*(*im).second.stripOffsetX)/2;
          //posY=indexY*pitchY-(sizeVol[1]-(*im).second.stripWidthY-2*(*im).second.stripOffsetY)/2;
@@ -536,7 +538,8 @@ int GateGridDiscretization::GetYIndex(G4double posY){
 
 
          pos.setX(posX);
-          pos.setY(posY);
+         pos.setY(posY);
+         pos.setZ(posZ);
      }
      else{
          G4cout<<"problems with index (is  the right volume?)"<<G4endl;
