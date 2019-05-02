@@ -155,6 +155,7 @@ protected:
   G4String VolNameStep;
   G4int evtID;
   G4int runID;
+  int nCrystalConv;
 
 
 

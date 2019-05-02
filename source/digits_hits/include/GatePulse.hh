@@ -150,6 +150,9 @@ class GatePulse
       inline void SetSourcePDG(G4int PDGEncoding)          { m_sourcePDG = PDGEncoding; }
       inline G4int GetSourcePDG() const                { return m_sourcePDG; }
 
+      inline void SetnCrystalConv(G4int nConv)          { m_nCrystalConv = nConv; }
+      inline G4int GetnCrystalConv() const                { return m_nCrystalConv; }
+
 
       inline void     SetProcessCreator(G4String proc) { m_processCreator = proc; }
       inline G4String GetProcessCreator() const             { return m_processCreator; }
@@ -233,6 +236,7 @@ private:
 
   G4double m_sourceEnergy;
   G4int m_sourcePDG;
+  G4int m_nCrystalConv;
 //--------------------
 
 

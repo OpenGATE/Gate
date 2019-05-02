@@ -120,6 +120,10 @@ public:
       inline void SetSourcePDG(G4int value)           	              { m_pulse.SetSourcePDG(value); }
       inline G4int GetSourcePDG() const                    	      	      { return m_pulse.GetSourcePDG(); }
 
+      inline void SetnCrystalConv(G4int value)           	              { m_pulse.SetnCrystalConv(value); }
+      inline G4int GetnCrystalConv() const                    	      	      { return m_pulse.GetnCrystalConv(); }
+
+
 
 
   

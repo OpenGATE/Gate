@@ -136,6 +136,11 @@ public:
   { return sourcePDG;}
   inline void SetSourcePDG(G4double sPDG)
   { sourcePDG = sPDG;}
+
+  inline G4int GetnCrystalConv() const
+  { return nCrystalConv;}
+  inline void SetnCrysConv(G4double nConv)
+  { nCrystalConv = nConv;}
   //@}
 
   //! \name Data fields
@@ -153,6 +158,7 @@ public:
   Float_t  sPosX, sPosY, sPosZ; 	//!< Local hit position (in millimeters)
   Float_t sourceEnergy;
   Int_t   sourcePDG;
+  Int_t   nCrystalConv;
   Int_t    eventID; 	      	      	      	//!< Event ID
   Int_t    runID;   	      	      	      	//!< Run ID
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
@@ -223,6 +229,7 @@ public:
   Float_t  sourcePosZ;
   Float_t  sourceEnergy;
   Int_t    sourcePDG;
+  Int_t    nCrystalConv;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
@@ -285,6 +292,7 @@ public:
   Float_t  sourcePosZ;
   Float_t  sourceEnergy;
   Int_t    sourcePDG;
+  Int_t    nCrystalConv;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;

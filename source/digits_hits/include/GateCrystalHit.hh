@@ -99,6 +99,7 @@ private:
    G4double m_energyFin;         // final energy of the particle
    G4double m_sourceEnergy;//AE
    G4int m_sourcePDG;//AE
+   G4int m_nCrystalConv;    // # of pair creation process in the crystal occurred to the photon
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -221,6 +222,10 @@ private:
 
       inline void  SetSourcePDG(G4int value)     { m_sourcePDG = value; }
       inline  G4int GetSourcePDG() const        { return m_sourcePDG; }
+
+
+      inline void  SetnCrystalConv(G4int value)     { m_nCrystalConv = value; }
+      inline  G4int GetnCrystalConv() const        { return m_nCrystalConv; }
       //----------------------------------------------------------------
 
 

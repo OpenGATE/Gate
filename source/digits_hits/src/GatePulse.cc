@@ -55,6 +55,9 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
 
   if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
   if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
+  if ( right->m_nCrystalConv > m_nCrystalConv ){
+    m_nCrystalConv 	= right->m_nCrystalConv;
+  }
 
   // Local and global positions: store the controids
   if(totalEnergy>0){
@@ -68,6 +71,10 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
 
   // Now that the centroids are stored, we can store the energy
   m_energy   = totalEnergy;
+
+
+
+
 
   // # of compton process: store the max nb
   if ( right->m_nPhantomCompton > m_nPhantomCompton )
@@ -110,6 +117,11 @@ const GatePulse & GatePulse::MergePositionEnergyWin(const GatePulse* right){
 
      // time: store the minimum time
      m_time = std::min ( m_time , right->m_time ) ;
+     if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
+     if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
+     if ( right->m_nCrystalConv > m_nCrystalConv ){
+       m_nCrystalConv 	= right->m_nCrystalConv;
+     }
 
 
 
@@ -166,7 +178,9 @@ const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
 
   if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
   if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
-
+  if ( right->m_nCrystalConv > m_nCrystalConv ){
+    m_nCrystalConv 	= right->m_nCrystalConv;
+  }
   // energy: we compute the sum
   G4double totalEnergy = m_energy + right->m_energy;
 
@@ -214,6 +228,9 @@ const GatePulse& GatePulse::CentroidMergeCompton(const GatePulse* right)
 
     if (m_sourceEnergy != right->m_sourceEnergy) m_sourceEnergy=-1;
     if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
+    if ( right->m_nCrystalConv > m_nCrystalConv ){
+      m_nCrystalConv 	= right->m_nCrystalConv;
+    }
     m_energyIniTrack=-1;         // Initial energy of the track
     m_energyFin=-1;
 

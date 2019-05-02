@@ -303,7 +303,7 @@ void GateComptonCameraActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::ResetData()
 {
-  nEvent = 0;
+  //nEvent = 0;
 
 }
 //-----------------------------------------------------------------------------
@@ -355,6 +355,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 
     evtID = evt->GetEventID();
 
+      nCrystalConv=0;
     //std::cout<<"eventID="<<evtID<<std::endl;
 
   //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
@@ -480,7 +481,8 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 
             }
 
-  nEvent++;
+  //nEvent++;
+
 
  //G4cout<<"######END OF :END OF EVENT ACTION####################################"<<G4endl;
 }
@@ -721,12 +723,18 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //G4cout<<"CCActor::UserSteppingAction: sourceEnergy= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
   //G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
   //}
+    if(processPostStep=="conv"){
+        nCrystalConv++;
+    }
 
 
+    //specfParentID.size()=!=0 (parentId not null, we have ions,  )
   if(parentID==0){
       //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
       if(Ef_oldPrimary!=0)Ei=Ef_oldPrimary;
       Ef_oldPrimary=Ef;
+
+
   }
  // if( sourceEnergy==0 &&(parentID==4 ||parentID==2)){
  //
@@ -745,6 +753,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
        aHit->SetEdep(hitEdep);
        aHit->SetEnergyFin(Ef);
        aHit->SetEnergyIniTrack(Ei);
+       aHit->SetnCrystalConv(nCrystalConv);
        //    G4ThreeVector hitPos;
        //    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
        //    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);
@@ -852,7 +861,7 @@ void GateComptonCameraActor::SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string
     int copyCrys=-1;
     //if(layerN=="absorberBlocks"){
     // copyCrys=aHit->GetVolumeID().GetVolume(4)->GetCopyNo();
-    copyCrys=aHit->GetVolumeID().GetBottomCreator()->GetPhysicalVolume()->GetCopyNo();
+    copyCrys=aHit->GetVolumeID().GetBottomVolume()->GetCopyNo();
 
     //}
 
@@ -882,7 +891,7 @@ void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
 
 
 
-     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(8)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    "<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<layerName<< '\n';
+     ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(8)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    globalPos="<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<"    globalPos="<<aSin->GetLocalPos().getX()<<"    "<<aSin->GetLocalPos().getY()<<"    "<<aSin->GetLocalPos().getZ()<<"    "<<layerName<< '\n';
 
 
 }

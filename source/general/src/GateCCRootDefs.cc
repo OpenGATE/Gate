@@ -43,6 +43,8 @@ void GateCCRootHitBuffer::Clear()
   sPosZ       = 0./mm;
   sourceEnergy      = 0./MeV;
   sourcePDG      = 0;
+  nCrystalConv=0;
+
   eventID         = -1;
   runID           = -1;
   strcpy (layerName, " ");
@@ -74,6 +76,7 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
   SetsourcePos(      aHit->GetSourcePosition() );
   SetSourceEnergy(aHit->GetSourceEnergy());
   SetSourcePDG(aHit->GetSourcePDG());
+  SetnCrysConv(aHit->GetnCrystalConv());
   parentID        = aHit->GetParentID();
   eventID         = aHit->GetEventID();
   runID           = aHit->GetRunID();
@@ -109,6 +112,7 @@ GateCrystalHit* GateCCRootHitBuffer::CreateHit()
   aHit->SetSourcePosition(GetsourcePos());
   aHit->SetSourceEnergy(GetSourceEnergy());
   aHit->SetSourcePDG(GetSourcePDG());
+  aHit->SetnCrystalConv(GetnCrystalConv());
   aHit->SetEventID(eventID);
   aHit->SetRunID(runID);
   aHit->SetProcess(processName);
@@ -155,6 +159,7 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
   Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
   Branch("sourceEnergy",    &buffer.sourceEnergy,"sourceEnergy/F");
   Branch("sourcePDG",    &buffer.sourcePDG,"sourcePDG/I");
+  Branch("nCrystalConv",    &buffer.nCrystalConv,"nCrystalConv/I");
   Branch("energyFinal",    &buffer.energyFin,"energyFinal/F");
   Branch("energyIniT",     &buffer.energyIniT,"energyIniT/F");
   Branch("postStepProcess", (void *)buffer.postStepProcess,"postStepProcess/C");
@@ -185,6 +190,7 @@ void GateCCHitTree::SetBranchAddresses(TTree* hitTree,GateCCRootHitBuffer& buffe
   hitTree->SetBranchAddress("sourcePosZ",&buffer.sPosZ);
   hitTree->SetBranchAddress("sourceEnergy",&buffer.sourceEnergy);
   hitTree->SetBranchAddress("sourcePDG",&buffer.sourcePDG);
+  hitTree->SetBranchAddress("nCrystalConv",&buffer.nCrystalConv);
   hitTree->SetBranchAddress("eventID",&buffer.eventID);
   hitTree->SetBranchAddress("runID",&buffer.runID);
   hitTree->SetBranchAddress("processName",&buffer.processName);
@@ -218,6 +224,7 @@ void GateCCRootSingleBuffer::Clear()
   sourcePosZ       = 0./mm;
   sourceEnergy      = 0./MeV;
   sourcePDG        =0;
+  nCrystalConv=0;
 
   strcpy (layerName, " ");
   //layerID=-1;
@@ -249,6 +256,7 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     sourcePosZ    = (aDigi->GetSourcePosition().getZ())/mm;
     sourceEnergy    =aDigi->GetSourceEnergy()/MeV;
     sourcePDG    =aDigi->GetSourcePDG();
+    nCrystalConv    =aDigi->GetnCrystalConv();
  // layerID=slayerID;//it was as a second argument of the function.
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
@@ -296,6 +304,7 @@ void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
     Branch("sourceEnergy",     &buffer.sourceEnergy,"sourceEnergy/F");
     Branch("sourcePDG",     &buffer.sourcePDG,"sourcePDG/I");
+    Branch("nCrystalConv",     &buffer.nCrystalConv,"nCrystalConv/I");
     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
@@ -328,7 +337,8 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
     singlesTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
     singlesTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
     singlesTree->SetBranchAddress("sourceEnergy",&buffer.sourceEnergy);
-     singlesTree->SetBranchAddress("sourcePDG",&buffer.sourcePDG);
+    singlesTree->SetBranchAddress("sourcePDG",&buffer.sourcePDG);
+    singlesTree->SetBranchAddress("nCrystalConv",&buffer.nCrystalConv);
     singlesTree->SetBranchAddress("localPosX",&buffer.localPosX);
     singlesTree->SetBranchAddress("localPosY",&buffer.localPosY);
     singlesTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
@@ -375,6 +385,7 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
   aSingle->SetSourcePosition(sPos);
   aSingle->SetSourceEnergy(sourceEnergy);
   aSingle->SetSourcePDG(sourcePDG);
+  aSingle->SetnCrystalConv(nCrystalConv);
   aSingle->SetEnergy(energy);
   aSingle->SetIniEnergy(energyIni);
   aSingle->SetFinalEnergy(energyFin);
@@ -406,6 +417,7 @@ void GateCCRootCoincBuffer::Clear()
   sourcePosZ       = 0./mm;
   sourceEnergy      =  0./MeV;
   sourcePDG        =0;
+  nCrystalConv        =0;
   strcpy (layerName, " ");
   //layerID=-1;
   sublayerID=-1;
@@ -441,6 +453,7 @@ void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
 
     sourceEnergy   =aDigi->GetSourceEnergy()/MeV;
     sourcePDG    =aDigi->GetSourcePDG();
+    nCrystalConv    =aDigi->GetnCrystalConv();
 
     //layerID=slayerID;
     aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
@@ -480,6 +493,7 @@ void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
     Branch("sourceEnergy",    &buffer.sourceEnergy,"sourceEnergy/F");
     Branch("sourcePDG",     &buffer.sourcePDG,"sourcePDG/I");
+    Branch("nCrystalConv",     &buffer.nCrystalConv,"nCrystalConv/I");
     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
@@ -511,6 +525,7 @@ void GateCCCoincTree::SetBranchAddresses(TTree* coinTree,GateCCRootCoincBuffer& 
     coinTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
     coinTree->SetBranchAddress("sourceEnergy",&buffer.sourceEnergy);
     coinTree->SetBranchAddress("sourcePDG",&buffer.sourcePDG);
+    coinTree->SetBranchAddress("nCrystalConv",&buffer.nCrystalConv);
     coinTree->SetBranchAddress("localPosX",&buffer.localPosX);
     coinTree->SetBranchAddress("localPosY",&buffer.localPosY);
     coinTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
@@ -561,7 +576,7 @@ GateCCCoincidenceDigi* GateCCRootCoincBuffer::CreateCoincidence()
 
   aCoin->SetSourceEnergy(sourceEnergy);
   aCoin->SetSourcePDG(sourcePDG);
-
+  aCoin->SetnCrystalConv(nCrystalConv);
 
   aCoin->SetEnergy(energy);
   aCoin->SetIniEnergy(energyIni);
