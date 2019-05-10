@@ -71,6 +71,9 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableElossHistoFlag = false;
   
   mEnableLogBinning = false;  
+  mEnableEnergyPerUnitMass = false;
+  mEnableRelativePrimEvents = false;
+  
   
   emcalc = new G4EmCalculator;
 
@@ -131,14 +134,14 @@ void GateEnergySpectrumActor::Construct()
       if (mEnableEnergySpectrumFluenceCosFlag){
           pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos",GetENBins(),GetEmin() ,GetEmax() );
           pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumFluenceCos->SetYTitle("Fluence [cm^-2]");
+          pEnergySpectrumFluenceCos->SetYTitle("Fluence * Area [1]");
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);
       }
 
       if (mEnableEnergySpectrumFluenceTrackFlag){
           pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track",GetENBins(),GetEmin() ,GetEmax() );
           pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
-          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [cm]");
+          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [mm]");
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
       } 
         
@@ -160,13 +163,13 @@ void GateEnergySpectrumActor::Construct()
       if (mEnableEnergySpectrumFluenceCosFlag){
           pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos", mENBins,eBinV );
           pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumFluenceCos->SetYTitle("Fluence [cm^-2]");   
+          pEnergySpectrumFluenceCos->SetYTitle("Fluence * Area [1]");   
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);   
           }
       if (mEnableEnergySpectrumFluenceTrackFlag){
           pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track", mENBins,eBinV );
           pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
-          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [cm]");
+          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [mm]");
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
           } 
       if (mEnableEnergySpectrumEdepFlag){
@@ -225,7 +228,13 @@ void GateEnergySpectrumActor::Construct()
 /// Save data
 void GateEnergySpectrumActor::SaveData()
 {
-    
+   if (mEnableRelativePrimEvents){
+    for(std::list<TH1D*>::iterator it=allEnabledTH1DHistograms.begin();it!=allEnabledTH1DHistograms.end();++it)
+      {
+          (*it)->Scale(1./nEvent);
+      }
+   }
+  
   GateVActor::SaveData();
   pTfile->Write();
   
@@ -389,13 +398,18 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     ltof /= 2;
     //cout << "****************** diff tof=" << ltof << " edep=" << edep << endl;
   }
-
+    G4double atomicMassScaleFactor = 1.;
+    if (mEnableEnergyPerUnitMass){
+        atomicMassScaleFactor = (double)(step->GetTrack()->GetParticleDefinition()->GetAtomicMass());
+    }
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
+  Ei=step->GetPreStepPoint()->GetKineticEnergy();
   if(newTrack){
-    Ei=step->GetPreStepPoint()->GetKineticEnergy();
-     
+    
+
+    
     if (mEnableEnergySpectrumNbPartFlag){
-        pEnergySpectrumNbPart->Fill(Ei/MeV,step->GetTrack()->GetWeight());
+        pEnergySpectrumNbPart->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight());
     }
     
     G4ThreeVector momentumDir = step->GetTrack()->GetMomentumDirection(); 
@@ -406,7 +420,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
             //double Emean = (Ei+Ef)/2/MeV;
             double invAngle = 1/dz;
             //if (invAngle > 10) invAngle = 10;
-            pEnergySpectrumFluenceCos->Fill(Ei,step->GetTrack()->GetWeight()*invAngle);
+            pEnergySpectrumFluenceCos->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*invAngle);
         }
     }
     // uncommented A.Resch 30.Nov 2018
@@ -418,11 +432,11 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   
    if (mEnableEnergySpectrumFluenceTrackFlag){
        G4double stepLength = step->GetStepLength();
-       pEnergySpectrumFluenceTrack->Fill(Ei/MeV,step->GetTrack()->GetWeight()*stepLength);
+       pEnergySpectrumFluenceTrack->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*stepLength/mm);
        
    }
    if (mEnableEnergySpectrumEdepFlag){
-       pEnergyEdepSpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
+       pEnergyEdepSpectrum->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*step->GetTotalEnergyDeposit()/MeV);
    }
   if(mEnableLETSpectrumFlag) {
       G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 

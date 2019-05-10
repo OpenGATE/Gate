@@ -63,6 +63,8 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithAString * pSourceFileCmd;
     //Configuration of spot intensity as number of ions or MU (MU by default)
     G4UIcmdWithABool * pSpotIntensityCmd;
+    //to inform the user about renamed option
+    G4UIcmdWithABool * pDeprecatedSpotIntensityCmd;
     //Convergent or divergent beam model (divergent by default)
     G4UIcmdWithABool* pDivergenceCmd;
     G4UIcmdWithABool* pDivergenceXThetaCmd;

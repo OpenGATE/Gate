@@ -8,32 +8,24 @@
 #ifndef GATESOURCETPSPENCILBEAM_HH
 #define GATESOURCETPSPENCILBEAM_HH
 
-#include "GateConfiguration.h"
-
-#include "G4Event.hh"
-#include "globals.hh"
-#include "G4VPrimaryGenerator.hh"
-#include "G4ThreeVector.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTable.hh"
-#include "G4PrimaryVertex.hh"
-#include "G4ParticleMomentum.hh"
+// std
 #include <iomanip>
 #include <vector>
-#include <string>
 
-#include "GateVSource.hh"
-#include "GateSourceTPSPencilBeamMessenger.hh"
-#include "GateSourcePencilBeam.hh"
+// geant4
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
 
-#include "CLHEP/Random/RandGeneral.h"
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
+// CLHEP
 #include "CLHEP/Random/RandGauss.h"
-#include "CLHEP/Matrix/Vector.h"
-#include "CLHEP/Matrix/SymMatrix.h"
-#include "GateRandomEngine.hh"
 
-void ReadLineTo3Doubles(double *toto, const std::string &oneline);
+// GATE
+#include "GateConfiguration.h"
+#include "GateVSource.hh"
+
+class G4Event;
+class GateSourceTPSPencilBeamMessenger;
+class GateSourcePencilBeam;
 
 //------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource
@@ -49,9 +41,9 @@ public:
   G4int GeneratePrimaries( G4Event* event );
   void GenerateVertex( G4Event* );
   //Particle Type
-  void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
+  void SetParticleType(G4String ParticleType) {mParticleType=ParticleType;}
   //Particle Properties If GenericIon
-  void SetIonParameter(G4String ParticleParameters) {strcpy(mParticleParameters, ParticleParameters);}
+  void SetIonParameter(G4String ParticleParameters) {mParticleParameters=ParticleParameters;}
   //Specify how to define the particle type
   void SetIsGenericIon(bool IsGenericIon) {mIsGenericIon=IsGenericIon;}
   //Test Flag
@@ -61,7 +53,7 @@ public:
   //Flag to switch between absolute (MeV) and relative (%) energy spread specification
   void SetSigmaEnergyInMeVFlag(bool b) {mSigmaEnergyInMeVFlag=b;}
   //Treatment Plan file (plan description file)
-  void SetPlan(std::string plan) {mPlan=plan;}
+  void SetPlan(G4String plan) {mPlan=plan;}
   //FlatGenerationFlag
   void SetGeneFlatFlag(bool b) {mFlatGenerationFlag=b;}
 
@@ -112,16 +104,15 @@ protected:
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
 
-//  std::vector<GateSourcePencilBeam*> mPencilBeams;
-  GateSourcePencilBeam* mPencilBeam; // new style vertex generation uses only one pencil beam
+  GateSourcePencilBeam* mPencilBeam;
   double mDistanceSMXToIsocenter;
   double mDistanceSMYToIsocenter;
   double mDistanceSourcePatient;
 
   //Particle Type
-  char mParticleType[64];
+  G4String mParticleType;
   //Particle Properties If GenericIon
-  char mParticleParameters[64];
+  G4String mParticleParameters;
   //ParticleDefinitionMethod;
   bool mIsGenericIon;
   //Test flag (for verbosity)

@@ -1,0 +1,29 @@
+
+
+
+GATE v8.2 15/02/2019
+
+
+New features (PR means Pull Request)
+
+- New actor to compute muMap (PR 209 https://github.com/OpenGATE/Gate/pull/209)
+- New actor Proton Nuclear Information (PR 206 https://github.com/OpenGATE/Gate/pull/206)
+- New actor NN-ARF (PR 197 https://github.com/OpenGATE/Gate/pull/197)
+- New actor multi material thermal (PR 195 https://github.com/OpenGATE/Gate/pull/195)
+- New actor Neutron Track Length Estimator (NTLE) (PR 193 https://github.com/OpenGATE/Gate/pull/193)
+- New actor X ray phase contrast (PR 170 https://github.com/OpenGATE/Gate/pull/170)
+
+Several bug corrections and update. Among them
+- new RTK (PR 221 https://github.com/OpenGATE/Gate/pull/221
+- random crash (PR 222 https://github.com/OpenGATE/Gate/pull/222)
+- time is stored in double rather than float in PhaseSpace (PR 205 https://github.com/OpenGATE/Gate/pull/205)
+- optimization of VoxelizedMass (PR 199 https://github.com/OpenGATE/Gate/pull/199)
+and several others things ...
+
+
+Documentation:
+GATE home page:	        http://www.opengatecollaboration.org
+GATE wiki:              http://wiki.opengatecollaboration.org/index.php/Main_Page
+GATE source code:       https://github.com/OpenGATE/Gate
+GATE examples macro:    https://github.com/OpenGATE/GateContrib
+
