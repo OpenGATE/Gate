@@ -26,7 +26,6 @@
 #include "G4Trajectory.hh"
 
 #include "G4VProcess.hh"
-#include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include <iomanip>
 #include "G4UImanager.hh"
