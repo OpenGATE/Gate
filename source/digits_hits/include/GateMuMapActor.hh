@@ -59,6 +59,7 @@ protected:
   G4double  mMuUnit;
   G4String mMuMapFilename;
   G4String mSourceMapFilename;
+  G4int    mCurrentEvent;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(MuMapActor,GateMuMapActor)

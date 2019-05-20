@@ -43,7 +43,9 @@ GateApplicationMgr::GateApplicationMgr():
   mRequestedAmountOfPrimariesPerRun = 0;
   mATotalAmountOfPrimariesIsRequested = false;
   mAnAmountOfPrimariesPerRunIsRequested = false;
-
+//LSLS
+  mReadNumberOfPrimariesInAFileIsUsed = false;
+  
   m_weight = -1.;
 
   m_clusterStart = -1.;
@@ -98,6 +100,7 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
     GateError("Please do not use 'addSlice' and 'readTimeSlicesIn' commands at the same time");
   }
 
+
   // Open file
   std::ifstream is;
   OpenFileInput(filename, is);
@@ -136,6 +139,42 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
 }
 //------------------------------------------------------------------------------------------
 
+
+//LSLS
+//------------------------------------------------------------------------------------------
+void GateApplicationMgr::ReadNumberOfPrimariesInAFile(G4String filename) {
+   if (mReadNumberOfPrimariesInAFileIsUsed) {
+     GateError("Please do not use 'ReadNumberOfPrimariesInAFile' twice");
+   }
+   
+  // Open file
+   std::ifstream is;
+   OpenFileInput(filename, is);
+   skipComment(is);
+   
+   
+     // Use no unit
+   
+   int n = (int)ReadDouble(is); // read first time
+   
+   mNumberOfPrimariesPerRun.resize(1);
+   mNumberOfPrimariesPerRun[0] = n;
+   skipComment(is); // just in case the user felt like cluttering up the time slice list with comments...
+ 
+   while (is)
+     {
+       n = (int)ReadDouble(is); 
+         
+       mNumberOfPrimariesPerRun.push_back(n);
+ 
+       skipComment(is);
+     }
+ 
+   is.close();
+   mReadNumberOfPrimariesInAFileIsUsed = true;
+   
+ }
+ //-----------------------------------------
 
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::SetTimeSlice(G4double timeSlice)
@@ -328,6 +367,7 @@ void GateApplicationMgr::StartDAQ()
   m_time = mTimeSlices.front();
   while(m_time < mTimeSlices.back())
     {
+      
       // Informational message about the current slice
       GateMessage("Acquisition", 0, "Slice " << slice << " from "
                   << mTimeSlices[slice]/s << " to "
@@ -340,6 +380,11 @@ void GateApplicationMgr::StartDAQ()
       GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
       theClock->SetTime(m_time);
 
+      if (mReadNumberOfPrimariesInAFileIsUsed) {
+        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #  
+        GateRunManager::GetRunManager()->BeamOn(mNumberOfPrimariesPerRun[slice]);
+        m_time = mTimeSlices[slice+1];
+      }
       // calculate the time steps for total primaries mode
       if(mATotalAmountOfPrimariesIsRequested)
         {
@@ -354,7 +399,7 @@ void GateApplicationMgr::StartDAQ()
               mRequestedAmountOfPrimariesPerRun = int(mTimeSlices[slice+1]/mTimeStepInTotalAmountOfPrimariesMode)
                 - int(mTimeSlices[slice]/mTimeStepInTotalAmountOfPrimariesMode);
             }
-          GateRunManager::GetRunManager()->SetRunIDCounter(slice);                    // Must explicitly keep the RunID in sync with the slice #
+          GateRunManager::GetRunManager()->SetRunIDCounter(slice);                    // Must explicitly keep the RunID in sync with the slice #      
           GateRunManager::GetRunManager()->BeamOn(mRequestedAmountOfPrimariesPerRun); // otherwise RunID is automatically incremented
           m_time = mTimeSlices[slice+1];
         }
@@ -441,6 +486,13 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 
       m_time = std::max(mTimeSlices[slice],m_clusterStart);
       theClock->SetTimeNoGeoUpdate(m_time);
+
+    // This if is Not tested in cluster mode
+     if (mReadNumberOfPrimariesInAFileIsUsed) {
+        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #  
+        GateRunManager::GetRunManager()->BeamOn(mNumberOfPrimariesPerRun[slice]);
+        m_time = mTimeSlices[slice+1];
+      }
 
       // calculate the time steps for total primaries mode
       if(mATotalAmountOfPrimariesIsRequested)
@@ -545,7 +597,14 @@ void GateApplicationMgr::PrintStatus()
 
   const int eventID = run->GetNumberOfEvent() + 1;
   int eventTotal = 0;
+  int i;
 
+//this if is not tested
+  if (IsReadNumberOfPrimariesInAFileModeEnabled()){
+    for(i = 0;i < runTotal; i++)
+      eventTotal = eventTotal + mNumberOfPrimariesPerRun[i];
+    }
+  printf("yo\n");getchar();
   if(IsTotalAmountOfPrimariesModeEnabled()) {
     eventTotal = GetTotalNumberOfPrimaries()/runTotal;
   }else if (IsAnAmountOfPrimariesPerRunModeEnabled()) {
