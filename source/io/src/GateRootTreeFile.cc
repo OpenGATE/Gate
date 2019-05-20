@@ -44,7 +44,9 @@ void GateRootTree::register_variable(const std::string &name, const void *p, std
   void *pp = (void*)p;
 
   std::stringstream leaf_ss;
-  leaf_ss << name << "/" << m_tmapOfDefinition.at(t_index);
+
+  auto b = name.find_first_of("[");
+  leaf_ss << name.substr(0, b) << "/" << m_tmapOfDefinition.at(t_index);
   string leaf_s = leaf_ss.str();
 
 //  cout << "RootTreeFile::register_variable name = " << name << " t_index = " << t_index.name() << " leaf_s = " << leaf_s << "\n";

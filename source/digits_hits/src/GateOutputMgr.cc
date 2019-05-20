@@ -35,6 +35,8 @@
 #include "GateARFDataToRoot.hh"
 #include "GateToRoot.hh"
 
+#include "GateToTree.hh"
+
 GateOutputMgr* GateOutputMgr::instance = 0;
 
 
@@ -107,6 +109,10 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   GateARFDataToRoot* gateARFDataToRoot = new GateARFDataToRoot("arf", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
 #endif
+
+  auto g = new GateToTree("tree", this, m_digiMode);
+  AddOutputModule(g);
+
 
   GateMessage("Output",4,"GateOutputMgr() -- end\n");
 }

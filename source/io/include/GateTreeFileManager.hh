@@ -39,6 +39,7 @@ class GateOutputTreeFileManager
 {
 public:
   GateOutputTreeFileManager();
+  GateOutputTreeFileManager(GateOutputTreeFileManager &&m);
   virtual ~GateOutputTreeFileManager();
 
   std::unique_ptr<GateOutputTreeFile> add_file(const std::string &file_path, const std::string &kind);
