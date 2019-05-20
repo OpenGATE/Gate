@@ -55,7 +55,10 @@ GateOutputTreeFileManager::GateOutputTreeFileManager()
   m_nameOfTree = GateTree::default_tree_name();
 }
 
-
+GateOutputTreeFileManager::GateOutputTreeFileManager(GateOutputTreeFileManager &&m) :
+m_listOfTreeFile(move(m.m_listOfTreeFile)),
+m_nameOfTree(move(m.m_nameOfTree))
+{}
 
 
 void GateOutputTreeFileManager::write_variable(const std::string &name, const std::string *p, size_t nb_char)
