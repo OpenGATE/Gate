@@ -58,6 +58,12 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   if ( right->m_nCrystalConv > m_nCrystalConv ){
     m_nCrystalConv 	= right->m_nCrystalConv;
   }
+  if ( right->m_nCrystalCompton > m_nCrystalCompton ){
+    m_nCrystalCompton 	= right->m_nCrystalCompton;
+  }
+  if ( right->m_nCrystalRayleigh > m_nCrystalRayleigh ){
+    m_nCrystalRayleigh 	= right->m_nCrystalRayleigh;
+  }
 
   // Local and global positions: store the controids
   if(totalEnergy>0){
@@ -122,6 +128,12 @@ const GatePulse & GatePulse::MergePositionEnergyWin(const GatePulse* right){
      if ( right->m_nCrystalConv > m_nCrystalConv ){
        m_nCrystalConv 	= right->m_nCrystalConv;
      }
+     if ( right->m_nCrystalCompton > m_nCrystalCompton ){
+       m_nCrystalCompton 	= right->m_nCrystalCompton;
+     }
+     if ( right->m_nCrystalRayleigh > m_nCrystalRayleigh ){
+       m_nCrystalRayleigh 	= right->m_nCrystalRayleigh;
+     }
 
 
 
@@ -181,6 +193,12 @@ const GatePulse& GatePulse::CentroidMergeComptPhotIdeal(const GatePulse* right)
   if ( right->m_nCrystalConv > m_nCrystalConv ){
     m_nCrystalConv 	= right->m_nCrystalConv;
   }
+  if ( right->m_nCrystalCompton > m_nCrystalCompton ){
+    m_nCrystalCompton 	= right->m_nCrystalCompton;
+  }
+  if ( right->m_nCrystalRayleigh > m_nCrystalRayleigh ){
+    m_nCrystalRayleigh 	= right->m_nCrystalRayleigh;
+  }
   // energy: we compute the sum
   G4double totalEnergy = m_energy + right->m_energy;
 
@@ -230,6 +248,12 @@ const GatePulse& GatePulse::CentroidMergeCompton(const GatePulse* right)
     if (m_sourcePDG != right->m_sourcePDG) m_sourcePDG=0;
     if ( right->m_nCrystalConv > m_nCrystalConv ){
       m_nCrystalConv 	= right->m_nCrystalConv;
+    }
+    if ( right->m_nCrystalCompton > m_nCrystalCompton ){
+      m_nCrystalCompton 	= right->m_nCrystalCompton;
+    }
+    if ( right->m_nCrystalRayleigh > m_nCrystalRayleigh ){
+      m_nCrystalRayleigh 	= right->m_nCrystalRayleigh;
     }
     m_energyIniTrack=-1;         // Initial energy of the track
     m_energyFin=-1;

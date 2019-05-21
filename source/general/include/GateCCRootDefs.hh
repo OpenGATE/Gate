@@ -137,10 +137,20 @@ public:
   inline void SetSourcePDG(G4double sPDG)
   { sourcePDG = sPDG;}
 
-  inline G4int GetnCrystalConv() const
+  inline G4int GetNCrystalConv() const
   { return nCrystalConv;}
-  inline void SetnCrysConv(G4double nConv)
+  inline void SetNCrystalConv(G4double nConv)
   { nCrystalConv = nConv;}
+
+  inline G4int GetNCrystalCompton() const
+  { return nCrystalCompt;}
+  inline void SetNCrystalCompton(G4double nCompt)
+  { nCrystalCompt = nCompt;}
+
+  inline G4int GetNCrystalRayleigh() const
+  { return nCrystalRayl;}
+  inline void SetNCrystalRayleigh(G4double nRayl)
+  { nCrystalRayl = nRayl;}
   //@}
 
   //! \name Data fields
@@ -159,6 +169,8 @@ public:
   Float_t sourceEnergy;
   Int_t   sourcePDG;
   Int_t   nCrystalConv;
+  Int_t   nCrystalCompt;
+  Int_t   nCrystalRayl;
   Int_t    eventID; 	      	      	      	//!< Event ID
   Int_t    runID;   	      	      	      	//!< Run ID
   Char_t   processName[40]; 	      	      	//!< Name of the process that generated the hit
@@ -230,6 +242,8 @@ public:
   Float_t  sourceEnergy;
   Int_t    sourcePDG;
   Int_t    nCrystalConv;
+   Int_t   nCrystalCompt;
+    Int_t   nCrystalRayl;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;
@@ -293,6 +307,8 @@ public:
   Float_t  sourceEnergy;
   Int_t    sourcePDG;
   Int_t    nCrystalConv;
+  Int_t   nCrystalCompt;
+  Int_t   nCrystalRayl;
   //Int_t    layerID;
   Char_t   layerName[40];
   Int_t    sublayerID;

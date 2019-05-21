@@ -64,9 +64,13 @@ public:
       inline G4double GetSourceEnergy() const                    	      { return m_pulse.GetSourceEnergy(); }
       inline void SetSourcePDG(G4int value)           	      { m_pulse.SetSourcePDG(value); }
       inline G4int GetSourcePDG() const                    	      { return m_pulse.GetSourcePDG(); }
-      inline void SetnCrystalConv(G4int value)           	      { m_pulse.SetnCrystalConv(value); }
-      inline G4int GetnCrystalConv() const                    	      { return m_pulse.GetnCrystalConv(); }
-
+      inline void SetNCrystalConv(G4int value)           	      { m_pulse.SetNCrystalConv(value); }
+      inline G4int GetNCrystalConv() const                    	      { return m_pulse.GetNCrystalConv(); }
+    // Compton y Rayl
+      inline void SetNCrystalCompton(G4int value)           	      { m_pulse.SetNCrystalCompton(value); }
+      inline G4int GetNCrystalCompton() const                    	      { return m_pulse.GetNCrystalCompton(); }
+      inline void SetNCrystalRayleigh(G4int value)           	      { m_pulse.SetNCrystalRayleigh(value); }
+      inline G4int GetNCrystalRayleigh() const                    	      { return m_pulse.GetNCrystalRayleigh(); }
       inline GatePulse& GetPulse()             { return m_pulse; }
 
        inline void     SetVolumeID(const GateVolumeID& v) {  m_pulse.SetVolumeID(v); }

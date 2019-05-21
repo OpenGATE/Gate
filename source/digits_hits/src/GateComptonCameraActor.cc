@@ -356,6 +356,8 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     evtID = evt->GetEventID();
 
       nCrystalConv=0;
+      nCrystalRayl=0;
+      nCrystalCompt=0;
     //std::cout<<"eventID="<<evtID<<std::endl;
 
   //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
@@ -679,16 +681,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //To check if  step ends in the  boundary
   // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
-  //Manual singles
-  std::vector<G4String>::iterator it;
-  it = find (layerNames.begin(), layerNames.end(), VolNameStep);
-  //int poslayer=-1;
-  if (it != layerNames.end()){
-   // poslayer=std::distance(layerNames.begin(),it);
-    // std::cout << "Element found in myvector: " << *it <<"posicion="<<std::distance(layerNames.begin(),it)<<'\n';
-    //I add energy to the event only if it is deposited in the layers
-     edepEvt += step->GetTotalEnergyDeposit();
-  }
+
 
 
   if (newEvt) {
@@ -723,9 +716,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   //G4cout<<"CCActor::UserSteppingAction: sourceEnergy= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini()<<G4endl;
   //G4cout<<"CCActor::UserSteppingAction: sourcePDG= "<<((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG()<<G4endl;
   //}
-    if(processPostStep=="conv"){
-        nCrystalConv++;
-    }
+
 
 
     //specfParentID.size()=!=0 (parentId not null, we have ions,  )
@@ -736,12 +727,19 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
 
   }
- // if( sourceEnergy==0 &&(parentID==4 ||parentID==2)){
- //
-  //        sourceEnergy=Ei;
-  //}
+
+
+  std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), VolNameStep);
+
 
    if (it != layerNames.end()){
+       //I add energy to the event only if it is deposited in the layers
+       edepEvt += step->GetTotalEnergyDeposit();
+       if(processPostStep=="conv")  nCrystalConv++;
+       else if(processPostStep=="compt") nCrystalCompt++;
+       else if (processPostStep=="rayl")nCrystalRayl++;
+
+
        sourceEnergy=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini();
        sourcePDG=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG();
 
@@ -753,7 +751,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
        aHit->SetEdep(hitEdep);
        aHit->SetEnergyFin(Ef);
        aHit->SetEnergyIniTrack(Ei);
-       aHit->SetnCrystalConv(nCrystalConv);
+       aHit->SetNCrystalConv(nCrystalConv);
+       aHit->SetNCrystalCompton(nCrystalCompt);
+       aHit->SetNCrystalRayleigh(nCrystalRayl);
        //    G4ThreeVector hitPos;
        //    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
        //    hitPos.setY((hitPrePos.getY()+hitPostPos.getY())/2);

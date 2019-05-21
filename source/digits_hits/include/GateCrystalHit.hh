@@ -224,8 +224,8 @@ private:
       inline  G4int GetSourcePDG() const        { return m_sourcePDG; }
 
 
-      inline void  SetnCrystalConv(G4int value)     { m_nCrystalConv = value; }
-      inline  G4int GetnCrystalConv() const        { return m_nCrystalConv; }
+      inline void  SetNCrystalConv(G4int value)     { m_nCrystalConv = value; }
+      inline  G4int GetNCrystalConv() const        { return m_nCrystalConv; }
       //----------------------------------------------------------------
 
 
