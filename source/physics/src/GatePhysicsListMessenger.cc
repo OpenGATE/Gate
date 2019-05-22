@@ -49,6 +49,9 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  delete pSetUseICRU90DataFlag;
+#endif
 
   delete pMuHandlerSetDatabase;
   delete pMuHandlerSetEMin;
@@ -188,6 +191,13 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pSetSplineFlag = new G4UIcmdWithABool(bb,this);
   guidance = "Set SplineFlag for Standard EM Processes";
   pSetSplineFlag->SetGuidance(guidance);
+
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  bb = base+"/setUseICRU90DataFlag";
+  pSetUseICRU90DataFlag = new G4UIcmdWithABool(bb,this);
+  guidance = "Use ICRU90 EM stopping power tables for protons and alphas in G4_AIR, G4_WATER and G4_GRAPHITE";
+  pSetUseICRU90DataFlag->SetGuidance(guidance);
+#endif
 
   // Mu Handler commands
   bb = base+"/MuHandler/setDatabase";
@@ -375,8 +385,15 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   if (command == pSetSplineFlag) {
     G4bool flag = pSetSplineFlag->GetNewBoolValue(param);
     pPhylist->SetOptSplineFlag(flag);
-    GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1.\n");
+    GateMessage("Physic", 1, "(EM Options) Spline Flag set to "<<flag<<". Spline Flag defaut 1.\n");
   }
+#if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
+  if (command == pSetUseICRU90DataFlag) {
+    G4bool flag = pSetUseICRU90DataFlag->GetNewBoolValue(param);
+    pPhylist->SetUseICRU90DataFlag(flag);
+    GateMessage("Physic", 1, "(EM Options) 'Use the ICRU90 data' flag set to "<<flag<<". Defaut is 0 (false).\n");
+  }
+#endif
 
   // Mu Handler commands
   if (command == pMuHandlerSetDatabase){

@@ -31,6 +31,8 @@
 #include <TH2.h>
 #include <TMath.h>
 
+#include <list>
+
 class G4EmCalculator;
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
@@ -113,6 +115,7 @@ public:
   
   
   void SetLogBinning(bool b) {mEnableLogBinning = b; }
+  void SetEnergyPerUnitMass(bool b) {mEnableEnergyPerUnitMass = b; }
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
 
@@ -136,6 +139,8 @@ protected:
   TH1D * pEdep;
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
+  
+  std::list<TH1D*> allEnabledTH1DHistograms;
 
   TH1D * pLETSpectrum;
   G4double mLETmin;
@@ -191,6 +196,7 @@ protected:
   bool mEnableEdepTrackHistoFlag;
   bool mEnableElossHistoFlag;
   bool mEnableLogBinning;
+  bool mEnableEnergyPerUnitMass;
   
   
   G4EmCalculator * emcalc;
@@ -201,4 +207,3 @@ MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
 
 #endif /* end #define GATEENERGYSPECTRUMACTOR_HH */
 #endif
-

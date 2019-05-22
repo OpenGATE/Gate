@@ -76,6 +76,7 @@ protected:
   G4UIcmdWithABool          * pEnableElossHistoCmd;
   
   G4UIcmdWithABool          * pEnableLogBinningCMD;
+  G4UIcmdWithABool          * pEnableEnergyPerUnitMassCMD;
   
 
 }; // end class GateEnergySpectrumActorMessenger

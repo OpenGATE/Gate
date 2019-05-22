@@ -70,6 +70,9 @@ public:
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
 
+  void SetIsTOutEnabled(bool b){EnableTOut = b;}
+  void SetIsTProdEnabled(bool b){EnableTProd = b;}
+
   void SetIsChargeEnabled(bool b){EnableCharge = b;}
   void SetIsElectronicDEDXEnabled(bool b) {EnableElectronicDEDX = b;}
   void SetIsTotalDEDXEnabled(bool b) {EnableTotalDEDX = b;}
@@ -136,6 +139,9 @@ protected:
   bool mStoreOutPart;
   bool EnableNuclearFlag;
 
+  bool EnableTOut;
+  bool EnableTProd;
+
   bool mSphereProjectionFlag;
   G4ThreeVector mSphereProjectionCenter;
   double mSphereProjectionRadius;
@@ -155,6 +161,9 @@ protected:
   bool bEnableCompact;
   bool bEnablePDGCode;
   long int bPDGCode;
+
+  bool bEnableTOut;
+  bool bEnableTProd;
 
   double mFileSize;
 
@@ -180,7 +189,9 @@ protected:
   float ekPost;
   float ekPre;
   float w;
-  float t;//t is either time or local time.
+  float tOut;
+  float tProd;
+  double t;//t is either time or local time.
   G4int m;
   Char_t vol[256];
 

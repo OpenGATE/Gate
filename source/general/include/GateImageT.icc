@@ -71,8 +71,9 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "dcm") ReadDICOM(filename);
 #endif
   else {
-    GateError( "Unknown image file extension. Supported extensions are : "
-               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33, .dcm\n");
+    GateError( "Unknown image file extension." << Gateendl
+               << "Your file name is [" << filename << "] and the extension [" << extension << "]." << Gateendl
+               << "Supported extensions are: .vox, .hdr, .img, .mhd, .mha, .h33, .i33, .dcm" << Gateendl);
     exit(0);
   }
 }

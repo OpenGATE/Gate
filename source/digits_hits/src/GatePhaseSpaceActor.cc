@@ -56,10 +56,13 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableLocalTime = false;
   EnableMass = true;
   EnableSec = false;
+  EnableNuclearFlag = false;
   mIsFistStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
+  EnableTOut = true ;
+  EnableTProd = true ;
 
   mSphereProjectionFlag = false;
   mSphereProjectionCenter = G4ThreeVector(0);
@@ -74,6 +77,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bEnableCompact = false;
   bEnableEmissionPoint = false;
   bEnablePDGCode = false;
+  bEnableTOut = true;
+  bEnableTProd = true;
 
   bSpotID = 0;
   bSpotIDFromSource = " ";
@@ -146,7 +151,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
-    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
+    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
@@ -170,6 +175,9 @@ void GatePhaseSpaceActor::Construct()
       pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
     }
     if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
+    if (EnableTOut) pListeVar->Branch("TOut", &tOut, "TOut/F");
+    if (EnableTProd) pListeVar->Branch("TProd", &tProd, "TProd/F");
 
     if (EnableNuclearFlag)
     {    
@@ -435,7 +443,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   dy = localMomentum.y();
   dz = localMomentum.z();
 
-
+  tOut = step->GetTrack()->GetLocalTime();
+  tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
   //------------- Option to project position on a sphere
 
   /* Sometimes it is useful to store the particle position on a different
