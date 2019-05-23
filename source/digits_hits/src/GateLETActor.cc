@@ -93,10 +93,10 @@ void GateLETActor::Construct() {
     }
 
   if (mIsGqq0EBT31stOrder){
-    mLETFilename= removeExtension(mLETFilename) + "-gqq0linear."+ getExtension(mLETFilename);
+    mLETFilename= removeExtension(mLETFilename) + "-gqqZerolinear."+ getExtension(mLETFilename);
   }
   else if (mIsGqq0EBT34thOrder){
-    mLETFilename= removeExtension(mLETFilename) + "-gqq0fourthOrder."+ getExtension(mLETFilename);
+    mLETFilename= removeExtension(mLETFilename) + "-gqqZerofourthOrder."+ getExtension(mLETFilename);
   }
   else if (mIsLETtoWaterEnabled){
     mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
@@ -155,7 +155,7 @@ void GateLETActor::SaveData() {
     double ebt3_a0 = 1.0258;
     double ebt3_a1 = -0.0211;
 
-    double ebt3_b0 = -1.0054;
+    double ebt3_b0 = 1.0054;
     double ebt3_b1 = -6.4262E-4;
     double ebt3_b2 = -4.9426E-3;
     double ebt3_b3 = 4.1747E-4;
