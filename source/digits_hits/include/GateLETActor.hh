@@ -89,6 +89,9 @@ protected:
   bool mIsDoseAverageEdepDX;
   
   bool mIsAverageKinEnergy;
+  
+  bool mIsGqq0EBT31stOrder;
+  bool mIsGqq0EBT34thOrder;
 
 
   bool mIsParallelCalculationEnabled;
