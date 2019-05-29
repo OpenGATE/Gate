@@ -1,5 +1,5 @@
 #=========================================================
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
 
@@ -92,6 +92,10 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
+
+#=========================================================
+# Option for libTorch
+OPTION(GATE_USE_TORCH "Gate use libTorch" OFF)
 
 #=========================================================
 # RTK / ITK
@@ -222,6 +226,11 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
+IF(GATE_USE_TORCH)
+  FIND_PACKAGE(Torch REQUIRED)
+ENDIF()
+
+#=========================================================
 # RTK
 IF(GATE_USE_RTK OR GATE_USE_ITK)
   SET(ITK_MINIMAL_VERSION 4.9)
@@ -256,7 +265,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY}  ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)

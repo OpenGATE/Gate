@@ -53,6 +53,15 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
   guid = G4String("Apply Russian Roulette VRT to data outside all energy windows. The given nb is the factor (1/w w=weight), integer (e.g. 50)");
   pSetRRFactorCmd->SetGuidance(guid);
 
+  n = base + "/setNNModel";
+  pSetNNModelCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Path to the neural network model in .pt");
+  pSetNNModelCmd->SetGuidance(guid);
+
+  n = base + "/setNNDict";
+  pSetNNDictCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Path to the neural network dictionary in .json");
+  pSetNNDictCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -64,6 +73,8 @@ void Gate_NN_ARF_ActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pSetModeFlagCmd)             pDIOActor->SetMode(newValue);
   if (cmd == pSetMaxAngleCmd)             pDIOActor->SetMaxAngle(pSetMaxAngleCmd->GetNewDoubleValue(newValue));
   if (cmd == pSetRRFactorCmd)             pDIOActor->SetRRFactor(pSetRRFactorCmd->GetNewIntValue(newValue));
+  if (cmd == pSetNNModelCmd)              pDIOActor->SetNNModel(newValue);
+  if (cmd == pSetNNDictCmd)               pDIOActor->SetNNDict(newValue);
   GateActorMessenger::SetNewValue(cmd, newValue);
 }
 //-----------------------------------------------------------------------------

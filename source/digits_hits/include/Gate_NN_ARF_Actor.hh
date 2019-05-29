@@ -64,6 +64,8 @@ public:
   void SetMode(std::string m);
   void SetMaxAngle(double a);
   void SetRRFactor(int f);
+  void SetNNModel(std::string& m);
+  void SetNNDict(std::string& m);
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run *);
@@ -94,6 +96,8 @@ protected:
   double mMaxAngle;
   double mThetaMax;
   double mPhiMax;
+  std::string mNNModelPath;
+  std::string mNNDictPath;
 };
 
 // Macro to auto declare actor

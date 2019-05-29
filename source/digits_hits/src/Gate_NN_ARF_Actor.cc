@@ -6,6 +6,8 @@
   See LICENSE.md for further details
   ----------------------*/
 
+#include <torch/script.h>
+#include "json.hpp"
 #include "Gate_NN_ARF_Actor.hh"
 #include "GateSingleDigi.hh"
 #include "G4DigiManager.hh"
@@ -58,6 +60,8 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   mThetaMax = 0.0;
   mPhiMax = 0.0;
   GateDebugMessageDec("Actor",4,"Gate_NN_ARF_Actor() -- end\n");
+  mNNModelPath = "";
+  mNNDictPath = "";
 }
 //-----------------------------------------------------------------------------
 
@@ -99,6 +103,22 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
   }
 
   GateMessage("Actor", 1, "Gate_NN_ARF_Actor mode = " << m);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetNNModel(std::string& m)
+{
+  mNNModelPath = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetNNDict(std::string& m)
+{
+  mNNDictPath = m;
 }
 //-----------------------------------------------------------------------------
 
@@ -344,6 +364,43 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.E = E;
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
+
+    //Load the nn and the json dictionary
+    if (mNNModelPath == "")
+      GateError("Error: Neural Network model path (.pt) is empty");
+    if (mNNDictPath == "")
+      GateError("Error: Neural Network dictionay path (.json) is empty");
+    std::shared_ptr<torch::jit::script::Module> module = torch::jit::load(mNNModelPath);
+    module->to(torch::kCUDA);
+    std::ifstream nnDictFile(mNNDictPath);
+    using json = nlohmann::json;
+    json nnDict;
+    nnDictFile >> nnDict;
+    std::vector<double> x_mean = nnDict["x_mean"];
+    std::vector<double> x_std = nnDict["x_std"];
+
+    assert(module != nullptr);
+
+    //pass these data to nn
+    // Create a vector of inputs.
+    std::vector<torch::jit::IValue> inputs;
+    torch::Tensor input = torch::zeros({1, 3});
+    input[0][0] = (theta - x_mean[0])/x_std[0];
+    input[0][1] = (phi - x_mean[1])/x_std[1];
+    input[0][2] = (E - x_mean[2])/x_std[2];
+    inputs.push_back(input.cuda());
+
+    // Execute the model and turn its output into a tensor.
+    at::Tensor output = module->forward(inputs).toTensor();
+
+    //Display elements
+    //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/5) << '\n';
+    //for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
+    //  std::cout << output[0][outputIndex] << " ";
+    //}
+    //std::cout << std::endl << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
+
+
   }
 
   // Output will be set EndOfEventAction

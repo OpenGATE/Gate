@@ -35,6 +35,8 @@ protected:
   G4UIcmdWithAString        * pSetModeFlagCmd;
   G4UIcmdWithADoubleAndUnit * pSetMaxAngleCmd;
   G4UIcmdWithAnInteger      * pSetRRFactorCmd;
+  G4UIcmdWithAString        * pSetNNModelCmd;
+  G4UIcmdWithAString        * pSetNNDictCmd;
 };
 //-----------------------------------------------------------------------------
 
