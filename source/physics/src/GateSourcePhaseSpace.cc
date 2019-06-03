@@ -8,8 +8,6 @@
 
 #include "GateConfiguration.h"
 
-
-
 #include "GateSourcePhaseSpace.hh"
 #include "GateIAEAHeader.h"
 #include "GateIAEARecord.h"
@@ -24,8 +22,7 @@
 #include "G4ThreeVector.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
-
-
+#include "GateFileExceptions.hh"
 
 typedef unsigned int uint;
 
@@ -208,7 +205,11 @@ void GateSourcePhaseSpace::Initialize()
     if (mChain.has_variable("ParticleName")) {
       mChain.read_variable("ParticleName",particleName, 64);
     }
-    mChain.read_variable("Ekine", &energy);
+    try {
+      mChain.read_variable("Ekine", &energy);
+    } catch (GateKeyNotFoundInHeaderException & e) {
+      mChain.read_variable("E", &energy);
+    }
 
     mChain.read_variable("X",&x);
     mChain.read_variable("Y",&y);
@@ -595,5 +596,3 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
   return pIAEAheader->nParticles;
 }
 // ----------------------------------------------------------------------------------
-
-
