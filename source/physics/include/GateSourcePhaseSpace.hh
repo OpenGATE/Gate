@@ -12,6 +12,13 @@
 
 #include "GateConfiguration.h"
 
+#ifdef GATE_USE_TORCH
+// Need to be *before* include GateIAEAHeader because it define macros
+// that mess with torch
+#include <torch/script.h>
+#include "json.hpp"
+#endif
+
 #include "G4Event.hh"
 #include "globals.hh"
 #include "G4VPrimaryGenerator.hh"
@@ -78,6 +85,8 @@ public:
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
   void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
+
+  void InitializePyTorch();
 
 protected:
 
@@ -154,12 +163,27 @@ protected:
 
   int mPTCurrentIndex;
   int mPTBatchSize;
+  double mPTmass;
   std::vector<G4ThreeVector> mPTPosition;
   std::vector<double> mPTDX;
   std::vector<double> mPTDY;
   std::vector<double> mPTDZ;
   std::vector<double> mPTEnergy;
-  
+#ifdef GATE_USE_TORCH
+  std::shared_ptr<torch::jit::script::Module> mPTmodule;
+  torch::Tensor mPTzer;
+  std::vector<double> mPTx_mean;
+  std::vector<double> mPTx_std;
+  int mPTz_dim;
+  int mPTEnergyIndex;
+  int mPTPositionXIndex;
+  int mPTPositionYIndex;
+  int mPTPositionZIndex;
+  int mPTDirectionXIndex;
+  int mPTDirectionYIndex;
+  int mPTDirectionZIndex;
+#endif  
+
 };
 
 #endif
