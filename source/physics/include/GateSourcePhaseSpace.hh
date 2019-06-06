@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #ifndef GATEPHASESPACESOURCE_HH
@@ -44,6 +44,8 @@ public:
   void Initialize();
   void GenerateROOTVertex( G4Event* );
   void GenerateIAEAVertex( G4Event* );
+  void GeneratePyTorchVertex( G4Event* );
+  void GenerateBatchSamplesFromPyTorch();
 
   G4int OpenIAEAFile(G4String file);
 
@@ -148,7 +150,14 @@ protected:
   bool mUseNbOfParticleAsIntensity;
   GateInputTreeFileChain mChain;
 
-
+  int mPTCurrentIndex;
+  int mPTBatchSize;
+  std::vector<G4ThreeVector> mPTPosition;
+  std::vector<double> mPTDX;
+  std::vector<double> mPTDY;
+  std::vector<double> mPTDZ;
+  std::vector<double> mPTEnergy;
+  
 };
 
 #endif
