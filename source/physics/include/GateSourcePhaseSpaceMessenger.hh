@@ -51,6 +51,7 @@ private:
   G4UIcmdWithADoubleAndUnit* setRmaxCmd;
   G4UIcmdWithADouble*        setStartIdCmd;
   G4UIcmdWithAnInteger*      setPytorchBatchSizeCmd;
+  G4UIcmdWithAString*        setPytorchParamsCmd;
 };
 //----------------------------------------------------------------------------------------
 

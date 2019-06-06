@@ -69,6 +69,11 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setPytorchBatchSizeCmd = new G4UIcmdWithAnInteger(cmdName,this);
   setPytorchBatchSizeCmd->SetGuidance("set the batch size for pytorch PHSP");
 
+  cmdName = GetDirectoryName()+"setPytorchParams";
+  setPytorchParamsCmd = new G4UIcmdWithAString(cmdName,this);
+  setPytorchParamsCmd->SetGuidance("set the json file associated with the .pt PHSP");
+  setPytorchParamsCmd->SetParameterName("Filename",false);
+
 }
 //----------------------------------------------------------------------------------------
 
@@ -85,6 +90,7 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
   delete setRmaxCmd;
   delete setStartIdCmd;
   delete setPytorchBatchSizeCmd;
+  delete setPytorchParamsCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -103,6 +109,8 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
   if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
   if (command == setPytorchBatchSizeCmd) pSource->SetPytorchBatchSize(setPytorchBatchSizeCmd->GetNewIntValue(newValue));
+  if (command == setPytorchParamsCmd) pSource->SetPytorchParams(newValue);
+  
 }
 //----------------------------------------------------------------------------------------
 

@@ -744,11 +744,13 @@ void GateSourcePhaseSpace::InitializePyTorch()
   mPTzer = torch::zeros({mPTBatchSize, mPTz_dim});
 
   // un normalize
-  auto f = "nnDict.json";
-  std::ifstream nnDictFile(f);
-  using json = nlohmann::json;
-  json nnDict;
-  nnDictFile >> nnDict;
+  nlohmann::json nnDict;
+  try {
+    std::ifstream nnDictFile(mPTJsonFilename);
+    nnDictFile >> nnDict;
+  } catch(std::exception & e) {
+    GateError("Cannot open json file: " << mPTJsonFilename);
+  }
   std::vector<double> x_mean = nnDict["x_mean"];
   std::vector<double> x_std = nnDict["x_std"];
   mPTx_mean = x_mean;//nnDict["x_mean"];

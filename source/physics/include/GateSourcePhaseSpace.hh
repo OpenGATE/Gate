@@ -85,8 +85,8 @@ public:
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
   void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
-
   void InitializePyTorch();
+  void SetPytorchParams(G4String & name) { mPTJsonFilename = name; }
 
 protected:
 
@@ -169,6 +169,7 @@ protected:
   std::vector<double> mPTDY;
   std::vector<double> mPTDZ;
   std::vector<double> mPTEnergy;
+  std::string mPTJsonFilename;
 #ifdef GATE_USE_TORCH
   std::shared_ptr<torch::jit::script::Module> mPTmodule;
   torch::Tensor mPTzer;
