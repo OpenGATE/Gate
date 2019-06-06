@@ -65,6 +65,10 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setStartIdCmd = new G4UIcmdWithADouble(cmdName,this);
   setStartIdCmd->SetGuidance("set the id of the particle to start with");
 
+  cmdName = GetDirectoryName()+"setPytorchBatchSize";
+  setPytorchBatchSizeCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  setPytorchBatchSizeCmd->SetGuidance("set the batch size for pytorch PHSP");
+
 }
 //----------------------------------------------------------------------------------------
 
@@ -80,6 +84,7 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
   delete setUseNbParticleAsIntensityCmd;
   delete setRmaxCmd;
   delete setStartIdCmd;
+  delete setPytorchBatchSizeCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -97,6 +102,7 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
     pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
   if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
+  if (command == setPytorchBatchSizeCmd) pSource->SetPytorchBatchSize(setPytorchBatchSizeCmd->GetNewIntValue(newValue));
 }
 //----------------------------------------------------------------------------------------
 

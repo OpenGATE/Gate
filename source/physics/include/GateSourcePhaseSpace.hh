@@ -77,6 +77,8 @@ public:
 
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
+  void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
+
 protected:
 
 
