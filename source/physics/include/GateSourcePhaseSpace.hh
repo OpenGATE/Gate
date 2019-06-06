@@ -71,7 +71,8 @@ public:
 
   void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
 
-  void SetRmax(float r){mRmax = r;}
+  void SetRmax(float r) { mRmax = r; }
+  void SetSphereRadius(float r) { mSphereRadius = r; }
 
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
@@ -117,6 +118,7 @@ protected:
   bool mAlreadyLoad;
 
   float mRmax;
+  double mSphereRadius;
 
   double px ;
   double py ;

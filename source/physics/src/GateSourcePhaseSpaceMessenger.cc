@@ -65,6 +65,11 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setStartIdCmd = new G4UIcmdWithADouble(cmdName,this);
   setStartIdCmd->SetGuidance("set the id of the particle to start with");
 
+  cmdName = GetDirectoryName()+"setSphereRadius";
+  setSphereRadiusCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  setSphereRadiusCmd->SetGuidance("set the radius in mm of the sphere to project the particles");
+  setSphereRadiusCmd->SetParameterName("Radius value",false);
+
 }
 //----------------------------------------------------------------------------------------
 
@@ -80,6 +85,7 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
   delete setUseNbParticleAsIntensityCmd;
   delete setRmaxCmd;
   delete setStartIdCmd;
+  delete setSphereRadiusCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -96,6 +102,7 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
   if (command == setUseNbParticleAsIntensityCmd)
     pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
+  if (command == setSphereRadiusCmd) pSource->SetSphereRadius(setSphereRadiusCmd->GetNewDoubleValue(newValue));
   if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
 }
 //----------------------------------------------------------------------------------------
