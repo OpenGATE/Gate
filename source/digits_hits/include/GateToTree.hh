@@ -176,6 +176,8 @@ private:
   G4int m_photonID;
 //  G4int m_outpuID[OUTPUTID_SIZE];
 
+
+
  public:
 
 
@@ -184,9 +186,11 @@ private:
   static const auto MAX_OUTPUTIDNAME_SIZE = 32;
 
   static char m_outputIDName[MAX_NB_SYSTEM][MAX_DEPTH_SYSTEM][MAX_OUTPUTIDNAME_SIZE];
+  static G4int m_max_depth_system[MAX_NB_SYSTEM];
 
  private:
   G4int m_outputID[2][MAX_NB_SYSTEM][MAX_DEPTH_SYSTEM];
+
 
 
 
