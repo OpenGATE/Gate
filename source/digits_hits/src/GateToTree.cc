@@ -22,6 +22,7 @@ See LICENSE.md for further details
 
 
 char GateToTree::m_outputIDName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM][GateToTree::MAX_OUTPUTIDNAME_SIZE];
+G4int GateToTree::m_max_depth_system[GateToTree::MAX_NB_SYSTEM];
 const auto MAX_NB_CHARACTER = 32;
 
 GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode) :
@@ -117,10 +118,12 @@ void GateToTree::RecordBeginOfAcquisition()
 
       for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
       {
-        for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+//        for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+        for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
         {
           std::stringstream ss;
           ss << m_outputIDName[k][depth];
+//          if(ss.str() != "")
           m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
         }
       }
@@ -148,7 +151,7 @@ void GateToTree::RecordBeginOfAcquisition()
 
         for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
         {
-            for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+            for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
             {
                 std::stringstream ss;
                 ss << m_outputIDName[k][depth];
@@ -232,7 +235,7 @@ void GateToTree::RecordBeginOfAcquisition()
         for(auto side = 1; side <= 2; ++side){
             for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
             {
-                for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+                for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
                 {
                     std::stringstream ss;
                     ss << m_outputIDName[k][depth] << side;
@@ -565,6 +568,8 @@ void GateToTree::SetOutputIDName(G4int id_system, const char *anOutputIDName, si
 
     assert(id_system < MAX_NB_SYSTEM);
     assert(depth < MAX_DEPTH_SYSTEM);
+
+    m_max_depth_system[id_system] = depth + 1;
 
     strncpy(m_outputIDName[id_system][depth], anOutputIDName, MAX_OUTPUTIDNAME_SIZE);
 
