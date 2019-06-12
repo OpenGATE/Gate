@@ -8,6 +8,13 @@
 
 #include "GateConfiguration.h"
 
+#ifdef GATE_USE_TORCH
+// Need to be *before* include GateIAEAHeader because it define macros
+// that mess with torch
+#include <torch/script.h>
+#include "json.hpp"
+#endif
+
 #include "GateSourcePhaseSpace.hh"
 #include "GateIAEAHeader.h"
 #include "GateIAEARecord.h"
@@ -677,15 +684,7 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
 void GateSourcePhaseSpace::InitializePyTorch()
 {
   G4cout << "----------------------> pytorch mode" << std::endl;
-  
-  // #ifndef GATE_USE_TORCH
-  //   GateError("Cannot use pytorch: must compile with GATE_USE_TORCH set to ON";
-  // #endif
-
-  // Read pt file
-  // [later] Read json file
-  // Init model
-  
+    
   // allocate batch samples of particles
   G4cout << "mPTBatchSize = " << mPTBatchSize << std::endl;
   mPTPosition.resize(mPTBatchSize);
@@ -710,22 +709,21 @@ void GateSourcePhaseSpace::InitializePyTorch()
   mTotalNumberOfParticles = 1e12;
   mNumberOfParticlesInFile = 1e12;
 
-
 #ifdef GATE_USE_TORCH
 
   // Load the model //FIXME put in init
   auto filename = listOfPhaseSpaceFile[0];
   G4cout << "pytorch filename " << filename << std::endl;
-  //  std::shared_ptr<torch::jit::script::Module>
-  mPTmodule = torch::jit::load(filename);
-
+  mPTmodule = torch::jit::load(filename);//, torch::kCUDA);
+  G4cout << "pytorch loaded." << std::endl;
+  
   // Check
   if (mPTmodule == nullptr) {
     GateError("Cannot open the .pt file: " << filename);
   }
     
   // Set to cude FIXME --> check CUDA exist
-  // module->to(torch::kCUDA);
+  // mPTmodule->to(torch::kCUDA);
 
   // FIXME --> check input dimension, convert angle to XYZ etc
   // FIXME to read in the json or in the model
@@ -740,7 +738,6 @@ void GateSourcePhaseSpace::InitializePyTorch()
   mPTDirectionZIndex = 6;
 
   // Create a vector of random inputs
-  //torch::Tensor zer = torch::zeros({mPTBatchSize, z_dim});
   mPTzer = torch::zeros({mPTBatchSize, mPTz_dim});
 
   // un normalize
@@ -753,8 +750,8 @@ void GateSourcePhaseSpace::InitializePyTorch()
   }
   std::vector<double> x_mean = nnDict["x_mean"];
   std::vector<double> x_std = nnDict["x_std"];
-  mPTx_mean = x_mean;//nnDict["x_mean"];
-  mPTx_std = x_std;//nnDict["x_std"];
+  mPTx_mean = x_mean;
+  mPTx_std = x_std;
 
   std::cout << "mean " << mPTx_mean << std::endl;
   std::cout << "std  " << mPTx_std << std::endl;
@@ -771,26 +768,32 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
   G4cout << "GenerateBatchSamplesFromPyTorch "
          << mPTCurrentIndex <<  " " << mPTBatchSize << std::endl;
 
-  // the following ifdef prevent to compile this section if GATE_USE_TORCH is not set
+  // the following ifdef prevents to compile this section if GATE_USE_TORCH is not set
 #ifdef GATE_USE_TORCH
 
   // Create a vector of random inputs
   std::vector<torch::jit::IValue> inputs;
   torch::Tensor z = torch::randn_like(mPTzer);
   inputs.push_back(z);
+  //inputs.push_back(z.cuda());
+  // std::cout << "z " << z << std::endl;
 
   // Execute the model
+  DD("Forward");
   torch::Tensor output = mPTmodule->forward(inputs).toTensor();
+  DD("Forward DONE ");
   std::cout << "output size " << output.sizes() << std::endl;
 
   std::vector<double> x_mean = mPTx_mean;
   std::vector<double> x_std = mPTx_std;
   auto u = [&x_mean, &x_std](const float * v, int i) {
+             // DD(v[i]);
              return (v[i]*x_std[i])+x_mean[i];
            };
     
   // Store the results into the vectors
   for (auto i=0; i < output.sizes()[0]; ++i) {
+    // DD(i)
     const float * v = output[i].data<float>();
     mPTEnergy[i] = u(v, mPTEnergyIndex);
     mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex),
