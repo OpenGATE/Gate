@@ -6,8 +6,13 @@
   See LICENSE.md for further details
   ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_TORCH
 #include <torch/script.h>
 #include "json.hpp"
+#endif
+ 
 #include "Gate_NN_ARF_Actor.hh"
 #include "GateSingleDigi.hh"
 #include "G4DigiManager.hh"
@@ -365,7 +370,8 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
 
-    //Load the nn and the json dictionary
+ #ifdef GATE_USE_TORCH
+   //Load the nn and the json dictionary
     if (mNNModelPath == "")
       GateError("Error: Neural Network model path (.pt) is empty");
     if (mNNDictPath == "")
@@ -400,7 +406,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     //}
     //std::cout << std::endl << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
 
-
+#endif
   }
 
   // Output will be set EndOfEventAction
