@@ -29,6 +29,7 @@
 #include "G4ThreeVector.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
+#include "GateFileExceptions.hh"
 
 typedef unsigned int uint;
 
@@ -95,6 +96,7 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):
   mTotalSimuTime = 0.;
   mAlreadyLoad = false;
   mRmax=0;
+  mSphereRadius = -1;
   mCurrentParticleInIAEAFiles = 0;
   mCurrentUsedParticleInIAEAFiles = 0;
 }
@@ -528,8 +530,54 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
   ChangeParticlePositionRelativeToAttachedVolume(mParticlePosition2);
 
 
-  //parameter not used: particle_time
+  // ----------------------------------------------
+  // Try to change position according to a max radius
+  if (mSphereRadius > 0) {
+    //G4cout << "mParticlePosition2 " << mParticlePosition2 << std::endl;
+    G4ThreeVector mSphereCenter(0,0,0);
+    //G4cout << "Sphere center/radius" << mSphereCenter << " " << mSphereRadius << std::endl;
+    G4ThreeVector l = mParticleMomentum2/mParticleMomentum2.mag();
+    G4ThreeVector & o = mParticlePosition2;
+    G4ThreeVector & c = mSphereCenter;
+    double & r = mSphereRadius;
+    // G4cout << "  l " << l << std::endl;
+    // G4cout << "  o " << o << std::endl;
+    // G4cout << "  c " << c << std::endl;
+    // G4cout << "  r " << r << std::endl;
+    // G4cout << "  norm " << l.mag2() << std::endl;
+    G4ThreeVector diff = (o-c);
+    double a = -(l.dot(diff));
+    double b = a*a - (diff.mag2()-r*r);
+    // G4cout << "    diff " << diff << std::endl;
+    // G4cout << "    a " << a << std::endl;
+    // G4cout << "    a² " << a*a << std::endl;
+    // G4cout << "    diff² " << diff.mag2() << std::endl;
+    // G4cout << "    r² " << r*r << std::endl;
+    // G4cout << "    b " << b << std::endl;
 
+    if (b>0) {
+      double c = sqrt(b);
+      double d1 = a + c;
+      double d2 = a - c;
+      // G4cout << "    d1 " << d1 << std::endl;
+      // G4cout << "    d2 " << d2 << std::endl;
+      if (d1<0 && d2<0) {
+        double d = d2;
+        if (d1 > d2) d = d1;
+        mParticlePosition2 = mParticlePosition2+d*l;
+      }
+      else {
+        // Ignore
+        GateMessage("Beam", 0, "WARNING particle is already inside the sphere " << d1 << " " << d2 << std::endl);
+      }
+    }
+  }
+  
+
+  // ---------------------------------------------- 
+
+  
+  //parameter not used: particle_time
   pVertex = new G4PrimaryVertex(mParticlePosition2, mParticleTime);
   pVertex->SetWeight(weight);
   pVertex->SetPrimary(pParticle);
@@ -582,7 +630,6 @@ void GateSourcePhaseSpace::AddFile(G4String file)
       else
         GateError( "Cannot mix phase IAEAFile space files with others types");
     }
-  
   if ((mFileType == "pytorch") && (listOfPhaseSpaceFile.size() > 1)) {
     GateError( "Please, use only one pytorch file.");
   }
@@ -809,5 +856,4 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 #endif
 }
 // ----------------------------------------------------------------------------------
-
 
