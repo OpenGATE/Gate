@@ -25,6 +25,7 @@ public:
      bool hasNext();
  
     G4int PrepareNextEvent();
+    G4int PrepareNextEventIdeal();
     GateComptonCameraCones PrepareEndOfEvent();
 
 

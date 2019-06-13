@@ -17,6 +17,7 @@
 #include "GateCrystalHit.hh"
 #include "GateSingleDigi.hh"
 #include "GateCCCoincidenceDigi.hh"
+#include "GateComptonCameraCones.hh"
 
 //-----------------------------------------------------------------------------
 void GateCCRootHitBuffer::Clear()
@@ -616,4 +617,127 @@ GateCCCoincidenceDigi* GateCCRootCoincBuffer::CreateCoincidence()
   //Set the paremeters
 
   return aCoin;
+}
+
+
+
+void GateCCRootConesBuffer::Clear()
+{
+  //coincID          =-1;
+
+  energy1           = 0./MeV;
+  energyR           = 0./MeV;
+  globalPosX1       = 0./mm;
+  globalPosY1       = 0./mm;
+  globalPosZ1       = 0./mm;
+  globalPosX2       = 0./mm;
+  globalPosY2       = 0./mm;
+  globalPosZ2       = 0./mm;
+
+  m_nSingles=0;
+  m_IsTrueCoind=true;
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateCCRootConesBuffer::Fill(GateComptonCameraCones* aCon)
+{
+    //I need to include it
+    //coincID       =
+
+    energy1        =  aCon->GetEnergy1()/MeV;;
+    energyR        =  aCon->GetEnergyR()/MeV;
+
+    globalPosX1    = (aCon->GetPosition1()).x()/mm;
+    globalPosY1    = (aCon->GetPosition1()).y()/mm;
+    globalPosZ1    = (aCon->GetPosition1()).z()/mm;
+    globalPosX2    = (aCon->GetPosition2()).x()/mm;
+    globalPosY2    = (aCon->GetPosition2()).y()/mm;
+    globalPosZ2    = (aCon->GetPosition2()).z()/mm;
+
+    m_nSingles=aCon->GetEnergyR();
+    m_IsTrueCoind=aCon->GetTrueFlag();
+
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateCCConesTree::Init(GateCCRootConesBuffer& buffer)
+{
+    SetAutoSave(2000);
+    //Branch("coincID",          &buffer.coincID,"coincID/I");
+    Branch("energy1",         &buffer.energy1,"energy1/F");
+    Branch("energyR",         &buffer.energyR,"energyR/F");
+
+    Branch("globalPosX1",     &buffer.globalPosX1,"globalPosX1/F");
+    Branch("globalPosY1",     &buffer.globalPosY1,"globalPosY1/F");
+    Branch("globalPosZ1",     &buffer.globalPosZ1,"globalPosZ1/F");
+    Branch("globalPosX2",     &buffer.globalPosX2,"globalPosX2/F");
+    Branch("globalPosY2",     &buffer.globalPosY2,"globalPosY2/F");
+    Branch("globalPosZ2",     &buffer.globalPosZ2,"globalPosZ2/F");
+
+
+    Branch("nSingles",        &buffer.m_nSingles,"m_nSingles/I");
+    Branch("IsTrueCoind",     &buffer.m_IsTrueCoind,"m_IsTrueCoind/O");
+
+}
+//-----------------------------------------------------------------------------
+
+void GateCCConesTree::SetBranchAddresses(TTree* conTree,GateCCRootConesBuffer& buffer)
+{
+
+
+    //coinTree->SetBranchAddress("coincID",&buffer.coincID);
+
+    conTree->SetBranchAddress("energy1",&buffer.energy1);
+    conTree->SetBranchAddress("energyR",&buffer.energyR);
+
+    conTree->SetBranchAddress("globalPosX1",&buffer.globalPosX1);
+    conTree->SetBranchAddress("globalPosY1",&buffer.globalPosY1);
+    conTree->SetBranchAddress("globalPosZ1",&buffer.globalPosZ1);
+    conTree->SetBranchAddress("globalPosX2",&buffer.globalPosX2);
+    conTree->SetBranchAddress("globalPosY2",&buffer.globalPosY2);
+    conTree->SetBranchAddress("globalPosZ2",&buffer.globalPosZ2);
+
+    conTree->SetBranchAddress("nSingles",&buffer.m_nSingles);
+    conTree->SetBranchAddress("IsTrueCoind",&buffer.m_IsTrueCoind);
+
+
+
+}
+
+GateComptonCameraCones* GateCCRootConesBuffer::CreateCone()
+{
+    GateComptonCameraCones* aCon = new GateComptonCameraCones();
+
+    //aCoin->SetCoincidenceID(coincID);
+
+
+
+  G4ThreeVector globalPos1;
+  globalPos1.setX(globalPosX1);
+  globalPos1.setY(globalPosY1);
+  globalPos1.setZ(globalPosZ1);
+  G4ThreeVector globalPos2;
+  globalPos2.setX(globalPosX2);
+  globalPos2.setY(globalPosY2);
+  globalPos2.setZ(globalPosZ2);
+
+
+  aCon->SetPosition1(globalPos1);
+  aCon->SetPosition2(globalPos2);
+
+
+  aCon->SetEnergy1(energy1);
+  aCon->SetEnergy1(energyR);
+  aCon->SetNumSingles(m_nSingles);
+  aCon->SetTrueFlag(m_IsTrueCoind);
+
+  //Set the paremeters
+
+  return aCon;
 }

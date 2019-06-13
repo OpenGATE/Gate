@@ -27,6 +27,7 @@
 class GateCrystalHit;
 class GateSingleDigi;
 class GateCCCoincidenceDigi;
+class GateComptonCameraCones;
 
 #define ROOT_VOLUMEIDSIZE 10
 //-----------------------------------------------------------------------------
@@ -330,6 +331,53 @@ public:
 
   void Init(GateCCRootCoincBuffer& buffer);
   static void SetBranchAddresses(TTree* ,GateCCRootCoincBuffer& buffer);
+};
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+class GateCCRootConesBuffer
+{
+public:
+
+  inline GateCCRootConesBuffer() {Clear();}   	      	  //!< Public constructor
+  inline virtual ~GateCCRootConesBuffer() {} 	      	  //!< Public destructor
+
+  void Clear();     	      	      	      	  //!< Reset the fields of the structure
+  void Fill(GateComptonCameraCones* aCon);
+  GateComptonCameraCones* CreateCone();
+    //@{
+  Float_t  energy1;
+  Float_t  energyR;
+  Float_t  globalPosX1;
+  Float_t  globalPosY1;
+  Float_t  globalPosZ1;
+  Float_t  globalPosX2;
+  Float_t  globalPosY2;
+  Float_t  globalPosZ2;
+
+ // Int_t    coincID;
+  Int_t    m_nSingles;
+  G4bool m_IsTrueCoind;
+ //@}
+
+
+};
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+class GateCCConesTree : public  TTree
+{
+public:
+  inline GateCCConesTree( const G4String& treeName,
+                           const G4String& treeDescription="The root tree for cones")
+    : TTree(treeName,treeDescription)
+  {}
+  virtual inline ~GateCCConesTree() {}
+
+  void Init(GateCCRootConesBuffer& buffer);
+  static void SetBranchAddresses(TTree* ,GateCCRootConesBuffer& buffer);
 };
 //-----------------------------------------------------------------------------
 

@@ -91,6 +91,65 @@ G4int GateSequenceCoincidenceTreeReader::PrepareNextEvent(){
       return 0;
     int  counter=0;
    int firstEvtID=0;
+   double energyR=0.0;
+    bool isTrueCoinc=true;
+    // We loop until the data that have been read are found to be for a different event or run
+
+    while ( (currentCoincID == m_coincBuffer.coincID) && (currentRunID == m_coincBuffer.runID) ) {
+       //GateCCCoincidenceDigi* aCoinc=m_coincBuffer.CreateCoincidence();//No me hace falta crear una coincidencia
+        if(counter==0){
+            aCone.SetEnergy1(m_coincBuffer.energy);
+            G4ThreeVector pos1;
+            pos1.setX(m_coincBuffer.globalPosX);
+            pos1.setY(m_coincBuffer.globalPosY);
+            pos1.setZ(m_coincBuffer.globalPosZ);
+            aCone.SetPosition1(pos1);
+
+           //First event od the coincidence
+           firstEvtID=m_coincBuffer.eventID;
+       }
+       else{
+           if(m_coincBuffer.eventID!=firstEvtID)isTrueCoinc=false;
+	   energyR+=m_coincBuffer.energy;
+           if(counter==1){
+
+               G4ThreeVector pos2;
+               pos2.setX(m_coincBuffer.globalPosX);
+               pos2.setY(m_coincBuffer.globalPosY);
+               pos2.setZ(m_coincBuffer.globalPosZ);
+               aCone.SetPosition2(pos2);;
+           }
+       }
+       counter++;//Para contar primera y segunda interaccion y ponerla en el cono
+
+
+     LoadCoincData();
+    }
+     aCone.SetEnergyR(energyR);
+     aCone.SetNumSingles(counter);
+     aCone.SetTrueFlag(isTrueCoinc);
+    if (currentRunID==m_coincBuffer.runID){
+        // We got a set of hits for the current run -> return 1
+        return 1;
+      }
+      else
+      {
+        // We got a set of hits for a later run -> return 0
+        return 0;
+      }
+}
+
+
+G4int GateSequenceCoincidenceTreeReader::PrepareNextEventIdeal(){
+    G4int currentCoincID = m_coincBuffer.coincID;
+    G4int currentRunID = m_coincBuffer.runID;
+
+
+    // We've reached the end-of-file
+    if ( (currentCoincID==-1) && (currentRunID==-1) )
+      return 0;
+    int  counter=0;
+   int firstEvtID=0;
     bool isTrueCoinc=true;
     // We loop until the data that have been read are found to be for a different event or run
 
@@ -138,7 +197,6 @@ G4int GateSequenceCoincidenceTreeReader::PrepareNextEvent(){
         return 0;
       }
 }
-
 
 
 GateComptonCameraCones GateSequenceCoincidenceTreeReader::PrepareEndOfEvent(){

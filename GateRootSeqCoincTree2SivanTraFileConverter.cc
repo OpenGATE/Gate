@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
          //Saca un pulseList por cada eventID with the corresponfing number of pulses
          while( m_coincFileReader->hasNext()){
              //cout<<"prepareNext"<<endl;
-              int isgood=m_coincFileReader->PrepareNextEvent();
+              int isgood=m_coincFileReader->PrepareNextEventIdeal();
 	     //if(isgood==1){
              if(isgood==1 && m_coincFileReader->PrepareEndOfEvent().GetTrueFlag()==true){
                  coincCounter++;
