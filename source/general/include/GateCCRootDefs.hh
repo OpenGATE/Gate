@@ -135,22 +135,22 @@ public:
 
   inline G4int GetSourcePDG() const
   { return sourcePDG;}
-  inline void SetSourcePDG(G4double sPDG)
+  inline void SetSourcePDG(G4int sPDG)
   { sourcePDG = sPDG;}
 
   inline G4int GetNCrystalConv() const
   { return nCrystalConv;}
-  inline void SetNCrystalConv(G4double nConv)
+  inline void SetNCrystalConv(G4int nConv)
   { nCrystalConv = nConv;}
 
   inline G4int GetNCrystalCompton() const
   { return nCrystalCompt;}
-  inline void SetNCrystalCompton(G4double nCompt)
+  inline void SetNCrystalCompton(G4int nCompt)
   { nCrystalCompt = nCompt;}
 
   inline G4int GetNCrystalRayleigh() const
   { return nCrystalRayl;}
-  inline G4int SetNCrystalRayleigh(G4double nRayl)
+  inline void SetNCrystalRayleigh(G4int nRayl)
   { nCrystalRayl = nRayl;}
   //@}
 
