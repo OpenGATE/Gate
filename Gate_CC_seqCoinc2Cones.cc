@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
                    //writeTraEvent( m_coincFileReader->PrepareEndOfEvent(), coincCounter,ossCones);
              }
            }
+     pTfile->Write();
     return 0;
 }
 
