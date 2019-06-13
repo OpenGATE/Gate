@@ -150,7 +150,7 @@ public:
 
   inline G4int GetNCrystalRayleigh() const
   { return nCrystalRayl;}
-  inline void SetNCrystalRayleigh(G4double nRayl)
+  inline G4int SetNCrystalRayleigh(G4double nRayl)
   { nCrystalRayl = nRayl;}
   //@}
 

@@ -519,7 +519,7 @@ void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
     Branch("sourcePDG",     &buffer.sourcePDG,"sourcePDG/I");
     Branch("nCrystalConv",     &buffer.nCrystalConv,"nCrystalConv/I");
     Branch("nCrystalCompt",     &buffer.nCrystalCompt,"nCrystalCompt/I");
-    Branch("nCrystalRayl",     &buffer.nCrystalRayl,"nCrystalRaylI");
+    Branch("nCrystalRayl",     &buffer.nCrystalRayl,"nCrystalRayl/I");
     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
@@ -657,7 +657,7 @@ void GateCCRootConesBuffer::Fill(GateComptonCameraCones* aCon)
     globalPosY2    = (aCon->GetPosition2()).y()/mm;
     globalPosZ2    = (aCon->GetPosition2()).z()/mm;
 
-    m_nSingles=aCon->GetEnergyR();
+    m_nSingles=aCon->GetNumSingles();
     m_IsTrueCoind=aCon->GetTrueFlag();
 
 
