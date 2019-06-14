@@ -147,7 +147,8 @@ void GateMuMapActor::BeginOfRunAction(const G4Run * r) {
 void GateMuMapActor::EndOfRunAction(const G4Run* r)
 {
     GateVActor::EndOfRunAction(r);
-    SaveData();
+    // Save SourceMap voxel 
+    mSourceMapImage.Write(mSourceMapFilename);
 }
 
 //-----------------------------------------------------------------------------
