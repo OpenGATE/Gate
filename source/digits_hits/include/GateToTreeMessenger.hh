@@ -14,6 +14,7 @@ See LICENSE.md for further details
 #ifndef GATE_GATETOTREEMESSENGER_HH
 #define GATE_GATETOTREEMESSENGER_HH
 
+#include <unordered_map>
 #include "GateOutputModuleMessenger.hh"
 
 class GateToTree;
@@ -38,6 +39,11 @@ private:
   G4UIcmdWithoutParameter *m_disableHitsOutput;
   G4UIcmdWithAString* m_addCollectionCmd;
   GateToTree *m_gateToTree;
+
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_maphits_cmdParameter_toTreeParameter;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapsingles_cmdParameter_toTreeParameter;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter;
+
 
 };
 
