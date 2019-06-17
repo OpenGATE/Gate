@@ -21,8 +21,21 @@ See LICENSE.md for further details
 #include <unordered_map>
 
 class GateToTreeMessenger;
-
 class GateCoincidenceDigi;
+
+class SaveDataParam
+{
+public:
+  SaveDataParam();
+
+  bool toSave() const;
+
+public:
+  bool m_save;
+
+  void setToSave(bool mSave);
+
+};
 
 class GateToTree : public GateVOutputModule
 {
@@ -30,22 +43,17 @@ class GateToTree : public GateVOutputModule
 public:
   GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode);
 
-  void RecordBeginOfAcquisition() override;
+
 
   virtual ~GateToTree();
 
+  void RecordBeginOfAcquisition() override;
   void RecordEndOfAcquisition() override;
-
   void RecordBeginOfRun(const G4Run *run) override;
-
   void RecordEndOfRun(const G4Run *run) override;
-
   void RecordBeginOfEvent(const G4Event *event) override;
-
   void RecordEndOfEvent(const G4Event *event) override;
-
   void RecordStepWithVolume(const GateVVolume *v, const G4Step *step) override;
-
   void RecordVoxels(GateVGeometryVoxelStore *store) override;
   void RegisterNewCoincidenceDigiCollection(const G4String &string, G4bool aBool) override;
   void RegisterNewSingleDigiCollection(const G4String &string, G4bool aBool) override;
@@ -54,6 +62,13 @@ public:
   void addFileName(const G4String &s);
 
   static void SetOutputIDName(G4int id_system, const char * anOutputIDName, size_t depth);
+  G4bool getHitsEnabled() const;
+  void setHitsEnabled(G4bool mHitsEnabled);
+  void addCollection(const std::string &str); //called by messenger
+
+  std::unordered_map<std::string, SaveDataParam> &getHitsParamsToWrite();
+  std::unordered_map<std::string, SaveDataParam> &getSinglesParamsToWrite();
+  std::unordered_map<std::string, SaveDataParam> &getCoincidencesParamsToWrite();
 
 private:
 
@@ -77,19 +92,13 @@ private:
       m_axialPos = p->GetScannerPos().z() / mm;
       m_rotationAngle = p->GetScannerRotAngle() / degree;
 
-      m_comptonVolumeName[0] = p->GetComptonVolumeName();
-      m_RayleighVolumeName[0] = p->GetRayleighVolumeName();
-
       m_nPhantomCompton[0] = p->GetNPhantomCompton();
       m_nCrystalCompton[0] = p->GetNCrystalCompton();
       m_nPhantomRayleigh[0] = p->GetNPhantomRayleigh();
       m_nCrystalRayleigh[0] = p->GetNCrystalRayleigh();
-
-      for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
-          m_outputID[0][system_id][depth] = p->GetComponentID(depth);
-
-
   }
+
+
 
   GateToTreeMessenger *m_messenger;
   GateOutputTreeFileManager m_manager_hits;
@@ -103,19 +112,8 @@ private:
   std::vector<std::string> m_listOfFileName;
   std::vector<std::string> m_listOfSinglesCollection;
   std::vector<std::string> m_listOfCoincidencesCollection;
-
   G4bool m_hits_enabled;
-public:
-  G4bool getHitsEnabled() const;
-  void setHitsEnabled(G4bool mHitsEnabled);
-  void addCollection(const std::string &str); //called by messenger
-
-private:
-
-
   G4String m_uselessFileName; //only for GiveNameOfFile which return a reference..
-
-
 
   G4int m_PDGEncoding;
   G4int m_trackID;
@@ -176,9 +174,13 @@ private:
   G4int m_photonID;
 //  G4int m_outpuID[OUTPUTID_SIZE];
 
+  std::unordered_map<std::string, SaveDataParam> m_hitsParams_to_write;
+  std::unordered_map<std::string, SaveDataParam> m_singlesParams_to_write;
+  std::unordered_map<std::string, SaveDataParam> m_coincidencesParams_to_write;
 
 
- public:
+
+public:
 
 
   static const auto MAX_NB_SYSTEM = 32;
