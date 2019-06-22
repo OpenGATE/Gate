@@ -31,7 +31,6 @@ GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G
 	macName=macfileName;
 	nSplits=numberOfSplits;
 	nAliases=numberOfAliases;
-	aliases=aliasesPtr;
 	timeUnit=" -1 ";
 	timeStart=-1.;
 	timeStop=-1.;
@@ -40,8 +39,6 @@ GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G
 	addSliceBool = false;
 	readSliceBool = false;
 	lambda=-1;
-//	usedAliases = new bool[nAliases];
-	//for(int i=0;i<nAliases;i++)usedAliases[i]=false;
 	for(int i=0;i<nAliases;i++)listOfUsedAliases.push_back(false);
 	for(int i=0;i<nAliases;i++)	listOfAliases.push_back(aliasesPtr[i]);
 	oldSplitNumber=-1;
@@ -226,7 +223,7 @@ void GateMacfileParser::InsertAliases()
 	nAliases = (G4int)(listOfAliases.size());
 	for (G4int i=1;i<nAliases;i+=2)
 	{
-		while (macline.contains("{"+aliases[i]+"}"))
+		while (macline.contains("{"+listOfAliases[i]+"}"))
 		{
 			insert=listOfAliases[i-1];
 			G4int position=macline.find("{"+listOfAliases[i]+"}",0);

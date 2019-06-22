@@ -39,7 +39,6 @@ public:
   G4String macName;
   G4int nSplits; 
   G4int nAliases;
-  G4String* aliases;
   static char buffer[256];
   G4String macline;
   G4String localDir;
@@ -95,7 +94,6 @@ public:
   void CheckOutput(std::ofstream&,std::ofstream&,G4int);
   int enable[SIZE];
   int filenames[SIZE];
-  bool* usedAliases;
   bool Braced(G4String origFile);
   void BraceReplace(G4String def, G4String origFile, char* SplitNumberAsString);
   const G4String ExtractFileName(G4String key);
