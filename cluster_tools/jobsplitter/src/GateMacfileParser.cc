@@ -240,13 +240,18 @@ void GateMacfileParser::AddAliases()
 	{
 		G4String tmpStr = macline.substr(15,256);
 		int position = tmpStr.find(" ");
+
+		G4String aliasName(tmpStr.substr(0,position));
+		for(size_t i=1;i<listOfAliases.size();i+=2)
+			if(aliasName==listOfAliases[i])
+				return;
+
 		listOfAliases.push_back( tmpStr.substr(position+1,tmpStr.size()-position));
 		listOfUsedAliases.push_back(false);
 		nAliases++;
 		listOfAliases.push_back( tmpStr.substr(0,position));
 		listOfUsedAliases.push_back(false);
 		nAliases++;
-	//	G4cout<<listOfAliases[nAliases-1] <<":"<<listOfAliases[nAliases-2]<<G4endl;
 	}
 }
 
