@@ -39,7 +39,6 @@ public:
   G4String macName;
   G4int nSplits; 
   G4int nAliases;
-  static char buffer[256];
   G4String macline;
   G4String localDir;
   G4String outputDir;
