@@ -123,10 +123,8 @@ void GateLETActor::Construct() {
   mDoseTrackAverageLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mDoseTrackAverageLETImage.Allocate();
 
-  // Warning: for the moment we force to PostStepHitType. This is ok
-  // (slightly faster) if voxel sizes are the same between the
-  // let-actor and the attached voxelized volume. But wrong if not.
-  mStepHitType = PostStepHitType;// RandomStepHitType; // Warning
+  // Step Hit Type
+  mStepHitType = RandomStepHitType ;// PostStepHitType; // Warning
 
   // Print information
   GateMessage("Actor", 1,
@@ -191,7 +189,14 @@ void GateLETActor::SaveData() {
                          else 
                          { 
                              if (mIsGqq0EBT31stOrder) *iter_Final = 1 / (ebt3_a0 + ebt3_a1 * (*iter_LET)/(*iter_Edep));
-                             else *iter_Final = 1/(ebt3_b0 + ebt3_b1 * (*iter_LET)/(*iter_Edep) + ebt3_b2 * std::pow((*iter_LET)/(*iter_Edep),2) + ebt3_b3 * std::pow((*iter_LET)/(*iter_Edep),3) + ebt3_b4 * std::pow((*iter_LET)/(*iter_Edep),4) );
+                             else 
+                             {
+                                 double let_voxel = (*iter_LET)/(*iter_Edep);
+                                 double RE = (ebt3_b0 + ebt3_b1 * let_voxel  + ebt3_b2 * std::pow(let_voxel,2) + ebt3_b3 * std::pow(let_voxel,3) + ebt3_b4 * std::pow(let_voxel,4) );
+                                 *iter_Final = 1 / RE;
+                                 //G4cout << "4th: "<< *iter_Final << " -- 1st: "<<   (ebt3_a0 + ebt3_a1 * (*iter_LET)/(*iter_Edep)) << G4endl;
+                                 
+                             }
                             }
                         //G4cout <<"gqq: "<< *iter_Final <<  G4endl;
                        
