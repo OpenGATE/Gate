@@ -25,6 +25,8 @@ Gate_NN_ARF_ActorMessenger::~Gate_NN_ARF_ActorMessenger()
   delete pSetModeFlagCmd;
   delete pSetMaxAngleCmd;
   delete pSetRRFactorCmd;
+  delete pSetNNModelCmd;
+  delete pSetNNDictCmd;
 }
 //-----------------------------------------------------------------------------
 
