@@ -378,6 +378,11 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     nnDictFile >> nnDict;
     std::vector<double> x_mean = nnDict["x_mean"];
     std::vector<double> x_std = nnDict["x_std"];
+    float rr(0);
+    if (nnDict.find("rr") != nnDict.end())
+        rr = nnDict["rr"];
+    else
+        rr = nnDict["RR"];
 
     assert(module != nullptr);
 
@@ -393,14 +398,22 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     // Execute the model and turn its output into a tensor.
     at::Tensor output = module->forward(inputs).toTensor();
 
+    //Normalize output
+    output = exp(output);
+    output = output/sum(output);
+
+    //normalize with russian roulette
+    for (unsigned int outputIndex=0; outputIndex < output.sizes()[0]; ++outputIndex) {
+      output[outputIndex][0] *= rr; //use mRRFactor ?
+    }
+    output = output/sum(output);
+
     //Display elements
-    //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/5) << '\n';
+    //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/8) << '\n';
     //for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
     //  std::cout << output[0][outputIndex] << " ";
     //}
     //std::cout << std::endl << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
-
-
   }
 
   // Output will be set EndOfEventAction
