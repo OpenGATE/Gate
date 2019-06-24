@@ -107,6 +107,9 @@ G4int GateMacfileParser::GenerateResolvedMacros(G4String directory)
 		i_str<<j;
 		GenerateResolvedMacro(dir+macNameDir+i_str.str()+".mac",j,splitfile); 
 		splitfile<<endl;  
+
+		if(j%(nSplits/10)==0)
+			cout<<100*j/nSplits<<"% "<<flush;
 	}
 	if (filenames[ROOT]==1)
 		splitfile<<"Original Root filename: "<<originalRootFileName<<endl;
