@@ -289,7 +289,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   const double weight = step->GetTrack()->GetWeight();
 
   // A.Resch tested calculation method:
-  G4double edep = step->GetTotalEnergyDeposit()*weight;
+  G4double edep = step->GetTotalEnergyDeposit();
 
   G4double steplength = step->GetStepLength();
 
@@ -329,24 +329,24 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
 
   double normalizationVal = 0;
   if (mIsDoseAverageDEDX) {
-    weightedLET=edep*dedx; // /(density/(g/cm3));
-    normalizationVal = edep;
+    weightedLET=edep*dedx*weight; // /(density/(g/cm3));
+    normalizationVal = edep*weight;
   }
   else if (mIsTrackAverageDEDX) {
-    weightedLET=dedx*steplength;
-    normalizationVal = steplength;
+    weightedLET=dedx*steplength*weight;
+    normalizationVal = steplength*weight;
   }
   else if (mIsTrackAverageEdepDX) {
-    weightedLET=edep;
-    normalizationVal = steplength;
+    weightedLET=edep*weight;
+    normalizationVal = steplength*weight;
   }
   else if (mIsDoseAverageEdepDX) {
-    weightedLET=edep*edep/steplength;
-    normalizationVal = edep;
+    weightedLET=edep*edep/steplength*weight;
+    normalizationVal = edep*weight;
   }
   else if (mIsAverageKinEnergy) {
     weightedLET=steplength*energy*weight;
-    normalizationVal = steplength;
+    normalizationVal = steplength*weight;
   }
 
   //if (mIsLETtoWaterEnabled){
