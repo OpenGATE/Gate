@@ -124,7 +124,7 @@ void GateLETActor::Construct() {
   mDoseTrackAverageLETImage.Allocate();
 
   // Step Hit Type
-  mStepHitType = RandomStepHitType ;// PostStepHitType; // Warning
+  mStepHitType = mStepHitType ; // RandomStepHitType ;// PostStepHitType; 
 
   // Print information
   GateMessage("Actor", 1,
@@ -183,8 +183,6 @@ void GateLETActor::SaveData() {
                else
                {
                     for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
-                        //G4cout << *iter_LET <<  G4endl;
-                        //G4cout << *iter_Edep <<  G4endl;
                          if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
                          else 
                          { 
@@ -194,11 +192,9 @@ void GateLETActor::SaveData() {
                                  double let_voxel = (*iter_LET)/(*iter_Edep);
                                  double RE = (ebt3_b0 + ebt3_b1 * let_voxel  + ebt3_b2 * std::pow(let_voxel,2) + ebt3_b3 * std::pow(let_voxel,3) + ebt3_b4 * std::pow(let_voxel,4) );
                                  *iter_Final = 1 / RE;
-                                 //G4cout << "4th: "<< *iter_Final << " -- 1st: "<<   (ebt3_a0 + ebt3_a1 * (*iter_LET)/(*iter_Edep)) << G4endl;
-                                 
+                                
                              }
                             }
-                        //G4cout <<"gqq: "<< *iter_Final <<  G4endl;
                        
                        iter_Edep++;
                        iter_Final++;
@@ -227,22 +223,7 @@ void GateLETActor::SaveData() {
             if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
             else 
             {
-                
-                
-                //if (mIsGqq0EBT31stOrder)
-                //{
-                    //*iter_Final = 1 / (ebt3_a0 + ebt3_a1 * (*iter_LET)/(*iter_Edep));
-                    //G4cout << *iter_Final <<  G4endl;
-                //}
-                //else if (mIsGqq0EBT34thOrder)
-                //{
-                    //*iter_Final = 1/(ebt3_b0 + ebt3_b1 * (*iter_LET)/(*iter_Edep) + ebt3_b2 * std::pow((*iter_LET)/(*iter_Edep),2) + ebt3_b3 * std::pow((*iter_LET)/(*iter_Edep),3) + ebt3_b4 * std::pow((*iter_LET)/(*iter_Edep),4) );
-                //}
-                //else
-                //{
                     *iter_Final = (*iter_LET)/(*iter_Edep);
-                //}
-                
             }
             iter_Edep++;
             iter_Final++;
@@ -353,10 +334,6 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     weightedLET=steplength*energy*weight;
     normalizationVal = steplength*weight;
   }
-
-  //if (mIsLETtoWaterEnabled){
-    //weightedLET = (weightedLET/dedx)*	emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
-  //}
 
   mWeightedLETImage.AddValue(index, weightedLET);
   mNormalizationLETImage.AddValue(index, normalizationVal);

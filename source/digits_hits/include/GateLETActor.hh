@@ -97,6 +97,8 @@ protected:
   bool mIsParallelCalculationEnabled;
 
   G4EmCalculator * emcalc;
+  
+  StepHitType mUserStepHitType;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(LETActor,GateLETActor)
