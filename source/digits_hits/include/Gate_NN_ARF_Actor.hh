@@ -21,6 +21,8 @@
 #include "Gate_NN_ARF_ActorMessenger.hh"
 #include "GateImage.hh"
 
+#include <torch/script.h>
+
 //-----------------------------------------------------------------------------
 struct Gate_NN_ARF_Train_Data {
   double theta; // in deg, angle along X
@@ -113,6 +115,10 @@ protected:
   std::string mNNModelPath;
   std::string mNNDictPath;
   std::string mImagePath;
+  std::vector<double> mXmean;
+  std::vector<double> mXstd;
+  float mRr;
+  std::shared_ptr<torch::jit::script::Module> mNNModule;
 };
 
 // Macro to auto declare actor

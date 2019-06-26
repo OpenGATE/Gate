@@ -6,7 +6,6 @@
   See LICENSE.md for further details
   ----------------------*/
 
-#include <torch/script.h>
 #include "json.hpp"
 #include "Gate_NN_ARF_Actor.hh"
 #include "GateSingleDigi.hh"
@@ -64,6 +63,7 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   mCollimatorLength = 99;
   mScale = 1.0;
   mNDataset = 1;
+  mRr = 0;
   GateDebugMessageDec("Actor",4,"Gate_NN_ARF_Actor() -- end\n");
   mNNModelPath = "";
   mNNDictPath = "";
@@ -207,6 +207,27 @@ void Gate_NN_ARF_Actor::Construct()
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
 
+  //Load the nn and the json dictionary
+  if (mNNModelPath == "")
+    GateError("Error: Neural Network model path (.pt) is empty");
+  if (mNNDictPath == "")
+    GateError("Error: Neural Network dictionay path (.json) is empty");
+  mNNModule = torch::jit::load(mNNModelPath);
+  mNNModule->to(torch::kCUDA);
+  std::ifstream nnDictFile(mNNDictPath);
+  using json = nlohmann::json;
+  json nnDict;
+  nnDictFile >> nnDict;
+  std::vector<double> tempXmean = nnDict["x_mean"];
+  mXmean = tempXmean;
+  std::vector<double> tempXstd = nnDict["x_std"];
+  mXstd = tempXstd;
+  if (nnDict.find("rr") != nnDict.end())
+      mRr = nnDict["rr"];
+  else
+      mRr = nnDict["RR"];
+  assert(mNNModule != nullptr);
+
   ResetData();
   GateMessageDec("Actor", 4, "Gate_NN_ARF_Actor -- Construct - end\n");
 }
@@ -277,7 +298,7 @@ void Gate_NN_ARF_Actor::SaveData()
       pListeVar->Fill();
     }
 
-    //Write the image
+    //Write the image thanks to the NN
     double nb_ene = mTestData[0].nn.size();
     G4ThreeVector resolution(mSize[0],
                              mSize[1],
@@ -446,38 +467,17 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
 
-    //Load the nn and the json dictionary
-    if (mNNModelPath == "")
-      GateError("Error: Neural Network model path (.pt) is empty");
-    if (mNNDictPath == "")
-      GateError("Error: Neural Network dictionay path (.json) is empty");
-    std::shared_ptr<torch::jit::script::Module> module = torch::jit::load(mNNModelPath);
-    module->to(torch::kCUDA);
-    std::ifstream nnDictFile(mNNDictPath);
-    using json = nlohmann::json;
-    json nnDict;
-    nnDictFile >> nnDict;
-    std::vector<double> x_mean = nnDict["x_mean"];
-    std::vector<double> x_std = nnDict["x_std"];
-    float rr(0);
-    if (nnDict.find("rr") != nnDict.end())
-        rr = nnDict["rr"];
-    else
-        rr = nnDict["RR"];
-
-    assert(module != nullptr);
-
     //pass these data to nn
     // Create a vector of inputs.
     std::vector<torch::jit::IValue> inputs;
     torch::Tensor input = torch::zeros({1, 3});
-    input[0][0] = (theta - x_mean[0])/x_std[0];
-    input[0][1] = (phi - x_mean[1])/x_std[1];
-    input[0][2] = (E - x_mean[2])/x_std[2];
+    input[0][0] = (theta - mXmean[0])/mXstd[0];
+    input[0][1] = (phi - mXmean[1])/mXstd[1];
+    input[0][2] = (E - mXmean[2])/mXstd[2];
     inputs.push_back(input.cuda());
 
     // Execute the model and turn its output into a tensor.
-    at::Tensor output = module->forward(inputs).toTensor();
+    at::Tensor output = mNNModule->forward(inputs).toTensor();
 
     //Normalize output
     output = exp(output);
@@ -485,7 +485,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
 
     //normalize with russian roulette
     for (unsigned int outputIndex=0; outputIndex < output.sizes()[0]; ++outputIndex) {
-      output[outputIndex][0] *= rr; //use mRRFactor ?
+      output[outputIndex][0] *= mRr; //use mRRFactor ?
     }
     output = output/sum(output);
     mCurrentTestData.nn = std::vector<double>(output.sizes()[1]);
