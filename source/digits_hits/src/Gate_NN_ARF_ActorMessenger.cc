@@ -64,6 +64,49 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
   pSetNNDictCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Path to the neural network dictionary in .json");
   pSetNNDictCmd->SetGuidance(guid);
+
+  n = base + "/setImage";
+  pSetImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Path to the output image of the NN");
+  pSetImageCmd->SetGuidance(guid);
+
+  n = base + "/setSpacingX";
+  pSetSpacingXCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("Spacing of the otuput image along X");
+  pSetSpacingXCmd->SetGuidance(guid);
+  pSetSpacingXCmd->SetDefaultUnit("mm");
+
+  n = base + "/setSpacingY";
+  pSetSpacingYCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("Spacing of the otuput image along Y");
+  pSetSpacingYCmd->SetGuidance(guid);
+  pSetSpacingYCmd->SetDefaultUnit("mm");
+
+  n = base + "/setSizeX";
+  pSetSizeXCmd = new G4UIcmdWithAnInteger(n, this);
+  guid = G4String("Size of the output image in pixel along X");
+  pSetSizeXCmd->SetGuidance(guid);
+
+  n = base + "/setSizeY";
+  pSetSizeYCmd = new G4UIcmdWithAnInteger(n, this);
+  guid = G4String("Size of the output image in pixel along Y");
+  pSetSizeYCmd->SetGuidance(guid);
+
+  n = base + "/setScale";
+  pSetScaleCmd = new G4UIcmdWithADouble(n, this);
+  guid = G4String("Scale the image for N primary events");
+  pSetScaleCmd->SetGuidance(guid);
+
+  n = base + "/setNDataset";
+  pSetNDatasetCmd = new G4UIcmdWithAnInteger(n, this);
+  guid = G4String("N Dataset");
+  pSetNDatasetCmd->SetGuidance(guid);
+
+  n = base + "/setCollimatorLength";
+  pSetCollimatorLengthCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("collimator+ half crystal length");
+  pSetCollimatorLengthCmd->SetGuidance(guid);
+  pSetCollimatorLengthCmd->SetDefaultUnit("mm");
 }
 //-----------------------------------------------------------------------------
 
@@ -77,6 +120,14 @@ void Gate_NN_ARF_ActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pSetRRFactorCmd)             pDIOActor->SetRRFactor(pSetRRFactorCmd->GetNewIntValue(newValue));
   if (cmd == pSetNNModelCmd)              pDIOActor->SetNNModel(newValue);
   if (cmd == pSetNNDictCmd)               pDIOActor->SetNNDict(newValue);
+  if (cmd == pSetImageCmd)                pDIOActor->SetImage(newValue);
+  if (cmd == pSetSpacingXCmd)             pDIOActor->SetSpacing(pSetSpacingXCmd->GetNewDoubleValue(newValue), 0);
+  if (cmd == pSetSpacingYCmd)             pDIOActor->SetSpacing(pSetSpacingYCmd->GetNewDoubleValue(newValue), 1);
+  if (cmd == pSetSizeXCmd)                pDIOActor->SetSize(pSetSizeXCmd->GetNewIntValue(newValue), 0);
+  if (cmd == pSetSizeYCmd)                pDIOActor->SetSize(pSetSizeYCmd->GetNewIntValue(newValue), 1);
+  if (cmd == pSetScaleCmd)                pDIOActor->SetScale(pSetScaleCmd->GetNewDoubleValue(newValue));
+  if (cmd == pSetNDatasetCmd)             pDIOActor->SetNDataset(pSetNDatasetCmd->GetNewIntValue(newValue));
+  if (cmd == pSetCollimatorLengthCmd)     pDIOActor->SetCollimatorLength(pSetCollimatorLengthCmd->GetNewDoubleValue(newValue));
   GateActorMessenger::SetNewValue(cmd, newValue);
 }
 //-----------------------------------------------------------------------------

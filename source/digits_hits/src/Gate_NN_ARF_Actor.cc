@@ -59,9 +59,15 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   mRRFactor = 0;   // no Russian Roulette factor
   mThetaMax = 0.0;
   mPhiMax = 0.0;
+  mSize.resize(2);
+  mSpacing.resize(2);
+  mCollimatorLength = 99;
+  mScale = 1.0;
+  mNDataset = 1;
   GateDebugMessageDec("Actor",4,"Gate_NN_ARF_Actor() -- end\n");
   mNNModelPath = "";
   mNNDictPath = "";
+  mImage = new GateImageDouble();
 }
 //-----------------------------------------------------------------------------
 
@@ -70,6 +76,7 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
 Gate_NN_ARF_Actor::~Gate_NN_ARF_Actor()
 {
   delete pMessenger;
+  delete mImage;
 }
 //-----------------------------------------------------------------------------
 
@@ -135,6 +142,54 @@ void Gate_NN_ARF_Actor::SetMaxAngle(double a)
 void Gate_NN_ARF_Actor::SetRRFactor(int f)
 {
   mRRFactor = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetImage(std::string& m)
+{
+  mImagePath = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetSpacing(double m, int index)
+{
+  mSpacing[index] = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetSize(int m, int index)
+{
+  mSize[index] = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetCollimatorLength(double m)
+{
+  mCollimatorLength = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetScale(double m)
+{
+  mScale = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetNDataset(int m)
+{
+  mNDataset = m;
 }
 //-----------------------------------------------------------------------------
 
@@ -221,6 +276,32 @@ void Gate_NN_ARF_Actor::SaveData()
       e = mTestData[i].E;
       pListeVar->Fill();
     }
+
+    //Write the image
+    double nb_ene = mTestData[0].nn.size();
+    G4ThreeVector resolution(mSize[0],
+                             mSize[1],
+                             nb_ene);
+    G4ThreeVector imageSize(mSize[0]*mSpacing[0]/2.0,
+                            mSize[1]*mSpacing[1]/2.0,
+                            nb_ene/2.0);
+    mImage->SetResolutionAndHalfSize(resolution, imageSize);
+    mImage->Allocate();
+    mImage->Fill(0.0);
+    for(unsigned int i=0; i<mTestData.size(); i++) {
+      double tx = mCollimatorLength*cos(mTestData[i].theta * pi /180.0);
+      double ty = mCollimatorLength*cos(mTestData[i].phi * pi /180.0);
+      int u = round((mTestData[i].x + tx + mSize[0]*mSpacing[0]/2.0 - mSpacing[0]/2.0)/mSpacing[0]);
+      int v = round((mTestData[i].y + ty + mSize[1]*mSpacing[1]/2.0 - mSpacing[1]/2.0)/mSpacing[1]);
+      if (u < 0 || u > (mSize[0]-1))
+        continue;
+      if (v < 0 || v > (mSize[1]-1))
+        continue;
+      for (unsigned int energy=1; energy<nb_ene; ++energy) {
+        mImage->SetValue(u, v, energy, mImage->GetValue(u, v, energy) + mTestData[i].nn[energy]/mNDataset*mScale);
+      }
+    }
+    mImage->Write(mImagePath);
   }
   pFile->Write();
   pFile->Close();
@@ -407,13 +488,18 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
       output[outputIndex][0] *= rr; //use mRRFactor ?
     }
     output = output/sum(output);
+    mCurrentTestData.nn = std::vector<double>(output.sizes()[1]);
+    for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
+      mCurrentTestData.nn[outputIndex] = output[0][outputIndex].item<double>();
+    }
 
     //Display elements
     //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/8) << '\n';
     //for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
-    //  std::cout << output[0][outputIndex] << " ";
+    //  std::cout << mCurrentTestData.nn[outputIndex] << " ";
     //}
-    //std::cout << std::endl << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
+    //std::cout << std::endl ;
+    //std::cout << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
   }
 
   // Output will be set EndOfEventAction
