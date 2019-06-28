@@ -16,7 +16,7 @@
 #include "TTree.h"
 #include "TBranch.h"
 #include "TString.h"
-
+#include <iostream>
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
 {
@@ -64,6 +64,8 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   mScale = 1.0;
   mNDataset = 1;
   mRr = 0;
+  mBatchSize = 1e5;
+  mCurrentSaveNNOutput = 0;
   GateDebugMessageDec("Actor",4,"Gate_NN_ARF_Actor() -- end\n");
   mNNModelPath = "";
   mNNDictPath = "";
@@ -195,6 +197,14 @@ void Gate_NN_ARF_Actor::SetNDataset(int m)
 
 
 //-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetBatchSize(double m)
+{
+  mBatchSize = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::Construct()
 {
   GateDebugMessageInc("Actor", 4, "Gate_NN_ARF_Actor -- Construct - begin\n");
@@ -226,6 +236,7 @@ void Gate_NN_ARF_Actor::Construct()
       mRr = nnDict["rr"];
   else
       mRr = nnDict["RR"];
+  mNNOutput = at::empty({0,0});
   assert(mNNModule != nullptr);
 
   ResetData();
@@ -310,16 +321,18 @@ void Gate_NN_ARF_Actor::SaveData()
     mImage->Allocate();
     mImage->Fill(0.0);
     for(unsigned int i=0; i<mTestData.size(); i++) {
-      double tx = mCollimatorLength*cos(mTestData[i].theta * pi /180.0);
-      double ty = mCollimatorLength*cos(mTestData[i].phi * pi /180.0);
-      int u = round((mTestData[i].x + tx + mSize[0]*mSpacing[0]/2.0 - mSpacing[0]/2.0)/mSpacing[0]);
-      int v = round((mTestData[i].y + ty + mSize[1]*mSpacing[1]/2.0 - mSpacing[1]/2.0)/mSpacing[1]);
-      if (u < 0 || u > (mSize[0]-1))
-        continue;
-      if (v < 0 || v > (mSize[1]-1))
-        continue;
-      for (unsigned int energy=1; energy<nb_ene; ++energy) {
-        mImage->SetValue(u, v, energy, mImage->GetValue(u, v, energy) + mTestData[i].nn[energy]/mNDataset*mScale);
+      if (!mTestData[i].nn.empty()) {
+        double tx = mCollimatorLength*cos(mTestData[i].theta * pi /180.0);
+        double ty = mCollimatorLength*cos(mTestData[i].phi * pi /180.0);
+        int u = round((mTestData[i].y + tx + mSize[0]*mSpacing[0]/2.0 - mSpacing[0]/2.0)/mSpacing[0]);
+        int v = round((mTestData[i].x + ty + mSize[1]*mSpacing[1]/2.0 - mSpacing[1]/2.0)/mSpacing[1]);
+        if (u < 0 || u > (mSize[0]-1))
+          continue;
+        if (v < 0 || v > (mSize[1]-1))
+          continue;
+        for (unsigned int energy=1; energy<nb_ene; ++energy) {
+          mImage->SetValue(v, u, energy, mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset*mScale);
+        }
       }
     }
     mImage->Write(mImagePath);
@@ -415,6 +428,15 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
     // Do not count event that never go to UserSteppingAction
     if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
       mTestData.push_back(mCurrentTestData);
+      if (mNNOutput.sizes()[0] > 0) {
+        for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
+          mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
+          for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+            mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
+          }
+        }
+        mCurrentSaveNNOutput += mNNOutput.sizes()[0];
+      }
     }
   }
 }
@@ -467,39 +489,54 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
 
-    //pass these data to nn
-    // Create a vector of inputs.
-    std::vector<torch::jit::IValue> inputs;
-    torch::Tensor input = torch::zeros({1, 3});
-    input[0][0] = (theta - mXmean[0])/mXstd[0];
-    input[0][1] = (phi - mXmean[1])/mXstd[1];
-    input[0][2] = (E - mXmean[2])/mXstd[2];
-    inputs.push_back(input.cuda());
+    // Create a vector of input and push it in the bash inputs.
+    // If batch inputs is full (size = mBatchSize) then pass it to the Neural Network
+    // Else, get the next particle
+    std::vector<double> tempVector {(theta - mXmean[0])/mXstd[0], (phi - mXmean[1])/mXstd[1], (E - mXmean[2])/mXstd[2]};
+    mBatchInputs.push_back(tempVector);
 
-    // Execute the model and turn its output into a tensor.
-    at::Tensor output = mNNModule->forward(inputs).toTensor();
+    mNNOutput = at::empty({0,0});
+    if (mBatchInputs.size() >= mBatchSize) {
+      //Convert NN inputs to Tensor
+      std::vector<torch::jit::IValue> inputTensorContainer;
+      torch::Tensor inputTensor = torch::zeros({(unsigned int)mBatchInputs.size(), 3});
+      for (unsigned int inputIndex=0; inputIndex<mBatchInputs.size(); ++inputIndex) {
+        inputTensor[inputIndex][0] = mBatchInputs[inputIndex][0];
+        inputTensor[inputIndex][1] = mBatchInputs[inputIndex][1];
+        inputTensor[inputIndex][2] = mBatchInputs[inputIndex][2];
+      }
+      inputTensorContainer.push_back(inputTensor.cuda());
 
-    //Normalize output
-    output = exp(output);
-    output = output/sum(output);
+      // Execute the model and turn its output into a tensor.
+      mNNOutput = mNNModule->forward(inputTensorContainer).toTensor();
 
-    //normalize with russian roulette
-    for (unsigned int outputIndex=0; outputIndex < output.sizes()[0]; ++outputIndex) {
-      output[outputIndex][0] *= mRr; //use mRRFactor ?
+      //Normalize output
+      mNNOutput = exp(mNNOutput);
+      for (unsigned int tensorIndex=0; tensorIndex < mNNOutput.sizes()[0]; ++tensorIndex) {
+        mNNOutput[tensorIndex] = mNNOutput[tensorIndex]/sum(mNNOutput[tensorIndex]);
+      }
+
+      //normalize with russian roulette
+      for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[0]; ++outputIndex) {
+        mNNOutput[outputIndex][0] *= mRr; //use mRRFactor ?
+      }
+      for (unsigned int tensorIndex=0; tensorIndex < mNNOutput.sizes()[0]; ++tensorIndex) {
+        mNNOutput[tensorIndex] = mNNOutput[tensorIndex]/sum(mNNOutput[tensorIndex]);
+      }
+
+      //Clean the inputs
+      mBatchInputs.clear();
+
+      //Display elements
+      //std::cout << mNNOutput.slice(/*dim=*/5, /*start=*/0, /*end=*/8) << '\n';
+      //for (unsigned int outputIndex1=0; outputIndex1 < mNNOutput.sizes()[0]; ++outputIndex1) {
+      //  for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+      //    std::cout << mNNOutput[outputIndex1][outputIndex].item<double>() << " ";
+      //  }
+      //}
+      //std::cout << std::endl ;
+      //std::cout << mNNOutput.sizes()[0] << " " << mNNOutput.sizes()[1] << std::endl;
     }
-    output = output/sum(output);
-    mCurrentTestData.nn = std::vector<double>(output.sizes()[1]);
-    for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
-      mCurrentTestData.nn[outputIndex] = output[0][outputIndex].item<double>();
-    }
-
-    //Display elements
-    //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/8) << '\n';
-    //for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
-    //  std::cout << mCurrentTestData.nn[outputIndex] << " ";
-    //}
-    //std::cout << std::endl ;
-    //std::cout << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
   }
 
   // Output will be set EndOfEventAction

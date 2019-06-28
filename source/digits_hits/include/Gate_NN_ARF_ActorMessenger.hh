@@ -46,6 +46,7 @@ protected:
   G4UIcmdWithADouble        * pSetScaleCmd;
   G4UIcmdWithAnInteger      * pSetNDatasetCmd;
   G4UIcmdWithADoubleAndUnit * pSetCollimatorLengthCmd;
+  G4UIcmdWithADouble        * pSetBatchSizeCmd;
 };
 //-----------------------------------------------------------------------------
 

@@ -76,6 +76,7 @@ public:
   void SetCollimatorLength(double m);
   void SetScale(double m);
   void SetNDataset(int m);
+  void SetBatchSize(double m);
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run *);
@@ -119,6 +120,10 @@ protected:
   std::vector<double> mXstd;
   float mRr;
   std::shared_ptr<torch::jit::script::Module> mNNModule;
+  float mBatchSize; //not unsigned int to be able to be superior to max int
+  std::vector<std::vector<double> > mBatchInputs;
+  at::Tensor mNNOutput;
+  unsigned int mCurrentSaveNNOutput;
 };
 
 // Macro to auto declare actor

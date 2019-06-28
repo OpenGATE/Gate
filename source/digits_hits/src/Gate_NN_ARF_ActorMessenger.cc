@@ -107,6 +107,11 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
   guid = G4String("collimator+ half crystal length");
   pSetCollimatorLengthCmd->SetGuidance(guid);
   pSetCollimatorLengthCmd->SetDefaultUnit("mm");
+
+  n = base + "/setBatchSize";
+  pSetBatchSizeCmd = new G4UIcmdWithADouble(n, this);
+  guid = G4String("Batch size for GPU. Large value is faster, but may require too much GPU memory.");
+  pSetBatchSizeCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -128,6 +133,7 @@ void Gate_NN_ARF_ActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pSetScaleCmd)                pDIOActor->SetScale(pSetScaleCmd->GetNewDoubleValue(newValue));
   if (cmd == pSetNDatasetCmd)             pDIOActor->SetNDataset(pSetNDatasetCmd->GetNewIntValue(newValue));
   if (cmd == pSetCollimatorLengthCmd)     pDIOActor->SetCollimatorLength(pSetCollimatorLengthCmd->GetNewDoubleValue(newValue));
+  if (cmd == pSetBatchSizeCmd)            pDIOActor->SetBatchSize(pSetBatchSizeCmd->GetNewDoubleValue(newValue));
   GateActorMessenger::SetNewValue(cmd, newValue);
 }
 //-----------------------------------------------------------------------------
