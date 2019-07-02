@@ -297,14 +297,9 @@ void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 
   double dtot = std::sqrt(dx*dx + dy*dy + dz*dz);
 
-  if (energy<0) {
-    GateWarning("Energy < 0 in phase space file!");
-    energy = 1e-5;
-  }
-  if (energy==0) {
-    GateWarning("Energy = 0 in phase space file!");
-    energy = 1e-5;
-  }
+  if (energy<0) GateError("Energy < 0 in phase space file!");
+  if (energy==0) GateError("Energy = 0 in phase space file!");
+
   mMomentum = std::sqrt(energy*energy+2*energy*mass);
 
   if (dtot==0) GateError("No momentum defined in phase space file!");
@@ -348,8 +343,15 @@ void GateSourcePhaseSpace::GeneratePyTorchVertex( G4Event* /*aEvent*/ )
   //G4cout << "energy " << energy << std::endl;
   //if (energy<=0) energy = 0.00006666;
 
-  if (energy<0) GateError("Energy < 0 in phase space file!");
-  if (energy==0) GateError("Energy = 0 in phase space file!");
+  if (energy<=0) {
+    energy = 1e-6;
+    G4cout << "Energy < 0 in phase space file! " << std::endl;
+    DD(mParticlePosition);
+    DD(energy);
+    DD(dx);
+    DD(dy);
+    DD(dz);
+  }
 
   double dtot = std::sqrt(dx*dx + dy*dy + dz*dz);
   if (dtot==0) GateError("No momentum defined in phase space file!");
