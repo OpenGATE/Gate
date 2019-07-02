@@ -21,7 +21,9 @@
 #include "Gate_NN_ARF_ActorMessenger.hh"
 #include "GateImage.hh"
 
+#ifdef GATE_USE_TORCH
 #include <torch/script.h>
+#endif
 
 //-----------------------------------------------------------------------------
 struct Gate_NN_ARF_Train_Data {

@@ -1,16 +1,23 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #ifndef GATEPHASESPACESOURCE_HH
 #define GATEPHASESPACESOURCE_HH
 
 #include "GateConfiguration.h"
+
+#ifdef GATE_USE_TORCH
+// Need to be *before* include GateIAEAHeader because it define macros
+// that mess with torch
+#include <torch/script.h>
+#include "json.hpp"
+#endif
 
 #include "G4Event.hh"
 #include "globals.hh"
@@ -44,6 +51,8 @@ public:
   void Initialize();
   void GenerateROOTVertex( G4Event* );
   void GenerateIAEAVertex( G4Event* );
+  void GeneratePyTorchVertex( G4Event* );
+  void GenerateBatchSamplesFromPyTorch();
 
   G4int OpenIAEAFile(G4String file);
 
@@ -71,9 +80,14 @@ public:
 
   void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
 
-  void SetRmax(float r){mRmax = r;}
+  void SetRmax(float r) { mRmax = r; }
+  void SetSphereRadius(float r) { mSphereRadius = r; }
 
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
+
+  void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
+  void InitializePyTorch();
+  void SetPytorchParams(G4String & name) { mPTJsonFilename = name; }
 
 protected:
 
@@ -117,6 +131,7 @@ protected:
   bool mAlreadyLoad;
 
   float mRmax;
+  double mSphereRadius;
 
   double px ;
   double py ;
@@ -148,6 +163,29 @@ protected:
   bool mUseNbOfParticleAsIntensity;
   GateInputTreeFileChain mChain;
 
+  int mPTCurrentIndex;
+  int mPTBatchSize;
+  double mPTmass;
+  std::vector<G4ThreeVector> mPTPosition;
+  std::vector<double> mPTDX;
+  std::vector<double> mPTDY;
+  std::vector<double> mPTDZ;
+  std::vector<double> mPTEnergy;
+  std::string mPTJsonFilename;
+#ifdef GATE_USE_TORCH
+  std::shared_ptr<torch::jit::script::Module> mPTmodule;
+  torch::Tensor mPTzer;
+  std::vector<double> mPTx_mean;
+  std::vector<double> mPTx_std;
+  int mPTz_dim;
+  int mPTEnergyIndex;
+  int mPTPositionXIndex;
+  int mPTPositionYIndex;
+  int mPTPositionZIndex;
+  int mPTDirectionXIndex;
+  int mPTDirectionYIndex;
+  int mPTDirectionZIndex;
+#endif  
 
 };
 

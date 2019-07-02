@@ -16,6 +16,7 @@
 #cmakedefine GATE_USE_RTK                  @GATE_USE_RTK@
 #cmakedefine GATE_USE_ITK                  @GATE_USE_ITK@
 #cmakedefine GATE_USE_DAVIS                @GATE_USE_DAVIS@
+#cmakedefine GATE_USE_TORCH                @GATE_USE_TORCH@
 
 #ifdef GATE_USE_ROOT
  #define G4ANALYSIS_USE_ROOT 1

@@ -217,6 +217,7 @@ void Gate_NN_ARF_Actor::Construct()
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
 
+#ifdef GATE_USE_TORCH
   //Load the nn and the json dictionary
   if (mNNModelPath == "")
     GateError("Error: Neural Network model path (.pt) is empty");
@@ -238,6 +239,7 @@ void Gate_NN_ARF_Actor::Construct()
       mRr = nnDict["RR"];
   mNNOutput = at::empty({0,0});
   assert(mNNModule != nullptr);
+#endif
 
   ResetData();
   GateMessageDec("Actor", 4, "Gate_NN_ARF_Actor -- Construct - end\n");
@@ -309,6 +311,7 @@ void Gate_NN_ARF_Actor::SaveData()
       pListeVar->Fill();
     }
 
+#ifdef GATE_USE_TORCH
     //Write the image thanks to the NN
     double nb_ene = mTestData[0].nn.size();
     G4ThreeVector resolution(mSize[0],
@@ -336,6 +339,7 @@ void Gate_NN_ARF_Actor::SaveData()
       }
     }
     mImage->Write(mImagePath);
+#endif
   }
   pFile->Write();
   pFile->Close();
@@ -428,6 +432,7 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
     // Do not count event that never go to UserSteppingAction
     if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
       mTestData.push_back(mCurrentTestData);
+#ifdef GATE_USE_TORCH
       if (mNNOutput.sizes()[0] > 0) {
         for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
           mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
@@ -437,6 +442,7 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
         }
         mCurrentSaveNNOutput += mNNOutput.sizes()[0];
       }
+#endif
     }
   }
 }
@@ -489,6 +495,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
 
+#ifdef GATE_USE_TORCH
     // Create a vector of input and push it in the bash inputs.
     // If batch inputs is full (size = mBatchSize) then pass it to the Neural Network
     // Else, get the next particle
@@ -537,6 +544,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
       //std::cout << std::endl ;
       //std::cout << mNNOutput.sizes()[0] << " " << mNNOutput.sizes()[1] << std::endl;
     }
+#endif
   }
 
   // Output will be set EndOfEventAction
