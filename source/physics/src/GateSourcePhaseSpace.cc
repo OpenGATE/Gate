@@ -297,8 +297,14 @@ void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 
   double dtot = std::sqrt(dx*dx + dy*dy + dz*dz);
 
-  if (energy<0) GateError("Energy < 0 in phase space file!");
-  if (energy==0) GateError("Energy = 0 in phase space file!");
+  if (energy<0) {
+    GateWarning("Energy < 0 in phase space file!");
+    energy = 1e-5;
+  }
+  if (energy==0) {
+    GateWarning("Energy = 0 in phase space file!");
+    energy = 1e-5;
+  }
   mMomentum = std::sqrt(energy*energy+2*energy*mass);
 
   if (dtot==0) GateError("No momentum defined in phase space file!");
@@ -568,7 +574,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
       }
       else {
         // Ignore
-        GateMessage("Beam", 0, "WARNING particle is already inside the sphere " << d1 << " " << d2 << std::endl);
+        GateMessage("Beam", 2, "WARNING particle is already inside the sphere " << d1 << " " << d2 << std::endl);
       }
     }
   }
