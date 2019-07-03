@@ -154,10 +154,10 @@ GateUnitPair GateMDBFieldReader::theAtomicNumberUnitTable[N_ATOMICNUMBERUNIT] = 
 GateUnitMap GateMDBFieldReader::theAtomicNumberUnitMap = GateUnitMap(N_ATOMICNUMBERUNIT,theAtomicNumberUnitTable);
 
 #define N_MOLARMASSUNIT 1
-GateUnitPair GateMDBFieldReader::theMolarMasUnitTable[N_MOLARMASSUNIT] = {
+GateUnitPair GateMDBFieldReader::theMolarMassUnitTable[N_MOLARMASSUNIT] = {
     GateUnitPair("g/mole" , gram/mole)
   };
-GateUnitMap GateMDBFieldReader::theMolarMassUnitMap = GateUnitMap(N_MOLARMASSUNIT,theMolarMasUnitTable);
+GateUnitMap GateMDBFieldReader::theMolarMassUnitMap = GateUnitMap(N_MOLARMASSUNIT,theMolarMassUnitTable);
 
 #define N_DENSITYUNIT 9
 GateUnitPair GateMDBFieldReader::theDensityUnitTable[N_DENSITYUNIT] = {

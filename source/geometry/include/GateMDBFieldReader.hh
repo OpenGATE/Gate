@@ -103,7 +103,7 @@ private:
   static GateCodePair theFractionPrefixTable[];
   
   static GateUnitPair theAtomicNumberUnitTable[];
-  static GateUnitPair theMolarMasUnitTable[];
+  static GateUnitPair theMolarMassUnitTable[];
   static GateUnitPair theDensityUnitTable[];
   static GateUnitPair theTempUnitTable[];
   static GateUnitPair thePressureUnitTable[];
