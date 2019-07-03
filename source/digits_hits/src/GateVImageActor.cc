@@ -324,7 +324,7 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
   int maxDepth = theTouchable->GetHistoryDepth();
   G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
 
-  GateDebugMessage("Track",3,"GateVImageActor -- GetIndexFromStepPosition: Step in "<<currentVol->GetName()<<" - Max Depth = "<<maxDepth
+  GateDebugMessage("Track",3,"GateVImageActor -- GetIndexFromTrackPosition: Step in "<<currentVol->GetName()<<" - Max Depth = "<<maxDepth
                                                                       <<" -> target = "<<v->GetLogicalVolume()->GetName()<< Gateendl );
   int depth = 0;
   int transDepth = maxDepth;
@@ -340,17 +340,17 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
 
   // GateError( "currentVol : "<< currentVol->GetName()<<"    Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" );
 
-  GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromStepPosition: Logical volume "<<currentVol->GetName() <<" found! - Depth = "<<depth << Gateendl );
+  GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromTrackPosition: Logical volume "<<currentVol->GetName() <<" found! - Depth = "<<depth << Gateendl );
 
   G4ThreeVector position = theTouchable->GetHistory()->GetTransform(transDepth).TransformPoint(tmpPosition);
 
 
   if (mPositionIsSet) {
-    GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromStepPosition: Track position (vol reference) = " << position << Gateendl);
+    GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromTrackPosition: Track position (vol reference) = " << position << Gateendl);
     position -= mPosition;
   }
 
-  GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromStepPosition: Track position = " << position << Gateendl);
+  GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromTrackPosition: Track position = " << position << Gateendl);
   int index = mImage.GetIndexFromPosition(position);
   return index;
 }
