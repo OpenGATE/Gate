@@ -30,18 +30,33 @@
 class GateMaterialDatabase;
 
 //-------------------------------------------------------------------------------------------------
+class GateIsotopeCreator {
+public:
+  inline GateIsotopeCreator(const G4String& itsName="")
+    : name(itsName),molarMass(0),atomicNumber(0),nucleonNumber(0) {}
+  virtual inline ~GateIsotopeCreator() {}
+  G4Isotope* Construct();
+
+
+  G4String  	      	      	name;
+  G4double  	      	      	molarMass;
+  G4double  	      	      	atomicNumber;
+  G4double  	      	      	nucleonNumber;
+} ;
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 class GateElementCreator {
 public:
   inline GateElementCreator(const G4String& itsName="") 
-    : name(itsName),symbol(""),molarMass(0),atomicNumber(0) {}
-  inline ~GateElementCreator() {}
-  G4Element* Construct();
+    : name(itsName),symbol("") {}
+  virtual inline ~GateElementCreator() {}
+  virtual G4Element* Construct() =0;
       
     
   G4String  	      	      	name;
   G4String  	      	      	symbol;
-  G4double  	      	      	molarMass;
-  G4double  	      	      	atomicNumber;
 } ;   
 //-------------------------------------------------------------------------------------------------
 
@@ -52,6 +67,7 @@ public:
   inline GateComponentCreator(  GateMaterialDatabase* db, const G4String& itsName="") : mDatabase(db), name(itsName) {}
   virtual inline ~GateComponentCreator() {}
   virtual void AddToMaterial(G4Material* material) = 0;
+  virtual void AddToElement(G4Element* element) = 0;
 
   /// Stores the database which created this (through GateMDBFile) in order to suppress the use of static instance of the database
   GateMaterialDatabase* mDatabase;
@@ -61,11 +77,64 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
+class GateScratchElementCreator : public GateElementCreator {
+public:
+  inline GateScratchElementCreator(const G4String& itsName)
+    : GateElementCreator(itsName), molarMass(0.),atomicNumber(0.) {}
+  virtual ~GateScratchElementCreator() {}
+  virtual G4Element* Construct();
+
+  G4double  	      	      	molarMass;
+  G4double  	      	      	atomicNumber;
+} ;
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
+class GateCompoundElementCreator : public GateElementCreator {
+public:
+  inline GateCompoundElementCreator(const G4String& itsName)
+    : GateElementCreator(itsName), nComponents(0),components() {}
+  virtual ~GateCompoundElementCreator();
+  virtual G4Element* Construct();
+
+  G4int     	      	      	nComponents;
+  std::vector<GateComponentCreator*>     components;
+} ;
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
+class GateIsotopeComponentCreator : public GateComponentCreator {
+public:
+  inline GateIsotopeComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName) {}
+  virtual inline ~GateIsotopeComponentCreator() {}
+  virtual void AddToMaterial(G4Material* material) {(void)material;}
+  virtual void AddToElement(G4Element* element)=0;
+} ;
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 class GateElemComponentCreator : public GateComponentCreator {
 public:
   inline GateElemComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName) {}
   virtual inline ~GateElemComponentCreator() {}
   virtual void AddToMaterial(G4Material* material)=0;
+  virtual void AddToElement(G4Element* element) {(void)element;}
+} ;
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
+class GateIByFComponentCreator : public GateIsotopeComponentCreator {
+public:
+  inline GateIByFComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateIsotopeComponentCreator(db,itsName),fraction(0.) {}
+  virtual inline ~GateIByFComponentCreator() {}
+  virtual void AddToElement(G4Element* element);
+
+public:
+  G4double  	  fraction;
 } ;   
 //-------------------------------------------------------------------------------------------------
 
@@ -94,12 +163,15 @@ public:
 } ;   
 //-------------------------------------------------------------------------------------------------
 
+
+
 //-------------------------------------------------------------------------------------------------
 class GateMatComponentCreator : public GateComponentCreator {
 public:
   inline GateMatComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName),fraction(0.) {}
   virtual inline ~GateMatComponentCreator() {}
   virtual void AddToMaterial(G4Material* material);
+  virtual void AddToElement(G4Element* element) {(void)element;}
 
 public:
   G4double  	  fraction;
