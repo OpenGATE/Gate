@@ -89,7 +89,7 @@ TEST_CASE("Gaussian beam","[example][physics]") {
             z_dist.add_value(p_rnd.getZ());
         }
         REQUIRE(x_dist.average() == Approx(0.0).margin(0.2)); // these margins are pretty large
-        REQUIRE(y_dist.average() == Approx(0.0).margin(0.2));
+        REQUIRE(y_dist.average() == Approx(0.0).margin(0.5)); // uncertainty on average is 5.0/sqrt(1000)=0.16 (sigma)
         REQUIRE(z_dist.average() == Approx(0.0).margin(0.2));
         REQUIRE(x_dist.rms() == Approx(2.0).margin(0.2));
         REQUIRE(y_dist.rms() == Approx(5.0).margin(0.2));
