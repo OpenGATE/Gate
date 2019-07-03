@@ -346,7 +346,7 @@ INSTALL(TARGETS Gate DESTINATION bin)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 # Additionally, we force the c++11 std. This is mandatory for Geant4 >= 10.2.
 # TODO: see github issue #211
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #=========================================================
 
 #=========================================================
