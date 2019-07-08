@@ -185,6 +185,7 @@ protected:
   int mPTDirectionXIndex;
   int mPTDirectionYIndex;
   int mPTDirectionZIndex;
+  std::map<std::string, double> mDefaultKeyValues;
 #endif  
 
 };

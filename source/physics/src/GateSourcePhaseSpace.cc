@@ -604,6 +604,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
   GateMessage("Beam", 3, "(" << event->GetEventID() << ") "
               << pVertex->GetPrimary()->GetG4code()->GetParticleName()
               << " pos=" << pVertex->GetPosition()
+              << " ene=" << G4BestUnit(pVertex->GetPrimary()->GetMomentum().mag(), "Energy")
               << " momentum=" << pVertex->GetPrimary()->GetMomentum()
               << " weight=" << pVertex->GetWeight()
               << " time=" << pVertex->GetT0()
@@ -808,6 +809,43 @@ void GateSourcePhaseSpace::InitializePyTorch()
   mPTx_mean = x_mean;
   mPTx_std = x_std;
 
+  std::vector<std::string> keys = nnDict["keys"];
+
+  for(auto k:keys) {
+    std::cout << "k -> " << k << std::endl;
+  }
+
+  auto get_index = [&keys, &nnDict, this](std::string s) {
+                     auto d = std::find(keys.begin(), keys.end(), s);
+                     auto index = d-keys.begin();                     
+                     if (d == keys.end()) {
+                       index = -1;
+                       // Check if the value exist in the json
+                       try {
+                         double v = nnDict[s];
+                         this->mDefaultKeyValues[s] = v;
+                         std::cout << " v = " << v << std::endl;
+                       } catch(std::exception & e) {
+                         GateError("Cannot find the value for key " << s << " in json file");
+                       }
+                     }
+                     std::cout << "index for " << s << " = " << index << std::endl;
+                     return index;
+                   };
+  
+  mPTPositionXIndex = get_index("X");
+  mPTPositionYIndex = get_index("Y");
+  mPTPositionZIndex = get_index("Z");
+  mPTDirectionXIndex = get_index("dX");
+  mPTDirectionYIndex = get_index("dY");
+  mPTDirectionZIndex = get_index("dZ");
+  mPTEnergyIndex = get_index("Ekine");
+
+  std::cout << "index : " << mPTPositionXIndex << " " << mPTPositionYIndex << " " << mPTPositionZIndex << std::endl;
+  std::cout << "index : " << mPTDirectionXIndex << " " << mPTDirectionYIndex << " " << mPTDirectionZIndex << std::endl;
+  std::cout << "index E : " << mPTEnergyIndex << std::endl;
+   
+  
   std::cout << "mean " << mPTx_mean << std::endl;
   std::cout << "std  " << mPTx_std << std::endl;
 
@@ -820,29 +858,41 @@ void GateSourcePhaseSpace::InitializePyTorch()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 {
-  G4cout << "GenerateBatchSamplesFromPyTorch "
-         << mPTCurrentIndex <<  " " << mPTBatchSize << std::endl;
-
   // the following ifdef prevents to compile this section if GATE_USE_TORCH is not set
 #ifdef GATE_USE_TORCH
 
+  // Check default values
+  double def_E = 0.0;
+  double def_X = 0.0;
+  double def_Y = 0.0;
+  double def_Z = 0.0;
+  double def_dX = 0.0;
+  double def_dY = 0.0;
+  double def_dZ = 0.0;
+  if (mPTEnergyIndex == -1) def_E = mDefaultKeyValues["Ekine"];
+  if (mPTPositionXIndex == -1) def_X = mDefaultKeyValues["X"];
+  if (mPTPositionYIndex == -1) def_Y = mDefaultKeyValues["Y"];
+  if (mPTPositionZIndex == -1) def_Z = mDefaultKeyValues["Z"];
+  if (mPTDirectionXIndex == -1) def_dX = mDefaultKeyValues["dX"];
+  if (mPTDirectionYIndex == -1) def_dY = mDefaultKeyValues["dY"];
+  if (mPTDirectionZIndex == -1) def_dZ = mDefaultKeyValues["dZ"];  
+  
   // Create a vector of random inputs
   std::vector<torch::jit::IValue> inputs;
   torch::Tensor z = torch::randn_like(mPTzer);
   inputs.push_back(z);
-  //inputs.push_back(z.cuda());
+  // inputs.push_back(z.cuda());
   // std::cout << "z " << z << std::endl;
 
   // Execute the model
-  DD("Forward");
   torch::Tensor output = mPTmodule->forward(inputs).toTensor();
-  DD("Forward DONE ");
-  std::cout << "output size " << output.sizes() << std::endl;
+  std::cout << "Forward DONE " << output.sizes() << std::endl;
 
   std::vector<double> x_mean = mPTx_mean;
   std::vector<double> x_std = mPTx_std;
-  auto u = [&x_mean, &x_std](const float * v, int i) {
+  auto u = [&x_mean, &x_std](const float * v, int i, double def) {
              // DD(v[i]);
+             if (i == -1) return def;             
              return (v[i]*x_std[i])+x_mean[i];
            };
     
@@ -850,13 +900,13 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
   for (auto i=0; i < output.sizes()[0]; ++i) {
     // DD(i)
     const float * v = output[i].data<float>();
-    mPTEnergy[i] = u(v, mPTEnergyIndex);
-    mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex),
-                                   u(v, mPTPositionYIndex),
-                                   u(v, mPTPositionZIndex));
-    mPTDX[i] = u(v,mPTDirectionXIndex);
-    mPTDY[i] = u(v,mPTDirectionYIndex);
-    mPTDZ[i] = u(v,mPTDirectionZIndex);
+    mPTEnergy[i] = u(v, mPTEnergyIndex, def_E);
+    mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex, def_X),
+                                   u(v, mPTPositionYIndex, def_Y),
+                                   u(v, mPTPositionZIndex, def_Z));
+    mPTDX[i] = u(v,mPTDirectionXIndex, def_dX);
+    mPTDY[i] = u(v,mPTDirectionYIndex, def_dY);
+    mPTDZ[i] = u(v,mPTDirectionZIndex, def_dZ);
   }
 
   std::cout << "GENERATION DONE " << mPTEnergy.size() << std::endl << std::endl;
