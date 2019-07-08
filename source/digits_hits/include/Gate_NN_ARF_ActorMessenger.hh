@@ -16,6 +16,7 @@
 #include "GateActorMessenger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADouble.hh"
 
 class Gate_NN_ARF_Actor;
 
@@ -37,6 +38,15 @@ protected:
   G4UIcmdWithAnInteger      * pSetRRFactorCmd;
   G4UIcmdWithAString        * pSetNNModelCmd;
   G4UIcmdWithAString        * pSetNNDictCmd;
+  G4UIcmdWithAString        * pSetImageCmd;
+  G4UIcmdWithADoubleAndUnit * pSetSpacingXCmd;
+  G4UIcmdWithADoubleAndUnit * pSetSpacingYCmd;
+  G4UIcmdWithAnInteger      * pSetSizeXCmd;
+  G4UIcmdWithAnInteger      * pSetSizeYCmd;
+  G4UIcmdWithADouble        * pSetScaleCmd;
+  G4UIcmdWithAnInteger      * pSetNDatasetCmd;
+  G4UIcmdWithADoubleAndUnit * pSetCollimatorLengthCmd;
+  G4UIcmdWithADouble        * pSetBatchSizeCmd;
 };
 //-----------------------------------------------------------------------------
 

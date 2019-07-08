@@ -6,13 +6,7 @@
   See LICENSE.md for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
-
-#ifdef GATE_USE_TORCH
-#include <torch/script.h>
 #include "json.hpp"
-#endif
- 
 #include "Gate_NN_ARF_Actor.hh"
 #include "GateSingleDigi.hh"
 #include "G4DigiManager.hh"
@@ -22,7 +16,7 @@
 #include "TTree.h"
 #include "TBranch.h"
 #include "TString.h"
-
+#include <iostream>
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
 {
@@ -64,9 +58,18 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
   mRRFactor = 0;   // no Russian Roulette factor
   mThetaMax = 0.0;
   mPhiMax = 0.0;
+  mSize.resize(2);
+  mSpacing.resize(2);
+  mCollimatorLength = 99;
+  mScale = 1.0;
+  mNDataset = 1;
+  mRr = 0;
+  mBatchSize = 1e5;
+  mCurrentSaveNNOutput = 0;
   GateDebugMessageDec("Actor",4,"Gate_NN_ARF_Actor() -- end\n");
   mNNModelPath = "";
   mNNDictPath = "";
+  mImage = new GateImageDouble();
 }
 //-----------------------------------------------------------------------------
 
@@ -75,6 +78,7 @@ Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
 Gate_NN_ARF_Actor::~Gate_NN_ARF_Actor()
 {
   delete pMessenger;
+  delete mImage;
 }
 //-----------------------------------------------------------------------------
 
@@ -145,6 +149,62 @@ void Gate_NN_ARF_Actor::SetRRFactor(int f)
 
 
 //-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetImage(std::string& m)
+{
+  mImagePath = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetSpacing(double m, int index)
+{
+  mSpacing[index] = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetSize(int m, int index)
+{
+  mSize[index] = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetCollimatorLength(double m)
+{
+  mCollimatorLength = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetScale(double m)
+{
+  mScale = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetNDataset(int m)
+{
+  mNDataset = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::SetBatchSize(double m)
+{
+  mBatchSize = m;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::Construct()
 {
   GateDebugMessageInc("Actor", 4, "Gate_NN_ARF_Actor -- Construct - begin\n");
@@ -156,6 +216,30 @@ void Gate_NN_ARF_Actor::Construct()
   EnableEndOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
+
+#ifdef GATE_USE_TORCH
+  //Load the nn and the json dictionary
+  if (mNNModelPath == "")
+    GateError("Error: Neural Network model path (.pt) is empty");
+  if (mNNDictPath == "")
+    GateError("Error: Neural Network dictionay path (.json) is empty");
+  mNNModule = torch::jit::load(mNNModelPath);
+  mNNModule->to(torch::kCUDA);
+  std::ifstream nnDictFile(mNNDictPath);
+  using json = nlohmann::json;
+  json nnDict;
+  nnDictFile >> nnDict;
+  std::vector<double> tempXmean = nnDict["x_mean"];
+  mXmean = tempXmean;
+  std::vector<double> tempXstd = nnDict["x_std"];
+  mXstd = tempXstd;
+  if (nnDict.find("rr") != nnDict.end())
+      mRr = nnDict["rr"];
+  else
+      mRr = nnDict["RR"];
+  mNNOutput = at::empty({0,0});
+  assert(mNNModule != nullptr);
+#endif
 
   ResetData();
   GateMessageDec("Actor", 4, "Gate_NN_ARF_Actor -- Construct - end\n");
@@ -226,6 +310,36 @@ void Gate_NN_ARF_Actor::SaveData()
       e = mTestData[i].E;
       pListeVar->Fill();
     }
+
+#ifdef GATE_USE_TORCH
+    //Write the image thanks to the NN
+    double nb_ene = mTestData[0].nn.size();
+    G4ThreeVector resolution(mSize[0],
+                             mSize[1],
+                             nb_ene);
+    G4ThreeVector imageSize(mSize[0]*mSpacing[0]/2.0,
+                            mSize[1]*mSpacing[1]/2.0,
+                            nb_ene/2.0);
+    mImage->SetResolutionAndHalfSize(resolution, imageSize);
+    mImage->Allocate();
+    mImage->Fill(0.0);
+    for(unsigned int i=0; i<mTestData.size(); i++) {
+      if (!mTestData[i].nn.empty()) {
+        double tx = mCollimatorLength*cos(mTestData[i].theta * pi /180.0);
+        double ty = mCollimatorLength*cos(mTestData[i].phi * pi /180.0);
+        int u = round((mTestData[i].y + tx + mSize[0]*mSpacing[0]/2.0 - mSpacing[0]/2.0)/mSpacing[0]);
+        int v = round((mTestData[i].x + ty + mSize[1]*mSpacing[1]/2.0 - mSpacing[1]/2.0)/mSpacing[1]);
+        if (u < 0 || u > (mSize[0]-1))
+          continue;
+        if (v < 0 || v > (mSize[1]-1))
+          continue;
+        for (unsigned int energy=1; energy<nb_ene; ++energy) {
+          mImage->SetValue(v, u, energy, mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset*mScale);
+        }
+      }
+    }
+    mImage->Write(mImagePath);
+#endif
   }
   pFile->Write();
   pFile->Close();
@@ -318,6 +432,17 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
     // Do not count event that never go to UserSteppingAction
     if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
       mTestData.push_back(mCurrentTestData);
+#ifdef GATE_USE_TORCH
+      if (mNNOutput.sizes()[0] > 0) {
+        for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
+          mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
+          for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+            mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
+          }
+        }
+        mCurrentSaveNNOutput += mNNOutput.sizes()[0];
+      }
+#endif
     }
   }
 }
@@ -370,42 +495,55 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
     mCurrentTestData.theta = theta;
     mCurrentTestData.phi = phi;
 
- #ifdef GATE_USE_TORCH
-   //Load the nn and the json dictionary
-    if (mNNModelPath == "")
-      GateError("Error: Neural Network model path (.pt) is empty");
-    if (mNNDictPath == "")
-      GateError("Error: Neural Network dictionay path (.json) is empty");
-    std::shared_ptr<torch::jit::script::Module> module = torch::jit::load(mNNModelPath);
-    module->to(torch::kCUDA);
-    std::ifstream nnDictFile(mNNDictPath);
-    using json = nlohmann::json;
-    json nnDict;
-    nnDictFile >> nnDict;
-    std::vector<double> x_mean = nnDict["x_mean"];
-    std::vector<double> x_std = nnDict["x_std"];
+#ifdef GATE_USE_TORCH
+    // Create a vector of input and push it in the bash inputs.
+    // If batch inputs is full (size = mBatchSize) then pass it to the Neural Network
+    // Else, get the next particle
+    std::vector<double> tempVector {(theta - mXmean[0])/mXstd[0], (phi - mXmean[1])/mXstd[1], (E - mXmean[2])/mXstd[2]};
+    mBatchInputs.push_back(tempVector);
 
-    assert(module != nullptr);
+    mNNOutput = at::empty({0,0});
+    if (mBatchInputs.size() >= mBatchSize) {
+      //Convert NN inputs to Tensor
+      std::vector<torch::jit::IValue> inputTensorContainer;
+      torch::Tensor inputTensor = torch::zeros({(unsigned int)mBatchInputs.size(), 3});
+      for (unsigned int inputIndex=0; inputIndex<mBatchInputs.size(); ++inputIndex) {
+        inputTensor[inputIndex][0] = mBatchInputs[inputIndex][0];
+        inputTensor[inputIndex][1] = mBatchInputs[inputIndex][1];
+        inputTensor[inputIndex][2] = mBatchInputs[inputIndex][2];
+      }
+      inputTensorContainer.push_back(inputTensor.cuda());
 
-    //pass these data to nn
-    // Create a vector of inputs.
-    std::vector<torch::jit::IValue> inputs;
-    torch::Tensor input = torch::zeros({1, 3});
-    input[0][0] = (theta - x_mean[0])/x_std[0];
-    input[0][1] = (phi - x_mean[1])/x_std[1];
-    input[0][2] = (E - x_mean[2])/x_std[2];
-    inputs.push_back(input.cuda());
+      // Execute the model and turn its output into a tensor.
+      mNNOutput = mNNModule->forward(inputTensorContainer).toTensor();
 
-    // Execute the model and turn its output into a tensor.
-    at::Tensor output = module->forward(inputs).toTensor();
+      //Normalize output
+      mNNOutput = exp(mNNOutput);
+      for (unsigned int tensorIndex=0; tensorIndex < mNNOutput.sizes()[0]; ++tensorIndex) {
+        mNNOutput[tensorIndex] = mNNOutput[tensorIndex]/sum(mNNOutput[tensorIndex]);
+      }
 
-    //Display elements
-    //std::cout << output.slice(/*dim=*/1, /*start=*/0, /*end=*/5) << '\n';
-    //for (unsigned int outputIndex=0; outputIndex < output.sizes()[1]; ++outputIndex) {
-    //  std::cout << output[0][outputIndex] << " ";
-    //}
-    //std::cout << std::endl << output.sizes()[0] << " " << output.sizes()[1] << std::endl;
+      //normalize with russian roulette
+      for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[0]; ++outputIndex) {
+        mNNOutput[outputIndex][0] *= mRr; //use mRRFactor ?
+      }
+      for (unsigned int tensorIndex=0; tensorIndex < mNNOutput.sizes()[0]; ++tensorIndex) {
+        mNNOutput[tensorIndex] = mNNOutput[tensorIndex]/sum(mNNOutput[tensorIndex]);
+      }
 
+      //Clean the inputs
+      mBatchInputs.clear();
+
+      //Display elements
+      //std::cout << mNNOutput.slice(/*dim=*/5, /*start=*/0, /*end=*/8) << '\n';
+      //for (unsigned int outputIndex1=0; outputIndex1 < mNNOutput.sizes()[0]; ++outputIndex1) {
+      //  for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+      //    std::cout << mNNOutput[outputIndex1][outputIndex].item<double>() << " ";
+      //  }
+      //}
+      //std::cout << std::endl ;
+      //std::cout << mNNOutput.sizes()[0] << " " << mNNOutput.sizes()[1] << std::endl;
+    }
 #endif
   }
 
