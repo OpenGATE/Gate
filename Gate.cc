@@ -67,7 +67,7 @@ void printHelpAndQuit( G4String msg )
   std::cout << std::endl;
   std::cout << "  -h, --help             print the help" << std::endl;
   std::cout << "  -v, --version          print the version" << std::endl;
-  std::cout << "  -g, --g4verbose        enable Geant4 verbose (off by default)" << std::endl;
+  std::cout << "  -g, --quietg4          quiet Geant4 verbose" << std::endl;
   std::cout << "  -a, --param            set alias. Format is '[alias1,value1] [alias2,value2] ...'" << std::endl;
   std::cout << "  --d                    use the DigiMode" << std::endl;
   std::cout << "  --qt                   use the Qt visualization mode" << std::endl;
@@ -226,7 +226,7 @@ int main( int argc, char* argv[] )
   // analyzing arguments
   static G4int isDigiMode = 0; // DigiMode false by default
   static G4int isQt = 0; // Enable Qt or not
-  static G4int isG4verbose = 0; // Enable G4 verbose or not
+  static G4int isG4verbose = 1; // Enable G4 verbose or not
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
 
@@ -289,7 +289,7 @@ int main( int argc, char* argv[] )
           listOfParameters = optarg;
           break;
         case 'g':
-          isG4verbose = 1;
+          isG4verbose = 0;
           theGateMessageManager->EnableG4Messages(isG4verbose);
           break;
         case '?':
@@ -379,7 +379,7 @@ int main( int argc, char* argv[] )
   theGateMessageManager->EnableG4Messages( false );
   G4VisManager* visManager = new G4VisExecutive("q"); // 'q' = quiet 'a' = all
   visManager->Initialize();
-  theGateMessageManager->EnableG4Messages( isG4verbose );
+  theGateMessageManager->EnableG4Messages(isG4verbose);
 #endif
 
   // Initialize G4 kernel
