@@ -18,7 +18,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See GATE/LICENSE.txt fGeant496_COMPATIBILITYor further details
   ----------------------*/
 
 #ifndef GateUIterminal_h
@@ -37,13 +37,13 @@ public:
 
   ~GateUIterminal() {}
 
-  void EnableG4Messages(bool b);
-
+#ifdef Geant496_COMPATIBILITY
   virtual G4int ReceiveG4cout( const G4String& coutString);
   virtual G4int ReceiveG4cerr( const G4String& cerrString);
-
-protected:
-  bool mEnableG4Message;
+#else
+  virtual G4int ReceiveG4cout( G4String coutString);
+  virtual G4int ReceiveG4cerr( G4String cerrString);
+#endif
 
 };
 

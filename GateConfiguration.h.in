@@ -49,6 +49,11 @@
    #define G4VERSION9_3 1
 #endif
 
+// WARNING : Replace all G4VERSION_3 and other with a correct test
+#if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR==9) && (G4VERSION_MINOR >=6))
+   #define Geant496_COMPATIBILITY 1
+#endif
+
 #cmakedefine GATE_USE_OPENGL               @GATE_USE_OPENGL@
 
 #endif // GATE_CONFIGURATION_H
