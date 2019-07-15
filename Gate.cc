@@ -59,19 +59,18 @@
 #endif
 
 
-
 //-----------------------------------------------------------------------------
 void printHelpAndQuit( G4String msg )
 {
-  GateMessage( "Core", 0, msg << G4endl );
-  GateMessage( "Core", 0, "Usage: Gate [OPTION]... MACRO_FILE" << G4endl );
-  GateMessage( "Core", 0, G4endl);
-  GateMessage( "Core", 0, "Mandatory arguments to long options are mandatory for short options too." << G4endl );
-  GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
-  GateMessage( "Core", 0, "  -v, --version          print the version" << G4endl );
-  GateMessage( "Core", 0, "  -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'" << G4endl );
-  GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
-  GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
+  std::cout << msg << std::endl;
+  std::cout << "Usage: Gate [OPTION] MACRO_FILE" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  -h, --help             print the help" << std::endl;
+  std::cout << "  -v, --version          print the version" << std::endl;
+  std::cout << "  -g, --g4quiet          quiet Geant4 verbose" << std::endl;
+  std::cout << "  -a, --param            set alias. Format is '[alias1,value1] [alias2,value2] ...'" << std::endl;
+  std::cout << "  --d                    use the DigiMode" << std::endl;
+  std::cout << "  --qt                   use the Qt visualization mode" << std::endl;
   exit( EXIT_FAILURE );
 }
 //-----------------------------------------------------------------------------
@@ -157,19 +156,42 @@ void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UIma
 //-----------------------------------------------------------------------------
 void welcome()
 {
-  GateMessage("Core", 0, G4endl);
-  GateMessage("Core", 0, "*************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version 8.2 (February 2019)" << G4endl);
-  GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
-  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << G4endl);
-  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << G4endl);
-  GateMessage("Core", 0, " Reference : Med. Phys. 41(6)    (2014)" << G4endl);
-  GateMessage("Core", 0, " http://www.opengatecollaboration.org        " << G4endl);
-  GateMessage("Core", 0, "*************************************************" << G4endl);
+  GateMessage("Core", 0, "*************************************************" << std::endl);
+  GateMessage("Core", 0, " GATE version 8.2 (February 2019)" << std::endl);
+  GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << std::endl);
+  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << std::endl);
+  GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << std::endl);
+  GateMessage("Core", 0, " Reference : Med. Phys. 41(6)    (2014)" << std::endl);
+  GateMessage("Core", 0, " http://www.opengatecollaboration.org" << std::endl);
 #ifdef GATE_USE_GPU
-  GateMessage("Core", 0, "GPU support activated" << G4endl );
+  GateMessage("Core", 0, " GPU enabled. WARNING: experimental, no more maintained." << G4endl);
 #endif
-  GateMessage("Core", 0, G4endl);
+#ifdef GATE_USE_OPTICAL
+  GateMessage("Core", 0, " OPTICAL module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_XRAYLIB
+  GateMessage("Core", 0, " XRAYLIB module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_DAVIS
+  GateMessage("Core", 0, " DAVIS LUT module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_LMF
+  GateMessage("Core", 0, " LMF module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_ECAT7
+  GateMessage("Core", 0, " ECAT7 module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_RTK
+  GateMessage("Core", 0, " RTK module enabled" << G4endl);
+#endif
+#ifdef GATE_USE_ITK
+  GateMessage("Core", 0, " ITK module enabled" << G4endl);
+#endif
+  std::ostringstream s;
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  GateMessage("Core", 0, " GEANT4 version " << s.str() << std::endl);
+  GateMessage("Core", 0, "*************************************************" << std::endl);
+  GateMessage("Core", 0, std::endl);
 }
 //-----------------------------------------------------------------------------
 
@@ -177,8 +199,12 @@ void welcome()
 //-----------------------------------------------------------------------------
 int main( int argc, char* argv[] )
 {
+  // welcom message
+  welcome();
 
   // First of all, set the G4cout to our message manager
+  // See GateUIterminal::ReceiveG4cout
+  // and GateMessageManager::ReceiveG4cout
   GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
   G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
 
@@ -200,9 +226,9 @@ int main( int argc, char* argv[] )
   // analyzing arguments
   static G4int isDigiMode = 0; // DigiMode false by default
   static G4int isQt = 0; // Enable Qt or not
+  static G4int isG4verbose = 1; // Enable G4 verbose or not
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
-
 
   // Loop over arguments
   G4int c = 0;
@@ -211,11 +237,13 @@ int main( int argc, char* argv[] )
       // Declaring options
       G4int optionIndex = 0;
       static struct option longOptions[] = {
-        { "help", no_argument, 0, 'h' },
-        { "version", no_argument, 0, 'v' },
-        { "d", no_argument, &isDigiMode, 1 },
-        { "qt", no_argument, &isQt, 1 },
-        { "param", required_argument, 0, 'a' }
+                                            { "help", no_argument, 0, 'h' },
+                                            { "version", no_argument, 0, 'v' },
+                                            { "g4quiet", no_argument, 0, 'g'},
+                                            { "d", no_argument, &isDigiMode, 1 },
+                                            { "qt", no_argument, &isQt, 1 },
+                                            { "param", required_argument, 0, 'a' },
+                                            { NULL, 0, NULL, 0 }
       };
 
 #ifdef __APPLE__
@@ -236,13 +264,14 @@ int main( int argc, char* argv[] )
 #endif
         {
           // Getting the option
-          c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
+          c = getopt_long( argc, argv, "hvga:", longOptions, &optionIndex );
         }
 
       // Exit the loop if -1
       if( c == -1 ) break;
 
       // Analyzing each option
+      std::string s = "Unknown option : " + std::string(argv[optionIndex]);
       switch( c )
         {
         case 0:
@@ -259,8 +288,15 @@ int main( int argc, char* argv[] )
         case 'a':
           listOfParameters = optarg;
           break;
+        case 'g':
+          isG4verbose = 0;
+          theGateMessageManager->EnableG4Messages(isG4verbose);
+          break;
+        case '?':
+          printHelpAndQuit(s);
+          break;
         default:
-          printHelpAndQuit( "Out of switch options" );
+          printHelpAndQuit(s);
           break;
         }
     }
@@ -275,60 +311,6 @@ int main( int argc, char* argv[] )
   // Install the signal handler to handle interrupt calls
   GateSignalHandler::Install();
 
-  // Construct the default run manager
-  GateRunManager* runManager = new GateRunManager;
-
-  // Set the Basic ROOT Output
-  GateRecorderBase* myRecords = 0;
-#ifdef G4ANALYSIS_USE_ROOT
-  myRecords = new GateROOTBasicOutput;
-#endif
-
-  // Set the DetectorConstruction
-  GateDetectorConstruction* gateDC = new GateDetectorConstruction();
-  runManager->SetUserInitialization( gateDC );
-
-  // Set the PhysicsList
-  runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
-
-  // Set the users actions to handle callback for actors - before the initialisation
-  new GateUserActions( runManager, myRecords );
-
-  // Set the Visualization Manager
-#ifdef G4VIS_USE
-  theGateMessageManager->EnableG4Messages( false );
-  G4VisManager* visManager = new G4VisExecutive;
-  visManager->Initialize();
-  theGateMessageManager->EnableG4Messages( true );
-#endif
-
-  // Initialize G4 kernel
-  runManager->InitializeAll();
-
-  // Incorporate the user actions, set the particles generator
-  runManager->SetUserAction( new GatePrimaryGeneratorAction() );
-
-  // Create various singleton objets
-#ifdef G4ANALYSIS_USE_GENERAL
-  GateOutputMgr::SetDigiMode( aDigiMode );
-  GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-  GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
-  digitizer->StoreNewPulseProcessorChain( singleChain );
-#endif
-
-  if( aDigiMode == kofflineMode )
-#ifdef G4ANALYSIS_USE_ROOT
-    GateHitFileReader::GetInstance();
-#else
-  abortIfRootNotFound();
-#endif
-
-  GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
-  GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-  GateClock::GetInstance()->SetTime( 0 );
-  GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
-
   // Get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
@@ -336,7 +318,8 @@ int main( int argc, char* argv[] )
 #ifdef G4UI_USE
   G4UIExecutive* ui = NULL;
 #endif
-  G4UIsession* session = NULL;
+  //G4UIsession* session = NULL;
+  GateUIterminal * session = NULL;
   if( isQt )
     {
 #ifdef G4UI_USE
@@ -369,6 +352,63 @@ int main( int argc, char* argv[] )
 #endif
     }
 
+  // G4 messages
+  session->EnableG4Messages(isG4verbose);
+
+  // Construct the default run manager
+  GateRunManager* runManager = new GateRunManager;
+
+  // Set the Basic ROOT Output
+  GateRecorderBase* myRecords = 0;
+#ifdef G4ANALYSIS_USE_ROOT
+  myRecords = new GateROOTBasicOutput;
+#endif
+
+  // Set the DetectorConstruction
+  GateDetectorConstruction* gateDC = new GateDetectorConstruction();
+  runManager->SetUserInitialization( gateDC );
+
+  // Set the PhysicsList
+  runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
+
+  // Set the users actions to handle callback for actors - before the initialisation
+  new GateUserActions( runManager, myRecords );
+
+  // Set the Visualization Manager
+#ifdef G4VIS_USE
+  theGateMessageManager->EnableG4Messages( false );
+  G4VisManager* visManager = new G4VisExecutive("q"); // 'q' = quiet 'a' = all
+  visManager->Initialize();
+  theGateMessageManager->EnableG4Messages(isG4verbose);
+#endif
+
+  // Initialize G4 kernel
+  runManager->InitializeAll();
+
+  // Incorporate the user actions, set the particles generator
+  runManager->SetUserAction( new GatePrimaryGeneratorAction() );
+
+  // Create various singleton objets
+#ifdef G4ANALYSIS_USE_GENERAL
+  GateOutputMgr::SetDigiMode( aDigiMode );
+  GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
+  GateDigitizer* digitizer = GateDigitizer::GetInstance();
+  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
+  digitizer->StoreNewPulseProcessorChain( singleChain );
+#endif
+
+  if( aDigiMode == kofflineMode )
+#ifdef G4ANALYSIS_USE_ROOT
+    GateHitFileReader::GetInstance();
+#else
+  abortIfRootNotFound();
+#endif
+
+  GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
+  GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
+  GateClock::GetInstance()->SetTime( 0 );
+  GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
+
   // Macro file parameters
   G4int isMacroFile = 0;
   G4String macrofilename = "";
@@ -386,13 +426,6 @@ int main( int argc, char* argv[] )
       isMacroFile = 1;
       macrofilename = lastArgument;
     }
-
-  // Using 'session' if not Qt
-  welcome();
-
-  std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
-  GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file
   if (isMacroFile) {
