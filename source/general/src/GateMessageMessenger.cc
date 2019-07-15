@@ -8,10 +8,13 @@ See LICENSE.md for further details
 
 
 #include "GateMessageMessenger.hh"
+
+
 #include "GateMessageManager.hh"
 
 
 //-----------------------------------------------------------------------------
+// Ctor
 GateMessageMessenger::GateMessageMessenger(G4String base, GateMessageManager* man)
  :pMessageManager(man)
 {
@@ -24,17 +27,17 @@ GateMessageMessenger::GateMessageMessenger(G4String base, GateMessageManager* ma
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
+// Dtor
 GateMessageMessenger::~GateMessageMessenger()
 {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void GateMessageMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
+  //GateMessage("Manager",5,"GateMessageMessenger::SetNewValue("<<newValue<<")\n");
   if (cmd == pVerboseCmd) {
     str_size pos = newValue.index (' ');
     if (pos<newValue.length()) {
