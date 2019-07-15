@@ -28,9 +28,9 @@ int is_big_endian()
   u.l = 1;
 
   if (u.c[sizeof(long int)-1] == 1)
-  {
-    return 1;
-  }
+    {
+      return 1;
+    }
   else
     return 0;
 }
@@ -45,9 +45,8 @@ string get_endianness_carater()
 
 GateNumpyTree::GateNumpyTree() : m_nb_elements(0)
 {
-//  cout << "NumpyFile::NumpyFile()\n";
-//  cout << "NumpyFile::NumpyFile() is_big_endian = " << is_big_endian() << "\n";
-
+  //  cout << "NumpyFile::NumpyFile()\n";
+  //  cout << "NumpyFile::NumpyFile() is_big_endian = " << is_big_endian() << "\n";
 
   fill_maps<long double>("f16");
   fill_maps<double>("f8");
@@ -64,9 +63,9 @@ GateNumpyTree::GateNumpyTree() : m_nb_elements(0)
   fill_maps<bool>("?");
   fill_maps<char>("b");
 
-//  m_file = ofstream();
+  //  m_file = ofstream();
 
-//  m_file.open("/tmp/z.npy",std::ofstream::binary);
+  //  m_file.open("/tmp/z.npy",std::ofstream::binary);
 }
 
 
@@ -83,16 +82,16 @@ void GateNumpyTree::register_variable(const std::string& name, const void *p, co
   GateNumpyData d(p, size, name, std::move(numpy_format), t_index);
 
   for (auto&& d_ : m_vector_of_pointer_to_data) // access by const reference
-  {
+    {
       if(d_.name() == name)
-      {
-        string s("Error: Key '");
-        s+= name;
-        s += "' already used !";
-        cerr << s << endl;
-        throw GateKeyAlreadyExistsException( s );
-      }
-  }
+        {
+          string s("Error: Key '");
+          s+= name;
+          s += "' already used !";
+          cerr << s << endl;
+          throw GateKeyAlreadyExistsException( s );
+        }
+    }
   m_vector_of_pointer_to_data.push_back(d);
 }
 //
@@ -139,11 +138,11 @@ void GateOutputNumpyTreeFile::write_header()
 
 
   for ( auto it = m_vector_of_pointer_to_data.begin(); it != m_vector_of_pointer_to_data.end(); ++it )
-  {
-    if(it != m_vector_of_pointer_to_data.begin())
-      ss_dico_before_shape << ", ";
-    ss_dico_before_shape << (*it).m_numpy_description;
-  }
+    {
+      if(it != m_vector_of_pointer_to_data.begin())
+        ss_dico_before_shape << ", ";
+      ss_dico_before_shape << (*it).m_numpy_description;
+    }
 
   ss_dico_before_shape << "], 'fortran_order': False, 'shape': (";
 
@@ -185,12 +184,7 @@ void GateOutputNumpyTreeFile::write_header()
   m_position_after_shape = m_file.tellp();
   m_file << dico_after_shape.c_str();
   m_write_header_called = true;
-
-
-
 }
-
-
 
 
 void GateOutputNumpyTreeFile::fill()
@@ -202,52 +196,49 @@ void GateOutputNumpyTreeFile::fill()
   if (m_vector_of_pointer_to_data.empty())
     return;
 
-//  if( (m_mode & ios_base::out) != ios_base::out )
-//    return;
+  //  if( (m_mode & ios_base::out) != ios_base::out )
+  //    return;
 
-//  cout << "OutputNumpyTreeFile::fill()" << endl;
+  //  cout << "OutputNumpyTreeFile::fill()" << endl;
   for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
-  {
-    if(d.m_nb_characters == 0)
-      m_file.write((const char*)d.m_pointer_to_data, d.m_size_of_data);
-    else
     {
-      if(d.m_type_index == typeid(char*))
-      {
-        char *p_data = (char*)d.m_pointer_to_data;
-        auto current_nb_characters = strlen(p_data);
-//        cout << " p_data = " << p_data;
-//        cout << " current_nb_characters = " << current_nb_characters;
-        for(size_t i = current_nb_characters; i < d.m_nb_characters; ++i)
-          p_data[i] = '\0';
-
-
-        m_file.write(p_data, d.m_size_of_data);
-      } else if (d.m_type_index == typeid(string))
-      {
-        const auto *p_s = (const string*) d.m_pointer_to_data;
-        if( p_s->size() > d.m_nb_characters)
+      if(d.m_nb_characters == 0)
+        m_file.write((const char*)d.m_pointer_to_data, d.m_size_of_data);
+      else
         {
-          string m;
-          m += "lenght(" + *p_s + ") = (" + std::to_string(p_s->size()) +   ") > " + std::to_string(d.m_nb_characters);
-          throw std::length_error(m);
+          if(d.m_type_index == typeid(char*))
+            {
+              char *p_data = (char*)d.m_pointer_to_data;
+              auto current_nb_characters = strlen(p_data);
+              //        cout << " p_data = " << p_data;
+              //        cout << " current_nb_characters = " << current_nb_characters;
+              for(size_t i = current_nb_characters; i < d.m_nb_characters; ++i)
+                p_data[i] = '\0';
+
+
+              m_file.write(p_data, d.m_size_of_data);
+            } else if (d.m_type_index == typeid(string))
+            {
+              const auto *p_s = (const string*) d.m_pointer_to_data;
+              if( p_s->size() > d.m_nb_characters)
+                {
+                  string m;
+                  m += "length(" + *p_s + ") = (" + std::to_string(p_s->size()) +   ") > " + std::to_string(d.m_nb_characters);
+                  throw std::length_error(m);
+                }
+
+              string s(*p_s); // copy of the data, :-(
+              s.resize(d.m_nb_characters, '\0');
+
+
+              m_file.write(s.c_str(), d.m_size_of_data);
+            }
         }
-
-        string s(*p_s); // copy of the data, :-(
-        s.resize(d.m_nb_characters, '\0');
-
-
-        m_file.write(s.c_str(), d.m_size_of_data);
-      }
     }
-  }
 
   m_nb_elements++;
-//  cout << "\n";
+  //  cout << "\n";
 }
-
-
-
 
 
 void GateOutputNumpyTreeFile::close()
@@ -257,20 +248,20 @@ void GateOutputNumpyTreeFile::close()
     return;
 
   if( (m_mode & ios_base::out) == ios_base::out )
-  {
-    m_file.seekp(m_position_before_shape);
-//    cout << "current position = " << m_file.tellp() << "\n";
-    stringstream ss_shape;
-    ss_shape << std::setw(20) << std::setfill(' ') << m_nb_elements;
-    string shape = ss_shape.str();
-    m_file.write(shape.c_str(), shape.size());
-  } else {
-    for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
     {
-      if(d.buffer_read)
-        delete[](d.buffer_read);
-    }
-//    throw std::runtime_error("NumpyTreeFile::close: no se");
+      m_file.seekp(m_position_before_shape);
+      //    cout << "current position = " << m_file.tellp() << "\n";
+      stringstream ss_shape;
+      ss_shape << std::setw(20) << std::setfill(' ') << m_nb_elements;
+      string shape = ss_shape.str();
+      m_file.write(shape.c_str(), shape.size());
+    } else {
+    for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
+      {
+        if(d.buffer_read)
+          delete[](d.buffer_read);
+      }
+    //    throw std::runtime_error("NumpyTreeFile::close: no se");
   }
 
   m_file.close();
@@ -292,12 +283,12 @@ void GateOutputNumpyTreeFile::open(const std::string& s)
   GateFile::open(s, std::ofstream::binary | std::fstream::out);
   m_file.open(s, std::ofstream::binary | std::fstream::out);
   if(!m_file.is_open())
-  {
-//    perror("Error opening file!");
-    std::stringstream ss;
-    ss << "Error opening file! '"  << s <<  "' : " << strerror(errno) ;
-    throw std::ios::failure(ss.str());
-  }
+    {
+      //    perror("Error opening file!");
+      std::stringstream ss;
+      ss << "Error opening file! '"  << s <<  "' : " << strerror(errno) ;
+      throw std::ios::failure(ss.str());
+    }
 }
 
 void GateInputNumpyTreeFile::open(const std::string &s)
@@ -305,16 +296,16 @@ void GateInputNumpyTreeFile::open(const std::string &s)
   GateFile::open(s, std::fstream::in);
   m_file.open(s, std::ofstream::binary | std::fstream::in);
   if(!m_file.is_open())
-  {
-//    perror("Error opening file!");
-    std::stringstream ss;
-    ss << "Error opening file! '"  << s <<  "' : " << strerror(errno) ;
-    throw std::ios::failure(ss.str());
-  }
+    {
+      //    perror("Error opening file!");
+      std::stringstream ss;
+      ss << "Error opening file! '"  << s <<  "' : " << strerror(errno) ;
+      throw std::ios::failure(ss.str());
+    }
 
   // get length of file:
   m_file.seekg (0, std::fstream::end);
-  m_lenght_of_file = m_file.tellg();
+  m_length_of_file = m_file.tellg();
   m_file.seekg (0, std::fstream::beg);
 }
 
@@ -343,7 +334,7 @@ GateOutputNumpyTreeFile::GateOutputNumpyTreeFile() : m_write_header_called(false
 //
 void GateNumpyTree::register_variable(const std::string &name, const void *p, std::type_index t_index)
 {
-//  std::cout << "NumpyFile::register_variable name = " << name << " t_index = " << t_index.name() << "\n";
+  //  std::cout << "NumpyFile::register_variable name = " << name << " t_index = " << t_index.name() << "\n";
   this->register_variable(name, p, m_tmapOfSize.at(t_index), m_tmap_cppToNumpy.at(t_index), t_index);
 }
 
@@ -376,7 +367,7 @@ string get_data(const string &str)
 
 vector<pair<string, string>> intertpret_descr(const string &descr)
 {
-//  cout << "intertpret_descr:#" << descr << "#" << "\n";
+  //  cout << "intertpret_descr:#" << descr << "#" << "\n";
   string str = descr;
 
   size_t pos_start = 0;
@@ -388,23 +379,23 @@ vector<pair<string, string>> intertpret_descr(const string &descr)
   std::vector<string> vect_data;
 
   while( pos_start != string::npos  )
-  {
+    {
 
 
-    //cout << "pos_start=" << pos_start << " " << "pos_end=" <<  pos_end << "\n";
+      //cout << "pos_start=" << pos_start << " " << "pos_end=" <<  pos_end << "\n";
 
-    string data = str.substr(pos_start, pos_end - 1);
+      string data = str.substr(pos_start, pos_end - 1);
 
-    str = str.substr(pos_end + 1, str.size() - pos_end -1);
+      str = str.substr(pos_end + 1, str.size() - pos_end -1);
 
 
-//    cout << "str=" << str << "\n";
-//    cout << "data = " << data << "\n";
-    vect_data.push_back(data);
+      //    cout << "str=" << str << "\n";
+      //    cout << "data = " << data << "\n";
+      vect_data.push_back(data);
 
-    pos_start = str.find('(');
-    pos_end = str.find(')');
-  }
+      pos_start = str.find('(');
+      pos_end = str.find(')');
+    }
 
   if (vect_data.empty())
     throw std::runtime_error("only structured data accepted");
@@ -413,30 +404,30 @@ vector<pair<string, string>> intertpret_descr(const string &descr)
   vector<pair<string, string>> v;
 
   for (auto&& data : vect_data)
-  {
+    {
 
-    size_t pos = data.find(',');
-    string name = data.substr( 0, pos );
-    string type = data.substr( pos + 1, data.size() - pos -1);
+      size_t pos = data.find(',');
+      string name = data.substr( 0, pos );
+      string type = data.substr( pos + 1, data.size() - pos -1);
 
-    pos_start = name.find("'");
-    pos_end = name.rfind("'");
-    name = name.substr(pos_start + 1, pos_end - pos_start - 1);
+      pos_start = name.find("'");
+      pos_end = name.rfind("'");
+      name = name.substr(pos_start + 1, pos_end - pos_start - 1);
 
-    pos_start = type.find("'");
-    pos_end = type.rfind("'");
-    type = type.substr(pos_start + 1, pos_end - pos_start - 1);
+      pos_start = type.find("'");
+      pos_end = type.rfind("'");
+      type = type.substr(pos_start + 1, pos_end - pos_start - 1);
 
-//    cout << "for data=" << data << " name = #" << name << "# type = " << type << " \n";
+      //    cout << "for data=" << data << " name = #" << name << "# type = " << type << " \n";
 
-    v.emplace_back(name, type);
+      v.emplace_back(name, type);
 
-  }
+    }
 
   return v;
 
 
-//  return vect_data;
+  //  return vect_data;
 }
 
 uint64_t interpret_shape(const string &shape)
@@ -476,17 +467,17 @@ void GateInputNumpyTreeFile::read_header()
   uint16_t hlen = 0;
   m_file.read((char*)&hlen, sizeof(hlen));
 
-//  cout << "hlen = " << hlen << "\n";
+  //  cout << "hlen = " << hlen << "\n";
 
   if(hlen == 0)
     throw std::runtime_error("InputNumpyTreeFile::read_header: hlean == 0");
 
-//  cout << "hlen = " << hlen << "\n";
+  //  cout << "hlen = " << hlen << "\n";
 
   string dictionary(hlen, '\0');
   m_file.read(&dictionary[0], hlen);
 
-//  cout << "dictionary=#" << dictionary << "#" << "\n";
+  //  cout << "dictionary=#" << dictionary << "#" << "\n";
 
   size_t fortran_order_pos = dictionary.find("'fortran_order'");
   size_t descr_pos = dictionary.find("'descr'");
@@ -495,21 +486,21 @@ void GateInputNumpyTreeFile::read_header()
 
 
 
-//  cout << "descr_pos = " << descr_pos << "\n";
-//  cout << "fortran_order_pos = " << fortran_order_pos << "\n";
-//
-//  cout << "shape_pos = " << shape_pos << "\n";
+  //  cout << "descr_pos = " << descr_pos << "\n";
+  //  cout << "fortran_order_pos = " << fortran_order_pos << "\n";
+  //
+  //  cout << "shape_pos = " << shape_pos << "\n";
 
   if(  descr_pos > fortran_order_pos or fortran_order_pos > shape_pos )
     throw std::runtime_error("InputNumpyTreeFile::read_header: wrong order of key in description");
 
   string descr_str = dictionary.substr(descr_pos, fortran_order_pos - descr_pos);
-//  cout << "descr_str = #" << descr_str << "#\n";
+  //  cout << "descr_str = #" << descr_str << "#\n";
   string fortran_order_str = dictionary.substr(fortran_order_pos, shape_pos - fortran_order_pos);
-//  cout << "fortran_order_str = #" << fortran_order_str << "#\n";
+  //  cout << "fortran_order_str = #" << fortran_order_str << "#\n";
 
   string shape_str = dictionary.substr(shape_pos,  dictionary.size() - shape_pos);
-//  cout << "shape_str = #" << shape_str << "#\n";
+  //  cout << "shape_str = #" << shape_str << "#\n";
 
 
 
@@ -523,23 +514,23 @@ void GateInputNumpyTreeFile::read_header()
   auto  v_descr_str = intertpret_descr(descr_str);
 
   for (auto&& data : v_descr_str)
-  {
-    auto name = data.first;
-    auto type_str = data.second;
-
-//    cout << "InputNumpyTreeFile::read_header:name = " << name << "\ttype = " << type_str<<  "\n";
-
-    if(  type_str.find("|S") != string::npos  ) // string
     {
-        size_t number_caracters = stol(  type_str.substr(2, type_str.size()) );
-        this->register_variable(name, (const string *)nullptr, number_caracters);
+      auto name = data.first;
+      auto type_str = data.second;
+
+      //    cout << "InputNumpyTreeFile::read_header:name = " << name << "\ttype = " << type_str<<  "\n";
+
+      if(  type_str.find("|S") != string::npos  ) // string
+        {
+          size_t number_caracters = stol(  type_str.substr(2, type_str.size()) );
+          this->register_variable(name, (const string *)nullptr, number_caracters);
+        }
+      else
+        {
+          auto type_index = m_tmap_numpyToCpp.at(type_str);
+          this->register_variable(name, nullptr, type_index);
+        }
     }
-    else
-    {
-      auto type_index = m_tmap_numpyToCpp.at(type_str);
-      this->register_variable(name, nullptr, type_index);
-    }
-  }
   m_start_of_data = m_file.tellg();
   m_read_header_called = true;
 }
@@ -550,38 +541,38 @@ void GateInputNumpyTreeFile::read_next_entrie()
   if(!m_read_header_called)
     throw std::logic_error("read_header not called");
 
-//  cout << "0. current pos = " << m_file.tellg() << " end = " << m_file.end << "eof = " <<  m_file.eof() << "data_to_read() ="  << data_to_read() <<   "\n";
+  //  cout << "0. current pos = " << m_file.tellg() << " end = " << m_file.end << "eof = " <<  m_file.eof() << "data_to_read() ="  << data_to_read() <<   "\n";
   for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
-  {
-//    cout << "InputNumpyTreeFile::read_next_entrie = " << d.m_name << "\ttype = " << d.m_numpy_format<<  "\n";
-
-    if(d.m_pointer_to_data)
     {
-      if(!d.m_nb_characters)
-      {
-//        cout << "read data for " << d.name() << "\n";
-        m_file.read((char*)d.m_pointer_to_data,  d.m_size_of_data);
-      }
-      else
-      {
-        if( d.m_type_index_read == typeid(string) )
+      //    cout << "InputNumpyTreeFile::read_next_entrie = " << d.m_name << "\ttype = " << d.m_numpy_format<<  "\n";
+
+      if(d.m_pointer_to_data)
         {
-//          char buffer[d.m_nb_characters];
-          m_file.read(d.buffer_read,  d.m_size_of_data);
-          ((string*)d.m_pointer_to_data)->assign(d.buffer_read);
+          if(!d.m_nb_characters)
+            {
+              //        cout << "read data for " << d.name() << "\n";
+              m_file.read((char*)d.m_pointer_to_data,  d.m_size_of_data);
+            }
+          else
+            {
+              if( d.m_type_index_read == typeid(string) )
+                {
+                  //          char buffer[d.m_nb_characters];
+                  m_file.read(d.buffer_read,  d.m_size_of_data);
+                  ((string*)d.m_pointer_to_data)->assign(d.buffer_read);
+                }
+              else
+                m_file.read((char*)d.m_pointer_to_data,  d.m_size_of_data);
+            }
+
         }
-        else
-          m_file.read((char*)d.m_pointer_to_data,  d.m_size_of_data);
-      }
-
+      else
+        {
+          m_file.seekg((size_t )m_file.tellg() + d.m_size_of_data);
+        }
     }
-    else
-    {
-        m_file.seekg((size_t )m_file.tellg() + d.m_size_of_data);
-    }
-  }
 
-//  cout << "1. current pos = " << m_file.tellg() << " end = " << m_file.end << "eof = " <<  m_file.eof() << "data_to_read()"   << data_to_read() <<   "\n";
+  //  cout << "1. current pos = " << m_file.tellg() << " end = " << m_file.end << "eof = " <<  m_file.eof() << "data_to_read()"   << data_to_read() <<   "\n";
 
 }
 
@@ -591,59 +582,59 @@ void GateInputNumpyTreeFile::read_variable(const std::string &name, void *p, std
     throw std::logic_error("read_header not called");
 
   for (auto&& d : m_vector_of_pointer_to_data)
-  {
-    if(name == d.name())
     {
-      if(t_index == typeid(string))
-      {
-
-        if(d.m_type_index != typeid(string))
-          throw GateTypeMismatchHeaderException("Provided a string for non string variable");
-
-        d.m_type_index_read = t_index;
-        d.buffer_read = new char[d.m_nb_characters];
-        d.m_pointer_to_data = p;
-        return;
-      }
-
-      if(t_index == typeid(char*))
-      {
-        if(d.m_type_index != typeid(string))
-          throw GateTypeMismatchHeaderException("Provided a char* for non string variable");
-        d.m_type_index_read = t_index;
-        d.m_pointer_to_data = p;
-        return;
-      }
-
-
-      if(t_index != d.m_type_index)
-      {
-
-        std::stringstream ss;
-        if (d.m_type_index != typeid(string)) // no typeid(char*) in m_tmap_cppToNumpy
-          ss << "type_index given to store '" << name <<"' has not the right type (given " << m_tmap_cppToNumpy.at(t_index) << " but need " << m_tmap_cppToNumpy.at(d.m_type_index) << ")";
-        else
+      if(name == d.name())
         {
-          ss << "TODO: make a message here";
+          if(t_index == typeid(string))
+            {
+
+              if(d.m_type_index != typeid(string))
+                throw GateTypeMismatchHeaderException("Provided a string for non string variable");
+
+              d.m_type_index_read = t_index;
+              d.buffer_read = new char[d.m_nb_characters];
+              d.m_pointer_to_data = p;
+              return;
+            }
+
+          if(t_index == typeid(char*))
+            {
+              if(d.m_type_index != typeid(string))
+                throw GateTypeMismatchHeaderException("Provided a char* for non string variable");
+              d.m_type_index_read = t_index;
+              d.m_pointer_to_data = p;
+              return;
+            }
+
+
+          if(t_index != d.m_type_index)
+            {
+
+              std::stringstream ss;
+              if (d.m_type_index != typeid(string)) // no typeid(char*) in m_tmap_cppToNumpy
+                ss << "type_index given to store '" << name <<"' has not the right type (given " << m_tmap_cppToNumpy.at(t_index) << " but need " << m_tmap_cppToNumpy.at(d.m_type_index) << ")";
+              else
+                {
+                  ss << "TODO: make a message here";
+                }
+
+              throw GateTypeMismatchHeaderException(ss.str());
+            }
+
+
+          if(this->m_tmapOfSize[t_index] !=  this->m_tmapOfSize[d.m_type_index] )
+            {
+              std::stringstream ss;
+              ss << "object given to store '" << name <<"' has not the right size (given " << this->m_tmapOfSize[t_index] <<" but need " << this->m_tmapOfSize[d.m_type_index] << ")";
+              throw GateTypeMismatchHeaderException(ss.str());
+            }
+
+          d.m_pointer_to_data = p;
+          d.m_type_index_read = t_index;
+          return;
         }
 
-        throw GateTypeMismatchHeaderException(ss.str());
-      }
-
-
-      if(this->m_tmapOfSize[t_index] !=  this->m_tmapOfSize[d.m_type_index] )
-      {
-        std::stringstream ss;
-        ss << "object given to store '" << name <<"' has not the right size (given " << this->m_tmapOfSize[t_index] <<" but need " << this->m_tmapOfSize[d.m_type_index] << ")";
-        throw GateTypeMismatchHeaderException(ss.str());
-      }
-
-      d.m_pointer_to_data = p;
-      d.m_type_index_read = t_index;
-      return;
     }
-
-  }
   {
     std::stringstream ss;
     ss << "Variable named '" << name << "' not found !";
@@ -665,12 +656,12 @@ bool GateInputNumpyTreeFile::data_to_read()
 {
   if(!m_read_header_called)
     throw std::logic_error("read_header not called");
-  return m_lenght_of_file > m_file.tellg();
+  return m_length_of_file > (size_t)m_file.tellg(); // cast to remove warning
 }
 
 void GateInputNumpyTreeFile::read_variable(const std::string &name, std::string *p)
 {
-    read_variable(name, p, typeid(string));
+  read_variable(name, p, typeid(string));
 }
 
 
@@ -692,13 +683,13 @@ uint64_t GateInputNumpyTreeFile::nb_elements()
 
 void GateInputNumpyTreeFile::read_entrie(const uint64_t &i)
 {
-//  m_file.seekg(m_start_of_data);
+  //  m_file.seekg(m_start_of_data);
 
   size_t one_element = 0;
   for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
-  {
-    one_element += d.m_size_of_data;
-  }
+    {
+      one_element += d.m_size_of_data;
+    }
 
   m_file.seekg(m_start_of_data + i * one_element);
   this->read_next_entrie();
@@ -706,12 +697,12 @@ void GateInputNumpyTreeFile::read_entrie(const uint64_t &i)
 
 
   for(uint64_t nb_seek = 0; nb_seek < i; ++nb_seek)
-  {
-    for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
     {
-      m_file.seekg((size_t )m_file.tellg() + d.m_size_of_data);
+      for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
+        {
+          m_file.seekg((size_t )m_file.tellg() + d.m_size_of_data);
+        }
     }
-  }
   this->read_next_entrie();
 }
 

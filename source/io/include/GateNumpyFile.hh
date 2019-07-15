@@ -152,7 +152,7 @@ public:
   std::type_index get_type_of_variable(const std::string &name) override;
 
 private:
-  size_t  m_lenght_of_file;
+  size_t  m_length_of_file;
   static bool s_registered;
   bool m_read_header_called;
   size_t m_start_of_data;

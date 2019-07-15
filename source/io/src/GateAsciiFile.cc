@@ -377,7 +377,7 @@ bool GateInputAsciiTreeFile::has_variable(const std::string &name)
   return false;
 }
 
-type_index GateInputAsciiTreeFile::get_type_of_variable(const std::string &name)
+type_index GateInputAsciiTreeFile::get_type_of_variable(const std::string & /*name*/)
 {
   if(!m_read_header_called)
     throw std::logic_error("read_header not called");
