@@ -7,7 +7,7 @@
   ----------------------*/
 
 #include "GatePhaseSpaceActorMessenger.hh"
-#ifdef G4ANALYSIS_USE_ROOT
+
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
@@ -331,4 +331,4 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
 }
 //-----------------------------------------------------------------------------
 
-#endif
+

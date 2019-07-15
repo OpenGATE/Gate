@@ -6,19 +6,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-#ifdef G4ANALYSIS_USE_ROOT
+
 #ifndef GATEPHASESPACESOURCE_HH
 #define GATEPHASESPACESOURCE_HH
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TChain.h"
-#include "TH1D.h"
-#include "TMath.h"
-#include "TKey.h"
-#include "TEntryList.h"
+#include "GateConfiguration.h"
 
 #include "G4Event.hh"
 #include "globals.hh"
@@ -37,6 +29,8 @@ See LICENSE.md for further details
 //#include "GateRunManager.hh"
 
 #include "GateUserActions.hh"
+#include "GateTreeFileManager.hh"
+#include <typeindex>
 
 struct iaea_record_type;
 struct iaea_header_type;
@@ -83,7 +77,7 @@ public:
 
 protected:
 
-  TChain *T;
+
   //TEntryList
   std::vector<unsigned int> pListOfSelectedEvents;
 
@@ -111,7 +105,7 @@ protected:
   float dx, dy, dz;
   float ftime;
   double dtime;
-  EDataType time_type;
+  std::type_index time_type = typeid(nullptr);
   float weight;
 
   //  char volumeName;
@@ -152,8 +146,10 @@ protected:
   double mAngle;
 
   bool mUseNbOfParticleAsIntensity;
+  GateInputTreeFileChain mChain;
+
 
 };
 
 #endif
-#endif
+
