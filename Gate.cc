@@ -67,7 +67,7 @@ void printHelpAndQuit( G4String msg )
   std::cout << std::endl;
   std::cout << "  -h, --help             print the help" << std::endl;
   std::cout << "  -v, --version          print the version" << std::endl;
-  std::cout << "  -g, --quietg4          quiet Geant4 verbose" << std::endl;
+  std::cout << "  -g, --g4quiet          quiet Geant4 verbose" << std::endl;
   std::cout << "  -a, --param            set alias. Format is '[alias1,value1] [alias2,value2] ...'" << std::endl;
   std::cout << "  --d                    use the DigiMode" << std::endl;
   std::cout << "  --qt                   use the Qt visualization mode" << std::endl;
@@ -239,7 +239,7 @@ int main( int argc, char* argv[] )
       static struct option longOptions[] = {
                                             { "help", no_argument, 0, 'h' },
                                             { "version", no_argument, 0, 'v' },
-                                            { "g4verbose", no_argument, 0, 'g'},
+                                            { "g4quiet", no_argument, 0, 'g'},
                                             { "d", no_argument, &isDigiMode, 1 },
                                             { "qt", no_argument, &isQt, 1 },
                                             { "param", required_argument, 0, 'a' },
