@@ -243,6 +243,7 @@ int main( int argc, char* argv[] )
       if( c == -1 ) break;
 
       // Analyzing each option
+      std::ostringstream ss;
       switch( c )
         {
         case 0:
@@ -253,7 +254,8 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 8.2" << std::endl;
+          ss << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+          std::cout << "Gate version is 8.2 ; Geant4 version is " << ss.str() << std::endl;
           exit(0);
           break;
         case 'a':
