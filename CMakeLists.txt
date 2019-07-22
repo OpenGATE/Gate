@@ -222,6 +222,7 @@ INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 # Setup include directory for this project
 INCLUDE(${Geant4_USE_FILE})
 INCLUDE_DIRECTORIES(
+  ${PROJECT_SOURCE_DIR}/source/io/include
   ${PROJECT_SOURCE_DIR}/source/arf/include
   ${PROJECT_SOURCE_DIR}/source/geometry/include
   ${PROJECT_SOURCE_DIR}/source/physics/include
@@ -232,6 +233,7 @@ INCLUDE_DIRECTORIES(
 #=========================================================
 # Locate sources and headers for this project
 FILE(GLOB sources
+  ${PROJECT_SOURCE_DIR}/source/io/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/arf/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
@@ -241,6 +243,7 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc)
 
 FILE(GLOB headers
+  ${PROJECT_SOURCE_DIR}/source/io/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
@@ -332,7 +335,7 @@ ENDIF()
 ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 SET(EXTRA_GATE_LINK_LIBRARIES ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
 TARGET_LINK_LIBRARIES(GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}  )
-MESSAGE("Gate links to: ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}"  )
+#MESSAGE("Gate links to: ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}"  )
 TARGET_LINK_LIBRARIES(Gate GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 #TARGET_LINK_LIBRARIES(Gate GateImpl ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${EXTRA_GATE_LINK_LIBRARIES}  )
 
@@ -346,7 +349,8 @@ INSTALL(TARGETS Gate DESTINATION bin)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 # Additionally, we force the c++11 std. This is mandatory for Geant4 >= 10.2.
 # TODO: see github issue #211
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+
 #=========================================================
 
 #=========================================================
