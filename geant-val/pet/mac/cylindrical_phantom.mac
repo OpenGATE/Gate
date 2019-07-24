@@ -1,0 +1,12 @@
+
+# Define a cylindrical box 
+/gate/world/daughters/name         phantom
+/gate/world/daughters/insert       cylinder
+/gate/phantom/geometry/setRmin     0.0 cm
+/gate/phantom/geometry/setRmax     10.0 cm
+/gate/phantom/geometry/setHeight   20. cm
+/gate/phantom/setMaterial          Water
+/gate/phantom/vis/setColor         green
+
+# Define the sensitive detector
+# /gate/phantom/attachPhantomSD

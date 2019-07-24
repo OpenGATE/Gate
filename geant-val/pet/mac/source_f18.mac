@@ -1,0 +1,16 @@
+
+# fluor 18 positron emission source
+/gate/source/addSource                 f18
+/gate/source/f18/gps/particle          e+
+/gate/source/f18/gps/energytype        Fluor18
+/gate/source/f18/setActivity           200 kilobecquerel
+/gate/source/f18/setForcedUnstableFlag true
+/gate/source/f18/setForcedHalfLife     6586.2 s
+/gate/source/f18/gps/angtype           iso
+
+/gate/source/f18/gps/shape 		Cylinder
+/gate/source/f18/gps/radius 	0.5 mm
+/gate/source/f18/gps/halfz 		0.5 mm
+/gate/source/f18/gps/angtype 	iso
+/gate/source/f18/gps/centre 	0. 0. 0. cm
+

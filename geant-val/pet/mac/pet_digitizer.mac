@@ -1,0 +1,48 @@
+
+# The singles
+/gate/digitizer/Singles/insert                        adder
+
+/gate/digitizer/Singles/insert                        readout
+/gate/digitizer/Singles/readout/setDepth              2
+
+/gate/digitizer/Singles/insert                        blurring
+/gate/digitizer/Singles/blurring/setResolution        0.26
+/gate/digitizer/Singles/blurring/setEnergyOfReference 511. keV
+
+/gate/digitizer/Singles/insert                        thresholder
+/gate/digitizer/Singles/thresholder/setThreshold      350. keV
+/gate/digitizer/Singles/insert                        upholder
+/gate/digitizer/Singles/upholder/setUphold            650. keV
+
+
+# ATTACHEMENT TO THE SYSTEM 
+#/gate/systems/system_name/system_level_name/attach volume_name 
+#..
+#..
+
+# Deadtime 
+# the deadtime is applied on the "blockDetector" defined in pet_head.mac
+# /gate/digitizer/Singles/insert deadtime 
+# /gate/digitizer/Singles/deadtime/setDeadTime 3000 ns
+# /gate/digitizer/Singles/deadtime/setMode nonparalysable 
+# #/gate/digitizer/Singles/deadtime/chooseDTVolume blockDetector
+# /gate/digitizer/Singles/deadtime/chooseDTVolume ecat
+# #/gate/digitizer/Singles/deadtime/chooseDTVolume crystalUnit
+# /gate/digitizer/Singles/deadtime/setBufferSize 1 MB 
+# /gate/digitizer/Singles/deadtime/setBufferMode 0
+
+
+#	Coincidence sorter
+# Define a delay coincidence sorter 
+# To estimate random coincidences
+
+/gate/digitizer/Coincidences/setWindow          10 ns
+#/gate/digitizer/Coincidences/MultiplesPolicy    takeWinnerOfGoods
+
+/gate/digitizer/name                            delay
+/gate/digitizer/insert                          coincidenceSorter
+/gate/digitizer/delay/setWindow                 10 ns
+/gate/digitizer/delay/setOffset                 500 ns
+#/gate/digitizer/delay/MultiplesPolicy           takeWinnerOfGoods
+
+

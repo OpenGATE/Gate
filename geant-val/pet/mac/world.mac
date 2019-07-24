@@ -1,0 +1,12 @@
+
+# Material Database
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# World
+/gate/world/geometry/setXLength 4 m
+/gate/world/geometry/setYLength 4 m
+/gate/world/geometry/setZLength 4 m
+/gate/world/vis/setColor white
+/gate/world/vis/forceWireframe
+/gate/world/setMaterial Air
+

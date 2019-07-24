@@ -1,0 +1,19 @@
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stat.txt
+/gate/actor/stat/saveEveryNSeconds 60
+
+
+# Define a root listmode file output
+
+/gate/output/root/enable
+/gate/output/root/setFileName             output/pet_output_low
+
+/gate/output/root/setRootHitFlag          1
+/gate/output/root/setRootSinglesFlag      1
+/gate/output/root/setRootCoincidencesFlag 1
+/gate/output/root/setRootdelayFlag        1
+/gate/output/root/setRootNtupleFlag       0
+
+
+/gate/phantom/attachPhantomSD

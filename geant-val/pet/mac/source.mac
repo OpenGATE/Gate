@@ -1,0 +1,38 @@
+
+# fluor 18 positron emission source
+/gate/source/addSource                 f18
+/gate/source/f18/gps/particle          e+
+/gate/source/f18/gps/energytype        Fluor18
+/gate/source/f18/setActivity           1000 becquerel
+/gate/source/f18/setForcedUnstableFlag true
+/gate/source/f18/setForcedHalfLife     6586.2 s
+/gate/source/f18/gps/angtype           iso
+
+/gate/source/f18/gps/shape 		Cylinder
+/gate/source/f18/gps/radius 	0.5 mm
+/gate/source/f18/gps/halfz 		0.5 mm
+/gate/source/f18/gps/angtype 	iso
+/gate/source/f18/gps/centre 	0. 0. 0. cm
+#/gate/source/f18/gps/centre 	5. 5. 0. cm
+
+# /gate/source/f18/visualize 		cyan
+
+
+# ---------------------------------------
+# ALTERNATIVE: direct gamma/gamma emission
+
+#/gate/source/addSource twogamma
+#/gate/source/twogamma/setActivity 1000 Bq
+#/gate/source/twogamma/setType backtoback
+#/gate/source/twogamma/gps/particle gamma
+#/gate/source/twogamma/gps/energytype Mono
+#/gate/source/twogamma/gps/monoenergy 0.511 MeV
+
+#/gate/source/twogamma/gps/shape 	Cylinder
+#/gate/source/twogamma/gps/radius 	0.5 mm
+#/gate/source/twogamma/gps/halfz 	0.5 mm
+#/gate/source/twogamma/gps/angtype 	iso
+#/gate/source/twogamma/gps/centre 	0. 0. 0. cm
+#/gate/source/twogamma/gps/centre 	5. 5. 0. cm
+
+/gate/source/list

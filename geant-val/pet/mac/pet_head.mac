@@ -1,0 +1,62 @@
+
+# Define a pet system
+/gate/world/daughters/name            ecat
+/gate/world/daughters/insert		      cylinder
+/gate/ecat/placement/setTranslation   0.0 0.0 0.0 cm
+/gate/ecat/geometry/setRmax           50 cm
+/gate/ecat/geometry/setRmin           43 cm
+/gate/ecat/geometry/setHeight         25 cm
+/gate/ecat/setMaterial                Air
+/gate/ecat/vis/forceWireframe
+/gate/ecat/vis/setColor               red
+
+#	Block
+/gate/ecat/daughters/name                     blockDetector
+/gate/ecat/daughters/insert                   box
+/gate/blockDetector/placement/setTranslation  46 0 0 cm
+/gate/blockDetector/geometry/setXLength       2 cm
+/gate/blockDetector/geometry/setYLength       5.35 cm # 12*4mm for crystal + 11*0.5 for gaps
+/gate/blockDetector/geometry/setZLength       5.35 cm
+/gate/blockDetector/setMaterial               Air
+/gate/ecat/vis/forceWireframe
+/gate/blockDetector/vis/setColor              green
+
+#	Crystal
+/gate/blockDetector/daughters/name             crystalUnit
+/gate/blockDetector/daughters/insert           box
+/gate/crystalUnit/placement/setTranslation     0.0 0.0 0.0 mm
+/gate/crystalUnit/geometry/setXLength          20. mm
+/gate/crystalUnit/geometry/setYLength          4. mm
+/gate/crystalUnit/geometry/setZLength          4. mm
+/gate/crystalUnit/setMaterial                  LSO
+/gate/crystalUnit/vis/setColor                 yellow
+#/gate/crystalUnit/vis/setVisible              0
+
+# Repeat the block and the crystal
+# Block: ring(x46) & linear(x4)
+# Crystal: cubicArray(12x12)
+/gate/blockDetector/repeaters/insert                  ring
+/gate/blockDetector/ring/setRepeatNumber              46
+
+/gate/blockDetector/repeaters/insert                  linear
+/gate/blockDetector/linear/setRepeatNumber            4
+/gate/blockDetector/linear/setRepeatVector            0.0 0.0 55 mm
+
+/gate/crystalUnit/repeaters/insert                    cubicArray
+/gate/crystalUnit/cubicArray/setRepeatNumberX         1
+/gate/crystalUnit/cubicArray/setRepeatNumberY         12
+/gate/crystalUnit/cubicArray/setRepeatNumberZ         12
+/gate/crystalUnit/cubicArray/setRepeatVector          0.0 4.5 4.5 mm
+
+# Attach the volumes to the system tree
+/gate/systems/ecat/block/attach     blockDetector
+/gate/systems/ecat/crystal/attach   crystalUnit
+
+# Definition of the sensitive detector
+/gate/crystalUnit/attachCrystalSD
+
+
+# Verbosity
+/gate/systems/ecat/describe
+
+
