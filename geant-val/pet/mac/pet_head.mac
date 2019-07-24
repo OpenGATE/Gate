@@ -1,7 +1,7 @@
 
 # Define a pet system
 /gate/world/daughters/name            ecat
-/gate/world/daughters/insert		      cylinder
+/gate/world/daughters/insert	      cylinder
 /gate/ecat/placement/setTranslation   0.0 0.0 0.0 cm
 /gate/ecat/geometry/setRmax           50 cm
 /gate/ecat/geometry/setRmin           43 cm
