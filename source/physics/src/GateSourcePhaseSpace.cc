@@ -8,7 +8,7 @@
 
 #include "GateConfiguration.h"
 
-#ifdef G4ANALYSIS_USE_ROOT
+
 
 #include "GateSourcePhaseSpace.hh"
 #include "GateIAEAHeader.h"
@@ -25,11 +25,16 @@
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
 
+
+
 typedef unsigned int uint;
 
 // ----------------------------------------------------------------------------------
-GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
+GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):
+GateVSource( name )
 {
+
+
   mCurrentParticleNumber=0;
   mNumberOfParticlesInFile=0;
   mTotalNumberOfParticles=0;
@@ -77,7 +82,7 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
   x = y = z = dx = dy = dz = px = py = pz = energy  = 0.;
   dtime= -1.;
   ftime= -1.;
-  time_type = EDataType::kOther_t;
+
   weight = 1.;
   strcpy(particleName, "");
 
@@ -114,53 +119,53 @@ void GateSourcePhaseSpace::Initialize()
   InitializeTransformation();
   mTotalSimuTime = GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
 
-  if (mFileType == "rootFile"){
-    T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
-
-    for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
-      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
-      T->Add(listOfPhaseSpaceFile[i]);
-    }
-
-    mTotalNumberOfParticles = T->GetEntries();
-    mNumberOfParticlesInFile = mTotalNumberOfParticles;
-
-    if (T->GetListOfBranches()->FindObject("ParticleName")) {
-      T->SetBranchAddress("ParticleName",&particleName);
-    }
-    T->SetBranchAddress("Ekine",&energy);
-    T->SetBranchAddress("X",&x);
-    T->SetBranchAddress("Y",&y);
-    T->SetBranchAddress("Z",&z);
-    T->SetBranchAddress("dX",&dx);
-    T->SetBranchAddress("dY",&dy);
-    T->SetBranchAddress("dZ",&dz);
-    if (T->GetListOfBranches()->FindObject("Weight")) {
-      T->SetBranchAddress("Weight",&weight);
-    }
-    auto tob = T->GetListOfBranches()->FindObject("Time");
-    if (tob) {
-      auto tt = dynamic_cast<TBranch*>(tob);
-      TClass * expectedClass;
-      tt-> GetExpectedType(expectedClass, time_type);
-      if (time_type == EDataType::kDouble_t)
-        T->SetBranchAddress("Time",&dtime);
-      else
-        T->SetBranchAddress("Time",&ftime);
-    }
-
-    if (mRmax>0){
-      for(int i = 0; i < mTotalNumberOfParticles;i++){
-        T->GetEntry(i);
-        if (std::abs(x)<mRmax && std::abs(y)<mRmax)
-          {
-            pListOfSelectedEvents.push_back(i);
-          }
-      }
-      mTotalNumberOfParticles = pListOfSelectedEvents.size();
-      mNumberOfParticlesInFile = mTotalNumberOfParticles;
-    }
-  }
+//  if (mFileType == "rootFile"){
+//    T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
+//
+//    for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
+//      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
+//      T->Add(listOfPhaseSpaceFile[i]);
+//    }
+//
+//    mTotalNumberOfParticles = T->GetEntries();
+//    mNumberOfParticlesInFile = mTotalNumberOfParticles;
+//
+//    if (T->GetListOfBranches()->FindObject("ParticleName")) {
+//      T->SetBranchAddress("ParticleName",&particleName);
+//    }
+//    T->SetBranchAddress("Ekine",&energy);
+//    T->SetBranchAddress("X",&x);
+//    T->SetBranchAddress("Y",&y);
+//    T->SetBranchAddress("Z",&z);
+//    T->SetBranchAddress("dX",&dx);
+//    T->SetBranchAddress("dY",&dy);
+//    T->SetBranchAddress("dZ",&dz);
+//    if (T->GetListOfBranches()->FindObject("Weight")) {
+//      T->SetBranchAddress("Weight",&weight);
+//    }
+//    auto tob = T->GetListOfBranches()->FindObject("Time");
+//    if (tob) {
+//      auto tt = dynamic_cast<TBranch*>(tob);
+//      TClass * expectedClass;
+//      tt-> GetExpectedType(expectedClass, time_type);
+//      if (time_type == EDataType::kDouble_t)
+//        T->SetBranchAddress("Time",&dtime);
+//      else
+//        T->SetBranchAddress("Time",&ftime);
+//    }
+//
+//    if (mRmax>0){
+//      for(int i = 0; i < mTotalNumberOfParticles;i++){
+//        T->GetEntry(i);
+//        if (std::abs(x)<mRmax && std::abs(y)<mRmax)
+//          {
+//            pListOfSelectedEvents.push_back(i);
+//          }
+//      }
+//      mTotalNumberOfParticles = pListOfSelectedEvents.size();
+//      mNumberOfParticlesInFile = mTotalNumberOfParticles;
+//    }
+//  }
 
   if (mFileType == "IAEAFile"){
     int totalEvent = 0;
@@ -182,12 +187,73 @@ void GateSourcePhaseSpace::Initialize()
       }
     }
     if (mRmax>0) mTotalNumberOfParticles = pListOfSelectedEvents.size();
+  } else
+  {
+
+    for(auto file: listOfPhaseSpaceFile )
+    {
+      GateMessage("Beam", 1, "Phase Space Source. Read file " << file << Gateendl);
+
+      G4cout << "Phase Space Source. Read file " << file << Gateendl;
+
+      auto extension = getExtension(file);
+      mChain.add_file(file, extension);
+    }
+    mChain.set_tree_name("PhaseSpace");
+    mChain.read_header();
+
+    mTotalNumberOfParticles = mChain.nb_elements();
+    mNumberOfParticlesInFile = mTotalNumberOfParticles;
+
+    if (mChain.has_variable("ParticleName")) {
+      mChain.read_variable("ParticleName",particleName, 64);
+    }
+    mChain.read_variable("Ekine", &energy);
+
+    mChain.read_variable("X",&x);
+    mChain.read_variable("Y",&y);
+    mChain.read_variable("Z",&z);
+    mChain.read_variable("dX",&dx);
+    mChain.read_variable("dY",&dy);
+    mChain.read_variable("dZ",&dz);
+
+    if(mChain.has_variable("Weight"))
+      mChain.read_variable("Weight", &weight);
+
+    if(mChain.has_variable("Time"))
+    {
+      if(mChain.get_type_of_variable("Time") == typeid(float))
+      {
+        mChain.read_variable("Time",&ftime);
+        time_type = typeid(float);
+      }
+      else
+      {
+        mChain.read_variable("Time",&dtime);
+        time_type = typeid(double);
+      }
+    }
+
+    if (mRmax>0){
+      for(int i = 0; i < mTotalNumberOfParticles;i++){
+        mChain.read_entrie(i);
+        if (std::abs(x)<mRmax && std::abs(y)<mRmax)
+          {
+            pListOfSelectedEvents.push_back(i);
+          }
+      }
+      mTotalNumberOfParticles = pListOfSelectedEvents.size();
+      mNumberOfParticlesInFile = mTotalNumberOfParticles;
+    }
   }
 
   mInitialized  = true;
 
   if (mUseNbOfParticleAsIntensity)
     SetIntensity(mNumberOfParticlesInFile);
+
+  G4cout << "Phase Space Source. Total nb of particles in PhS "
+         << mNumberOfParticlesInFile << Gateendl;
 
   GateMessage("Beam", 1, "Phase Space Source. Total nb of particles in PhS "
               << mNumberOfParticlesInFile << Gateendl);
@@ -198,8 +264,8 @@ void GateSourcePhaseSpace::Initialize()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 {
-  if (pListOfSelectedEvents.size()) T->GetEntry(pListOfSelectedEvents[mCurrentParticleNumberInFile]);
-  else T->GetEntry(mCurrentParticleNumberInFile);
+  if (pListOfSelectedEvents.size()) mChain.read_entrie(pListOfSelectedEvents[mCurrentParticleNumberInFile]);
+  else mChain.read_entrie(mCurrentParticleNumberInFile);
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   pParticleDefinition = particleTable->FindParticle(particleName);
@@ -231,8 +297,8 @@ void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 
   mParticleMomentum = G4ThreeVector(px,py,pz);
 
-  if (time_type == EDataType::kDouble_t and dtime>0) mParticleTime = dtime;
-  if (time_type == EDataType::kFloat_t and ftime>0) mParticleTime = ftime;
+  if (time_type == typeid(double) and dtime>0) mParticleTime = dtime;
+  if (time_type == typeid(float) and ftime>0) mParticleTime = ftime;
 }
 // ----------------------------------------------------------------------------------
 
@@ -319,12 +385,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
 
   if (mCurrentUse==0){
     //mCurrentUse=-1;
-    if (mFileType == "rootFile") {
-      //if (mCurrentParticleNumber>=mTotalNumberOfParticles) {mCurrentParticleNumberInFile=0;}
-      if (mCurrentParticleNumberInFile>=mNumberOfParticlesInFile) {mCurrentParticleNumberInFile=0;}
-      GenerateROOTVertex( event );
-      mCurrentParticleNumberInFile++;
-    }
+
     if (mFileType == "IAEAFile"){
       if (mCurrentParticleNumberInFile>=mNumberOfParticlesInFile || mCurrentParticleNumberInFile == -1){
         mCurrentParticleNumberInFile=0;
@@ -355,6 +416,10 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
       mCurrentParticleNumberInFile++;
       mCurrentParticleInIAEAFiles++;
       mCurrentUsedParticleInIAEAFiles++;
+    } else {
+      if (mCurrentParticleNumberInFile>=mNumberOfParticlesInFile) {mCurrentParticleNumberInFile=0;}
+      GenerateROOTVertex( event );
+      mCurrentParticleNumberInFile++;
     }
     mResidu = mRequestedNumberOfParticlesPerRun-mTotalNumberOfParticles*mLoop;
   }
@@ -429,18 +494,24 @@ void GateSourcePhaseSpace::AddFile(G4String file)
   G4String extension = getExtension(file);
 
   if (listOfPhaseSpaceFile.size()==0){
-    if (extension == "root") mFileType = "rootFile";
-    else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
-    else GateError( "Unknow phase space file extension. Knowns extensions are : "
-                    << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
-    listOfPhaseSpaceFile.push_back(file);
-    return;
+    if (extension == "IAEAphsp" || extension == "IAEAheader" )
+      mFileType = "IAEAFile";
   }
 
-  if (extension == "root" && mFileType == "rootFile") listOfPhaseSpaceFile.push_back(file);
-  else if ((extension == "IAEAphsp" || extension == "IAEAheader") && mFileType == "IAEAFile") listOfPhaseSpaceFile.push_back(file);
-  else GateError( "Cannot add phase space files with different extension");
+  if ((extension == "IAEAphsp" || extension == "IAEAheader"))
+  {
+    if(mFileType == "IAEAFile")
+      listOfPhaseSpaceFile.push_back(file);
+    else
+      GateError( "Cannot mix phase IAEAFile space files with others types");
+  }
 
+  G4cout << "GateSourcePhaseSpace::AddFile Add " << file << G4endl;
+
+  if(extension != "npy" && extension != "root")
+    GateError( "Unknow phase space file extension. Knowns extensions are : " << Gateendl << ".IAEAphsp (or IAEAheader), .root, .npy\n");
+
+  listOfPhaseSpaceFile.push_back(file);
 }
 // ----------------------------------------------------------------------------------
 
@@ -525,4 +596,4 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
 }
 // ----------------------------------------------------------------------------------
 
-#endif
+

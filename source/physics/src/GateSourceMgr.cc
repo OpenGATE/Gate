@@ -31,6 +31,7 @@
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
 #include "GateExtendedVSource.hh"
+#include "GateSourcePhaseSpace.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
