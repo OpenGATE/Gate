@@ -7,7 +7,7 @@
 # Define a root listmode file output
 
 /gate/output/root/enable
-/gate/output/root/setFileName             output/pet_output_low
+/gate/output/root/setFileName             output/pet
 
 /gate/output/root/setRootHitFlag          1
 /gate/output/root/setRootSinglesFlag      1
