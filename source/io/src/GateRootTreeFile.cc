@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 
 #include "TLeaf.h"
 #include "TROOT.h"
