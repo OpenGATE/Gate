@@ -1,6 +1,6 @@
 
 # Visualisation
-/control/execute mac/visu.mac
+# /control/execute mac/visu.mac
 
 # Verbosity
 /control/execute mac/verbose.mac
