@@ -234,7 +234,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetSourceID( m_sourceProgressiveNumber );
       }
       else if (sourceGeomType == "fastY90") {
-        source = new GateSourceFastY90( sourceName );	
+        source = new GateSourceFastY90( sourceName );
         source->SetType("fastY90");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
