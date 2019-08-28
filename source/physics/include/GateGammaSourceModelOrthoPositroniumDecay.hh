@@ -46,11 +46,11 @@ class GateGammaSourceModelOrthoPositroniumDecay : public GateGammaSourceModel
   * */
  static GateGammaSourceModelOrthoPositroniumDecay* GetInstance();
 
- private:
+ protected:
   Double_t calculate_mQED(Double_t mass_e, Double_t w1, Double_t w2, Double_t w3) const;
   TRandom3 m_random_gen = TRandom3(0);
 
- private:
+ protected:
  /** Constructor
   * */
  GateGammaSourceModelOrthoPositroniumDecay();

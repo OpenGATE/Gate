@@ -42,7 +42,7 @@ class GateGammaSourceModelParaPositroniumDecay : public GateGammaSourceModel
    * @return: class object pointer
    * */
   static GateGammaSourceModelParaPositroniumDecay *GetInstance();
- private:
+ protected:
   /** Constructor
    * */
   GateGammaSourceModelParaPositroniumDecay();

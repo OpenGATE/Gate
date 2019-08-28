@@ -46,7 +46,7 @@ class GateGammaSourceModelSingleGamma : public GateGammaSourceModel
   * */
  static GateGammaSourceModelSingleGamma *GetInstance();
 
- private:
+ protected:
  /** Constructor
  * */
  GateGammaSourceModelSingleGamma();

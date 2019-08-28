@@ -22,7 +22,7 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
 
   void SetNewValue( G4UIcommand* command, G4String newValue );
 
- private:
+ protected:
   void InitCommands();
   void DeleteCommands();
 
