@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 #include "GateToASCIIMessenger.hh"
 #include "GateToASCII.hh"
@@ -92,8 +92,8 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
   delete OutFileHitsCmd;
   delete OutFileVoxelCmd;
   delete SetFileNameCmd;
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    delete OutputChannelCmdList[i];
+  // for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
+  //   delete OutputChannelCmdList[i];
 }
 //--------------------------------------------------------------------------------------------------------
 

@@ -39,8 +39,8 @@ GateDeadTime::GateDeadTime(GatePulseProcessorChain* itsChain,
 
 GateDeadTime::~GateDeadTime()
 {
-  if(m_deadTimeTable) delete(m_deadTimeTable);
-  if(m_bufferCurrentSize) delete(m_bufferCurrentSize);
+  // if(m_deadTimeTable) delete(m_deadTimeTable);
+  // if(m_bufferCurrentSize) delete(m_bufferCurrentSize);
   delete m_messenger;
 }
 
