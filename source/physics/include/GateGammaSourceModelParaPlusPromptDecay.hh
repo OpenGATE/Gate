@@ -41,11 +41,11 @@ class GateGammaSourceModelParaPlusPromptDecay : public GateGammaSourceModel
    * */
   static GateGammaSourceModelParaPlusPromptDecay *GetInstance();
 
- private:
+ protected:
   GateGammaSourceModelParaPlusPromptDecay();
   static GateGammaSourceModelParaPlusPromptDecay* ptrJPETParaPlusPromptDecayModel;
 
- private:
+ protected:
   void AddGammasFromParaPositronium( std::vector<G4PrimaryParticle*>& particles );
   void AddGammaFromDeexcitation( std::vector<G4PrimaryParticle*>& particles );
   G4ThreeVector GetRandomVectorOnSphere();

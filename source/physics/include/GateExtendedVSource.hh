@@ -53,7 +53,7 @@ public:
   * */
  void SetUnpolarizedParticlesGenerating( const bool use_unpolarized );
 
-private:
+protected:
  /** This function depends on user setting choose one correct model for simulation and associate with it pointer.
   * */
  bool InitModel();

@@ -37,7 +37,7 @@ public:
 
  G4String GetGammaSourceModelsNames() const;
 
-private:
+protected:
  GateExtendedVSourceManager();
  static GateExtendedVSourceManager* ptrSingletonJPETSourceManager;
  std::map<G4String,GateGammaSourceModel*> fGammaSourceModels;

@@ -105,10 +105,10 @@ class GateGammaSourceModel
 
   void SetGammaSourceModel( GateGammaModelPrimaryParticleInformation::GammaSourceModel model );
 
- private:
+ protected:
   G4ThreeVector calcPolarization( G4ThreeVector& d0, double angle_radians ) const;
 
- private:
+ protected:
   //Number of gamma quanta which model generate
   int fParticlesNumber = 0;
   //Positron momentum

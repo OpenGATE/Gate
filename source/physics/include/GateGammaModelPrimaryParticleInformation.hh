@@ -59,7 +59,7 @@ class GateGammaModelPrimaryParticleInformation : public G4VUserPrimaryParticleIn
   void setInitialPolarization( const G4ThreeVector& polarization );
   G4ThreeVector getInitialPolarization() const;
 
- private:
+ protected:
   GammaSourceModel fGammaSourceModel = GammaSourceModel::Unknown;
   GammaKind fGammaKind = GammaKind::GammaUnknown;
   G4ThreeVector fInitialPolarization = G4ThreeVector( 0, 0, 0 );
