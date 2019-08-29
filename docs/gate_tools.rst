@@ -38,16 +38,18 @@ All tools are also available to be use within your own Python script with, for e
 
 Tests: run 
 
+.. code-block:: python
   python -m unittest gatetools
 
 When developing, install with: 
 
+.. code-block:: python
   pip install -e . 
 
 Dependencies:
-- click: https://click.palletsprojects.com
-- uproot: https://github.com/scikit-hep/uproot
-- pydicom: https://pydicom.github.io/
-- tqdm: https://github.com/tqdm/tqdm
-- colored: https://gitlab.com/dslackw/colored
-- itk: https://itk.org/
+* click: https://click.palletsprojects.com
+* uproot: https://github.com/scikit-hep/uproot
+* pydicom: https://pydicom.github.io/
+* tqdm: https://github.com/tqdm/tqdm
+* colored: https://gitlab.com/dslackw/colored
+* itk: https://itk.org/
