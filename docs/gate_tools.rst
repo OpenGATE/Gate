@@ -9,14 +9,13 @@ GateTools
    
 The `GateTools <https://github.com/OpenGATE/GateTools>`_ repository contains a list of python command line tools to facilitate Gate simulations running and analysis. 
 
-Install with : `pip install gatetools`
+Install with ::
+   pip install gatetools
 
-Example of usage: 
-
-.. code-block::
+Example of usage::
    gate_image_convert -i input.dcm -o output.mhd  
-   gate_image_convert -i input.mhd -o output_float.mhd -p float  
-   gate_image_arithm -i *.mhd -o output.mhd -O sum  
+   gate_image_convert -i input.mhd -o output_float.mhd -p float 
+   gate_image_arithm -i *.mhd -o output.mhd -O sum 
    gate_gamma_index data/tps_dose.mhd result.XYZ/gate-DoseToWater.mhd -o gamma.mhd --dd 2 --dta 2.5 -u "%" -T 0.2
 
 Current list of command line tools. Use the flag `-h` to get print the help of each tool.
@@ -31,19 +30,16 @@ Current list of command line tools. Use the flag `-h` to get print the help of e
 | `gate_gamma_index`      | Compute gamma index between images|
 
 All tools are also available to be use within your own Python script with, for example: 
-
-.. code-block:: python
+::
    import gatetools as gt  
    gt.image_convert(inputImage, pixeltype)
 
 Tests: run 
-
-.. code-block:: python
+::
   python -m unittest gatetools
 
 When developing, install with: 
-
-.. code-block:: python
+::
   pip install -e . 
 
 Dependencies:
