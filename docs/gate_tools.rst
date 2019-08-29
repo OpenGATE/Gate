@@ -1,3 +1,6 @@
+
+# GateTools
+
 .. toctree::
    :maxdepth: 1
    :numbered:
@@ -5,28 +8,40 @@
    
 The `GateTools <https://github.com/OpenGATE/GateTools>`_ repository contains a list of python command line tools to facilitate Gate simulations running and analysis. 
 
-To install the package, use ::
+Install with : `pip install gatetools`
 
-  pip install gatetools
+Example of usage: 
+```
+gate_image_convert -i input.dcm -o output.mhd
+gate_image_convert -i input.mhd -o output_float.mhd -p float
+gate_image_arithm -i *.mhd -o output.mhd -O sum
+gate_gamma_index data/tps_dose.mhd result.XYZ/gate-DoseToWater.mhd -o gamma.mhd --dd 2 --dta 2.5 -u "%" -T 0.2
+```
 
-Command line tools have a built-in help, type the name of the tools with the ''--help'' (or '-h') option. For example::
+Current list of command line tools. Use the flag `-h` to get print the help of each tool.
 
-  gate_info -h
+| Tool  | Comment |
+| ------------- | ------------- |
+| `gate_info`  | Display info about current Gate/G4 version  |
+| `gate_image_arithm`  | Pixel- or voxel-wise arithmetic operations |
+| `gate_image_convert` | Convert image file format (dicom, mhd, hdr, nfty ... ) |
+| `gate_image_uncertainty`| Compute statistical uncertainty|
+| `gate_gamma_index`| Compute gamma index between images|
 
-API: all commands are also available as python functions::
+All tools are also available to be use within your own Python script with, for example: 
+```
+import gatetools as gt
+gt.image_convert(inputImage, pixeltype)
+```
 
-  import gatetools as gt
-  gt.print_gate_info()
-  gt.image_convert(inputImage, pixeltype)
+Tests: run `python -m unittest gatetools`
 
+When developing, install with: `pip install -e .`
 
-Current list of tools::
-
-  gate_info
-  gate_image_convert
-  gate_image_arithm
-  gate_image_uncertainty
-  gate_gamma_index
-  
-  
-  
+Dependencies:
+- click: https://click.palletsprojects.com
+- uproot: https://github.com/scikit-hep/uproot
+- pydicom: https://pydicom.github.io/
+- tqdm: https://github.com/tqdm/tqdm
+- colored: https://gitlab.com/dslackw/colored
+- itk: https://itk.org/
