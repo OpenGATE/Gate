@@ -15,6 +15,7 @@ Welcome to GATE's documentation!
    radiotherapy_and_dosimetry_applications
    thermal_therapy_application
    parallel_computing
+   gate_tools
 
 Indices and tables
 ==================
