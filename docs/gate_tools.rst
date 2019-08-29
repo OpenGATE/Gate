@@ -9,10 +9,12 @@ GateTools
    
 The `GateTools <https://github.com/OpenGATE/GateTools>`_ repository contains a list of python command line tools to facilitate Gate simulations running and analysis. 
 
-Install with ::
+Install with :
+::
    pip install gatetools
 
-Example of usage::
+Example of usage:
+::
    gate_image_convert -i input.dcm -o output.mhd  
    gate_image_convert -i input.mhd -o output_float.mhd -p float 
    gate_image_arithm -i *.mhd -o output.mhd -O sum 
@@ -43,9 +45,9 @@ When developing, install with:
   pip install -e . 
 
 Dependencies:
-* click: https://click.palletsprojects.com
-* uproot: https://github.com/scikit-hep/uproot
-* pydicom: https://pydicom.github.io/
-* tqdm: https://github.com/tqdm/tqdm
-* colored: https://gitlab.com/dslackw/colored
-* itk: https://itk.org/
+ * click: https://click.palletsprojects.com
+ * uproot: https://github.com/scikit-hep/uproot
+ * pydicom: https://pydicom.github.io/
+ * tqdm: https://github.com/tqdm/tqdm
+ * colored: https://gitlab.com/dslackw/colored
+ * itk: https://itk.org/
