@@ -1,14 +1,24 @@
 
-/gate/physics/addPhysicsList emstandard_opt1
-#/gate/physics/addProcess RadioactiveDecay
+
+/gate/physics/addPhysicsList emstandard_opt3
+
 
 # High cut by default
 /gate/physics/Gamma/SetCutInRegion      world 1 km
 /gate/physics/Electron/SetCutInRegion   world 1 km
 /gate/physics/Positron/SetCutInRegion   world 1 km
 
-# Low cut in the crystal
-# /gate/physics/Gamma/SetCutInRegion      crystalUnit 1 mm
-# /gate/physics/Electron/SetCutInRegion   crystalUnit 1 mm
-# /gate/physics/Positron/SetCutInRegion   crystalUnit 1 mm
+# Cuts for particle in NEMACylinder
+/gate/physics/Gamma/SetCutInRegion      phantom 1.0 mm
+/gate/physics/Electron/SetCutInRegion   phantom 1.0 mm
+/gate/physics/Positron/SetCutInRegion   phantom 1.0 mm
 
+# Cuts for particle in LSO
+/gate/physics/Gamma/SetCutInRegion      LSO 1.0 mm
+/gate/physics/Electron/SetCutInRegion   LSO 1.0 mm
+/gate/physics/Positron/SetCutInRegion   LSO 1.0 mm
+
+# Cuts for particle in BGO
+/gate/physics/Gamma/SetCutInRegion      BGO 1.0 mm
+/gate/physics/Electron/SetCutInRegion   BGO 1.0 mm
+/gate/physics/Positron/SetCutInRegion   BGO 1.0 mm

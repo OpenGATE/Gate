@@ -1,6 +1,6 @@
 
 # Visualisation
-# /control/execute mac/visu.mac
+#/control/execute mac/visu.mac
 
 # Verbosity
 /control/execute mac/verbose.mac
@@ -21,15 +21,23 @@
 /gate/run/initialize
 
 # Source
-#/control/execute mac/source_f18.mac
-/control/execute mac/source_2gammas.mac
+/control/execute mac/sources.mac
+
 
 # Random
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
 
+# verbose
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
 # Start acquisition
 /gate/application/setTimeStart 0 s
-/gate/application/setTimeSlice 1 s
-/gate/application/setTimeStop  1 s
-/gate/application/start
+/gate/application/setTimeSlice 120 s
+/gate/application/setTimeStop  240 s
+/gate/application/startDAQ
+
+# computation time around 2 min for 10 sec
+# computation time around 1.3h for 240 sec
