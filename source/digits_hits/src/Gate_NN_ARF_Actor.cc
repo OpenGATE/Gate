@@ -310,15 +310,7 @@ void Gate_NN_ARF_Actor::SaveData()
     // process remaining particules if the current batch is not complete
     if (mBatchInputs.size() > 0) {
       ProcessBatch();
-      if (mNNOutput.sizes()[0] > 0) {
-        for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
-          mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
-          for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
-            mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
-          }
-        }
-        mCurrentSaveNNOutput += mNNOutput.sizes()[0];
-      }
+      ProcessBatchEnd();
     }
 #endif
 
@@ -347,7 +339,7 @@ void Gate_NN_ARF_Actor::SaveData()
       double nb_ene = mTestData[0].nn.size();
       G4ThreeVector resolution(mSize[0],
                                mSize[1],
-                               nb_ene+1); // +1 because first empty slice
+                               nb_ene); // +1 because first empty slice
       G4ThreeVector imageSize(resolution[0]*mSpacing[0]/2.0,
                               resolution[1]*mSpacing[1]/2.0,
                               resolution[2]/2.0);
@@ -364,7 +356,7 @@ void Gate_NN_ARF_Actor::SaveData()
             continue;
           if (v < 0 || v > (mSize[1]-1))
             continue;
-          for (unsigned int energy=1; energy<nb_ene+1; ++energy) {
+          for (unsigned int energy=1; energy<nb_ene; ++energy) {
             mImage->SetValue(v, u, energy, mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset);
           }
         }
@@ -474,19 +466,7 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event * e)
     // Do not count event that never go to UserSteppingAction
     if (mEventIsAlreadyStored and !mIgnoreCurrentData) {
       mTestData.push_back(mCurrentTestData);
-
-#ifdef GATE_USE_TORCH
-      if (mNNOutput.sizes()[0] > 0) {
-        for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
-          mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
-          for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
-            mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
-          }
-        }
-        mCurrentSaveNNOutput += mNNOutput.sizes()[0];
-      }
-#endif
-      
+      ProcessBatchEnd();
     }
   }
 }
@@ -597,6 +577,23 @@ void Gate_NN_ARF_Actor::ProcessBatch()
 
   // Clean the inputs
   mBatchInputs.clear();
+
 #endif
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void Gate_NN_ARF_Actor::ProcessBatchEnd()
+{
+  if (mNNOutput.sizes()[0] > 0) {
+    for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
+      mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
+      for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+        mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
+      }
+    }
+    mCurrentSaveNNOutput += mNNOutput.sizes()[0];
+  }
 }
 //-----------------------------------------------------------------------------

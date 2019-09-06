@@ -91,6 +91,7 @@ public:
 
   // Apply NN to current batch of particles
   void ProcessBatch();
+  void ProcessBatchEnd();
 
 protected:
   Gate_NN_ARF_Actor(G4String name, G4int depth = 0);
