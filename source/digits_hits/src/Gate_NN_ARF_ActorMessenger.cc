@@ -72,13 +72,13 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
 
   n = base + "/setSpacingX";
   pSetSpacingXCmd = new G4UIcmdWithADoubleAndUnit(n, this);
-  guid = G4String("Spacing of the otuput image along X");
+  guid = G4String("Spacing of the output image along X");
   pSetSpacingXCmd->SetGuidance(guid);
   pSetSpacingXCmd->SetDefaultUnit("mm");
 
   n = base + "/setSpacingY";
   pSetSpacingYCmd = new G4UIcmdWithADoubleAndUnit(n, this);
-  guid = G4String("Spacing of the otuput image along Y");
+  guid = G4String("Spacing of the output image along Y");
   pSetSpacingYCmd->SetGuidance(guid);
   pSetSpacingYCmd->SetDefaultUnit("mm");
 
@@ -91,16 +91,6 @@ void Gate_NN_ARF_ActorMessenger::BuildCommands(G4String base)
   pSetSizeYCmd = new G4UIcmdWithAnInteger(n, this);
   guid = G4String("Size of the output image in pixel along Y");
   pSetSizeYCmd->SetGuidance(guid);
-
-  n = base + "/setScale";
-  pSetScaleCmd = new G4UIcmdWithADouble(n, this);
-  guid = G4String("Scale the image for N primary events");
-  pSetScaleCmd->SetGuidance(guid);
-
-  n = base + "/setNDataset";
-  pSetNDatasetCmd = new G4UIcmdWithAnInteger(n, this);
-  guid = G4String("N Dataset");
-  pSetNDatasetCmd->SetGuidance(guid);
 
   n = base + "/setCollimatorLength";
   pSetCollimatorLengthCmd = new G4UIcmdWithADoubleAndUnit(n, this);
@@ -130,8 +120,6 @@ void Gate_NN_ARF_ActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pSetSpacingYCmd)             pDIOActor->SetSpacing(pSetSpacingYCmd->GetNewDoubleValue(newValue), 1);
   if (cmd == pSetSizeXCmd)                pDIOActor->SetSize(pSetSizeXCmd->GetNewIntValue(newValue), 0);
   if (cmd == pSetSizeYCmd)                pDIOActor->SetSize(pSetSizeYCmd->GetNewIntValue(newValue), 1);
-  if (cmd == pSetScaleCmd)                pDIOActor->SetScale(pSetScaleCmd->GetNewDoubleValue(newValue));
-  if (cmd == pSetNDatasetCmd)             pDIOActor->SetNDataset(pSetNDatasetCmd->GetNewIntValue(newValue));
   if (cmd == pSetCollimatorLengthCmd)     pDIOActor->SetCollimatorLength(pSetCollimatorLengthCmd->GetNewDoubleValue(newValue));
   if (cmd == pSetBatchSizeCmd)            pDIOActor->SetBatchSize(pSetBatchSizeCmd->GetNewDoubleValue(newValue));
   GateActorMessenger::SetNewValue(cmd, newValue);

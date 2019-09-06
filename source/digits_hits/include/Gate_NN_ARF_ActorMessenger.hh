@@ -43,8 +43,6 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetSpacingYCmd;
   G4UIcmdWithAnInteger      * pSetSizeXCmd;
   G4UIcmdWithAnInteger      * pSetSizeYCmd;
-  G4UIcmdWithADouble        * pSetScaleCmd;
-  G4UIcmdWithAnInteger      * pSetNDatasetCmd;
   G4UIcmdWithADoubleAndUnit * pSetCollimatorLengthCmd;
   G4UIcmdWithADouble        * pSetBatchSizeCmd;
 };

@@ -77,7 +77,6 @@ public:
   void SetSize(int m, int index);
   void SetCollimatorLength(double m);
   void SetScale(double m);
-  void SetNDataset(int m);
   void SetBatchSize(double m);
 
   // Callbacks
@@ -89,6 +88,9 @@ public:
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
+
+  // Apply NN to current batch of particles
+  void ProcessBatch();
 
 protected:
   Gate_NN_ARF_Actor(G4String name, G4int depth = 0);
@@ -113,18 +115,19 @@ protected:
   std::vector<double> mSpacing; //Spacing in mm of the image
   std::vector<int> mSize; //Size in pixel of the image
   double mCollimatorLength; //collimator+ half crystal length in mm
-  double mScale;
   int mNDataset;
+  int mNumberOfBatch;
   std::string mNNModelPath;
   std::string mNNDictPath;
   std::string mImagePath;
   std::vector<double> mXmean;
   std::vector<double> mXstd;
-  float mRr;
+#ifdef GATE_USE_TORCH
   std::shared_ptr<torch::jit::script::Module> mNNModule;
+  at::Tensor mNNOutput;
+#endif
   float mBatchSize; //not unsigned int to be able to be superior to max int
   std::vector<std::vector<double> > mBatchInputs;
-  at::Tensor mNNOutput;
   unsigned int mCurrentSaveNNOutput;
 };
 
