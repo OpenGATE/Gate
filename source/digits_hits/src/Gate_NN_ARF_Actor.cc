@@ -307,8 +307,19 @@ void Gate_NN_ARF_Actor::SaveData()
   }
   else {
 #ifdef GATE_USE_TORCH
-    // process remaining particules if the batch is not complete
-    if (mBatchInputs.size() > 0) ProcessBatch();
+    // process remaining particules if the current batch is not complete
+    if (mBatchInputs.size() > 0) {
+      ProcessBatch();
+      if (mNNOutput.sizes()[0] > 0) {
+        for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
+          mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
+          for (unsigned int outputIndex=0; outputIndex < mNNOutput.sizes()[1]; ++outputIndex) {
+            mTestData[testIndex + mCurrentSaveNNOutput].nn[outputIndex] = mNNOutput[testIndex][outputIndex].item<double>();
+          }
+        }
+        mCurrentSaveNNOutput += mNNOutput.sizes()[0];
+      }
+    }
 #endif
 
     if (mSaveFilename != "FilnameNotGivenForThisActor") {
