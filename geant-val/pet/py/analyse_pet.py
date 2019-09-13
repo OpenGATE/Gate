@@ -3,16 +3,28 @@
 
 import matplotlib.pyplot as plt
 from matplotlib import collections as mc
+import scipy.stats as ss
 import numpy as np
 import os
 from pathlib import Path
 import uproot
+import re
 import click
 
 # --------------------------------------------------------------------------
 # it is faster to access to root array like this dont know exactly why
 def tget(t, array_name):
     return t.arrays([array_name])[array_name]
+
+# --------------------------------------------------------------------------
+def get_stat_value(s, v):
+    g = r''+v+'\w+'
+    a = re.search(g, s)
+    if a == None:
+        return -1
+    a = a.group(0)[len(v):]
+    return float(a)
+
 
 # --------------------------------------------------------------------------
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -22,22 +34,33 @@ def analyse_pet(filename):
     '''
     \b
     PET analysis:
-    
+
     <FILENAME> : input root filename
     '''
 
-    print(filename)
+    print('Filename', filename)
     f = uproot.open(filename)
     #print("List of keys: \n", f.keys())
 
-    singles = f[b'Singles']
-    print('nb singles ', len(singles))
+    stat_filename = os.path.join(Path(filename).parent, 'stat.txt')
+    print('Open stat file', stat_filename)
+    fs = open(stat_filename, 'r').read()
+    n_events = get_stat_value(fs, '# NumberOfEvents = ')
+    start_simulation_time = get_stat_value(fs, '# StartSimulationTime        = ')
+    stop_simulation_time = get_stat_value(fs, '# StopSimulationTime         = ')
     
-    coinc = f[b'Coincidences']
-    print('nb coincidences', len(coinc))
 
-    # plot 
-    fig, ax = plt.subplots(2, 3, figsize=(15, 10))
+    singles = f[b'Singles']
+    print('nb of singles ', len(singles))
+
+    coinc = f[b'Coincidences']
+    print('nb of coincidences', len(coinc))
+
+    delays = f[b'delay']
+    print('nb of delays', len(delays))
+
+    # plot
+    fig, ax = plt.subplots(3, 3, figsize=(15, 10))
 
     #
     print("Detector positions by run")
@@ -46,9 +69,8 @@ def analyse_pet(filename):
     gpx2 = tget(coinc, b'globalPosX2')
     gpy1 = tget(coinc, b'globalPosY1')
     gpy2 = tget(coinc, b'globalPosY2')
-    print('run', len(runID))
     mask = (runID == 0)
-    n = 2000 # restrict to the n first values 
+    n = 1000 # restrict to the n first values
     r0_gpx1 = gpx1[mask][:n]
     r0_gpx2 = gpx2[mask][:n]
     r0_gpy1 = gpy1[mask][:n]
@@ -67,16 +89,16 @@ def analyse_pet(filename):
     a = ax[(0,0)]
     a.scatter(r1x, r1y, s=1)
     a.set_aspect('equal', adjustable='box')
+    a.set_title('Transaxial detection position ({} first events only)'.format(n))
 
-    
     # Axial Detection
     print('Axial Detection')
     ad1 = tget(coinc, b'globalPosZ1')
     ad2 = tget(coinc, b'globalPosZ2')
     ad = np.concatenate((ad1, ad2))
     a = ax[(0,1)]
-    a.hist(ad, bins=100)
-    a.set_title('Axial detection position')
+    a.hist(ad, histtype='step', bins=100)
+    a.set_title('Axial coincidences detection position')
 
     # True unscattered coincidences (tuc)
     # True scattered coincindences (tsc)
@@ -89,37 +111,82 @@ def analyse_pet(filename):
     mask =  ((compt1==0) & (compt2==0) & (rayl1==0) & (rayl2==0))
     tuc = z[mask]
     tsc = z[~mask]
-    print("scattered", len(tsc))
-    print("unscattered", len(tuc))
+    print("\tscattered", len(tsc))
+    print("\tunscattered", len(tuc))
     a = ax[0,2]
     a.hist(tuc, bins=100)
     a.set_title('Axial Sensitivity Detection')
     a = ax[1,0]
-    a.hist(tsc, bins=100)
-    a.set_title('Axial Scatter Detection')
+    countsa, binsa = np.histogram(tsc, bins=100)
+    countsr, binsr = np.histogram(z, bins=100)
+    a.hist(binsa[:-1], bins=100, weights=countsa/countsr)
+    a.set_title('Axial Scatter fraction')
 
     # Delays and Randoms
     print("Delays and Randoms")
-    delays = tget(coinc, b'time1')
+    time = tget(coinc, b'time1')
+    sourceID1 = tget(coinc, b'sourceID1')
+    sourceID2 = tget(coinc, b'sourceID2')
+    mask = (sourceID1==0) & (sourceID2==0)
+    decayF18 = time[mask]
+    mask = (sourceID1==1) & (sourceID2==1)
+    decayO15 = time[mask]
+
+    ## FIXME -> measured and expected HL
+    # F18 109.771(20) minutes 6586.2 sec
+    # O15 122.24 seconds
+    y, x = np.histogram(decayO15, bins=300)
+    loc, scale = ss.expon.fit(x, floc=0)
+    rX = np.linspace(0, 240, 300)
+    rP = ss.expon.pdf(rX, loc, scale)
+    a = ax[1,1]
+    a.hist(decayO15, bins=100, label='O15 HL = 122.24 sec', histtype='stepfilled', alpha=0.5, density=True)
+    a.hist(decayF18, bins=100, label='F18 HL = 6586.2 sec', histtype='stepfilled', alpha=0.5, density=True)
+    a.plot(rX, rP, label='O15 fit HL = {:.2f} sec'.format(scale))
+    a.legend()
+    a.set_title('Rad decays')
+
+    # Randoms
     eventID1 = tget(coinc, b'eventID1')
     eventID2 = tget(coinc, b'eventID2')
-    randoms = delays[eventID1 != eventID2]
-    print('delays', len(delays))
-    print('randoms', len(randoms))
-    a = ax[1,1]
-    a.hist(delays, bins=100)
-    a.set_title('Delays')
+    randoms = time[eventID1 != eventID2]
+    print(len(delays))
+    t1 = tget(delays, b'time1')
+    print('nb of randoms', len(randoms))
+    print('nb of delays', len(delays))
     a = ax[1,2]
-    a.hist(randoms, bins=100)
+    a.hist(randoms, bins=100, histtype='stepfilled', alpha=0.6, label='Random = {}'.format(len(randoms)))
+    a.hist(t1, bins=100, histtype='step', label="Delays with coinc sorter = {}".format(len(delays)))
+    a.legend()
     a.set_title('Randoms')
 
-    # decay ?
+    # info
+    ntrue = len(tuc)
+    absolute_sensitivity = ntrue/n_events
+    line1 = 'Number of events {:.0f}'.format(n_events)
+    line1 = line1+'\nNumber of singles {:.0f}'.format(len(singles))
+    line1 = line1+'\nNumber of coincidences {:.0f}'.format(len(coinc))
+    line1 = line1+'\nNumber of true {:.0f}'.format(len(tuc))
+    line1 = line1+'\nNumber of randoms {:.0f}'.format(len(randoms))
+    line1 = line1+'\nNumber of scatter {:.0f}'.format(len(tsc))
+    line1 = line1+'\nAbsolute sensibility {:.2f} %'.format(absolute_sensitivity*100.0)
+    line1 = line1+'\nStart time {:.1f} s'.format(start_simulation_time)
+    line1 = line1+'\nStop time {:.1f} s'.format(stop_simulation_time)
+    a = ax[2,0]
+    a.plot([0], [0], '')
+    a.plot([1], [1], '')
+    a.set_xticks([])
+    a.set_yticks([])
+    a.axis('off')
+    a.text(0.2, 0.5, line1)
 
+    # end
+    fig.delaxes(ax[2][1])
+    fig.delaxes(ax[2][2])
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.show()
-    
-    
+
+
 # --------------------------------------------------------------------------
 if __name__ == '__main__':
     analyse_pet()
-
