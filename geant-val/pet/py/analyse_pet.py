@@ -4,6 +4,7 @@
 import matplotlib.pyplot as plt
 from matplotlib import collections as mc
 import scipy.stats as ss
+import scipy
 import numpy as np
 import os
 from pathlib import Path
@@ -42,13 +43,19 @@ def analyse_pet(filename):
     f = uproot.open(filename)
     #print("List of keys: \n", f.keys())
 
-    stat_filename = os.path.join(Path(filename).parent, 'stat.txt')
-    print('Open stat file', stat_filename)
-    fs = open(stat_filename, 'r').read()
-    n_events = get_stat_value(fs, '# NumberOfEvents = ')
-    start_simulation_time = get_stat_value(fs, '# StartSimulationTime        = ')
-    stop_simulation_time = get_stat_value(fs, '# StopSimulationTime         = ')
-    
+    n_events = 1
+    start_simulation_time = 0
+    stop_simulation_time = 240
+    try:
+        stat_filename = os.path.join(Path(filename).parent, 'stat.txt')
+        print('Open stat file', stat_filename)
+        fs = open(stat_filename, 'r').read()
+        n_events = get_stat_value(fs, '# NumberOfEvents = ')
+        start_simulation_time = get_stat_value(fs, '# StartSimulationTime        = ')
+        stop_simulation_time = get_stat_value(fs, '# StopSimulationTime         = ')
+    except:
+        print('nope')
+        
 
     singles = f[b'Singles']
     print('nb of singles ', len(singles))
@@ -135,14 +142,25 @@ def analyse_pet(filename):
     ## FIXME -> measured and expected HL
     # F18 109.771(20) minutes 6586.2 sec
     # O15 122.24 seconds
-    y, x = np.histogram(decayO15, bins=300)
-    loc, scale = ss.expon.fit(x, floc=0)
-    rX = np.linspace(0, 240, 300)
-    rP = ss.expon.pdf(rX, loc, scale)
+
+    # histogram of decayO15
+    bin_heights, bin_borders = np.histogram(np.array(decayO15), bins='auto', density=True)
+    bin_widths = np.diff(bin_borders)
+    bin_centers = bin_borders[:-1] + bin_widths / 2
+
+    # expo fit
+    def exponenial_func(x, a, b):
+        return a*np.exp(-b*x)
+    popt, pcov = scipy.optimize.curve_fit(exponenial_func, bin_centers, bin_heights)
+    xx = np.linspace(0, 240, 240)
+    yy = exponenial_func(xx, *popt)
+    hl = np.log(2)/popt[1]
+
+    # plot
     a = ax[1,1]
     a.hist(decayO15, bins=100, label='O15 HL = 122.24 sec', histtype='stepfilled', alpha=0.5, density=True)
     a.hist(decayF18, bins=100, label='F18 HL = 6586.2 sec', histtype='stepfilled', alpha=0.5, density=True)
-    a.plot(rX, rP, label='O15 fit HL = {:.2f} sec'.format(scale))
+    a.plot(xx, yy, label='O15 fit HL = {:.2f} sec'.format(hl))
     a.legend()
     a.set_title('Rad decays')
 
