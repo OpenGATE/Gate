@@ -37,8 +37,6 @@ typedef unsigned int uint;
 GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):
   GateVSource( name )
 {
-
-
   mCurrentParticleNumber=0;
   mNumberOfParticlesInFile=0;
   mTotalNumberOfParticles=0;
@@ -49,51 +47,38 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):
   mParticleTypeNameGivenByUser = "none";
   mUseNbOfParticleAsIntensity = false;
   mStartingParticleId = 0;
-
   mCurrentRunNumber = -1;
   mLoop = 0;
   mLoopFile = 0;
   mCurrentUse = 0;
   mIgnoreWeight = false;
-
   mUseRegularSymmetry = false;
   mUseRandomSymmetry = false;
   mAngle=0.;
   mPositionInWorldFrame = false;
-
   mRequestedNumberOfParticlesPerRun = 0;
-
   mInitialized  = false;
-  m_sourceMessenger = new GateSourcePhaseSpaceMessenger( this );
-
+  m_sourceMessenger = new GateSourcePhaseSpaceMessenger(this);
   mFileType = "";
-
   mParticleTime = 0. ;//->GetTime();
-
   pIAEAFile = 0;
   pIAEARecordType = 0;
   pIAEAheader = 0;
-
   pParticleDefinition = 0;
   pParticle = 0;
   pVertex = 0;
   mMomentum = 0.;
-
   mParticlePosition = G4ThreeVector();
   mParticleMomentum = G4ThreeVector();
   mParticlePosition2 = G4ThreeVector();
   mParticleMomentum2 = G4ThreeVector();
-
   x = y = z = dx = dy = dz = px = py = pz = energy  = 0.;
   dtime= -1.;
   ftime= -1.;
-
   weight = 1.;
   strcpy(particleName, "");
-
   mPTBatchSize = 1e5;
   mPTCurrentIndex = mPTBatchSize;
-
   mTotalSimuTime = 0.;
   mAlreadyLoad = false;
   mRmax=0;
@@ -123,152 +108,91 @@ GateSourcePhaseSpace::~GateSourcePhaseSpace()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::Initialize()
 {
-  // GateMessage("Beam", 1, "Phase Space Source - Initialisation\n");
-  
   InitializeTransformation();
   mTotalSimuTime = GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
-
-  //  if (mFileType == "rootFile"){
-  //    T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
-  //
-  //    for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
-  //      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
-  //      T->Add(listOfPhaseSpaceFile[i]);
-  //    }
-  //
-  //    mTotalNumberOfParticles = T->GetEntries();
-  //    mNumberOfParticlesInFile = mTotalNumberOfParticles;
-  //
-  //    if (T->GetListOfBranches()->FindObject("ParticleName")) {
-  //      T->SetBranchAddress("ParticleName",&particleName);
-  //    }
-  //    T->SetBranchAddress("Ekine",&energy);
-  //    T->SetBranchAddress("X",&x);
-  //    T->SetBranchAddress("Y",&y);
-  //    T->SetBranchAddress("Z",&z);
-  //    T->SetBranchAddress("dX",&dx);
-  //    T->SetBranchAddress("dY",&dy);
-  //    T->SetBranchAddress("dZ",&dz);
-  //    if (T->GetListOfBranches()->FindObject("Weight")) {
-  //      T->SetBranchAddress("Weight",&weight);
-  //    }
-  //    auto tob = T->GetListOfBranches()->FindObject("Time");
-  //    if (tob) {
-  //      auto tt = dynamic_cast<TBranch*>(tob);
-  //      TClass * expectedClass;
-  //      tt-> GetExpectedType(expectedClass, time_type);
-  //      if (time_type == EDataType::kDouble_t)
-  //        T->SetBranchAddress("Time",&dtime);
-  //      else
-  //        T->SetBranchAddress("Time",&ftime);
-  //    }
-  //
-  //    if (mRmax>0){
-  //      for(int i = 0; i < mTotalNumberOfParticles;i++){
-  //        T->GetEntry(i);
-  //        if (std::abs(x)<mRmax && std::abs(y)<mRmax)
-  //          {
-  //            pListOfSelectedEvents.push_back(i);
-  //          }
-  //      }
-  //      mTotalNumberOfParticles = pListOfSelectedEvents.size();
-  //      mNumberOfParticlesInFile = mTotalNumberOfParticles;
-  //    }
-  //  }
 
   if (mFileType == "IAEAFile") {
     int totalEvent = 0;
     int totalEventInFile = 0;
     mCurrentParticleNumberInFile = -1;
     G4String IAEAFileName  = " ";
-    for(uint j=0;j<listOfPhaseSpaceFile.size();j++){
+    for(uint j=0;j<listOfPhaseSpaceFile.size();j++) {
       IAEAFileName = G4String(removeExtension(listOfPhaseSpaceFile[j]));
       totalEventInFile = OpenIAEAFile(IAEAFileName);
       mTotalNumberOfParticles += totalEventInFile;
 
       if (mRmax>0){
-        for(int j=0 ; j<totalEventInFile ; j++)
-          {
-            pIAEARecordType->read_particle();
-            if ( std::abs(pIAEARecordType->x*cm)<mRmax && std::abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<< Gateendl;}
-            totalEvent++;
+        for(int j=0 ; j<totalEventInFile ; j++) {
+          pIAEARecordType->read_particle();
+          if (std::abs(pIAEARecordType->x*cm)<mRmax && std::abs(pIAEARecordType->y*cm)<mRmax) {
+            pListOfSelectedEvents.push_back(totalEvent);
+            // G4cout<<" --> OK  "<<totalEvent<< Gateendl;
           }
+          totalEvent++;
+        }
       }
     }
     if (mRmax>0) mTotalNumberOfParticles = pListOfSelectedEvents.size();
   }
-  
+
   else if (mFileType == "pytorch") {
     InitializePyTorch();
   }
-  else
-    {
+  else {
+    for(auto file: listOfPhaseSpaceFile) {
+      GateMessage("Beam", 1, "Phase Space Source. Read file " << file << Gateendl);
+      auto extension = getExtension(file);
+      mChain.add_file(file, extension);
+    }
+    mChain.set_tree_name("PhaseSpace");
+    mChain.read_header();
 
-      for(auto file: listOfPhaseSpaceFile )
-        {
-          GateMessage("Beam", 1, "Phase Space Source. Read file " << file << Gateendl);
+    mTotalNumberOfParticles = mChain.nb_elements();
+    mNumberOfParticlesInFile = mTotalNumberOfParticles;
 
-          G4cout << "Phase Space Source. Read file " << file << Gateendl;
+    if (mChain.has_variable("ParticleName")) {
+      mChain.read_variable("ParticleName",particleName, 64);
+    }
+    mChain.read_variable("Ekine", &energy);
 
-          auto extension = getExtension(file);
-          mChain.add_file(file, extension);
-        }
-      mChain.set_tree_name("PhaseSpace");
-      mChain.read_header();
+    mChain.read_variable("X",&x);
+    mChain.read_variable("Y",&y);
+    mChain.read_variable("Z",&z);
+    mChain.read_variable("dX",&dx);
+    mChain.read_variable("dY",&dy);
+    mChain.read_variable("dZ",&dz);
 
-      mTotalNumberOfParticles = mChain.nb_elements();
-      mNumberOfParticlesInFile = mTotalNumberOfParticles;
+    if(mChain.has_variable("Weight") and not mIgnoreWeight)
+      mChain.read_variable("Weight", &weight);
 
-      if (mChain.has_variable("ParticleName")) {
-        mChain.read_variable("ParticleName",particleName, 64);
+    if(mChain.has_variable("Time")) {
+      if(mChain.get_type_of_variable("Time") == typeid(float)) {
+        mChain.read_variable("Time",&ftime);
+        time_type = typeid(float);
       }
-      mChain.read_variable("Ekine", &energy);
-
-      mChain.read_variable("X",&x);
-      mChain.read_variable("Y",&y);
-      mChain.read_variable("Z",&z);
-      mChain.read_variable("dX",&dx);
-      mChain.read_variable("dY",&dy);
-      mChain.read_variable("dZ",&dz);
-
-      if(mChain.has_variable("Weight") and not mIgnoreWeight)
-        mChain.read_variable("Weight", &weight);
-
-      if(mChain.has_variable("Time"))
-        {
-          if(mChain.get_type_of_variable("Time") == typeid(float))
-            {
-              mChain.read_variable("Time",&ftime);
-              time_type = typeid(float);
-            }
-          else
-            {
-              mChain.read_variable("Time",&dtime);
-              time_type = typeid(double);
-            }
-        }
-
-      if (mRmax>0){
-        for(int i = 0; i < mTotalNumberOfParticles;i++){
-          mChain.read_entrie(i);
-          if (std::abs(x)<mRmax && std::abs(y)<mRmax)
-            {
-              pListOfSelectedEvents.push_back(i);
-            }
-        }
-        mTotalNumberOfParticles = pListOfSelectedEvents.size();
-        mNumberOfParticlesInFile = mTotalNumberOfParticles;
+      else {
+        mChain.read_variable("Time",&dtime);
+        time_type = typeid(double);
       }
     }
 
+    if (mRmax>0){
+      for(int i = 0; i < mTotalNumberOfParticles;i++) {
+        mChain.read_entrie(i);
+        if (std::abs(x)<mRmax && std::abs(y)<mRmax) {
+          pListOfSelectedEvents.push_back(i);
+        }
+      }
+      mTotalNumberOfParticles = pListOfSelectedEvents.size();
+      mNumberOfParticlesInFile = mTotalNumberOfParticles;
+    }
+  }
+
   mInitialized  = true;
-    
+
   if (mUseNbOfParticleAsIntensity)
     SetIntensity(mNumberOfParticlesInFile);
-    
-  G4cout << "Phase Space Source. Total nb of particles in PhS "
-         << mNumberOfParticlesInFile << Gateendl;
-    
+
   GateMessage("Beam", 1, "Phase Space Source. Total nb of particles in PhS "
               << mNumberOfParticlesInFile << Gateendl);
 }
@@ -318,7 +242,6 @@ void GateSourcePhaseSpace::GenerateROOTVertex( G4Event* /*aEvent*/ )
 // ----------------------------------------------------------------------------------
 
 
-
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GeneratePyTorchVertex( G4Event* /*aEvent*/ )
 {
@@ -331,13 +254,13 @@ void GateSourcePhaseSpace::GeneratePyTorchVertex( G4Event* /*aEvent*/ )
 
   // Position
   mParticlePosition = mPTPosition[mPTCurrentIndex];
-  //G4cout<< "mParticlePosition = " << mParticlePosition << std::endl;  
-  
+  //G4cout<< "mParticlePosition = " << mParticlePosition << std::endl;
+
   // Direction
   dx = mPTDX[mPTCurrentIndex];
   dy = mPTDY[mPTCurrentIndex];
   dz = mPTDZ[mPTCurrentIndex];
-  //G4cout<< "mParticleDirection = " << dx << " " << dy << " " << dz << std::endl;  
+  //G4cout<< "mParticleDirection = " << dx << " " << dy << " " << dz << std::endl;
 
   // Energy
   energy = mPTEnergy[mPTCurrentIndex];
@@ -413,7 +336,6 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
   weight = pIAEARecordType->weight;
 
   //if (mCurrentParticleNumber>=mNumberOfParticlesInFile) mCurrentParticleNumber=0;
-
 }
 // ----------------------------------------------------------------------------------
 
@@ -421,9 +343,6 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
 // ----------------------------------------------------------------------------------
 G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
 {
-  //GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << Gateendl);
-  //GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << Gateendl);
-
   G4int numVertices = 0;
   double timeSlice = 0.;
   G4RotationMatrix rotation;
@@ -436,11 +355,11 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
     mRequestedNumberOfParticlesPerRun = 0.;
     mLastPartIndex = mCurrentParticleNumber;
 
-
-    if (GateApplicationMgr::GetInstance()->GetNumberOfPrimariesPerRun()) mRequestedNumberOfParticlesPerRun = GateApplicationMgr::GetInstance()->GetNumberOfPrimariesPerRun();
+    if (GateApplicationMgr::GetInstance()->GetNumberOfPrimariesPerRun())
+      mRequestedNumberOfParticlesPerRun = GateApplicationMgr::GetInstance()->GetNumberOfPrimariesPerRun();
+    
     if (GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries()) {
       timeSlice = GateApplicationMgr::GetInstance()->GetTimeSlice(mCurrentRunNumber);
-
       mRequestedNumberOfParticlesPerRun = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries()*timeSlice/mTotalSimuTime + mResiduRun;
       mResiduRun = mRequestedNumberOfParticlesPerRun - int(mRequestedNumberOfParticlesPerRun);
     }
@@ -450,9 +369,8 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
   }//Calculate the number of time each particle in phase space will be used
 
 
-  if (mCurrentUse==0){
+  if (mCurrentUse==0) {
     //mCurrentUse=-1;
-
     if (mFileType == "IAEAFile"){
       if (mCurrentParticleNumberInFile>=mNumberOfParticlesInFile || mCurrentParticleNumberInFile == -1){
         mCurrentParticleNumberInFile=0;
@@ -485,18 +403,9 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
       mCurrentUsedParticleInIAEAFiles++;
     }
     else if (mFileType == "pytorch") {
-      //G4cout << "GeneratePrimaries pytorch" << std::endl;
-
-      // DD(mCurrentParticleNumberInFile);
-      // DD(mStartingParticleId);
-      // DD(mRequestedNumberOfParticlesPerRun);
-      // DD(mLastPartIndex);
-      // DD(mCurrentParticleNumber);
-        
       GeneratePyTorchVertex( event );
-      // Dummy variables 
+      // Dummy variables
       mCurrentParticleNumberInFile++;
-      
     }
     else {
       if (mCurrentParticleNumberInFile>=mNumberOfParticlesInFile) {mCurrentParticleNumberInFile=0;}
@@ -509,7 +418,9 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
   mParticleMomentum2 = mParticleMomentum;
   mParticlePosition2 = mParticlePosition;
 
-  if (GetPositionInWorldFrame()) mParticleMomentum2 = SetReferenceMomentum(mParticleMomentum2); //momentum: convert world frame coordinate to local volume coordinate
+  if (GetPositionInWorldFrame())
+    mParticleMomentum2 = SetReferenceMomentum(mParticleMomentum2);
+  //momentum: convert world frame coordinate to local volume coordinate
 
   if (GetUseRegularSymmetry() && mCurrentUse!=0) {
     rotation.rotateZ(mAngle*mCurrentUse);
@@ -531,16 +442,17 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
     particle_polarization.y(),
     particle_polarization.z());*/
 
-  if (GetPositionInWorldFrame()) mParticlePosition2 = SetReferencePosition(mParticlePosition2); //particle: convert world frame coordinate to local volume coordinate
+  if (GetPositionInWorldFrame())
+    mParticlePosition2 = SetReferencePosition(mParticlePosition2);
+  //particle: convert world frame coordinate to local volume coordinate
 
   if (GetUseRegularSymmetry() && mCurrentUse!=0) { mParticlePosition2  =  rotation*mParticlePosition2; }
   if (GetUseRandomSymmetry() && mCurrentUse!=0) {  mParticlePosition2 =  rotation*mParticlePosition2; }
 
   ChangeParticlePositionRelativeToAttachedVolume(mParticlePosition2);
 
-
   // ----------------------------------------------
-  // Try to change position according to a max radius
+  // change position according to a max radius (experimental)
   if (mSphereRadius > 0) {
     //G4cout << "mParticlePosition2 " << mParticlePosition2 << std::endl;
     G4ThreeVector mSphereCenter(0,0,0);
@@ -581,11 +493,9 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
       }
     }
   }
-  
+  // ----------------------------------------------
 
-  // ---------------------------------------------- 
 
-  
   //parameter not used: particle_time
   pVertex = new G4PrimaryVertex(mParticlePosition2, mParticleTime);
   pVertex->SetWeight(weight);
@@ -595,12 +505,10 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
 
   mCurrentUse++;
 
-
   if ((mCurrentParticleNumber-mLastPartIndex) < ((mLoop+1)*mResidu)  && mLoop<mCurrentUse ) mCurrentUse=0;
   else if ((mCurrentParticleNumber-mLastPartIndex) >= ((mLoop+1)*mResidu) && (mLoop-1)<mCurrentUse ) mCurrentUse=0;
 
   mCurrentParticleNumber++;
-
 
   GateMessage("Beam", 3, "(" << event->GetEventID() << ") "
               << pVertex->GetPrimary()->GetG4code()->GetParticleName()
@@ -620,26 +528,21 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::AddFile(G4String file)
 {
-  G4cout << "AddFile" << file << std::endl;
-  
   G4String extension = getExtension(file);
 
-  G4cout << "extension" << extension << std::endl;
-
-  if (listOfPhaseSpaceFile.size()==0){
+  if (listOfPhaseSpaceFile.size()==0) {
     if (extension == "IAEAphsp" || extension == "IAEAheader" )
       mFileType = "IAEAFile";
-    if (extension == "pt") 
+    if (extension == "pt")
       mFileType = "pytorch";
   }
 
-  if ((extension == "IAEAphsp" || extension == "IAEAheader"))
-    {
-      if(mFileType == "IAEAFile")
-        listOfPhaseSpaceFile.push_back(file);
-      else
-        GateError( "Cannot mix phase IAEAFile space files with others types");
-    }
+  if ((extension == "IAEAphsp" || extension == "IAEAheader")) {
+    if(mFileType == "IAEAFile")
+      listOfPhaseSpaceFile.push_back(file);
+    else
+      GateError( "Cannot mix phase IAEAFile space files with others types");
+  }
   if ((mFileType == "pytorch") && (listOfPhaseSpaceFile.size() > 1)) {
     GateError( "Please, use only one pytorch file.");
   }
@@ -659,7 +562,7 @@ void GateSourcePhaseSpace::AddFile(G4String file)
 // ----------------------------------------------------------------------------------
 G4ThreeVector GateSourcePhaseSpace::SetReferencePosition(G4ThreeVector coordLocal)
 {
-  for(int j = mListOfRotation.size()-1;j>=0;j--){
+  for(int j = mListOfRotation.size()-1;j>=0;j--) {
     //for(int j = 0; j<mListOfRotation.size();j++){
     const G4ThreeVector & t = mListOfTranslation[j];
     const G4RotationMatrix * r =  mListOfRotation[j];
@@ -741,7 +644,7 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
 void GateSourcePhaseSpace::InitializePyTorch()
 {
   G4cout << "----------------------> pytorch mode" << std::endl;
-    
+
   // allocate batch samples of particles
   G4cout << "mPTBatchSize = " << mPTBatchSize << std::endl;
   mPTPosition.resize(mPTBatchSize);
@@ -773,15 +676,15 @@ void GateSourcePhaseSpace::InitializePyTorch()
   G4cout << "pytorch filename " << filename << std::endl;
   mPTmodule = torch::jit::load(filename);//, torch::kCUDA);
 
-  // FIXME --> error message if not found  
-  
+  // FIXME --> error message if not found
+
   G4cout << "pytorch loaded." << std::endl;
-  
+
   // Check
   if (mPTmodule == nullptr) {
     GateError("Cannot open the .pt file: " << filename);
   }
-    
+
   // Set to cude FIXME --> check CUDA exist
   // mPTmodule->to(torch::kCUDA);
 
@@ -805,7 +708,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
 
   // FIXME harmonize with GARF
-  
+
   try {
     std::ifstream nnDictFile(mPTJsonFilename);
     nnDictFile >> nnDict;
@@ -825,7 +728,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
   auto get_index = [&keys, &nnDict, this](std::string s) {
                      auto d = std::find(keys.begin(), keys.end(), s);
-                     auto index = d-keys.begin();                     
+                     auto index = d-keys.begin();
                      if (d == keys.end()) {
                        index = -1;
                        // Check if the value exist in the json
@@ -840,7 +743,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
                      std::cout << "index for " << s << " = " << index << std::endl;
                      return index;
                    };
-  
+
   mPTPositionXIndex = get_index("X");
   mPTPositionYIndex = get_index("Y");
   mPTPositionZIndex = get_index("Z");
@@ -852,8 +755,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
   std::cout << "index : " << mPTPositionXIndex << " " << mPTPositionYIndex << " " << mPTPositionZIndex << std::endl;
   std::cout << "index : " << mPTDirectionXIndex << " " << mPTDirectionYIndex << " " << mPTDirectionZIndex << std::endl;
   std::cout << "index E : " << mPTEnergyIndex << std::endl;
-   
-  
+
   std::cout << "mean " << mPTx_mean << std::endl;
   std::cout << "std  " << mPTx_std << std::endl;
 
@@ -862,6 +764,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
 }
 // ----------------------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
@@ -883,8 +786,8 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
   if (mPTPositionZIndex == -1) def_Z = mDefaultKeyValues["Z"];
   if (mPTDirectionXIndex == -1) def_dX = mDefaultKeyValues["dX"];
   if (mPTDirectionYIndex == -1) def_dY = mDefaultKeyValues["dY"];
-  if (mPTDirectionZIndex == -1) def_dZ = mDefaultKeyValues["dZ"];  
-  
+  if (mPTDirectionZIndex == -1) def_dZ = mDefaultKeyValues["dZ"];
+
   // Create a vector of random inputs
   std::vector<torch::jit::IValue> inputs;
   torch::Tensor z = torch::randn_like(mPTzer);
@@ -900,10 +803,10 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
   std::vector<double> x_std = mPTx_std;
   auto u = [&x_mean, &x_std](const float * v, int i, double def) {
              // DD(v[i]);
-             if (i == -1) return def;             
+             if (i == -1) return def;
              return (v[i]*x_std[i])+x_mean[i];
            };
-    
+
   // Store the results into the vectors
   for (auto i=0; i < output.sizes()[0]; ++i) {
     // DD(i)
@@ -922,4 +825,3 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 #endif
 }
 // ----------------------------------------------------------------------------------
-
