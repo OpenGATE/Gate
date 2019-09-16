@@ -56,6 +56,10 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setUseNbParticleAsIntensityCmd = new G4UIcmdWithABool(cmdName,this);
   setUseNbParticleAsIntensityCmd->SetGuidance("use the nb of particle in the PhS as source intensity");
 
+  cmdName = GetDirectoryName()+"ignoreWeight";
+  ignoreWeightCmd = new G4UIcmdWithABool(cmdName,this);
+  ignoreWeightCmd->SetGuidance("Force weight to 1.0 even if weight exist in the phase space");
+
   cmdName = GetDirectoryName()+"setRmax";
   setRmaxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   setRmaxCmd->SetGuidance("set the value of R");
@@ -97,7 +101,7 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
   delete setPytorchBatchSizeCmd;
   delete setPytorchParamsCmd;
   delete setSphereRadiusCmd;
-
+  delete ignoreWeightCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -113,6 +117,7 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
   if (command == setParticleTypeCmd) pSource->SetParticleType(newValue);
   if (command == setUseNbParticleAsIntensityCmd)
     pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
+   if (command == ignoreWeightCmd) pSource->SetIgnoreWeight(ignoreWeightCmd->GetNewBoolValue(newValue)); 
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
   if (command == setSphereRadiusCmd) pSource->SetSphereRadius(setSphereRadiusCmd->GetNewDoubleValue(newValue));
   if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));

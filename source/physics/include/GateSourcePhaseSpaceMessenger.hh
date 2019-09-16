@@ -48,6 +48,7 @@ private:
   G4UIcmdWithoutParameter*   RegularSymmetryCmd;
   G4UIcmdWithoutParameter*   RandomSymmetryCmd;
   G4UIcmdWithABool*          setUseNbParticleAsIntensityCmd;
+  G4UIcmdWithABool*          ignoreWeightCmd;
   G4UIcmdWithADoubleAndUnit* setRmaxCmd;
   G4UIcmdWithADoubleAndUnit* setSphereRadiusCmd;
   G4UIcmdWithADouble*        setStartIdCmd;
