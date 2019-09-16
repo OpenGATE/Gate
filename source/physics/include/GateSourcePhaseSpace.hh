@@ -85,6 +85,8 @@ public:
 
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
+  void SetIgnoreWeight(bool b) { mIgnoreWeight = b; }
+  
   void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
   void InitializePyTorch();
   void SetPytorchParams(G4String & name) { mPTJsonFilename = name; }
@@ -162,6 +164,8 @@ protected:
 
   bool mUseNbOfParticleAsIntensity;
   GateInputTreeFileChain mChain;
+
+  bool mIgnoreWeight;
 
   int mPTCurrentIndex;
   int mPTBatchSize;

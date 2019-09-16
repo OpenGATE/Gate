@@ -54,6 +54,7 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):
   mLoop = 0;
   mLoopFile = 0;
   mCurrentUse = 0;
+  mIgnoreWeight = false;
 
   mUseRegularSymmetry = false;
   mUseRandomSymmetry = false;
@@ -230,7 +231,7 @@ void GateSourcePhaseSpace::Initialize()
       mChain.read_variable("dY",&dy);
       mChain.read_variable("dZ",&dz);
 
-      if(mChain.has_variable("Weight"))
+      if(mChain.has_variable("Weight") and not mIgnoreWeight)
         mChain.read_variable("Weight", &weight);
 
       if(mChain.has_variable("Time"))
@@ -771,6 +772,9 @@ void GateSourcePhaseSpace::InitializePyTorch()
   auto filename = listOfPhaseSpaceFile[0];
   G4cout << "pytorch filename " << filename << std::endl;
   mPTmodule = torch::jit::load(filename);//, torch::kCUDA);
+
+  // FIXME --> error message if not found  
+  
   G4cout << "pytorch loaded." << std::endl;
   
   // Check
@@ -798,6 +802,10 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
   // un normalize
   nlohmann::json nnDict;
+
+
+  // FIXME harmonize with GARF
+  
   try {
     std::ifstream nnDictFile(mPTJsonFilename);
     nnDictFile >> nnDict;
@@ -909,7 +917,7 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
     mPTDZ[i] = u(v,mPTDirectionZIndex, def_dZ);
   }
 
-  std::cout << "GENERATION DONE " << mPTEnergy.size() << std::endl << std::endl;
+  //std::cout << "GENERATION DONE " << mPTEnergy.size() << std::endl << std::endl;
   mPTCurrentIndex = 0;
 #endif
 }
