@@ -677,6 +677,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
   mPTmodule = torch::jit::load(filename);//, torch::kCUDA);
 
   // FIXME --> error message if not found
+  // FIXME --> error message if several 
 
   G4cout << "pytorch loaded." << std::endl;
 
