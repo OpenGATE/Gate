@@ -280,8 +280,8 @@ void Gate_NN_ARF_Actor::SaveData()
   // Root Output
   mSaveFilename = mSaveFilename;
 
-  auto pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file Gate_NN_ARF_Actor", 9);
   if (mTrainingModeFlag) {
+    auto pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file Gate_NN_ARF_Actor", 9);
     auto pListeVar = new TTree("ARF (training)", "ARF Training Dataset");
     double t,p,e,w;//, weight;
     pListeVar->Branch("Theta", &t, "Theta/D");
@@ -304,6 +304,8 @@ void Gate_NN_ARF_Actor::SaveData()
       */
       pListeVar->Fill();
     }
+    pFile->Write();
+    pFile->Close();
   }
   else {
 #ifdef GATE_USE_TORCH
@@ -315,7 +317,8 @@ void Gate_NN_ARF_Actor::SaveData()
 #endif
 
     if (mSaveFilename != "FilnameNotGivenForThisActor") {
-      auto pListeVar = new TTree("ARF (testing)", "ARF Testing Dataset Tree");
+      auto pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file Gate_NN_ARF_Actor", 9);
+      auto pListeVar = new TTree("ARF (using)", "ARF Dataset");
       double x,y,t,p,e;
       pListeVar->Branch("X", &x, "X/D");
       pListeVar->Branch("Y", &y, "Y/D");
@@ -331,6 +334,8 @@ void Gate_NN_ARF_Actor::SaveData()
         e = mTestData[i].E;
         pListeVar->Fill();
       }
+      pFile->Write();
+      pFile->Close();
     }
 
 #ifdef GATE_USE_TORCH
@@ -373,8 +378,6 @@ void Gate_NN_ARF_Actor::SaveData()
     }
 #endif
   }
-  pFile->Write();
-  pFile->Close();
 }
 //-----------------------------------------------------------------------------
 

@@ -10,11 +10,10 @@
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-
 #include "GateSourcePhaseSpaceMessenger.hh"
 #include "GateSourcePhaseSpace.hh"
-
 #include "GateClock.hh"
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -80,7 +79,7 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
 
   cmdName = GetDirectoryName()+"setSphereRadius";
   setSphereRadiusCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  setSphereRadiusCmd->SetGuidance("set the radius in mm of the sphere to project the particles");
+  setSphereRadiusCmd->SetGuidance("set the radius in mm of the sphere to project the particles (EXPERIMENTAL)");
   setSphereRadiusCmd->SetParameterName("Radius value",false);
 
 }
