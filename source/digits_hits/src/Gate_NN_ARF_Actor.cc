@@ -351,6 +351,10 @@ void Gate_NN_ARF_Actor::SaveData()
       mImage->SetResolutionAndHalfSize(resolution, imageSize);
       mImage->Allocate();
       mImage->Fill(0.0);
+      auto mImageSquared = new GateImageDouble();
+      mImageSquared->SetResolutionAndHalfSize(resolution, imageSize);
+      mImageSquared->Allocate();
+      mImageSquared->Fill(0.0);
       for(unsigned int i=0; i<mTestData.size(); i++) {
         if (!mTestData[i].nn.empty()) {
           double tx = mCollimatorLength*cos(mTestData[i].theta * pi /180.0);
@@ -362,11 +366,15 @@ void Gate_NN_ARF_Actor::SaveData()
           if (v < 0 || v > (mSize[1]-1))
             continue;
           for (unsigned int energy=1; energy<nb_ene; ++energy) {
-            mImage->SetValue(v, u, energy, mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset);
+            auto value = mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset;
+            mImage->SetValue(v, u, energy, value);
+            mImageSquared->SetValue(v, u, energy, value*value);
           }
         }
       }
       mImage->Write(mImagePath);
+      auto mImagePathSquared = removeExtension(mImagePath)+"-Squared.mhd";
+      mImageSquared->Write(mImagePathSquared);
       GateMessage("Actor", 1, "NN_ARF_Actor Projection written in " << mImagePath << G4endl);
       GateMessage("Actor", 1, "NN_ARF_Actor Number of energy windows " << nb_ene << G4endl);
       GateMessage("Actor", 1, "NN_ARF_Actor Number of events " << mNDataset << G4endl);
