@@ -659,15 +659,16 @@ void GateSourcePhaseSpace::InitializePyTorch()
   // load the model
   auto filename = listOfPhaseSpaceFile[0];
   GateMessage("Actor", 1, "GateSourcePhaseSpace reading " << filename << std::endl);
+  try {
   mPTmodule = torch::jit::load(filename);
-
+}
   // check
-  if (mPTmodule == nullptr) {
+  catch (...) {
     GateError("GateSourcePhaseSpace: cannot open the .pt file: " << filename);
   }
 
   // No CUDA mode yet
-  // mPTmodule->to(torch::kCUDA);
+  // mPTmodule.to(torch::kCUDA);
 
   // read json file
   nlohmann::json nnDict;
@@ -773,7 +774,7 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 
   // Execute the model
   // this is the time consuming part
-  torch::Tensor output = mPTmodule->forward(inputs).toTensor();
+  torch::Tensor output = mPTmodule.forward(inputs).toTensor();
 
   // un normalize
   std::vector<double> x_mean = mPTx_mean;
