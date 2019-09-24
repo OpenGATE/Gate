@@ -202,7 +202,7 @@ void Gate_NN_ARF_Actor::Construct()
 
 #ifdef GATE_USE_TORCH
   
-  //Load the nn and the json dictionary
+  // Load the nn and the json dictionary
   
   if (mNNModelPath == "")
     GateError("Error: Neural Network model filename (.pt) is empty. Use setNNModel");
@@ -214,7 +214,7 @@ void Gate_NN_ARF_Actor::Construct()
   mNNModule = torch::jit::load(mNNModelPath);
 
   // No CUDA for the moment
-  // mNNModule->to(torch::kCUDA);  //FIXME not cuda
+  // mNNModule->to(torch::kCUDA);
 
   // Load the json file
   std::ifstream nnDictFile(mNNDictPath);
@@ -366,12 +366,17 @@ void Gate_NN_ARF_Actor::SaveData()
           if (v < 0 || v > (mSize[1]-1))
             continue;
           for (unsigned int energy=1; energy<nb_ene; ++energy) {
-            auto value = mImage->GetValue(v, u, energy) + mTestData[i].nn[energy]/mNDataset;
+            auto value = mImage->GetValue(v, u, energy) + mTestData[i].nn[energy];///mNDataset;
             mImage->SetValue(v, u, energy, value);
             mImageSquared->SetValue(v, u, energy, value*value);
           }
         }
       }
+      // scale per events
+      for(auto p = mImage->begin(); p<mImage->end(); p++) *p /= mNDataset;
+      double s = mNDataset*mNDataset;
+      for(auto p = mImageSquared->begin(); p<mImageSquared->end(); p++) *p /= s;
+      // write
       mImage->Write(mImagePath);
       auto mImagePathSquared = removeExtension(mImagePath)+"-Squared.mhd";
       mImageSquared->Write(mImagePathSquared);
