@@ -124,7 +124,7 @@ protected:
   std::vector<double> mXmean;
   std::vector<double> mXstd;
 #ifdef GATE_USE_TORCH
-  std::shared_ptr<torch::jit::script::Module> mNNModule;
+  torch::jit::script::Module mNNModule;
   at::Tensor mNNOutput;
 #endif
   float mBatchSize; //not unsigned int to be able to be superior to max int

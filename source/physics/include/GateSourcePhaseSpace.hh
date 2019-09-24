@@ -177,7 +177,7 @@ protected:
   std::vector<double> mPTEnergy;
   std::string mPTJsonFilename;
 #ifdef GATE_USE_TORCH
-  std::shared_ptr<torch::jit::script::Module> mPTmodule;
+  torch::jit::script::Module mPTmodule;
   torch::Tensor mPTzer;
   std::vector<double> mPTx_mean;
   std::vector<double> mPTx_std;

@@ -17,6 +17,7 @@
 #include "TBranch.h"
 #include "TString.h"
 #include <iostream>
+#include <torch/torch.h>
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
 {
@@ -214,7 +215,7 @@ void Gate_NN_ARF_Actor::Construct()
   mNNModule = torch::jit::load(mNNModelPath);
 
   // No CUDA for the moment
-  // mNNModule->to(torch::kCUDA);
+  // mNNModule.to(torch::kCUDA);  //FIXME not cuda
 
   // Load the json file
   std::ifstream nnDictFile(mNNDictPath);
@@ -575,7 +576,8 @@ void Gate_NN_ARF_Actor::ProcessBatch()
   inputTensorContainer.push_back(inputTensor); // NOT CUDA
 
   // Execute the model and turn its output into a tensor.
-  mNNOutput = mNNModule->forward(inputTensorContainer).toTensor();
+  torch::NoGradGuard no_grad_guard;
+  mNNOutput = mNNModule.forward(inputTensorContainer).toTensor();
 
   // Normalize output
   mNNOutput = exp(mNNOutput);
