@@ -18,6 +18,7 @@
 #include "TString.h"
 #include <iostream>
 #include <torch/torch.h>
+
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
 {
@@ -249,7 +250,7 @@ void Gate_NN_ARF_Actor::Construct()
   }
   
   mNNOutput = at::empty({0,0});
-  assert(mNNModule != nullptr);
+  //assert(mNNModule != nullptr);
 #endif
 
   ResetData();
