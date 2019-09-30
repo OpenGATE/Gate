@@ -11,6 +11,26 @@ Package Requirements
 
 Compiling software usually requires certain system libraries and compilation tools. Furthermore, GATE and Geant4 have various package requirements which have to be met BEFORE installing or compiling. Visit the Package Requirements page for detailed package lists. This list may change frequently, last update: Dec. 31 2015
 
+Ubuntu 18.04.2 LTS (for GATE v8.2 w/ Geant4 10.5 p01)
+-----------------------------------------------------
+
+In Terminal, **type** ::
+
+   sudo apt-get update
+   sudo apt-get install <package_1 here> <package_2 here> ... <package_N here>
+
+to install the packages. Replace <package_X here> with the correct packages. For example::
+
+   sudo apt-get install cmake cmake-curses-gui build-essential libqt4-opengl-dev qt4-qmake libqt4-dev libx11-dev libxmu-dev libxpm-dev libxft-dev
+
+**The following packages are required for GATE v8.2 with minimal options turned ON (Qt5, OpenGL turned on)** ::
+
+  cmake-curses-gui libqt5-default libxmu-dev
+
+Note: In the event a package does not exist in the Ubuntu repository, you can search for a potential replacement by typing ::
+
+   sudo apt-cache search <search_term>
+
 Ubuntu 16.04.2 LTS (for GATE v8.0 w/ Geant4 10.3 p01) and Ubuntu 16.04 LTS (for GATE v7.2 w/ Geant4 10.2 p01)
 -------------------------------------------------------------------------------------------------------------
 
