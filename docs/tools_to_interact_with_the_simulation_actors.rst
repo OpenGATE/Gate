@@ -898,6 +898,20 @@ This actor records information on proton nuclear interactions (number and type).
 
 .. _filters-label:
 
+MuMapActor
+~~~~~~~~~~
+
+In PET recon, it need MuMap to attenuation correction, people can use MuMapActor to get MuMap and sourceMap. Note: voxel Mu Uint(default) is cm-1::
+
+   /gate/actor/addActor MuMapActor getMuMap
+   /gatt/actor/getMuMap/attachTo world
+   /gate/actor/getMuMap/save myMapFileName.mhd
+   /gate/actor/getMuMap/setPosition 0 0 0 mm
+   /gate/actor/getMuMap/setVoxelSize 2 2 2 mm
+   /gate/actor/getMuMap/setResolution 128 128 100
+   /gate/actor/getMuMap/setEnergy 511 keV
+   /gate/actor/getMuMap/setMuUnit 1 1/mm ##assign Mu uint
+
 Filters
 -------
 
