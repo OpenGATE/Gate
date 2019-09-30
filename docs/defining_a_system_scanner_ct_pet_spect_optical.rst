@@ -1583,5 +1583,3 @@ Notes
 1)	The command “systemType” is optional in case of using only one system, but the system name must be one GATE systems (first column in :numref:`system_tab`) as for standard definition
 2)	Same remark, in the case where all systems have different types.
 3)	In general, one has to use the “systemType” command only for simulating more than one system of the same type.
-
-*last modification: 16/04/2019*

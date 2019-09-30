@@ -359,5 +359,3 @@ When running multiple simulations simultaneously from the command line in batch 
    $ Gate -a [CoincWindow,10] [lld,350] [uld,650] myScanner.mac > terminal_output.txt &
 
 It is recommended (although not compulsory) to avoid running visualization commands in batch mode.
-
-*last modification: 16/04/2019*

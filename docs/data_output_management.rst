@@ -893,5 +893,3 @@ In the case of VRT simulation mode (see :ref:`ctscanner-label`), the VRT K facto
 Finally the random seed can be defined using::
 
  /gate/output/imageCT/setStartSeed   676567
-
-*last modification: 16/04/2019*

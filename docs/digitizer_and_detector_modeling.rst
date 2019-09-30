@@ -1153,5 +1153,3 @@ Finally, we call the 'triCoincProcessor' module and we plug on it the second sys
    /gate/digitizer/TriCoinc/triCoincProcessor/setWindow 15 ns
    /gate/digitizer/TriCoinc/triCoincProcessor/setSinglesBufferSize 40
 
-
-*last modification: 16/04/2019*

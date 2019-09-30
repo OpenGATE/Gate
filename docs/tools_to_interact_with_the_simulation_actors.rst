@@ -1037,5 +1037,3 @@ Example: To kill particles in a cone of 20 degrees around x axis::
    /gate/actor/MyActor/angleFilter/setDirection              1 0 0
 
 
-
-*last modification: 16/04/2019*

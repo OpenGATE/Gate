@@ -589,5 +589,3 @@ Comparison between input formats can be made by the diff command::
 
    diff DA-[seriesA]-mhd-Dose.raw DA-[seriesA]-dcm-Dose.raw
 
-
-*last modification: 16/04/2019*

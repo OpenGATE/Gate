@@ -147,5 +147,3 @@ TLE and seTLE (Track Length Estimator)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See the TLEDoseActor and SETLEDoseActor :ref:`tle_and_setle_track_length_estimator-label`.
-
-*last modification: 16/04/2019*

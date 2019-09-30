@@ -60,5 +60,3 @@ GATE allows to simulate the dose distribution in a phantom during radiotherapy (
    Dose distribution after radiotherapy treatment on a phantom.
 
 The :ref:`dose_measurement_doseactor-label` is the tool that is used to store the **deposited dose in a 3D matrix** which size and resolution can be specified. It can also be used for 1D and 2D dose maps. It can store *dose*, *edep* or *number of hits* and computes associated statistical uncertainty. The **DoseActor** is attached to a volume which can be voxelized or not.
-
-*last modification: 16/04/2019*

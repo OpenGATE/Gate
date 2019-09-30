@@ -469,5 +469,3 @@ During the GATE configuration by using ccmake, you need to set ON the GATE_USE_G
 .. figure:: Ccmake.png
    :alt: Figure 2: Ccmake
    :name: Ccmake
-
-*last modification: 16/04/2019*

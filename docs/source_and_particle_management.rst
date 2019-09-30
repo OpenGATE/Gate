@@ -756,5 +756,3 @@ The *fastY90* source can be used with a voxelized distribution. The voxelized di
 The data file must be a raw binary containing data in IEEE 32-bit floating point format. The voxelized distribution will be scaled internally to create a 3D probability map of the geometry of the source, but the total activity is set by the setActivity command as for any other source. By default, the location of the voxelized source will be centred at the origin. The position of the voxelized distribution can also be changed using the setVoxelizedPhantomPosition command to specify the position of the first pixel in the data file::
 
    gate/source/mySource/setVoxelizedPhantomPosition -3.5 6.0 -10.0 cm
-
-*last modification: 16/04/2019*

@@ -37,5 +37,3 @@ The examples are located in the source code into to the folder : *Gate/examples/
 **Radiography examples**:
 
 * Example 10 : Radiography of a thorax phantom. Outputs are 3D dose distribution maps computed with the classical method and the accelerated (TLE) method.
-
-*last modification: 16/04/2019*

@@ -116,5 +116,3 @@ Chapter 10 draws the architecture of a simulation. Data output are described in
 Chapter 11. Finally, Chapter 12 gives the principal material definitions
 available in GATE. Chapter 13 illustrates the interactive, bathc, or cluster
 modes of running GATE.
-
-*last modification: 16/04/2019*

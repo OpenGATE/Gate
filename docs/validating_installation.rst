@@ -126,5 +126,3 @@ If everything went well, you should see at the end of each test::
    0
    -----------------------
    (Gate output in gate_simulation_log.txt)
-
-*last modification: 16/04/2019*

@@ -521,5 +521,3 @@ Bibliography
 * Baran T M, Wilson J D, Mitra S, Yao J L, Messing E M, Waldman D L and Foster T H 2012 Optical property measurements establish the feasibility of photodynamic therapy as a minimally invasive intervention for tumors of the kidney J. Biomed. Opt. 17 (9) 098002
 * Rolfe P 2000 Brain - In vivo near-infrared spectroscopy Annu. Rev. Biomed. Eng. 2 715-754
 * Roncali E & Cherry S 2013 - `Simulation of light transport in scintillators based on 3D characterization of crystal surfaces. <https://www.ncbi.nlm.nih.gov/pubmed/23475145>`_ Phys. Med. Biol., Volume 58(7), p. 2185–2198.
-
-*last modification: 16/04/2019*

@@ -70,5 +70,3 @@ Finally, the last commands are used to attach the scintillation crystal to the d
    /gate/crystal/attachCrystalSD 
 
 **In the case of a voxellized matrix:** Previous commands to attach sensitive detectors are used for the volumes created using the geometry commands of GATE (see :ref:`defining_a_geometry-label`). In order to record the same information concerning the interactions occuring in a voxellized matrix, see :ref:`voxelized_source_and_phantom-label`.
-
-*last modification: 16/04/2019*

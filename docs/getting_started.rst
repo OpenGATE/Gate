@@ -671,5 +671,3 @@ beginning of run.
    :name: Simtree
 
    GATE simulation architecture
-
-*last modification: 16/04/2019*

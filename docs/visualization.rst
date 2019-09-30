@@ -183,5 +183,3 @@ Axes
 Any position in the *world* is defined with respect to a three-axis system: X, Y and Z. These three axes can be seen in the display window using::
 
    /vis/scene/add/axes
-
-*last modification: 16/04/2019*

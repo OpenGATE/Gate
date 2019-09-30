@@ -901,5 +901,3 @@ Here is the help for the command::
     Omittable       : True
     Default value   : tesla
     Candidates      : T kG G tesla kilogauss gauss
-
-*last modification: 16/04/2019*

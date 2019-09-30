@@ -137,5 +137,3 @@ The following packages are required::
   libxml2 xerces-c-devel qt qt-devel qt-x11 binutils libX11-devel libXft-devel libXext-devel ncurses-devel
   pcre-devel mesa-libGL-devel mesa-libGL libxml2-dev libxml2 gtkglarea2 gtkglarea2-devel fftw-devel fftw2-devel
   fftw fftw2
-
-*last modification: 16/04/2019*

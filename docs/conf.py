@@ -16,11 +16,13 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from datetime import datetime
 
 # -- Project information -----------------------------------------------------
 
 project = 'GATE'
-copyright = '2019, OpenGATE Collaboration'
+now = datetime.now()
+copyright = str(now.year) + ', OpenGATE Collaboration. Updated on ' + now.strftime("%B %d, %Y")
 author = 'OpenGATE Collaboration'
 
 # The short X.Y version

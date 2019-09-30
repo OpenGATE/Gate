@@ -140,5 +140,3 @@ Other Web Sites
 * DAWN release:  http://geant4.kek.jp/
 * ROOT  Brun R, Rademakers F 1997 ROOT - An object oriented data analysis framework Institute Nucl. Instr. Meth.  A389  81-86 ROOT website: http://root.cern.ch
 * libxml website: http://www.libxml.org
-
-*last modification: 16/04/2019*

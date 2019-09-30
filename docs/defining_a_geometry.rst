@@ -1562,5 +1562,3 @@ geometry. It also refreshes the display window. The geometry can be
 updated with the following command::
 
   /gate/geometry/rebuild
-
-*last modification: 16/04/2019*

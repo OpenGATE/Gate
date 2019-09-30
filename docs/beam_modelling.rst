@@ -49,4 +49,3 @@ of 3 beams of 10e9 C12 ions.  Each beam was composed of 195 independent spots wi
 
    (a)Dose distribution simulated for a C12 irradiation inside a CT image of a thorax. (b) Simulated PET image of the resulting C11 isotope distribution. (c) Simulated PET image of the O15 isotope distribution.
 
-*last modification: 16/04/2019*

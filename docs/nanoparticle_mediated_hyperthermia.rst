@@ -90,5 +90,3 @@ Density and heat capacity should just be in the same unit for both blood and tis
 
      /gate/actor/MyActor/setDiffusionTime              5 s
      /gate/actor/MyActor/setNumberOfTimeFrames         5
-
-*last modification: 16/04/2019*

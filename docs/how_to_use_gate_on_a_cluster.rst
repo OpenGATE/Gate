@@ -206,5 +206,3 @@ What about errors?
 If something went wrong during a simulation and a ROOT file is corrupted or incomplete, then this will be detected by the file merger. There are two options. First, one can restart only the specific part of the simulation that went wrong. This can be easily done, as the ROOT files are numbered and one can edit the submit file so it only launches that specific part. Alternatively, one can find the macro file that was used to start that part of the simulation in the .Gate directory and start the simulation directly with the macro file and its corresponding seed file.  
 
 The second option is to edit the split file, located in the .Gate directory. Once the reference to the corrupted root file is removed from it, it is possible to merge the files again. At this point, the eventIDs will not be valid anymore.
-
-*last modification: 16/04/2019*

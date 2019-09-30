@@ -32,5 +32,3 @@ In order to use the Davis LUT model Geant4 has to be extended. This documentatio
 5) Go on with ccmake process in of step 1. and finish as documented.
 6) To enable modifications of Geant4 in GATE: Follow compiling instructions: :ref:`gate-label`
 7) In the ccmake process set CMake options GATE_USE_OPTICAL and GATE_USE_DAVIS to ON. (Run provided example to validate installation for LUT Davis model and compare to provided output file.)
-
-*last modification: 16/04/2019*
