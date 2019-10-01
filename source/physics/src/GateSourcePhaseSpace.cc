@@ -687,7 +687,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
   // list of keys
   std::vector<std::string> keys = nnDict["keys"];
-  mPTz_dim = 0;
+  mPTz_dim = nnDict["z_dim"];
   auto get_index = [&keys, &nnDict, this](std::string s) {
                      auto d = std::find(keys.begin(), keys.end(), s);
                      auto index = d-keys.begin();
@@ -702,7 +702,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
                          GateError("Cannot find the value for key " << s << " in json file");
                        }
                      }
-                     else this->mPTz_dim++;
+                     // else this->mPTz_dim++;
                      std::cout << "index for " << s << " = " << index << std::endl;
                      return index;
                    };
@@ -724,6 +724,7 @@ void GateSourcePhaseSpace::InitializePyTorch()
 
   std::cout << "mean " << mPTx_mean << std::endl;
   std::cout << "std  " << mPTx_std << std::endl;
+  std::cout << "Zdim  " << mPTz_dim << std::endl;  
 
   strcpy(particleName, mParticleTypeNameGivenByUser);
 #endif
@@ -742,7 +743,8 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 
   // nb of particles to generate
   int N = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries();
-  if (N-mCurrentParticleNumberInFile < mPTBatchSize) {
+  if (N!= 0 and (N-mCurrentParticleNumberInFile < mPTBatchSize)) {
+    std::cout << "N " << N << " " << mCurrentParticleNumberInFile << std::endl;
     int n = N-mCurrentParticleNumberInFile + 10;
     mPTzer = torch::zeros({n, mPTz_dim});
   }
