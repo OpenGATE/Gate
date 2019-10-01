@@ -64,6 +64,8 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bSetSphereProjectionRadius;
   delete bEnableTranslationAlongDirection;
   delete bSetTranslationAlongDirectionLength;
+  delete pUseMaskCmd;
+  delete pEnableKillCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -278,6 +280,16 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pEnableTProdCmd->SetGuidance(guidance);
   pEnableTProdCmd->SetParameterName("State",false);
 
+  bb = base+"/useMask";
+  pUseMaskCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Store only if particle position is in mask (pixel value different from 0).";
+  pUseMaskCmd->SetGuidance(guidance);
+  
+  bb = base+"/killParticle";
+  pEnableKillCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Kill particle once stored.";
+  pEnableKillCmd->SetGuidance(guidance);
+  pEnableKillCmd->SetParameterName("State",false);
 
 }
 //-----------------------------------------------------------------------------
@@ -326,7 +338,9 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
 
   if(command == pEnableTOutCmd) pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
   if(command == pEnableTProdCmd) pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
-
+  if(command == pUseMaskCmd) pActor->SetMaskFilename(param);
+  if(command == pEnableKillCmd) pActor->SetKillParticleFlag(pEnableKillCmd->GetNewBoolValue(param));
+  
   GateActorMessenger::SetNewValue(command ,param );
 }
 //-----------------------------------------------------------------------------
