@@ -368,9 +368,9 @@ void Gate_NN_ARF_Actor::SaveData()
           if (v < 0 || v > (mSize[1]-1))
             continue;
           for (unsigned int energy=1; energy<nb_ene; ++energy) {
-            auto v = mTestData[i].nn[energy];
-            auto value = mImage->GetValue(v, u, energy) + v;
-            auto valuesq = mImageSquared->GetValue(v, u, energy) + v*v;
+            auto val = mTestData[i].nn[energy];
+            auto value = mImage->GetValue(v, u, energy) + val;
+            auto valuesq = mImageSquared->GetValue(v, u, energy) + val*val;
             mImage->SetValue(v, u, energy, value);
             mImageSquared->SetValue(v, u, energy, valuesq);
           }
