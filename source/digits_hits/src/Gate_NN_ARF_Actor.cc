@@ -376,10 +376,11 @@ void Gate_NN_ARF_Actor::SaveData()
           }
         }
       }
+
       // scale per events
       for(auto p = mImage->begin(); p<mImage->end(); p++) *p /= mNDataset;
-      double s = mNDataset*mNDataset;
-      for(auto p = mImageSquared->begin(); p<mImageSquared->end(); p++) *p /= s;
+      for(auto p = mImageSquared->begin(); p<mImageSquared->end(); p++) *p /= mNDataset;
+      
       // write
       mImage->Write(mImagePath);
       auto mImagePathSquared = removeExtension(mImagePath)+"-Squared.mhd";
