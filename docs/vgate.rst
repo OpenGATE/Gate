@@ -1,6 +1,6 @@
 .. _vgate-label:
 
-Desktop view of vGate
+vGate (virtual Gate)
 =====================
 
 .. contents:: Table of Contents
