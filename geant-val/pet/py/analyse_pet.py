@@ -96,6 +96,8 @@ def analyse_pet(filename):
     a = ax[(0,0)]
     a.scatter(r1x, r1y, s=1)
     a.set_aspect('equal', adjustable='box')
+    a.set_xlabel('mm')
+    a.set_ylabel('mm')
     a.set_title('Transaxial detection position ({} first events only)'.format(n))
 
     # Axial Detection
@@ -105,6 +107,8 @@ def analyse_pet(filename):
     ad = np.concatenate((ad1, ad2))
     a = ax[(0,1)]
     a.hist(ad, histtype='step', bins=100)
+    a.set_xlabel('mm')
+    a.set_ylabel('counts')
     a.set_title('Axial coincidences detection position')
 
     # True unscattered coincidences (tuc)
@@ -122,11 +126,15 @@ def analyse_pet(filename):
     print("\tunscattered", len(tuc))
     a = ax[0,2]
     a.hist(tuc, bins=100)
+    a.set_xlabel('mm')
+    a.set_ylabel('counts')
     a.set_title('Axial Sensitivity Detection')
     a = ax[1,0]
     countsa, binsa = np.histogram(tsc, bins=100)
     countsr, binsr = np.histogram(z, bins=100)
     a.hist(binsa[:-1], bins=100, weights=countsa/countsr)
+    a.set_xlabel('mm')
+    a.set_ylabel('%')
     a.set_title('Axial Scatter fraction')
 
     # Delays and Randoms
@@ -162,6 +170,8 @@ def analyse_pet(filename):
     a.hist(decayF18, bins=100, label='F18 HL = 6586.2 sec', histtype='stepfilled', alpha=0.5, density=True)
     a.plot(xx, yy, label='O15 fit HL = {:.2f} sec'.format(hl))
     a.legend()
+    a.set_xlabel('time (s)')
+    a.set_ylabel('decay')
     a.set_title('Rad decays')
 
     # Randoms
@@ -176,6 +186,8 @@ def analyse_pet(filename):
     a.hist(randoms, bins=100, histtype='stepfilled', alpha=0.6, label='Random = {}'.format(len(randoms)))
     a.hist(t1, bins=100, histtype='step', label="Delays with coinc sorter = {}".format(len(delays)))
     a.legend()
+    a.set_xlabel('time (s)')
+    a.set_ylabel('events')
     a.set_title('Randoms')
 
     # info
