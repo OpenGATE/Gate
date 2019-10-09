@@ -16,6 +16,7 @@ Welcome to GATE's documentation!
    thermal_therapy_application
    parallel_computing
    gate_tools
+   vgate
 
 Indices and tables
 ==================
