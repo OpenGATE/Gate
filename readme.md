@@ -3,6 +3,7 @@
 https://github.com/OpenGATE/Gate is the public repository of the GATE software. 
 
 More details : http://www.opengatecollaboration.org
+
 Documentation : https://opengate.readthedocs.io
 
 * The stable version is branch 'master' (or tag 8.2): https://github.com/OpenGATE/Gate/tree/v8.2
