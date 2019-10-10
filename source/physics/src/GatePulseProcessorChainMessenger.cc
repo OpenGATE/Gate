@@ -58,7 +58,7 @@ See LICENSE.md for further details
 #include "GateDoIModels.hh"
 #include "GateGridDiscretization.hh"
 #include "GateLocalMultipleRejection.hh"
-#include "GateLocalTimeResolution.hh
+#include "GateLocalTimeResolution.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -189,8 +189,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBuffer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="timeResolution")
     newProcessor = new GateTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
-  else if (childTypeName=="localtimeResolution")
-    newProcessor = new GateLocalTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
+  else if (childTypeName=="localTimeResolution")
+    newProcessor = new GateLocalTimeResolution(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="systemFilter")
      newProcessor = new GateSystemFilter(GetProcessorChain(),newInsertionName);
  // else if (childTypeName=="stripSpDiscretization")
