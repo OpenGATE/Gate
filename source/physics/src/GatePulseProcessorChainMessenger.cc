@@ -58,6 +58,7 @@ See LICENSE.md for further details
 #include "GateDoIModels.hh"
 #include "GateGridDiscretization.hh"
 #include "GateLocalMultipleRejection.hh"
+#include "GateLocalTimeResolution.hh
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -101,7 +102,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect  gridDiscretization  localMultipleRejection";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter adderGPUSpect  gridDiscretization  localMultipleRejection";
   return theList;
 }
 
@@ -188,6 +189,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBuffer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="timeResolution")
     newProcessor = new GateTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
+  else if (childTypeName=="localtimeResolution")
+    newProcessor = new GateLocalTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
   else if (childTypeName=="systemFilter")
      newProcessor = new GateSystemFilter(GetProcessorChain(),newInsertionName);
  // else if (childTypeName=="stripSpDiscretization")
