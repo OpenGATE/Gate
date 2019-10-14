@@ -1067,7 +1067,10 @@ Generic repeater
 ~~~~~~~~~~~~~~~~
 
 It is also possible to repeat a volume according to a list of
-transformations (rotation and translation). The following macros read
+transformations (rotation and translation). The time column is ignored by 
+the generic repeater.
+
+The following macros read
 the transformations into a simple text file::
 
   /gate/myvolume/repeaters/insert                       genericRepeater
@@ -1077,17 +1080,20 @@ the transformations into a simple text file::
 The text file "myvolume.placements" is composed as follows::
 
   ###### List of placement (translation and rotation)
-  ###### Column 1      is rotationAngle in degree
-  ###### Columns 2,3,4 are rotation axis 
-  ###### Columns 5,6,7 are translation in mm
+  ###### Column 1      is time in seconds
+  ###### Column 2      is rotationAngle in degree
+  ###### Columns 3,4,5 are rotation axis 
+  ###### Columns 6,7,8 are translation in mm
+  Time     s
   Rotation deg
   Translation mm
-  0       0 1 0       0 0 10
-  10      0 1 0       0 0 10
-  15      0 1 0       0 0 20
+  0      0       0 1 0       0 0 10
+  0      10      0 1 0       0 0 10
+  0      15      0 1 0       0 0 20
 
 -  line with # are ignored
--  first word must be Rotation or Translation followed with the unity
+-  first word must be Time followed with the units
+-  next words must be Rotation then Translation followed with the units
    (deg and mm here)
 -  Rotation are described with 4 columns, the first for the angle, three
    others for the rotation axis
