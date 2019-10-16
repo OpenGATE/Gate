@@ -1,17 +1,9 @@
-/**
- *  @copyright Copyright 2016 The J-PET Gate Authors. All rights reserved.
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  @file GateExtendedVSource.hh
- */
+/** ----------------------
+  Copyright (C): OpenGATE Collaboration
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 #ifndef GateExtendedVSource_hh
 #define GateExtendedVSource_hh
 
@@ -20,10 +12,11 @@
 #include "GateGammaSourceModels.hh"
 #include "GateExtendedVSourceMessenger.hh"
 
-/**Author: Mateusz Bała
- * Email: bala.mateusz@gmail.com
- * About class: Extended version of GateVSource. It inherits all methods from GateVSource. It provides additional methods and solutions: support access to gammas source models.
- */
+/** Author: Mateusz Bała
+ *  Email: bala.mateusz@gmail.com
+ *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
+ *  About class: Extended version of GateVSource. It inherits all methods from GateVSource. It provides additional methods and solutions: support access to gammas source models.
+ **/
 class GateExtendedVSource : public GateVSource
 {
 public:

@@ -1,4 +1,9 @@
-
+/** ----------------------
+  Copyright (C): OpenGATE Collaboration
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 #ifndef GateExtendedVSourceMessenger_hh
 #define GateExtendedVSourceMessenger_hh
 
@@ -12,8 +17,9 @@ class GateExtendedVSource;
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
+ *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Messenger for GateExtendedVSource class
- * */
+ **/
 class GateExtendedVSourceMessenger: public GateVSourceMessenger
 {
  public:
