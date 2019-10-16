@@ -1,17 +1,9 @@
-/**
- *  @copyright Copyright 2019 The J-PET Gate Authors. All rights reserved.
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  @file GateGammaModelPrimaryParticleInformation.hh
- */
+/** ----------------------
+  Copyright (C): OpenGATE Collaboration
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 #ifndef GateGammaModelPrimaryParticleInformation_hh
 #define GateGammaModelPrimaryParticleInformation_hh
 #include <G4VUserPrimaryParticleInformation.hh>
@@ -19,8 +11,9 @@
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
+ *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Provides additional data about gamma particle - useful for analysis.
- * */
+ **/
 class GateGammaModelPrimaryParticleInformation : public G4VUserPrimaryParticleInformation
 {
  public:

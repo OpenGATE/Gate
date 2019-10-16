@@ -1,18 +1,9 @@
-/**
- *  @copyright Copyright 2017 The J-PET Gate Authors. All rights reserved.
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  @file GateGammaSourceModel.hh
- */
-
+/** ----------------------
+  Copyright (C): OpenGATE Collaboration
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 #ifndef GateGammaSourceModel_hh
 #define GateGammaSourceModel_hh
 
@@ -26,10 +17,11 @@
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
+ *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Clear abstract class which provide source of particles from any process.
  *  Your task is to write class which inherit this one and write working GetGammaParticles function.
  *  In addiction this class provide tool to generate linear polarization vectors (or zero polarization vectors).
- * */
+ **/
 class GateGammaSourceModel
 {
  public:
