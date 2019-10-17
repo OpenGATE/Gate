@@ -43,6 +43,14 @@ def analyse_pet(filename):
     f = uproot.open(filename)
     #print("List of keys: \n", f.keys())
 
+    # get timing
+    singles = f[b'Singles']
+    times = tget(singles, b'time')
+    start_time = min(times)
+    end_time = max(times)
+    slice_time = (end_time-start_time)/2
+    print(f'Times : {start_time} {slice_time} {end_time}')
+    
     n_events = 1
     start_simulation_time = 0
     stop_simulation_time = 240
@@ -71,12 +79,15 @@ def analyse_pet(filename):
 
     #
     print("Detector positions by run")
+    times = tget(coinc, b'time1')
     runID = tget(coinc, b'runID')
     gpx1 = tget(coinc, b'globalPosX1')
     gpx2 = tget(coinc, b'globalPosX2')
     gpy1 = tget(coinc, b'globalPosY1')
     gpy2 = tget(coinc, b'globalPosY2')
-    mask = (runID == 0)
+    # only consider coincidences  with time lower than time_slice
+    # (assuming 2 time slices only)
+    mask = (times < slice_time)
     n = 1000 # restrict to the n first values
     r0_gpx1 = gpx1[mask][:n]
     r0_gpx2 = gpx2[mask][:n]
@@ -86,7 +97,7 @@ def analyse_pet(filename):
     r0y = np.concatenate((r0_gpy1,r0_gpy2, r0_gpy1))
     a = ax[(0,0)]
     a.scatter(r0x, r0y, s=1)
-    mask = (runID == 1)
+    mask = (times > slice_time)
     r1_gpx1 = gpx1[mask][:n]
     r1_gpx2 = gpx2[mask][:n]
     r1_gpy1 = gpy1[mask][:n]
@@ -160,7 +171,7 @@ def analyse_pet(filename):
     def exponenial_func(x, a, b):
         return a*np.exp(-b*x)
     popt, pcov = scipy.optimize.curve_fit(exponenial_func, bin_centers, bin_heights)
-    xx = np.linspace(0, 240, 240)
+    xx = np.linspace(0, end_time, end_time)
     yy = exponenial_func(xx, *popt)
     hl = np.log(2)/popt[1]
 
@@ -200,8 +211,9 @@ def analyse_pet(filename):
     line1 = line1+'\nNumber of randoms {:.0f}'.format(len(randoms))
     line1 = line1+'\nNumber of scatter {:.0f}'.format(len(tsc))
     line1 = line1+'\nAbsolute sensibility {:.2f} %'.format(absolute_sensitivity*100.0)
-    line1 = line1+'\nStart time {:.1f} s'.format(start_simulation_time)
-    line1 = line1+'\nStop time {:.1f} s'.format(stop_simulation_time)
+    line1 = line1+'\nStart time {:.1f} s'.format(start_time)
+    line1 = line1+'\nSlice time {:.1f} s'.format(slice_time)
+    line1 = line1+'\nStop time {:.1f} s'.format(end_time)
     a = ax[2,0]
     a.plot([0], [0], '')
     a.plot([1], [1], '')
