@@ -67,6 +67,7 @@ protected:
 
 private:
  const static int INVALID_Qf=100000;
+ double computeGeomScatteringAngleError( GateCoincidencePulse coincP);
 
   GateCCCoincidenceSequenceReconMessenger *m_messenger;    //!< Messenger
 
