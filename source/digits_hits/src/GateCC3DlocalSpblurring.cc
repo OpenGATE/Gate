@@ -34,6 +34,8 @@ G4int GateCC3DlocalSpblurring::ChooseVolume(G4String val)
       m_param.sigmaSpblurr.setX(-1);
       m_param.sigmaSpblurr.setY(-1);
       m_param.sigmaSpblurr.setZ(-1);
+      //AE: Before in an older Gate version I could get here the extent of the volume once. Now it seems that the volume here was initialized but not created. The corresponding SolidVolume does not exist (the logical one exits). 
+//m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
 
       m_table[val] = m_param;
       return 1;
