@@ -19,7 +19,7 @@ GateLocalClusteringMessenger::GateLocalClusteringMessenger(GateLocalClustering* 
 
       cmdName = GetDirectoryName() + "chooseNewVolume";
       newVolCmd = new G4UIcmdWithAString(cmdName,this);
-      newVolCmd->SetGuidance("Choose a volume for applying a Strip discretization");
+      newVolCmd->SetGuidance("Choose a volume for applying clustering");
 
 
 
@@ -43,7 +43,7 @@ void GateLocalClusteringMessenger::SetNewValue(G4UIcommand* command, G4String ne
           G4String cmdName2, cmdName3;
 
            if(GetLocalClustering()->ChooseVolume(newValue) == 1) {
-               G4cout<<"new Value options for SpDiscreti "<< newValue<<G4endl;
+               G4cout<<"new Value options for clustering "<< newValue<<G4endl;
 
 
                m_volDirectory.push_back(new G4UIdirectory( (GetDirectoryName() + newValue + "/").c_str() ));
