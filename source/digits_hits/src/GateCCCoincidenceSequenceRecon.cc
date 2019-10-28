@@ -267,7 +267,7 @@ GateCoincidencePulse* GateCCCoincidenceSequenceRecon::ProcessPulse(GateCoinciden
 
 
 
-double computeGeomScatteringAngleError( GateCoincidencePulse coincP){
+double GateCCCoincidenceSequenceRecon::computeGeomScatteringAngleError( GateCoincidencePulse coincP){
     //MEgalib method to compute it
     double deltaF=0;
     if(coincP.size()==3){
