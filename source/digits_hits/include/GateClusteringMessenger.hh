@@ -20,19 +20,19 @@ class GateClustering;
 
 class GateClusteringMessenger: public GatePulseProcessorMessenger
 {
-  public:
-    GateClusteringMessenger(GateClustering* itsPulseAdder);
+public:
+    GateClusteringMessenger(GateClustering* itsPulseClus);
     virtual ~GateClusteringMessenger();
 
-     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
     inline GateClustering* GetClustering()
-      { return (GateClustering*) GetPulseProcessor(); }
+    { return (GateClustering*) GetPulseProcessor(); }
 
- private:
+private:
 
-      G4UIcmdWithADoubleAndUnit*   pAcceptedDistCmd;
-      G4UIcmdWithABool* pRejectionMultipleClustersCmd;
+    G4UIcmdWithADoubleAndUnit*   pAcceptedDistCmd;
+    G4UIcmdWithABool* pRejectionMultipleClustersCmd;
 
 };
 

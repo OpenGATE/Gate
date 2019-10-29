@@ -18,7 +18,7 @@ class GateClusteringMessenger;
 
 class GateClustering : public GateVPulseProcessor
 {
-  public:
+public:
 
     //! Constructs a new pulse-adder attached to a GateDigitizer
     GateClustering(GatePulseProcessorChain* itsChain,const G4String& itsName);
@@ -39,15 +39,14 @@ class GateClustering : public GateVPulseProcessor
 
 protected:
 
-  //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
-  //! This methods processes one input-pulse
-  //! It is is called by ProcessPulseList() for each of the input pulses
-  //! The result of the pulse-processing is incorporated into the output pulse-list
-  //void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList, std::vector<int> & indexX, std::vector<int>&  indexY);
-  void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
+    //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
+    //! This methods processes one input-pulse
+    //! It is is called by ProcessPulseList() for each of the input pulses
+    //! The result of the pulse-processing is incorporated into the output pulse-list
+    void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
 
 
- GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
+    GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
 
 
 
@@ -58,12 +57,12 @@ protected:
 
     double getDistance(  G4ThreeVector pos1,G4ThreeVector pos2 );
 
-   void checkClusterCentersDistance( GatePulseList& outputPulseList);
-   //std::vector<int > index4Clusters;
-	//several functions needed for special processing of electronic pulses
-	void PulsePushBack(const GatePulse* inputPulse, GatePulseList& outputPulseList);
+    void checkClusterCentersDistance( GatePulseList& outputPulseList);
+    //std::vector<int > index4Clusters;
+    //several functions needed for special processing of electronic pulses
+    void PulsePushBack(const GatePulse* inputPulse, GatePulseList& outputPulseList);
 
-    bool same_volumeID(const GatePulse& pulse1, const GatePulse& pulse2 );
+    bool same_volumeID(const GatePulse* pulse1, const GatePulse* pulse2 );
 private:
     G4double m_acceptedDistance;
     G4bool m_flgMRejection;
