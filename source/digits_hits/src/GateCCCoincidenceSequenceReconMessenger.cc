@@ -19,11 +19,11 @@ See LICENSE.md for further details
 GateCCCoincidenceSequenceReconMessenger::GateCCCoincidenceSequenceReconMessenger(GateCCCoincidenceSequenceRecon* itsSequence)
     : GateClockDependentMessenger(itsSequence)
 {
-  G4String guidance;
-  G4String cmdName;
+    G4String guidance;
+    G4String cmdName;
 
 
-  cmdName = GetDirectoryName()+"setSequencePolicy";
+    cmdName = GetDirectoryName()+"setSequencePolicy";
     sequencePolicyCmd = new G4UIcmdWithAString(cmdName,this);
     sequencePolicyCmd->SetGuidance("How to order coincidences");
     sequencePolicyCmd->SetCandidates("singlesTime lowestEnergyFirst randomly axialDist2Source revanC_CSR");
@@ -36,7 +36,7 @@ GateCCCoincidenceSequenceReconMessenger::GateCCCoincidenceSequenceReconMessenger
 GateCCCoincidenceSequenceReconMessenger::~GateCCCoincidenceSequenceReconMessenger()
 {
 
-  delete sequencePolicyCmd;
+    delete sequencePolicyCmd;
 
 }
 

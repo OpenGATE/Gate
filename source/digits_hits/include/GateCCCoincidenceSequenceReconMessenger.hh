@@ -21,16 +21,16 @@ class GateCCCoincidenceSequenceRecon;
 class GateCCCoincidenceSequenceReconMessenger: public GateClockDependentMessenger
 {
 public:
-  GateCCCoincidenceSequenceReconMessenger(GateCCCoincidenceSequenceRecon* itsSequence);
-  virtual ~GateCCCoincidenceSequenceReconMessenger();
+    GateCCCoincidenceSequenceReconMessenger(GateCCCoincidenceSequenceRecon* itsSequence);
+    virtual ~GateCCCoincidenceSequenceReconMessenger();
 
-  inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-  inline GateCCCoincidenceSequenceRecon* GetCoincidenceSequence(){ return (GateCCCoincidenceSequenceRecon*) GetClockDependent(); }
+    inline GateCCCoincidenceSequenceRecon* GetCoincidenceSequence(){ return (GateCCCoincidenceSequenceRecon*) GetClockDependent(); }
 
 private:
 
-  G4UIcmdWithAString         * sequencePolicyCmd;  //!< The UI command "sequencePolicy"
+    G4UIcmdWithAString         * sequencePolicyCmd;  //!< The UI command "sequencePolicy"
 
 };
 
