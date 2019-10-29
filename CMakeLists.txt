@@ -133,12 +133,6 @@ IF(GATE_USE_XRAYLIB)
 ENDIF(GATE_USE_XRAYLIB)
 
 #=========================================================
-# Option for Davis model
-IF(GATE_USE_DAVIS)
-  MESSAGE("Warning! You have to install a manually modified version of Geant4 to use the Davis LUT model. Please refer to http://wiki.opengatecollaboration.org/index.php/Enabling_LUT_Davis_Model for detailed step-by-step compiling instructions")
-ENDIF(GATE_USE_DAVIS)
-
-#=========================================================
 # Option for Clhep use
 IF(GATE_USE_SYSTEM_CLHEP)
   FIND_PACKAGE(CLHEP REQUIRED)
@@ -194,6 +188,7 @@ INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 # Setup include directory for this project
 INCLUDE(${Geant4_USE_FILE})
 INCLUDE_DIRECTORIES(
+  ${PROJECT_SOURCE_DIR}/source/io/include
   ${PROJECT_SOURCE_DIR}/source/arf/include
   ${PROJECT_SOURCE_DIR}/source/geometry/include
   ${PROJECT_SOURCE_DIR}/source/physics/include
@@ -204,6 +199,7 @@ INCLUDE_DIRECTORIES(
 #=========================================================
 # Locate sources and headers for this project
 FILE(GLOB sources
+  ${PROJECT_SOURCE_DIR}/source/io/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/arf/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
@@ -213,6 +209,7 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc)
 
 FILE(GLOB headers
+  ${PROJECT_SOURCE_DIR}/source/io/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
@@ -288,7 +285,10 @@ ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
 # such warning related to clhep/g4 system of units. Additionally,
 # we force the c++11 std. This is mandatory for Geant4 >= 10.2.
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+set(CMAKE_CXX_STANDARD 11)
+
 #=========================================================
 
 #=========================================================

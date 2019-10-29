@@ -17,9 +17,9 @@ using std::cout;
 using std::endl;
 
 GateSplitManager::GateSplitManager(G4int nAliases,G4String* aliases,G4String platform,G4String pbsscript,
-                                   G4String condorscript,G4String macfile,G4int nSplits,G4int time)
+                                   G4String slurmscript,G4String condorscript,G4String macfile,G4int nSplits,G4int time)
 {
- toPlatform = new GateToPlatform(nSplits,platform,pbsscript,condorscript,macfile,time);
+ toPlatform = new GateToPlatform(nSplits,platform,pbsscript,slurmscript,condorscript,macfile,time);
  macParser  = new GateMacfileParser(macfile,nSplits,nAliases,aliases);
  numberOfSplits=nSplits;
 }

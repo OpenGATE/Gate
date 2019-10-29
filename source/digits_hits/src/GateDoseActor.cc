@@ -520,9 +520,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mMaterialFilter != "") {
     GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = " << Gateendl
                      << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
-                     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
+                     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetDoselVolume(), "Volumic Mass") << Gateendl
                      << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
-                     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
+                     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetDoselVolume(), "Volume") << Gateendl);
   }
 
   if (mVolumeFilter != "") {

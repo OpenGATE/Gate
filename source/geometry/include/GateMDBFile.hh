@@ -29,11 +29,15 @@ public:
   virtual ~GateMDBFile();
 
 public:
+  GateIsotopeCreator*  ReadIsotope(const G4String& isotopeName);
   GateElementCreator*  ReadElement(const G4String& elementName);
   GateMaterialCreator* ReadMaterial(const G4String& materialName);
   G4String GetMDBFileName(){return filePath;}
 
 protected:
+  GateScratchElementCreator*  ReadScratchElement(const G4String& elementName,const G4String& line);
+  GateCompoundElementCreator* ReadCompoundElement(const G4String& elementName,const G4String& line);
+
   GateScratchMaterialCreator*  ReadScratchMaterial(const G4String& materialName,const G4String& line);
   GateCompoundMaterialCreator* ReadCompoundMaterial(const G4String& materialName,const G4String& line);
 
@@ -43,6 +47,7 @@ protected:
       	      	      	      	      	       const G4String& field, const G4String& componentName);
   GateEByFComponentCreator*  ReadEByFComponent(const G4String& materialName,const G4String& componentOrdinal,
       	      	      	      	      	       const G4String& field, const G4String& componentName);
+  GateIByFComponentCreator*  ReadIsoComponent(const G4String& elementName,const G4String& componentOrdinal,const G4String& line);
   GateMatComponentCreator*   ReadMatComponent(const G4String& materialName,const G4String& componentOrdinal,const G4String& line);
   
   void     ReadAllMaterialOptions(const G4String& materialName,const G4String& line,GateMaterialCreator* creator);

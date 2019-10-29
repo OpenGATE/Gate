@@ -30,6 +30,7 @@
 #include "GateActions.hh"
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
+#include "GateSourcePhaseSpace.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -582,7 +583,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
           G4cout << "GateSourceMgr::PrepareNextEvent :  m_time (s) " << m_time/s
                  << "  m_timeLimit (s) " << m_timeLimit/s << Gateendl;
 
-        if( m_time <= m_timeLimit || appMgr->IsTotalAmountOfPrimariesModeEnabled())
+        if( m_time <= m_timeLimit || appMgr->IsTotalAmountOfPrimariesModeEnabled() || appMgr->IsReadNumberOfPrimariesInAFileModeEnabled() )
           {
             if( mVerboseLevel > 1 )
               G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"

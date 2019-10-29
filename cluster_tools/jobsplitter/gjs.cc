@@ -30,10 +30,13 @@ void showhelp()
 	cout<<"  -a value alias             : use any alias"<<endl;
 	cout<<"  -numberofsplits, -n   n    : the number of job splits; default=1"<<endl;
 	cout<<"  -clusterplatform, -c  name : the cluster platform, name is one of the following:"<<endl;
-	cout<<"                               openmosix - condor - openPBS - xgrid"<<endl;
+	cout<<"                               openmosix - condor - openPBS - slurm - xgrid"<<endl;
 	cout<<"                               This executable is compiled with "<<GC_DEFAULT_PLATFORM<<" as default"<<endl<<endl;
 	cout<<"  -openPBSscript, os         : template for an openPBS script "<<endl;
 	cout<<"                               see the example that comes with the source code (script/openPBS.script)"<<endl;
+	cout<<"                               overrules the environment variable below"<<endl<<endl; 
+	cout<<"  -slurmscript, ss           : template for a SLURM script "<<endl;
+	cout<<"                               see the example that comes with the source code (script/slurm.script)"<<endl;
 	cout<<"                               overrules the environment variable below"<<endl<<endl; 
 	cout<<"  -condorscript, cs          : template for a condor submit file"<<endl;
 	cout<<"                               see the example that comes with the source code (script/condor.script)"<<endl;
@@ -63,6 +66,7 @@ int main(int argc,char** argv)
 	G4String platform="";
 	G4String macfile;
 	G4String pbsscript;
+	G4String slurmscript;
 	G4String condorscript;
 	G4int nSplits=0;
 	G4int nextArg = 1;
@@ -121,6 +125,12 @@ int main(int argc,char** argv)
 			pbsscript=argv[nextArg+1];
 			if(debug)cout<<"found -openPBSscript "<<pbsscript<<endl;
 		}  
+		if ((!strcmp(argv[nextArg],"-slurmscript") || !strcmp(argv[nextArg],"-ss")) && indicator==0)
+		{
+			indicator=1;
+			slurmscript=argv[nextArg+1];
+			if(debug)cout<<"found -slurmscript "<<slurmscript<<endl;
+		}  
 		if ((!strcmp(argv[nextArg],"-condorscript") || !strcmp(argv[nextArg],"-cs")) && indicator==0)
 		{
 			indicator=1;
@@ -158,7 +168,7 @@ int main(int argc,char** argv)
 		}
 	} 
 	
-	if (platform=="" || platform=="openmosix" || platform=="openPBS" || platform=="condor"|| platform=="xgrid")
+	if (platform=="" || platform=="openmosix" || platform=="openPBS" || platform=="slurm" || platform=="condor"|| platform=="xgrid")
 	{  
 		if (platform=="")
 		{
@@ -206,7 +216,7 @@ int main(int argc,char** argv)
 	}
 	//create a splitmanager to coordinate it all  
 	GateSplitManager* manager;
-	manager=new GateSplitManager(nAliases,aliases,platform,pbsscript,condorscript,macfile,nSplits,time);
+	manager=new GateSplitManager(nAliases,aliases,platform,pbsscript,slurmscript,condorscript,macfile,nSplits,time);
 	manager->SetVerboseLevel(verb);
 	manager->StartSplitting();
 	
