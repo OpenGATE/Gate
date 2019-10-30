@@ -40,12 +40,9 @@ G4int GateCC3DlocalSpblurring::ChooseVolume(G4String val)
        * G4VoxelLimits limits;
       G4double min, max;
       G4AffineTransform at;
-      G4cout << m_store->FindCreator(val)->GetLogicalVolume() << G4endl;
-      G4cout << "coucou0" << G4endl;
-      G4cout << m_store->FindCreator(val)->GetLogicalVolume()->GetSolid() << G4endl;
-      G4cout << "coucou1" << G4endl;
-      m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
-      G4cout << "coucou2" << G4endl;*/
+      G4cout <<"logical "<< m_store->FindCreator(val)->GetLogicalVolume() << G4endl;
+      G4cout <<"solid "<< m_store->FindCreator(val)->GetLogicalVolume()->GetSolid() << G4endl;
+      m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);*/
 
       m_table[val] = m_param;
       return 1;
