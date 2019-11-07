@@ -110,14 +110,23 @@ G4int GateSequenceCoincidenceTreeReader::PrepareNextEvent(){
        }
        else{
            if(m_coincBuffer.eventID!=firstEvtID)isTrueCoinc=false;
-	   energyR+=m_coincBuffer.energy;
+           energyR+=m_coincBuffer.energy;//Al the deposited energy except E1
            if(counter==1){
-
+               aCone.SetEnergy2(m_coincBuffer.energy);
                G4ThreeVector pos2;
                pos2.setX(m_coincBuffer.globalPosX);
                pos2.setY(m_coincBuffer.globalPosY);
                pos2.setZ(m_coincBuffer.globalPosZ);
-               aCone.SetPosition2(pos2);;
+               aCone.SetPosition2(pos2);
+           }
+           if(counter==2){
+
+               G4ThreeVector pos3;
+               pos3.setX(m_coincBuffer.globalPosX);
+               pos3.setY(m_coincBuffer.globalPosY);
+               pos3.setZ(m_coincBuffer.globalPosZ);
+               aCone.SetPosition3(pos3);
+
            }
        }
        counter++;//Para contar primera y segunda interaccion y ponerla en el cono
