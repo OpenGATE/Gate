@@ -50,9 +50,6 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse, GatePulseList& o
 
   if (inputPulse->GetRunID() != m_init_done_run_id) {
     // initialise the DeadTime buffer and table
-    DD(m_volumeName);
-    DD(m_init_done_run_id);
-    DD(inputPulse->GetRunID());
     CheckVolumeName(m_volumeName);
     if (!m_testVolume) {
       G4cerr << Gateendl << "[GateDeadTime::ProcessOnePulse]:\n"
@@ -157,7 +154,6 @@ void GateDeadTime::SetDeadTimeMode(G4String val)
     G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
     m_isParalysable = (val=="paralysable");
-
 }
 
 
@@ -180,8 +176,6 @@ void GateDeadTime::CheckVolumeName(G4String val)
 
 void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
 {
-  DD("FindLevelsParams");
-
   G4int numberTotalOfComponentInSystem = 0;
   GateVVolume* anInserter = anInserterStore->FindCreator(m_volumeName);
   GateVVolume* anotherInserter = anInserter; // just to buffer anInserter
@@ -199,7 +193,6 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   anotherInserter = anInserter;
 
   // How many components for each levels ?
-  // G4int* numberOfComponentForLevel = new G4int[numberOfHigherLevels];
   numberOfComponentForLevel.resize(numberOfHigherLevels);
   if (numberOfHigherLevels < 1) {
     G4cout << "[GateDeadTime::FindLevelsParams]: ERROR numberOfHigherLevels is zero.\n\n";
@@ -225,8 +218,6 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
     G4cout << "total number of elements = " <<numberTotalOfComponentInSystem << Gateendl;
 
   // create the table of "rebirth time" (detector is dead than it rebirth)
-  //unsigned long long int* m_deadTimeTable = new unsigned long long int[numberTotalOfComponentInSystem];
-
   m_deadTimeTable.resize(numberTotalOfComponentInSystem);
   m_bufferCurrentSize.resize(numberTotalOfComponentInSystem);
 
