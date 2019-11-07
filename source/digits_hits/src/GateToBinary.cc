@@ -45,19 +45,8 @@ GateToBinary::GateToBinary( G4String const& name, GateOutputMgr* outputMgr,
 
 GateToBinary::~GateToBinary()
 {
-  // Deleting each output channel vector
-  // for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
-  // {
-  // 	delete m_outputChannelVector[ i ];
-  // }
-
   // Deleting the messenger
   delete m_binaryMessenger;
-
-  if( nVerboseLevel > 0 )
-    {
-      std::cout << "GateToBinary deleting...\n";
-    }
 }
 
 void GateToBinary::RecordBeginOfAcquisition()
