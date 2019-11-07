@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #ifndef GateDeadTime_h
@@ -22,18 +22,19 @@ class GateDeadTimeMessenger;
 
 
 /*! \class  GateDeadTime
-    \brief  Pulse-processor modelling a simple dead time discriminator.
+  \brief  Pulse-processor modelling a simple dead time discriminator.
 
-    - GateDeadTime - by Luc.Simon@iphe.unil.ch
+  - GateDeadTime - by Luc.Simon@iphe.unil.ch
 
-    - The method ProcessOnePulse of this class models a simple
-      deadTime discriminator. User chooses value of dead time, mode
-      (paralysable or not) and geometric level of application (crystal, module,...)
+  - The method ProcessOnePulse of this class models a simple
+  deadTime discriminator. User chooses value of dead time, mode
+  (paralysable or not) and geometric level of application (crystal, module,...)
 
-      \sa GateVPulseProcessor
-      \sa GateVolumeID
-      \sa GatePulseProcessorChainMessenger
+  \sa GateVPulseProcessor
+  \sa GateVolumeID
+  \sa GatePulseProcessorChainMessenger
 */
+
 class GateDeadTime : public GateVPulseProcessor
 {
 public:
@@ -50,7 +51,7 @@ public:
 
   //! Constructs a new dead time attached to a GateDigitizer
   GateDeadTime(GatePulseProcessorChain* itsChain,
-			     const G4String& itsName);
+               const G4String& itsName);
 
 public:
 
@@ -93,7 +94,7 @@ private:
   G4int *numberOfComponentForLevel; //!< Table of number of element for each geometric level
   G4int numberOfHigherLevels ;  //!< number of geometric level higher than the one chosen by the user
   unsigned long long int m_deadTime; //!< DeadTime value
-// was :  G4String m_deadTimeMode;   //!< dead time mode : paralysable nonparalysable
+  // was :  G4String m_deadTimeMode;   //!< dead time mode : paralysable nonparalysable
   G4bool m_isParalysable;   //!< dead time mode : paralysable (true) nonparalysable (false) (modif. by D. Guez on 03/03/04)
   unsigned long long int *m_deadTimeTable;  //!< contains the "rebirth times". Alocated once at the first call.
   G4double m_bufferSize;  //!< contains the rebirth time.

@@ -39,8 +39,8 @@ GateDeadTime::GateDeadTime(GatePulseProcessorChain* itsChain,
 
 GateDeadTime::~GateDeadTime()
 {
-  if(m_deadTimeTable) delete(m_deadTimeTable);
-  if(m_bufferCurrentSize) delete(m_bufferCurrentSize);
+  if (m_deadTimeTable) delete(m_deadTimeTable);
+  if (m_bufferCurrentSize) delete(m_bufferCurrentSize);
   delete m_messenger;
 }
 
@@ -51,11 +51,11 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 {
   static G4int m_doneOnce = 0;      // equal to 0 before first ProcessOnPulse use, then 1
 
-  if(!m_doneOnce)
+  if (!m_doneOnce)
     {
 
       m_doneOnce = 1;
-      if(!m_testVolume)
+      if (!m_testVolume)
         {
           G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:\n"
                  <<   "Sorry, but you don't have chosen any volume !\n";
@@ -101,7 +101,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   /////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
   /*
 
-    for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+    for (G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     {
     m_generalDetId += aVolumeID->GetCopyNo(m_depth-i) * numberOfComponentForLevel[i-1];
 
@@ -109,7 +109,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
     }
   */
   G4int multFactor = 1;
-  for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+  for (G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     {
       multFactor *= numberOfComponentForLevel[i-1];
       m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
@@ -167,7 +167,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
           outputPulseList.push_back(new GatePulse(*inputPulse));
         }
       } else {
-      	if(m_isParalysable && (m_bufferSize<2)){
+      	if (m_isParalysable && (m_bufferSize<2)){
           m_deadTimeTable[m_generalDetId]  = currentTime + m_deadTime;
         }
       }
@@ -180,7 +180,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 
 void GateDeadTime::SetDeadTimeMode(G4String val)
 {
-  if((val!="paralysable")&&(val!="nonparalysable"))
+  if ((val!="paralysable")&&(val!="nonparalysable"))
     G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
     m_isParalysable = (val=="paralysable");
@@ -215,7 +215,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   GateVVolume* anotherInserter = anInserter; // just to buffer anInserter
 
 
-  if(nVerboseLevel>1)
+  if (nVerboseLevel>1)
     G4cout << "DEAD TIME IS APPLIED ON " <<  m_volumeName << Gateendl;
 
 
@@ -233,7 +233,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   // How many components for each levels ?
   //  G4int* numberOfComponentForLevel = new G4int[numberOfHigherLevels];
   numberOfComponentForLevel = (G4int*)malloc(sizeof(G4int)*(numberOfHigherLevels));
-  if(!numberOfComponentForLevel)
+  if (!numberOfComponentForLevel)
     {
       G4cout << "[GateDeadTime::FindLevelsParams]: new failed\n\n";
       return;
@@ -243,17 +243,17 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   numberOfComponentForLevel[0] = anotherInserter->GetVolumeNumber();
 
 
-  for(G4int i = 1 ; i < numberOfHigherLevels ; i++)
+  for (G4int i = 1 ; i < numberOfHigherLevels ; i++)
     {
       anotherInserter = anotherInserter->GetMotherList()->GetCreator();
       numberOfComponentForLevel[i] = anotherInserter->GetVolumeNumber();
     }
 
   numberTotalOfComponentInSystem = 1;
-  for(G4int i2 = 0 ; i2 < numberOfHigherLevels ; i2++)
+  for (G4int i2 = 0 ; i2 < numberOfHigherLevels ; i2++)
     {
       numberTotalOfComponentInSystem = numberTotalOfComponentInSystem * numberOfComponentForLevel[i2];
-      if(nVerboseLevel>5)
+      if (nVerboseLevel>5)
         G4cout << "Level : " << i2 << " has "
                << numberOfComponentForLevel[i2] << " elements\n";
     }
@@ -262,7 +262,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   //G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<< Gateendl;
 
 
-  if(nVerboseLevel>5)
+  if (nVerboseLevel>5)
     G4cout << "total number of elements = " <<numberTotalOfComponentInSystem << Gateendl;
 
   // create the table of "rebirth time" (detector is dead than it rebirth)
@@ -273,11 +273,12 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   //  printf("alocated for %d elements\n",numberTotalOfComponentInSystem);getchar();
 
 
-  if( (!m_deadTimeTable) || (!m_bufferCurrentSize)){
+  if ((!m_deadTimeTable) || (!m_bufferCurrentSize)) {
     G4cout << "[GateDeadTime::FindLevelsParams]: malloc failed\n\n";
     return;
-  } else {
-    for(G4int i=0;i<numberTotalOfComponentInSystem;i++){
+  }
+  else {
+    for (G4int i=0;i<numberTotalOfComponentInSystem;i++){
       m_deadTimeTable[i] = 0;
       m_bufferCurrentSize[i] = 0.;
 
