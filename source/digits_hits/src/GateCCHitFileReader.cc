@@ -40,9 +40,6 @@ GateCCHitFileReader::GateCCHitFileReader(G4String file)
   m_filePath= file.substr(0,lastDirect+1);
 
   std::string nameExt=file.substr(lastDirect+1);
-  //unsigned lastDot=nameExt.rfind("."); // To remove to avoid warning if unused (?)
-  //Esto seria solo el nombre pero yo quiero el nombre ocn el path
-  //m_fileName=nameExt.substr(0,lastDot);
   std::cout<<"directory "<<m_filePath<<std::endl;
   std::cout<<"name "<<m_fileName<<std::endl;
 
@@ -84,11 +81,6 @@ GateCCHitFileReader* GateCCHitFileReader::GetInstance(G4String filename)
 }
 
 
-
-
-
-// This method must be called (normally by the application manager) before starting a new DigiGate acquisition
-// It opens the ROOT input file, sets up the hit tree, and loads the first series of hits
 void GateCCHitFileReader::PrepareAcquisition()
 {
     std::cout<<"Preparing acquisition"<<std::endl;
@@ -114,35 +106,21 @@ void GateCCHitFileReader::PrepareAcquisition()
   // Reset the entry counters
   m_currentEntry=0;
   m_entries = m_hitTree->GetEntries();
-  //std::cout<<"entries hit root "<<m_entries<<std::endl;
 
-  //std::cout<<"setting branch address"<<std::endl;
   // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
   GateCCHitTree::SetBranchAddresses(m_hitTree,m_hitBuffer);
 
 
- //std::cout<<"load data"<<std::endl;
-  //  Load the first hit into the root-hit structure
+  //Load the first hit into the root-hit structure
   LoadHitData();
   std::cout<<"Done"<<std::endl;
 }
 
 
 
-
-/* This method is meant to be called by the primary generator action at the beginning of each event.
-   It read a series of hit data from the ROOT file, and stores them into a queue of hits/
-
-   It returns 1 if it managed to read a series of hits for the current run
-   It can return 0 in two cases:
-   - either it failed to read a series of hits (end-of-file)
-   - or the series of hits has a different runID from the current runID, so that this series
-   should not be used for the current run but rather for a later run
-*/
 G4int GateCCHitFileReader::PrepareNextEvent( )
 {
-  //G4cout << " GateCCHitFileReader::PrepareNextEvent\n";
-  // Store the current runID and eventID
+
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
 
@@ -185,13 +163,8 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
 }
 
 
-// This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
-// It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
 std::vector<GateCrystalHit*> GateCCHitFileReader::PrepareEndOfEvent()
 {
-  // We loop until the hit-queue is empty
-  // Each hit is inserted into the crystalSD hit-collection, then removed from the queue
-    //Duplciatinf thing puting from a vector to another vector ?? To be fixed
 //  while (m_hitQueue.size()) {
 
 //    vHitsCollection.push_back(m_hitQueue.front());
@@ -205,8 +178,6 @@ std::vector<GateCrystalHit*> GateCCHitFileReader::PrepareEndOfEvent()
 
 
 
-// This method must be called (normally by the application manager) after completion of a DigiGate acquisition
-// It closes the ROOT input file
 void GateCCHitFileReader::TerminateAfterAcquisition()
 {
   // Close the file
@@ -226,9 +197,6 @@ void GateCCHitFileReader::TerminateAfterAcquisition()
      // delete vHitsCollection.back();
      vHitsCollection.erase(vHitsCollection.end()-1);
    }
-
-  // Note that we don't delete the tree: it was based on the file so
-  // I assume it was destroyed at the same time as the file was closed (true?)
   m_hitTree=0;
 }
 

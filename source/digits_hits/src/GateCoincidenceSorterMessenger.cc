@@ -76,13 +76,9 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   AllPulseOpenCoincGateCmd = new G4UIcmdWithABool(cmdName,this);
   AllPulseOpenCoincGateCmd->SetGuidance("Specify if a given pulse can be part of two coincs");
 
-
   cmdName = GetDirectoryName()+"setTriggerOnlyByAbsorber";
   SetTriggerOnlyByAbsorberCmd = new G4UIcmdWithABool(cmdName,this);
   SetTriggerOnlyByAbsorberCmd->SetGuidance("Specify if only the pulses in the absorber can open a coincidencee window");
-
-
-
 
 }
 
@@ -98,7 +94,6 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
     delete MultiplePolicyCmd;
     delete setPresortBufferSizeCmd;
     delete AllPulseOpenCoincGateCmd;
-
     delete SetTriggerOnlyByAbsorberCmd;
 
 }
