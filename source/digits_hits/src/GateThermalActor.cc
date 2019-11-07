@@ -297,7 +297,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
     for(int i=0; i!=mUserNumberOfTimeFrames-1; ++i) {
       GaussianFilterType::Pointer RecursiveGaussianImageFilterX = GaussianFilterType::New();
       RecursiveGaussianImageFilterX->SetDirection( 0 );
-      RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::ZeroOrder );
+      RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
       RecursiveGaussianImageFilterX->SetNormalizeAcrossScale( false );
       RecursiveGaussianImageFilterX->SetInput(ImageAbsorptionSample);
       RecursiveGaussianImageFilterX->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*((i+1)*duration/mUserNumberOfTimeFrames)));
@@ -305,7 +305,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
       GaussianFilterType::Pointer RecursiveGaussianImageFilterY = GaussianFilterType::New();
       RecursiveGaussianImageFilterY->SetDirection( 1 );
-      RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::ZeroOrder );
+      RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
       RecursiveGaussianImageFilterY->SetNormalizeAcrossScale( false );
       RecursiveGaussianImageFilterY->SetInput(RecursiveGaussianImageFilterX->GetOutput());
       RecursiveGaussianImageFilterY->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*((i+1)*duration/mUserNumberOfTimeFrames)));
@@ -313,7 +313,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
       GaussianFilterType::Pointer RecursiveGaussianImageFilterZ = GaussianFilterType::New();
       RecursiveGaussianImageFilterZ->SetDirection( 2 );
-      RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::ZeroOrder );
+      RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
       RecursiveGaussianImageFilterZ->SetNormalizeAcrossScale( false );
       RecursiveGaussianImageFilterZ->SetInput(RecursiveGaussianImageFilterY->GetOutput());
       RecursiveGaussianImageFilterZ->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*((i+1)*duration/mUserNumberOfTimeFrames)));
@@ -407,7 +407,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterX = GaussianFilterType::New();
     RecursiveGaussianImageFilterX->SetDirection( 0 );
-    RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterX->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterX->SetInput(addFilterFinal->GetOutput());
     RecursiveGaussianImageFilterX->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));
@@ -415,7 +415,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterY = GaussianFilterType::New();
     RecursiveGaussianImageFilterY->SetDirection( 1 );
-    RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterY->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterY->SetInput(RecursiveGaussianImageFilterX->GetOutput());
     RecursiveGaussianImageFilterY->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));
@@ -423,7 +423,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterZ = GaussianFilterType::New();
     RecursiveGaussianImageFilterZ->SetDirection( 2 );
-    RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterZ->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterZ->SetInput(RecursiveGaussianImageFilterY->GetOutput());
     RecursiveGaussianImageFilterZ->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));
@@ -472,7 +472,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterX = GaussianFilterType::New();
     RecursiveGaussianImageFilterX->SetDirection( 0 );
-    RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterX->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterX->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterX->SetInput(multiplyFilter->GetOutput());
     RecursiveGaussianImageFilterX->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));
@@ -480,7 +480,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterY = GaussianFilterType::New();
     RecursiveGaussianImageFilterY->SetDirection( 1 );
-    RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterY->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterY->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterY->SetInput(RecursiveGaussianImageFilterX->GetOutput());
     RecursiveGaussianImageFilterY->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));
@@ -488,7 +488,7 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
 
     GaussianFilterType::Pointer RecursiveGaussianImageFilterZ = GaussianFilterType::New();
     RecursiveGaussianImageFilterZ->SetDirection( 2 );
-    RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::ZeroOrder );
+    RecursiveGaussianImageFilterZ->SetOrder( GaussianFilterType::OrderEnumType::ZeroOrder );
     RecursiveGaussianImageFilterZ->SetNormalizeAcrossScale( false );
     RecursiveGaussianImageFilterZ->SetInput(RecursiveGaussianImageFilterY->GetOutput());
     RecursiveGaussianImageFilterZ->SetSigma(sqrt(2.0*mUserMaterialDiffusivity*mUserDiffusionTime));

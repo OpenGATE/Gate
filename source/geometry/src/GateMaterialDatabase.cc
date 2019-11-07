@@ -47,6 +47,23 @@ void GateMaterialDatabase::AddMDBFile(const G4String& filename)
 
 
 //-----------------------------------------------------------------------------
+G4Isotope* GateMaterialDatabase::GetIsotope(const G4String& isotopeName)
+{
+  GateMessage("Materials",5,"GateMaterialDatabase::GetIsotope("<<isotopeName<<")\n");
+  G4Isotope* isotope = LookForIsotopeInTable(isotopeName);
+
+  if (!isotope) {
+    isotope = ReadIsotopeFromDBFile(isotopeName);
+    if (!isotope)
+      GateError("GateMaterialDatabase: failed to read the isotope '" << isotopeName << "' in the database file!");
+  }
+  return isotope;
+}
+//-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
 G4Element* GateMaterialDatabase::GetElement(const G4String& elementName)
 {
   GateMessage("Materials",5,"GateMaterialDatabase::GetElement("<<elementName<<")\n");
@@ -76,6 +93,32 @@ G4Material* GateMaterialDatabase::GetMaterial(const G4String& materialName)
       GateError("GateMaterialDatabase: failed to read the material '" << materialName << "' in the database file!" );
   }
   return material;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4Isotope* GateMaterialDatabase::ReadIsotopeFromDBFile(const G4String& isotopeName)
+{
+  GateMessage("Materials",5,"GateMaterialDatabase::ReadIsotopeFromDBFile("<<isotopeName<<")\n");
+  GateIsotopeCreator *CreatorTemp = 0;
+  GateIsotopeCreator *Creator = 0;
+  int nDef=0;
+  G4String fileName= "";
+
+  std::vector<GateMDBFile*>::iterator i;
+  for (i=mMDBFile.begin();i!=mMDBFile.end();++i) {
+    CreatorTemp = (*i)->ReadIsotope(isotopeName);
+    if (CreatorTemp) {Creator = CreatorTemp; nDef++;fileName=(*i)->GetMDBFileName();}
+    //if (Creator) break;
+  }
+
+
+  if (!Creator) GateError("GateMaterialDatabase: could not find the definition for isotope '" <<isotopeName << "' in material files");
+  if(nDef>1) GateWarning("GateMaterialDatabase: Multiple definition of isotope: "<<isotopeName<<".\nThe definition in "<<fileName<<" was used.\n");
+  G4Isotope* isotope =  Creator->Construct();
+  delete Creator;
+  return isotope;
 }
 //-----------------------------------------------------------------------------
 
