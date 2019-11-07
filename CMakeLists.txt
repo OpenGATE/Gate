@@ -269,6 +269,12 @@ TARGET_LINK_LIBRARIES(Gate_CC_seqCoinc2Cones ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
+INSTALL(TARGETS Gate_CC_singles_sorter DESTINATION bin)
+INSTALL(TARGETS Gate_CC_hits_digitizer DESTINATION bin)
+INSTALL(TARGETS Gate_CC_coincidence_processor DESTINATION bin)
+INSTALL(TARGETS GateRootSeqCoincTree2SivanTraFileConverter DESTINATION bin)
+INSTALL(TARGETS GateRootSeqCoincTree2MACACOListMode DESTINATION bin)
+INSTALL(TARGETS Gate_CC_seqCoinc2Cones DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
