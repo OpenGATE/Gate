@@ -76,6 +76,7 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
 
  // PulsesIndexBelowSolidAngleTHR.erase(PulsesIndexBelowSolidAngleTHR.begin(), PulsesIndexBelowSolidAngleTHR.end());
    flgTriggerAW=0;
+   //volumeID where the signal surprases the THR when applying solid Angle weightes energy
    while(vID.size()){
        vID.erase(vID.end()-1);
    }
@@ -94,8 +95,6 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
 
           if(x.second.size()>1){
                EffEnergyM=0;
-              //TEngo multiples. Si estan cerca suma sus energias pata ver si pasan el THR
-              //Posicon media  y energua media Y la mas grande la chequeo a ver si cambio el flga
               im=m_table.find(((outputPulseList->at(x.second[0])->GetVolumeID()).GetBottomCreator())->GetObjectName());
               double distX=0;
               double distY=0;
@@ -147,26 +146,30 @@ GatePulseList* GateLocalEnergyThresholder::ProcessPulseList(const GatePulseList*
 
               if(lawP=="solidAngleWeighted" ){
                   if(flgTriggerAW==0){
-                      //Reject the pulse and delte
+                      //Reject the pulse and delete
+                      //I am deleting the pulses that I stored in the volume in case any of the other pulses in the same event was above the thr for solidAngleEnergyWeighted
 
                       delete (*iter);
                       outputPulseList->erase(iter);
-                     --iter;
+                      --iter;
                   }
                   else if(flgTriggerAW==1){
-                      //Tirar si el volumen no coincide con ninguno de los guardados
+                      // delete the pulse for with solida angle law was set if any of the opulses in that volume was above the thr
                       std::vector<GateVolumeID>::iterator  itV;
-                       itV= find (vID.begin(), vID.end(), (*iter)->GetVolumeID());
-                       if(itV==vID.end()){
-                           delete (*iter);
+                      itV= find (vID.begin(), vID.end(), (*iter)->GetVolumeID());
+                      if(itV==vID.end()){
+                          delete (*iter);
                           outputPulseList->erase(iter);
                           --iter;
-                       }
+                      }
 
                   }
               }
 
           }
+          //Option to rject the whole event
+          //if(){}
+
       }
 
   }
@@ -195,7 +198,7 @@ void GateLocalEnergyThresholder::ProcessOnePulse(const GatePulse* inputPulse,Gat
     return;
   }
 
-  //Only are processed the once in the selected volume
+  //Only are processed those in the selected volume
    im=m_table.find(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName());
   GatePulse* outputPulse = new GatePulse(*inputPulse);
 

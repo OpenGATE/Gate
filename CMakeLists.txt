@@ -255,6 +255,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate_CC_hits_digitizer Gate_CC_hits_digitizer.cc ${sources} ${headers})
   ADD_EXECUTABLE(Gate_CC_coincidence_processor Gate_CC_coincidence_processor.cc ${sources} ${headers})
   ADD_EXECUTABLE(GateRootSeqCoincTree2SivanTraFileConverter GateRootSeqCoincTree2SivanTraFileConverter.cc ${sources} ${headers})
+  ADD_EXECUTABLE(GateRootSeqCoincTree2MACACOListMode GateRootSeqCoincTree2MACACOListMode.cc ${sources} ${headers})
   ADD_EXECUTABLE(Gate_CC_seqCoinc2Cones Gate_CC_seqCoinc2Cones.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
@@ -263,10 +264,17 @@ TARGET_LINK_LIBRARIES(Gate_CC_singles_sorter ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 TARGET_LINK_LIBRARIES(Gate_CC_hits_digitizer ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
 TARGET_LINK_LIBRARIES(Gate_CC_coincidence_processor ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
 TARGET_LINK_LIBRARIES(GateRootSeqCoincTree2SivanTraFileConverter ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateRootSeqCoincTree2MACACOListMode ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
 TARGET_LINK_LIBRARIES(Gate_CC_seqCoinc2Cones ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
+INSTALL(TARGETS Gate_CC_singles_sorter DESTINATION bin)
+INSTALL(TARGETS Gate_CC_hits_digitizer DESTINATION bin)
+INSTALL(TARGETS Gate_CC_coincidence_processor DESTINATION bin)
+INSTALL(TARGETS GateRootSeqCoincTree2SivanTraFileConverter DESTINATION bin)
+INSTALL(TARGETS GateRootSeqCoincTree2MACACOListMode DESTINATION bin)
+INSTALL(TARGETS Gate_CC_seqCoinc2Cones DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
