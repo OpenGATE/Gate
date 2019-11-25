@@ -29,7 +29,6 @@ class GateEffectiveEnergyLawMessenger : public GateNamedObjectMessenger {
 		void SetNewValue(G4UIcommand* cmdName, G4String val);
 
 
-	private :
 
 
 };

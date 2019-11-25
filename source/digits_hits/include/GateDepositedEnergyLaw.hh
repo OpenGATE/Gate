@@ -13,24 +13,15 @@
 
 class GateDepositedEnergyLaw  : public GateVEffectiveEnergyLaw {
 
-	public :
-        GateDepositedEnergyLaw(const G4String& itsName);
-        virtual ~GateDepositedEnergyLaw() {delete m_messenger;}
+public :
+    GateDepositedEnergyLaw(const G4String& itsName);
+    virtual ~GateDepositedEnergyLaw() {delete m_messenger;}
+    virtual G4double ComputeEffectiveEnergy(GatePulse plse) const;
+    virtual void DescribeMyself (size_t ident=0) const;
 
+private :
 
-        virtual G4double ComputeEffectiveEnergy(GatePulse plse) const;
-
-
-
-
-
-       	virtual void DescribeMyself (size_t ident=0) const;
-
-
-
-    private :
-
-        GateDepositedEnergyLawMessenger* m_messenger;
+    GateDepositedEnergyLawMessenger* m_messenger;
 
 };
 
