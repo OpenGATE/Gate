@@ -29,6 +29,7 @@ public:
   double GetDensityFromH(double H);
   double FindMaxDensityDifference(double HMin, double HMax);
   void Read(G4String filename);
+  void ReadFromStream(std::istream &is, G4String stream_name);
 
 protected:
   std::vector<double> mH;

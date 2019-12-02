@@ -64,6 +64,10 @@ void GateHounsfieldDensityTable::Read(G4String filename)
 {
   std::ifstream is;
   OpenFileInput(filename, is);
+  ReadFromStream(is, filename);
+}
+
+void GateHounsfieldDensityTable::ReadFromStream(std::istream & is, G4String stream_name) {
   while (is) {
     skipComment(is);
     double h,d;
@@ -75,11 +79,12 @@ void GateHounsfieldDensityTable::Read(G4String filename)
       if (mH.size() > 1) {
         if (h <= mH[mH.size()-2]) {
           GateError("Error Hounsfield must be in strict ascending order, while I read h="
-                    << mH[mH.size()-2] << " and then h=" << h
-                    << " (in file " << filename << ")\n");
+                            << mH[mH.size()-2] << " and then h=" << h
+                            << " (in file " << stream_name << ")\n");
         }
       }
     }
   }
 }
+
 //-----------------------------------------------------------------------------

@@ -74,6 +74,7 @@ const GatePulse& GatePulse::CentroidMerge(const GatePulse* right)
   // m_scannerPos: identical for both pulses, nothing to do
   // m_scannerRotAngle: identical for both pulses, nothing to do
   // m_outputVolumeID: should be identical for both pulses, we do nothing
+  // TODO: why not put assets to make sure that the above statements are valid?
 
   return *this;
 }
@@ -86,6 +87,7 @@ const GatePulse& GatePulse::CentroidMergeCompton(const GatePulse* right)
   // eventID: identical for both pulses, nothing to do
   // sourceID: identical for both pulses, nothing to do
   // source-position: identical for both pulses, nothing to do
+  // TODO ensure the above criteria with assert statements?
 
   // time: store the minimum time
   m_time = std::min ( m_time , right->m_time ) ;
