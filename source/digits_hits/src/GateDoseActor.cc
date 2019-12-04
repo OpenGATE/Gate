@@ -695,7 +695,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
         // DISPLAY the process involved
         G4ProcessVector* plist = p->GetProcessManager()->GetProcessList();
-        for (G4int j = 0; j < plist->size(); j++)
+        for (unsigned int j = 0; j < plist->size(); j++)
           {
             G4cout<<"Process type : "<<(*plist)[j]->GetProcessType()<<"\t process name : "<<(*plist)[j]->GetProcessName()<<G4endl;
           }
