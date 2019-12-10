@@ -40,7 +40,6 @@
 #include "GateClock.hh"
 #include "GateUIcontrolMessenger.hh"
 #ifdef G4ANALYSIS_USE_ROOT
-#include "GateROOTBasicOutput.hh"
 #include "TPluginManager.h"
 #include "GateHitFileReader.hh"
 #endif
@@ -280,12 +279,6 @@ int main( int argc, char* argv[] )
   // Construct the default run manager
   GateRunManager* runManager = new GateRunManager;
 
-  // Set the Basic ROOT Output
-  GateRecorderBase* myRecords = 0;
-#ifdef G4ANALYSIS_USE_ROOT
-  myRecords = new GateROOTBasicOutput;
-#endif
-
   // Set the DetectorConstruction
   GateDetectorConstruction* gateDC = new GateDetectorConstruction();
   runManager->SetUserInitialization( gateDC );
@@ -294,7 +287,7 @@ int main( int argc, char* argv[] )
   runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
 
   // Set the users actions to handle callback for actors - before the initialisation
-  new GateUserActions( runManager, myRecords );
+  new GateUserActions( runManager);
 
   // Set the Visualization Manager
 #ifdef G4VIS_USE
@@ -433,9 +426,6 @@ int main( int argc, char* argv[] )
   delete appMgr;
   delete randomEngine;
   delete controlMessenger;
-#ifdef G4ANALYSIS_USE_ROOT
-  delete myRecords;
-#endif
   delete verbosity;
 
   delete runManager;

@@ -6,6 +6,8 @@
   See LICENSE.md for further details
   ----------------------*/
 
+
+
 #include "GateOutputMgr.hh"
 #include "GateVOutputModule.hh"
 #include "GateOutputMgrMessenger.hh"
@@ -19,9 +21,11 @@
 #include "G4UImanager.hh"
 #include "G4UserSteppingAction.hh"
 #include "G4SteppingManager.hh"
+#include "G4Run.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4VVisManager.hh"
+#include "GateActorManager.hh"
 
 #include "GateMessageManager.hh"
 #include "GateToDigi.hh"

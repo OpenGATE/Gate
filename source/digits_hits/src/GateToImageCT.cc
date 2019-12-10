@@ -13,6 +13,7 @@
 #include <cmath>
 #include <vector>
 
+#include "G4Run.hh"
 #include "G4VProcess.hh"
 #include "G4UnitsTable.hh"
 #include "GateRunManager.hh"

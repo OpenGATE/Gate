@@ -10,7 +10,7 @@ See LICENSE.md for further details
 #ifndef GateVOutputModule_H
 #define GateVOutputModule_H
 
-#include "GateRecorderBase.hh"
+
 #include "GateConfiguration.h"
 
 #include "globals.hh"
@@ -29,7 +29,7 @@ enum DigiMode {
   kofflineMode
 };
 
-class GateVOutputModule :  public GateRecorderBase
+class GateVOutputModule
 {
 public:
 
