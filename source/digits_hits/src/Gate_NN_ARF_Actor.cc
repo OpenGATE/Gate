@@ -17,7 +17,9 @@
 #include "TBranch.h"
 #include "TString.h"
 #include <iostream>
+#ifdef GATE_USE_TORCH
 #include <torch/torch.h>
+#endif
 
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Train_Data::Print(std::ostream & os)
@@ -608,6 +610,7 @@ void Gate_NN_ARF_Actor::ProcessBatch()
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::ProcessBatchEnd()
 {
+#ifdef GATE_USE_TORCH
   if (mNNOutput.sizes()[0] > 0) {
     for (unsigned int testIndex=0; testIndex < mNNOutput.sizes()[0]; ++testIndex) {
       mTestData[testIndex + mCurrentSaveNNOutput].nn = std::vector<double>(mNNOutput.sizes()[1]);
@@ -617,5 +620,6 @@ void Gate_NN_ARF_Actor::ProcessBatchEnd()
     }
     mCurrentSaveNNOutput += mNNOutput.sizes()[0];
   }
+#endif
 }
 //-----------------------------------------------------------------------------
