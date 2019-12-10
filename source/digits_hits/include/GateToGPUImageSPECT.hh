@@ -15,6 +15,9 @@
 #ifndef GATETOGPUIMAGESPECT_HH
 #define GATETOGPUIMAGESPECT_HH
 
+
+#include <G4RotationMatrix.hh>
+
 #include "GateVOutputModule.hh"
 #include "GateApplicationMgr.hh"
 #include "TFile.h"
@@ -22,6 +25,7 @@
 #include "GateGPUParticle.hh"
 #include "GateCPUParticle.hh"
 #include <ctime>
+
 
 class GateVSystem;
 class GateToGPUImageSPECTMessenger;

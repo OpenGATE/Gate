@@ -14,7 +14,6 @@
 #include "GateVGeometryVoxelStore.hh"
 #include "GateCrystalHit.hh"
 #include "GatePhantomHit.hh"
-#include "GateRecorderBase.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateVVolume.hh"
 #include "GateDigitizer.hh"

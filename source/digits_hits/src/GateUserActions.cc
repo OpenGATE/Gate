@@ -20,15 +20,13 @@ See LICENSE.md for further details
 
 #include "GateSteppingVerbose.hh"
 #include "G4SteppingManager.hh"
-
 #include "G4SliceTimer.hh"
 
 //class GateRecorderBase;
 GateUserActions* GateUserActions::pUserActions=0;
 
 //-----------------------------------------------------------------------------
-GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
-  : recorder(r)
+GateUserActions::GateUserActions(GateRunManager* m)
 {
   GateMessage("Core", 4,"GateUserActions Constructor start.\n");
 
@@ -52,10 +50,10 @@ GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
 
   // Set fGate' user action classes to the GateRunmanager :
   // Run/Event/Tracking/Stepping in order to get the callbacks
-  GateRunAction* RunAction = new GateRunAction(this, recorder);
-  GateEventAction* EventAction = new GateEventAction(this, recorder);
-  GateTrackingAction* TrackingAction = new GateTrackingAction(this, recorder);
-  GateSteppingAction* SteppingAction = new GateSteppingAction(this, recorder);
+  GateRunAction* RunAction = new GateRunAction(this);
+  GateEventAction* EventAction = new GateEventAction(this);
+  GateTrackingAction* TrackingAction = new GateTrackingAction(this);
+  GateSteppingAction* SteppingAction = new GateSteppingAction(this);
 
   pRunManager->SetUserAction(RunAction);
   pRunManager->SetUserAction(EventAction);
