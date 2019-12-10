@@ -137,12 +137,6 @@ IF(GATE_USE_XRAYLIB)
 ENDIF(GATE_USE_XRAYLIB)
 
 #=========================================================
-# Option for Davis model
-IF(GATE_USE_DAVIS)
-  MESSAGE("Warning! You have to install a manually modified version of Geant4 to use the Davis LUT model. Please refer to http://wiki.opengatecollaboration.org/index.php/Enabling_LUT_Davis_Model for detailed step-by-step compiling instructions")
-ENDIF(GATE_USE_DAVIS)
-
-#=========================================================
 # Option for Clhep use
 IF(GATE_USE_SYSTEM_CLHEP)
   FIND_PACKAGE(CLHEP REQUIRED)

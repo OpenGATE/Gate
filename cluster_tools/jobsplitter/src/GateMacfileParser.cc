@@ -31,7 +31,6 @@ GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G
 	macName=macfileName;
 	nSplits=numberOfSplits;
 	nAliases=numberOfAliases;
-	aliases=aliasesPtr;
 	timeUnit=" -1 ";
 	timeStart=-1.;
 	timeStop=-1.;
@@ -40,8 +39,6 @@ GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G
 	addSliceBool = false;
 	readSliceBool = false;
 	lambda=-1;
-//	usedAliases = new bool[nAliases];
-	//for(int i=0;i<nAliases;i++)usedAliases[i]=false;
 	for(int i=0;i<nAliases;i++)listOfUsedAliases.push_back(false);
 	for(int i=0;i<nAliases;i++)	listOfAliases.push_back(aliasesPtr[i]);
 	oldSplitNumber=-1;
@@ -110,6 +107,9 @@ G4int GateMacfileParser::GenerateResolvedMacros(G4String directory)
 		i_str<<j;
 		GenerateResolvedMacro(dir+macNameDir+i_str.str()+".mac",j,splitfile); 
 		splitfile<<endl;  
+
+		if(j%(nSplits/10)==0)
+			cout<<100*j/nSplits<<"% "<<flush;
 	}
 	if (filenames[ROOT]==1)
 		splitfile<<"Original Root filename: "<<originalRootFileName<<endl;
@@ -226,7 +226,7 @@ void GateMacfileParser::InsertAliases()
 	nAliases = (G4int)(listOfAliases.size());
 	for (G4int i=1;i<nAliases;i+=2)
 	{
-		while (macline.contains("{"+aliases[i]+"}"))
+		while (macline.contains("{"+listOfAliases[i]+"}"))
 		{
 			insert=listOfAliases[i-1];
 			G4int position=macline.find("{"+listOfAliases[i]+"}",0);
@@ -243,13 +243,18 @@ void GateMacfileParser::AddAliases()
 	{
 		G4String tmpStr = macline.substr(15,256);
 		int position = tmpStr.find(" ");
+
+		G4String aliasName(tmpStr.substr(0,position));
+		for(size_t i=1;i<listOfAliases.size();i+=2)
+			if(aliasName==listOfAliases[i])
+				return;
+
 		listOfAliases.push_back( tmpStr.substr(position+1,tmpStr.size()-position));
 		listOfUsedAliases.push_back(false);
 		nAliases++;
 		listOfAliases.push_back( tmpStr.substr(0,position));
 		listOfUsedAliases.push_back(false);
 		nAliases++;
-	//	G4cout<<listOfAliases[nAliases-1] <<":"<<listOfAliases[nAliases-2]<<G4endl;
 	}
 }
 

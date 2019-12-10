@@ -1,0 +1,24 @@
+
+div.sphinxsidebar a {
+    border-bottom: none; !important
+}
+
+a {
+    text-decoration: none; !important
+}
+
+a.reference {
+    border-bottom: none; !important
+}
+
+div.document {
+    width: 80%; !important
+}
+
+div.documentwrapper {
+    width: 100%; !important
+}
+
+div.body {
+    max-width: 100%; !important
+}
