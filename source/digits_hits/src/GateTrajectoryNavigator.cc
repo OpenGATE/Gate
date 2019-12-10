@@ -34,7 +34,7 @@ G4ThreeVector GateTrajectoryNavigator::FindSourcePosition()
 
   G4int sourceIndex = FindSourceIndex();
 
-  if ((sourceIndex < 0) || (sourceIndex >= m_trajectoryContainer->entries())) {
+  if ((sourceIndex < 0) || ((unsigned int)sourceIndex >= m_trajectoryContainer->entries())) {
     G4cout << "GateTrajectoryNavigator::FindSourcePosition : WARNING : sourceIndex out of range: " << sourceIndex << Gateendl;
   } else {
     G4Trajectory* trjSource = (G4Trajectory*)((*m_trajectoryContainer)[sourceIndex]);

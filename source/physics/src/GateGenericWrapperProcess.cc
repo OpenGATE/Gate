@@ -82,7 +82,7 @@ void GenericWrapperProcess::Initialisation(G4String partName)
 	if(energy==0.) energy = 0.0000001;
 	sig1 = 0.;
 	sig2 = 0.;
-	for(int i =0;i<pList->size();i++){
+	for(unsigned int i =0;i<pList->size();i++){
 	  G4String proName = (*pList)[i]->GetProcessName();
 
 	  G4String realName= proName;

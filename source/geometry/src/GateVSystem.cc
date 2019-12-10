@@ -433,7 +433,7 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
     	     G4LogicalVolume* logical = last_vol->GetLogicalVolume();
 	     if (!logical->IsDaughter(vol)){
 	     	G4bool pb=true;
-	     	for (G4int ii=0;ii<logical->GetNoDaughters();++ii){
+	     	for (unsigned int ii=0;ii<logical->GetNoDaughters();++ii){
 	    	    last_vol=logical->GetDaughter(ii);
 		    if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
 		    	ans->push_back(last_vol);
