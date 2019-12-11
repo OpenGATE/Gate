@@ -79,6 +79,24 @@ Depending on your environment, you need to source ROOT as follow (this final ste
 .. _gate-label:
 
 
+libtorch (optional)
+---------
+
+The goal is here to make Gate use the torch library, an open source machine learning framework : https://pytorch.org
+
+Pytorch is usually used via a Python module, but here we need an additional library named 'libtorch' that will be used by Gate during compilation.
+
+Follow instruction on https://pytorch.org getting started page, selecting "LibTorch" in the "Package" line. It is a zip file that must be downloaded and unziped somewhere on your disk. No compilation required here.
+
+Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
+    Torch_DIR          /home/YOURNAME/libtorch-1.2.0/share/cmake/Torch
+    
+In some configuration, the following path should also be set ::
+    CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
+    CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
+
+
+
 GATE V8.2
 ---------
 
