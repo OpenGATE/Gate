@@ -242,7 +242,7 @@ G4double GateTetMeshBox::GetHalfDimension(size_t axis)
 void GateTetMeshBox::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector* msd)
 {
   // set sensitive detector for all daughters of the envelope box, i.e. all tetrahedra
-  for (G4int i = 0; i < pEnvelopeLogical->GetNoDaughters(); ++i)
+  for (size_t i = 0; i < pEnvelopeLogical->GetNoDaughters(); ++i)
   {
     pEnvelopeLogical->GetDaughter(i)->GetLogicalVolume()->SetSensitiveDetector(msd);
   }
@@ -260,7 +260,7 @@ void GateTetMeshBox::PropagateGlobalSensitiveDetector()
   if (phantomSD)
   {
     // set for all tetrahedra
-    for (G4int i = 0; i < pEnvelopeLogical->GetNoDaughters(); ++i)
+    for (size_t i = 0; i < pEnvelopeLogical->GetNoDaughters(); ++i)
     {
       pEnvelopeLogical->GetDaughter(i)->GetLogicalVolume()->SetSensitiveDetector(phantomSD);
     }

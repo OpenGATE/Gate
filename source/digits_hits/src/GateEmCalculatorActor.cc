@@ -118,7 +118,7 @@ void GateEmCalculatorActor::SaveData()
   G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
   std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++)
+  for (size_t j = 0; j < plist->size(); j++)
     {
         if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
             {

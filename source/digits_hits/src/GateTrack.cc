@@ -122,8 +122,8 @@ G4bool GateTrack::Compare( G4Track* aTrack)
     G4cout << " test4 = " << std::boolalpha << test4 << Gateendl;
     G4cout << " test5 = " << std::boolalpha << test5 << Gateendl;
     G4cout << " test6 = " << std::boolalpha << test6 << Gateendl;
-  */
   G4cout <<" ====================== \n";
+  */
 
 
   //return true;

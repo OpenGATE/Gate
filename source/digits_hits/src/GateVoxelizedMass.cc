@@ -780,7 +780,7 @@ pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* m
   // Calculation for daughter(s) ///////////////////////////////////////////
   if(motherLV->GetNoDaughters() > 0)
   {
-    for(int i=0; i<motherLV->GetNoDaughters(); i++)
+    for(size_t i=0; i<motherLV->GetNoDaughters(); i++)
     {
       const G4VPhysicalVolume*  daughterPV = motherLV->GetDaughter(i);
       G4VSolid*                 daughterSV = daughterPV->GetLogicalVolume()->GetSolid()->Clone();

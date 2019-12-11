@@ -381,7 +381,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	primary.SetKineticEnergy(incidentEnergy);
 
 	// find the physical models according to the gamma energy
-	for(int i=0; i<processListForGamma->size(); i++)
+	for(size_t i=0; i<processListForGamma->size(); i++)
 	{
           size_t physicRegionNumber = 0;
 	  G4String processName = (*processListForGamma)[i]->GetProcessName();
