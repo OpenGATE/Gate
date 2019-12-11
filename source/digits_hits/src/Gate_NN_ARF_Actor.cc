@@ -108,6 +108,9 @@ void Gate_NN_ARF_Actor::SetMode(std::string m)
   if (m == "test") {
     mTrainingModeFlag = false;
     found = true;
+#ifndef GATE_USE_TORCH
+    GateError("Error: GATE was not compiled with USE_TORCH.");
+#endif
   }
 
   if (!found) {
