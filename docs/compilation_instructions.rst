@@ -14,18 +14,18 @@ Required dependencies
 
 The minimal software distribution should be the following::
 
-   Geant4 10.05 (including the embedded CLHEP)
+   Geant4 10.05  # including the embedded CLHEP
    GATE V8.2
-   ROOT (ROOT 6.xx). Root is still required, it may become optional in the future.
+   ROOT (ROOT 6.xx) # still required, but it may become optional in the future
    
 
 Optional packages ::
  
-   CLHEP 2.3.4.3 (by default the one provided in Geant4 is used)   
+   CLHEP 2.3.4.3  # by default the one provided in Geant4 is used
    ITK (version 4.10.xx or later)
    ECAT
    LMF
-   libTorch (see section below)
+   libTorch # see section below
    
 
 CLHEP
@@ -89,9 +89,11 @@ Pytorch is usually used via a Python module, but here we need an additional libr
 Follow instruction on https://pytorch.org getting started page, selecting "LibTorch" in the "Package" line. It is a zip file that must be downloaded and unziped somewhere on your disk. No compilation required here.
 
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
+
     Torch_DIR          /home/YOURNAME/libtorch-1.2.0/share/cmake/Torch
     
 In some configuration, the following path should also be set ::
+
     CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
     CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
 
