@@ -32,26 +32,19 @@ See LICENSE.md for further details
 #include "GateMessageManager.hh"
 #include "GateActorManager.hh"
 #include "GateMessageManager.hh"
-//#include "GateActions.hh"
-
 #include "GateTrajectory.hh"
-#include "GateRecorderBase.hh"
-
 #include "GateSteppingVerbose.hh"
 #include "G4VSteppingVerbose.hh"
 
-//class GateRecorderBase;
+
 class GateRunAction;
 class GateEventAction;
-
 class G4SliceTimer;
-
-
 
 class GateUserActions
 {
 public:
-  GateUserActions(GateRunManager* m, GateRecorderBase* r);
+  GateUserActions(GateRunManager* m);
   ~GateUserActions();
 
   //-----------------------------------------------------------------------------
@@ -128,7 +121,7 @@ protected:
 
   static GateUserActions* pUserActions;
 
-  GateRecorderBase* recorder;
+
   GateRunAction* runAction;
   GateEventAction* eventAction;
 
