@@ -55,6 +55,7 @@ protected:
   virtual void register_variable(const std::string &name, const void *p, std::type_index t_index) = 0;
   virtual void register_variable(const std::string &name, const std::string *p, size_t nb_char) = 0;
   virtual void register_variable(const std::string &name, const char *p, size_t nb_char) = 0;
+  virtual void register_variable(const std::string &name, const int *p, size_t n) = 0;
 
 
 private:
@@ -95,6 +96,7 @@ public:
   virtual void write_variable(const std::string &name, const void *p, std::type_index t_index) = 0;
   virtual void write_variable(const std::string &name, const std::string *p, size_t nb_char) = 0;
   virtual void write_variable(const std::string &name, const char *p, size_t nb_char) = 0;
+  virtual void write_variable(const std::string &name, const int  *p, size_t n) = 0;
   virtual void set_tree_name(const std::string &name) ;
   virtual ~GateOutputTreeFile();
 

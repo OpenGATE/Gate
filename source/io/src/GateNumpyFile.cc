@@ -122,6 +122,24 @@ void GateNumpyTree::register_variable(const std::string &name, const std::string
 }
 
 
+void  GateNumpyTree::register_variable(const std::string &name, const int *, size_t n)
+{
+    //Thinking about how to write in npy file an array of int corresponding to volumeID information. Work in progres. It is not working properly
+
+    if(!n)
+        throw std::out_of_range("n == 0 does not make any sense");
+    std::cout<<name<<" information can not be written in .npy output file"<<std::endl;
+    cout<<"ERROR: .npy format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file"<<endl;
+    abort();
+    //stringstream ss;
+    //ss << "|V" << n;
+    //register_variable(name, p, sizeof(int)*n, ss.str(), typeid(int*));
+    //auto&& data = m_vector_of_pointer_to_data.back();
+    //data.m_nb_characters = n;
+}
+
+
+
 void GateOutputNumpyTreeFile::write_header()
 {
 
@@ -217,22 +235,33 @@ void GateOutputNumpyTreeFile::fill()
 
 
               m_file.write(p_data, d.m_size_of_data);
-            } else if (d.m_type_index == typeid(string))
-            {
+          } else if (d.m_type_index == typeid(string))
+          {
               const auto *p_s = (const string*) d.m_pointer_to_data;
               if( p_s->size() > d.m_nb_characters)
-                {
+              {
                   string m;
                   m += "length(" + *p_s + ") = (" + std::to_string(p_s->size()) +   ") > " + std::to_string(d.m_nb_characters);
                   throw std::length_error(m);
-                }
+              }
 
               string s(*p_s); // copy of the data, :-(
               s.resize(d.m_nb_characters, '\0');
 
 
               m_file.write(s.c_str(), d.m_size_of_data);
-            }
+          }
+          /*
+           *Thinking about how to write in npy file an array of int corresponding to volumeID information. Work in progres. It is not working
+           * else if (d.m_type_index == typeid(int*))
+          {
+              int *p_int = (int*) d.m_pointer_to_data;
+              std::string numericArrayToWrite ="[";
+              for (auto numericIndex=0; numericIndex<d.m_nb_characters-1; ++numericIndex)
+                  numericArrayToWrite += std::to_string(p_int[numericIndex]) + ",";
+              numericArrayToWrite += std::to_string(p_int[d.m_nb_characters-1]) + "]";
+              m_file.write(numericArrayToWrite.c_str(), d.m_size_of_data+2+d.m_nb_characters-1);
+          }*/
         }
     }
 
@@ -322,6 +351,11 @@ void GateOutputNumpyTreeFile::write_variable(const std::string &name, const std:
 void GateOutputNumpyTreeFile::write_variable(const std::string &name, const char *p, size_t nb_char)
 {
   this->register_variable(name, p, nb_char);
+}
+
+void GateOutputNumpyTreeFile::write_variable(const std::string &name, const int *p, size_t nb)
+{
+  this->register_variable(name, p, nb);
 }
 
 GateOutputNumpyTreeFile::GateOutputNumpyTreeFile() : m_write_header_called(false)

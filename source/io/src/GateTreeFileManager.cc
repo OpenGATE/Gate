@@ -74,6 +74,14 @@ void GateOutputTreeFileManager::write_variable(const std::string &name, const ch
   }
 }
 
+void GateOutputTreeFileManager::write_variable(const std::string &name, const int *p, size_t sizeArray)
+{
+  for(auto&& f : m_listOfTreeFile)
+  {
+    f->write_variable(name, p, sizeArray);
+  }
+}
+
 void GateOutputTreeFileManager::close()
 {
   for(auto&& f : m_listOfTreeFile)

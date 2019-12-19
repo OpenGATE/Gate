@@ -17,9 +17,8 @@ using namespace std;
 
 void GateAsciiTree::register_variable(const std::string &name, const void *p, std::type_index t_index)
 {
-//    std::cout << "AsciiFile::register_variable name = " << name << " t_index = " << t_index.name() << endl;
-
-//  AsciiData d(p, name, t_index, m_tmapOfSave_to_file.at(t_index));
+   // std::cout << "AsciiFile::register_variable name = " << name << " t_index = " << t_index.name() << endl;
+   //  AsciiData d(p, name, t_index, m_tmapOfSave_to_file.at(t_index));
     GateAsciiData dd(p, name, t_index, m_tmapOfSave_to_file.at(t_index), m_tmapOfRead_from_string.at(t_index));
 
     for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
@@ -48,7 +47,14 @@ void GateAsciiTree::register_variable(const std::string &name, const std::string
     this->register_variable(name, p, typeid(string));
 }
 
-
+void  GateAsciiTree::register_variable(const std::string &name, const int *, size_t )
+{
+    //problem unordered map at key
+    //this->register_variable(name, p, typeid(int*));
+    std::cout<<name<<" information can not be written in ascii output file"<<std::endl;
+    cout<<"ERROR: .txt format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file"<<endl;
+    abort();
+}
 
 
 bool GateOutputAsciiTreeFile::is_open()
@@ -166,6 +172,12 @@ void GateOutputAsciiTreeFile::write_variable(const std::string &name, const char
 {
     this->register_variable(name, p, nb_char);
 }
+
+void GateOutputAsciiTreeFile::write_variable(const std::string &name, const int *p, size_t n)
+{
+    this->register_variable(name, p, n);
+}
+
 void GateOutputAsciiTreeFile::open(const std::string& s)
 {
   GateFile::open(s, std::fstream::out);

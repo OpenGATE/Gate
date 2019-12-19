@@ -69,6 +69,7 @@ public:
   void register_variable(const std::string &name, const void *p, std::type_index t_index) override;
   void register_variable(const std::string &name, const char *p, size_t nb_char) override;
   void register_variable(const std::string &name, const std::string *p, size_t nb_char) override;
+  void register_variable(const std::string &name, const int *p, size_t n) override;
 
   template<typename T>
   void register_variable(const std::string &name, const T *p)
@@ -126,6 +127,7 @@ class GateOutputAsciiTreeFile: public GateAsciiTree, public GateOutputTreeFile
   void write_variable(const std::string &name, const void *p, std::type_index t_index) override;
   void write_variable(const std::string &name, const std::string *p, size_t nb_char)override ;
   void write_variable(const std::string &name, const char *p, size_t nb_char) override  ;
+  void write_variable(const std::string &name, const int *p, size_t n) override  ;
 
 
   template<typename T >
