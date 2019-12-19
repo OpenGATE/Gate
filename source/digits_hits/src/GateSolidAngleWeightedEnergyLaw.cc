@@ -66,7 +66,8 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
 }
 
 void GateSolidAngleWeightedEnergyLaw::DescribeMyself (size_t indent) const {
-    ///G4cout << "Inverse Square law for energy blurring\n";
-    ///G4cout << GateTools::Indent(indent) << "Energy of Reference:\t" << G4BestUnit(GetEnergyRef(),"Energy") << Gateendl;
-    ///G4cout << GateTools::Indent(indent) << "Resolution of Reference:\t" << GetResolution() << Gateendl;
+    G4cout << "Solid Angle Weighted enegy";
+    G4cout << GateTools::Indent(indent) << "size of the pixel in X direction:\t" << G4BestUnit(GetRectangleSzX(),"Length") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "size of the pixel in Y direction:\t" << G4BestUnit(GetRectangleSzY(),"Length") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "ReadoutSense in z:\t" <<GetZSense()  << Gateendl;
 }

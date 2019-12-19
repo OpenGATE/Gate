@@ -171,12 +171,14 @@ protected:
 
   typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
   typedef std::pair<G4String,GateCoincidencePulse*> GateCoincidencePulseListAlias;
-public:
+
+
+
+private:
   std::vector<GatePulseList*>            	m_pulseListVector;
   std::vector<GateCoincidencePulse*>     	m_coincidencePulseVector;
   std::vector<GatePulseListAlias>      		m_pulseListAliasVector;
    std::vector<GateCoincidencePulseListAlias>    m_coincidencePulseListAliasVector;
-protected:
 
 
   static GateDigitizer*      			theDigitizer;

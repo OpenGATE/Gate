@@ -20,8 +20,6 @@ GateDepositedEnergyLawMessenger::GateDepositedEnergyLawMessenger(GateDepositedEn
 
 
 
-
-
 GateDepositedEnergyLaw* GateDepositedEnergyLawMessenger::GetDepositedEnergyLaw() const {
     return dynamic_cast<GateDepositedEnergyLaw*>(GetEffectiveEnergyLaw());
 }
@@ -30,7 +28,5 @@ GateDepositedEnergyLaw* GateDepositedEnergyLawMessenger::GetDepositedEnergyLaw()
 
 void GateDepositedEnergyLawMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
-
-
     GateEffectiveEnergyLawMessenger::SetNewValue(command,newValue);
 }
