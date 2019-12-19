@@ -10,6 +10,8 @@
 #include <cstring> //for strerror
 #include <sstream>
 
+#include"GateMessageManager.hh"
+
 
 #include "GateFileExceptions.hh"
 
@@ -51,9 +53,9 @@ void  GateAsciiTree::register_variable(const std::string &name, const int *, siz
 {
     //problem unordered map at key
     //this->register_variable(name, p, typeid(int*));
-    std::cout<<name<<" information can not be written in ascii output file"<<std::endl;
-    cout<<"ERROR: .txt format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file"<<endl;
-    abort();
+    std::cout<<"ERROR "<<name<<" information can not be written in ascii output file"<<std::endl;
+    GateError(" .txt format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file");
+
 }
 
 

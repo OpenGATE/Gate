@@ -15,6 +15,8 @@
 #include "GateFileExceptions.hh"
 #include "GateTreeFileManager.hh"
 
+#include "GateMessageManager.hh"
+
 using namespace std;
 //
 //
@@ -128,9 +130,8 @@ void  GateNumpyTree::register_variable(const std::string &name, const int *, siz
 
     if(!n)
         throw std::out_of_range("n == 0 does not make any sense");
-    std::cout<<name<<" information can not be written in .npy output file"<<std::endl;
-    cout<<"ERROR: .npy format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file"<<endl;
-    abort();
+     std::cout<<"ERROR "<<name<<" information can not be written in .npy output file"<<std::endl;
+     GateError(".npy format  is not available for *int output such as  volumeID. Unselect volumeID information in your output file or select .root output file");
     //stringstream ss;
     //ss << "|V" << n;
     //register_variable(name, p, sizeof(int)*n, ss.str(), typeid(int*));
