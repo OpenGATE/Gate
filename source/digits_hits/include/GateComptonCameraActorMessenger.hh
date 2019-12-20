@@ -51,10 +51,33 @@ protected:
   G4UIcmdWithABool          * pSaveCoincidenceChainsTree;
 
 
-  G4UIcmdWithABool          * pSaveHitsText;
-  G4UIcmdWithABool          * pSaveSinglesText;
-  G4UIcmdWithABool          * pSaveCoincidencesText;
-  G4UIcmdWithABool          * pSaveCoincidenceChainsText;
+  //Include flags for variables it affects to all the trees (hits, singles, coincidences)
+  //(only checked singles variables)
+  G4UIcmdWithABool* pEnableEnergyCmd;
+  G4UIcmdWithABool* pEnableEnergyIniCmd;
+  G4UIcmdWithABool* pEnableEnergyFinCmd;
+  G4UIcmdWithABool* pEnableTimeCmd;
+  G4UIcmdWithABool* pEnablePositionXCmd;
+  G4UIcmdWithABool* pEnablePositionYCmd;
+  G4UIcmdWithABool* pEnablePositionZCmd;
+  G4UIcmdWithABool* pEnableLocalPositionXCmd;
+  G4UIcmdWithABool* pEnableLocalPositionYCmd;
+  G4UIcmdWithABool* pEnableLocalPositionZCmd;
+  G4UIcmdWithABool* pEnableSourcePositionXCmd;
+  G4UIcmdWithABool* pEnableSourcePositionYCmd;
+  G4UIcmdWithABool* pEnableSourcePositionZCmd;
+  //volume identification
+  G4UIcmdWithABool* pEnableVolumeIDCmd;
+  //G4UIcmdWithABool* pEnableLayerNameCmd;
+  G4UIcmdWithABool* pEnableSourceEnergyCmd;
+  G4UIcmdWithABool* pEnableSourcePDGCmd;
+  G4UIcmdWithABool* pEnablenCrystalConvCmd;
+  G4UIcmdWithABool* pEnablenCrystalComptCmd;
+  G4UIcmdWithABool* pEnablenCrystalRaylCmd;
+
+
+
+
   //
   G4UIcmdWithAString        * pNameOfAbsorberSDVol;
   G4UIcmdWithAString        * pNameOfScattererSDVol;

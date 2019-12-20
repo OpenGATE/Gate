@@ -16,27 +16,20 @@
 #include "GateVActor.hh"
 #include "GateActorMessenger.hh"
 #include "GateVolumeID.hh"
-#include "GateCCRootDefs.hh"
 #include "G4EventManager.hh"
-
 #include "GateCrystalHit.hh"
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
 #include "GatePulseAdder.hh"
 #include "GateCCCoincidenceDigi.hh"
-
 #include "GatePrimTrackInformation.hh"
 
-#include <TROOT.h>
-#include <TFile.h>
-#include <TH1.h>
-#include <TH2.h>
+//#include "GateCCRootDefs.hh"
+#include "GateTreeDefs.hh"
+#include "GateTreeFileManager.hh"
+
 #include  <iomanip>
 
-#include "TNtuple.h"
-#include "TTree.h"
-#include "TBranch.h"
-#include "TString.h"
 
 class G4EmCalculator;
 class GateDigitizer;
@@ -63,9 +56,9 @@ public:
   virtual void BeginOfEventAction(const G4Event *) ;
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
+  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   //test nov
-  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
+  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void EndOfEventAction(const G4Event*);
 
   //-----------------------------------------------------------------------------
@@ -73,21 +66,17 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
-  virtual void Initialize(G4HCofThisEvent* ){};
-  virtual void EndOfEvent(G4HCofThisEvent*){};
 
-  int GetNDaughtersBB() {return nDaughterBB;}
+  virtual void Initialize(G4HCofThisEvent* ){}
+  virtual void EndOfEvent(G4HCofThisEvent*){}
+
+  unsigned int GetNDaughtersBB() {return nDaughterBB;}
 
   //Messenger flags
   void SetSaveHitsTreeFlag( bool b ){  mSaveHitsTreeFlag= b; }
   void SetSaveSinglesTreeFlag( bool b ){  mSaveSinglesTreeFlag= b; }
   void SetSaveCoincidencesTreeFlag( bool b ){  mSaveCoincidencesTreeFlag= b; }
   void SetSaveCoincidenceChainsTreeFlag( bool b ){  mSaveCoincidenceChainsTreeFlag= b; }
-
-  void SetSaveHitsTextFlag( bool b ){  mSaveHitsTextFlag= b; }
-  void SetSaveSinglesTextFlag( bool b ){  mSaveSinglesTextFlag= b; }
-  void SetSaveCoincidenceTextFlag( bool b ){  mSaveCoincTextFlag= b; }
-  void SetSaveCoincidenceChainsTextFlag( bool b ){  mSaveCoinChainsTextFlag= b; }
 
   void SetNumberOfDiffScattererLayers( int numS){mNumberDiffScattLayers=numS;}
   void SetNumberOfTotScattererLayers( int numS){mNumberTotScattLayers=numS;}
@@ -97,46 +86,79 @@ public:
   void SetParentIDSpecificationFlag( bool b ){  mParentIDSpecificationFlag= b; }
   void SetParentIDFileName(G4String name ) {mParentIDFileName=name;}
 
+
+  //Information stored in the tree handle by messenger flags
+  void SetIsEnergyEnabled(bool b){EnableEnergy = b;}
+  void SetIsEnergyIniEnabled(bool b){EnableEnergyIni = b;}
+  void SetIsEnergyFinEnabled(bool b){EnableEnergyFin = b;}
+  void SetIsTimeEnabled(bool b){EnableTime = b;}
+  void SetIsXPositionEnabled(bool b){EnableXPosition = b;}
+  void SetIsYPositionEnabled(bool b){EnableYPosition = b;}
+  void SetIsZPositionEnabled(bool b){EnableZPosition = b;}
+  void SetIsXLocalPositionEnabled(bool b){EnableXLocalPosition = b;}
+  void SetIsYLocalPositionEnabled(bool b){EnableYLocalPosition = b;}
+  void SetIsZLocalPositionEnabled(bool b){EnableZLocalPosition = b;}
+  void SetIsXSourcePositionEnabled(bool b){EnableXSourcePosition = b;}
+  void SetIsYSourcePositionEnabled(bool b){EnableYSourcePosition = b;}
+  void SetIsZSourcePositionEnabled(bool b){EnableZSourcePosition = b;}
+  void SetIsVolumeIDEnabled(bool b){EnableVolumeID=b;}
+  void SetIsSourceEnergyEnabled(bool b){EnableSourceEnergy=b;}
+  void SetIsSourcePDGEnabled(bool b){EnableSourcePDG=b;}
+  void SetIsnCrystalComptEnabled(bool b){EnablenCrystlaCompt=b;}
+  void SetIsnCrystalRaylEnabled(bool b){EnablenCrystalRayl=b;}
+  void SetIsnCrystalConvEnabled(bool b){EnablenCrystalConv=b;}
+
   //! Get the digitizer
   inline GateDigitizer*   GetDigitizer()
   { return m_digitizer; }
 
 protected:
   GateComptonCameraActor(G4String name, G4int depth=0);
-
-
-
-  void OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss);
- void OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> > &ss);
-
-  void SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string layerN);
-  void SaveAsTextSingleEvt(GateSingleDigi *aSin);
-  void SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin,std::ofstream& ossC);
-  void closeTextFiles();
-
   std::vector<G4String> layerNames;
   int slayerID;
   G4String mHistName;
 
-  TFile * pTfile;
 
+  //std::ofstream ossHits;
+  //std::ofstream ossSingles;
+  //std::ofstream ossCoincidences;
+  std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
+  std::vector<G4String> coincidenceChainNames;
+
+  //Root files
+  /*TFile * pTfile;
   GateCCHitTree*  m_hitsTree;
   GateCCRootHitBuffer  m_hitsBuffer;
+  std::vector<std::unique_ptr<GateCCCoincTree>> m_coincChainTree;*/
 
-  GateCCSingleTree*  m_SingleTree;
+  //Avoiding root dependency 12/2019
+  GateOutputTreeFileManager mFileSingles;
+  GateOutputTreeFileManager mFileCoinc;
   GateCCRootSingleBuffer  m_SinglesBuffer;
-
   GateCCRootCoincBuffer  m_CoincBuffer;
-  GateCCCoincTree*  m_CoincTree;
+//==============================
+  //Inmformation saved in the files
+  bool EnableEnergy;
+  bool EnableEnergyIni;
+  bool EnableEnergyFin;
+  bool EnableTime;
+  bool EnableXPosition;
+  bool EnableYPosition;
+  bool EnableZPosition;
+  bool EnableXLocalPosition;
+  bool EnableYLocalPosition;
+  bool EnableZLocalPosition;
+  bool EnableXSourcePosition;
+  bool EnableYSourcePosition;
+  bool EnableZSourcePosition;
+  bool EnableVolumeID;
+  bool EnableSourceEnergy;
+  bool EnableSourcePDG;
+  bool EnablenCrystlaCompt;
+  bool EnablenCrystalConv;
+  bool EnablenCrystalRayl;
 
-
-  std::vector<std::unique_ptr<GateCCCoincTree>> m_coincChainTree;
-   // I think thath I can use the sam ebuffer maybe ?
-    //std::vector<GateCCRootCoincBuffer> m_coincChainBuffer;
-
-
-
-
+ //========================
   unsigned int nDaughterBB;
   G4String attachPhysVolumeName;
 
@@ -160,9 +182,6 @@ protected:
   G4int nCrystalRayl;
 
 
-
-
-
   G4double hitEdep;
   G4double Ef_oldPrimary;
   G4ThreeVector hitPostPos;
@@ -175,23 +194,23 @@ protected:
   G4double trackLength;
   G4double trackLocalTime;
   G4ThreeVector hitPreLocalPos;
-   G4ThreeVector hitPostLocalPos;
+  G4ThreeVector hitPostLocalPos;
 
 
-   //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
-   std::vector<GateCrystalHit*> hitsList;
+  //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
+  std::vector<GateCrystalHit*> hitsList;
 
 
 
 
- // GatePulseList* crystalPulseList;
-   static const G4String thedigitizerName;
-     GatePulseProcessorChain* chain;
-    static const G4String thedigitizerSorterName;
-     GateCoincidenceSorter* coincidenceSorter;
+  // GatePulseList* crystalPulseList;
+  static const G4String thedigitizerName;
+  GatePulseProcessorChain* chain;
+  static const G4String thedigitizerSorterName;
+  GateCoincidenceSorter* coincidenceSorter;
 
-     void readPulses(GatePulseList* pPulseList);
-     void processPulsesIntoSinglesTree();
+  void readPulses(GatePulseList* pPulseList);
+  void processPulsesIntoSinglesTree();
 
 
   //messenger
@@ -200,31 +219,23 @@ protected:
   bool mSaveCoincidencesTreeFlag;
   bool mSaveCoincidenceChainsTreeFlag;
 
-  bool mSaveHitsTextFlag;
-  bool mSaveSinglesTextFlag;
-  bool mSaveCoincTextFlag;
-  bool mSaveCoinChainsTextFlag;
 
   int mNumberDiffScattLayers;
-   int mNumberTotScattLayers;
+  int mNumberTotScattLayers;
   G4String  mNameOfScattererSDVol;
   G4String  mNameOfAbsorberSDVol;
 
-   bool mParentIDSpecificationFlag;
-   G4String  mParentIDFileName;
-   std::vector<G4int> specfParentID;
-     std::vector<G4int>::iterator itPrtID;
-
-  std::ofstream ossHits;
-  std::ofstream ossSingles;
-  std::ofstream ossCoincidences;
-  std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
-  std::vector<G4String> coincidenceChainNames;
+  bool mParentIDSpecificationFlag;
+  G4String  mParentIDFileName;
+  std::vector<G4int> specfParentID;
+  std::vector<G4int>::iterator itPrtID;
 
 
-//GatePrimTrackInformation* trackInfo;
 
- GateActorMessenger* pMessenger;
+
+  //GatePrimTrackInformation* trackInfo;
+
+  GateActorMessenger* pMessenger;
   G4EmCalculator * emcalc;
   GateDigitizer* m_digitizer;
 

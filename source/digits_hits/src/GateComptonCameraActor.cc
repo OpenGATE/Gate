@@ -43,9 +43,9 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
 
     G4cout<<"###########################CONSTRUCTOR of GATEComptonCameraActor#############################################"<<G4endl;
 
-    m_hitsTree=0;
+    /*m_hitsTree=0;
     m_SingleTree=0;
-    m_CoincTree=0;
+    m_CoincTree=0;*/
 
 
     Ei = 0.;
@@ -64,13 +64,30 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     mSaveSinglesTreeFlag=1;
     mSaveCoincidencesTreeFlag=1;
     mSaveCoincidenceChainsTreeFlag=1;
-    mSaveSinglesTextFlag=false;
-    mSaveCoincTextFlag=false;
-    mSaveCoinChainsTextFlag=false;
     mParentIDSpecificationFlag=false;
 
     //Messenger load values
     pMessenger = new GateComptonCameraActorMessenger(this);
+
+    EnableEnergy=1;
+    EnableEnergyIni=0;
+    EnableEnergyFin=0;
+    EnableTime=1;
+    EnableXPosition=1;
+    EnableYPosition=1;
+    EnableZPosition=1;
+    EnableXLocalPosition=1;
+    EnableYLocalPosition=1;
+    EnableZLocalPosition=1;
+    EnableXSourcePosition=1;
+    EnableYSourcePosition=1;
+    EnableZSourcePosition=1;
+    EnableVolumeID=1;
+    EnableSourceEnergy=0;
+    EnableSourcePDG=0;
+    EnablenCrystlaCompt=0;
+    EnablenCrystalConv=0;
+    EnablenCrystalRayl=0;
 
     emcalc = new G4EmCalculator;
     m_digitizer = GateDigitizer::GetInstance();
@@ -127,6 +144,7 @@ void GateComptonCameraActor::Construct()
     EnableEndOfEventAction(true); // for save every n
 
 
+    //I think I can rm it It was for a test
     attachPhysVolumeName=mVolume->GetPhysicalVolumeName();//Name of  the BB where the actor is attached
     G4cout<<"GAteComptonCameraActor:Construct  numTotScatt"<<mNumberTotScattLayers<<G4endl;
 
@@ -180,32 +198,19 @@ void GateComptonCameraActor::Construct()
             specfParentID.push_back(tmpParentID);
 
         }
-
-        // G4cout<<"vector parentID size"<< specfParentID.size()<<G4endl;
-        //for(unsigned int i=0; i<specfParentID.size(); i++){
-        //     G4cout<<"value="<< specfParentID.at(i)<<G4endl;
-        // }
     }
 
     //##################################################################################3
     //root files
-    pTfile = new TFile(mSaveFilename,"RECREATE");
+   /* pTfile = new TFile(mSaveFilename,"RECREATE");
     //A tree for the hits
     if(mSaveHitsTreeFlag){
         //hits tree
         m_hitsTree=new GateCCHitTree("Hits");
         m_hitsTree->Init(m_hitsBuffer);
     }
-    if(mSaveSinglesTreeFlag){
-        // singles tree
-        m_SingleTree=new GateCCSingleTree("Singles");
-        m_SingleTree->Init(m_SinglesBuffer);
-    }
-    if(mSaveCoincidencesTreeFlag){
-        // coincidence tree
-        m_CoincTree=new GateCCCoincTree("Coincidences");
-        m_CoincTree->Init(m_CoincBuffer);
-    }
+
+
     //For the processed coincidence there can be multiple chains. Find how many
     for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
         coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
@@ -217,21 +222,109 @@ void GateComptonCameraActor::Construct()
             m_coincChainTree.back()->Init(m_CoincBuffer);
 
         }
-    }
+    }*/
+   /// if(mSaveHitsTreeFlag  || mSaveCoincidenceChainsTreeFlag){
+   ///
+   G4String extension = getExtension(mSaveFilename);
+   if(extension!="root"&&extension!="txt" &&extension!="npy") GateError("Unknown extension for CC actor output");
+    std::string filename = removeExtension(mSaveFilename);
+   //set a file for each tree. Filemanager it is not prepared to add several trees in a file
+   if( mSaveSinglesTreeFlag ){//Equivalent to the SingleTree->Init(SingleBuffer)
 
-    //Text files
-    if(mSaveHitsTextFlag){
-        OpenTextFile(mSaveFilename,"Hits", ossHits);
-    }
-    if(mSaveSinglesTextFlag){
-        OpenTextFile(mSaveFilename,"Singles", ossSingles);
-    }
-    if(mSaveCoincTextFlag){
-        OpenTextFile(mSaveFilename,"Coincidences", ossCoincidences);
-    }
-    if(mSaveCoinChainsTextFlag){
-        OpenTextFile(mSaveFilename, coincidenceChainNames, ossCoincidenceChains);
-    }
+       G4String filenameS=filename+"_Singles."+extension;
+       if(extension == "root")
+           mFileSingles.add_file(filenameS,  "root");
+       else if(extension == "npy")
+           mFileSingles.add_file(filenameS, "npy");
+       else if(extension == "txt")
+           mFileSingles.add_file(filenameS, "txt");
+       else
+           GateError("Unknown extension for CC actor output");
+
+       mFileSingles.set_tree_name("Singles");
+       //equivalent to Tree.Init(buffer)
+       mFileSingles.write_variable("runID",&m_SinglesBuffer.runID);
+       mFileSingles.write_variable("eventID", &m_SinglesBuffer.eventID);
+
+       if(EnableTime)mFileSingles.write_variable("time",&m_SinglesBuffer.time);
+       if (EnableEnergy) mFileSingles.write_variable("energy", &m_SinglesBuffer.energy);
+       //Sometimes they are not worth writing No info
+       if(EnableEnergyFin)mFileSingles.write_variable("energyFinal",&m_SinglesBuffer.energyFin);
+       if(EnableEnergyIni) mFileSingles.write_variable("energyIni",&m_SinglesBuffer.energyIni);
+       if(EnableXPosition) mFileSingles.write_variable("globalPosX", &m_SinglesBuffer.globalPosX);
+       if(EnableYPosition)mFileSingles.write_variable("globalPosY", &m_SinglesBuffer.globalPosY);
+       if(EnableZPosition) mFileSingles.write_variable("globalPosZ", &m_SinglesBuffer.globalPosZ);
+       if(EnableXLocalPosition)mFileSingles.write_variable("localPosX", &m_SinglesBuffer.localPosX);
+       if(EnableYLocalPosition)mFileSingles.write_variable("localPosY", &m_SinglesBuffer.localPosY);
+       if(EnableZLocalPosition)mFileSingles.write_variable("localPosZ", &m_SinglesBuffer.localPosZ);
+       //source
+       if(EnableXSourcePosition)mFileSingles.write_variable("sourcePosX", &m_SinglesBuffer.sourcePosX);
+       if(EnableYSourcePosition)mFileSingles.write_variable("sourcePosY", &m_SinglesBuffer.sourcePosY);
+       if(EnableZSourcePosition)mFileSingles.write_variable("sourcePosZ", &m_SinglesBuffer.sourcePosZ);
+       if(EnableSourceEnergy)mFileSingles.write_variable("sourceEnergy",&m_SinglesBuffer.sourceEnergy);
+       if(EnableSourcePDG)mFileSingles.write_variable("sourcePDG",&m_SinglesBuffer.sourcePDG);
+       //interactions
+       if(EnablenCrystalConv)mFileSingles.write_variable("nCrystalConv", &m_SinglesBuffer.nCrystalConv);
+       if(EnablenCrystlaCompt)mFileSingles.write_variable("nCrystalCompt",&m_SinglesBuffer.nCrystalCompt);
+       if(EnablenCrystlaCompt)mFileSingles.write_variable("nCrystalRayl",&m_SinglesBuffer.nCrystalRayl);
+       //volume identification
+       mFileSingles.write_variable("layerName", m_SinglesBuffer.layerName, sizeof(m_SinglesBuffer.layerName));
+        //it works only for root output
+       if(EnableVolumeID)mFileSingles.write_variable("volumeID", m_SinglesBuffer.volumeID,ROOT_VOLUMEIDSIZE);
+
+
+       mFileSingles.write_header();
+
+
+   }
+   if(mSaveCoincidencesTreeFlag){
+       G4String filenameC=filename+"_Coincidences."+extension;
+       if(extension == "root")
+           mFileCoinc.add_file(filenameC,  "root");
+       else if(extension == "npy")
+           mFileCoinc.add_file(filenameC, "npy");
+       else if(extension == "txt")
+           mFileCoinc.add_file(filenameC, "txt");
+       else
+           GateError("Unknown extension for CC actor output");
+
+       mFileCoinc.set_tree_name("Coincidences");
+
+       mFileCoinc.write_variable("runID",&m_CoincBuffer.runID);
+       mFileCoinc.write_variable("coincID",&m_CoincBuffer.coincID);
+       mFileCoinc.write_variable("eventID", &m_CoincBuffer.eventID);
+
+       if(EnableTime)mFileCoinc.write_variable("time",&m_CoincBuffer.time);
+       if (EnableEnergy) mFileCoinc.write_variable("energy", &m_CoincBuffer.energy);
+       //Sometimes they are not worth writing No info
+       if(EnableEnergyFin)mFileCoinc.write_variable("energyFinal",&m_CoincBuffer.energyFin);
+       if(EnableEnergyIni) mFileCoinc.write_variable("energyIni",&m_CoincBuffer.energyIni);
+       if(EnableXPosition) mFileCoinc.write_variable("globalPosX", &m_CoincBuffer.globalPosX);
+       if(EnableYPosition)mFileCoinc.write_variable("globalPosY", &m_CoincBuffer.globalPosY);
+       if(EnableZPosition) mFileCoinc.write_variable("globalPosZ", &m_CoincBuffer.globalPosZ);
+       if(EnableXLocalPosition)mFileCoinc.write_variable("localPosX", &m_CoincBuffer.localPosX);
+       if(EnableYLocalPosition)mFileCoinc.write_variable("localPosY", &m_CoincBuffer.localPosY);
+       if(EnableZLocalPosition)mFileCoinc.write_variable("localPosZ", &m_CoincBuffer.localPosZ);
+       //source
+       if(EnableXSourcePosition)mFileCoinc.write_variable("sourcePosX", &m_CoincBuffer.sourcePosX);
+       if(EnableYSourcePosition)mFileCoinc.write_variable("sourcePosY", &m_CoincBuffer.sourcePosY);
+       if(EnableZSourcePosition)mFileCoinc.write_variable("sourcePosZ", &m_CoincBuffer.sourcePosZ);
+       if(EnableSourceEnergy)mFileCoinc.write_variable("sourceEnergy",&m_CoincBuffer.sourceEnergy);
+       if(EnableSourcePDG)mFileCoinc.write_variable("sourcePDG",&m_CoincBuffer.sourcePDG);
+       //interactions
+       if(EnablenCrystalConv)mFileCoinc.write_variable("nCrystalConv", &m_CoincBuffer.nCrystalConv);
+       if(EnablenCrystlaCompt)mFileCoinc.write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
+       if(EnablenCrystlaCompt)mFileCoinc.write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
+       //volume identification
+       mFileCoinc.write_variable("layerName", m_CoincBuffer.layerName, sizeof(m_CoincBuffer.layerName));
+         //it works only for root output
+       if(EnableVolumeID)mFileCoinc.write_variable("volumeID", m_CoincBuffer.volumeID,ROOT_VOLUMEIDSIZE);
+
+       mFileCoinc.write_header();
+   }
+
+
+
 
 
     ResetData();
@@ -246,10 +339,16 @@ void GateComptonCameraActor::SaveData()
 {
     // It seems that  Vactor calls by default  call for EndOfRunAction allowing to call Save
     GateVActor::SaveData();
-    pTfile->Write();
-    closeTextFiles();
 
-    //pTfile->Close();
+
+     if(mSaveSinglesTreeFlag){
+        mFileSingles.close();
+     }
+     if(mSaveCoincidencesTreeFlag){
+         mFileCoinc.close();
+     }
+
+
 }
 //-----------------------------------------------------------------------------
 
@@ -300,7 +399,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     }
 
     if(mSaveHitsTreeFlag){
-        m_hitsBuffer.Clear();
+        //m_hitsBuffer.Clear();
     }
 
     evtID = evt->GetEventID();
@@ -334,12 +433,10 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
                     unsigned int numCoincPulses=(*it)->size();
                     for(unsigned int i=0;i<numCoincPulses;i++){
                         GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi((*it)->at(i), (*it)->GetCoincID());
-                        if(mSaveCoincTextFlag){
-                            SaveAsTextCoincEvt(aCoinDigi, ossCoincidences);
-                        }
+
                         if(mSaveCoincidencesTreeFlag){
                             m_CoincBuffer.Fill(aCoinDigi);
-                            m_CoincTree->Fill();
+                            mFileCoinc.fill();
                             m_CoincBuffer.Clear();
                         }
                         if(aCoinDigi){
@@ -371,16 +468,14 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
                             //GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),m_coincIDChain.at(iChain));
                             GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincPulse->GetCoincID());
 
-                            if(mSaveCoinChainsTextFlag){
-                                SaveAsTextCoincEvt(aCoinDigi, *(ossCoincidenceChains.at(iChain)));
-                            }
-                            if(mSaveCoincidenceChainsTreeFlag){
+
+                           /* if(mSaveCoincidenceChainsTreeFlag){
                                 //m_coincChainBuffer.at(i).Fill(aCoinDigi);
                                 m_CoincBuffer.Fill(aCoinDigi);
                                 m_coincChainTree.at(iChain)->Fill();
                                 //m_coincChainBuffer.at(i).Clear();
                                 m_CoincBuffer.Clear();
-                            }
+                            }*/
                             if(aCoinDigi){
                                 delete aCoinDigi;
                                 aCoinDigi=0;
@@ -642,16 +737,13 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         if(hitEdep!=0. ||(parentID==0 && processPostStep!="Transportation")){
             hitsList.push_back(aHit);
             if(mSaveHitsTreeFlag){
-                m_hitsBuffer.Fill(aHit,VolNameStep);
+                /*m_hitsBuffer.Fill(aHit,VolNameStep);
                 // m_hitsBuffer.Fill(aHit.get(),VolNameStep);
                 m_hitsTree->Fill();
-                m_hitsBuffer.Clear();
+                m_hitsBuffer.Clear();*/
 
             }
-            if(mSaveHitsTextFlag){
-                //SaveAsTextHitsEvt(&aHit,VolNameStep);
-                SaveAsTextHitsEvt(aHit,VolNameStep);
-            }
+
         }
         else{
             delete aHit;
@@ -666,84 +758,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
 
 
-//---------------------------------------------------------------
 
-
-void GateComptonCameraActor::OpenTextFile(G4String initial_filename, G4String specificName, std::ofstream & oss){
-
-    std::string filename = removeExtension(initial_filename);
-    filename = filename + "_"+specificName+".txt";
-    OpenFileOutput(filename, oss);
-    G4cout<<"Open "<<filename<<G4endl;
-}
-
-void GateComptonCameraActor::OpenTextFile(G4String initial_filename, std::vector<G4String> specificN, std::vector<std::shared_ptr<std::ofstream> >  &oss){
-    std::string filename = removeExtension(initial_filename);
-    std::string name;
-    for(unsigned int i=0; i<specificN.size(); i++){
-        name=filename + "_"+specificN.at(i)+".txt";
-        std::shared_ptr<std::ofstream> out(new std::ofstream);
-        out->open(name.c_str());
-        oss.push_back(out);
-        //OpenFileOutput(filename, *oss.at(i));
-        G4cout<<"Open "<<filename<<G4endl;
-
-    }
-    if(specificN.size()==0)G4cout<<"Text output asked for a coincidence Pulse processor but no processor is applied "<<filename<<G4endl;
-}
-
-//-----------------------------------------------------------------
-
-void GateComptonCameraActor::SaveAsTextHitsEvt(GateCrystalHit* aHit, std::string layerN)
-{
-
-    int copyCrys=-1;
-    copyCrys=aHit->GetVolumeID().GetBottomVolume()->GetCopyNo();
-    ossHits<<"    evtID="<< aHit->GetEventID()<<"  PDG="<<aHit->GetPDGEncoding()<<" processPost="<<aHit->GetPostStepProcess()<<"  pID="<<aHit->GetParentID()<<"     edep="<<aHit->GetEdep()<<"  copyCry="<<copyCrys<<"  "<<aHit->GetGlobalPos().getX()<<"    "<<aHit->GetGlobalPos().getY()<<"    "<<aHit->GetGlobalPos().getZ()<<"    "<<layerN<< '\n';
-
-}
-
-//-----------------------------------------------------------------------------
-void GateComptonCameraActor::SaveAsTextSingleEvt(GateSingleDigi *aSin)
-{
-
-    int copyN=aSin->GetPulse().GetVolumeID().GetBottomVolume()->GetCopyNo();
-    std::string layerName;
-    if(copyN==0){
-        layerName=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetName();
-    }
-    else{
-        layerName=aSin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
-    }
-
-
-    ossSingles<<aSin->GetEventID()<<"    "<<"    "<<std::setprecision(8)<<aSin->GetTime()<<"    "<<aSin->GetEnergy()<<"    globalPos="<<aSin->GetGlobalPos().getX()<<"    "<<aSin->GetGlobalPos().getY()<<"    "<<aSin->GetGlobalPos().getZ()<<"    "<<"    globalPos="<<aSin->GetLocalPos().getX()<<"    "<<aSin->GetLocalPos().getY()<<"    "<<aSin->GetLocalPos().getZ()<<"    "<<layerName<< '\n';
-
-
-}
-//--------------------------------------------------------------
-
-
-void GateComptonCameraActor::SaveAsTextCoincEvt(GateCCCoincidenceDigi* aCoin, std::ofstream& ossC)
-{
-
-
-    int copyN=aCoin->GetPulse().GetVolumeID().GetBottomVolume()->GetCopyNo();
-
-    std::string layerName;
-    if(copyN==0){
-        layerName=aCoin->GetPulse().GetVolumeID().GetBottomCreator()->GetObjectName();
-    }
-    else{
-        //layerName=aCoin->GetPulse().GetVolumeID().GetVolume(2)->GetName()+std::to_string(copyN);
-        layerName=aCoin->GetPulse().GetVolumeID().GetBottomCreator()->GetObjectName()+std::to_string(copyN);
-    }
-
-
-    ossC<<aCoin->GetCoincidenceID()<<"    "<<aCoin->GetEventID()<<"    "<<std::setprecision(8)<<aCoin->GetTime()<<"    "<<aCoin->GetEnergy()<<"    "<<aCoin->GetGlobalPos().getX()<<"    "<<aCoin->GetGlobalPos().getY()<<"    "<<aCoin->GetGlobalPos().getZ()<<"    "<<layerName<< std::endl;
-
-
-}
 //---------------------------------------------------
 void GateComptonCameraActor::readPulses(GatePulseList* pPulseList)
 {
@@ -774,15 +789,13 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
             for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
                 //GatePulse* inputPulse = *iterIn;
                 GateSingleDigi* aSingleDigi=new GateSingleDigi( *iterIn);
-
                 if(mSaveSinglesTreeFlag){
+
                     m_SinglesBuffer.Fill(aSingleDigi);
                     // G4cout<< " time units after Singlesbuffer="<<m_SinglesBuffer.time<<G4endl;
-                    m_SingleTree->Fill();
+                    //m_SingleTree->Fill();
+                    mFileSingles.fill();
                     m_SinglesBuffer.Clear();
-                }
-                if(mSaveSinglesTextFlag){
-                    SaveAsTextSingleEvt(aSingleDigi);
                 }
 
                 if(aSingleDigi){
@@ -799,16 +812,3 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
 }
 //----------------------------------------------------------------------------
 
-
-
-
-void GateComptonCameraActor::closeTextFiles(){
-    if(ossHits.is_open())ossHits.close();
-    if(ossSingles.is_open())ossSingles.close();
-    if(ossCoincidences.is_open())ossCoincidences.close();
-    for(unsigned int i =0; i<ossCoincidenceChains.size(); i++){
-        if(ossCoincidenceChains.at(i)->is_open())ossCoincidenceChains.at(i)->close();
-
-    }
-}
-//-----------------------------------------------------------------------------
