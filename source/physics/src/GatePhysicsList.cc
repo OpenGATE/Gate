@@ -57,6 +57,8 @@
 #include "G4OpticalPhoton.hh"
 #include "G4OpticalPhysics.hh"
 
+#include "GateParaPositronium.hh"
+#include "GateOrthoPositronium.hh"
 
 //-----------------------------------------------------------------------------------------
 GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
@@ -421,6 +423,11 @@ void GatePhysicsList::ConstructParticle()
   dnagenericIonsManager->GetIon("nitrogen");
   dnagenericIonsManager->GetIon("iron");
   dnagenericIonsManager->GetIon("oxygen");
+
+ //Construct positroniums
+ GateParaPositronium::ParaPositroniumDefinition();
+ GateOrthoPositronium::OrthoPositroniumDefinition();
+
 
 }
 //-----------------------------------------------------------------------------------------
