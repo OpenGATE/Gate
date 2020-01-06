@@ -1,5 +1,5 @@
 #=========================================================
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1 FATAL_ERROR)
 CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
 
@@ -106,15 +106,16 @@ option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader
 # ROOT
 IF(GATE_USE_ROOT)
   FIND_PACKAGE(ROOT REQUIRED)
-  INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
+  INCLUDE(${ROOT_USE_FILE})
+  #INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
+  #SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
   #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
   #IF(ROOT_INCLUDE_DIR)
     #MESSAGE("Your current Root version is ${ROOT_VERSION}")
   #ELSE()
-  IF(NOT ROOT_INCLUDE_DIR)
-    MESSAGE("Root not found! Please install Root and make it available in PATH")
-  ENDIF()
+  #IF(NOT ROOT_INCLUDE_DIR)
+  #  MESSAGE("Root not found! Please install Root and make it available in PATH")
+  #ENDIF()
 ENDIF()
 
 #=========================================================
@@ -255,6 +256,7 @@ ENDIF()
 
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 IF(GATE_USE_GPU AND CUDA_FOUND)
   SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
