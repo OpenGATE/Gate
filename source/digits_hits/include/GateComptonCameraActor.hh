@@ -134,6 +134,7 @@ protected:
   //Avoiding root dependency 12/2019
   GateOutputTreeFileManager mFileSingles;
   GateOutputTreeFileManager mFileCoinc;
+  std::vector<std::unique_ptr<GateOutputTreeFileManager>> mVectorFileCoinChain;
   GateCCRootSingleBuffer  m_SinglesBuffer;
   GateCCRootCoincBuffer  m_CoincBuffer;
 //==============================

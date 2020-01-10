@@ -200,31 +200,8 @@ void GateComptonCameraActor::Construct()
         }
     }
 
-    //##################################################################################3
-    //root files
-   /* pTfile = new TFile(mSaveFilename,"RECREATE");
-    //A tree for the hits
-    if(mSaveHitsTreeFlag){
-        //hits tree
-        m_hitsTree=new GateCCHitTree("Hits");
-        m_hitsTree->Init(m_hitsBuffer);
-    }
 
 
-    //For the processed coincidence there can be multiple chains. Find how many
-    for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
-        coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
-    }
-    if(mSaveCoincidenceChainsTreeFlag){
-        for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
-            m_coincChainTree.emplace_back(new GateCCCoincTree(coincidenceChainNames.at(i), "CoincidenceChain tree"));
-            //m_coincChainTree.back()->Init(m_coincChainBuffer.at(i));
-            m_coincChainTree.back()->Init(m_CoincBuffer);
-
-        }
-    }*/
-   /// if(mSaveHitsTreeFlag  || mSaveCoincidenceChainsTreeFlag){
-   ///
    G4String extension = getExtension(mSaveFilename);
    if(extension!="root"&&extension!="txt" &&extension!="npy") GateError("Unknown extension for CC actor output");
     std::string filename = removeExtension(mSaveFilename);
@@ -322,6 +299,63 @@ void GateComptonCameraActor::Construct()
 
        mFileCoinc.write_header();
    }
+   //Coincidence chains for CSR for example
+   for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
+       coincidenceChainNames.push_back(m_digitizer->GetCoincChain(i)->GetOutputName());
+   }
+   if(mSaveCoincidenceChainsTreeFlag){
+       for(unsigned int i=0; i<m_digitizer->GetmCoincChainListSize(); i++){
+           G4String filenameCSR=filename+"_"+coincidenceChainNames.at(i)+"."+extension;
+
+
+           //GateOutputTreeFileManager tempFile;
+           mVectorFileCoinChain.emplace_back(new GateOutputTreeFileManager());
+           std::cout<<"size chain file manager vector ="<<mVectorFileCoinChain.size()<<std::endl;
+
+           if(extension == "root")
+               mVectorFileCoinChain.back()->add_file(filenameCSR,  "root");
+           else if(extension == "npy")
+               mVectorFileCoinChain.back()->add_file(filenameCSR,  "npy");
+           else if(extension == "txt")
+               mVectorFileCoinChain.back()->add_file(filenameCSR,  "txt");
+           else
+                GateError("Unknown extension for CC actor output");
+           mVectorFileCoinChain.back()->set_tree_name(coincidenceChainNames.at(i));
+
+           mVectorFileCoinChain.back()->write_variable("runID",&m_CoincBuffer.runID);
+           mVectorFileCoinChain.back()->write_variable("coincID",&m_CoincBuffer.coincID);
+           mVectorFileCoinChain.back()->write_variable("eventID", &m_CoincBuffer.eventID);
+
+           if(EnableTime)mVectorFileCoinChain.back()->write_variable("time",&m_CoincBuffer.time);
+           if (EnableEnergy) mVectorFileCoinChain.back()->write_variable("energy", &m_CoincBuffer.energy);
+           //Sometimes they are not worth writing No info
+           if(EnableEnergyFin)mVectorFileCoinChain.back()->write_variable("energyFinal",&m_CoincBuffer.energyFin);
+           if(EnableEnergyIni) mVectorFileCoinChain.back()->write_variable("energyIni",&m_CoincBuffer.energyIni);
+           if(EnableXPosition) mVectorFileCoinChain.back()->write_variable("globalPosX", &m_CoincBuffer.globalPosX);
+           if(EnableYPosition)mVectorFileCoinChain.back()->write_variable("globalPosY", &m_CoincBuffer.globalPosY);
+           if(EnableZPosition) mVectorFileCoinChain.back()->write_variable("globalPosZ", &m_CoincBuffer.globalPosZ);
+           if(EnableXLocalPosition)mVectorFileCoinChain.back()->write_variable("localPosX", &m_CoincBuffer.localPosX);
+           if(EnableYLocalPosition)mVectorFileCoinChain.back()->write_variable("localPosY", &m_CoincBuffer.localPosY);
+           if(EnableZLocalPosition)mVectorFileCoinChain.back()->write_variable("localPosZ", &m_CoincBuffer.localPosZ);
+           //source
+           if(EnableXSourcePosition)mVectorFileCoinChain.back()->write_variable("sourcePosX", &m_CoincBuffer.sourcePosX);
+           if(EnableYSourcePosition)mVectorFileCoinChain.back()->write_variable("sourcePosY", &m_CoincBuffer.sourcePosY);
+           if(EnableZSourcePosition)mVectorFileCoinChain.back()->write_variable("sourcePosZ", &m_CoincBuffer.sourcePosZ);
+           if(EnableSourceEnergy)mVectorFileCoinChain.back()->write_variable("sourceEnergy",&m_CoincBuffer.sourceEnergy);
+           if(EnableSourcePDG)mVectorFileCoinChain.back()->write_variable("sourcePDG",&m_CoincBuffer.sourcePDG);
+           //interactions
+           if(EnablenCrystalConv)mVectorFileCoinChain.back()->write_variable("nCrystalConv", &m_CoincBuffer.nCrystalConv);
+           if(EnablenCrystlaCompt)mVectorFileCoinChain.back()->write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
+           if(EnablenCrystlaCompt)mVectorFileCoinChain.back()->write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
+           //volume identification
+           mVectorFileCoinChain.back()->write_variable("layerName", m_CoincBuffer.layerName, sizeof(m_CoincBuffer.layerName));
+             //it works only for root output
+           if(EnableVolumeID)mVectorFileCoinChain.back()->write_variable("volumeID", m_CoincBuffer.volumeID,ROOT_VOLUMEIDSIZE);
+
+           mVectorFileCoinChain.back()->write_header();
+
+       }
+   }
 
 
 
@@ -346,6 +380,11 @@ void GateComptonCameraActor::SaveData()
      }
      if(mSaveCoincidencesTreeFlag){
          mFileCoinc.close();
+     }
+     if(mSaveCoincidenceChainsTreeFlag){
+         for(unsigned int i=0; i<mVectorFileCoinChain.size(); i++){
+             mVectorFileCoinChain.at(i)->close();
+         }
      }
 
 
@@ -469,13 +508,11 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
                             GateCCCoincidenceDigi* aCoinDigi=new GateCCCoincidenceDigi(coincPulse->at(i),coincPulse->GetCoincID());
 
 
-                           /* if(mSaveCoincidenceChainsTreeFlag){
-                                //m_coincChainBuffer.at(i).Fill(aCoinDigi);
+                            if(mSaveCoincidenceChainsTreeFlag){
                                 m_CoincBuffer.Fill(aCoinDigi);
-                                m_coincChainTree.at(iChain)->Fill();
-                                //m_coincChainBuffer.at(i).Clear();
+                                mVectorFileCoinChain.at(iChain)->fill();
                                 m_CoincBuffer.Clear();
-                            }*/
+                            }
                             if(aCoinDigi){
                                 delete aCoinDigi;
                                 aCoinDigi=0;
