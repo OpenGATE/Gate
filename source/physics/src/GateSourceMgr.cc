@@ -30,6 +30,7 @@
 #include "GateActions.hh"
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
+#include "GateExtendedVSource.hh"
 #include "GateSourcePhaseSpace.hh"
 #include "GateExtendedVSource.hh"
 
