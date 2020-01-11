@@ -78,7 +78,8 @@ protected:
 
   G4UIcmdWithABool* pEnableTOutCmd;
   G4UIcmdWithABool* pEnableTProdCmd;
-
+  G4UIcmdWithAString* pUseMaskCmd;
+  G4UIcmdWithABool* pEnableKillCmd;
 };
 
 #endif /* end #define GATESOURCEACTORMESSENGER_HH*/

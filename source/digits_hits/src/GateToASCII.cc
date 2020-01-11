@@ -14,7 +14,6 @@
 #include "GateVGeometryVoxelStore.hh"
 #include "GateCrystalHit.hh"
 #include "GatePhantomHit.hh"
-#include "GateRecorderBase.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateVVolume.hh"
 #include "GateDigitizer.hh"
@@ -54,10 +53,10 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
                    // They are then checked in GateApplicationMgr::StartDAQ, using
                    // the VOutputModule pure virtual method GiveNameOfFile()
 {
-/*
-  if (digiMode==kofflineMode)
+  /*
+    if (digiMode==kofflineMode)
     m_fileName=" ";
-*/
+  */
 
   m_isEnabled = false; // Keep this flag false: all output are disabled by default
   nVerboseLevel =0;
@@ -74,8 +73,8 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
 
 GateToASCII::~GateToASCII()
 {
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    delete m_outputChannelList[i];
+  // for (size_t i=0; i<m_outputChannelList.size() ; ++i )
+  //   delete m_outputChannelList[i];
 
   delete m_asciiMessenger;
 
@@ -125,7 +124,7 @@ void GateToASCII::RecordEndOfAcquisition()
     m_outFileHits.close();
 
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-       m_outputChannelList[i]->Close();
+    m_outputChannelList[i]->Close();
 
 }
 
@@ -149,7 +148,7 @@ void GateToASCII::RecordEndOfRun(const G4Run * )
     G4int nEvent = ((GatePrimaryGeneratorAction*)GateRunManager::GetRunManager()->
 		    GetUserPrimaryGeneratorAction())->GetEventNumber();
     if (nVerboseLevel > 0) G4cout
-      << "GateToASCII::RecordEndOfRun: Events in the past run: " << nEvent << Gateendl;
+                             << "GateToASCII::RecordEndOfRun: Events in the past run: " << nEvent << Gateendl;
     m_outFileRun
       << " " << std::setw(9) << nEvent
       << Gateendl;
@@ -187,8 +186,8 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 	G4String processName = (*CHC)[iHit]->GetProcess();
 	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
 	if (nVerboseLevel > 2) G4cout
-	  << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
-	  << ">    Particls PDG code : " << PDGEncoding << Gateendl;
+                                 << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
+                                 << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 	if ((*CHC)[iHit]->GoodForAnalysis()) {
 	  if (m_outFileHitsFlag) m_outFileHits << (*CHC)[iHit];
 	}
@@ -230,50 +229,50 @@ void GateToASCII::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
   if (nVerboseLevel > 2)
     G4cout << "[GateToASCII::RecordVoxels]\n";
   if (m_recordFlag>0)
-  {
-    // protect against huge ASCII files in case of nx,ny,nz ~O(100)
-    if (!m_outFileVoxelFlag) return;
+    {
+      // protect against huge ASCII files in case of nx,ny,nz ~O(100)
+      if (!m_outFileVoxelFlag) return;
 
-    std::ofstream  voxelFile; 	      	    //!< Output stream for the voxel density map
-    // Open the header file
-    G4String voxelFileName = "voxels.dat";
-    voxelFile.open(voxelFileName.c_str(),std::ios::out | std::ios::trunc);
-    if (!(voxelFile.is_open()))
-		{
-			G4String msg = "Could not open the voxel file '" + voxelFileName;
-        	G4Exception( "GateToASCII::RecordVoxels", "RecordVoxels", FatalException, msg);
-		}
-
-    // Write the header: number of voxels, voxel dimensions
-    G4int nx = voxelStore->GetVoxelNx();
-    G4int ny = voxelStore->GetVoxelNy();
-    G4int nz = voxelStore->GetVoxelNz();
-    G4ThreeVector voxelSize = voxelStore->GetVoxelSize();
-    G4double dx = voxelSize.x();
-    G4double dy = voxelSize.y();
-    G4double dz = voxelSize.z();
-
-    voxelFile << " " << nx << " " << ny << " " << nz << Gateendl;
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dx/mm;
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dy/mm;
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dz/mm;
-    voxelFile << Gateendl;
-
-    // Write the content of the voxel matrix
-    for (G4int iz=0; iz<nz; iz++) {
-      for (G4int iy=0; iy<ny; iy++) {
-        for (G4int ix=0; ix<nx; ix++) {
-	  G4double density = voxelStore->GetVoxelMaterial(ix,iy,iz)->GetDensity()/(gram/cm3);
-	  //	G4cout << "Material: " << voxelStore->GetVoxelMaterial(ix,iy,iz)->GetName() << "  density: " << density << Gateendl;
-	  voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << density;
+      std::ofstream  voxelFile; 	      	    //!< Output stream for the voxel density map
+      // Open the header file
+      G4String voxelFileName = "voxels.dat";
+      voxelFile.open(voxelFileName.c_str(),std::ios::out | std::ios::trunc);
+      if (!(voxelFile.is_open()))
+        {
+          G4String msg = "Could not open the voxel file '" + voxelFileName;
+          G4Exception( "GateToASCII::RecordVoxels", "RecordVoxels", FatalException, msg);
         }
-        // line break for each voxel line
-        voxelFile << Gateendl;
-      }
-    }
 
-    voxelFile.close();
-  }
+      // Write the header: number of voxels, voxel dimensions
+      G4int nx = voxelStore->GetVoxelNx();
+      G4int ny = voxelStore->GetVoxelNy();
+      G4int nz = voxelStore->GetVoxelNz();
+      G4ThreeVector voxelSize = voxelStore->GetVoxelSize();
+      G4double dx = voxelSize.x();
+      G4double dy = voxelSize.y();
+      G4double dz = voxelSize.z();
+
+      voxelFile << " " << nx << " " << ny << " " << nz << Gateendl;
+      voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dx/mm;
+      voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dy/mm;
+      voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dz/mm;
+      voxelFile << Gateendl;
+
+      // Write the content of the voxel matrix
+      for (G4int iz=0; iz<nz; iz++) {
+        for (G4int iy=0; iy<ny; iy++) {
+          for (G4int ix=0; ix<nx; ix++) {
+            G4double density = voxelStore->GetVoxelMaterial(ix,iy,iz)->GetDensity()/(gram/cm3);
+            //	G4cout << "Material: " << voxelStore->GetVoxelMaterial(ix,iy,iz)->GetName() << "  density: " << density << Gateendl;
+            voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << density;
+          }
+          // line break for each voxel line
+          voxelFile << Gateendl;
+        }
+      }
+
+      voxelFile.close();
+    }
 
 }
 
@@ -294,7 +293,7 @@ void GateToASCII::RegisterNewSingleDigiCollection(const G4String& aCollectionNam
     new SingleOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(singleOutputChannel);
 
-//  G4cout << " GateToASCII::RegisterNewSingleDigiCollection \n";
+  //  G4cout << " GateToASCII::RegisterNewSingleDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
 
@@ -306,7 +305,7 @@ void GateToASCII::RegisterNewCoincidenceDigiCollection(const G4String& aCollecti
     new CoincidenceOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(coincOutputChannel);
 
-//  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection \n";
+  //  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(coincOutputChannel);
 }
 
@@ -332,10 +331,10 @@ void GateToASCII::VOutputChannel::Open(const G4String& aFileBaseName)
   G4String fileName = aFileBaseName + m_collectionName + fileCounterSuffix + ".dat";
   if (m_outputFlag) {
     m_outputFile.open(fileName,std::ios::out);
-	//LF
+    //LF
     //m_outputFile.seekp (0, ios::beg);
-	 m_outputFile.seekp (0, std::ios::beg);
-	//LF
+    m_outputFile.seekp (0, std::ios::beg);
+    //LF
     m_outputFileBegin = m_outputFile.tellp();
   }
   m_fileBaseName = aFileBaseName;
@@ -359,10 +358,10 @@ G4bool GateToASCII::VOutputChannel::ExceedsSize()
   //LF
   outputFileEnd = m_outputFile.tellp();
   long size = outputFileEnd - m_outputFileBegin; // in bytes
-//   G4cout << "[GateToASCII::VOutputChannel::ExceedsSize]"
-// 	 << " collectionID: " << m_collectionID
-// 	 << " file limit: " << m_outputFileSizeLimit
-// 	 << " file size: " << size << Gateendl;
+  //   G4cout << "[GateToASCII::VOutputChannel::ExceedsSize]"
+  // 	 << " collectionID: " << m_collectionID
+  // 	 << " file limit: " << m_outputFileSizeLimit
+  // 	 << " file size: " << size << Gateendl;
   return (size > m_outputFileSizeLimit);
 }
 
@@ -384,11 +383,11 @@ void GateToASCII::SingleOutputChannel::RecordDigitizer()
 
   if (!SDC) {
     if (nVerboseLevel>0) G4cout << "[GateToASCII::SingleOutputChannel::RecordDigitizer]: "
-    				 << "digi collection '" << m_collectionName <<"' not found\n";
+                                << "digi collection '" << m_collectionName <<"' not found\n";
   } else {
     // Digi loop
     if (nVerboseLevel>0) G4cout << "[GateToASCII::SingleOutputChannel::RecordDigitizer]: Totals digits: "
-				 << SDC->entries() << Gateendl;
+                                << SDC->entries() << Gateendl;
     if (m_outputFlag) {
       G4int n_digi =  SDC->entries();
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
@@ -423,11 +422,11 @@ void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
 
   if (!CDC) {
     if (nVerboseLevel>0) G4cout << "[GateToASCII::CoincidenceOutputChannel::RecordDigitizer]: "
-    				 << "digi collection '" << m_collectionName <<"' not found\n";
+                                << "digi collection '" << m_collectionName <<"' not found\n";
   } else {
     // Digi loop
     if (nVerboseLevel>0) G4cout << "[GateToASCII::CoincidenceOutputChannel::RecordDigitizer]: Totals digits: "
-				 << CDC->entries() << Gateendl;
+                                << CDC->entries() << Gateendl;
 
     if (m_outputFlag) {
       G4int n_digi =  CDC->entries();

@@ -118,7 +118,7 @@ void GateEmCalculatorActor::SaveData()
   G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
   std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++)
+  for (unsigned int j = 0; j < plist->size(); j++)
     {
         if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
             {
@@ -158,9 +158,10 @@ void GateEmCalculatorActor::SaveData()
       eDensity = (*matTbl)[k]->GetElectronDensity();
       radLength = (*matTbl)[k]->GetRadlen();
       I = (*matTbl)[k]->GetIonisation()->GetMeanExcitationEnergy();
-      EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut);
-      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material);
-      TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut);
+      EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut) / density;
+      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material) / density;
+      TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut) / density;
+      MuMassCoeficient = 0.;
       for( size_t j = 0; j < processNameVector.size(); j++)
         {
           CrossSectionProcess = emcalc->ComputeCrossSectionPerVolume( mEnergy, mPartName, processNameVector[j], material, cut);
@@ -179,10 +180,10 @@ void GateEmCalculatorActor::SaveData()
       os << eDensity << "\t";
       os << radLength << "\t\t";
       os << I*1.e6 << "\t";
-      os << EmDEDX*10./(e_SI*density) << "\t\t";
-      os << NuclearDEDX*10./(e_SI*density) << "\t";
-      os << TotalDEDX*10./(e_SI*density) << "\t\t";
-      os << MuMassCoeficient << Gateendl;
+      os << EmDEDX / (MeV*cm2/g) << "\t\t";
+      os << NuclearDEDX / (MeV*cm2/g) << "\t";
+      os << TotalDEDX / (MeV*cm2/g) << "\t\t";
+      os << MuMassCoeficient / (cm2/g) << Gateendl;
     }
 
   if (!os) {

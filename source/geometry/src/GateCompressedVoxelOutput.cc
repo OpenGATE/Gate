@@ -25,7 +25,6 @@ See LICENSE.md for further details
 #include "G4TrajectoryContainer.hh"
 #include "G4Material.hh"
 #include "G4VProcess.hh"
-#include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
 #include "GatePrimaryGeneratorAction.hh"

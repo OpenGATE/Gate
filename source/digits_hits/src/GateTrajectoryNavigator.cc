@@ -16,6 +16,8 @@
 #include "G4TransportationManager.hh"
 
 #include "GateActions.hh"
+#include "GateMessageManager.hh"
+#include "GateRunManager.hh"
 
 GateTrajectoryNavigator::GateTrajectoryNavigator() : m_trajectoryContainer(NULL), m_positronTrackID(0), m_positronTrj(NULL), m_ionID(0), nVerboseLevel(0)
 {
@@ -34,7 +36,7 @@ G4ThreeVector GateTrajectoryNavigator::FindSourcePosition()
 
   G4int sourceIndex = FindSourceIndex();
 
-  if ((sourceIndex < 0) || (sourceIndex >= m_trajectoryContainer->entries())) {
+  if ((sourceIndex < 0) || ((unsigned int)sourceIndex >= m_trajectoryContainer->entries())) {
     G4cout << "GateTrajectoryNavigator::FindSourcePosition : WARNING : sourceIndex out of range: " << sourceIndex << Gateendl;
   } else {
     G4Trajectory* trjSource = (G4Trajectory*)((*m_trajectoryContainer)[sourceIndex]);

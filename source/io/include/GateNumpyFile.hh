@@ -104,7 +104,7 @@ class GateOutputNumpyTreeFile: public GateNumpyTree, public GateOutputTreeFile
 {
 public:
   GateOutputNumpyTreeFile();
-  void open(const std::string& s) ;
+  void open(const std::string& s) override ;
   bool is_open() override;
   void close() override;
 
@@ -135,7 +135,7 @@ public:
 
   void open(const std::string &name) override ;
   bool is_open() override;
-  virtual void read_next_entrie();
+  virtual void read_next_entrie() override ;
   void close() override;
   uint64_t nb_elements() override ;
 
@@ -146,7 +146,7 @@ public:
   void read_variable(const std::string &name, std::string *p) override ;
   using GateInputTreeFile::read_variable; //call templated version
   void read_header() override;
-  bool data_to_read();
+  bool data_to_read() override ;
 
   bool has_variable(const std::string &name) override;
   std::type_index get_type_of_variable(const std::string &name) override;

@@ -134,7 +134,7 @@ GatePhysicsList::~GatePhysicsList()
   while( (*theParticleIterator)() ){//&& !isTransportationDelete){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
-    for(int i = 0; i<vect->size();i++)
+    for(unsigned int i = 0; i<vect->size();i++)
       {
         if((*vect)[i]->GetProcessName()=="Transportation" )//&& !isTransportationDelete)
           {

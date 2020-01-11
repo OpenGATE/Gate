@@ -36,7 +36,7 @@ See LICENSE.md for further details
 #include "GateFictitiousVoxelMapParameterized.hh"
 #include "GateCrystalHit.hh"
 #include "GatePhantomHit.hh"
-#include "GateRecorderBase.hh"
+
 
 // for std::abs
 #include <cmath>

@@ -91,6 +91,9 @@ G4int GateSourceFastY90::GeneratePrimaries(G4Event *event)
   position = m_posSPS->GenerateOne();
   direction = m_angSPS->GenerateOne();
 
+  // relative position if attached
+  ChangeParticlePositionRelativeToAttachedVolume(position);
+
   G4double P = G4UniformRand();
   if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {

@@ -211,7 +211,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
     if(processName != "Transportation")
     {
       G4VProcess *currentProcess = 0;
-      for(int i=0; i<mProcessListForGamma->size(); i++)
+      for(unsigned int i=0; i<mProcessListForGamma->size(); i++)
       {
 	if((*mProcessListForGamma)[i]->GetProcessName() == processName)
 	{

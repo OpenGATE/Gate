@@ -1,5 +1,5 @@
 #=========================================================
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
 
@@ -75,8 +75,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.4 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.5)
-  MESSAGE("Warning! GATE version 8.2 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.4 or 10.5 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.5 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.6)
+  MESSAGE("Warning! GATE version 9.0 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.6 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -92,6 +92,10 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
+
+#=========================================================
+# Option for libTorch
+OPTION(GATE_USE_TORCH "Gate use libTorch" OFF)
 
 #=========================================================
 # RTK / ITK
@@ -131,12 +135,6 @@ IF(GATE_USE_XRAYLIB)
     MESSAGE("xraylib not found! Please install xraylib and make it available in PATH or manually set the LIBXRL_LIBRARY and LIBXRL_INCLUDE variables.")
   ENDIF()
 ENDIF(GATE_USE_XRAYLIB)
-
-#=========================================================
-# Option for Davis model
-IF(GATE_USE_DAVIS)
-  MESSAGE("Warning! You have to install a manually modified version of Geant4 to use the Davis LUT model. Please refer to http://wiki.opengatecollaboration.org/index.php/Enabling_LUT_Davis_Model for detailed step-by-step compiling instructions")
-ENDIF(GATE_USE_DAVIS)
 
 #=========================================================
 # Option for Clhep use
@@ -225,6 +223,11 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
+IF(GATE_USE_TORCH)
+  FIND_PACKAGE(Torch REQUIRED)
+ENDIF()
+
+#=========================================================
 # RTK
 IF(GATE_USE_RTK OR GATE_USE_ITK)
   SET(ITK_MINIMAL_VERSION 4.9)
@@ -259,7 +262,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY}  ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
@@ -293,7 +296,9 @@ MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
 
 #=========================================================
 # Add gprof to RELWITHDEBINFO target
-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -pg")
-SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -pg")
-SET(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} -pg")
+IF(NOT APPLE)
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -pg")
+  SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -pg")
+  SET(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} -pg")
+ENDIF()
 #=========================================================
