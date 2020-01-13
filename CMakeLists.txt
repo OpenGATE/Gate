@@ -295,6 +295,16 @@ ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
 # such warning related to clhep/g4 system of units. Additionally,
 # we force the c++11 std. This is mandatory for Geant4 >= 10.2.
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
+IF(UNIX)
+  string(FIND ${CMAKE_CXX_FLAGS_RELEASE} -march=native pos_march_cxx)
+  string(FIND ${CMAKE_C_FLAGS_RELEASE} -march=native pos_march_c)
+  IF(${pos_march_cxx} EQUAL -1)
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+  ENDIF() 
+  IF(${pos_march_c} EQUAL -1)
+    SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
+  ENDIF() 
+ENDIF(UNIX)
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(CMAKE_CXX_STANDARD 11)
