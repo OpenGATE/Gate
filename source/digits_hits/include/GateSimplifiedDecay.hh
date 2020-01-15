@@ -33,7 +33,7 @@ public:
   }
 
   void print(){
-    std::for_each(  transitionVector->begin(),  transitionVector->end(), std::mem_fun( &GateSimplifiedDecayTransition::print)  );
+    std::for_each(  transitionVector->begin(),  transitionVector->end(), std::mem_fn( &GateSimplifiedDecayTransition::print)  );
   }
 
   void sample(int n, int k){
