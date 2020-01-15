@@ -232,39 +232,39 @@ void GatePhysicsList::ConstructProcess()
   if(mLoadState>0) DefineCuts();
 
   /* //to check : move in DefineCuts
-  if(mLoadState==1 && mListOfStepLimiter.size()!=0){
-    G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
-    theParticleIterator->reset();
-    while( (*theParticleIterator)() ){
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
-	if(mListOfStepLimiter[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
-          pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
-        }
-      }
-    }
-  }
+     if(mLoadState==1 && mListOfStepLimiter.size()!=0){
+     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+     G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+     theParticleIterator->reset();
+     while( (*theParticleIterator)() ){
+     G4ParticleDefinition* particle = theParticleIterator->value();
+     G4ProcessManager* pmanager = particle->GetProcessManager();
+     G4String particleName = particle->GetParticleName();
+     for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
+     if(mListOfStepLimiter[i]==particleName) {
+     GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
+     pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
+     }
+     }
+     }
+     }
 
-  if(mLoadState==1 && mListOfG4UserSpecialCut.size()!=0){
-    G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
-    theParticleIterator->reset();
-    while( (*theParticleIterator)() ){
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
-	if(mListOfG4UserSpecialCut[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
-          pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
-        }
-      }
-    }
-  }
+     if(mLoadState==1 && mListOfG4UserSpecialCut.size()!=0){
+     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+     G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+     theParticleIterator->reset();
+     while( (*theParticleIterator)() ){
+     G4ParticleDefinition* particle = theParticleIterator->value();
+     G4ProcessManager* pmanager = particle->GetProcessManager();
+     G4String particleName = particle->GetParticleName();
+     for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
+     if(mListOfG4UserSpecialCut[i]==particleName) {
+     GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
+     pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
+     }
+     }
+     }
+     }
   */
 
   mLoadState++;
@@ -586,10 +586,10 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 void GatePhysicsList::AddAtomDeexcitation()
 {
   if(G4LossTableManager::Instance()->AtomDeexcitation() == NULL)
-  {
-    G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
-    G4LossTableManager::Instance()->SetAtomDeexcitation(de);
-  }
+    {
+      G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
+      G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+    }
 
   emPar->SetFluo(true);
   emPar->SetAuger(true);

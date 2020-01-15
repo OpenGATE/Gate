@@ -295,9 +295,9 @@ void GateDoseActor::Construct() {
 
   if (mDoseByRegionsFlag) {
     if(mDoseByRegionsInputFilename == "")
-    {
-      GateError("Please set DoseByRegionsInputFilename if you want to use DoseByRegions");
-    }
+      {
+        GateError("Please set DoseByRegionsInputFilename if you want to use DoseByRegions");
+      }
     mDoseByRegionsLabelImage.Read(mDoseByRegionsInputFilename);
     SetOriginTransformAndFlagToImage(mDoseByRegionsLabelImage);
     // double tol = 0.00000001;
@@ -535,10 +535,10 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   //calculate values once to save time
   double energy;
   if (mIsDoseImageEnabled || mIsDoseToWaterImageEnabled || mIsDoseToOtherMaterialImageEnabled) {
-	  //get the energy
-	  double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-	  double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-	  energy=(energy1+energy2)/2;
+    //get the energy
+    double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+    double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+    energy=(energy1+energy2)/2;
   }
 
   //Edep
@@ -613,26 +613,26 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       //Alternative way of converting dose to water is to keep the dose from particles having dedx=0 equal to the dedx of electrons
       //------------------------------------
       /*
-			//if calculation for a given particle does not work using DEDX (neutron etc, use an electron instead)
-			if(DEDX == 0) {
+      //if calculation for a given particle does not work using DEDX (neutron etc, use an electron instead)
+      if(DEDX == 0) {
       DEDX = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), current_material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), water, cut);
-			}
+      }
 
-			if (DEDX_Water == 0 or DEDX == 0)
-			{
+      if (DEDX_Water == 0 or DEDX == 0)
+      {
       doseToWater = 0.0; // to avoid inf or NaN
       GateWarning("DEDX = 0 in doseToWater, Edep ommited");
       G4cout<<"PartName: "<< p->GetParticleName()<<" Edep: "<<edep/gray<<G4endl;
       doseToWater = 0.0;
-			}
-			else doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
-		  //~ else {
-			//~ if (mDose2WaterWarningFlag) {
+      }
+      else doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
+      //~ else {
+      //~ if (mDose2WaterWarningFlag) {
       //~ GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
       //~
       //~ mDose2WaterWarningFlag = false;
-			//~ }
+      //~ }
 
       //~ }
       //~ else	doseToWater=dose;
@@ -648,10 +648,10 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   double DoseToOtherMaterial = 0;
   if (mIsDoseToOtherMaterialImageEnabled){
     double cut = DBL_MAX;
-	 	G4String material;
-		const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
-		bool IsMaterialInMDB = false;
-		double Density_OtherMaterial = 1;
+    G4String material;
+    const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
+    bool IsMaterialInMDB = false;
+    double Density_OtherMaterial = 1;
 
     // check if the material has already been created in the simulation
     for(size_t k=0; k < G4Material::GetNumberOfMaterials(); k++){
@@ -664,16 +664,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     }
     // create the material if not already created in the simulation
     if(!IsMaterialInMDB){
-			//FIXME
-			//CREATE THE MISSING MATERIAL (look into the Gate db)
-			GateError("Material not defined - abort simulation");
-		}
+      //FIXME
+      //CREATE THE MISSING MATERIAL (look into the Gate db)
+      GateError("Material not defined - abort simulation");
+    }
 
 
-	  //deterimine density ratio for dose to other material
-	  //in case geometric and scoring voxels are not the same
-	  double densityRatio=	density/current_material->GetDensity();
-	  Density_OtherMaterial/=densityRatio;
+    //deterimine density ratio for dose to other material
+    //in case geometric and scoring voxels are not the same
+    double densityRatio=	density/current_material->GetDensity();
+    Density_OtherMaterial/=densityRatio;
 
     // dedx
     double DEDX=0, DEDX_OtherMaterial=0;
@@ -707,7 +707,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     //		when comparing dose and dosetowater in the material G4_WATER
     //For neutrons the dose is neglected - testing with 1.3 MeV photon beam or 150 MeV protons or 1500 MeV carbon ion beam showed that the error induced is < 0.01%
     //		we are systematically missing a little bit of dose of course with this solution
-		if (p == G4Gamma::Gamma())  p = G4Electron::Electron();
+    if (p == G4Gamma::Gamma())  p = G4Electron::Electron();
     DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
     DEDX_OtherMaterial = emcalc->ComputeTotalDEDX(energy, p, OtherMaterial, cut);
     //In current implementation, dose deposited directly by neutrons is neglected - the below lines prevent "inf or NaN"
