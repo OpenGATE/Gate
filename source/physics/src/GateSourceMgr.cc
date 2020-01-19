@@ -31,6 +31,7 @@
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
 #include "GateSourcePhaseSpace.hh"
+#include "GateExtendedVSource.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -242,6 +243,10 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetType("gps");
         source->SetSourceID( m_sourceProgressiveNumber );
         source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)
+      }
+      else if (sourceGeomType == "Extended"){
+    	source = new GateExtendedVSource( sourceName );
+    	source->SetSourceID( m_sourceProgressiveNumber );
       }
       else {
         GateError("Unknown source type '" << sourceGeomType
