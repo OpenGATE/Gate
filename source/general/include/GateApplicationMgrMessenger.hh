@@ -60,10 +60,6 @@ private:
   G4UIcmdWithADouble *      SetTotalNumberOfPrimariesCmd;
   G4UIcmdWithADouble *      SetNumberOfPrimariesPerRunCmd;
   G4UIcmdWithADouble *      SetNumberOfPrimariesPerRunCmd2;
-
-//LSLS
-  G4UIcmdWithAString *      ReadNumberOfPrimariesInAFileCmd;
-
 };
 
 #endif

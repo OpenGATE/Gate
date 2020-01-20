@@ -6,6 +6,8 @@
   See LICENSE.md for further details
   ----------------------*/
 
+#include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
 
 /*
   \class  GatePhaseSpaceActorMessenger
@@ -78,9 +80,8 @@ protected:
 
   G4UIcmdWithABool* pEnableTOutCmd;
   G4UIcmdWithABool* pEnableTProdCmd;
-  G4UIcmdWithAString* pUseMaskCmd;
-  G4UIcmdWithABool* pEnableKillCmd;
+
 };
 
 #endif /* end #define GATESOURCEACTORMESSENGER_HH*/
-
+#endif

@@ -6,20 +6,26 @@
   See LICENSE.md for further details
   ----------------------*/
 
-
+#include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
 
 #ifndef GATEPHASESPACEACTOR_HH
 #define GATEPHASESPACEACTOR_HH
 
+#include "TROOT.h"
+#include "TFile.h"
+#include "TNtuple.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TString.h"
+
 #include "GateVActor.hh"
-#include "GateImage.hh"
-#include "GateTreeFileManager.hh"
+#include "GatePhaseSpaceActorMessenger.hh"
 
 struct iaea_header_type;
 struct iaea_record_type;
 
 class G4EmCalculator;
-class GatePhaseSpaceActorMessenger;
 
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor
@@ -101,18 +107,14 @@ public:
   void SetEnabledTranslationAlongDirection(bool b) { mTranslateAlongDirectionFlag = b; }
   void SetTranslationAlongDirectionLength(double r) { mTranslationLength = r; }
 
-  void SetMaskFilename(G4String filename);
-  void SetKillParticleFlag(bool b);
-
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
 
-  G4String mFileType;
+  TString mFileType;
   G4int mNevent;
 
-  GateOutputTreeFileManager mFile;
-
-
+  TFile * pFile;
+  TTree * pListeVar;
 
   bool EnableCharge;
   bool EnableElectronicDEDX;
@@ -160,11 +162,6 @@ protected:
   bool bEnablePDGCode;
   long int bPDGCode;
 
-  bool mMaskIsEnabled;
-  G4String mMaskFilename;
-  GateImage mMask;
-  bool mKillParticleFlag;
-
   bool bEnableTOut;
   bool bEnableTProd;
 
@@ -172,9 +169,9 @@ protected:
 
   long int mNumberOfTrack;
 
-  bool mIsFirstStep;
+  bool mIsFistStep;
 
-  char  pname[256];
+  Char_t  pname[256];
 
   G4int Za;
   float elecDEDX;
@@ -196,10 +193,10 @@ protected:
   float tProd;
   double t;//t is either time or local time.
   G4int m;
-  char vol[256];
+  Char_t vol[256];
 
-  char creator_process[256];
-  char pro_step[256];
+  Char_t creator_process[256];
+  Char_t pro_step[256];
 
   int trackid;
   int parentid;
@@ -221,4 +218,4 @@ MAKE_AUTO_CREATOR_ACTOR(PhaseSpaceActor,GatePhaseSpaceActor)
 
 
 #endif /* end #define GATESOURCEACTOR_HH */
-
+#endif

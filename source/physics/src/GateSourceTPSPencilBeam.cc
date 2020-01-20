@@ -14,24 +14,15 @@
 // It will simulate each single pencil beam of the treatment plan using the GateSourcePencilBeam class.
 //=======================================================
 
-// std
+#include "GateConfiguration.h"
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-// geant4
-#include "globals.hh"
-#include "G4Event.hh"
-
-// GATE
-#include "GateConfiguration.h"
-#include "GateRandomEngine.hh"
-#include "GateSourcePencilBeam.hh"
 #include "GateSourceTPSPencilBeam.hh"
-#include "GateSourceTPSPencilBeamMessenger.hh"
+#include "G4Proton.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
 
@@ -40,7 +31,7 @@
 GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mPencilBeam(NULL), mDistriGeneral(NULL)
 {
   //Particle Type
-  mParticleType="proton";
+  strcpy(mParticleType,"proton");
   //Particle Properties if GenericIon
   mIsGenericIon=false;
   //others
@@ -605,4 +596,12 @@ G4int GateSourceTPSPencilBeam::GeneratePrimaries( G4Event* event ) {
   return numVertices;
 }
 //------------------------------------------------------------------------------------------------------
+void ReadLineTo3Doubles(double *toto, const std::string &data) {
+  std::istringstream iss(data);
+  std::string token;
+  for (int j=0; j<3; j++) {
+    getline(iss, token, ' ');
+    toto[j]=atof(token.c_str());
+  }
+}
 // vim: ai sw=2 ts=2 et

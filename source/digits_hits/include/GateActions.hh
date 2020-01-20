@@ -24,12 +24,12 @@
 #include "G4UserStackingAction.hh"
 
 #include "globals.hh"
-#include "GateApplicationMgr.hh"
-#include "G4TrackStatus.hh"
+#include "GateUserActions.hh"
+#include "GateTrack.hh"
 
-class GateTrack;
+#include "GateApplicationMgr.hh"
+
 class GateVVolume;
-class GateUserActions;
 
 enum TrackingMode {
   kUnknown, kBoth,  kTracker,
@@ -41,7 +41,7 @@ enum TrackingMode {
 class GateRunAction :  public G4UserRunAction
 {
 public :
-  GateRunAction(GateUserActions * cbm);
+  GateRunAction(GateUserActions * cbm, GateRecorderBase* r);
   ~GateRunAction(){}
 
   //-----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ public :
 private:
   GateRunAction() {}
   GateUserActions* pCallbackMan;
-
+  GateRecorderBase* recorder;
   G4int runIDcounter;
   G4bool flagBasicOutput;
   static GateRunAction* prunAction;
@@ -73,7 +73,7 @@ private:
 class GateEventAction :  public G4UserEventAction
 {
 public :
-  GateEventAction(GateUserActions * cbm);
+  GateEventAction(GateUserActions * cbm, GateRecorderBase* r);
   ~GateEventAction()
   {}
   //-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public :
 private:
   GateEventAction() {}
   GateUserActions* pCallbackMan;
-
+  GateRecorderBase* recorder;
   G4bool flagBasicOutput;
   static GateEventAction* peventAction;
 };
@@ -102,7 +102,7 @@ private:
 class GateTrackingAction :  public G4UserTrackingAction
 {
 public :
-  GateTrackingAction(GateUserActions * cbm);
+  GateTrackingAction(GateUserActions * cbm, GateRecorderBase* r);
   //    : pCallbackMan(cbm){}
   ~GateTrackingAction() {}
   //-----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ class GateSteppingActionMessenger;
 class GateSteppingAction :  public G4UserSteppingAction
 {
 public :
-  GateSteppingAction(GateUserActions * cbm);
+  GateSteppingAction(GateUserActions * cbm, GateRecorderBase* r);
   ~GateSteppingAction() ;
   //-----------------------------------------------------------------------------
   // Action classes Callbacks
@@ -162,6 +162,7 @@ public :
 private:
   GateSteppingAction() {}
   GateUserActions* pCallbackMan;
+  GateRecorderBase* recorder;
   G4int m_drawTrjLevel;
   G4int m_verboseLevel;
 

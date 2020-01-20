@@ -48,6 +48,7 @@
 #include "GateDigitizer.hh"
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
+#include "GateRecorderBase.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
 #include "GateVVolume.hh"

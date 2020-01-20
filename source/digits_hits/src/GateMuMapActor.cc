@@ -31,7 +31,6 @@ GateMuMapActor::GateMuMapActor(G4String name, G4int depth):
 
         mEnergy = 0.511*MeV;
         mMuUnit= 1.0*(1.0/cm);
-        mCurrentEvent = -1;
         pMessenger = new GateMuMapActorMessenger(this);
         GateDebugMessageDec("Actor",4,"GateMuMapActor() -- end"<<G4endl);
     }
@@ -127,7 +126,7 @@ void GateMuMapActor::BeginOfRunAction(const G4Run * r) {
     for(int index=0; index<mMuMapImage.GetNumberOfValues(); index++)
     {
         G4ThreeVector myPosition=mMuMapImage.GetVoxelCenterFromIndex(index);
-        G4VPhysicalVolume* pVolume = theNavigator->LocateGlobalPointAndSetup(myPosition+mPosition);
+        G4VPhysicalVolume* pVolume = theNavigator->LocateGlobalPointAndSetup(myPosition);
         if(pVolume)
         {
         G4LogicalVolume* lVolume= pVolume->GetLogicalVolume();
@@ -147,8 +146,7 @@ void GateMuMapActor::BeginOfRunAction(const G4Run * r) {
 void GateMuMapActor::EndOfRunAction(const G4Run* r)
 {
     GateVActor::EndOfRunAction(r);
-    // Save SourceMap voxel 
-    mSourceMapImage.Write(mSourceMapFilename);
+    SaveData();
 }
 
 //-----------------------------------------------------------------------------
@@ -158,15 +156,14 @@ void GateMuMapActor::EndOfRunAction(const G4Run* r)
 void GateMuMapActor::BeginOfEventAction(const G4Event * e) {
     GateVActor::BeginOfEventAction(e);
 
-    ++mCurrentEvent;
     GateDebugMessage("Actor", 3, "GateMuMapActor -- Begin of Event: "<<mCurrentEvent << G4endl);
    G4ThreeVector primaryPosition = e->GetPrimaryVertex()->GetPosition();
-   int index = mSourceMapImage.GetIndexFromPosition(primaryPosition-mPosition);
+   int index = mSourceMapImage.GetIndexFromPosition(primaryPosition);
    if(index>=0)
    {
        int count = mSourceMapImage.GetValue(index);
         mSourceMapImage.SetValue(index,count+1);
-    }
+   }
 }
 //-----------------------------------------------------------------------------
 

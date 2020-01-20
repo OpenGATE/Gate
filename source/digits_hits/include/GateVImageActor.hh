@@ -83,13 +83,6 @@ public :
 
   virtual void ResetData();
 
-  static int GetIndexFromStepPosition2(const GateVVolume *,
-                                       const G4Step  * step,
-                                       const GateImage & image,
-                                       const bool mPositionIsSet,
-                                       const G4ThreeVector mPosition,
-                                       const StepHitType mStepHitType);
-
 protected:
 
   //-----------------------------------------------------------------------------

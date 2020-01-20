@@ -1,23 +1,24 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+   Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
-  ----------------------*/
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
 
-
+#include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
 #ifndef GATEPHASESPACESOURCE_HH
 #define GATEPHASESPACESOURCE_HH
 
-#include "GateConfiguration.h"
-
-#ifdef GATE_USE_TORCH
-// Need to be *before* include GateIAEAHeader because it define macros
-// that mess with torch
-#include <torch/script.h>
-#include "json.hpp"
-#endif
+#include "TROOT.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TChain.h"
+#include "TH1D.h"
+#include "TMath.h"
+#include "TKey.h"
+#include "TEntryList.h"
 
 #include "G4Event.hh"
 #include "globals.hh"
@@ -36,8 +37,6 @@
 //#include "GateRunManager.hh"
 
 #include "GateUserActions.hh"
-#include "GateTreeFileManager.hh"
-#include <typeindex>
 
 struct iaea_record_type;
 struct iaea_header_type;
@@ -51,8 +50,6 @@ public:
   void Initialize();
   void GenerateROOTVertex( G4Event* );
   void GenerateIAEAVertex( G4Event* );
-  void GeneratePyTorchVertex( G4Event* );
-  void GenerateBatchSamplesFromPyTorch();
 
   G4int OpenIAEAFile(G4String file);
 
@@ -80,20 +77,13 @@ public:
 
   void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
 
-  void SetRmax(float r) { mRmax = r; }
-  void SetSphereRadius(float r) { mSphereRadius = r; }
+  void SetRmax(float r){mRmax = r;}
 
   void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
-  void SetIgnoreWeight(bool b) { mIgnoreWeight = b; }
-  
-  void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
-  void InitializePyTorch();
-  void SetPytorchParams(G4String & name) { mPTJsonFilename = name; }
-
 protected:
 
-
+  TChain *T;
   //TEntryList
   std::vector<unsigned int> pListOfSelectedEvents;
 
@@ -121,7 +111,7 @@ protected:
   float dx, dy, dz;
   float ftime;
   double dtime;
-  std::type_index time_type = typeid(nullptr);
+  EDataType time_type;
   float weight;
 
   //  char volumeName;
@@ -133,7 +123,6 @@ protected:
   bool mAlreadyLoad;
 
   float mRmax;
-  double mSphereRadius;
 
   double px ;
   double py ;
@@ -163,36 +152,8 @@ protected:
   double mAngle;
 
   bool mUseNbOfParticleAsIntensity;
-  GateInputTreeFileChain mChain;
-
-  bool mIgnoreWeight;
-
-  int mPTCurrentIndex;
-  int mPTBatchSize;
-  double mPTmass;
-  std::vector<G4ThreeVector> mPTPosition;
-  std::vector<double> mPTDX;
-  std::vector<double> mPTDY;
-  std::vector<double> mPTDZ;
-  std::vector<double> mPTEnergy;
-  std::string mPTJsonFilename;
-#ifdef GATE_USE_TORCH
-  torch::jit::script::Module mPTmodule;
-  torch::Tensor mPTzer;
-  std::vector<double> mPTx_mean;
-  std::vector<double> mPTx_std;
-  int mPTz_dim;
-  int mPTEnergyIndex;
-  int mPTPositionXIndex;
-  int mPTPositionYIndex;
-  int mPTPositionZIndex;
-  int mPTDirectionXIndex;
-  int mPTDirectionYIndex;
-  int mPTDirectionZIndex;
-  std::map<std::string, double> mDefaultKeyValues;
-#endif  
 
 };
 
 #endif
-
+#endif

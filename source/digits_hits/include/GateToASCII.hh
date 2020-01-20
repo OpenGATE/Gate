@@ -9,10 +9,6 @@
 #ifndef GateToASCII_H
 #define GateToASCII_H
 
-
-#include <vector>
-#include <fstream>
-
 #include "GateVOutputModule.hh"
 
 #ifdef G4ANALYSIS_USE_FILE

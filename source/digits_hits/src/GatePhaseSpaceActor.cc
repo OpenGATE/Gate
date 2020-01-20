@@ -6,8 +6,10 @@
   See LICENSE.md for further details
   ----------------------*/
 
+#include "GatePhaseSpaceActor.hh"
 
-//
+#ifdef G4ANALYSIS_USE_ROOT
+
 /*
   \brief Class GatePhaseSpaceActor
   \author thibault.frisson@creatis.insa-lyon.fr
@@ -16,21 +18,18 @@
   brent.huisman@insa-lyon.fr
 */
 
-
-#include "GatePhaseSpaceActor.hh"
-#include <G4EmCalculator.hh>
 #include <G4VProcess.hh>
 #include <G4Run.hh>
+#include <G4EmCalculator.hh>
+#include <G4ParticleTable.hh>
+#include "GateRunManager.hh"
 #include "GateMiscFunctions.hh"
-
-#include "GateSourceMgr.hh"
-#include "GateVImageActor.hh"
-#include "GateProtonNuclearInformationActor.hh"
-
-#include "GateSourceTPSPencilBeam.hh"
-#include "GatePhaseSpaceActorMessenger.hh"
+#include "GateObjectStore.hh"
 #include "GateIAEAHeader.h"
-
+#include "GateIAEARecord.h"
+#include "GateIAEAUtilities.h"
+#include "GateSourceMgr.hh"
+#include "GateProtonNuclearInformationActor.hh"
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
@@ -58,12 +57,12 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableMass = true;
   EnableSec = false;
   EnableNuclearFlag = false;
-  mIsFirstStep = true;
+  mIsFistStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
-  EnableTOut = false ;
-  EnableTProd = false ;
+  EnableTOut = true ;
+  EnableTProd = true ;
 
   mSphereProjectionFlag = false;
   mSphereProjectionCenter = G4ThreeVector(0);
@@ -84,9 +83,6 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bSpotID = 0;
   bSpotIDFromSource = " ";
   bCoordFrame = " ";
-  mMaskFilename = "";
-  mMaskIsEnabled = false;
-  mKillParticleFlag = false;
 
   mFileType = " ";
   mNevent = 0;
@@ -133,13 +129,64 @@ void GatePhaseSpaceActor::Construct()
 
   G4String extension = getExtension(mSaveFilename);
 
-  // If mask, load the image
-  if (mMaskIsEnabled) {
-    GateMessage("Actor", 1, "GatePhaseSpaceActor read mask file " << mMaskFilename);
-    mMask.Read(mMaskFilename);
-  }
+  if (extension == "root") mFileType = "rootFile";
+  else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
+  else GateError( "Unknow phase space file extension. Knowns extensions are : "
+                  << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
 
-  if (extension == "IAEAphsp" || extension == "IAEAheader" ) {
+  if (mFileType == "rootFile") {
+
+    pFile = new TFile(mSaveFilename, "RECREATE", "ROOT file for phase space", 9);
+    pListeVar = new TTree("PhaseSpace", "Phase space tree");
+
+    if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
+
+    if (EnableCharge) pListeVar->Branch("AtomicNumber", &Za, "AtomicNumber/I");
+    if (EnableElectronicDEDX) pListeVar->Branch("ElectronicDEDX", &elecDEDX, "elecDEDX/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("StepLength", &stepLength, "stepLength/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Edep", &edep, "Edep/F");
+    if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
+
+    if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
+    if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
+    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
+    if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
+    if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
+    if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
+    if (EnableZPosition) pListeVar->Branch("Z", &z, "Z/F");
+    if (EnableXDirection) pListeVar->Branch("dX", &dx, "dX/F");
+    if (EnableYDirection) pListeVar->Branch("dY", &dy, "dY/F");
+    if (EnableZDirection) pListeVar->Branch("dZ", &dz, "dZ/F");
+    if (EnablePartName /*&& bEnableCompact==false*/) pListeVar->Branch("ParticleName", pname , "ParticleName/C");
+    if (EnableProdVol && bEnableCompact == false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
+    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("CreatorProcess", creator_process, "CreatorProcess/C");
+    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProcessDefinedStep", pro_step, "ProcessDefinedStep/C");
+    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
+    if (bEnableCompact == false) pListeVar->Branch("ParentID", &parentid, "ParentID/I");
+    if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
+    if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
+    if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
+    if (bEnablePDGCode) pListeVar->Branch("PDGCode", &bPDGCode, "PDGCode/I");
+    if (bEnableEmissionPoint) {
+      pListeVar->Branch("EmissionPointX", &bEmissionPointX, "EmissionPointX/F");
+      pListeVar->Branch("EmissionPointY", &bEmissionPointY, "EmissionPointY/F");
+      pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
+    }
+    if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
+    if (EnableTOut) pListeVar->Branch("TOut", &tOut, "TOut/F");
+    if (EnableTProd) pListeVar->Branch("TProd", &tProd, "TProd/F");
+
+    if (EnableNuclearFlag)
+    {    
+      pListeVar->Branch("CreatorProcess", &creator, "CreatorProcess/I");
+      pListeVar->Branch("NuclearProcess", &nucprocess, "NuclearProcess/I");
+      pListeVar->Branch("Order", &order, "Order/I");
+    }
+
+  } else if (mFileType == "IAEAFile") {
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
     pIAEAheader->initialize_counters();
     pIAEARecordType = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
@@ -167,89 +214,7 @@ void GatePhaseSpaceActor::Construct()
       GateWarning("'Mass' is not available in IAEA phase space.");
     }
     if ( pIAEAheader->set_record_contents(pIAEARecordType) == FAIL) GateError("Record contents not setted.");
-  } else  {
-    if(extension == "root")
-      mFile.add_file(mSaveFilename,  "root");
-    else if(extension == "npy")
-      mFile.add_file(mSaveFilename, "npy");
-    else if(extension == "txt")
-      mFile.add_file(mSaveFilename, "txt");
-    else
-      GateError("Unknown extension for phasespace");
-
-    mFile.set_tree_name("PhaseSpace");
-
-
-    if (EnableCharge) mFile.write_variable("AtomicNumber", &Za);
-
-    if (EnableElectronicDEDX) mFile.write_variable("ElectronicDEDX", &elecDEDX);
-    if (EnableElectronicDEDX) mFile.write_variable("StepLength", &stepLength);
-    if (EnableElectronicDEDX) mFile.write_variable("Edep", &edep);
-    if (EnableTotalDEDX) mFile.write_variable("TotalDEDX", &totalDEDX);
-
-    if (EnableEkine) mFile.write_variable("Ekine", &e);
-    if (EnableElectronicDEDX) mFile.write_variable("Ekpost", &ekPost);
-    if (EnableElectronicDEDX) mFile.write_variable("Ekpre", &ekPre);
-    if (EnableWeight) mFile.write_variable("Weight", &w);
-    if (EnableTime || EnableLocalTime) mFile.write_variable("Time", &t);
-    if (EnableMass) mFile.write_variable("Mass", &m); // in MeV/c2
-    if (EnableXPosition) mFile.write_variable("X", &x);
-    if (EnableYPosition) mFile.write_variable("Y", &y);
-    if (EnableZPosition) mFile.write_variable("Z", &z);
-    if (EnableXDirection) mFile.write_variable("dX", &dx);
-    if (EnableYDirection) mFile.write_variable("dY", &dy);
-    if (EnableZDirection) mFile.write_variable("dZ", &dz);
-
-    if (EnablePartName /*&& bEnableCompact==false*/) mFile.write_variable("ParticleName", pname, sizeof(pname) );
-    if (EnableProdVol && bEnableCompact == false) mFile.write_variable("ProductionVolume", vol, sizeof(vol));
-    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("CreatorProcess", creator_process, sizeof(creator_process));
-    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("ProcessDefinedStep", pro_step, sizeof(pro_step));
-    if (bEnableCompact == false) mFile.write_variable("TrackID", &trackid);
-    if (bEnableCompact == false) mFile.write_variable("ParentID", &parentid);
-    if (bEnableCompact == false) mFile.write_variable("EventID", &eventid);
-    if (bEnableCompact == false) mFile.write_variable("RunID", &runid);
-    if (bEnablePrimaryEnergy) mFile.write_variable("PrimaryEnergy", &bPrimaryEnergy);
-    if (bEnablePDGCode) mFile.write_variable("PDGCode", &bPDGCode);
-    if (bEnableEmissionPoint) {
-      mFile.write_variable("EmissionPointX", &bEmissionPointX);
-      mFile.write_variable("EmissionPointY", &bEmissionPointY);
-      mFile.write_variable("EmissionPointZ", &bEmissionPointZ);
-    }
-    if (bEnableSpotID) mFile.write_variable("SpotID", &bSpotID);
-
-    if (EnableTOut) mFile.write_variable("TOut", &tOut);
-    if (EnableTProd) mFile.write_variable("TProd", &tProd);
-
-    if (EnableNuclearFlag)
-      {
-        mFile.write_variable("CreatorProcess", &creator);
-        mFile.write_variable("NuclearProcess", &nucprocess);
-        mFile.write_variable("Order", &order);
-      }
-
-
-    mFile.write_header();
-
-
   }
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void GatePhaseSpaceActor::SetMaskFilename(G4String filename)
-{
-  mMaskFilename = filename;
-  mMaskIsEnabled = true;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void GatePhaseSpaceActor::SetKillParticleFlag(bool b)
-{
-  mKillParticleFlag = b;
 }
 // --------------------------------------------------------------------
 
@@ -257,7 +222,7 @@ void GatePhaseSpaceActor::SetKillParticleFlag(bool b)
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track * t)
 {
-  mIsFirstStep = true;
+  mIsFistStep = true;
   if (bEnableEmissionPoint) {
     bEmissionPointX = t->GetVertexPosition().x();
     bEmissionPointY = t->GetVertexPosition().y();
@@ -288,43 +253,17 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *step)
 {
 
-  /*
-    Options:
-    - storeOutgoingParticles --> consider PostPoint instead of PrePoint
-    - storeAllStep           --> store every step, not only the first time it enters the volume
-    - storeSecondaries       --> also store particle created inside the volume
-    - attachMask             --> store particle only when it is in the mask
-    - killParticle           --> kill the particle once stored
-  */
+  //----------- ??? -------------
+  //FIXME: Document what mIsFistStep is/does.
+  if (!mIsFistStep && !EnableAllStep) return;
+  if (mIsFistStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
 
-  // IsFirstStep is true when this is the first time the track is in this function
-  // It is initialized to true in PreUserTrackingAction and to false here.
-
-  // If track already stored and the option EnableAllStep is not true, do nothing.
-  if (!mIsFirstStep && !EnableAllStep) return;
-
-  // If this is the first time we see the track and this is an event,
-  // increment mNevent (used by iaea output)
-  if (mIsFirstStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
-
-  // By default, we consider the preStep (starting point), except if
-  // user set mStoreOutPart or if the option EnableAllStep is enabled
+  //----------- ??? -------------
+  //FIXME: Document what this is/does.
   G4StepPoint *stepPoint;
+  //prestep, NOT poststep!!!!
   if (mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();
   else stepPoint = step->GetPreStepPoint();
-
-  // If needed, check if in the mask, if not, do nothing (do not store, do not mark particle)
-  if (mMaskIsEnabled) {
-    //auto vox = dynamic_cast<const GateVImageVolume*>(mVolume);
-    if (mVolume != NULL) {
-      const bool mPositionIsSet = false;
-      const G4ThreeVector mPosition;
-      const GateVImageActor::StepHitType mStepHitType = GateVImageActor::PreStepHitType;
-      auto index = GateVImageActor::GetIndexFromStepPosition2(mVolume, step, mMask, mPositionIsSet, mPosition, mStepHitType);
-      auto value = mMask.GetValue(index);
-      if (value == 1) return; // do nothing
-    }
-  }
 
   //-----------Write volumename -------------
   G4String st = "";
@@ -399,7 +338,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     GateVVolume *v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
     if (v == NULL) {
       if (mFileType == "rootFile") {
-        mFile.close();
+        pFile = pListeVar->GetCurrentFile();
+        pFile->Close();
       }
       GateError("Error, cannot find the volume '" << GetCoordFrame() << "' -> (see the setCoordinateFrame)");
     }
@@ -439,35 +379,35 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   //===============================================================================================================
  
   if(EnableNuclearFlag)
+  {
+    GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
+    if(info == NULL)
+      GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
+    else
     {
-      GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
-      if(info == NULL)
-        GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
-      else
-        {
-          creator = 0;
-          nucprocess = 0;
-          order = info->GetScatterOrder(); 
+      creator = 0;
+      nucprocess = 0;
+      order = info->GetScatterOrder(); 
 
-          if (!step->GetTrack()->GetCreatorProcess())
-            creator = 0;
+      if (!step->GetTrack()->GetCreatorProcess())
+        creator = 0;
 
-          if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
-            creator = 1;
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
+        creator = 1;
 
-          if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
-            creator = 2;
+      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
+        creator = 2;
 
-          if (!info->GetScatterProcess())
-            nucprocess =  0;
+      if (!info->GetScatterProcess())
+        nucprocess =  0;
 
-          if (info->GetScatterProcess() == "hadElastic")
-            nucprocess =  1;
+      if (info->GetScatterProcess() == "hadElastic")
+        nucprocess =  1;
 
-          if (info->GetScatterProcess() == "protonInelastic")
-            nucprocess = 2;
-        }
+      if (info->GetScatterProcess() == "protonInelastic")
+        nucprocess = 2;
     }
+  }
 
   // particle momentum
   // pc = sqrt(Ek^2 + 2*Ek*m_0*c^2)
@@ -505,12 +445,11 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   tOut = step->GetTrack()->GetLocalTime();
   tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
-
-
   //------------- Option to project position on a sphere
+
   /* Sometimes it is useful to store the particle position on a different
      position than the one where it has been detected. The option
-     ''SphereProjection' change the particle position: it compute the projection
+     ''SphereProjection' change the particle position: it compute the projeciton
      on a sphere. */
   if (mSphereProjectionFlag) {
     // Project point position on the use sphere
@@ -545,7 +484,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   /*
     Translate the particle point along the direction by a given value
-  */
+   */
   if (mTranslateAlongDirectionFlag) {
 
     // move point along its direction by a length d (may be negative)
@@ -616,8 +555,11 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     st = stepPoint->GetProcessDefinedStep()->GetProcessName();
   strcpy(pro_step, st.c_str());
 
-
-  if (mFileType == "IAEAFile") {
+  if (mFileType == "rootFile") {
+    if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
+    pListeVar->Fill();
+  }
+  else if (mFileType == "IAEAFile") {
 
     const G4Track *aTrack = step->GetTrack();
     int pdg = aTrack->GetDefinition()->GetPDGEncoding();
@@ -649,16 +591,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     pIAEAheader->update_counters(pIAEARecordType);
 
-  } else {
-    mFile.fill();
   }
-  mIsFirstStep = false;
-
-
-  // Info will be stored so we marked the particle as killed
-  if (mKillParticleFlag)
-    step->GetTrack()->SetTrackStatus(fStopAndKill);
-
+  mIsFistStep = false;
 }
 // --------------------------------------------------------------------
 
@@ -668,11 +602,15 @@ void GatePhaseSpaceActor::SaveData()
 {
   GateVActor::SaveData();
 
-  if (mFileType == "IAEAFile") {
+  if (mFileType == "rootFile") {
+    pFile = pListeVar->GetCurrentFile();
+    pFile->Write();
+    //pFile->Close();
+  } else if (mFileType == "IAEAFile") {
     pIAEAheader->orig_histories = mNevent;
     G4String IAEAHeaderExt = ".IAEAheader";
 
-    strcpy(pIAEAheader->title, "Phase space generated by GATE software (Geant4)");
+    strcpy(pIAEAheader->title, "Phase space generated by GATE softawre (Geant4)");
 
     pIAEAheader->iaea_index = 0;
 
@@ -684,17 +622,7 @@ void GatePhaseSpaceActor::SaveData()
 
     fclose(pIAEAheader->fheader);
     fclose(pIAEARecordType->p_file);
-  } else {
-    G4cout << "Close TreeFileManager" << G4endl;
-    mFile.close();
   }
-
-
-
-
-
-
-
 }
 // --------------------------------------------------------------------
 
@@ -702,10 +630,14 @@ void GatePhaseSpaceActor::SaveData()
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::ResetData()
 {
+  if (mFileType == "rootFile") {
+    pListeVar->Reset();
+    return;
+  }
 
   GateError("Can't reset phase space");
 }
 // --------------------------------------------------------------------
 
 
-
+#endif /* end #define G4ANALYSIS_USE_ROOT */

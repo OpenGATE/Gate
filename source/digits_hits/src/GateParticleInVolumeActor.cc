@@ -21,7 +21,6 @@ GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth)
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin\n");
   outsideTrack = false;
-  mCurrentEvent = -1;
   mIsParticleInVolumeImageEnabled = true;
   pMessenger = new GateImageActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end\n");
@@ -96,7 +95,6 @@ void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) {
 
   mLastHitEventImage.Fill(-1);
 
-  ++mCurrentEvent;
   GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------

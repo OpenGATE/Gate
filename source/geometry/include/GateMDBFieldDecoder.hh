@@ -24,7 +24,6 @@ public:
   enum PrefixCode {
     prefix_symbol,
     prefix_atomicnumber,
-    prefix_nucleonnumber,
     prefix_molarmass,
     prefix_density,
     prefix_state,

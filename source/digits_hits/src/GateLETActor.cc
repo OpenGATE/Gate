@@ -32,8 +32,6 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   mIsDoseAverageDEDX=false;
   mIsDoseAverageEdepDX=false;
   mIsAverageKinEnergy=false;
-  mIsGqq0EBT31stOrder=false;
-  mIsGqq0EBT34thOrder=false;
 
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
@@ -76,8 +74,6 @@ void GateLETActor::Construct() {
   else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAverage" || mAveragingType == "Track" || mAveragingType == "track" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAverageDEDX = true;}
   else if (mAveragingType == "TrackAveragedEdep" || mAveragingType == "TrackAverageEdep" ){mIsTrackAverageEdepDX = true;}
   else if (mAveragingType == "AverageKinEnergy"){mIsAverageKinEnergy = true;}
-  else if (mAveragingType == "gqq0EBT3linear"){mIsGqq0EBT31stOrder = true;mIsLETtoWaterEnabled=true;mIsDoseAverageDEDX = true;}
-  else if (mAveragingType == "gqq0EBT3fourth"){mIsGqq0EBT34thOrder = true;mIsLETtoWaterEnabled=true;mIsDoseAverageDEDX = true;}
   else {GateError("The LET averaging Type" << GetObjectName()
                   << " is not valid ...\n Please select 'DoseAveraged' or 'TrackAveraged')");}
 
@@ -91,14 +87,7 @@ void GateLETActor::Construct() {
     {
       mLETFilename= removeExtension(mSaveFilename) + "-trackAveraged."+ getExtension(mSaveFilename);
     }
-
-  if (mIsGqq0EBT31stOrder){
-    mLETFilename= removeExtension(mLETFilename) + "-gqqZerolinear."+ getExtension(mLETFilename);
-  }
-  else if (mIsGqq0EBT34thOrder){
-    mLETFilename= removeExtension(mLETFilename) + "-gqqZerofourthOrder."+ getExtension(mLETFilename);
-  }
-  else if (mIsLETtoWaterEnabled){
+  if (mIsLETtoWaterEnabled){
     mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
   }
   if (mIsAverageKinEnergy){
@@ -123,8 +112,10 @@ void GateLETActor::Construct() {
   mDoseTrackAverageLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mDoseTrackAverageLETImage.Allocate();
 
-  // Step Hit Type
-  mStepHitType = mStepHitType ; // RandomStepHitType ;// PostStepHitType; 
+  // Warning: for the moment we force to PostStepHitType. This is ok
+  // (slightly faster) if voxel sizes are the same between the
+  // let-actor and the attached voxelized volume. But wrong if not.
+  mStepHitType = PostStepHitType;// RandomStepHitType; // Warning
 
   // Print information
   GateMessage("Actor", 1,
@@ -145,93 +136,25 @@ void GateLETActor::Construct() {
 void GateLETActor::SaveData() {
   GateVActor::SaveData();
 
-//if (mIsGqq0EBT31stOrder || mIsGqq0EBT34thOrder)
-//{
 
-  if ((mIsGqq0EBT31stOrder) || (mIsGqq0EBT34thOrder))
-  {  
-    double ebt3_a0 = 1.0258;
-    double ebt3_a1 = -0.0211;
-
-    double ebt3_b0 = 1.0054;
-    double ebt3_b1 = -6.4262E-4;
-    double ebt3_b2 = -4.9426E-3;
-    double ebt3_b3 = 4.1747E-4;
-    double ebt3_b4 = -1.1622E-5;
-        // ==========================
-        // Note: gqq0 = 1/RE; and RE = a0 + a1*LETd ; therefore numerator and denomiator change in gqq
-        // ==========================
-           
-           GateImageDouble::const_iterator iter_LET = mWeightedLETImage.begin();
-           GateImageDouble::const_iterator iter_Edep = mNormalizationLETImage.begin();
-           GateImageDouble::iterator iter_Final = mDoseTrackAverageLETImage.begin();
-           
-            if (mIsParallelCalculationEnabled) 
-                {
-                   for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
-                       //if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
-                       //else 
-                        *iter_Final = ebt3_a0 * (*iter_Edep) + ebt3_a1 * (*iter_LET);
-                       iter_Edep++;
-                       iter_Final++;
-                    }
-                    mNormalizationLETImage.Write(numeratorFileName);
-                    mDoseTrackAverageLETImage.Write(denominatorFileName);
-                    
-               }
-                     
-               else
-               {
-                    for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
-                         if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
-                         else 
-                         { 
-                             if (mIsGqq0EBT31stOrder) *iter_Final = 1 / (ebt3_a0 + ebt3_a1 * (*iter_LET)/(*iter_Edep));
-                             else 
-                             {
-                                 double let_voxel = (*iter_LET)/(*iter_Edep);
-                                 double RE = (ebt3_b0 + ebt3_b1 * let_voxel  + ebt3_b2 * std::pow(let_voxel,2) + ebt3_b3 * std::pow(let_voxel,3) + ebt3_b4 * std::pow(let_voxel,4) );
-                                 *iter_Final = 1 / RE;
-                                
-                             }
-                            }
-                       
-                       iter_Edep++;
-                       iter_Final++;
-                    }
-                    mDoseTrackAverageLETImage.Write(mLETFilename);
-                }
-           
-     
-    }
-   else
-   {
-
-
-      if (mIsParallelCalculationEnabled) {
-          
-            mWeightedLETImage.Write(numeratorFileName);
-            mNormalizationLETImage.Write(denominatorFileName);
-        
+  if (mIsParallelCalculationEnabled) {
+    mWeightedLETImage.Write(numeratorFileName);
+    mNormalizationLETImage.Write(denominatorFileName);
+  }
+  else
+    {
+      GateImageDouble::const_iterator iter_LET = mWeightedLETImage.begin();
+      GateImageDouble::const_iterator iter_Edep = mNormalizationLETImage.begin();
+      GateImageDouble::iterator iter_Final = mDoseTrackAverageLETImage.begin();
+      for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
+        if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
+        else *iter_Final = (*iter_LET)/(*iter_Edep);
+        iter_Edep++;
+        iter_Final++;
       }
-      else
-        {
-          GateImageDouble::const_iterator iter_LET = mWeightedLETImage.begin();
-          GateImageDouble::const_iterator iter_Edep = mNormalizationLETImage.begin();
-          GateImageDouble::iterator iter_Final = mDoseTrackAverageLETImage.begin();
-          for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
-            if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
-            else 
-            {
-                    *iter_Final = (*iter_LET)/(*iter_Edep);
-            }
-            iter_Edep++;
-            iter_Final++;
-          }
-          mDoseTrackAverageLETImage.Write(mLETFilename);
+      mDoseTrackAverageLETImage.Write(mLETFilename);
 
     }
-   }
 }
 //-----------------------------------------------------------------------------
 
@@ -275,9 +198,9 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   const double weight = step->GetTrack()->GetWeight();
 
   // A.Resch tested calculation method:
-  G4double edep = step->GetTotalEnergyDeposit();
+  const double edep = step->GetTotalEnergyDeposit()*weight;
 
-  G4double steplength = step->GetStepLength();
+  double steplength = step->GetStepLength();
 
   //if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0) {
@@ -290,49 +213,40 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   }
 
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
-  G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-  G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-  G4double energy=(energy1+energy2)/2;
+  double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+  double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+  double energy=(energy1+energy2)/2;
   const G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
 
   // Compute the dedx for the current particle in the current material
   double weightedLET =0;
   G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
-  // SPR to water is unity, but is overwritten if LET to water is enabled
-  G4double SPR_ToWater =1.0;
-  
-  if (mIsLETtoWaterEnabled){
-    G4double dedx_Water = emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
-    
-    if ((dedx > 0) && (dedx_Water >0 ))
-    {
-        SPR_ToWater = dedx_Water/dedx;
-        edep *=SPR_ToWater;
-        dedx *=SPR_ToWater;
-    }
-    
-  }
+
 
   double normalizationVal = 0;
   if (mIsDoseAverageDEDX) {
-    weightedLET=edep*dedx*weight; // /(density/(g/cm3));
-    normalizationVal = edep*weight;
+    weightedLET=edep*dedx; // /(density/(g/cm3));
+    normalizationVal = edep;
   }
   else if (mIsTrackAverageDEDX) {
-    weightedLET=dedx*steplength*weight;
-    normalizationVal = steplength*weight;
+    weightedLET=dedx*steplength;
+    normalizationVal = steplength;
   }
   else if (mIsTrackAverageEdepDX) {
-    weightedLET=edep*weight;
-    normalizationVal = steplength*weight;
+    weightedLET=edep;
+    normalizationVal = steplength;
   }
   else if (mIsDoseAverageEdepDX) {
-    weightedLET=edep*edep/steplength*weight;
-    normalizationVal = edep*weight;
+    weightedLET=edep*edep/steplength;
+    normalizationVal = edep;
   }
   else if (mIsAverageKinEnergy) {
     weightedLET=steplength*energy*weight;
-    normalizationVal = steplength*weight;
+    normalizationVal = steplength;
+  }
+
+  if (mIsLETtoWaterEnabled){
+    weightedLET = (weightedLET/dedx)*	emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
   }
 
   mWeightedLETImage.AddValue(index, weightedLET);

@@ -14,6 +14,7 @@
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4VProcess.hh"
+#include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
 #include "G4ParticleDefinition.hh"

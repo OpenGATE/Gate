@@ -1,13 +1,14 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+   Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
-  ----------------------*/
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
 
 
 #include "GateDeadTimeMessenger.hh"
+
 #include "GateDeadTime.hh"
 
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -16,7 +17,7 @@
 #include "G4UIcmdWithAnInteger.hh"
 
 GateDeadTimeMessenger::GateDeadTimeMessenger(GateDeadTime* itsDeadTime)
-  : GatePulseProcessorMessenger(itsDeadTime)
+    : GatePulseProcessorMessenger(itsDeadTime)
 {
   G4String guidance;
   G4String cmdName;

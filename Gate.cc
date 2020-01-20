@@ -40,6 +40,7 @@
 #include "GateClock.hh"
 #include "GateUIcontrolMessenger.hh"
 #ifdef G4ANALYSIS_USE_ROOT
+#include "GateROOTBasicOutput.hh"
 #include "TPluginManager.h"
 #include "GateHitFileReader.hh"
 #endif
@@ -158,7 +159,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "*************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version 9.0 (December 2019)" << G4endl);
+  GateMessage("Core", 0, " GATE version 8.2 (February 2019)" << G4endl);
   GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << G4endl);
@@ -242,7 +243,6 @@ int main( int argc, char* argv[] )
       if( c == -1 ) break;
 
       // Analyzing each option
-      std::ostringstream ss;
       switch( c )
         {
         case 0:
@@ -253,8 +253,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          ss << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
-          std::cout << "Gate version is 8.2 ; Geant4 version is " << ss.str() << std::endl;
+          std::cout << "Gate version is 8.2" << std::endl;
           exit(0);
           break;
         case 'a':
@@ -279,6 +278,12 @@ int main( int argc, char* argv[] )
   // Construct the default run manager
   GateRunManager* runManager = new GateRunManager;
 
+  // Set the Basic ROOT Output
+  GateRecorderBase* myRecords = 0;
+#ifdef G4ANALYSIS_USE_ROOT
+  myRecords = new GateROOTBasicOutput;
+#endif
+
   // Set the DetectorConstruction
   GateDetectorConstruction* gateDC = new GateDetectorConstruction();
   runManager->SetUserInitialization( gateDC );
@@ -287,7 +292,7 @@ int main( int argc, char* argv[] )
   runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
 
   // Set the users actions to handle callback for actors - before the initialisation
-  new GateUserActions( runManager);
+  new GateUserActions( runManager, myRecords );
 
   // Set the Visualization Manager
 #ifdef G4VIS_USE
@@ -426,6 +431,9 @@ int main( int argc, char* argv[] )
   delete appMgr;
   delete randomEngine;
   delete controlMessenger;
+#ifdef G4ANALYSIS_USE_ROOT
+  delete myRecords;
+#endif
   delete verbosity;
 
   delete runManager;

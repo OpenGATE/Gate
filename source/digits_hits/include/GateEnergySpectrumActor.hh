@@ -116,8 +116,6 @@ public:
   
   void SetLogBinning(bool b) {mEnableLogBinning = b; }
   void SetEnergyPerUnitMass(bool b) {mEnableEnergyPerUnitMass = b; }
-  void SetRelativePrimEvents(bool b) {mEnableRelativePrimEvents = b; }
-  
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
 
@@ -199,7 +197,6 @@ protected:
   bool mEnableElossHistoFlag;
   bool mEnableLogBinning;
   bool mEnableEnergyPerUnitMass;
-  bool mEnableRelativePrimEvents;
   
   
   G4EmCalculator * emcalc;

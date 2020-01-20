@@ -7,7 +7,7 @@
   ----------------------*/
 
 #include "GatePhaseSpaceActorMessenger.hh"
-
+#ifdef G4ANALYSIS_USE_ROOT
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
@@ -64,8 +64,6 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bSetSphereProjectionRadius;
   delete bEnableTranslationAlongDirection;
   delete bSetTranslationAlongDirectionLength;
-  delete pUseMaskCmd;
-  delete pEnableKillCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -270,26 +268,16 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/enableTOut";
   pEnableTOutCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Store the time taken from the production to the leaving of the volume. Usefull only for the outgoing particles";
+  guidance = "Save the leaving time of the particle (defined as a LocalTime) in the phase space file. Usefull only for the outgoing mode";
   pEnableTOutCmd->SetGuidance(guidance);
   pEnableTOutCmd->SetParameterName("State",false);
 
   bb = base+"/enableTProd";
   pEnableTProdCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Save the production time of the particle wrt to the primary production (defined as a GlobalTime - LocalTime)";
+  guidance = "Save the production time of the particle (defined as a GlobalTime - LocalTime) in the phase space file.";
   pEnableTProdCmd->SetGuidance(guidance);
   pEnableTProdCmd->SetParameterName("State",false);
 
-  bb = base+"/useMask";
-  pUseMaskCmd = new G4UIcmdWithAString(bb, this);
-  guidance = "Store only if particle position is in mask (pixel value different from 0).";
-  pUseMaskCmd->SetGuidance(guidance);
-  
-  bb = base+"/killParticle";
-  pEnableKillCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Kill particle once stored.";
-  pEnableKillCmd->SetGuidance(guidance);
-  pEnableKillCmd->SetParameterName("State",false);
 
 }
 //-----------------------------------------------------------------------------
@@ -338,11 +326,9 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
 
   if(command == pEnableTOutCmd) pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
   if(command == pEnableTProdCmd) pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
-  if(command == pUseMaskCmd) pActor->SetMaskFilename(param);
-  if(command == pEnableKillCmd) pActor->SetKillParticleFlag(pEnableKillCmd->GetNewBoolValue(param));
-  
+
   GateActorMessenger::SetNewValue(command ,param );
 }
 //-----------------------------------------------------------------------------
 
-
+#endif
