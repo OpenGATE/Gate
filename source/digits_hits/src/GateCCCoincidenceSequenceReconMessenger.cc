@@ -26,7 +26,8 @@ GateCCCoincidenceSequenceReconMessenger::GateCCCoincidenceSequenceReconMessenger
     cmdName = GetDirectoryName()+"setSequencePolicy";
     sequencePolicyCmd = new G4UIcmdWithAString(cmdName,this);
     sequencePolicyCmd->SetGuidance("How to order coincidences");
-    sequencePolicyCmd->SetCandidates("singlesTime lowestEnergyFirst randomly axialDist2Source revanC_CSR");
+    sequencePolicyCmd->SetCandidates("singlesTime lowestEnergyFirst randomly axialDist2Source");
+   // sequencePolicyCmd->SetCandidates("singlesTime lowestEnergyFirst randomly axialDist2Source revanC_CSR");
 
 
 
