@@ -73,22 +73,22 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   G4String bb;
 
 
-  bb = base+"/saveHitsRootTree";
+  bb = base+"/saveHitsTree";
   pSaveHitsTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree wit the hit info inside the attachedVolume");
   pSaveHitsTree->SetGuidance(guidance);
 
-  bb = base+"/saveSinglesRootTree";
+  bb = base+"/saveSinglesTree";
   pSaveSinglesTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree wit the singles info inside the attachedVolume");
   pSaveSinglesTree->SetGuidance(guidance);
 
-  bb = base+"/saveCoincidencesRootTree";
+  bb = base+"/saveCoincidencesTree";
   pSaveCoincidencesTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree with the coincidences info inside the attachedVolume");
   pSaveCoincidencesTree->SetGuidance(guidance);
 
-  bb = base+"/saveCoincidenceChainsRootTree";
+  bb = base+"/saveCoincidenceChainsTree";
   pSaveCoincidenceChainsTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree wit the coincidence chain info inside the attachedVolume");
   pSaveCoincidenceChainsTree->SetGuidance(guidance);

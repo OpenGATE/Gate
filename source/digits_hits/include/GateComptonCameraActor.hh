@@ -5,7 +5,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-
+//Ane Etxebeste 01/2020
 /*!
   \class  GateComptonCameraActor
 */
@@ -24,8 +24,7 @@
 #include "GateCCCoincidenceDigi.hh"
 #include "GatePrimTrackInformation.hh"
 
-//#include "GateCCRootDefs.hh"
-#include "GateTreeDefs.hh"
+#include "GateCCRootDefs.hh"
 #include "GateTreeFileManager.hh"
 
 #include  <iomanip>
@@ -104,7 +103,7 @@ public:
   void SetIsVolumeIDEnabled(bool b){EnableVolumeID=b;}
   void SetIsSourceEnergyEnabled(bool b){EnableSourceEnergy=b;}
   void SetIsSourcePDGEnabled(bool b){EnableSourcePDG=b;}
-  void SetIsnCrystalComptEnabled(bool b){EnablenCrystlaCompt=b;}
+  void SetIsnCrystalComptEnabled(bool b){EnablenCrystalCompt=b;}
   void SetIsnCrystalRaylEnabled(bool b){EnablenCrystalRayl=b;}
   void SetIsnCrystalConvEnabled(bool b){EnablenCrystalConv=b;}
 
@@ -119,22 +118,17 @@ protected:
   G4String mHistName;
 
 
-  //std::ofstream ossHits;
-  //std::ofstream ossSingles;
-  //std::ofstream ossCoincidences;
-  std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
+
+  //std::vector<std::shared_ptr<std::ofstream> > ossCoincidenceChains;
   std::vector<G4String> coincidenceChainNames;
 
-  //Root files
-  /*TFile * pTfile;
-  GateCCHitTree*  m_hitsTree;
-  GateCCRootHitBuffer  m_hitsBuffer;
-  std::vector<std::unique_ptr<GateCCCoincTree>> m_coincChainTree;*/
-
-  //Avoiding root dependency 12/2019
+  //Using new GateFileManager classes 12/2019
+  GateOutputTreeFileManager mFileHits;
   GateOutputTreeFileManager mFileSingles;
   GateOutputTreeFileManager mFileCoinc;
   std::vector<std::unique_ptr<GateOutputTreeFileManager>> mVectorFileCoinChain;
+
+  GateCCRootHitBuffer  m_HitsBuffer;
   GateCCRootSingleBuffer  m_SinglesBuffer;
   GateCCRootCoincBuffer  m_CoincBuffer;
 //==============================
@@ -155,7 +149,7 @@ protected:
   bool EnableVolumeID;
   bool EnableSourceEnergy;
   bool EnableSourcePDG;
-  bool EnablenCrystlaCompt;
+  bool EnablenCrystalCompt;
   bool EnablenCrystalConv;
   bool EnablenCrystalRayl;
 

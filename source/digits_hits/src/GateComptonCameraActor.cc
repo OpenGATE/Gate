@@ -26,9 +26,6 @@
 
 
 
-
-
-
 typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
 
 const G4String GateComptonCameraActor::thedigitizerName="layers";
@@ -42,11 +39,6 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     GateDebugMessageInc("Actor",4,"GateComptonamerActor() -- begin\n");
 
     G4cout<<"###########################CONSTRUCTOR of GATEComptonCameraActor#############################################"<<G4endl;
-
-    /*m_hitsTree=0;
-    m_SingleTree=0;
-    m_CoincTree=0;*/
-
 
     Ei = 0.;
     Ef = 0.;
@@ -85,7 +77,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     EnableVolumeID=1;
     EnableSourceEnergy=0;
     EnableSourcePDG=0;
-    EnablenCrystlaCompt=0;
+    EnablenCrystalCompt=0;
     EnablenCrystalConv=0;
     EnablenCrystalRayl=0;
 
@@ -179,7 +171,7 @@ void GateComptonCameraActor::Construct()
     }
 
 
-    //To select primary particles for example in ion sources. Otherwiser the associated to the primary particle is set to the particle with parentID=0
+    //To select primary particles for example in ion sources. Otherwise the associated to the primary particle is set to the particle with parentID=0
     if(mParentIDSpecificationFlag){
         // Read the file and load the values in the vector called mParentIDFileName
         std::ifstream textfile;
@@ -206,6 +198,55 @@ void GateComptonCameraActor::Construct()
    if(extension!="root"&&extension!="txt" &&extension!="npy") GateError("Unknown extension for CC actor output");
     std::string filename = removeExtension(mSaveFilename);
    //set a file for each tree. Filemanager it is not prepared to add several trees in a file
+    if(mSaveHitsTreeFlag){
+        G4String filenameH=filename+"_Hits."+extension;
+        if(extension == "root")
+            mFileHits.add_file(filenameH,  "root");
+        else if(extension == "npy")
+            mFileHits.add_file(filenameH, "npy");
+        else if(extension == "txt")
+            mFileHits.add_file(filenameH, "txt");
+        else
+            GateError("Unknown extension for CC actor output");
+        mFileHits.set_tree_name("Hits");
+        //equivalent to Tree.Init(buffer)
+        mFileHits.write_variable("runID",&m_HitsBuffer.runID);
+        mFileHits.write_variable("eventID", &m_HitsBuffer.eventID);
+
+        //someflags missing. I need to define them
+        mFileHits.write_variable("PDGEncoding", &m_HitsBuffer.PDGEncoding);
+        mFileHits.write_variable("trackID", &m_HitsBuffer.trackID);
+        mFileHits.write_variable("parentID", &m_HitsBuffer.parentID);
+        mFileHits.write_variable("trackLocalTime", &m_HitsBuffer.trackLocalTime);
+        if(EnableTime)mFileHits.write_variable("time", &m_HitsBuffer.time);
+        if(EnableEnergy)mFileHits.write_variable("edep", &m_HitsBuffer.edep);
+        mFileHits.write_variable("stepLength", &m_HitsBuffer.stepLength);
+        mFileHits.write_variable("trackLength", &m_HitsBuffer.trackLength);
+        if(EnableXPosition) mFileHits.write_variable("posX", &m_HitsBuffer.posX);
+        if(EnableYPosition)mFileHits.write_variable("posY", &m_HitsBuffer.posY);
+        if(EnableZPosition)mFileHits.write_variable("posZ", &m_HitsBuffer.posZ);
+        if(EnableXLocalPosition)mFileHits.write_variable("localPosX", &m_HitsBuffer.localPosX);
+        if(EnableYLocalPosition)mFileHits.write_variable("localPosY", &m_HitsBuffer.localPosY);
+        if(EnableZLocalPosition)mFileHits.write_variable("localPosZ", &m_HitsBuffer.localPosZ);
+        if(EnableXSourcePosition)mFileHits.write_variable("sourcePosX", &m_HitsBuffer.sPosX);
+        if(EnableYSourcePosition)mFileHits.write_variable("sourcePosY", &m_HitsBuffer.sPosY);
+        if(EnableZSourcePosition)mFileHits.write_variable("sourcePosZ", &m_HitsBuffer.sPosZ);
+        if(EnableSourceEnergy)mFileHits.write_variable("sourceEnergy", &m_HitsBuffer.sourceEnergy);
+        if(EnableSourcePDG)mFileHits.write_variable("sourcePDG", &m_HitsBuffer.sourcePDG);
+        if(EnablenCrystalConv)mFileHits.write_variable("nCrystalConv",&m_HitsBuffer.nCrystalConv);
+        if(EnablenCrystalCompt)mFileHits.write_variable("nCrystalCompt", &m_HitsBuffer.nCrystalCompt);
+        if(EnablenCrystalRayl) mFileHits.write_variable("nCrystalRayl", &m_HitsBuffer.nCrystalRayl);
+        if(EnableEnergyFin)mFileHits.write_variable("energyFinal",&m_HitsBuffer.energyFin);
+        if(EnableEnergyIni)mFileHits.write_variable("energyIniT",&m_HitsBuffer.energyIniT);
+        mFileHits.write_variable("postStepProcess", m_HitsBuffer.postStepProcess, sizeof(m_HitsBuffer.postStepProcess));
+        mFileHits.write_variable("processName", m_HitsBuffer.processName, sizeof(m_HitsBuffer.processName));
+        //It is not necessary
+        mFileHits.write_variable("layerName", m_HitsBuffer.layerName, sizeof(m_HitsBuffer.layerName));
+        if(EnableVolumeID)mFileHits.write_variable("volumeID", m_HitsBuffer.volumeID,ROOT_VOLUMEIDSIZE);
+
+        mFileHits.write_header();
+
+    }
    if( mSaveSinglesTreeFlag ){//Equivalent to the SingleTree->Init(SingleBuffer)
 
        G4String filenameS=filename+"_Singles."+extension;
@@ -242,8 +283,8 @@ void GateComptonCameraActor::Construct()
        if(EnableSourcePDG)mFileSingles.write_variable("sourcePDG",&m_SinglesBuffer.sourcePDG);
        //interactions
        if(EnablenCrystalConv)mFileSingles.write_variable("nCrystalConv", &m_SinglesBuffer.nCrystalConv);
-       if(EnablenCrystlaCompt)mFileSingles.write_variable("nCrystalCompt",&m_SinglesBuffer.nCrystalCompt);
-       if(EnablenCrystlaCompt)mFileSingles.write_variable("nCrystalRayl",&m_SinglesBuffer.nCrystalRayl);
+       if(EnablenCrystalCompt)mFileSingles.write_variable("nCrystalCompt",&m_SinglesBuffer.nCrystalCompt);
+       if(EnablenCrystalRayl)mFileSingles.write_variable("nCrystalRayl",&m_SinglesBuffer.nCrystalRayl);
        //volume identification
        mFileSingles.write_variable("layerName", m_SinglesBuffer.layerName, sizeof(m_SinglesBuffer.layerName));
         //it works only for root output
@@ -290,8 +331,8 @@ void GateComptonCameraActor::Construct()
        if(EnableSourcePDG)mFileCoinc.write_variable("sourcePDG",&m_CoincBuffer.sourcePDG);
        //interactions
        if(EnablenCrystalConv)mFileCoinc.write_variable("nCrystalConv", &m_CoincBuffer.nCrystalConv);
-       if(EnablenCrystlaCompt)mFileCoinc.write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
-       if(EnablenCrystlaCompt)mFileCoinc.write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
+       if(EnablenCrystalCompt)mFileCoinc.write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
+       if(EnablenCrystalRayl)mFileCoinc.write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
        //volume identification
        mFileCoinc.write_variable("layerName", m_CoincBuffer.layerName, sizeof(m_CoincBuffer.layerName));
          //it works only for root output
@@ -345,8 +386,8 @@ void GateComptonCameraActor::Construct()
            if(EnableSourcePDG)mVectorFileCoinChain.back()->write_variable("sourcePDG",&m_CoincBuffer.sourcePDG);
            //interactions
            if(EnablenCrystalConv)mVectorFileCoinChain.back()->write_variable("nCrystalConv", &m_CoincBuffer.nCrystalConv);
-           if(EnablenCrystlaCompt)mVectorFileCoinChain.back()->write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
-           if(EnablenCrystlaCompt)mVectorFileCoinChain.back()->write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
+           if(EnablenCrystalCompt)mVectorFileCoinChain.back()->write_variable("nCrystalCompt",&m_CoincBuffer.nCrystalCompt);
+           if(EnablenCrystalRayl)mVectorFileCoinChain.back()->write_variable("nCrystalRayl",&m_CoincBuffer.nCrystalRayl);
            //volume identification
            mVectorFileCoinChain.back()->write_variable("layerName", m_CoincBuffer.layerName, sizeof(m_CoincBuffer.layerName));
              //it works only for root output
@@ -374,18 +415,20 @@ void GateComptonCameraActor::SaveData()
     // It seems that  Vactor calls by default  call for EndOfRunAction allowing to call Save
     GateVActor::SaveData();
 
-
-     if(mSaveSinglesTreeFlag){
+    if(mSaveHitsTreeFlag){
+        mFileHits.close();
+    }
+    if(mSaveSinglesTreeFlag){
         mFileSingles.close();
-     }
-     if(mSaveCoincidencesTreeFlag){
-         mFileCoinc.close();
-     }
-     if(mSaveCoincidenceChainsTreeFlag){
-         for(unsigned int i=0; i<mVectorFileCoinChain.size(); i++){
-             mVectorFileCoinChain.at(i)->close();
-         }
-     }
+    }
+    if(mSaveCoincidencesTreeFlag){
+        mFileCoinc.close();
+    }
+    if(mSaveCoincidenceChainsTreeFlag){
+        for(unsigned int i=0; i<mVectorFileCoinChain.size(); i++){
+            mVectorFileCoinChain.at(i)->close();
+        }
+    }
 
 
 }
@@ -438,7 +481,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     }
 
     if(mSaveHitsTreeFlag){
-        //m_hitsBuffer.Clear();
+        m_HitsBuffer.Clear();
     }
 
     evtID = evt->GetEventID();
@@ -774,10 +817,10 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         if(hitEdep!=0. ||(parentID==0 && processPostStep!="Transportation")){
             hitsList.push_back(aHit);
             if(mSaveHitsTreeFlag){
-                /*m_hitsBuffer.Fill(aHit,VolNameStep);
+                m_HitsBuffer.Fill(aHit,VolNameStep);
                 // m_hitsBuffer.Fill(aHit.get(),VolNameStep);
-                m_hitsTree->Fill();
-                m_hitsBuffer.Clear();*/
+                mFileHits.fill();
+                m_HitsBuffer.Clear();
 
             }
 
