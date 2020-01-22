@@ -6,6 +6,7 @@
 #include "GateCCHitFileReader.hh"
 #include "GateDigitizer.hh"
 #include "GateSingleDigi.hh"
+#include "GateRandomEngine.hh"
 
 #include "GateDetectorConstruction.hh"
 #include "GateRunManager.hh"
@@ -64,6 +65,8 @@ int main(int argc, char *argv[])
     GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
     G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
     GateSignalHandler::Install();
+
+    GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
 
     //To have volumeID in the pulses and use properly the adder, the geometry ids needed to interpret volumeD of hits.
     //I have in the tree also layer name I could use that but to this end it should be inserted somehow in the pulses and taken into account in the adders
@@ -138,8 +141,10 @@ int main(int argc, char *argv[])
     pTfile->Write();
     m_hitFileReader->TerminateAfterAcquisition();
 
+    delete  randomEngine;
     delete runManager;
     delete digitizer;
+
 
 
 
