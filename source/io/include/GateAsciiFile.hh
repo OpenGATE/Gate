@@ -162,7 +162,7 @@ class GateInputAsciiTreeFile: public GateAsciiTree, public GateInputTreeFile {
   void read_variable(const std::string &name, void *p, std::type_index t_index) override ;
   void read_variable(const std::string &name, std::string* p) override ;
   void read_variable(const std::string &name, char* p) override ; // dangerous !
-  void read_variable(const std::string &name, char* p, size_t nb_char);
+  void read_variable(const std::string &name, char* p, size_t nb_char) override ;
   using GateInputTreeFile::read_variable;
 
 

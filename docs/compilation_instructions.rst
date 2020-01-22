@@ -9,99 +9,59 @@ Compiling GATE (V8.2)
 
 **IMPORTANT** Before continuing, make sure all required packages are properly installed on your system. See :ref:`package_requirements-label`
 
-Package required
+Required dependencies
 ----------------
 
 The minimal software distribution should be the following::
 
-   Geant4 10.05 (including the embedded CLHEP)
+   Geant4 10.05  # including the embedded CLHEP
    GATE V8.2
-   ITK (version 4.10.xx or later)
-   Users can also used the external CLHEP 2.3.4.3
+   ROOT (ROOT 6.xx) # still required, but it may become optional in the future
+   
 
-Optionnal packages are required for output management::
+Optional packages ::
  
-   ROOT (ROOT 6.xx)
+   CLHEP 2.3.4.3  # by default the one provided in Geant4 is used
+   ITK (version 4.10.xx or later)
    ECAT
    LMF
+   libTorch # see section below
+   
 
 CLHEP
 -----
 
 Since the GATE V7.0 release, users can use the CLHEP embedded within each Geant4 distribution. This case, the CMAKE flag GEANT4_USE_SYSTEM_CLHEP, which is OFF by default, must stay OFF.
 
-However, users can use an external CLHEP version (2.3.4.3) by turning flag GEANT4_USE_SYSTEM_CLHEP ON and following the standard installation procedures.
+However, users can use an external CLHEP version (2.3.4.3) by turning flag GEANT4_USE_SYSTEM_CLHEP ON and following the CLHEP installation procedures: http://proj-clhep.web.cern.ch/proj-clhep
 
-**WARNING:** Note that since CLHEP version 2.1.2.0, `CMake <https://cmake.org/>`_ is the preferred build option. Building with autotools and configure is deprecated!!!
 
-Instructions for using CMake can be found in INSTALL.cmake file.
+Geant4
+------
 
-Note: With Ubuntu Linux distribution, the package is 'cmake'. sudo apt-get install cmake.
+First, download the Geant sources at this address: http://geant4.web.cern.ch/
 
-You can download CLHEP at this address:
+During the cmake: QT and OPENGL are optional. We recommand to set GEANT4_INSTALL_DATA.
 
-http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION
+Finally, update your environment variables file with the following command lines:
 
-Download the CLHEP version following the GEANT4 recommendations:
+* bash or zsh:
 
-http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.10.05.html#2
+   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
 
-The recommended version for Geant4 10.05 and GATE V8.2 is CLHEP 2.3.4.3
+* [t]csh:
 
-To install, unzip and untar the downloaded file::
+   source /PATH_TO/geant4.10.05-install/bin/geant4.csh
 
-   tar -xzf clhep-2.3.4.3.tgz
+For details, read the official GEANT4 installation procedure.
 
-In the same directory, create two directories to build and install CLHEP::
-
-   mkdir 2.3.4.3-build
-   mkdir 2.3.4.3-install
-
-Move into the CLHEP build directory::
-
-   cd 2.3.4.3-build
-
-Launching the cmake command and the make command as follow::
-
-   cmake -DCMAKE_INSTALL_PREFIX=/PATH_TO/2.3.4.3-install /PATH_TO/2.3.4.3/CLHEP/
-   make
-   make test
-   make install
-
-Finally, update your environment variables file with the following command lines: (this part is summarized in the item 5 of this document)
-
-* bash or zsh::
-
-   export PATH=$PATH:/PATH_TO/2.3.4.3/-install/bin:/PATH_TO/2.3.4.3-install/include
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/PATH_TO/2.3.4.3-install/lib
-
-* [t]csh::
-
-   setenv PATH ${PATH}:/PATH_TO/2.3.1.1/-install/bin:/PATH_TO/2.3.4.3-install/include
-   setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/PATH_TO/2.3.4.3-install/lib
 
 ROOT
 ----
 
-You can download ROOT at the following address:
-
-https://root.cern.ch/downloading-root
+You can download ROOT at the following address: https://root.cern.ch/downloading-root
 
 It is recommended to install directly the ROOT binaries. Users have to compile the ROOT sources only if necessary.
-
-Choose the ROOT version according to your hardware architecture and uncompressed the downloaded file:
-
-* Ubuntu 14 gcc4.8::
-
-   tar -xzf root_v6.xx.xx.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
-
-* CentOS Cern 7 gcc4.8::
-
-   tar -xzf root_v6.xx.xx.Linux-centos7-x86_64-gcc4.8.tar.gz
-
-Move the ROOT name directory::
-
-   mv root root_v6.xx
 
 Depending on your environment, you need to source ROOT as follow (this final step is summarized in the item 5 of this documentation):
 
@@ -115,76 +75,46 @@ Depending on your environment, you need to source ROOT as follow (this final ste
 
 .. _geant4-label:
 
-Geant4
-------
-
-**WARNING: Minimum required version of CMake to build Geant4 10.5 is 3.3**
-
-First, download the Geant sources at this address:
-
-http://geant4.web.cern.ch/geant4/support/download.shtml
-
-Unzip and untar the downloaded file::
-
-   tar -xzf geant4.10.05.tar.gz
-
-In the same directory, create two directories to build and install GEANT4::
-
-   mkdir geant4.10.05-build
-   mkdir geant4.10.05-install
-
-Move into the Geant4 build directory::
-
-   cd geant4.10.05-build
-
-Run ccmake as follows::
-
-   ccmake ../geant4.10.05
-
-You will obtain the following screen and you need to configure the different options as it is done in this figure:
-  
-.. figure:: CMakeGeant4.10.3.png
-   :alt: Figure 1: CMakeGeant4.10.3
-   :name: CMakeGeant4.10.3
-
-QT and OPENGL are optional, depending of what users want to do.
-GEANT4_INSTALL_DATA and GEANT4_USE_SYSTEM_CLHEP are mandatory.
-
-Press 'c' to configure and 'g' to generate the compilation environment.
-
-After this step you will automatically back to the prompt terminal and then, you can launch the compilation::
-
-   make -jN (N is the number of processor(s) in your PC)
-   make install
-
-Finally, update your environment variables file with the following command lines: (this part is summarized in the item 5 of this document)
-
-* bash or zsh:
-
-   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
-
-* [t]csh:
-
-   source /PATH_TO/geant4.10.05-install/bin/geant4.csh
-
-For details, read the official GEANT4 installation procedure:
-http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/InstallationGuide/html/ch02.html
 
 .. _gate-label:
+
+
+libtorch (optional)
+---------
+
+The goal is here to make Gate use the torch library, an open source machine learning framework : https://pytorch.org
+
+Pytorch is usually used via a Python module, but here we need an additional library named 'libtorch' that will be used by Gate during compilation.
+
+Follow instruction on https://pytorch.org getting started page, selecting "LibTorch" in the "Package" line. It is a zip file that must be downloaded and unziped somewhere on your disk. No compilation required here.
+
+Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
+
+    Torch_DIR          /home/YOURNAME/libtorch-1.2.0/share/cmake/Torch
+    
+In some configuration, the following path should also be set ::
+
+    CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
+    CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
+
+
 
 GATE V8.2
 ---------
 
-First, download the GATE sources at this address:
-
-http://www.opengatecollaboration.org/node/90
+First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v8.2.tar.gz
 
 Unzip and untar the downloaded file::
 
    tar -xzf Gate-8.2.tar.gz
 
-(Alternatively, if you are familiar with git, then instead of downloading and extracting the tar ball, you can also clone the sources from github and check out the *v8.2* release tag.)
-In the same directory, create two directories to build and install GATE::
+Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v8.2* release tag.
+
+   git clone https://github.com/OpenGATE/Gate.git Gate_v8.2
+   cd Gate_v8.2
+   git checkout v8.2
+
+Create two directories to build and install GATE::
 
    mkdir gate_v8.2-build
    mkdir gate_v8.2-install
@@ -234,6 +164,7 @@ Finally, update your environment variables file with the following command lines
 * [t]csh
 
    setenv PATH /PATH_TO/gate_v8.1-install/bin:${PATH}
+   
 
 Environment configuration and starting GATE
 -------------------------------------------

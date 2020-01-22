@@ -276,7 +276,7 @@ G4VPhysicalVolume* GateSystemComponent::GetPhysicalVolume(size_t copyNumber) con
 
 //-------------------------------------------------------------------------------------------
 // Returns the translation vector for one of the physical volumes created by the creator
-const G4ThreeVector& GateSystemComponent::GetCurrentTranslation(size_t copyNumber) const
+G4ThreeVector GateSystemComponent::GetCurrentTranslation(size_t copyNumber) const
 {
   static G4ThreeVector defaultPosition;
 
@@ -350,7 +350,7 @@ GateEccentRotMove* GateSystemComponent::FindEccentRotMove() const
 
 //-------------------------------------------------------------------------------------------
 // The function returns the creator's translation velocity, if a translation can be find was found in the creator's move list
-const G4ThreeVector& GateSystemComponent::GetTranslationVelocity() const
+G4ThreeVector GateSystemComponent::GetTranslationVelocity() const
 {
   static const G4ThreeVector defaultVelocity;
 

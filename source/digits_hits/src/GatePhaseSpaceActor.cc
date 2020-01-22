@@ -24,6 +24,7 @@
 #include "GateMiscFunctions.hh"
 
 #include "GateSourceMgr.hh"
+#include "GateVImageActor.hh"
 #include "GateProtonNuclearInformationActor.hh"
 
 #include "GateSourceTPSPencilBeam.hh"
@@ -57,7 +58,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableMass = true;
   EnableSec = false;
   EnableNuclearFlag = false;
-  mIsFistStep = true;
+  mIsFirstStep = true;
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
@@ -83,6 +84,9 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bSpotID = 0;
   bSpotIDFromSource = " ";
   bCoordFrame = " ";
+  mMaskFilename = "";
+  mMaskIsEnabled = false;
+  mKillParticleFlag = false;
 
   mFileType = " ";
   mNevent = 0;
@@ -129,13 +133,13 @@ void GatePhaseSpaceActor::Construct()
 
   G4String extension = getExtension(mSaveFilename);
 
-//  if (extension == "root") mFileType = "rootFile";
-//  else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
-//  else GateError( "Unknow phase space file extension. Knowns extensions are : "
-//                  << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
+  // If mask, load the image
+  if (mMaskIsEnabled) {
+    GateMessage("Actor", 1, "GatePhaseSpaceActor read mask file " << mMaskFilename);
+    mMask.Read(mMaskFilename);
+  }
 
-
-    if (extension == "IAEAphsp" || extension == "IAEAheader" ) {
+  if (extension == "IAEAphsp" || extension == "IAEAheader" ) {
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
     pIAEAheader->initialize_counters();
     pIAEARecordType = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
@@ -164,60 +168,59 @@ void GatePhaseSpaceActor::Construct()
     }
     if ( pIAEAheader->set_record_contents(pIAEARecordType) == FAIL) GateError("Record contents not setted.");
   } else  {
-      if(extension == "root")
-        mFile.add_file(mSaveFilename,  "root");
-      else if(extension == "npy")
-        mFile.add_file(mSaveFilename, "npy");
-      else if(extension == "txt")
-        mFile.add_file(mSaveFilename, "txt");
-      else
-        GateError("Unknown extension for phasespace");
+    if(extension == "root")
+      mFile.add_file(mSaveFilename,  "root");
+    else if(extension == "npy")
+      mFile.add_file(mSaveFilename, "npy");
+    else if(extension == "txt")
+      mFile.add_file(mSaveFilename, "txt");
+    else
+      GateError("Unknown extension for phasespace");
 
-      mFile.set_tree_name("PhaseSpace");
+    mFile.set_tree_name("PhaseSpace");
 
 
+    if (EnableCharge) mFile.write_variable("AtomicNumber", &Za);
 
-      if (EnableCharge) mFile.write_variable("AtomicNumber", &Za);
+    if (EnableElectronicDEDX) mFile.write_variable("ElectronicDEDX", &elecDEDX);
+    if (EnableElectronicDEDX) mFile.write_variable("StepLength", &stepLength);
+    if (EnableElectronicDEDX) mFile.write_variable("Edep", &edep);
+    if (EnableTotalDEDX) mFile.write_variable("TotalDEDX", &totalDEDX);
 
-      if (EnableElectronicDEDX) mFile.write_variable("ElectronicDEDX", &elecDEDX);
-      if (EnableElectronicDEDX) mFile.write_variable("StepLength", &stepLength);
-      if (EnableElectronicDEDX) mFile.write_variable("Edep", &edep);
-      if (EnableTotalDEDX) mFile.write_variable("TotalDEDX", &totalDEDX);
+    if (EnableEkine) mFile.write_variable("Ekine", &e);
+    if (EnableElectronicDEDX) mFile.write_variable("Ekpost", &ekPost);
+    if (EnableElectronicDEDX) mFile.write_variable("Ekpre", &ekPre);
+    if (EnableWeight) mFile.write_variable("Weight", &w);
+    if (EnableTime || EnableLocalTime) mFile.write_variable("Time", &t);
+    if (EnableMass) mFile.write_variable("Mass", &m); // in MeV/c2
+    if (EnableXPosition) mFile.write_variable("X", &x);
+    if (EnableYPosition) mFile.write_variable("Y", &y);
+    if (EnableZPosition) mFile.write_variable("Z", &z);
+    if (EnableXDirection) mFile.write_variable("dX", &dx);
+    if (EnableYDirection) mFile.write_variable("dY", &dy);
+    if (EnableZDirection) mFile.write_variable("dZ", &dz);
 
-      if (EnableEkine) mFile.write_variable("Ekine", &e);
-      if (EnableElectronicDEDX) mFile.write_variable("Ekpost", &ekPost);
-      if (EnableElectronicDEDX) mFile.write_variable("Ekpre", &ekPre);
-      if (EnableWeight) mFile.write_variable("Weight", &w);
-      if (EnableTime || EnableLocalTime) mFile.write_variable("Time", &t);
-      if (EnableMass) mFile.write_variable("Mass", &m); // in MeV/c2
-      if (EnableXPosition) mFile.write_variable("X", &x);
-      if (EnableYPosition) mFile.write_variable("Y", &y);
-      if (EnableZPosition) mFile.write_variable("Z", &z);
-      if (EnableXDirection) mFile.write_variable("dX", &dx);
-      if (EnableYDirection) mFile.write_variable("dY", &dy);
-      if (EnableZDirection) mFile.write_variable("dZ", &dz);
+    if (EnablePartName /*&& bEnableCompact==false*/) mFile.write_variable("ParticleName", pname, sizeof(pname) );
+    if (EnableProdVol && bEnableCompact == false) mFile.write_variable("ProductionVolume", vol, sizeof(vol));
+    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("CreatorProcess", creator_process, sizeof(creator_process));
+    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("ProcessDefinedStep", pro_step, sizeof(pro_step));
+    if (bEnableCompact == false) mFile.write_variable("TrackID", &trackid);
+    if (bEnableCompact == false) mFile.write_variable("ParentID", &parentid);
+    if (bEnableCompact == false) mFile.write_variable("EventID", &eventid);
+    if (bEnableCompact == false) mFile.write_variable("RunID", &runid);
+    if (bEnablePrimaryEnergy) mFile.write_variable("PrimaryEnergy", &bPrimaryEnergy);
+    if (bEnablePDGCode) mFile.write_variable("PDGCode", &bPDGCode);
+    if (bEnableEmissionPoint) {
+      mFile.write_variable("EmissionPointX", &bEmissionPointX);
+      mFile.write_variable("EmissionPointY", &bEmissionPointY);
+      mFile.write_variable("EmissionPointZ", &bEmissionPointZ);
+    }
+    if (bEnableSpotID) mFile.write_variable("SpotID", &bSpotID);
 
-      if (EnablePartName /*&& bEnableCompact==false*/) mFile.write_variable("ParticleName", pname, sizeof(pname) );
-      if (EnableProdVol && bEnableCompact == false) mFile.write_variable("ProductionVolume", vol, sizeof(vol));
-      if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("CreatorProcess", creator_process, sizeof(creator_process));
-      if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("ProcessDefinedStep", pro_step, sizeof(pro_step));
-      if (bEnableCompact == false) mFile.write_variable("TrackID", &trackid);
-      if (bEnableCompact == false) mFile.write_variable("ParentID", &parentid);
-      if (bEnableCompact == false) mFile.write_variable("EventID", &eventid);
-      if (bEnableCompact == false) mFile.write_variable("RunID", &runid);
-      if (bEnablePrimaryEnergy) mFile.write_variable("PrimaryEnergy", &bPrimaryEnergy);
-      if (bEnablePDGCode) mFile.write_variable("PDGCode", &bPDGCode);
-      if (bEnableEmissionPoint) {
-        mFile.write_variable("EmissionPointX", &bEmissionPointX);
-        mFile.write_variable("EmissionPointY", &bEmissionPointY);
-        mFile.write_variable("EmissionPointZ", &bEmissionPointZ);
-      }
-      if (bEnableSpotID) mFile.write_variable("SpotID", &bSpotID);
+    if (EnableTOut) mFile.write_variable("TOut", &tOut);
+    if (EnableTProd) mFile.write_variable("TProd", &tProd);
 
-      if (EnableTOut) mFile.write_variable("TOut", &tOut);
-      if (EnableTProd) mFile.write_variable("TProd", &tProd);
-
-      if (EnableNuclearFlag)
+    if (EnableNuclearFlag)
       {
         mFile.write_variable("CreatorProcess", &creator);
         mFile.write_variable("NuclearProcess", &nucprocess);
@@ -225,11 +228,28 @@ void GatePhaseSpaceActor::Construct()
       }
 
 
-      mFile.write_header();
+    mFile.write_header();
 
 
-    }
+  }
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::SetMaskFilename(G4String filename)
+{
+  mMaskFilename = filename;
+  mMaskIsEnabled = true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::SetKillParticleFlag(bool b)
+{
+  mKillParticleFlag = b;
 }
 // --------------------------------------------------------------------
 
@@ -237,7 +257,7 @@ void GatePhaseSpaceActor::Construct()
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track * t)
 {
-  mIsFistStep = true;
+  mIsFirstStep = true;
   if (bEnableEmissionPoint) {
     bEmissionPointX = t->GetVertexPosition().x();
     bEmissionPointY = t->GetVertexPosition().y();
@@ -268,17 +288,43 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *step)
 {
 
-  //----------- ??? -------------
-  //FIXME: Document what mIsFistStep is/does.
-  if (!mIsFistStep && !EnableAllStep) return;
-  if (mIsFistStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
+  /*
+    Options:
+    - storeOutgoingParticles --> consider PostPoint instead of PrePoint
+    - storeAllStep           --> store every step, not only the first time it enters the volume
+    - storeSecondaries       --> also store particle created inside the volume
+    - attachMask             --> store particle only when it is in the mask
+    - killParticle           --> kill the particle once stored
+  */
 
-  //----------- ??? -------------
-  //FIXME: Document what this is/does.
+  // IsFirstStep is true when this is the first time the track is in this function
+  // It is initialized to true in PreUserTrackingAction and to false here.
+
+  // If track already stored and the option EnableAllStep is not true, do nothing.
+  if (!mIsFirstStep && !EnableAllStep) return;
+
+  // If this is the first time we see the track and this is an event,
+  // increment mNevent (used by iaea output)
+  if (mIsFirstStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
+
+  // By default, we consider the preStep (starting point), except if
+  // user set mStoreOutPart or if the option EnableAllStep is enabled
   G4StepPoint *stepPoint;
-  //prestep, NOT poststep!!!!
   if (mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();
   else stepPoint = step->GetPreStepPoint();
+
+  // If needed, check if in the mask, if not, do nothing (do not store, do not mark particle)
+  if (mMaskIsEnabled) {
+    //auto vox = dynamic_cast<const GateVImageVolume*>(mVolume);
+    if (mVolume != NULL) {
+      const bool mPositionIsSet = false;
+      const G4ThreeVector mPosition;
+      const GateVImageActor::StepHitType mStepHitType = GateVImageActor::PreStepHitType;
+      auto index = GateVImageActor::GetIndexFromStepPosition2(mVolume, step, mMask, mPositionIsSet, mPosition, mStepHitType);
+      auto value = mMask.GetValue(index);
+      if (value == 1) return; // do nothing
+    }
+  }
 
   //-----------Write volumename -------------
   G4String st = "";
@@ -393,35 +439,35 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   //===============================================================================================================
  
   if(EnableNuclearFlag)
-  {
-    GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
-    if(info == NULL)
-      GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
-    else
     {
-      creator = 0;
-      nucprocess = 0;
-      order = info->GetScatterOrder(); 
+      GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
+      if(info == NULL)
+        GateWarning("Could not retrieve GateProtonNuclearInformation, EnableNuclearFlag needs it");
+      else
+        {
+          creator = 0;
+          nucprocess = 0;
+          order = info->GetScatterOrder(); 
 
-      if (!step->GetTrack()->GetCreatorProcess())
-        creator = 0;
+          if (!step->GetTrack()->GetCreatorProcess())
+            creator = 0;
 
-      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
-        creator = 1;
+          if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "hadElastic")
+            creator = 1;
 
-      if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
-        creator = 2;
+          if (step->GetTrack()->GetCreatorProcess() && step->GetTrack()->GetCreatorProcess()->GetProcessName() == "protonInelastic")
+            creator = 2;
 
-      if (!info->GetScatterProcess())
-        nucprocess =  0;
+          if (!info->GetScatterProcess())
+            nucprocess =  0;
 
-      if (info->GetScatterProcess() == "hadElastic")
-        nucprocess =  1;
+          if (info->GetScatterProcess() == "hadElastic")
+            nucprocess =  1;
 
-      if (info->GetScatterProcess() == "protonInelastic")
-        nucprocess = 2;
+          if (info->GetScatterProcess() == "protonInelastic")
+            nucprocess = 2;
+        }
     }
-  }
 
   // particle momentum
   // pc = sqrt(Ek^2 + 2*Ek*m_0*c^2)
@@ -459,11 +505,12 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   tOut = step->GetTrack()->GetLocalTime();
   tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
-  //------------- Option to project position on a sphere
 
+
+  //------------- Option to project position on a sphere
   /* Sometimes it is useful to store the particle position on a different
      position than the one where it has been detected. The option
-     ''SphereProjection' change the particle position: it compute the projeciton
+     ''SphereProjection' change the particle position: it compute the projection
      on a sphere. */
   if (mSphereProjectionFlag) {
     // Project point position on the use sphere
@@ -498,7 +545,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   /*
     Translate the particle point along the direction by a given value
-   */
+  */
   if (mTranslateAlongDirectionFlag) {
 
     // move point along its direction by a length d (may be negative)
@@ -605,7 +652,13 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   } else {
     mFile.fill();
   }
-  mIsFistStep = false;
+  mIsFirstStep = false;
+
+
+  // Info will be stored so we marked the particle as killed
+  if (mKillParticleFlag)
+    step->GetTrack()->SetTrackStatus(fStopAndKill);
+
 }
 // --------------------------------------------------------------------
 

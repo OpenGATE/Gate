@@ -12,6 +12,7 @@
 #define GATEPHASESPACEACTOR_HH
 
 #include "GateVActor.hh"
+#include "GateImage.hh"
 #include "GateTreeFileManager.hh"
 
 struct iaea_header_type;
@@ -100,6 +101,9 @@ public:
   void SetEnabledTranslationAlongDirection(bool b) { mTranslateAlongDirectionFlag = b; }
   void SetTranslationAlongDirectionLength(double r) { mTranslationLength = r; }
 
+  void SetMaskFilename(G4String filename);
+  void SetKillParticleFlag(bool b);
+
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
 
@@ -156,6 +160,11 @@ protected:
   bool bEnablePDGCode;
   long int bPDGCode;
 
+  bool mMaskIsEnabled;
+  G4String mMaskFilename;
+  GateImage mMask;
+  bool mKillParticleFlag;
+
   bool bEnableTOut;
   bool bEnableTProd;
 
@@ -163,7 +172,7 @@ protected:
 
   long int mNumberOfTrack;
 
-  bool mIsFistStep;
+  bool mIsFirstStep;
 
   char  pname[256];
 

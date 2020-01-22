@@ -58,7 +58,7 @@ protected:
 class GateOutputRootTreeFile: public GateRootTree, public GateOutputTreeFile
 {
  public:
-  void open(const std::string& s) ;
+  void open(const std::string& s) override ;
 
   bool is_open() override ;
   void close() override ;

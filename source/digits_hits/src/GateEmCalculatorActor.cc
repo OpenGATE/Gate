@@ -32,7 +32,7 @@ GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
 {
   GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin\n");
   //SetTypeName("EmCalculatorActor");
-//  pActor = new GateActorMessenger(this);
+  //  pActor = new GateActorMessenger(this);
   ResetData();
   GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end\n");
 
@@ -49,7 +49,7 @@ GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
 /// Destructor
 GateEmCalculatorActor::~GateEmCalculatorActor()
 {
-//  delete pActor;
+  //  delete pActor;
   delete pActorMessenger;
 }
 //-----------------------------------------------------------------------------
@@ -59,41 +59,41 @@ GateEmCalculatorActor::~GateEmCalculatorActor()
 void GateEmCalculatorActor::Construct()
 {
   GateVActor::Construct();
-//  Callbacks
-//   EnableBeginOfRunAction(true);
-//   EnableBeginOfEventAction(true);
-//   EnablePreUserTrackingAction(true);
-//   EnableUserSteppingAction(true);
-//   ResetData();
+  //  Callbacks
+  //   EnableBeginOfRunAction(true);
+  //   EnableBeginOfEventAction(true);
+  //   EnablePreUserTrackingAction(true);
+  //   EnableUserSteppingAction(true);
+  //   ResetData();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback Begin of Run
 /*void GateEmCalculatorActor::BeginOfRunAction(const G4Run*r)
-{
-}*/
+  {
+  }*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
 /*void GateEmCalculatorActor::BeginOfEventAction(const G4Event*e)
-{
-}*/
+  {
+  }*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback Begin Track
 /*void GateEmCalculatorActor::PreUserTrackingAction(const GateVVolume * v, const G4Track*t)
-{
-}*/
+  {
+  }*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callbacks
 /*void GateEmCalculatorActor::UserSteppingAction(const GateVVolume * v, const G4Step * step)
-{
-}*/
+  {
+  }*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -118,38 +118,38 @@ void GateEmCalculatorActor::SaveData()
   G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
   std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++)
+  for (unsigned int j = 0; j < plist->size(); j++)
     {
-        if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
-            {
-                processNameVector.push_back((*plist)[j]->GetProcessName());
-            }
+      if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
+        {
+          processNameVector.push_back((*plist)[j]->GetProcessName());
+        }
     }
 
-      os << "# Output calculted for the following parameters:\n";
-      os << "# Energy\t" << mEnergy << " MeV\n";
-      os << "# Particle\t" << mPartName << "\n\n";
-      os << "# And for the following materials\n";
-// labels
-      os << "Material\t";
-      os << "Density\t\t";
-      os << "e-density\t";
-      os << "RadLength\t";
-      os << "I\t";
-      os << "EM-DEDX\t\t";
-      os << "Nucl-DEDX\t";
-      os << "Tot-DEDX\t";
-      os << "Mu_mass\n";
-// units
-      os << "\t\t";
-      os << "(g/cm³)\t\t";
-      os << "(e-/mm³)\t";
-      os << "(mm)\t\t";
-      os << "(eV)\t";
-      os << "(MeV.cm²/g)\t";
-      os << "(MeV.cm²/g)\t";
-      os << "(MeV.cm²/g)\t";
-      os << "(cm²/g)\n";
+  os << "# Output calculted for the following parameters:\n";
+  os << "# Energy\t" << mEnergy << " MeV\n";
+  os << "# Particle\t" << mPartName << "\n\n";
+  os << "# And for the following materials\n";
+  // labels
+  os << "Material\t";
+  os << "Density\t\t";
+  os << "e-density\t";
+  os << "RadLength\t";
+  os << "I\t";
+  os << "EM-DEDX\t\t";
+  os << "Nucl-DEDX\t";
+  os << "Tot-DEDX\t";
+  os << "Mu_mass\n";
+  // units
+  os << "\t\t";
+  os << "(g/cm³)\t\t";
+  os << "(e-/mm³)\t";
+  os << "(mm)\t\t";
+  os << "(eV)\t";
+  os << "(MeV.cm²/g)\t";
+  os << "(MeV.cm²/g)\t";
+  os << "(MeV.cm²/g)\t";
+  os << "(cm²/g)\n";
 
   for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
     {
@@ -169,12 +169,12 @@ void GateEmCalculatorActor::SaveData()
         }
 
 
-// Get methods issue
-// for instance I tried:  double CSDARange = emcalc->GetDEDX(mEnergy, mPartName, material);
-// I think geometries should be initialized first and then Get methods called and then physics and source could be initialized
-// Currently all 3 initialization methods are called together, making difficult the use of GetMethods of G4EmCalculator.
+      // Get methods issue
+      // for instance I tried:  double CSDARange = emcalc->GetDEDX(mEnergy, mPartName, material);
+      // I think geometries should be initialized first and then Get methods called and then physics and source could be initialized
+      // Currently all 3 initialization methods are called together, making difficult the use of GetMethods of G4EmCalculator.
 
-// values
+      // values
       os << material << "\t\t";
       os << density*e_SI << "\t\t";
       os << eDensity << "\t";

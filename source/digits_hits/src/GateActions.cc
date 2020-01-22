@@ -18,7 +18,8 @@
 #include "G4NeutrinoE.hh"
 #include "G4SteppingManager.hh"
 #include "GateActions.hh"
-#include "GateRecorderBase.hh"
+#include "GateUserActions.hh"
+#include "GateTrack.hh"
 
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_GENERAL
@@ -54,8 +55,8 @@ GateRunAction* GateRunAction::prunAction=0;
 GateEventAction* GateEventAction::peventAction=0;
 
 //-----------------------------------------------------------------------------
-GateRunAction::GateRunAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r), flagBasicOutput(false)
+GateRunAction::GateRunAction(GateUserActions * cbm)
+  : pCallbackMan(cbm), flagBasicOutput(false)
 { SetRunAction(this); runIDcounter = 0; }
 //-----------------------------------------------------------------------------
 
@@ -67,10 +68,7 @@ void GateRunAction::BeginOfRunAction(const G4Run* aRun)
 
   //#ifdef GATE_BasicROOT_Output
   //if(GateApplicationMgr::GetInstance()->GetOutputMode()){
-  if (GetFlagBasicOutput()){
-    // Basic ROOT output -------------------------------------------
-    ((G4Run *)(aRun))->SetRunID(runIDcounter++);
-    if (recorder != 0) recorder->RecordBeginOfRun(aRun);}
+
   //--------------------------------------------------------------
   //}
   //#endif
@@ -93,11 +91,7 @@ inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
 {
   GateMessage("Core", 1, "End Of Run " << aRun->GetRunID() << Gateendl);
 
-  //#ifdef GATE_BasicROOT_Output
-  if (GetFlagBasicOutput()){
-    // Basic ROOT output
-    if (recorder != 0) recorder->RecordEndOfRun(aRun);}
-  //#endif
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the Analysis manager
@@ -114,8 +108,8 @@ inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
 
 
 //-----------------------------------------------------------------------------
-GateEventAction::GateEventAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r), flagBasicOutput(false)
+GateEventAction::GateEventAction(GateUserActions * cbm)
+  : pCallbackMan(cbm), flagBasicOutput(false)
 { SetEventAction(this); }
 //-----------------------------------------------------------------------------
 
@@ -128,9 +122,7 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if ( theMode != kTracker )
     {
-      if (GetFlagBasicOutput()){
-        // Basic ROOT output
-        if (recorder != NULL) recorder->RecordBeginOfEvent(anEvent);}
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
       // Here we fill the histograms of the OutputMgr manager
@@ -150,9 +142,7 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
 inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
-  if (GetFlagBasicOutput()){
-    anEvent->GetEventID();
-    if (recorder != 0) recorder->RecordEndOfEvent(anEvent);}
+
 
 
 #ifdef G4ANALYSIS_USE_GENERAL
@@ -205,7 +195,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 
 
 //-----------------------------------------------------------------------------
-GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase*)
+GateTrackingAction::GateTrackingAction(GateUserActions * cbm)
   : pCallbackMan(cbm)
 {
 }
@@ -513,8 +503,8 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
 
 
 //-----------------------------------------------------------------------------
-GateSteppingAction::GateSteppingAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r)
+GateSteppingAction::GateSteppingAction(GateUserActions * cbm)
+  : pCallbackMan(cbm)
 {
   m_drawTrjLevel = 1;
   m_verboseLevel = 0;

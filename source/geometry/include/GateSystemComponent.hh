@@ -174,7 +174,7 @@ class GateSystemComponent  : public GateClockDependent
      //! Returns one of the physical volumes created by the creator
      virtual G4VPhysicalVolume* GetPhysicalVolume(size_t copyNumber=0) const ;
      //! Returns the translation vector for one of the physical volumes created by the creator
-     virtual const G4ThreeVector&   GetCurrentTranslation(size_t copyNumber=0) const;
+     virtual G4ThreeVector  GetCurrentTranslation(size_t copyNumber=0) const;
      //! Returns the rotation matrix for one of the physical volumes created by the creator
      virtual G4RotationMatrix* 	   GetCurrentRotation(size_t copyNumber=0) const;
     
@@ -196,7 +196,7 @@ class GateSystemComponent  : public GateClockDependent
     //! The function returns the creator's translation move, if one can be find was found in the creator's move list
     GateTranslationMove* FindTranslationMove() const ;
     //! The function returns the creator's translation velocity, if a translation can be find was found in the creator's move list
-    const G4ThreeVector& GetTranslationVelocity() const;
+    G4ThreeVector GetTranslationVelocity() const;
 
     //@}
 

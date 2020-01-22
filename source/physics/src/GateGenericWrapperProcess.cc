@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #include "GateGenericWrapperProcess.hh"
@@ -24,39 +24,39 @@ See LICENSE.md for further details
 
 GenericWrapperProcess::GenericWrapperProcess(G4String name )
 {
-    mSplitFactor = 1;
-    mNSecondaries = 0;
-    mActive = true;
-    mWeight=1.;
-    mNFilterPrimary=0;
-    mNFilterSecondary=0;
-    pFilterManagerSecondary=0;
-    pFilterManagerPrimary=0;
-    SetGenericWrapperProcess( name);
-    mCSEFactor=1.;
-    mCSEnhancement = false;
-    mSplitting = false;
-    mkeepSec  = false;
-    mInitCS = false;
-    mRR = false;
+  mSplitFactor = 1;
+  mNSecondaries = 0;
+  mActive = true;
+  mWeight=1.;
+  mNFilterPrimary=0;
+  mNFilterSecondary=0;
+  pFilterManagerSecondary=0;
+  pFilterManagerPrimary=0;
+  SetGenericWrapperProcess( name);
+  mCSEFactor=1.;
+  mCSEnhancement = false;
+  mSplitting = false;
+  mkeepSec  = false;
+  mInitCS = false;
+  mRR = false;
 
-    mNbins = 10000; // 10000 bins between 0 and 50 MeV
-    mEneMax = 50.;  // 10000 bins between 0 and 50 MeV
+  mNbins = 10000; // 10000 bins between 0 and 50 MeV
+  mEneMax = 50.;  // 10000 bins between 0 and 50 MeV
 
-    emcalc = new G4EmCalculator;
+  emcalc = new G4EmCalculator;
 }
 
 GenericWrapperProcess::~GenericWrapperProcess() 
 {
-   if(pFilterManagerPrimary) delete pFilterManagerPrimary;
-   if(pFilterManagerSecondary) delete pFilterManagerSecondary;
+  if(pFilterManagerPrimary) delete pFilterManagerPrimary;
+  if(pFilterManagerSecondary) delete pFilterManagerSecondary;
 }
 
 
 void GenericWrapperProcess::SetGenericWrapperProcess(G4String name)
 {
-   pFilterManagerPrimary = new GateFilterManager(name+"/prim");
-   pFilterManagerSecondary = new GateFilterManager(name+"/second");
+  pFilterManagerPrimary = new GateFilterManager(name+"/prim");
+  pFilterManagerSecondary = new GateFilterManager(name+"/second");
 }
 
 void GenericWrapperProcess::Initialisation(G4String partName)
@@ -82,7 +82,7 @@ void GenericWrapperProcess::Initialisation(G4String partName)
 	if(energy==0.) energy = 0.0000001;
 	sig1 = 0.;
 	sig2 = 0.;
-	for(int i =0;i<pList->size();i++){
+	for(unsigned int i =0;i<pList->size();i++){
 	  G4String proName = (*pList)[i]->GetProcessName();
 
 	  G4String realName= proName;
@@ -107,10 +107,10 @@ G4double GenericWrapperProcess::PostStepGetPhysicalInteractionLength(const G4Tra
   G4double interL =0.;
 
   if( mCSEnhancement && pFilterManagerPrimary->Accept(&track) )
-  {
-    previousStepSize=0.;
-    interL = pRegProcess->PostStepGetPhysicalInteractionLength(track, previousStepSize, condition )/mCSEFactor;
-  }
+    {
+      previousStepSize=0.;
+      interL = pRegProcess->PostStepGetPhysicalInteractionLength(track, previousStepSize, condition )/mCSEFactor;
+    }
   else {
     interL = pRegProcess->PostStepGetPhysicalInteractionLength(track, previousStepSize, condition );
   }
@@ -159,7 +159,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
       rdm = G4RandFlat::shoot(mWeight);
 
     if( (rdm<1. && weight>1.) || weight<1. || mCSEnhancement) {// =?
-     if(pFilterManagerSecondary->GetNumberOfFilters()>0){
+      if(pFilterManagerSecondary->GetNumberOfFilters()>0){
         for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
           if(pFilterManagerSecondary->Accept(particleChange->GetSecondary(j)) ) validFinalState = true;
         }
@@ -185,7 +185,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
 	}
       }//else
     } 
-   // particleChange->SetNumberOfSecondaries(secondaries.size()+filteredSecondaries.size());
+    // particleChange->SetNumberOfSecondaries(secondaries.size()+filteredSecondaries.size());
     //particleChange->Clear();
   }//for mSplitFactor
 
@@ -198,60 +198,60 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
     //G4ProcessManager * pMan = pDef->GetProcessManager() ;
     /*G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
 
-    for(int i =0;i<pList->size();i++){
+      for(int i =0;i<pList->size();i++){
       G4String proName = (*pList)[i]->GetProcessName();
       G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
       if(proName==GetProcessName()) 
-	sig1 = emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
+      sig1 = emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
       else 
-	sig2 += emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
-    }
-    double frac = 0.;
-    G4cout<<sig1<<"  "<<sig2<< Gateendl;
-    if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
-    else frac =0.;
+      sig2 += emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
+      }
+      double frac = 0.;
+      G4cout<<sig1<<"  "<<sig2<< Gateendl;
+      if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
+      else frac =0.;
     */
  
     double frac = 1./mCSEFactor;
     /*    if(partName=="gamma"){
-      if(!mInitCS) Initialisation(partName);
+          if(!mInitCS) Initialisation(partName);
 
-      int bin = int(floor(track.GetKineticEnergy()/(50./10000.)));
-      G4String material = track.GetMaterial()->GetName();
+          int bin = int(floor(track.GetKineticEnergy()/(50./10000.)));
+          G4String material = track.GetMaterial()->GetName();
 
-      double y2 = theListOfBranchRatioFactor[material][bin+1];
-      double y1 = theListOfBranchRatioFactor[material][bin];
+          double y2 = theListOfBranchRatioFactor[material][bin+1];
+          double y1 = theListOfBranchRatioFactor[material][bin];
 
-      frac = y2 + ( (mEneMax*(bin+1))/mNbins - track.GetKineticEnergy())/(mEneMax/mNbins)*(y1 - y2);
-      G4cout<<"frac = "<<frac<<" y1= "<<y1<<" y2= "<<y2<< Gateendl;
+          frac = y2 + ( (mEneMax*(bin+1))/mNbins - track.GetKineticEnergy())/(mEneMax/mNbins)*(y1 - y2);
+          G4cout<<"frac = "<<frac<<" y1= "<<y1<<" y2= "<<y2<< Gateendl;
 
-      G4ProcessManager * pMan = partDef->GetProcessManager() ;
-      G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
-      double sig1=0.;
-      double sig2=0.;
-      for(int i =0;i<pList->size();i++){
-	G4String proName = (*pList)[i]->GetProcessName();
-	// G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
-G4String realName= proName;
+          G4ProcessManager * pMan = partDef->GetProcessManager() ;
+          G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
+          double sig1=0.;
+          double sig2=0.;
+          for(int i =0;i<pList->size();i++){
+          G4String proName = (*pList)[i]->GetProcessName();
+          // G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
+          G4String realName= proName;
 	  if(proName.find("Wrapped")<10000) realName = realName.replace(0,7,"");
 
 	  if(proName==GetProcessName()) {
 	  sig1 = emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName ,realName , track.GetMaterial()->GetName(), 0.000000);
 	  G4cout<<"proName  "<<proName<<"  "<<sig1<<"  "<<track.GetKineticEnergy()<<"  "<<realName<<"  "<< emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName ,realName , track.GetMaterial()->GetName(), 0.000000)  << Gateendl;
 	  }
-	else 
+          else 
 	  G4cout<<"proName  "<<proName<<"  "<<emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000 )<<"  "<<  emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000) << Gateendl;
 	  sig2 += emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000);
-      }
-      frac = 0.;
-      //G4cout<<sig1<<"  "<<sig2<< Gateendl;
-            if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
-      //if(sig1!=0 || sig2!=0) frac = (mCSEFactor*sig1)/(sig2+mCSEFactor*sig1);
-      else frac =0.;
-      G4cout<<"frac2 = "<<frac<<"  "<<sig1<<"  "<< sig2 << Gateendl;
+          }
+          frac = 0.;
+          //G4cout<<sig1<<"  "<<sig2<< Gateendl;
+          if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
+          //if(sig1!=0 || sig2!=0) frac = (mCSEFactor*sig1)/(sig2+mCSEFactor*sig1);
+          else frac =0.;
+          G4cout<<"frac2 = "<<frac<<"  "<<sig1<<"  "<< sig2 << Gateendl;
 
 
-      }*/
+          }*/
 
     weight /= mCSEFactor;
     
@@ -259,17 +259,17 @@ G4String realName= proName;
     rdm = G4RandFlat::shoot();
     if(rdm<(1.-frac)){
       if(partName=="gamma"){
-       dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->ProposeMomentumDirection(dir);
-       dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->SetProposedKineticEnergy(kine);
-       dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->ProposeTrackStatus(fAlive); 
+        dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->ProposeMomentumDirection(dir);
+        dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->SetProposedKineticEnergy(kine);
+        dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->ProposeTrackStatus(fAlive); 
       }
       else{
-       dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->SetProposedMomentumDirection(dir);
-       dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->SetProposedKineticEnergy(kine);
-       dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->ProposeTrackStatus(fAlive);
+        dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->SetProposedMomentumDirection(dir);
+        dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->SetProposedKineticEnergy(kine);
+        dynamic_cast<G4ParticleChangeForLoss*>(particleChange)->ProposeTrackStatus(fAlive);
       }
-//      particleChange->ProposeMomentumDirection(dir);
-//      particleChange->ProposeEnergy(kine);
+      //      particleChange->ProposeMomentumDirection(dir);
+      //      particleChange->ProposeEnergy(kine);
     }
   }
 
@@ -279,16 +279,16 @@ G4String realName= proName;
   // Configure particleChange to handle multiple secondaries. Other 
   // data is unchanged
   if(mWeight!=1. || mCSEFactor!=1.){
-   //particleChange->Clear();
-   particleChange->SetNumberOfSecondaries(secondaries.size()+filteredSecondaries.size());
-   particleChange->SetSecondaryWeightByProcess(true);
+    //particleChange->Clear();
+    particleChange->SetNumberOfSecondaries(secondaries.size()+filteredSecondaries.size());
+    particleChange->SetSecondaryWeightByProcess(true);
 
     // Add all secondaries 
     std::vector<G4Track*>::iterator iter2 = secondaries.begin();
 
     while (iter2 != secondaries.end()) {
       G4Track* myTrack = *iter2;
-     myTrack->SetWeight(weight);
+      myTrack->SetWeight(weight);
 
       // particleChange takes ownership
       particleChange->AddSecondary(myTrack); 
@@ -360,20 +360,20 @@ G4int GenericWrapperProcess::GetNSecondaries()
 }
  
 /*void GenericWrapperProcess::SetProcessManager(const G4ProcessManager* procMan)
-{
+  {
   //G4VProcess::SetProcessManager(procMan);
   G4cout<<" set process manager : "<<procMan<< Gateendl;
   // proc = new G4ProcessManager(0);
-pRegProcess->SetProcessManager(procMan);
-//proc->add(pRegProcess);
-//proc->GetProcessList()->insert(pRegProcess);
-//proc->GetProcessList()->insert(pRegProcess);
-//proc->SetProcessActivation(pRegProcess, true);
-aProcessManager = procMan; 
-}
+  pRegProcess->SetProcessManager(procMan);
+  //proc->add(pRegProcess);
+  //proc->GetProcessList()->insert(pRegProcess);
+  //proc->GetProcessList()->insert(pRegProcess);
+  //proc->SetProcessActivation(pRegProcess, true);
+  aProcessManager = procMan; 
+  }
 
-const G4ProcessManager* GenericWrapperProcess::GetProcessManager()
-{
+  const G4ProcessManager* GenericWrapperProcess::GetProcessManager()
+  {
   //return G4VProcess::GetProcessManager();
   G4cout<<" get process manager : "<<aProcessManager<< Gateendl;
   G4cout<<" get process manager : "<<aProcessManager<< Gateendl;

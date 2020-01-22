@@ -10,11 +10,10 @@
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-
 #include "GateSourcePhaseSpaceMessenger.hh"
 #include "GateSourcePhaseSpace.hh"
-
 #include "GateClock.hh"
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -56,6 +55,10 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   setUseNbParticleAsIntensityCmd = new G4UIcmdWithABool(cmdName,this);
   setUseNbParticleAsIntensityCmd->SetGuidance("use the nb of particle in the PhS as source intensity");
 
+  cmdName = GetDirectoryName()+"ignoreWeight";
+  ignoreWeightCmd = new G4UIcmdWithABool(cmdName,this);
+  ignoreWeightCmd->SetGuidance("Force weight to 1.0 even if weight exist in the phase space");
+
   cmdName = GetDirectoryName()+"setRmax";
   setRmaxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   setRmaxCmd->SetGuidance("set the value of R");
@@ -64,6 +67,20 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
   cmdName = GetDirectoryName()+"setStartingParticleId";
   setStartIdCmd = new G4UIcmdWithADouble(cmdName,this);
   setStartIdCmd->SetGuidance("set the id of the particle to start with");
+
+  cmdName = GetDirectoryName()+"setPytorchBatchSize";
+  setPytorchBatchSizeCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  setPytorchBatchSizeCmd->SetGuidance("set the batch size for pytorch PHSP");
+
+  cmdName = GetDirectoryName()+"setPytorchParams";
+  setPytorchParamsCmd = new G4UIcmdWithAString(cmdName,this);
+  setPytorchParamsCmd->SetGuidance("set the json file associated with the .pt PHSP");
+  setPytorchParamsCmd->SetParameterName("Filename",false);
+
+  cmdName = GetDirectoryName()+"setSphereRadius";
+  setSphereRadiusCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  setSphereRadiusCmd->SetGuidance("set the radius in mm of the sphere to project the particles (EXPERIMENTAL)");
+  setSphereRadiusCmd->SetParameterName("Radius value",false);
 
 }
 //----------------------------------------------------------------------------------------
@@ -80,6 +97,10 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
   delete setUseNbParticleAsIntensityCmd;
   delete setRmaxCmd;
   delete setStartIdCmd;
+  delete setPytorchBatchSizeCmd;
+  delete setPytorchParamsCmd;
+  delete setSphereRadiusCmd;
+  delete ignoreWeightCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -95,10 +116,14 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand* command, G4String n
   if (command == setParticleTypeCmd) pSource->SetParticleType(newValue);
   if (command == setUseNbParticleAsIntensityCmd)
     pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
+   if (command == ignoreWeightCmd) pSource->SetIgnoreWeight(ignoreWeightCmd->GetNewBoolValue(newValue)); 
   if (command == setRmaxCmd) pSource->SetRmax(setRmaxCmd->GetNewDoubleValue(newValue));
+  if (command == setSphereRadiusCmd) pSource->SetSphereRadius(setSphereRadiusCmd->GetNewDoubleValue(newValue));
   if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
+  if (command == setPytorchBatchSizeCmd) pSource->SetPytorchBatchSize(setPytorchBatchSizeCmd->GetNewIntValue(newValue));
+  if (command == setPytorchParamsCmd) pSource->SetPytorchParams(newValue);
+  
 }
 //----------------------------------------------------------------------------------------
-
 
 #endif
