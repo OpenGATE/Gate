@@ -42,7 +42,10 @@ protected:
   G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
+    //Efficiency option
   G4UIcmdWithAString * pSetDoseEfficiencyCmd;
+    //Efficiency option by Z (by ion atomic number)
+  G4UIcmdWithAString * pSetDoseEfficiencyByZCmd;
   //DoseToWater
   G4UIcmdWithABool * pEnableDoseToWaterCmd;
   G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;

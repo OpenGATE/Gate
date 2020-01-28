@@ -57,6 +57,7 @@ public:
   void EnableDoseNormalisationToMax(bool b);
   void EnableDoseNormalisationToIntegral(bool b);
   void SetEfficiencyFile(G4String b);
+  void SetEfficiencyFileByZ(G4String b);
   //DoseToWater
   void EnableDoseToWaterImage(bool b) { mIsDoseToWaterImageEnabled = b; }
   void EnableDoseToWaterSquaredImage(bool b) { mIsDoseToWaterSquaredImageEnabled = b; }
@@ -118,6 +119,7 @@ protected:
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseEfficiencyEnabled;
+  bool mIsDoseEfficiencyByZEnabled;
   //DoseToWater
   bool mIsDoseToWaterImageEnabled;
   bool mIsDoseToWaterSquaredImageEnabled;
@@ -139,9 +141,15 @@ protected:
   //Dose
   G4String mDoseFilename;
   GateImageWithStatistic mDoseImage;
+    //Efficiency option
   G4String mDoseEfficiencyFile;
   std::vector<double> mDoseEnergy;
   std::vector<double> mDoseEfficiency;
+    //Efficiency option by Z (by ion atomic number)
+  std::vector<G4String> mDoseEfficiencyFileByZ;
+  std::vector<G4int> mDoseZByZ;
+  std::vector<std::vector<double>> mDoseEnergyByZ;
+  std::vector<std::vector<double>> mDoseEfficiencyByZ;
   //DoseToWater
   G4String mDoseToWaterFilename;
   GateImageWithStatistic mDoseToWaterImage;
