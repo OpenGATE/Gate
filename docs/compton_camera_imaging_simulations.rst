@@ -73,7 +73,7 @@ List of additional digitizer modules
 Here, there is a list of the additional developed modules: grid discretization (local module), clustering (local and global modules), ideal adder (local and global modules), DoI modeling (global module), time delay (local module), 3D spatial resolution (local module), multiple single rejection (local module), energy threshold module with different policies for effective energies (local and global modules).
 
 
-=======================
+
 Grid discretization  module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD.::
