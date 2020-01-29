@@ -10,22 +10,22 @@ Compton camera imaging simulations: CCMod
 Introduction
 ------------
 
-The Compton camera imaging system has been designed as an actor (see  :ref:`tools_to_interact_with_the_simulation_actors-label`) that collects the information of the hits in the different layers of the system. The following commands must be employed to add and attach the actor to a volume that contains the whole system::
+The Compton camera imaging system has been designed as an actor (see  :ref:`tools_to_interact_with_the_simulation_actors-label`) that collects the information of the *Hits* in the different layers of the system. The following commands must be employed to add and attach the actor to a volume that contains the whole system::
 
 	/gate/actor/addActor  ComptonCameraActor      [Actor Name]
 	/gate/actor/[Actor Name]/attachTo             [Vol Name]            
 
 
-The layers of the Compton camera work  as *Sensitive Detector* storing *Hits* (equivalent to volumes attached to crystalSD in PET/SPECT systems).
-Therefore the digitizer modules described in :ref:`digitizer_and_readout_parameters-label` can be applied to get *Singles*.
+The layers of the Compton camera work  as *Sensitive Detectors* storing *Hits* (equivalent to volumes attached to crystalSD in PET/SPECT systems).
+Therefore the digitizer modules described in :ref:`digitizer_and_readout_parameters-label` can be applied to *Hits* get *Singles*.
 
 
-A detailed description of CCMod can be found in the article `CCMod: a GATE module for Compton Camera imaging simulation (<https://doi.org/10.1088/1361-6560/ab6529>`
+A detailed description of CCMod can be found in the article `CCMod: a GATE module for Compton Camera imaging simulation <https://doi.org/10.1088/1361-6560/ab6529>`
 
 
 Defining the system 
 -------------------
-A Compton camera system is typically composed of two types of detectors: the scatterer and the absorber. These terms work as key words within the actor. The behavior of the  volumes associated to absorber and scatterer sensitive detectors (SD) is equivalent to the crystalSD  behavior  in  PET/SPECT systems. The sensitive detectors are specified with the following commands::
+A Compton camera system is typically composed of two types of detectors: the scatterer and the absorber. These terms work as key words within the actor. The behavior of the  volumes associated to absorber and scatterer *Sensitive detectors* is equivalent to the crystalSD  behavior  in  PET/SPECT systems. The sensitive detectors are specified with the following commands::
 
 	/gate/actor/[Actor Name]/absorberSDVolume      [absorber Name]
 	/gate/actor/[Actor Name]/scattererSDVolume     [scatterer Name]
@@ -43,26 +43,18 @@ if we have three scatterer layers  and we want to name them scatterer  the name 
 
 There are no constrains for the geometry.
 
-The output of the CC actor includes information about the energy and type of the source. When an ion source is employed, instead of the information of the ion, the information associated with one of the particles emitted in the  decays can be of interest. An extra option has been included in the actor  that allows to specify the parentID of the particle that is  going to be considered as a source. By default, this option is disabled::
 
-	/gate/actor/[Actor Name]/specifysourceParentID 0/1
-
-When it is set to 1, a text file must be included with a column of integers corresponding to the parentIDs  of the particles  that are going to be considered as primaries::
-
-	/gate/actor/[Actor Name]/parentIDFileName  [text file name]
-
-For example,  in the case of  a 22Na source, we are interested in the 1274 keV emitted gamma-ray and the annihilation photons that can be identified using a value for the parentID of 2 and 4 respectively (at least using livermore or em opt4 physics list).
 
 
 
 Digitization 
 -------------
 
-The main  purpose of the digitizer module is to simulate the behavior of the detector response. The same data structures (i. e. *Hits*, *Singles*, *Coincidences*) as in PET/SPECT systems have been employed to be able to share the digitizer modules between the systems and the CCMod. Therefore, the digitizer modules described in :ref:`digitizer_and_readout_parameters-label` can be  directly applied to the Compton camera by inserting the modules using the following command. The key word layers is employed in this case  instead of singles::
+The main  purpose of the digitization is to simulate the behavior of the detector response. The same data structures (i. e. *Hits*, *Singles*, *Coincidences*) as in PET/SPECT systems have been employed to be able to share the digitizer modules between the systems and the CCMod. Therefore, the digitizer modules described in :ref:`digitizer_and_readout_parameters-label` can be  directly applied to the Compton camera by inserting the modules using the following command. The key word *layers* instead of *singles* must be employed::
 
 	/gate/digitizer/layers/insert [Module name]
 
-Most of the modules available for systems are global modules; thus, they are applied to all the considered sensitive volumes. However, a Compton camera system is typically composed of two different types of detectors (the scatterer and the absorber). Therefore, it is useful to apply a different digitization chain to each of them. To this end, in addition to the global modules, several local modules have been developed that are applied to specific volumes using the following command.:
+Most of the modules available for systems are global modules; thus, they are applied to all the considered sensitive volumes. However, a Compton camera system is typically composed of two different types of detectors (the scatterer and the absorber). Therefore, it is useful to apply a different digitization chain to each of them. To this end, in addition to the global modules, several local modules have been developed that are applied to specific volumes using the following command::
 
 	/gate/digitizer/layers/[Module name]/chooseNewVolume [SD volume name]
 
@@ -70,43 +62,47 @@ Most of the modules available for systems are global modules; thus, they are app
 
 List of additional digitizer modules
 -------------------------------------
-Here, there is a list of the additional developed modules: grid discretization (local module), clustering (local and global modules), ideal adder (local and global modules), DoI modeling (global module), time delay (local module), 3D spatial resolution (local module), multiple single rejection (local module), energy threshold module with different policies for effective energies (local and global modules).
+Here, there is a list of the additional developed modules.
+..
+	: grid discretization (local module), clustering (local and global modules), ideal adder (local and global modules), DoI modeling (global module), time delay (local module), 3D spatial resolution (local module), multiple single rejection (local module), energy threshold module with different policies for effective energies (local and global modules).
 
 
 
 Grid discretization  module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD.::
+This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD::
 
 	/gate/digitizer/layers/insert gridDiscretization
 	/gate/digitizer/layers/gridDiscretization/chooseNewVolume [volName]
 
-The number of the strips/pixels must be specified in X and Y direction. In addition, the width of the strips/pixel and an offset can be specified to take into account the insensitive material in the detector layer.::
+The number of the strips/pixels must be specified in X and Y directions. In addition, the width of the strips/pixel and an offset can be specified to take into account the insensitive material in the detector layer::
 
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsX 64
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsY 48
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetX 0.0 mm
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetY 0.0 mm
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthX 4.375 mm
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthY 4.375 mm
+	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsX [Nx]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsY [Ny]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetX   [offSet_x]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetY [offSet_y]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthX [size_x]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthY [size_y]
 
-The hits detected in the strips/pixels are merged at the center of the strip/pixel in each spatial direction. When strips are defined in both spatial directions, only the hits in the volume defined by the intersection of two strips are stored; thus, generating pixels SDs.
+The *hits* detected in the strips/pixels are merged at the center of the strip/pixel in each spatial direction. When strips are defined in both spatial directions, only the hits in the volume defined by the intersection of two strips are stored; thus, generating pixels.
 
 When the grid discretization module is employed to reproduce the response of strip detectors, it should be generally applied followed by a strip activation energy threshold and a multiple single rejection module to avoid ambiguous strip-intersection identification.  
 
-On the other hand, when pixelated crystals are simulated, it can be of interest to  apply the readout at the level of blocks composed of several pixels. The number of readout block can be set individually in each direction using the following commands.::
+On the other hand, when pixelated crystals are simulated, it can be of interest to  apply the readout at the level of blocks composed of several pixels. The number of readout blocks can be set individually in each direction using the following commands::
 
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksX  8
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksY  6
+	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksX  [NBx]
+	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksY  [NBy]
 
 The energy in the block corresponds to the sum of the deposited energy and the position to the  energy weighted centroid position in the pixels that composed the block.
 
 Clustering module
 ~~~~~~~~~~~~~~~~~
-This module has been designed with monolithic crystals read-out by segmented photodetectors in mind. Both versions the global module and its local counterpart have been developed.::
+This module has been designed with monolithic crystals read-out by segmented photodetectors in mind. Both versions the global module and its local counterpart have been developed::
 
 	/gate/digitizer/layers/insert clustering
+
 or for the local counterpart::
+
 	/gate/digitizer/layers/insert localClustering
 	/gate/digitizer/layers/localClustering/chooseNewVolume [volName]
 
@@ -302,6 +298,18 @@ In addition, a policy based on the so-called revan analyzer from Megalib (Zoglau
 	/gate/digitizer/sequenceCoincidence/[name]/setSequencePolicy revanC_CSR
 
 
+
+Source Information
+------------------
+*Hits*  and  *Singles* contain information about the source, i.e. energy and  particle type (PDGEncoding). When an ion source is employed, instead of the information of the ion, the information associated with one of the particles emitted in the  decays can be of interest. An extra option has been included in the actor  that allows to specify the parentID of the particle that is  going to be considered as *source*. By default, this option is disabled. It can be enabled using the following command::
+
+	/gate/actor/[Actor Name]/specifysourceParentID 0/1
+
+When the option is enabled (it is set to 1), a text file must be included with a column of integers corresponding to the parentIDs  of the particles  that are going to be considered as primaries::
+
+	/gate/actor/[Actor Name]/parentIDFileName  [text file name]
+
+For example,  in the case of  a 22Na source, we are interested in the 1274 keV emitted gamma-ray and the annihilation photons that can be identified using a value for the parentID of 2 and 4 respectively (at least using livermore or em opt4 physics list).
 Data output
 -----------
 Output data is saved  using the following command::
@@ -316,6 +324,8 @@ The information of the Hits, Singles, Coincidences and Coincidence chains can be
 
 For each data format (Hits, Singles, Coincidences,  processed coincidences) a new file is generated with  the label of the data included.
 For examples if the [FileName] is test.root, then Singles are saved in thee file called test_singles.root.
+
+
 
 
 
