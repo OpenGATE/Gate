@@ -10,7 +10,7 @@ Compton camera imaging simulations
 Introduction
 ------------
 
-The Compton camera imaging system has been designed as an actor (see .. :ref:`_tools_to_interact_with_the_simulation_actors-label`:Q)that collects the information of the hits in the different layers of the system. The following commands must be employed to add and attach the actor to a volume that contains the whole system
+The Compton camera imaging system has been designed as an actor (see  :ref:`tools_to_interact_with_the_simulation_actors-label`)that collects the information of the hits in the different layers of the system. The following commands must be employed to add and attach the actor to a volume that contains the whole system
 
 /gate/actor/addActor  ComptonCameraActor      [Actor Name]
 /gate/actor/[Actor Name]/attachTo             [Vol Name]            
