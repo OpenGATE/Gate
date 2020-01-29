@@ -300,3 +300,31 @@ In addition, a policy based on the so-called revan analyzer from Megalib (Zoglau
 (not finished, the errors in energy and posiiton should be included for that, disable the messenger)::
 
 	/gate/digitizer/sequenceCoincidence/[name]/setSequencePolicy revanC_CSR
+
+
+Data output
+-----------
+Output data is saved  using the following command::
+	/gate/actor/[Actor Name]/save   [FileName]
+Data can be saved in .npy, .root or .txt format. The format is taken from the extension included in the chosen [FileName]. 
+The information of the Hits, Singles, Coincidences and Coincidence chains can be stored::
+
+	/gate/actor/[Actor Name]saveHitsTree         [1/0]                  
+	/gate/actor/[Actor Name]/saveSinglesTree       [1/0]                 
+	/gate/actor/[Actor Name]/saveCoincidencestTree     [1/0]              
+	/gate/actor/[Actor Name]/saveCoincidenceChainsTree  [1/0] 
+
+For each data format (Hits, Singles, Coincidences,  processed coincidences) a new file is generated with  the label of the data included.
+For examples if the [FileName] is test.root, then Singles are saved in thee file called test_singles.root.
+
+
+
+Offline digitizer sorter and CSR
+---------------------------------
+Only .root extension files can be processed offline.
+
+Gate_CC_hits_digitizer <hit.root> <singles.root> <options.mac>  
+Gate_CC_singles_sorter <singles.root> <coincidences.root> <options.mac> <absorber Vol>
+Gate_CC_coincidence_processor <coincidence.root> <seqCoincidences.root> <options.mac>
+Gate_CC_seqCoinc2Cones <SeqCoincidences.root> <Cones.root>
+
