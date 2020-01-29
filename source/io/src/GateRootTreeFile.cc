@@ -67,6 +67,16 @@ void GateRootTree::register_variable(const std::string &name, const char *p, siz
 
 }
 
+void GateRootTree::register_variable(const std::string &name, const int *p, size_t n)
+{
+   void *pp = (void*)p;
+
+   std::stringstream leaf_ss;
+   leaf_ss << name <<"["<<n <<"]/" <<"I";
+   string leaf_s = leaf_ss.str();
+   m_ttree->Branch(name.c_str(), pp, leaf_s.c_str());
+}
+
 void GateOutputRootTreeFile::open(const std::string& s)
 {
   GateFile::open(s.c_str(), ios_base::out);
@@ -152,6 +162,10 @@ void GateOutputRootTreeFile::write_variable(const std::string &name, const char 
     this->register_variable(name, p, nb_char);
 }
 
+void GateOutputRootTreeFile::write_variable(const std::string &name, const int *p, size_t n)
+{
+    this->register_variable(name, p, n);
+}
 
 void GateInputRootTreeFile::check_existence_and_kind(const std::string &name, std::type_index t_index)
 {

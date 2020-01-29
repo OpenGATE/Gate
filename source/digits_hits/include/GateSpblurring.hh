@@ -16,6 +16,8 @@ See LICENSE.md for further details
 #include "G4ThreeVector.hh"
 
 #include "GateVPulseProcessor.hh"
+#include "G4VoxelLimits.hh"
+
 
 class GateSpblurringMessenger;
 
@@ -70,6 +72,10 @@ class GateSpblurring : public GateVPulseProcessor
     G4double m_spresolution;   	      	  //!< Simulated spatial resolution
 
     GateSpblurringMessenger *m_messenger;  //!< Messenger
+
+    G4VoxelLimits limits;
+    G4double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
+    G4AffineTransform at;
 
 };
 

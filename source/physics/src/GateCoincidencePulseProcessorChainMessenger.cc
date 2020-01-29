@@ -22,6 +22,7 @@ See LICENSE.md for further details
 #include "GateCoincidenceBuffer.hh"
 #include "GateCoincidenceMultiplesKiller.hh"
 #include "GateTriCoincidenceSorter.hh" //mhadi_add
+#include "GateCCCoincidenceSequenceRecon.hh"//AE
 
 GateCoincidencePulseProcessorChainMessenger::GateCoincidencePulseProcessorChainMessenger(GateCoincidencePulseProcessorChain* itsProcessorChain)
 :GateListMessenger(itsProcessorChain)
@@ -68,7 +69,7 @@ void GateCoincidencePulseProcessorChainMessenger::SetNewValue(G4UIcommand* comma
 
 const G4String& GateCoincidencePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "deadtime timeDiffSelector geometrySelector buffer multiplesKiller triCoincProcessor";//mhadi_modif
+   static G4String theList = "deadtime  sequenceRecon timeDiffSelector geometrySelector buffer multiplesKiller triCoincProcessor";//mhadi_modif
   return theList;
 }
 
@@ -87,6 +88,8 @@ void GateCoincidencePulseProcessorChainMessenger::DoInsertion(const G4String& ch
 
   if (childTypeName=="deadtime")
     newProcessor = new GateCoincidenceDeadTime(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="sequenceRecon")
+    newProcessor = new GateCCCoincidenceSequenceRecon(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="timeDiffSelector")
     newProcessor = new GateCoincidenceTimeDiffSelector(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="geometrySelector")
