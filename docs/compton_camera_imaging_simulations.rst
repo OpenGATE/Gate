@@ -138,7 +138,7 @@ The option to reject those events in which the primary photon undergoes at least
 
 	/gate/digitizer/layers/insert/rejectEvtOtherProcesses [1/0]
 
-In order to get one interaction per volume, the user can apply another module afterwards such as the standard adder to handle multiple interactions.
+In order to get one *single* per volume, the user can apply another module afterwards such as the standard adder to handle multiple interactions.
 
 
 Energy thresholder module
