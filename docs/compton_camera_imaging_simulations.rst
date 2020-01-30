@@ -45,8 +45,6 @@ There are no constrains for the geometry.
 
 
 
-
-
 Digitization 
 -------------
 
@@ -271,33 +269,33 @@ Then, the rejection can be set to the whole event or only to those pulses within
 Sorter
 -------
 
-The sorter developed in GATE for PET systems has been adapted for the CC actor. Same  command is employed.::
+The sorter developed in GATE for PET systems has been adapted for the CCMod, see :ref:`coincidence_sorter-label`. Same  command is employed.::
 	/gate/digitizer/Coincidences/setWindow [time value]
 
-
-An additional option has been included to allow only singles in the absorber layer to open its own window, absorber coincidence trigger. By default, it is not activated. In order to enable it the following command must be employed::
+An additional option has been included to allow only *singles* in the absorber layer to open its own time window, i. e.  absorber coincidence trigger. By default, this option is disabled.
+In order to enable it the following command must be employed::
 
 	/gate/digitizer/Coincidences/setTriggerOnlyByAbsorber 1
 
 
-The criterion set for CC coincidence processing acceptance is that at least two of the singles within the TCW are recorded in different volume names.
-
-Coincidence processors
+The criterion set to accept coincidences in CCMod is that at least two of the *singles* within the  within the *coincidence* are recorded in different volume names.
+ 
+Coincidence processing
 -----------------------
+The described modules in  :ref:`coincidence_processing-label` to process coincidences in PET systems such as dead-time or
+memory buffer  can be in principle applied directly to CCMod using the same commands::
 
-This is common command for the processing of coincidences::
 	/gate/digitizer/name sequenceCoincidence  
 	/gate/digitizer/insert coincidenceChain
 	/gate/digitizer/sequenceCoincidence/addInputName Coincidences
 
-The coincidence modules already available for PET systems, such as dead-time or
-memory buffer can also be applied to the coincidences. Warning. Be careful because in some modules multiple coincidences are rejected.
+However, since they are designed for PET systems, some of them reject multiple *coincidences* (more than two *singles*).
 
-Coincidence Sequence Reconstruction (CSR).
-The CSR is a coincidence processor which modifies the order of the singles within a coincidence to generate a sequence coincidence.::
+Coincidence Sequence Reconstruction (CSR)  module has been included for CCMod. It is a *coincidence* processor which modifies the order of the *singles* within a *coincidence* to generate a *sequence coincidence*::
 
 	/gate/digitizer/sequenceCoincidence/insert [name]
-Different policies have been implemented to order the singles within a coincidence: randomly, by increasing single time-stamp value (ideal), axial distance to the source (first scatterer then absorber) or deposited energy. Those policies can be selected using the following commands.::
+
+Different policies have been implemented to order the *singles* within a *coincidence*: randomly, by increasing single time-stamp value (ideal), axial distance to the source (first scatterer then absorber) or deposited energy. Those policies can be selected using the following commands.::
 
 
 	/gate/digitizer/sequenceCoincidence/[name]/setSequencePolicy randomly
@@ -306,14 +304,40 @@ Different policies have been implemented to order the singles within a coinciden
 	/gate/digitizer/sequenceCoincidence/[name]/setSequencePolicy lowestEnergyFirst
 
 In addition, a policy based on the so-called revan analyzer from Megalib (Zoglauer et al. 2008), known as Classic Coincidence Sequence Reconstruction (CCSR) has been included.
-(not finished, the errors in energy and posiiton should be included for that, disable the messenger)::
+.. 
+	(It is disabled from the messenger since the  the errors in energy and posiiton are not properly included in the pulses)
 
 	/gate/digitizer/sequenceCoincidence/[name]/setSequencePolicy revanC_CSR
 
 
 
+Data output
+-----------
+Output data is saved  using the following command::
+	/gate/actor/[Actor Name]/save   [FileName]
+Data can be saved in .npy, .root or .txt format. The format is taken from the extension included in the chosen FileName. 
+The information of the *Hits*, *Singles*, *Coincidences* and Coincidence chains can be stored::
+
+	/gate/actor/[Actor Name]saveHitsTree         [1/0]                  
+	/gate/actor/[Actor Name]/saveSinglesTree       [1/0]                 
+	/gate/actor/[Actor Name]/saveCoincidencestTree     [1/0]              
+	/gate/actor/[Actor Name]/saveCoincidenceChainsTree  [1/0] 
+
+For each data format (*Hits*, *Singles*, *Coincidences*,  processed coincidence name) a new file is generated with  the label of the data included.
+For examples if the FileName is test.root, then *Singles* are saved in the file called test_singles.root.
+
+Most of the  information  in the output file can be enabled or disabled by the user. 
+For example, the information of the energy deposition can be disabled using the following command::
+
+
+	/gate/actor/[Actor Name]/enableEnergy 0
+
+
+
+Optional additional output
+-------------------------------
 Source Information
-------------------
+~~~~~~~~~~~~~~~~~~
 *Hits*  and  *Singles* contain information about the source, i.e. energy and  particle type (PDGEncoding). When an ion source is employed, instead of the information of the ion, the information associated with one of the particles emitted in the  decays can be of interest. An extra option has been included in the actor  that allows to specify the parentID of the particle that is  going to be considered as *source*. By default, this option is disabled. It can be enabled using the following command::
 
 	/gate/actor/[Actor Name]/specifysourceParentID 0/1
@@ -323,31 +347,13 @@ When the option is enabled (it is set to 1), a text file must be included with a
 	/gate/actor/[Actor Name]/parentIDFileName  [text file name]
 
 For example,  in the case of  a 22Na source, we are interested in the 1274 keV emitted gamma-ray and the annihilation photons that can be identified using a value for the parentID of 2 and 4 respectively (at least using livermore or em opt4 physics list).
-Data output
------------
-Output data is saved  using the following command::
-	/gate/actor/[Actor Name]/save   [FileName]
-Data can be saved in .npy, .root or .txt format. The format is taken from the extension included in the chosen [FileName]. 
-The information of the Hits, Singles, Coincidences and Coincidence chains can be stored::
-
-	/gate/actor/[Actor Name]saveHitsTree         [1/0]                  
-	/gate/actor/[Actor Name]/saveSinglesTree       [1/0]                 
-	/gate/actor/[Actor Name]/saveCoincidencestTree     [1/0]              
-	/gate/actor/[Actor Name]/saveCoincidenceChainsTree  [1/0] 
-
-For each data format (Hits, Singles, Coincidences,  processed coincidences) a new file is generated with  the label of the data included.
-For examples if the [FileName] is test.root, then Singles are saved in thee file called test_singles.root.
 
 
 
+Offline processing
+------------------
+Be aware that only .root extension output files can be processed offline.
+The following executables GateDigit_hits_digitizer, GateDigit_singles_sorter and GateDigit_coincidence_processor  perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
 
 
-Offline digitizer sorter and CSR
----------------------------------
-Only .root extension files can be processed offline.
-
-Gate_CC_hits_digitizer <hit.root> <singles.root> <options.mac>  
-Gate_CC_singles_sorter <singles.root> <coincidences.root> <options.mac> <absorber Vol>
-Gate_CC_coincidence_processor <coincidence.root> <seqCoincidences.root> <options.mac>
-Gate_CC_seqCoinc2Cones <SeqCoincidences.root> <Cones.root>
 
