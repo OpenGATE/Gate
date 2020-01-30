@@ -356,9 +356,11 @@ Offline processing
 ------------------
 Be aware that only .root extension output files can be processed offline.
 The following executables:
-	*GateDigit_hits_digitizer
-	*GateDigit_singles_sorter
-	*GateDigit_coincidence_processor  
+
+* GateDigit_hits_digitizer
+* GateDigit_singles_sorter
+* GateDigit_coincidence_processor  
+
 perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
 
 
