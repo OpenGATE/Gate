@@ -334,10 +334,9 @@ For example, the information of the energy deposition can be disabled using the 
 
 
 
-Optional additional output
--------------------------------
-Source Information
-~~~~~~~~~~~~~~~~~~
+Optional additional source information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 *Hits*  and  *Singles* contain information about the source, i.e. energy and  particle type (PDGEncoding). When an ion source is employed, instead of the information of the ion, the information associated with one of the particles emitted in the  decays can be of interest. An extra option has been included in the actor  that allows to specify the parentID of the particle that is  going to be considered as *source*. By default, this option is disabled. It can be enabled using the following command::
 
 	/gate/actor/[Actor Name]/specifysourceParentID 0/1
