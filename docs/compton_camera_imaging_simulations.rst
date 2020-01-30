@@ -64,7 +64,7 @@ List of additional digitizer modules
 -------------------------------------
 Here, there is a list of the additional developed modules.
 ..
-	: grid discretization (local module), clustering (local and global modules), ideal adder (local and global modules), DoI modeling (global module), time delay (local module), 3D spatial resolution (local module), multiple single rejection (local module), energy threshold module with different policies for effective energies (local and global modules).
+	grid discretization (local module), clustering (local and global modules), ideal adder (local and global modules), DoI modeling (global module), time delay (local module), 3D spatial resolution (local module), multiple single rejection (local module), energy threshold module with different policies for effective energies (local and global modules).
 
 
 
@@ -106,7 +106,7 @@ or for the local counterpart::
 	/gate/digitizer/layers/insert localClustering
 	/gate/digitizer/layers/localClustering/chooseNewVolume [volName]
 
-The hits located within the same volume are regrouped by distance, creating clusters. If a detected hit is closer than a specified accepted distance to one of the clusters, it is added to the closest one; otherwise, it generates a new cluster. The hits are added summing their deposited energies and computing the energy-weighted centroid position. If two clusters are closer than the accepted distance they are merged following the same criteria. If requested, events with multiple clusters in the same volume can be rejected.::
+The hits located within the same volume are regrouped by distance, creating clusters. If a detected *hit* is closer than a specified accepted distance to one of the clusters, it is added to the closest one; otherwise, it generates a new cluster. The *hits* are added summing their deposited energies and computing the energy-weighted centroid position. If two clusters are closer than the accepted distance they are merged following the same criteria. If requested, events with multiple clusters in the same volume can be rejected::
 
 	/gate/digitizer/layers/clustering/setAcceptedDistance [distance plus units]
 	/gate/digitizer/layers/clustering/setRejectionMultipleClusters [0/1]
@@ -121,10 +121,10 @@ Ideal adder module
 ~~~~~~~~~~~~~~~~~~~
 This module has been designed with the aim of recovering the exact Compton kinematics to enable further studies.
 
-The adderCompton module was designed with the same aim.  However, it does not work properly when there are several photonic hits with secondary electronic hit associated in the same volume since the module only distinguish between photonic and electronic hits. The adderCompton module is designed so that the energy of the electronic hits is added to the last photonic hit in the same  volume. Therefore, when there are two photonic hits in the same volumes, the energy of all the electronic hits is added to the second photonic hit  leaving the  first hit  in general with an incorrect  null energy deposition associated.
+The adderCompton module was designed with the same aim.  However, it does not work properly when there are several photonic hits with secondary electronic hit associated in the same volume since the module only distinguish between photonic and electronic hits. The adderCompton module is designed so that the energy of the electronic *hits* is added to the last photonic hit in the same  volume. Therefore, when there are two photonic hits in the same volume, the energy of all the electronic hits is added to the second photonic hit  leaving the  first hit  in general with an incorrect  null energy deposition associated.
 
-In order to develop an adder that will allow to recover the exact Compton kinematics also when several primary photonic hits occur in the same volume, extra information such as post-step process, creator process, initial energy of the track, final energy, trackID and parentID was  added to the pulses. This module creates a single from each primary photon hit that undergoes a Compton, Photoelectric or Pair Creation interaction. Additional information, such as the energy of the photon before and after the primary interaction that generates the pulse is included to be able to recover the ideal Compton kinematics, hence its name. The deposited energy value of each pulse corresponds to the sum of the deposited energy of the primary hit and all the secondary hits produced by it. The deposited energy has been validated using livermore physics list.
-Both versions the global module and its local counterpart have been developed.  They can be employed using the following command:::
+In order to develop an adder that  allow to recover the exact Compton kinematics also when several primary photonic hits occur in the same volume, extra information such as post-step process, creator process, initial energy of the track, final energy, trackID and parentID was  added to the pulses. This module creates a *single* from each primary photon *hit* that undergoes a Compton, Photoelectric or Pair Creation interaction. Additional information, such as the energy of the photon before and after the primary interaction that generates the pulse is included to be able to recover the ideal Compton kinematics, hence its name. The deposited energy value of each pulse corresponds to the sum of the deposited energy of the primary hit and all the secondary hits produced by it. The deposited energy has been validated using livermore physics list.
+Both versions the global module and its local counterpart have been developed.  They can be employed using the following command::
 
 	/gate/digitizer/layers/insert adderComptPhotIdeal
 
@@ -143,7 +143,7 @@ In order to get one *single* per volume, the user can apply another module after
 
 Energy thresholder module
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-This module apply an energy threshold for the acceptance of the pulses. By default, the threshold is applied to the deposited energy. Both versions the global module and its local counterpart have been developed. They can be added using the following commands.::
+This module apply an energy threshold for the acceptance of pulses. By default, the threshold is applied to the deposited energy. Both versions the global module and its local counterpart have been developed. They can be added using the following commands.::
 
 	/gate/digitizer/layers/insert energyThresholder
 	/gate/digitizer/layers/energyThresholder/[volName]/setThreshold [energy]
@@ -157,49 +157,54 @@ or::
 This threshold is applied to an effective energy that can be obtained using different criteria. Two options have been implemented namely deposited energy and solid angle weighted energy.  In order to explicitly specify that the threshold is applied to the deposited energy, the following command should be employed:::
 
 	/gate/digitizer/layers/energyThresholder/setLaw/depositedEnergy
+
 or::
+
 	/gate/digitizer/layers/localEnergyThresholder/[volName]/setLaw/depositedEnergy
 
-Another policy included
 
-For the other policy, namely solid angle weighted, the effective energy for each pulse is calculated multiplying the deposited energy by a factor that represents the fraction of the solid angle from the pulse position subtended by a virtual pixel centered in the X-Y pulse position at the detector layer readout surface. To this end, the size of the pixel and detector readout surface must be specified. Those characteristics are included using the following commands::
+For the solid angle weighted energy policy, the effective energy for each pulse is calculated multiplying the deposited energy by a factor that represents the fraction of the solid angle from the pulse position subtended by a virtual pixel centered in the X-Y pulse position at the detector layer readout surface. To this end, the size of the pixel and detector readout surface must be specified. Those characteristics are included using the following commands::
 
 
 	/gate/digitizer/layers/energyThresholder/setLaw/solidAngleWeighted
-	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setRentangleLengthX 3 mm
-	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setRentangleLengthY 3 mm
-	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setZSense4Readout 1
+	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setRentangleLengthX [szX]
+	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setRentangleLengthY [szY]
+	/gate/digitizer/layers/energyThresholder/solidAngleWeighted/setZSense4Readout [1/-1]
 
 or for the local counterpart::
 
 	/gate/digitizer/layers/localEnergyThresholder/[volName]/setLaw/solidAngleWeighted
-	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setRentangleLengthX 3 mm
-	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setRentangleLengthY 3 mm
-	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setZSense4Readout 1
+	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setRentangleLengthX [szX]
+	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setRentangleLengthY [szY]
+	/gate/digitizer/layers/localEnergyThresholder/[volName]/solidAngleWeighted/setZSense4Readout [1/-1]
 
 
 If at least the effective energy of one of the pulses is over the threshold, all the pulses  corresponding to the same event registered in the studied sensitive volume are stored, otherwise they are rejected.
 
 
-The energyThresholder is  equivalent to the already available thresholder if no energy effective law is selected or if the  selected  one is the   deposited energy (default one). Maybe this module can absorbe the other?
+The global energy thresholder with the default option (deposited energy law) is  equivalent to the already available  global thresholder. 
 
 
 DoI modeling
 ~~~~~~~~~~~~
 
-The DoI modeling digitizer is applied using the following command. It is a global module. The local counterpart can be useful::
+The DoI modeling digitizer is applied using the following command.::
 
 	/gate/digitizer/layers/insert DoImodel
+..
+	 It is a global module. The local counterpart can be useful::
+
+
 
 The different considered DoI models can be applied to two readout geometries (Schaart et al. 2009): front surface (entrance surface) readout, in which the photodetector is placed on the crystal surface facing the radiation source, and conventional back-surface (exit surface) readout. To this end, the  growth-direction of the DoI must be specified using the command.::
 
 	/gate/digitizer/layers/DoImodel/setAxis [0 0 1]
 
+In the above example the growth-direction of the DoI is set to  the growth direction of the Z-axis.
 The criterion for the DoI growth is set towards the readout surface and thereby the DoI value in that surface corresponds to the thickness of the crystal. The opposite surface of the readout surface is referred to as exterior surface. Therefore, the  different uncertainty models implemented can be applied to the different readout configurations.
 
-Two options are available for the DoI modelling: dual layer structure and exponential function for the DoI uncertainty.
-
-The model  dual layer model discretize the ground-truth DoI into  two positions in the crystal. If the position of the pulse is recorded in the half of thecrystal closer to the readout surface, the DoI is set to the central section, otherwise it is set to the exterior surface. It ca be applied using the following command::
+Two options are available for the DoI modelling: dual layer structure and exponential function for the DoI uncertainty. The dual layer model discretizes the ground-truth DoI into  two positions in the crystal. If the position of the pulse is recorded in the half of the crystal closer to the readout surface, the DoI is set to the central section, otherwise it is set to the exterior surface.
+This model can be selected using the following command::
 
 	/gate/digitizer/layers/DoImodel/setDoIModel dualLayer
 
@@ -215,32 +220,19 @@ The DoI exponential uncertainty is modeled as a negative exponential function in
 Local Time delay module
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-This local module delays the time value of the detected pulses in a specified SD volume. It can be useful in a Compton camera system, for instance, to delay the singles in the scatterer detector when the absorber gives the coincidence trigger.::
+This local module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
 
 	/gate/digitizer/layers/insert localTimeDelay
 	/gate/digitizer/layers/localTimeDelay/chooseNewVolume [volName]
 	/gate/digitizer/layers/localTimeDelay/[volName]/setTimeDelay [time value]
 
 
+Local time resolution
+~~~~~~~~~~~~~~~~~~~~~
+In addition to the global time resolution module described in section :ref:`digitizer_and_readout_parameters-label`  a  local version has been included in order to be able to set different time resolutions to the different layers::
 
-Local Multiple rejection module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is a local module that allows you to discard multiple pulses. It can be inserted using the following commands.::
-
-	/gate/digitizer/layers/insert localMultipleRejection
-	/gate/digitizer/layers/localMultipleRejection/chooseNewVolume [vol]
-
-The definition of  what is considered multiple pulses must be set. Two options are available: more than one pulse in the same volume name or more than one single in the same volumeID.
-When several identical volumes are needed, for example for several scatterer layers, they are usually created as copies using a repeater. In that case, all volumes share the same name but they have different volumeID.  The difference between the rejection based on volume name and the volumeID can be important.
-These options can be selected using the following command line.::
-
-	/gate/digitizer/layers/localMultipleRejection/[vol]/setMultipleDefinition [volumeID/volumeName]
-
-Then, the rejection can be set to the whole event or only to those pulses within the same volume name or volumeID where the multiplicity  happened.::
-
-	/gate/digitizer/layers/localMultipleRejection/[vol]/setEventRejection [1/0]
-
+	/gate/digitizer/layers/insert localTimeResolution
+	/gate/digitizer/layers/localtimeResolution/setTimeResolution [FWHM value]
 
 Local 3D  spatial resolution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -253,6 +245,27 @@ The module is inserted using the following command::
 
 and the sigma of the Gaussian function in each direction is set::
 	/gate/digitizer/layers/sp3Dlocalblurring/[vol name]/setSigma [vector (length)]
+
+
+
+Local Multiple rejection module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a local module that allows you to discard multiple pulses. It can be inserted using the following commands.::
+
+	/gate/digitizer/layers/insert localMultipleRejection
+	/gate/digitizer/layers/localMultipleRejection/chooseNewVolume [vol]
+
+The definition of  what is considered multiple pulses must be set. Two options are available: more than one pulse in the same volume name or more than one pulses in the same volumeID.
+When several identical volumes are needed, for example for several scatterer layers, they are usually created as copies using a repeater. In that case, all volumes share the same name but they have different volumeID.  The difference between the rejection based on volume name and volumeID is important in those cases.
+These options are selected using the following command line.::
+
+	/gate/digitizer/layers/localMultipleRejection/[vol]/setMultipleDefinition [volumeID/volumeName]
+
+Then, the rejection can be set to the whole event or only to those pulses within the same volume name or volumeID where the multiplicity happened.::
+
+	/gate/digitizer/layers/localMultipleRejection/[vol]/setEventRejection [1/0]
+
 
 
 Sorter
