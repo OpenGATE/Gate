@@ -242,6 +242,7 @@ The module is inserted using the following command::
 	/gate/digitizer/layers/sp3Dlocalblurring/chooseNewVolume [vol name]
 
 and the sigma of the Gaussian function in each direction is set::
+
 	/gate/digitizer/layers/sp3Dlocalblurring/[vol name]/setSigma [vector (length)]
 
 
@@ -270,6 +271,7 @@ Sorter
 -------
 
 The sorter developed in GATE for PET systems has been adapted for the CCMod, see :ref:`coincidence_sorter-label`. Same  command is employed.::
+
 	/gate/digitizer/Coincidences/setWindow [time value]
 
 An additional option has been included to allow only *singles* in the absorber layer to open its own time window, i. e.  absorber coincidence trigger. By default, this option is disabled.
@@ -314,6 +316,7 @@ In addition, a policy based on the so-called revan analyzer from Megalib (Zoglau
 Data output
 -----------
 Output data is saved  using the following command::
+
 	/gate/actor/[Actor Name]/save   [FileName]
 Data can be saved in .npy, .root or .txt format. The format is taken from the extension included in the chosen FileName. 
 The information of the *Hits*, *Singles*, *Coincidences* and Coincidence chains can be stored::
@@ -352,7 +355,11 @@ For example,  in the case of  a 22Na source, we are interested in the 1274 keV e
 Offline processing
 ------------------
 Be aware that only .root extension output files can be processed offline.
-The following executables GateDigit_hits_digitizer, GateDigit_singles_sorter and GateDigit_coincidence_processor  perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
+The following executables:
+	*GateDigit_hits_digitizer
+	*GateDigit_singles_sorter
+	*GateDigit_coincidence_processor  
+perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
 
 
 
