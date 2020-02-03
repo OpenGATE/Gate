@@ -70,6 +70,9 @@
   //Configuration of spot intensity as number of ions or MU (MU by default)
   cmdName = GetDirectoryName()+"setSpotIntensityAsNbIons";
   pSpotIntensityCmd = new G4UIcmdWithABool(cmdName,this);
+  //OLD configuration of spot intensity as number of ions or MU (to inform user about name change)
+  cmdName = GetDirectoryName()+"setSpotIntensityAsNbProtons";
+  pDeprecatedSpotIntensityCmd = new G4UIcmdWithABool(cmdName,this);
   //Convergent or divergent beam model (divergent by default)
   cmdName = GetDirectoryName()+"setBeamConvergence";
   pDivergenceCmd = new G4UIcmdWithABool(cmdName,this);
@@ -113,6 +116,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pSourceFileCmd;
   //Configuration of spot intensity
   delete pSpotIntensityCmd;
+  //deprecated Configuration of spot intensity
+  delete pDeprecatedSpotIntensityCmd;
   //Convergent or divergent beam model
   delete pDivergenceCmd;
   delete pDivergenceXThetaCmd;
@@ -155,6 +160,9 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pSourceFileCmd) {pSourceTPSPencilBeam->SetSourceDescriptionFile(newValue);  }
   //Configuration of spot intensity
   if (command == pSpotIntensityCmd) {pSourceTPSPencilBeam->SetSpotIntensity(pSpotIntensityCmd->GetNewBoolValue(newValue)); }
+  if (command == pDeprecatedSpotIntensityCmd) {
+    GateError("The 'setSpotIntensityAsNbProtons' option has been renamed 'setSpotIntensityAsNbIons'. Please update your macro file(s)!");
+  }
   //Convergent or divergent beam model
   if (command == pDivergenceCmd) {pSourceTPSPencilBeam->SetBeamConvergence(pDivergenceCmd->GetNewBoolValue(newValue)); }
   if (command == pDivergenceXThetaCmd) {pSourceTPSPencilBeam->SetBeamConvergenceXTheta(pDivergenceCmd->GetNewBoolValue(newValue)); }
