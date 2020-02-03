@@ -58,6 +58,8 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mSaveAsDiscreteSpectrumTextFlag = false;
   
   mEnableLETSpectrumFlag = false;
+  mEnableLETFluenceSpectrumFlag = false;
+  mEnableLETtoMaterialFluenceSpectrumFlag = false;
   mEnableQSpectrumFlag = false;
   mEnableEnergySpectrumNbPartFlag = false;
   mEnableEnergySpectrumFluenceCosFlag = false;
@@ -73,7 +75,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableLogBinning = false;  
   mEnableEnergyPerUnitMass = false;
   mEnableRelativePrimEvents = false;
-  
+  mOtherMaterial = "G4_WATER";
   
   emcalc = new G4EmCalculator;
 
@@ -108,6 +110,10 @@ void GateEnergySpectrumActor::Construct()
   EnableEndOfEventAction(true); // for save every n
   
 
+  // Find G4_WATER.
+  G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+  // Find OtherMaterial
+  G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
   
   if (mEnableLogBinning){
       G4double mEminLog = mEmin/MeV; // MeV is the default unit for energy in this actor
@@ -123,6 +129,10 @@ void GateEnergySpectrumActor::Construct()
       }
   }
   
+  if (mEnableLETtoMaterialFluenceSpectrumFlag) {
+      mEnableLETFluenceSpectrumFlag = true;
+  }
+      
   pTfile = new TFile(mSaveFilename,"RECREATE");
   if (!mEnableLogBinning){
       if (mEnableEnergySpectrumNbPartFlag){
@@ -186,6 +196,18 @@ void GateEnergySpectrumActor::Construct()
       pLETSpectrum->SetXTitle("LET (keV/um)");
       pLETSpectrum->SetYTitle("Energy deposition (MeV)");
       allEnabledTH1DHistograms.push_back(pLETSpectrum);
+  }
+  if (mEnableLETFluenceSpectrumFlag) {
+      pLETFluenceSpectrum = new TH1D("LETFluenceSpectrum","LET Fluence Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
+      pLETFluenceSpectrum->SetXTitle("LET (keV/um)");
+      pLETFluenceSpectrum->SetYTitle("Fluence * Volume [mm]");
+      allEnabledTH1DHistograms.push_back(pLETFluenceSpectrum);
+  }
+  if (mEnableLETtoMaterialFluenceSpectrumFlag) {
+      pLETtoMaterialFluenceSpectrum = new TH1D("LETtoMaterialFluenceSpectrum","LET to Material Fluence Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
+      pLETtoMaterialFluenceSpectrum->SetXTitle("LET to other material (keV/um)");
+      pLETtoMaterialFluenceSpectrum->SetYTitle("Fluence * Volume [mm]");
+      allEnabledTH1DHistograms.push_back(pLETtoMaterialFluenceSpectrum);
   }
   if (mEnableQSpectrumFlag) {
       pQSpectrum = new TH1D("QSpectrum","Q Spectrum",GetNQBins(),GetQmin() ,GetQmax() );
@@ -429,9 +451,9 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     //}
     newTrack=false;
   }
-  
+  G4double stepLength = step->GetStepLength();
    if (mEnableEnergySpectrumFluenceTrackFlag){
-       G4double stepLength = step->GetStepLength();
+       
        pEnergySpectrumFluenceTrack->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*stepLength/mm);
        
    }
@@ -448,6 +470,28 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
       dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
       pLETSpectrum->Fill(dedx/(keV/um),step->GetTrack()->GetWeight()*edep/MeV);
             
+  }  
+  if(mEnableLETFluenceSpectrumFlag) {
+      G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 
+      G4double energyPre = step->GetPreStepPoint()->GetKineticEnergy();
+      G4double energyPost = step->GetPostStepPoint()->GetKineticEnergy();
+      G4double energyMean=(energyPre+energyPost)/2;
+      G4ParticleDefinition* partdef = step->GetTrack()->GetDefinition();//->GetParticleName();
+      G4double dedx;
+      dedx = emcalc->ComputeElectronicDEDX(energyMean, partdef, material);
+      pLETFluenceSpectrum->Fill(dedx/(keV/um),step->GetTrack()->GetWeight()*stepLength/mm);
+            
+     if(mEnableLETtoMaterialFluenceSpectrumFlag) {
+          
+           //other material
+          static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);
+
+          //// DISPLAY parameters of particles having DEDX=0
+          //// Mainly gamma and neutron
+          //DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
+          dedx = emcalc->ComputeTotalDEDX(energyMean,step->GetTrack()->GetParticleDefinition(), OtherMaterial);
+          pLETtoMaterialFluenceSpectrum->Fill(dedx/(keV/um),step->GetTrack()->GetWeight()*stepLength/mm);
+     }
   }  
   
   if(mEnableQSpectrumFlag) {

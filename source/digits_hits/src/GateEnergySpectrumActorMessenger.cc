@@ -101,6 +101,22 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   pSaveAsTextDiscreteEnergySpectrum->SetGuidance(guidance);
   
   
+  bb = base+"/enableLETFluenceSpectrum";
+  pEnableLETFluenceSpectrumCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable LET Fluence spectrum");
+  pEnableLETFluenceSpectrumCmd->SetGuidance(guidance);
+  
+  
+  bb = base+"/enableLETtoMaterialFluenceSpectrum";
+  pEnableLETtoMaterialFluenceSpectrumCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable LET to material Fluence spectrum");
+  pEnableLETtoMaterialFluenceSpectrumCmd->SetGuidance(guidance);
+  
+  bb = base+"/setOtherMaterial";
+  pSetOtherMaterialCmd = new G4UIcmdWithAString(bb, this);
+  guidance = G4String("Set Other Material Name");
+  pSetOtherMaterialCmd->SetGuidance(guidance);
+  
   bb = base+"/enableLETSpectrum";
   pEnableLETSpectrumCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable LET spectrum");
@@ -235,6 +251,9 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
   if(cmd == pEdepNBinsCmd) pActor->SetEdepNBins(  pEdepNBinsCmd->GetNewIntValue(newValue)  ) ;
   if(cmd == pSaveAsText) pActor->SetSaveAsTextFlag(  pSaveAsText->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveAsTextDiscreteEnergySpectrum) pActor->SetSaveAsTextDiscreteEnergySpectrumFlag(  pSaveAsTextDiscreteEnergySpectrum->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pEnableLETFluenceSpectrumCmd) pActor->SetLETFluenceSpectrumCalc(  pEnableLETFluenceSpectrumCmd->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pEnableLETtoMaterialFluenceSpectrumCmd) pActor->SetLETtoMaterialFluenceSpectrumCalc(  pEnableLETtoMaterialFluenceSpectrumCmd->GetNewBoolValue(newValue)  ) ;
+  if (cmd == pSetOtherMaterialCmd) pActor->SetOtherMaterial(newValue);
   if(cmd == pEnableLETSpectrumCmd) pActor->SetLETSpectrumCalc(  pEnableLETSpectrumCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableQSpectrumCmd) pActor->SetQSpectrumCalc(  pEnableQSpectrumCmd->GetNewBoolValue(newValue)  ) ;
   

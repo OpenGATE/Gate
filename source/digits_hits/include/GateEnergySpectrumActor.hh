@@ -99,6 +99,11 @@ public:
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
   void SetLETSpectrumCalc(bool b) {mEnableLETSpectrumFlag = b; }
+  void SetLETFluenceSpectrumCalc(bool b) {mEnableLETFluenceSpectrumFlag = b; }
+  void SetLETtoMaterialFluenceSpectrumCalc(bool b) {mEnableLETtoMaterialFluenceSpectrumFlag = b; }
+  
+  void SetOtherMaterial(G4String b) { mOtherMaterial = b; }
+  
   void SetQSpectrumCalc(bool b) {mEnableQSpectrumFlag = b; }
   void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
   void SetSaveAsTextDiscreteEnergySpectrumFlag(bool b) { mSaveAsDiscreteSpectrumTextFlag = b; if (b) SetSaveAsTextFlag(b); }
@@ -145,6 +150,8 @@ protected:
   std::list<TH1D*> allEnabledTH1DHistograms;
 
   TH1D * pLETSpectrum;
+  TH1D * pLETFluenceSpectrum;
+  TH1D * pLETtoMaterialFluenceSpectrum;
   G4double mLETmin;
   G4double mLETmax;
   int mLETBins;
@@ -188,6 +195,8 @@ protected:
   bool mSaveAsTextFlag;
   bool mSaveAsDiscreteSpectrumTextFlag;
   bool mEnableLETSpectrumFlag;
+  bool mEnableLETFluenceSpectrumFlag;
+  bool mEnableLETtoMaterialFluenceSpectrumFlag;
   bool mEnableQSpectrumFlag;
   bool mEnableEnergySpectrumNbPartFlag;
   bool mEnableEnergySpectrumFluenceCosFlag;
@@ -200,6 +209,7 @@ protected:
   bool mEnableLogBinning;
   bool mEnableEnergyPerUnitMass;
   bool mEnableRelativePrimEvents;
+  G4String mOtherMaterial;
   
   
   G4EmCalculator * emcalc;
