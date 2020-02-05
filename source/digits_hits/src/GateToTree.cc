@@ -13,6 +13,8 @@ See LICENSE.md for further details
 #include "GateToTree.hh"
 #include "GateToTree.hh"
 
+#include <cassert>
+
 #include "GateToTreeMessenger.hh"
 
 #include "GateOutputMgr.hh"
@@ -45,7 +47,6 @@ void SaveDataParam::setToSave(bool mSave)
 GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode) :
     GateVOutputModule(name, outputMgr, digiMode)
 {
-
     m_hitsParams_to_write.emplace("PDGEncoding", SaveDataParam());
     m_hitsParams_to_write.emplace("trackID", SaveDataParam());
     m_hitsParams_to_write.emplace("parentID", SaveDataParam());
@@ -234,7 +235,6 @@ void GateToTree::RecordBeginOfAcquisition()
         {
           std::stringstream ss;
           ss << "volumeID[" << i << "]";
-//        ss << "volumeID" << i << "";
           m_manager_hits.write_variable(ss.str(), &m_volumeID[i]);
         }
       }
@@ -475,8 +475,6 @@ void GateToTree::RecordBeginOfAcquisition()
 
       if(m_coincidencesParams_to_write.at("sinogramS").toSave())
         mm.write_variable("sinogramS", &m_sinogramS);
-
-
 
       mm.write_header();
     }
