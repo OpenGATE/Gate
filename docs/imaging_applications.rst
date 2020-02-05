@@ -10,5 +10,6 @@ Imaging application
    digitizer_and_detector_modeling
    data_output_management
    generating_and_tracking_optical_photons
+   compton_camera_imaging_simulations
 
 `list of examples <https://github.com/OpenGATE/GateContrib/tree/master/imaging>`_
