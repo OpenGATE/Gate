@@ -273,6 +273,9 @@ private:
   TFile*             m_hfile; // the file for histograms, tree ...
 
   GateHitTree*       m_treeHit; // the tree for hit quantities
+  TH1D *m_total_nb_primaries_hist; //histogram of total_nb_primaries
+  TH1D *m_latest_event_ID_hist;
+  TDirectory *m_working_root_directory;
 
   GateRootHitBuffer  m_hitBuffer;
 
