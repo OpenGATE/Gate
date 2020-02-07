@@ -82,6 +82,7 @@ void GateVSystem::SetOutputIDName(char * anOutputIDName, size_t depth)
 {
 #ifdef G4ANALYSIS_USE_ROOT
   GateRootDefs::SetOutputIDName(anOutputIDName,depth);
+
 #endif
   GateToTree::SetOutputIDName(m_itsNumber, anOutputIDName, depth);
 }

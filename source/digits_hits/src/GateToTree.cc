@@ -475,7 +475,6 @@ void GateToTree::RecordBeginOfAcquisition()
 
       if(m_coincidencesParams_to_write.at("sinogramS").toSave())
         mm.write_variable("sinogramS", &m_sinogramS);
-
       mm.write_header();
     }
 
