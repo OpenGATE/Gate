@@ -943,22 +943,22 @@ Important to notice : in order to have same behavior between ROOT, numpy and asc
 In GateToTree, one can disable branch to limit size output (instead of mask)::
 
     /gate/output/tree/hits/enable
-    /gate/output/tree/hits/trackLocalTime/disable
+    /gate/output/tree/hits/branches/trackLocalTime/disable
 
 for volumeID[0], volumeID[1], ...::
 
-    /gate/output/tree/hits/volumeIDs/disable
+    /gate/output/tree/hits/branches/volumeIDs/disable
 
 Also implemented for Singles::
 
     /gate/output/tree/addCollection Singles
-    /gate/output/tree/Singles/comptVolName/disable
+    /gate/output/tree/Singles/branches/comptVolName/disable
 
 
 and Coincidences::
 
     /gate/output/tree/addCollection Coincidences
-    /gate/output/tree/Coincidences/eventID/disable
+    /gate/output/tree/Coincidences/branches/eventID/disable
 
 Implemented output format
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -982,7 +982,7 @@ ROOT format::
 ASCII format::
 
     /gate/output/tree/enable
-    /gate/output/tree/addFileName /tmp/p.txt #saved to /tmp/p.hits.npy
+    /gate/output/tree/addFileName /tmp/p.txt #saved to /tmp/p.hits.txt
     /gate/output/tree/hits/enable
 
 Binary format is not (yet implemented)
@@ -1029,18 +1029,18 @@ For example, for disabling 'trackLocalTime' in hits ::
 
 
     /gate/output/tree/hits/enable
-    /gate/output/tree/hits/trackLocalTime/disable
+    /gate/output/tree/hits/branches/trackLocalTime/disable
 
 
 Like for mask, the VolumeID variables are enabled/disabled together, as a group::
 
-    /gate/output/tree/hits/volumeIDs/disable
+    /gate/output/tree/hits/branches/volumeIDs/disable
 
 
 Also, for disabling 'comptVolName' in Singles::
 
     /gate/output/tree/addCollection Singles
-    /gate/output/tree/Singles/comptVolName/disable
+    /gate/output/tree/Singles/branches/comptVolName/disable
 
 
 In hits, variables that can be disabled are::

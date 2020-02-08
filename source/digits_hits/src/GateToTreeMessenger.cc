@@ -42,7 +42,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   for(auto &&m: m_gateToTree->getHitsParamsToWrite())
   {
     auto name = m.first;
-    G4String s = "/gate/output/tree/hits/" + name + "/disable";
+    G4String s = "/gate/output/tree/hits/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_maphits_cmdParameter_toTreeParameter.emplace(c, name);
   }
@@ -51,7 +51,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   for(auto &&m: m_gateToTree->getSinglesParamsToWrite())
   {
     auto name = m.first;
-    G4String s = "/gate/output/tree/Singles/" + name + "/disable";
+    G4String s = "/gate/output/tree/Singles/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_mapsingles_cmdParameter_toTreeParameter.emplace(c, name);
   }
@@ -59,7 +59,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   for(auto &&m: m_gateToTree->getCoincidencesParamsToWrite())
   {
     auto name = m.first;
-    G4String s = "/gate/output/tree/Coincidences/" + name + "/disable";
+    G4String s = "/gate/output/tree/Coincidences/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_mapscoincidences_cmdParameter_toTreeParameter.emplace(c, name);
   }
