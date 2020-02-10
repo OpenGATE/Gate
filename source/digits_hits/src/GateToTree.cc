@@ -610,8 +610,15 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       if(system_id == -1)
       {
         auto mother = static_cast<const GateCrystalHit*>(digi->GetPulse().GetMother());
-        assert(mother);
-        system_id = mother->GetSystemID();
+        if(!mother)
+        {
+          // for example pulse created by GateNoise.cc (l67).
+          system_id = 0;
+        } else
+        {
+          system_id = mother->GetSystemID();
+        }
+
       }
 
       retrieve(digi, system_id);
@@ -660,8 +667,12 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       if(system_id == -1)
       {
         auto mother = static_cast<const GateCrystalHit*>(digi->GetPulse(0).GetMother());
-        assert(mother);
-        system_id = mother->GetSystemID();
+        if(!mother) {
+          // for example pulse created by GateNoise.cc (l67).
+          system_id = 0;
+        } else {
+          system_id = mother->GetSystemID();
+        }
       }
 
       const auto &pulse = digi->GetPulse(0);
