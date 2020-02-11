@@ -1,2 +1,7 @@
 _build/
 _wiki/
+*~
+GPATH
+GRTAGS
+GTAGS
+

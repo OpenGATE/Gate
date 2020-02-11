@@ -31,6 +31,7 @@
 #include "GateToDigi.hh"
 #include "GateToASCII.hh"
 #include "GateToBinary.hh"
+#include "GateToSummary.hh"
 #include "GateDigitizer.hh"
 #include "GateCrystalSD.hh"
 #include "GatePhantomSD.hh"
@@ -117,6 +118,8 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   auto g = new GateToTree("tree", this, m_digiMode);
   AddOutputModule(g);
 
+  auto gs = new GateToSummary("summary", this, m_digiMode);
+  AddOutputModule(gs);
 
   GateMessage("Output",4,"GateOutputMgr() -- end\n");
 }
