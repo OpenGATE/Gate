@@ -1103,8 +1103,17 @@ In Coincidences, variables that can be disabled are::
     sinogramS
 
 
-    
+Additional output summary
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following output, named "summary", will write a txt file at the end of the simulation which indicates the numbers of Hits, Singles, Coincidences.:: 
+
+     /gate/output/summary/enable
+     /gate/output/summary/setFileName output/digit_summary.txt
+     /gate/output/summary/addCollection Singles
+     /gate/output/summary/addCollection Coincidences
+
+Usually, the 'hits' and 'singles' output lead to very large files, often only needed for debug purpose. We recommend to disable the output of 'hits' and 'Singles' and only keep the 'Coincidences' output. The Summary output can still be used to get the total numbers. 
 
 
 
