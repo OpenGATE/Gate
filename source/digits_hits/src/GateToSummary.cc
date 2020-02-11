@@ -57,11 +57,11 @@ void GateToSummary::RecordEndOfAcquisition()
 {
   std::ofstream os;
   OpenFileOutput(m_fileName, os);
-  os << "# NumberOfHits    = " << m_nb_of_hits << std::endl;
-  os << "# NumberOfRun     = " << m_nb_of_runs << std::endl;
-  os << "# NumberOfEvents  = " << m_nb_of_events << std::endl;
+  os << "# NumberOfHits = " << m_nb_of_hits << std::endl;
+  os << "# NumberOfRun = " << m_nb_of_runs << std::endl;
+  os << "# NumberOfEvents = " << m_nb_of_events << std::endl;
   for(auto s:m_collection_names) {
-    os << "# " << s << "  \t = " << m_collection_nb[s] << std::endl;
+    os << "# " << s << " = " << m_collection_nb[s] << std::endl;
   }
   os.flush();
   os.close();
