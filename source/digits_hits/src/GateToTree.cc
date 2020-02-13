@@ -15,6 +15,11 @@ See LICENSE.md for further details
 
 #include <cassert>
 
+
+#include "G4Event.hh"
+#include "G4Step.hh"
+#include "G4OpticalPhoton.hh"
+
 #include "GateToTreeMessenger.hh"
 
 #include "GateOutputMgr.hh"
@@ -98,6 +103,26 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("volumeIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("componentsIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("systemID", SaveDataParam());
+
+    m_opticalParams_to_write.emplace("NumScintillation", SaveDataParam());
+    m_opticalParams_to_write.emplace("NumCrystalWLS", SaveDataParam());
+    m_opticalParams_to_write.emplace("NumPhantomWLS", SaveDataParam());
+    m_opticalParams_to_write.emplace("CrystalLastHitPos_X", SaveDataParam());
+    m_opticalParams_to_write.emplace("CrystalLastHitPos_Y", SaveDataParam());
+    m_opticalParams_to_write.emplace("CrystalLastHitPos_Z", SaveDataParam());
+    m_opticalParams_to_write.emplace("CrystalLastHitEnergy", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomLastHitPos_X", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomLastHitPos_Y", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomLastHitPos_Z", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomLastHitEnergy", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomWLSPos_X", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomWLSPos_Y", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomWLSPos_Z", SaveDataParam());
+    m_opticalParams_to_write.emplace("PhantomProcessName", SaveDataParam());
+    m_opticalParams_to_write.emplace("CrystalProcessName", SaveDataParam());
+    m_opticalParams_to_write.emplace("MomentumDirectionx", SaveDataParam());
+    m_opticalParams_to_write.emplace("MomentumDirectiony", SaveDataParam());
+    m_opticalParams_to_write.emplace("MomentumDirectionz", SaveDataParam());
 
     m_singlesParams_to_write.emplace("runID", SaveDataParam());
     m_singlesParams_to_write.emplace("eventID", SaveDataParam());
@@ -316,6 +341,73 @@ void GateToTree::RecordBeginOfAcquisition()
 
       m_manager_hits.write_header();
     }
+
+
+  if(m_opticalData_enabled)
+  {
+    for(auto &&fileName: m_listOfFileName)
+    {
+      auto extension = getExtension(fileName);
+      auto name = removeExtension(fileName);
+
+      G4String hits_filename = name + ".optical." + extension;
+      m_manager_optical.add_file(hits_filename, extension);
+    }
+
+    if(m_opticalParams_to_write.at("NumScintillation").toSave())
+      m_manager_optical.write_variable("NumScintillation", &m_nScintillation);
+
+    if(m_opticalParams_to_write.at("NumCrystalWLS").toSave())
+      m_manager_optical.write_variable("NumCrystalWLS", &m_NumCrystalWLS);
+    if(m_opticalParams_to_write.at("NumPhantomWLS").toSave())
+      m_manager_optical.write_variable("NumPhantomWLS", &m_NumPhantomWLS);
+
+    if(m_opticalParams_to_write.at("CrystalLastHitPos_X").toSave())
+      m_manager_optical.write_variable("CrystalLastHitPos_X", &m_CrystalLastHitPos_X);
+    if(m_opticalParams_to_write.at("CrystalLastHitPos_Y").toSave())
+      m_manager_optical.write_variable("CrystalLastHitPos_Y", &m_CrystalLastHitPos_Y);
+    if(m_opticalParams_to_write.at("CrystalLastHitPos_Z").toSave())
+      m_manager_optical.write_variable("CrystalLastHitPos_Z", &m_CrystalLastHitPos_Z);
+    if(m_opticalParams_to_write.at("CrystalLastHitEnergy").toSave())
+      m_manager_optical.write_variable("CrystalLastHitEnergy", &m_CrystalLastHitEnergy);
+
+    if(m_opticalParams_to_write.at("PhantomLastHitPos_X").toSave())
+      m_manager_optical.write_variable("PhantomLastHitPos_X", &m_PhantomLastHitPos_X);
+    if(m_opticalParams_to_write.at("PhantomLastHitPos_Y").toSave())
+      m_manager_optical.write_variable("PhantomLastHitPos_Y", &m_PhantomLastHitPos_Y);
+    if(m_opticalParams_to_write.at("PhantomLastHitPos_Z").toSave())
+      m_manager_optical.write_variable("PhantomLastHitPos_Z", &m_PhantomLastHitPos_Z);
+    if(m_opticalParams_to_write.at("PhantomLastHitEnergy").toSave())
+      m_manager_optical.write_variable("PhantomLastHitEnergy", &m_PhantomLastHitEnergy);
+
+    if(m_opticalParams_to_write.at("PhantomWLSPos_X").toSave())
+      m_manager_optical.write_variable("PhantomWLSPos_X", &m_PhantomWLSPos_X);
+    if(m_opticalParams_to_write.at("PhantomWLSPos_Y").toSave())
+      m_manager_optical.write_variable("PhantomWLSPos_Y", &m_PhantomWLSPos_Y);
+    if(m_opticalParams_to_write.at("PhantomWLSPos_Z").toSave())
+      m_manager_optical.write_variable("PhantomWLSPos_Z", &m_PhantomWLSPos_Z);
+
+    if(m_opticalParams_to_write.at("PhantomProcessName").toSave())
+      m_manager_optical.write_variable("PhantomProcessName", &m_NameOfProcessInPhantom, MAX_NB_CHARACTER);
+    if(m_opticalParams_to_write.at("CrystalProcessName").toSave())
+      m_manager_optical.write_variable("CrystalProcessName", &m_NameOfProcessInCrystal, MAX_NB_CHARACTER);
+
+    if(m_opticalParams_to_write.at("MomentumDirectionx").toSave())
+      m_manager_optical.write_variable("MomentumDirectionx", &m_MomentumDirectionx);
+    if(m_opticalParams_to_write.at("MomentumDirectiony").toSave())
+      m_manager_optical.write_variable("MomentumDirectiony", &m_MomentumDirectiony);
+    if(m_opticalParams_to_write.at("MomentumDirectionz").toSave())
+      m_manager_optical.write_variable("MomentumDirectionz", &m_MomentumDirectionz);
+
+    m_manager_optical.write_header();
+
+    }
+
+
+
+
+
+
 
     for(auto &&m: m_mmanager_singles)
     {
@@ -566,6 +658,7 @@ void GateToTree::RecordBeginOfAcquisition()
 void GateToTree::RecordEndOfAcquisition()
 {
   m_manager_hits.close();
+  m_manager_optical.close();
   for(auto &&m: m_mmanager_singles)
     m.second.close();
 
@@ -791,6 +884,8 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       m.second.fill();
     }
   }
+
+    RecordOpticalData(event);
 }
 
 void GateToTree::retrieve(GateCoincidenceDigi *aDigi, G4int side, G4int system_id)
@@ -827,8 +922,16 @@ void GateToTree::retrieve(GateCoincidenceDigi *aDigi, G4int side, G4int system_i
 
 
 
-void GateToTree::RecordStepWithVolume(const GateVVolume *v, const G4Step *step)
+void GateToTree::RecordStepWithVolume(const GateVVolume *v, const G4Step *aStep)
 {
+
+  auto partDef = aStep->GetTrack()->GetDefinition();
+  if (partDef == G4OpticalPhoton::OpticalPhotonDefinition()) {
+    G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
+    m_MomentumDirectionx = momentumDirection.x();
+    m_MomentumDirectiony = momentumDirection.y();
+    m_MomentumDirectionz = momentumDirection.z();
+  }
 
 }
 
@@ -963,6 +1066,11 @@ std::unordered_map<std::string, SaveDataParam> &GateToTree::getHitsParamsToWrite
   return m_hitsParams_to_write;
 }
 
+std::unordered_map<std::string, SaveDataParam> &GateToTree::getOpticalParamsToWrite()
+{
+  return m_opticalParams_to_write;
+}
+
 std::unordered_map<std::string, SaveDataParam> &GateToTree::getSinglesParamsToWrite()
 {
   return m_singlesParams_to_write;
@@ -971,6 +1079,105 @@ std::unordered_map<std::string, SaveDataParam> &GateToTree::getSinglesParamsToWr
 std::unordered_map<std::string, SaveDataParam> &GateToTree::getCoincidencesParamsToWrite()
 {
   return m_coincidencesParams_to_write;
+}
+G4bool GateToTree::getOpticalDataEnabled() const
+{
+    return m_opticalData_enabled;
+}
+void GateToTree::setOpticalDataEnabled(G4bool mOpticalDataEnabled)
+{
+    m_opticalData_enabled = mOpticalDataEnabled;
+}
+void GateToTree::RecordOpticalData(const G4Event *event)
+{
+    auto CHC = this->GetOutputMgr()->GetCrystalHitCollection();
+    auto PHC = this->GetOutputMgr()->GetPhantomHitCollection();
+
+    m_nScintillation = 0;
+    m_nCrystalOpticalWLS = 0;
+    m_nPhantomOpticalWLS = 0;
+    m_NumCrystalWLS = 0;
+    m_NumPhantomWLS = 0;
+
+    // Looking at Phantom Hit Collection:
+    if (PHC) {
+
+        G4int NpHits = PHC->entries();
+        m_NameOfProcessInPhantom = "";
+
+        for (G4int iPHit=0;iPHit<NpHits;iPHit++)
+        {
+            auto pHit = (*PHC)[iPHit];
+            auto processName = pHit->GetProcess();
+//
+            if (pHit->GoodForAnalysis() && pHit-> GetPDGEncoding()==0)// looking at optical photons only
+            {
+                m_NameOfProcessInPhantom = pHit->GetProcess();
+//
+//                //                   if (processName.find("OpRayleigh") != G4String::npos)  nPhantomOpticalRayleigh++;
+//                //                   if (processName.find("OpticalMie") != G4String::npos)  nPhantomOpticalMie++;
+//                //                   if (processName.find("OpticalAbsorption") != G4String::npos) {
+//                //                          nPhantomOpticalAbsorption++;
+//                //                         PhantomAbsorbedPhotonHitPos_X = (*PHC)[iPHit]->GetPos().x();
+//                //                          PhantomAbsorbedPhotonHitPos_Y = (*PHC)[iPHit]->GetPos().y();
+//                //                          PhantomAbsorbedPhotonHitPos_Z = (*PHC)[iPHit]->GetPos().z();
+//                //                   }
+//
+                if (processName.find("OpticalWLS") != G4String::npos) {
+                    m_nPhantomOpticalWLS++;      // Fluorescence counting
+                    m_PhantomWLSPos_X = pHit->GetPos().x();
+                    m_PhantomWLSPos_Y = pHit->GetPos().y();
+                    m_PhantomWLSPos_Z = pHit->GetPos().z();
+                }
+//
+                m_PhantomLastHitPos_X = pHit->GetPos().x();
+                m_PhantomLastHitPos_Y = pHit->GetPos().y();
+                m_PhantomLastHitPos_Z = pHit->GetPos().z();
+                m_PhantomLastHitEnergy = pHit->GetEdep();
+            }  // end GoodForAnalysis() and optical photon
+        } // end loop over phantom hits
+    } // end if PHC
+
+
+    // Looking at Crystal Hits Collection:
+    if (CHC) {
+
+        G4int NbHits = CHC->entries();
+        m_NameOfProcessInCrystal = "";
+
+        for (G4int iHit=0;iHit<NbHits;iHit++)
+        {
+            auto aHit = (*CHC)[iHit];
+            auto processName = aHit->GetProcess();
+
+            if (aHit->GoodForAnalysis())
+            {
+                m_NameOfProcessInCrystal = aHit->GetProcess();
+
+                if(processName.find("Scintillation") != G4String::npos)
+                    m_nScintillation++;
+
+                if(aHit-> GetPDGEncoding()==0)  // looking at optical photons only
+                {
+                    if(processName.find("OpticalWLS") != G4String::npos)
+                        m_nCrystalOpticalWLS++;
+
+
+                    m_CrystalLastHitPos_X = aHit->GetGlobalPos().x();
+                    m_CrystalLastHitPos_Y = aHit->GetGlobalPos().y();
+                    m_CrystalLastHitPos_Z = aHit->GetGlobalPos().z();
+                    m_CrystalLastHitEnergy = aHit->GetEdep();
+                }
+            } // end GoodForAnalysis()
+        } // end loop over crystal hits
+    } // end if CHC
+
+    // counting the number of Wave Length Shifting = Fluorescence:
+    if(m_nCrystalOpticalWLS >0) m_NumCrystalWLS++;
+    if(m_nPhantomOpticalWLS >0) m_NumPhantomWLS++;
+
+    if(event->GetTrajectoryContainer())
+      m_manager_optical.fill();
 }
 
 

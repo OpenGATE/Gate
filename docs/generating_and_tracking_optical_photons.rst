@@ -418,6 +418,29 @@ OpticalData tree is generated with the following information::
    MomentumDirectionx MomentumDirectiony MomentumDirectionz
    Optical photon momentum direction
 
+
+
+New unified Tree output (ROOT, numpy and more)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One can save optical data in precedent section with new system (see :ref:`new_unified_tree_output_general_set-label`) like this::
+
+    /gate/output/tree/enable
+    /gate/output/tree/addFileName p.npy
+    /gate/output/tree/optical/enable
+
+And variables to save can also be disabled, for example::
+
+    /gate/output/tree/optical/branches/CrystalLastHitEnergy/disable
+
+
+
+
+
+
+
+
+
 .. _binary_output_of_projection_set-label:
 
 Binary output of projection set

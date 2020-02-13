@@ -895,6 +895,8 @@ Finally the random seed can be defined using::
  /gate/output/imageCT/setStartSeed   676567
 
 
+.. _new_unified_tree_output_general_set-label:
+
 New unified Tree output (ROOT, numpy and more)
 ----------------------------------------------
 

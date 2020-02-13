@@ -66,7 +66,12 @@ public:
   void setHitsEnabled(G4bool mHitsEnabled);
   void addCollection(const std::string &str); //called by messenger
 
+
+  G4bool getOpticalDataEnabled() const;
+  void setOpticalDataEnabled(G4bool mOpticalDataEnabled);
+
   std::unordered_map<std::string, SaveDataParam> &getHitsParamsToWrite();
+  std::unordered_map<std::string, SaveDataParam> &getOpticalParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getSinglesParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getCoincidencesParamsToWrite();
 
@@ -98,10 +103,13 @@ private:
       m_nCrystalRayleigh[0] = p->GetNCrystalRayleigh();
   }
 
+  void RecordOpticalData(const G4Event * event);
+
 
 
   GateToTreeMessenger *m_messenger;
   GateOutputTreeFileManager m_manager_hits;
+  GateOutputTreeFileManager m_manager_optical;
 //  std::vector<GateOutputTreeFileManager> m_vmanager_singles;
   std::unordered_map<std::string, GateOutputTreeFileManager> m_mmanager_singles;
   std::unordered_map<std::string, G4int> m_singles_to_collectionID;
@@ -114,6 +122,10 @@ private:
   std::vector<std::string> m_listOfCoincidencesCollection;
   G4bool m_hits_enabled;
   G4String m_uselessFileName; //only for GiveNameOfFile which return a reference..
+
+  G4bool m_opticalData_enabled;
+
+ private:
 
   G4int m_PDGEncoding;
   G4int m_trackID;
@@ -175,7 +187,17 @@ private:
   G4int m_photonID;
 //  G4int m_outpuID[OUTPUTID_SIZE];
 
+  G4int m_nScintillation, m_nCrystalOpticalWLS, m_nPhantomOpticalWLS;
+  G4int m_NumCrystalWLS, m_NumPhantomWLS;
+  std::string   m_NameOfProcessInCrystal;
+  std::string   m_NameOfProcessInPhantom;
+  G4double m_CrystalLastHitPos_X, m_CrystalLastHitPos_Y, m_CrystalLastHitPos_Z, m_CrystalLastHitEnergy;
+  G4double m_PhantomLastHitPos_X, m_PhantomLastHitPos_Y, m_PhantomLastHitPos_Z, m_PhantomLastHitEnergy;
+  G4double m_PhantomWLSPos_X, m_PhantomWLSPos_Y,m_PhantomWLSPos_Z;
+  G4double m_MomentumDirectionx, m_MomentumDirectiony, m_MomentumDirectionz;
+
   std::unordered_map<std::string, SaveDataParam> m_hitsParams_to_write;
+  std::unordered_map<std::string, SaveDataParam> m_opticalParams_to_write;
   std::unordered_map<std::string, SaveDataParam> m_singlesParams_to_write;
   std::unordered_map<std::string, SaveDataParam> m_coincidencesParams_to_write;
 
