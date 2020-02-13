@@ -86,7 +86,7 @@ void GateToSummary::RecordEndOfEvent(const G4Event* )
   GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
   if (CHC) {
     G4int NbHits = CHC->entries();
-    float n = 0;
+    G4int n = 0;
     for (G4int iHit=0; iHit<NbHits; iHit++) {
       GateCrystalHit* aHit = (*CHC)[iHit];
       if (aHit->GoodForAnalysis()) n++;
@@ -114,7 +114,7 @@ void GateToSummary::RecordEndOfEvent(const G4Event* )
 void GateToSummary::addCollection(const std::string & str)
 {
   m_collection_names.push_back(str);
-  m_collection_nb[str] = 0.0;
+  m_collection_nb[str] = 0;
 }
 //--------------------------------------------------------------------------------
 

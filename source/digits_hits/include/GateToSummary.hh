@@ -10,6 +10,7 @@
 #define GATETOSUMMARY_H
 
 #include <vector>
+#include <map>
 
 #include "GateVOutputModule.hh"
 
@@ -45,12 +46,12 @@ private:
   GateToSummaryMessenger* m_summaryMessenger;
   G4String m_fileName;
 
-  float m_nb_of_hits;
-  float m_nb_of_events;
-  float m_nb_of_runs;
+  G4int m_nb_of_hits;
+  G4int m_nb_of_events;
+  G4int m_nb_of_runs;
 
   std::vector<std::string> m_collection_names;
-  std::map<std::string, float> m_collection_nb;
+  std::map<std::string, G4int> m_collection_nb;
 };
 //--------------------------------------------------------------------------------
 
