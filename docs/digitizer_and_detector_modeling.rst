@@ -626,6 +626,9 @@ In the second example, a dead time corresponding to a disk access of 1 µs for a
    /gate/digitizer/Singles/deadtime/setBufferSize 1 MB 
    /gate/digitizer/Singles/deadtime/setBufferMode 0
 
+
+.. _digitizer_multiple_processor_chains-label:
+
 Multiple processor chains
 -------------------------
 

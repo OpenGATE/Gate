@@ -171,6 +171,7 @@ private:
 //  static const auto OUTPUTID_SIZE = 6;
 
   G4int m_volumeID[VOLUMEID_SIZE];
+  G4int m_systemID;
   G4int m_photonID;
 //  G4int m_outpuID[OUTPUTID_SIZE];
 
@@ -188,6 +189,7 @@ public:
   static const auto MAX_OUTPUTIDNAME_SIZE = 32;
 
   static char m_outputIDName[MAX_NB_SYSTEM][MAX_DEPTH_SYSTEM][MAX_OUTPUTIDNAME_SIZE];
+  static bool m_outputIDHasName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM];
   static G4int m_max_depth_system[MAX_NB_SYSTEM];
 
  private:

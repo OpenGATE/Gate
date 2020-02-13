@@ -19,11 +19,13 @@ See LICENSE.md for further details
 
 #include "GateOutputMgr.hh"
 #include "GateSystemListManager.hh"
+#include "GateVSystem.hh"
 #include "GateMiscFunctions.hh"
 #include "G4DigiManager.hh"
 
 
 char GateToTree::m_outputIDName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM][GateToTree::MAX_OUTPUTIDNAME_SIZE];
+bool GateToTree::m_outputIDHasName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM];
 G4int GateToTree::m_max_depth_system[GateToTree::MAX_NB_SYSTEM];
 const auto MAX_NB_CHARACTER = 32;
 
@@ -47,6 +49,17 @@ void SaveDataParam::setToSave(bool mSave)
 GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode) :
     GateVOutputModule(name, outputMgr, digiMode)
 {
+
+
+  for(auto nb_system = 0; nb_system < MAX_NB_SYSTEM; ++nb_system)
+  {
+    for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+    {
+      m_outputIDHasName[nb_system][depth] = false;
+    }
+  }
+
+
     m_hitsParams_to_write.emplace("PDGEncoding", SaveDataParam());
     m_hitsParams_to_write.emplace("trackID", SaveDataParam());
     m_hitsParams_to_write.emplace("parentID", SaveDataParam());
@@ -84,6 +97,7 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("photonID", SaveDataParam());
     m_hitsParams_to_write.emplace("volumeIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("componentsIDs", SaveDataParam());
+    m_hitsParams_to_write.emplace("systemID", SaveDataParam());
 
     m_singlesParams_to_write.emplace("runID", SaveDataParam());
     m_singlesParams_to_write.emplace("eventID", SaveDataParam());
@@ -105,6 +119,7 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_singlesParams_to_write.emplace("rotationAngle", SaveDataParam());
     m_singlesParams_to_write.emplace("axialPos", SaveDataParam());
     m_singlesParams_to_write.emplace("componentsIDs", SaveDataParam());
+    m_singlesParams_to_write.emplace("systemID", SaveDataParam());
 
     m_coincidencesParams_to_write.emplace("runID", SaveDataParam());
     m_coincidencesParams_to_write.emplace("eventID", SaveDataParam());
@@ -128,7 +143,7 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_coincidencesParams_to_write.emplace("sinogramTheta", SaveDataParam());
     m_coincidencesParams_to_write.emplace("sinogramS", SaveDataParam());
     m_coincidencesParams_to_write.emplace("componentsIDs", SaveDataParam());
-
+    m_coincidencesParams_to_write.emplace("systemID", SaveDataParam());
 
     m_messenger = new GateToTreeMessenger(this);
     m_hits_enabled = false;
@@ -263,8 +278,10 @@ void GateToTree::RecordBeginOfAcquisition()
 
       if(m_hitsParams_to_write.at("componentsIDs").toSave())
       {
-        for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+
+        if (GateSystemListManager::GetInstance()->size() == 1)
         {
+          int k = 0;
           for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
           {
             std::stringstream ss;
@@ -272,11 +289,31 @@ void GateToTree::RecordBeginOfAcquisition()
             m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
           }
         }
-      }
+        else
+        {
+          for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+          {
+            auto system = GateSystemListManager::GetInstance()->GetSystem(k);
 
+            for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
+            {
+              if(!m_outputIDHasName[k][depth])
+                continue;
+              std::stringstream ss;
+              ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+              m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
+            }
+          }
+        }
+      }
 
       if(m_hitsParams_to_write.at("photonID").toSave())
         m_manager_hits.write_variable("photonID", &m_photonID);
+
+      if(m_hitsParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
+        m_manager_hits.write_variable("systemID", &m_systemID);
+
+
       m_manager_hits.write_header();
     }
 
@@ -310,13 +347,29 @@ void GateToTree::RecordBeginOfAcquisition()
 
         if(m_singlesParams_to_write.at("componentsIDs").toSave())
         {
-          for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+          if (GateSystemListManager::GetInstance()->size() == 1)
           {
+            int k = 0;
             for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
             {
               std::stringstream ss;
               ss << m_outputIDName[k][depth];
               mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
+            }
+          }
+          else
+          {
+            for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+            {
+              auto system = GateSystemListManager::GetInstance()->GetSystem(k);
+              for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
+              {
+                if(!m_outputIDHasName[k][depth])
+                  continue;
+                std::stringstream ss;
+                ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+                mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
+              }
             }
           }
         }
@@ -345,6 +398,11 @@ void GateToTree::RecordBeginOfAcquisition()
           mm.write_variable("rotationAngle", &m_rotationAngle);
         if(m_singlesParams_to_write.at("axialPos").toSave())
           mm.write_variable("axialPos", &m_axialPos);
+
+        if(m_singlesParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
+          mm.write_variable("systemID", &m_systemID);
+
+
         mm.write_header();
     }
 
@@ -454,11 +512,13 @@ void GateToTree::RecordBeginOfAcquisition()
         mm.write_variable("RayleighCrystal2", &m_nCrystalRayleigh[1]);
       }
 
+
       if(m_coincidencesParams_to_write.at("componentsIDs").toSave())
       {
-        for(auto side = 1; side <= 2; ++side)
+        if (GateSystemListManager::GetInstance()->size() == 1)
         {
-          for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+          int k = 0;
+          for(auto side = 1; side <= 2; ++side)
           {
             for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
             {
@@ -467,8 +527,30 @@ void GateToTree::RecordBeginOfAcquisition()
               mm.write_variable(ss.str(), &m_outputID[side - 1][k][depth]);
             }
           }
+
+        }
+        else
+        {
+          for(auto side = 1; side <= 2; ++side)
+          {
+            for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+            {
+              auto system = GateSystemListManager::GetInstance()->GetSystem(k);
+              for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
+              {
+                if(!m_outputIDHasName[k][depth])
+                  continue;
+                std::stringstream ss;
+                ss << system->GetOwnName() << "/" << m_outputIDName[k][depth] << side;
+                mm.write_variable(ss.str(), &m_outputID[side - 1][k][depth]);
+              }
+            }
+          }
         }
       }
+
+      if(m_coincidencesParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
+        mm.write_variable("systemID", &m_systemID);
 
       if(m_coincidencesParams_to_write.at("sinogramTheta").toSave())
         mm.write_variable("sinogramTheta", &m_sinogramTheta);
@@ -522,19 +604,20 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
 //    auto writeRayleighVolName = m_hitsParams_to_write.at("RayleighVolName").toSave();
 //    auto writeVolumeIDs = m_hitsParams_to_write.at("volumeIDs").toSave();
 
+  m_systemID = -1;
   for( G4int iHit = 0; iHit < CHC->entries(); ++iHit )
   {
     auto hit = (*CHC)[ iHit ];
     if(!hit->GoodForAnalysis())
       continue;
 
-    auto system_id = hit->GetSystemID();
-    retrieve(hit, system_id);
+    m_systemID = hit->GetSystemID();
+    retrieve(hit, m_systemID);
 
     if(m_hitsParams_to_write.at("componentsIDs").toSave())
     {
       for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
-        m_outputID[0][system_id][depth] = hit->GetComponentID(depth);
+        m_outputID[0][m_systemID][depth] = hit->GetComponentID(depth);
     }
 
 //        if(writeComptonVolumeName)
@@ -602,32 +685,31 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
     auto v = SDC->GetVector();
     assert(v);
 
-    G4int system_id = -1;
+    m_systemID = -1;
 
 
     for(auto &&digi: *v)
     {
-      if(system_id == -1)
+      if(m_systemID == -1)
       {
         auto mother = static_cast<const GateCrystalHit*>(digi->GetPulse().GetMother());
         if(!mother)
         {
           // for example pulse created by GateNoise.cc (l67).
-          system_id = 0;
+          m_systemID = 0;
         } else
         {
-          system_id = mother->GetSystemID();
+          m_systemID = mother->GetSystemID();
         }
-
       }
 
-      retrieve(digi, system_id);
+      retrieve(digi, m_systemID);
       m_comptonVolumeName[0] = digi->GetComptonVolumeName();
       m_RayleighVolumeName[0] = digi->GetRayleighVolumeName();
       if(m_singlesParams_to_write.at("componentsIDs").toSave())
       {
         for(auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
-          m_outputID[0][system_id][depth] = digi->GetComponentID(depth);
+          m_outputID[0][m_systemID][depth] = digi->GetComponentID(depth);
       }
 
       m_edep[0] = digi->GetEnergy() / MeV;
@@ -659,30 +741,30 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
     auto v = SDC->GetVector();
     assert(v);
 
-    G4int system_id = -1;
+    m_systemID = -1;
 
 
     for(auto &&digi: *v)
     {
-      if(system_id == -1)
+      if(m_systemID == -1)
       {
         auto mother = static_cast<const GateCrystalHit*>(digi->GetPulse(0).GetMother());
         if(!mother) {
           // for example pulse created by GateNoise.cc (l67).
-          system_id = 0;
+          m_systemID = 0;
         } else {
-          system_id = mother->GetSystemID();
+          m_systemID = mother->GetSystemID();
         }
       }
 
       const auto &pulse = digi->GetPulse(0);
-      retrieve(&pulse, system_id);
+      retrieve(&pulse, m_systemID);
       m_comptonVolumeName[0] = pulse.GetComptonVolumeName();
       m_RayleighVolumeName[0] = pulse.GetRayleighVolumeName();
 
 
-      this->retrieve(digi, 0, system_id);
-      this->retrieve(digi, 1, system_id);
+      this->retrieve(digi, 0, m_systemID);
+      this->retrieve(digi, 1, m_systemID);
 
 
       m_sinogramTheta = atan2(m_posX[0]-m_posX[1], m_posY[0]-m_posY[1]);
@@ -793,17 +875,19 @@ void GateToTree::RegisterNewSingleDigiCollection(const G4String &string, G4bool 
 
 void GateToTree::SetOutputIDName(G4int id_system, const char *anOutputIDName, size_t depth)
 {
-//  G4cout << "GateToTree::SetOutputIDName, id_system = '" << id_system
-//         << "' anOutputIDName = '" << anOutputIDName
-//         << "' depth = '" << depth
-//         << "'\n";
+  G4cout << "GateToTree::SetOutputIDName, id_system = '" << id_system
+         << "' anOutputIDName = '" << anOutputIDName
+         << "' depth = '" << depth
+         << "'\n";
 
   assert(id_system < MAX_NB_SYSTEM);
   assert(depth < MAX_DEPTH_SYSTEM);
 
+
   m_max_depth_system[id_system] = depth + 1;
 
   strncpy(m_outputIDName[id_system][depth], anOutputIDName, MAX_OUTPUTIDNAME_SIZE);
+  m_outputIDHasName[id_system][depth] = true;
 }
 
 void GateToTree::addFileName(const G4String &s)
