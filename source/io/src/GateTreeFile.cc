@@ -17,7 +17,7 @@ GateTree::GateTree()
 
   this->add_size<long double>();
   this->add_size<float>();
-//  this->add_size<int>();
+  //this->add_size<int>();
   this->add_size<uint8_t>();
   this->add_size<uint16_t>();
   this->add_size<uint32_t>();

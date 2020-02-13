@@ -45,7 +45,9 @@ void GateRootTree::register_variable(const std::string &name, const void *p, std
   void *pp = (void*)p;
 
   std::stringstream leaf_ss;
-  leaf_ss << name << "/" << m_tmapOfDefinition.at(t_index);
+
+  auto b = name.find_first_of("[");
+  leaf_ss << name.substr(0, b) << "/" << m_tmapOfDefinition.at(t_index);
   string leaf_s = leaf_ss.str();
 
 //  cout << "RootTreeFile::register_variable name = " << name << " t_index = " << t_index.name() << " leaf_s = " << leaf_s << "\n";
@@ -65,6 +67,16 @@ void GateRootTree::register_variable(const std::string &name, const char *p, siz
 {
   register_variable(name, p, typeid(string));
 
+}
+
+void GateRootTree::register_variable(const std::string &name, const int *p, size_t n)
+{
+   void *pp = (void*)p;
+
+   std::stringstream leaf_ss;
+   leaf_ss << name <<"["<<n <<"]/" <<"I";
+   string leaf_s = leaf_ss.str();
+   m_ttree->Branch(name.c_str(), pp, leaf_s.c_str());
 }
 
 void GateOutputRootTreeFile::open(const std::string& s)
@@ -152,6 +164,10 @@ void GateOutputRootTreeFile::write_variable(const std::string &name, const char 
     this->register_variable(name, p, nb_char);
 }
 
+void GateOutputRootTreeFile::write_variable(const std::string &name, const int *p, size_t n)
+{
+    this->register_variable(name, p, n);
+}
 
 void GateInputRootTreeFile::check_existence_and_kind(const std::string &name, std::type_index t_index)
 {

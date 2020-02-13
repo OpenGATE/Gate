@@ -225,7 +225,7 @@ void GateToRoot::Book()
   hist_name  = "total_nb_primaries";
   hist_title = "total_nb_primaries(#)";
   //primaries_histo = new TH1D(hist_name,hist_title,100,0,900000000000.);
-  new TH1D(hist_name,hist_title,100,0,900000000000.);
+  m_total_nb_primaries_hist = new TH1D(hist_name,hist_title,100,0,900000000000.);
 
   m_treeHit = new GateHitTree(GateHitConvertor::GetOutputAlias());
   m_treeHit->Init(m_hitBuffer);
@@ -268,6 +268,9 @@ void GateToRoot::Book()
 
   for (size_t i=0; i<m_outputChannelList.size(); ++i)
     m_outputChannelList[i]->Book();
+
+
+  m_working_root_directory = TDirectory::CurrentDirectory();
 
 }
 //--------------------------------------------------------------------------
@@ -487,7 +490,7 @@ void GateToRoot::RecordEndOfAcquisition()
       TH1D* latest_histo;
       G4String hist_name;
       hist_name="latest_event_ID";
-      if ((latest_histo=(TH1D*)gDirectory->GetList()->FindObject(hist_name))!=NULL)
+      if ((latest_histo=(TH1D*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL)
         {
           latest_histo->Fill(latestEventID-1.0);
         }
@@ -501,7 +504,7 @@ void GateToRoot::RecordEndOfAcquisition()
   // Here we store the total number of primaries in the TH1D histo
   TH1D* primaries_histo;
   G4String hist_name = "total_nb_primaries";
-  if ( (primaries_histo=(TH1D*)gDirectory->GetList()->FindObject(hist_name))!=NULL)
+  if ( (primaries_histo=(TH1D*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL)
     {
       primaries_histo->Fill(nbPrimaries);
     }
@@ -736,7 +739,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       TH1F *hist;
       G4String hist_name;
       hist_name = "Positron_Kinetic_Energy_MeV";
-      if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+      if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
 
 	hist->Fill(m_positronKinEnergy/MeV);
       } else {
@@ -745,7 +748,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       }
       hist_name = "Ion_decay_time_s";
       hist = NULL;
-      if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+      if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(eventTime/s);
       } else {
 	if (nVerboseLevel > 0) G4cout
@@ -754,7 +757,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       G4ThreeVector posAnnihilDist = m_positronAnnihilPos - m_positronGenerationPos;
       hist_name = "Positron_annihil_distance_mm";
       hist = NULL;
-      if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+      if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(posAnnihilDist.mag()/mm);
       } else {
 	if (nVerboseLevel > 0) G4cout
@@ -773,7 +776,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
       hist_name = "Acolinea_Angle_Distribution_deg";
       hist = NULL;
-      if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+      if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(dev);
       } else {
 	//if (nVerboseLevel > 0)
@@ -782,7 +785,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
       TNtuple *ntuple;
       G4String ntuple_name="Gate";
-      if ((ntuple=(TNtuple *)gDirectory->GetList()->FindObject(ntuple_name))==NULL) {
+      if ((ntuple=(TNtuple *)m_working_root_directory->GetList()->FindObject(ntuple_name))==NULL) {
 	if (nVerboseLevel > 0) G4cout
 				 << "GateToRoot: ROOT: Cannot find ntuple "<< ntuple_name << Gateendl;
       } else {
@@ -1038,15 +1041,15 @@ void GateToRoot::Reset()
     TH1F *hist;
     G4String hist_name;
     hist_name = "Positron_Kinetic_Energy_MeV";
-    if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+    if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
       hist->Reset();
     }
     hist_name = "Ion_decay_time_s";
-    if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+    if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
       hist->Reset();
     }
     hist_name = "Positron_annihil_distance_mm";
-    if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
+    if ((hist=(TH1F*)m_working_root_directory->GetList()->FindObject(hist_name))!=NULL) {
       hist->Reset();
     }
   }

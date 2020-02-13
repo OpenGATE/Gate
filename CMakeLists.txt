@@ -254,12 +254,25 @@ IF(GATE_USE_GPU AND CUDA_FOUND)
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
+  ADD_EXECUTABLE(GateDigit_singles_sorter ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_singles_sorter.cc  ${sources} ${headers})
+  ADD_EXECUTABLE(GateDigit_hits_digitizer ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_hits_digitizer.cc ${sources} ${headers})
+  ADD_EXECUTABLE(GateDigit_coincidence_processor ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_coincidence_processor.cc ${sources} ${headers})
+  ADD_EXECUTABLE(GateDigit_seqCoinc2Cones ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_seqCoinc2Cones.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} pthread)
+#=========================================================
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_singles_sorter  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_hits_digitizer  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_coincidence_processor  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_seqCoinc2Cones  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
+INSTALL(TARGETS GateDigit_singles_sorter DESTINATION bin)
+INSTALL(TARGETS GateDigit_hits_digitizer DESTINATION bin)
+INSTALL(TARGETS GateDigit_coincidence_processor DESTINATION bin)
+INSTALL(TARGETS GateDigit_seqCoinc2Cones DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)

@@ -28,6 +28,7 @@ See LICENSE.md for further details
 #include "GateUpholder.hh"
 #include "GateDeadTime.hh"
 #include "GateBlurring.hh"
+#include "GateLocalTimeDelay.hh"
 #include "GateLocalBlurring.hh"
 #include "GateLocalEfficiency.hh"
 #include "GateEnergyEfficiency.hh"
@@ -44,9 +45,20 @@ See LICENSE.md for further details
 #include "GateSpblurring.hh"
 #include "GatePulseAdder.hh"
 #include "GatePulseAdderCompton.hh"
+#include "GatePulseAdderComptPhotIdeal.hh"
+#include "GatePulseAdderComptPhotIdealLocal.hh"
 #include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GatePulseAdderGPUSpect.hh"
+#include "GateLocalClustering.hh"
+#include "GateClustering.hh"
+#include "GateEnergyThresholder.hh"
+#include "GateLocalEnergyThresholder.hh"
+#include "GateCC3DlocalSpblurring.hh"
+#include "GateDoIModels.hh"
+#include "GateGridDiscretization.hh"
+#include "GateLocalMultipleRejection.hh"
+#include "GateLocalTimeResolution.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -90,7 +102,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder upholder blurring localBlurring localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring adder adderCompton deadtime crystalblurring timeResolution opticaladder systemFilter adderGPUSpect";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter adderGPUSpect  gridDiscretization  localMultipleRejection";
   return theList;
 }
 
@@ -116,6 +128,13 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateDiscretizer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="thresholder")
     newProcessor = new GateThresholder(GetProcessorChain(),newInsertionName,50.*keV);
+  else if (childTypeName=="energyThresholder")
+    newProcessor = new GateEnergyThresholder(GetProcessorChain(),newInsertionName,50.*keV);
+  else if (childTypeName=="localEnergyThresholder")
+    newProcessor = new GateLocalEnergyThresholder(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="DoImodel")
+    //newProcessor = new GateDoIModels(GetProcessorChain(),newInsertionName,G4ThreeVector(0.,0.,1.));
+    newProcessor = new GateDoIModels(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="upholder")
     newProcessor = new GateUpholder(GetProcessorChain(),newInsertionName,150.*keV);
   else if (childTypeName=="deadtime")
@@ -124,6 +143,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBlurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="localBlurring")
     newProcessor = new GateLocalBlurring(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="localTimeDelay")
+    newProcessor = new GateLocalTimeDelay(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="transferEfficiency")
     newProcessor = GateTransferEfficiency::GetInstance(GetProcessorChain(),newInsertionName); 
   else if (childTypeName=="lightYield")
@@ -140,10 +161,20 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateCalibration(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="spblurring")
     newProcessor = new GateSpblurring(GetProcessorChain(),newInsertionName,0.1);
+  else if (childTypeName=="sp3Dlocalblurring")
+    newProcessor = new GateCC3DlocalSpblurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adder")
     newProcessor = new GatePulseAdder(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderCompton")
     newProcessor = new GatePulseAdderCompton(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="adderComptPhotIdeal")
+    newProcessor = new GatePulseAdderComptPhotIdeal(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="adderComptPhotIdealLocal")
+    newProcessor = new GatePulseAdderComptPhotIdealLocal(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="localClustering")
+    newProcessor = new GateLocalClustering(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="clustering")
+    newProcessor = new GateClustering(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderGPUSpect")
 		newProcessor = new GatePulseAdderGPUSpect(GetProcessorChain(),newInsertionName);
 	else if (childTypeName=="crystalblurring")
@@ -158,8 +189,16 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateBuffer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="timeResolution")
     newProcessor = new GateTemporalResolution(GetProcessorChain(),newInsertionName,0. * ns);
+  else if (childTypeName=="localTimeResolution")
+    newProcessor = new GateLocalTimeResolution(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="systemFilter")
      newProcessor = new GateSystemFilter(GetProcessorChain(),newInsertionName);
+ // else if (childTypeName=="stripSpDiscretization")
+  //   newProcessor = new GateStripSpatialDiscretization(GetProcessorChain(),newInsertionName);
+else if (childTypeName=="gridDiscretization")
+     newProcessor = new GateGridDiscretization(GetProcessorChain(),newInsertionName);
+else if (childTypeName=="localMultipleRejection")
+     newProcessor = new GateLocalMultipleRejection(GetProcessorChain(),newInsertionName);
 #ifdef GATE_USE_OPTICAL
   else if (childTypeName=="opticaladder")
     newProcessor = new GateOpticalAdder(GetProcessorChain(), newInsertionName);

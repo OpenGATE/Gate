@@ -30,6 +30,8 @@
 
 #include "GateConfiguration.h"
 
+#include "GateToTree.hh"
+
 G4int GateVSystem::m_insertionOrder=-1;
 //-----------------------------------------------------------------------------
 /* Constructor
@@ -80,7 +82,8 @@ void GateVSystem::SetOutputIDName(char * anOutputIDName, size_t depth)
 {
  #ifdef G4ANALYSIS_USE_ROOT
   GateRootDefs::SetOutputIDName(anOutputIDName,depth);
- #endif
+#endif
+  GateToTree::SetOutputIDName(m_itsNumber, anOutputIDName, depth);
 }
 //-----------------------------------------------------------------------------
 

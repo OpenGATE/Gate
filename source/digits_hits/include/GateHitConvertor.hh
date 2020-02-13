@@ -32,6 +32,7 @@ class GateHitConvertor : public GateClockDependent
      virtual ~GateHitConvertor();
 
      virtual GatePulseList* ProcessHits(const GateCrystalHitsCollection* hitCollection);
+     virtual GatePulseList* ProcessHits(std::vector<GateCrystalHit*> vhitCollection);
      virtual void DescribeMyself(size_t indent);
 
      static  const G4String& GetOutputAlias()

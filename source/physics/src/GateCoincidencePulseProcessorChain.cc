@@ -31,6 +31,8 @@ GateCoincidencePulseProcessorChain::GateCoincidencePulseProcessorChain( GateDigi
 {
   
   m_messenger = new GateCoincidencePulseProcessorChainMessenger(this);
+  //name of your chain
+   //G4cout<<"GateCoincidencePulseProcessor m_outputName="<<m_outputName<<G4endl;
 
   G4cout << " in GateCoincidencePulseProcessorChain call new GateCoincidenceDigiMaker "  << Gateendl;
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
@@ -140,11 +142,13 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
        if (processor->IsEnabled()) {
 	 pulse = processor->ProcessPulse(pulse,i);
 	 if (pulse){
+	   //G4cout<<"processorName="<<processor->GetObjectName()<<G4endl;
       	   pulse->SetName(processor->GetObjectName());
       	   GateDigitizer::GetInstance()->StoreCoincidencePulse(pulse);
 	 } else break;
        }
      }
+      //G4cout<<"CoincChain m_outputName="<<m_outputName<<G4endl;
      if (pulse) GateDigitizer::GetInstance()->StoreCoincidencePulseAlias(m_outputName,pulse);
    }
 

@@ -39,6 +39,7 @@ class GateOutputTreeFileManager
 {
 public:
   GateOutputTreeFileManager();
+  GateOutputTreeFileManager(GateOutputTreeFileManager &&m);
   virtual ~GateOutputTreeFileManager();
 
   std::unique_ptr<GateOutputTreeFile> add_file(const std::string &file_path, const std::string &kind);
@@ -54,6 +55,7 @@ public:
 
   void write_variable(const std::string &name, const std::string *p, size_t nb_char);
   void write_variable(const std::string &name, const char *p, size_t nb_char);
+  void write_variable(const std::string &name, const int *p, size_t sizeArray);
   void set_tree_name(const std::string &name);
 
   void fill();

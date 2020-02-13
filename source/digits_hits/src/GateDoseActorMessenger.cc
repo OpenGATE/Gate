@@ -29,6 +29,7 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableDoseSquaredCmd= 0;
   pEnableDoseUncertaintyCmd= 0;
   pSetDoseEfficiencyCmd= 0;
+  pSetDoseEfficiencyByZCmd= 0;
   //DoseToWater
   pEnableDoseToWaterCmd = 0;
   pEnableDoseToWaterNormToMaxCmd= 0;
@@ -73,6 +74,7 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pSetDoseEfficiencyCmd) delete pSetDoseEfficiencyCmd;
+  if(pSetDoseEfficiencyByZCmd) delete pSetDoseEfficiencyByZCmd;
   //DoseToWater
   if(pEnableDoseToWaterCmd) delete pEnableDoseToWaterCmd;
   if(pEnableDoseToWaterNormToMaxCmd) delete pEnableDoseToWaterNormToMaxCmd;
@@ -144,10 +146,16 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pEnableDoseUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty dose computation");
   pEnableDoseUncertaintyCmd->SetGuidance(guid);
+    //Efficiency option
   n = base+"/setDoseEfficiencyFile";
   pSetDoseEfficiencyCmd = new G4UIcmdWithAString(n, this);
-  guid = G4String("set dose scoring efficiency as a function of energy");
+  guid = G4String("set dose scoring efficiency as a function of energy (independently of particle atomic number)");
   pSetDoseEfficiencyCmd->SetGuidance(guid);
+    //Efficiency option by Z (by ion atomic number)
+  n = base+"/setDoseEfficiencyFileAndAtomicNumber";
+  pSetDoseEfficiencyByZCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("set dose scoring efficiency as a function of energy, depending on particle atomic number");
+  pSetDoseEfficiencyByZCmd->SetGuidance(guid);
 
   //DoseToWater
   n = base+"/enableDoseToWater";
@@ -274,7 +282,11 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormToMaxCmd) pDoseActor->EnableDoseNormalisationToMax(pEnableDoseNormToMaxCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
+	//Efficiency option
   if (cmd == pSetDoseEfficiencyCmd) pDoseActor->SetEfficiencyFile(newValue);
+    //Efficiency option by Z (by ion atomic number)
+  if (cmd == pSetDoseEfficiencyByZCmd) pDoseActor->SetEfficiencyFileByZ(newValue);
+ 
   //DoseToWater
   if (cmd == pEnableDoseToWaterCmd) pDoseActor->EnableDoseToWaterImage(pEnableDoseToWaterCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterSquaredCmd) pDoseActor->EnableDoseToWaterSquaredImage(pEnableDoseToWaterSquaredCmd->GetNewBoolValue(newValue));

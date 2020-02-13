@@ -47,6 +47,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsDoseUncertaintyImageEnabled = false;
   mIsDoseNormalisationEnabled = false;
   mIsDoseEfficiencyEnabled = false;
+  mIsDoseEfficiencyByZEnabled = false;
   //DoseToWater
   mIsDoseToWaterImageEnabled = false;
   mIsDoseToWaterSquaredImageEnabled = false;
@@ -142,7 +143,29 @@ void GateDoseActor::SetEfficiencyFile(G4String b) {
   mDoseEfficiencyFile = b;
   mIsDoseEfficiencyEnabled = true;
 }
-
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetEfficiencyFileByZ(G4String b) {
+  mIsDoseEfficiencyByZEnabled = true;
+  std::stringstream ss(b);
+  string token;
+  int a=0;
+  G4String s="";
+  G4int i=0;
+  //split the input into string and integer
+  while (ss >> token) {
+	a++;
+	if (a==1) s=token;
+	if (a==2) i = stoi(token);
+	}
+  // check that 2 inputs are provided
+  if (a!=2) {
+	  G4cout<<"Number of arguments provided is incorrect: the setDoseEfficiencyFileAndAtomicNumber command requires an input efficiency file and an atomic number."<<G4endl;
+	  //G4cout<<"\n\n\n "<<iss.str().length()<<G4endl;
+	  exit(0);
+  }
+  mDoseEfficiencyFileByZ.push_back(s);
+  mDoseZByZ.push_back(i);
+}
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -242,6 +265,7 @@ void GateDoseActor::Construct() {
     mDoseToOtherMaterialImage.Allocate();
     mDoseToOtherMaterialImage.SetFilename(mDoseToOtherMaterialFilename);
   }
+  //Efficiency option
   if (mIsDoseEfficiencyEnabled){
     std::ifstream inFile(mDoseEfficiencyFile);
     if (! inFile) {
@@ -262,6 +286,37 @@ void GateDoseActor::Construct() {
     }
     GateMessage("Actor", 0, "[DoseActor] : "<<mDoseEfficiencyFile<<" loaded successfully!"<< Gateendl);
   }
+  //Efficiency option by Z (by ion atomic number)
+    if (mIsDoseEfficiencyByZEnabled){
+		std::ifstream inFile;
+		std::vector<double> mDoseEfficiencyParameters;
+		std::string line;
+		double previousEnergy=0;
+		int lineno = 0;
+		int NbLines = 0;
+		for (unsigned int i=0; i<mDoseEfficiencyFileByZ.size(); i++){
+			std::vector<double> EnergyTemp;
+			std::vector<double> EfficiencyTemp;
+			inFile.open(mDoseEfficiencyFileByZ.at(i));
+			if (! inFile) {
+				GateError("Cannot open dose efficiency file! "<<mDoseEfficiencyFileByZ.at(i)<<Gateendl);
+				}
+			NbLines = ParseNextContentLine<int,1>(inFile,lineno,mDoseEfficiencyFileByZ.at(i))[0];
+			for (int k = 0; k < NbLines; k++) {
+			  if (k>0) {previousEnergy=mDoseEfficiencyParameters[0];}
+			  mDoseEfficiencyParameters = ParseNextContentLine<double,2>(inFile,lineno,mDoseEfficiencyFileByZ.at(i));
+			  EnergyTemp.push_back(mDoseEfficiencyParameters[0]);
+			  EfficiencyTemp.push_back(mDoseEfficiencyParameters[1]);
+			  GateMessage("Actor", 5, "[DoseActor] mDoseEfficiencyParameters: "<<mDoseEfficiencyParameters[0]<<"\t"<<mDoseEfficiencyParameters[1]<< Gateendl);
+			  if (k>0 && mDoseEfficiencyParameters[0]<previousEnergy){GateError("The energies of the Efficiency file must be ordered from lowest to highest - simulation abort!");}
+			}
+			mDoseEnergyByZ.push_back(EnergyTemp);
+			mDoseEfficiencyByZ.push_back(EfficiencyTemp);
+			GateMessage("Actor", 0, "[DoseActor] : "<<mDoseEfficiencyFileByZ.at(i)<<" loaded successfully!"<< Gateendl);
+			inFile.close();
+		}
+	}
+  
   //HIT
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -545,15 +600,28 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mIsEdepImageEnabled) {
     GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
-
+  
+  //GetVoxelVolume for dose output calculation
+  double VoxelVolume=0.0;
+  if (mIsDoseImageEnabled){ VoxelVolume=mDoseImage.GetVoxelVolume();
+	  }
+	  else if (mIsDoseToWaterImageEnabled) { VoxelVolume=mDoseToWaterImage.GetVoxelVolume();
+		  }
+		  else if (mIsDoseToOtherMaterialImageEnabled) { VoxelVolume=mDoseToOtherMaterialImage.GetVoxelVolume();
+			}
+			
   //Dose
   double dose=0.;
   if (mIsDoseImageEnabled || mIsDoseToWaterImageEnabled || mIsDoseToOtherMaterialImageEnabled) {
     // ------------------------------------
     // Convert deposited energy into Gray
-    dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
+	//OLD METHOD REQUIRING a Dose Image to get the voxel volume
+		//dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
+    //NEW METHOD: do not require dose image to get the voxel volume
+    dose = edep/density/VoxelVolume/gray;
     // ------------------------------------
 
+  //Efficiency
     if(mIsDoseEfficiencyEnabled){
       double efficiency=1;
       for (unsigned int k=0; k<mDoseEnergy.size(); k++){
@@ -567,19 +635,46 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       }
       if(mTestFlag){
         G4double dedx = emcalc->ComputeElectronicDEDX(energy, p, current_material);
-
         G4cout<<"Particle : "<<p->GetParticleName()<<"\t energy : "<<energy<<"\t material : "<<current_material->GetName()<<"\t dedx : "<<dedx<<"\t efficiency : "<<efficiency<<"\t dose : "<<dose;
       }
       dose*=efficiency;
       if(mTestFlag){G4cout<<"\t effective dose : "<<dose<<G4endl;}
-
     }
-
+  //Efficiency option by Z (by ion atomic number)
+    if(mIsDoseEfficiencyByZEnabled){		
+          if (p->GetPDGCharge()!=0){
+		    for (unsigned i=0; i<mDoseZByZ.size(); i++){
+				//check that the current atomic number found belongs to one in the table
+				if (mDoseZByZ.at(i)==p->GetPDGCharge()) {
+				  double efficiency=1;
+				  for (unsigned int k=0; k<mDoseEnergyByZ[i].size(); k++){
+					if(mDoseEnergyByZ[i][k]>energy){
+					  efficiency=mDoseEfficiencyByZ[i][k-1]+(mDoseEfficiencyByZ[i][k]-mDoseEfficiencyByZ[i][k-1])/(mDoseEnergyByZ[i][k]-mDoseEnergyByZ[i][k-1])*(energy-mDoseEnergyByZ[i][k-1]);
+					  k=mDoseEnergyByZ[i].size();
+					}
+					else if(k==mDoseEnergyByZ[i].size()-1){
+					  GateMessage("Actor", 0, "WARNING particle energy larger than energies available in the file: "<<mDoseEfficiencyFileByZ.at(i)<<" Efficiency = 1 instead"<<Gateendl);
+					}
+				  }
+				  if(mTestFlag){
+					G4double dedx = emcalc->ComputeElectronicDEDX(energy, p, current_material);
+					G4cout<<"Particle : "<<p->GetParticleName()<<"\t energy : "<<energy<<"\t material : "<<current_material->GetName()<<"\t dedx : "<<dedx<<"\t efficiency : "<<efficiency<<"\t dose : "<<dose;
+				  }
+				  dose*=efficiency;
+				  if(mTestFlag){G4cout<<"\t effective dose : "<<dose<<G4endl;}
+				  i = mDoseZByZ.size();
+					;}
+				else {;}
+		  }
+	  }
+    }
+    
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
                      << G4BestUnit(dose, "Dose")
                      << " rho = "
                      << G4BestUnit(density, "Volumic Mass")<< Gateendl );
   }
+
 
   //DoseToWater
   double doseToWater = 0;
@@ -608,6 +703,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
         doseToWater = dose*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
       }
 
+//G4cout<<"Dose To Water " << doseToWater << G4endl;
 
       //------------------------------------
       //Alternative way of converting dose to water is to keep the dose from particles having dedx=0 equal to the dedx of electrons

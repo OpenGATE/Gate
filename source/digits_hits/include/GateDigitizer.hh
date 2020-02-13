@@ -1,12 +1,15 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
-//    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+/*!
+  \class  GateDigitizer
+  Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+*/
 
 #ifndef GateDigitizer_h
 #define GateDigitizer_h 1
@@ -27,43 +30,43 @@ class GateDigitizerMessenger;
 class GateHitConvertor;
 class GateVDigiMakerModule;
 class GateVSystem;
+class GateCrystalHit;
 
 class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 {
-  public:
-    static GateDigitizer* GetInstance();
+public:
+  static GateDigitizer* GetInstance();
 
-  protected:
-    GateDigitizer();
+protected:
+  GateDigitizer();
 
-  public:
-    virtual ~GateDigitizer();
+public:
+  virtual ~GateDigitizer();
 
-    virtual void InsertChain(GatePulseProcessorChain* newChain);
-    virtual void InsertCoincidenceChain(GateCoincidencePulseProcessorChain* newChain);
+  virtual void InsertChain(GatePulseProcessorChain* newChain);
+  virtual void InsertCoincidenceChain(GateCoincidencePulseProcessorChain* newChain);
 
-    virtual void DescribeChains(size_t indent);
-    virtual void DescribeSorters(size_t indent);
-    virtual void ListElements(size_t indent=0);
-    virtual GatePulseProcessorChain* GetChain(size_t i)
-      	  {return (i<m_singleChainList.size()) ? m_singleChainList[i] : 0; }
-     virtual inline size_t size() const
-      	  {return m_singleChainList.size(); }
-    virtual size_t GetChainNumber() const
-      	  { return size();}
-     virtual GateNamedObject* FindElement(const G4String& name);
-     virtual inline GateNamedObject* FindElementByBaseName(const G4String& baseName)
-       { return FindElement( MakeElementName(baseName) ) ; }
-     inline const G4String&  GetElementTypeName()
-      	  { return m_elementTypeName;}
+  virtual void DescribeChains(size_t indent);
+  virtual void DescribeSorters(size_t indent);
+  virtual void ListElements(size_t indent=0);
+  virtual GatePulseProcessorChain* GetChain(size_t i)
+  {return (i<m_singleChainList.size()) ? m_singleChainList[i] : 0; }
+  virtual inline size_t size() const
+  {return m_singleChainList.size(); }
+  virtual size_t GetChainNumber() const
+  { return size();}
+  virtual GateNamedObject* FindElement(const G4String& name);
+  virtual inline GateNamedObject* FindElementByBaseName(const G4String& baseName)
+  { return FindElement( MakeElementName(baseName) ) ; }
+  inline const G4String&  GetElementTypeName()
+  { return m_elementTypeName;}
 
-    virtual inline G4String MakeElementName(const G4String& newBaseName)
-      { return GetObjectName() + "/" + newBaseName; }
+  virtual inline G4String MakeElementName(const G4String& newBaseName)
+  { return GetObjectName() + "/" + newBaseName; }
 
-    virtual inline GateVSystem* GetSystem() const //mhadi_obso Obsolete because we use now a system list for the multi-system approach
-    { return m_system;}
-    virtual void SetSystem(GateVSystem* aSystem);//mhadi_obso Obsolete because we use now a system list for the multi-system approach
-
+  virtual inline GateVSystem* GetSystem() const //mhadi_obso Obsolete because we use now a system list for the multi-system approach
+  { return m_system;}
+  virtual void SetSystem(GateVSystem* aSystem);//mhadi_obso Obsolete because we use now a system list for the multi-system approach
 
   // Print-out a description of the object
   void Describe(size_t indent);
@@ -101,19 +104,22 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   void StoreNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter);
 
   void MakeCoincidencePulse(G4int i)
-    { m_coincidenceSorterList[i]->ProcessSinglePulseList();}
+  { m_coincidenceSorterList[i]->ProcessSinglePulseList();}
 
   virtual void Digitize();
+  void Digitize(std::vector<GateCrystalHit*> vHitsCollection);
+  void DigitizePulses();
+
 
   //! Return the hit convertor attached to the digitizer
   inline GateHitConvertor* GetHitConvertor()
-    { return m_hitConvertor;}
+  { return m_hitConvertor;}
 
   inline void StoreDigiCollection(G4VDigiCollection* aDC)
-    { G4VDigitizerModule::StoreDigiCollection(aDC); }
+  { G4VDigitizerModule::StoreDigiCollection(aDC); }
 
   inline void StoreCollectionName(const G4String& aCollectionName)
-    { collectionName.push_back(aCollectionName.c_str()); }
+  { collectionName.push_back(aCollectionName.c_str()); }
 
   virtual void InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModule);
 
@@ -148,7 +154,7 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   {return (i<m_coincidenceChainList.size()) ? m_coincidenceChainList[i] : 0; }
   //mhadi_add]
 
-  protected:
+protected:
   G4String 					m_elementTypeName;	 //!< Type-name for all digitizer modules
 
   GateVSystem*					m_system;		 //<! System to which the digitizer is attached //mhadi_obso Obsolete
@@ -166,12 +172,19 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
   typedef std::pair<G4String,GateCoincidencePulse*> GateCoincidencePulseListAlias;
 
+
+
+private:
   std::vector<GatePulseList*>            	m_pulseListVector;
   std::vector<GateCoincidencePulse*>     	m_coincidencePulseVector;
   std::vector<GatePulseListAlias>      		m_pulseListAliasVector;
-  std::vector<GateCoincidencePulseListAlias>    m_coincidencePulseListAliasVector;
+   std::vector<GateCoincidencePulseListAlias>    m_coincidencePulseListAliasVector;
+
 
   static GateDigitizer*      			theDigitizer;
+  //public:
+  //unsigned int GetPulseSingleListVectorSize();
+  //std::vector<GatePulseListAlias> searchSingles();
 };
 
 #endif
