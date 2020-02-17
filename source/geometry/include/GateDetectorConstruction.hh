@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
+  See GATE/LICENSE.txt for further details
   ----------------------*/
 
 
@@ -20,7 +20,37 @@
 #include "GatePhysicsList.hh"
 #include "GateRTPhantomMgr.hh"
 
+#include "G4FieldManager.hh"
+#include "G4MagIntegratorDriver.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4ChordFinder.hh"
+#include "G4TransportationManager.hh"
+#include "G4PropagatorInField.hh"
+
+#include "G4ExplicitEuler.hh"
+#include "G4ImplicitEuler.hh"
+#include "G4SimpleRunge.hh"
+#include "G4SimpleHeum.hh"
+#include "G4NystromRK4.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4HelixHeum.hh"
+#include "G4HelixExplicitEuler.hh"
+#include "G4HelixImplicitEuler.hh"
+#include "G4HelixSimpleRunge.hh"
+#include "G4CashKarpRKF45.hh"
+#include "G4RKG3_Stepper.hh"
+
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4UniformMagField.hh"
+#include "G4UniformElectricField.hh"
+#include "G4MagneticField.hh"
+#include "G4ElectricField.hh"
+
 class G4UniformMagField;
+class G4UniformElectricField;
+class G4MagneticField;
+class G4EqMagElectricField;
 class GateObjectStore;
 class G4Box;
 class G4LogicalVolume;
@@ -45,7 +75,19 @@ public:
   virtual G4VPhysicalVolume* Construct();
   virtual void UpdateGeometry();
   virtual void SetMagField (G4ThreeVector);
-  virtual void BuildMagField ();
+  virtual void SetMagFieldTabulatedFile (G4String);
+  virtual void SetElectField (G4ThreeVector);
+  virtual void SetElectFieldTabulatedFile (G4String);
+  virtual void BuildField ();
+
+  void SetMagStepMinimum(G4double);
+  void SetMagDeltaChord(G4double);
+  void SetMagDeltaOneStep(G4double);
+  void SetMagDeltaIntersection(G4double);
+  void SetMagMinimumEpsilonStep(G4double);
+  void SetMagMaximumEpsilonStep(G4double);
+  void SetMagIntegratorStepper(G4String);
+  void SetField ();
 
   /* PY Descourt 08/09/2009 */
   GateARFSD* GetARFSD(){ return m_ARFSD;};
@@ -145,9 +187,38 @@ protected :
 
 
 private:
-  //! Magnetic field
+  //! Magnetic field & Electric field
   G4UniformMagField* m_magField;
   G4ThreeVector      m_magFieldValue;
+  G4String           m_magFieldTabulatedFile;
+
+  G4UniformElectricField* e_electField;
+  G4ThreeVector      e_electFieldValue;
+  G4String           e_electFieldTabulatedFile;
+
+  G4bool             m_magFieldUniform;
+  G4bool             m_magFieldTabulated;
+
+  G4bool             e_electFieldUniform;
+  G4bool             e_electFieldTabulated;
+
+  G4MagneticField*   m_MagField;
+  G4ElectricField*   e_ElecField;
+
+  G4Mag_UsualEqRhs* fEquation_B;
+  G4EqMagElectricField* fEquation_E;
+
+  G4FieldManager * fFieldMgr;
+  G4MagIntegratorStepper * fStepper;
+
+  G4double fMinStep;
+  G4double fDeltaChord;
+  G4double fDeltaIntersection;
+  G4double fDeltaOneStep;
+  G4double fMinimumEpsilonStep;
+  G4double fMaximumEpsilonStep;
+  G4String fIntegratorStepper;
+  G4int nvarOfIntegratorStepper;
 
   GateARFSD* m_ARFSD; // PY Descourt 8/09/2009
   GateRTPhantomMgr* m_RTPhantomMgr; // PY Descourt 08/09/2009

@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
@@ -20,6 +20,8 @@ class G4UIcmdWithABool;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWith3VectorAndUnit;
+class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithADouble;
 
 class GateDetectorMessenger: public G4UImessenger
 {
@@ -37,7 +39,21 @@ class GateDetectorMessenger: public G4UImessenger
     G4UIdirectory*             pGateGeometryDir;
     
     G4UIcmdWithAString*        pMaterialDatabaseFilenameCmd;
+
     G4UIcmdWith3VectorAndUnit* pMagFieldCmd;
+    G4UIcmdWithAString* 	   pMagTabulatedField3DCmd;
+
+    G4UIcmdWith3VectorAndUnit* pElectFieldCmd;
+    G4UIcmdWithAString* 	   pElectTabulatedField3DCmd;
+
+    G4UIcmdWithAString*        pMagIntegratorStepperCmd;
+    G4UIcmdWithADoubleAndUnit* pMagStepMinimumCmd;
+    G4UIcmdWithADoubleAndUnit* pMagDeltaChordCmd;
+    G4UIcmdWithADoubleAndUnit* pMagDeltaOneStepCmd;
+    G4UIcmdWithADoubleAndUnit* pMagDeltaIntersectionCmd;
+    G4UIcmdWithADouble*        pMagMinimumEpsilonStepCmd;
+    G4UIcmdWithADouble*        pMagMaximumEpsilonStepCmd;
+
     G4UIcmdWithoutParameter*   pListCreatorsCmd;
     G4UIcmdWithAString*        IoniCmd;
 
