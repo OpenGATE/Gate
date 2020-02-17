@@ -132,9 +132,9 @@ private:
   G4int m_parentID;
   G4double m_trackLocalTime;
   G4double m_time[2];
-  G4double m_edep[2];
-  G4double m_stepLength;
-  G4double m_trackLength;
+  G4float m_edep[2];
+  G4float m_stepLength;
+  G4float m_trackLength;
 
 
   G4int m_runID;
@@ -143,20 +143,20 @@ private:
   G4int m_primaryID;
 
 
-  G4double m_localPosX;
-  G4double m_localPosY;
-  G4double m_localPosZ;
+  G4float m_localPosX;
+  G4float m_localPosY;
+  G4float m_localPosZ;
 
-  G4double m_posX[2];
-  G4double m_posY[2];
-  G4double m_posZ[2];
+  G4float m_posX[2];
+  G4float m_posY[2];
+  G4float m_posZ[2];
 
-  G4double m_momDirX;
-  G4double m_momDirY;
-  G4double m_momDirZ;
+  G4float m_momDirX;
+  G4float m_momDirY;
+  G4float m_momDirZ;
 
-  G4double m_axialPos;
-  G4double m_rotationAngle;
+  G4float m_axialPos;
+  G4float m_rotationAngle;
 
 
   std::string m_processName;
@@ -165,17 +165,17 @@ private:
 
 
 
-  G4double m_sourcePosX[2];
-  G4double m_sourcePosY[2];
-  G4double m_sourcePosZ[2];
+  G4float m_sourcePosX[2];
+  G4float m_sourcePosY[2];
+  G4float m_sourcePosZ[2];
 
   G4int m_nPhantomCompton[2];
   G4int m_nCrystalCompton[2];
   G4int m_nPhantomRayleigh[2];
   G4int m_nCrystalRayleigh[2];
 
-  G4double m_sinogramTheta;
-  G4double m_sinogramS;
+  G4float m_sinogramTheta;
+  G4float m_sinogramS;
 
 
 
