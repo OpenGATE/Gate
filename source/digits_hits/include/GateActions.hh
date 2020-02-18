@@ -31,7 +31,7 @@ class GateTrack;
 class GateVVolume;
 class GateUserActions;
 
-enum TrackingMode {
+enum class TrackingMode {
   kUnknown, kBoth,  kTracker,
   kDetector
 };
@@ -171,7 +171,7 @@ protected :
   //
   GateSteppingActionMessenger* m_steppingMessenger;
   std::vector<GateTrack*> *PPTrackVector;
-  TrackingMode TheMode;
+  TrackingMode m_trackingMode;
   G4int Boundary; // if set to 1 stop track on Phantom Boundary
   G4int fKeepOnlyP;
   G4int fKeepOnlyPhotons;
