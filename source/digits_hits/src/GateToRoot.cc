@@ -285,18 +285,18 @@ void GateToRoot::RecordBeginOfAcquisition()
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
-  if (nVerboseLevel > 1) G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << theMode << Gateendl;
+  if (nVerboseLevel > 1) G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << int(theMode) << Gateendl;
 
   // PY. Descourt 11/12/2008
   // NORMAL OR DETECTOR MODE
-  if ( ( theMode == kBoth ) || ( theMode == kDetector ) )
+  if ( ( theMode == TrackingMode::kBoth ) || ( theMode == TrackingMode::kDetector ) )
     {
       /////////////////////////////////////
       //////////////////////
       //////////
       ////
       //DETECTOR MODE : open the Tracks data Root File
-      if ( theMode == kDetector )
+      if ( theMode == TrackingMode::kDetector )
         {
 
           m_currentGTrack = new GateTrack();
@@ -370,7 +370,7 @@ void GateToRoot::RecordBeginOfAcquisition()
 
       return;
     }
-  if ( theMode == kTracker )
+  if ( theMode == TrackingMode::kTracker )
     {
 
       m_currentGTrack = new GateTrack();
@@ -516,7 +516,7 @@ void GateToRoot::RecordEndOfAcquisition()
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
-  if ( theMode == kTracker )
+  if ( theMode == TrackingMode::kTracker )
     {
       G4cout << " ----- ROOT FILE DATA INFORMATIONS ----- \n";
       if ( tracksTuple != 0 ) {tracksTuple->Print();}
@@ -536,7 +536,7 @@ void GateToRoot::RecordEndOfAcquisition()
       if ( m_hfile->IsOpen() ){ m_hfile->Close(); }
     }
 
-  if ( ( theMode == kBoth ) || ( theMode == kDetector ) )
+  if ( ( theMode == TrackingMode::kBoth ) || ( theMode == TrackingMode::kDetector ) )
     {
       //!    IMPORTANT NOTE
       //!    in case we have a lot of data being written, Root automatically
@@ -654,7 +654,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 
 
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
-  if ( (theMode == kDetector) &&   (evt->GetNumberOfPrimaryVertex() > 0) )
+  if ( (theMode == TrackingMode::kDetector) &&   (evt->GetNumberOfPrimaryVertex() > 0) )
     {
 
       // we read the RecStep and number of rayleigh & compton scatterings from the RecStep Data Root file
@@ -697,7 +697,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
-  if ( theMode == kTracker )return;
+  if ( theMode == TrackingMode::kTracker )return;
 
   nbPrimaries+=1.;
   latestEventID+=1.;

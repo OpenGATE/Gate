@@ -105,12 +105,12 @@ void GateSteppingActionMessenger::SetNewValue(G4UIcommand * command,G4String new
   }
   if( command == SetModeCmd )
   {
-    TrackingMode theMode = kUnknown;
-    if ( newValue == "Tracker"  ) { theMode = kTracker;}
-    if ( newValue == "Both"   ) { theMode = kBoth;     }
-    if ( newValue == "Detector" ) { theMode = kDetector;   }
-    if ( theMode  == kUnknown ) {
-         G4cout << " Gate Application Manager WARNING : The Application mode " << newValue <<" is not known. Switching to Normal Mode ...\n";theMode = kBoth;
+    TrackingMode theMode = TrackingMode::kUnknown;
+    if ( newValue == "Tracker"  ) { theMode = TrackingMode::kTracker;}
+    if ( newValue == "Both"   ) { theMode = TrackingMode::kBoth;     }
+    if ( newValue == "Detector" ) { theMode = TrackingMode::kDetector;   }
+    if ( theMode  == TrackingMode::kUnknown ) {
+         G4cout << " Gate Application Manager WARNING : The Application mode " << newValue <<" is not known. Switching to Normal Mode ...\n";theMode = TrackingMode::kBoth;
     }
     myAction->SetMode(theMode);
     return;

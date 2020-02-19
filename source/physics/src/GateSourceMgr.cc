@@ -553,7 +553,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 
   G4int numVertices = 0;
 
-  if ( (theMode == 1)  || (theMode == 2) )
+  if ( (theMode == TrackingMode::kBoth)  || (theMode == TrackingMode::kTracker) )
     {
       GateRTPhantomMgr::GetInstance()->UpdatePhantoms(m_time); /* PY Descourt 11/12/2008 */
 
@@ -616,7 +616,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       mNbOfParticleInTheCurrentRun++;
     } // normal or Tracker Modes
 
-  if ( theMode == 3 ) // detector mode
+  if ( theMode == TrackingMode::kDetector ) // detector mode
     {
       m_currentSources.push_back(m_fictiveSource);
       //G4cout << "GateSourceMgr::PrepareNextEvent :   m_fictiveSource = " << m_fictiveSource << Gateendl;

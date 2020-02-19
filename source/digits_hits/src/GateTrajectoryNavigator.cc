@@ -196,7 +196,7 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
 	    G4ThreeVector vert2 = ((G4TrajectoryPoint*)(trj2->GetPoint(0)))->GetPosition();
 	    // in detector mode the vertex position is stored at the last trajectory point
 	    // not the first one
-	    if (  theMode == kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
+	    if (  theMode == TrackingMode::kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
               {
                 G4int n_points =trj1->GetPointEntries();
                 vert1 = ((G4TrajectoryPoint*)(trj1->GetPoint( n_points - 1 )))->GetPosition();
