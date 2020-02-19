@@ -512,7 +512,12 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
     	GateSystemComponent* comp = m_system->GetBaseComponent();
 	G4int depth=0;
 	while (comp){
-	    gkSectorNumber.push_back(comp->GetAngularRepeatNumber());
+	    G4int rep_num = comp->GetAngularRepeatNumber();
+	    if (rep_num == 1)
+	        // Check for generic repeater
+	        rep_num = comp->GetGenericRepeatNumber();
+	    gkSectorNumber.push_back(rep_num);
+
 	    if ( (depth<m_depth) && ( comp->GetChildNumber() == 1)   ){
 	    	comp = comp->GetChildComponent(0);
 		depth++;

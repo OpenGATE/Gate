@@ -22,6 +22,7 @@
 #include "GateObjectChildList.hh"
 #include "GateLinearRepeater.hh"
 #include "GateAngularRepeater.hh"
+#include "GateGenericRepeater.hh"
 #include "GateSphereRepeater.hh"
 #include "GateSystemComponentList.hh"
 #include "GateObjectRepeaterList.hh"
@@ -659,6 +660,29 @@ G4double GateSystemComponent::GetSphereRadius()
   return repeater ? repeater->GetRadius() : 0.;
 }
 //-------------------------------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------------------------------
+// Finds the first generic repeater in the creator's repeater list
+GateGenericRepeater* GateSystemComponent::FindGenericRepeater()
+{
+  return FindRepeater<GateGenericRepeater>();
+}
+//-------------------------------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------------------------------
+// Finds the first linear-repeater's repeat number
+G4int GateSystemComponent::GetGenericRepeatNumber()
+{
+  GateGenericRepeater* repeater = FindGenericRepeater();
+  return repeater ? repeater->GetRepeatNumber() : 1;
+}
+//-------------------------------------------------------------------------------------------
+
+
 
 void GateSystemComponent::setInCoincidenceWith(G4String aRsectorName )
 {

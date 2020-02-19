@@ -35,6 +35,7 @@ public:
   void SetPlacementsFilename(std::string filename);
   void EnableRelativeTranslation(bool b) { mUseRelativeTranslation = b; }
   void SetPlacementList(std::vector<GatePlacement> l);
+  G4int GetRepeatNumber() { return (G4int)mPlacementsList.size(); };
 
 protected:
   GateGenericRepeaterMessenger* mMessenger; 

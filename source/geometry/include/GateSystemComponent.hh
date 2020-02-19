@@ -27,6 +27,7 @@ class G4VPhysicalVolume;
 class GateVolumePlacement;
 class GateLinearRepeater;
 class GateAngularRepeater;
+class GateGenericRepeater;
 class GateSphereRepeater;
 class GateOrbitingMove;
 class GateEccentRotMove;
@@ -292,6 +293,16 @@ class GateSystemComponent  : public GateClockDependent
 
     //@}
 
+
+    //@}
+
+    //! \name Access to the generic repeater properties (if any)
+    //@{
+
+    //! Finds the first generic repeater in the creator's repeater list
+    GateGenericRepeater* FindGenericRepeater();
+    //! Finds the first generic repeater's repeat number
+    G4int GetGenericRepeatNumber();
 
     //@}
 
