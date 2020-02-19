@@ -70,6 +70,8 @@ jobs:
     GEANT4_VERSION: 'v10.6.0'
     ROOT_DIR: $(Pipeline.Workspace)/software/root
     GEANT4_DIR: $(Pipeline.Workspace)/software/geant4
+    OSVERSION: 0
+
 
   steps:
   - script: |
@@ -106,9 +108,20 @@ jobs:
       mkdir software
     displayName: 'Install dependencies'
 
+  - script: |
+      if [ "$(Agent.OS)" == "Linux" ]; then
+        OSRELEASE=`lsb_release -rs`
+      elif [ "$(Agent.OS)" == "Darwin" ]; then
+        OSRELEASE=`sw_vers -productVersion`
+      fi
+      echo "OSVERSION:"
+      echo $OSRELEASE
+      echo "##vso[task.setvariable variable=OSVERSION]$OSRELEASE"
+    displayName: "Set OSVERSION Value"
+
   - task: Cache@2
     inputs:
-      key: 'ccache | "$(Agent.OS)_root_$(ROOT_VERSION)_geant4_$(GEANT4_VERSION)"'
+      key: 'ccache | "$(Agent.OS)_$(OSVERSION)_root_$(ROOT_VERSION)_geant4_$(GEANT4_VERSION)"'
       path: $(Pipeline.Workspace)/software
       cacheHitVar: CACHE_RESTORED
     displayName: ccache
