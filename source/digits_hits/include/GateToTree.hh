@@ -66,7 +66,12 @@ public:
   void setHitsEnabled(G4bool mHitsEnabled);
   void addCollection(const std::string &str); //called by messenger
 
+
+  G4bool getOpticalDataEnabled() const;
+  void setOpticalDataEnabled(G4bool mOpticalDataEnabled);
+
   std::unordered_map<std::string, SaveDataParam> &getHitsParamsToWrite();
+  std::unordered_map<std::string, SaveDataParam> &getOpticalParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getSinglesParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getCoincidencesParamsToWrite();
 
@@ -98,10 +103,13 @@ private:
       m_nCrystalRayleigh[0] = p->GetNCrystalRayleigh();
   }
 
+  void RecordOpticalData(const G4Event * event);
+
 
 
   GateToTreeMessenger *m_messenger;
   GateOutputTreeFileManager m_manager_hits;
+  GateOutputTreeFileManager m_manager_optical;
 //  std::vector<GateOutputTreeFileManager> m_vmanager_singles;
   std::unordered_map<std::string, GateOutputTreeFileManager> m_mmanager_singles;
   std::unordered_map<std::string, G4int> m_singles_to_collectionID;
@@ -115,14 +123,18 @@ private:
   G4bool m_hits_enabled;
   G4String m_uselessFileName; //only for GiveNameOfFile which return a reference..
 
+  G4bool m_opticalData_enabled;
+
+ private:
+
   G4int m_PDGEncoding;
   G4int m_trackID;
   G4int m_parentID;
   G4double m_trackLocalTime;
   G4double m_time[2];
-  G4double m_edep[2];
-  G4double m_stepLength;
-  G4double m_trackLength;
+  G4float m_edep[2];
+  G4float m_stepLength;
+  G4float m_trackLength;
 
 
   G4int m_runID;
@@ -131,20 +143,20 @@ private:
   G4int m_primaryID;
 
 
-  G4double m_localPosX;
-  G4double m_localPosY;
-  G4double m_localPosZ;
+  G4float m_localPosX;
+  G4float m_localPosY;
+  G4float m_localPosZ;
 
-  G4double m_posX[2];
-  G4double m_posY[2];
-  G4double m_posZ[2];
+  G4float m_posX[2];
+  G4float m_posY[2];
+  G4float m_posZ[2];
 
-  G4double m_momDirX;
-  G4double m_momDirY;
-  G4double m_momDirZ;
+  G4float m_momDirX;
+  G4float m_momDirY;
+  G4float m_momDirZ;
 
-  G4double m_axialPos;
-  G4double m_rotationAngle;
+  G4float m_axialPos;
+  G4float m_rotationAngle;
 
 
   std::string m_processName;
@@ -153,17 +165,17 @@ private:
 
 
 
-  G4double m_sourcePosX[2];
-  G4double m_sourcePosY[2];
-  G4double m_sourcePosZ[2];
+  G4float m_sourcePosX[2];
+  G4float m_sourcePosY[2];
+  G4float m_sourcePosZ[2];
 
   G4int m_nPhantomCompton[2];
   G4int m_nCrystalCompton[2];
   G4int m_nPhantomRayleigh[2];
   G4int m_nCrystalRayleigh[2];
 
-  G4double m_sinogramTheta;
-  G4double m_sinogramS;
+  G4float m_sinogramTheta;
+  G4float m_sinogramS;
 
 
 
@@ -171,10 +183,21 @@ private:
 //  static const auto OUTPUTID_SIZE = 6;
 
   G4int m_volumeID[VOLUMEID_SIZE];
+  G4int m_systemID;
   G4int m_photonID;
 //  G4int m_outpuID[OUTPUTID_SIZE];
 
+  G4int m_nScintillation, m_nCrystalOpticalWLS, m_nPhantomOpticalWLS;
+  G4int m_NumCrystalWLS, m_NumPhantomWLS;
+  std::string   m_NameOfProcessInCrystal;
+  std::string   m_NameOfProcessInPhantom;
+  G4double m_CrystalLastHitPos_X, m_CrystalLastHitPos_Y, m_CrystalLastHitPos_Z, m_CrystalLastHitEnergy;
+  G4double m_PhantomLastHitPos_X, m_PhantomLastHitPos_Y, m_PhantomLastHitPos_Z, m_PhantomLastHitEnergy;
+  G4double m_PhantomWLSPos_X, m_PhantomWLSPos_Y,m_PhantomWLSPos_Z;
+  G4double m_MomentumDirectionx, m_MomentumDirectiony, m_MomentumDirectionz;
+
   std::unordered_map<std::string, SaveDataParam> m_hitsParams_to_write;
+  std::unordered_map<std::string, SaveDataParam> m_opticalParams_to_write;
   std::unordered_map<std::string, SaveDataParam> m_singlesParams_to_write;
   std::unordered_map<std::string, SaveDataParam> m_coincidencesParams_to_write;
 
@@ -188,6 +211,7 @@ public:
   static const auto MAX_OUTPUTIDNAME_SIZE = 32;
 
   static char m_outputIDName[MAX_NB_SYSTEM][MAX_DEPTH_SYSTEM][MAX_OUTPUTIDNAME_SIZE];
+  static bool m_outputIDHasName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM];
   static G4int m_max_depth_system[MAX_NB_SYSTEM];
 
  private:

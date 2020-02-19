@@ -1372,6 +1372,10 @@ Below is part of the Optical Imaging benchmark macro, which is distributed with 
    /gate/Electronics/vis/setColor                  yellow
    /gate/Electronics/vis/forceSolid
 
+
+.. _multi-system-detector-label:
+
+
 How to define a multi-system detector
 -------------------------------------
 

@@ -36,6 +36,9 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   m_enableHitsOutput = new G4UIcmdWithoutParameter("/gate/output/tree/hits/enable", this);
   m_disableHitsOutput = new G4UIcmdWithoutParameter("/gate/output/tree/hits/disable", this);
 
+  m_enableOpticalDataOutput = new G4UIcmdWithoutParameter("/gate/output/tree/optical/enable", this);
+  m_disableOpticalDataOutput = new G4UIcmdWithoutParameter("/gate/output/tree/optical/disable", this);
+
   cmdName = GetDirectoryName() + "addCollection";
   m_addCollectionCmd = new G4UIcmdWithAString(cmdName, this);
 
@@ -45,6 +48,14 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     G4String s = "/gate/output/tree/hits/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_maphits_cmdParameter_toTreeParameter.emplace(c, name);
+  }
+
+  for(auto &&m: m_gateToTree->getOpticalParamsToWrite())
+  {
+    auto name = m.first;
+    G4String s = "/gate/output/tree/optical/branches/" + name + "/disable";
+    auto c = new G4UIcmdWithoutParameter(s, this);
+    m_mapoptical_cmdParameter_toTreeParameter.emplace(c, name);
   }
 
 
@@ -89,6 +100,14 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
     m_gateToTree->setHitsEnabled(true);
   if(icommand == m_disableHitsOutput)
     m_gateToTree->setHitsEnabled(false);
+
+  if(icommand == m_enableOpticalDataOutput)
+    m_gateToTree->setOpticalDataEnabled(true);
+  if(icommand == m_disableOpticalDataOutput)
+    m_gateToTree->setOpticalDataEnabled(false);
+
+
+
   if(icommand == m_addCollectionCmd)
     m_gateToTree->addCollection(string);
 
@@ -97,6 +116,14 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
   {
     auto p = m_maphits_cmdParameter_toTreeParameter.at(c);
     auto &param = m_gateToTree->getHitsParamsToWrite().at(p);
+    param.setToSave(false);
+  }
+
+  c = static_cast<G4UIcmdWithoutParameter*>(icommand);
+  if(m_mapoptical_cmdParameter_toTreeParameter.count(c))
+  {
+    auto p = m_mapoptical_cmdParameter_toTreeParameter.at(c);
+    auto &param = m_gateToTree->getOpticalParamsToWrite().at(p);
     param.setToSave(false);
   }
 

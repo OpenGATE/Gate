@@ -895,6 +895,8 @@ Finally the random seed can be defined using::
  /gate/output/imageCT/setStartSeed   676567
 
 
+.. _new_unified_tree_output_general_set-label:
+
 New unified Tree output (ROOT, numpy and more)
 ----------------------------------------------
 
@@ -1001,22 +1003,22 @@ If you want to save  Hits AND Singles::
 
     /gate/output/tree/enable
     /gate/output/tree/addFileName /tmp/p.npy
-    /gate/output/tree/hits/enable
-    /gate/output/tree/addCollection Singles
+    /gate/output/tree/hits/enable               #saved to /tmp/p.hits.npy
+    /gate/output/tree/addCollection Singles     #saved to /tmp/p.Singles.npy
 
 If you want to save  Hits AND Singles AND Coincidences::
 
     /gate/output/tree/enable
     /gate/output/tree/addFileName /tmp/p.npy
-    /gate/output/tree/hits/enable
-    /gate/output/tree/addCollection Singles
-    /gate/output/tree/addCollection Coincidences
+    /gate/output/tree/hits/enable                   #saved to /tmp/p.hits.npy
+    /gate/output/tree/addCollection Singles         #saved to /tmp/p.Singles.npy
+    /gate/output/tree/addCollection Coincidences    #saved to /tmp/p.Coincidences.npy
 
 If you want to save only Singles::
 
     /gate/output/tree/enable
     /gate/output/tree/addFileName /tmp/p.npy
-    /gate/output/tree/addCollection Singles
+    /gate/output/tree/addCollection Singles     #saved to /tmp/p.Singles.npy
 
 
 Selection of the variables to save
@@ -1065,7 +1067,7 @@ In hits, variables that can be disabled are::
     sourcePosX,sourcePosY,sourcePosZ,
     nPhantomCompton,nCrystalCompton,
     nPhantomRayleigh,nCrystalRayleigh,
-    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,photonID
+    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,photonID #/!\ depend on the system type
 
 
 In Singles, variables that can be disabled are::
@@ -1074,7 +1076,7 @@ In Singles, variables that can be disabled are::
     sourceID,
     sourcePosX,sourcePosY,sourcePosZ,
     globalPosX,globalPosY,globalPosZ,
-    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,
+    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID, #/!\ depend on the system type
     time,
     energy,
     comptonPhantom,comptonCrystal,RayleighPhantom,RayleighCrystal,comptVolName,RayleighVolName,
@@ -1097,10 +1099,46 @@ In Coincidences, variables that can be disabled are::
     comptonCrystal1,comptonCrystal2,
     RayleighPhantom1,RayleighPhantom2,
     RayleighCrystal1,RayleighCrystal2,
-    gantryID1,rsectorID1,moduleID1,submoduleID1,crystalID1,layerID1,
-    gantryID2,rsectorID2,moduleID2,submoduleID2,crystalID2,layerID2,
+    gantryID1,rsectorID1,moduleID1,submoduleID1,crystalID1,layerID1, #/!\ depend on the system type
+    gantryID2,rsectorID2,moduleID2,submoduleID2,crystalID2,layerID2, #/!\ depend on the system type
     sinogramTheta,
     sinogramS
+
+
+
+Multiple processor chains
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To deal with multiple processor chains as explained here (see :ref:`digitizer_multiple_processor_chains-label`) data cas be saved with::
+
+    /gate/output/tree/enable
+    /gate/output/tree/addFileName /tmp/p.npy
+    /gate/output/tree/addCollection Singles #optionnal
+    /gate/output/tree/addCollection LESingles   #saved to /tmp/p.LESingles.npy
+    /gate/output/tree/addCollection HESingles   #saved to /tmp/p.HESingles.npy
+
+and for disabling variable output::
+
+    /gate/output/tree/LESingles/branches/comptVolName/disable
+
+
+Multi-system detectors
+~~~~~~~~~~~~~~~~~~~~~~
+
+When "Multi-system detectors" feature is used (see :ref:`multi-system-detector-label`), a new variable appears in Hits, Singles and Coincidences : *systemID". The systemID correspond to the number order of apparation in system definition. For example::
+
+    /gate/world/daughters/name scanner_lead
+    /gate/world/daughters/systemType scanner
+
+    /gate/world/daughters/name scanner_water
+    /gate/world/daughters/systemType cylindricalPET
+
+Hits which belong to scanner_lead will have systemID equals to 0 and  scanner_water to 1.
+
+Concerning componentsID, variables names become "SYSTEMNAME/COMPONENTNAME", for example, here we will have new variables::
+
+    scanner_lead/level1ID, scanner_lead/level2ID, scanner_lead/level3ID, scanner_lead/level4ID, scanner_lead/level5ID
+    scanner_water/gantryID, scanner_water/rsectorID, scanner_water/moduleID, scanner_water/submoduleID, scanner_water/crystalID, scanner_water/layerID
 
 
 Additional output summary
