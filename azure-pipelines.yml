@@ -1,0 +1,202 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- develop
+
+
+jobs:
+- job: Build
+  timeoutInMinutes: 360 # how long to run the job before automatically cancelling
+
+  strategy:
+    matrix:
+      Linux:
+        STRATEGY_NAME: 'Linux'
+        imageName: 'ubuntu-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'OFF'
+      Linux_Torch:
+        STRATEGY_NAME: 'Linux_Torch'
+        imageName: 'ubuntu-latest'
+        GATE_USE_TORCH: 'ON'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'OFF'
+      Linux_RTK:
+        STRATEGY_NAME: 'Linux_RTK'
+        imageName: 'ubuntu-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'ON'
+        GATE_USE_OPTICAL: 'OFF'
+      Linux_Optic:
+        STRATEGY_NAME: 'Linux_Optic'
+        imageName: 'ubuntu-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'ON'
+      macOS:
+        STRATEGY_NAME: 'macOS'
+        imageName: 'macos-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'OFF'
+      macOS_Torch:
+        STRATEGY_NAME: 'macOS_Torch'
+        imageName: 'macos-latest'
+        GATE_USE_TORCH: 'ON'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'OFF'
+      macOS_RTK:
+        STRATEGY_NAME: 'macOS_RTK'
+        imageName: 'macos-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'ON'
+        GATE_USE_OPTICAL: 'OFF'
+      macOS_Optic:
+        STRATEGY_NAME: 'macOS_Optic'
+        imageName: 'macos-latest'
+        GATE_USE_TORCH: 'OFF'
+        GATE_USE_RTK: 'OFF'
+        GATE_USE_OPTICAL: 'ON'
+
+  pool:
+    vmImage: $(imageName)
+
+  variables:
+    ROOT_VERSION: 'v6-19-02'
+    GEANT4_VERSION: 'v10.6.0'
+    ROOT_DIR: $(Pipeline.Workspace)/software/root
+    GEANT4_DIR: $(Pipeline.Workspace)/software/geant4
+
+  steps:
+  - script: |
+      if [ "$(Agent.OS)" == "Linux" ]; then
+        sudo apt-get update -qq
+        sudo apt-get install -y gcc \
+                                g++ \
+                                make \
+                                binutils \
+                                libx11-dev \
+                                libxpm-dev \
+                                libxft-dev \
+                                libxext-dev \
+                                qt5-default \
+                                git \
+                                cmake \
+                                python3.7-dev \
+                                ccache \
+                                fftw3-dev
+      elif [ "$(Agent.OS)" == "Darwin" ]; then
+        brew update
+        brew install  qt5 \
+                      ccache \
+                      fftw \
+                      llvm \
+                      libomp \
+                      wget
+        brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
+        export PATH=/usr/local/opt/qt/bin:$PATH
+        export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
+        export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
+      fi
+      cd $(Pipeline.Workspace)
+      mkdir software
+    displayName: 'Install dependencies'
+
+  - task: Cache@2
+    inputs:
+      key: 'ccache | "$(Agent.OS)_root_$(ROOT_VERSION)_geant4_$(GEANT4_VERSION)"'
+      path: $(Pipeline.Workspace)/software
+      cacheHitVar: CACHE_RESTORED
+    displayName: ccache
+
+  - script: |
+      if [ "$CACHE_RESTORED" == "false" ]; then
+        if [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
+          cd $(Pipeline.Workspace)/software
+          mkdir root
+          cd root
+          mkdir src bin
+          git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
+          cd bin
+          cmake ../src
+          make -j4
+        fi
+      fi
+    displayName: 'Install root'
+
+  - script: |
+      if [ "$CACHE_RESTORED" == "false" ]; then
+        if [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
+          cd $(Pipeline.Workspace)/software
+          mkdir geant4
+          cd geant4
+          mkdir src bin install data
+          git clone  --branch $GEANT4_VERSION https://github.com/Geant4/geant4.git --depth 1 src
+          cd bin
+          cmake -DGEANT4_INSTALL_DATA=ON \
+                -DGEANT4_INSTALL_DATADIR=$(GEANT4_DIR)/data \
+                -DGEANT4_USE_QT=ON \
+                -DCMAKE_INSTALL_PREFIX=$(GEANT4_DIR)/install \
+                ../src
+          make -j4 install
+          cd $(Pipeline.Workspace)/software/geant4
+          rm -rf src bin
+        fi
+      fi
+    displayName: 'Install geant4'
+    
+  - script: |
+      if [ "$CACHE_RESTORED" == "true" ]; then
+        cd $(Pipeline.Workspace)
+        if [ "$GATE_USE_TORCH" == "ON" ]; then
+          if [ "$(Agent.OS)" == "Linux" ]; then
+            wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip
+            unzip libtorch-cxx11-abi-shared-with-deps-1.4.0+cpu.zip
+          elif [ "$(Agent.OS)" == "Darwin" ]; then
+            wget https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.4.0.zip
+            unzip libtorch-macos-1.4.0.zip
+          fi
+        fi
+        if [ "$GATE_USE_RTK" == "ON" ]; then
+          mkdir rtk
+          cd rtk
+          mkdir src bin
+          git clone https://github.com/InsightSoftwareConsortium/ITK.git --depth 1 src
+          cd bin
+          cmake -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
+          make -j4
+        fi
+      else
+        echo "Just store cache now"
+        echo "Run the CI again to compile Gate"
+      fi
+    displayName: 'Install gate compilation dependencies'
+
+  - script: |
+      if [ "$CACHE_RESTORED" == "true" ]; then
+        cd $(Pipeline.Workspace)
+        export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
+        export PATH=${ROOTSYS}:${PATH}
+        source $(ROOT_DIR)/bin/bin/thisroot.sh
+        source $(GEANT4_DIR)/install/bin/geant4.sh
+        mkdir build
+        cd build
+        cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
+              -DTorch_DIR=$(Pipeline.Workspace)/libtorch/share/cmake/Torch \
+              -DGATE_USE_RTK=$GATE_USE_RTK \
+              -DITK_DIR=$(Pipeline.Workspace)/rtk/bin/ \
+              -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
+              ../s
+        make -j4
+      else
+        echo "Just store cache now"
+        echo "Run the CI again to compile Gate"
+        if [ ! "$STRATEGY_NAME" == "Linux" ] && [ ! "$STRATEGY_NAME" == "macOS" ]; then
+          exit 1
+        fi
+      fi
+    displayName: 'Build Gate'
