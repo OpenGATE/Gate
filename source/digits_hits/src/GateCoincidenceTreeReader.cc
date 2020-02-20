@@ -26,7 +26,7 @@ void GateCoincidenceTreeReader::PrepareAcquisition(){
         exit(EXIT_FAILURE);
     }
     else{
-        cout<<"Warning: Ideal coincidence reader. Information from the ideal digitizer (Eini, Efin) is employed to create cones"
+        cout<<"Warning: Ideal coincidence reader. Information from the ideal digitizer (Eini, Efin) is employed to create cones"<<endl;
     }
 
     currentEntry=0;
