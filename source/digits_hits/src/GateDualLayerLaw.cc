@@ -122,7 +122,5 @@ void GateDualLayerLaw::ComputeDoI(GatePulse* pulse, G4ThreeVector axis)  {
 }
 
 void GateDualLayerLaw::DescribeMyself (size_t indent) const {
-    G4cout << "DoI dualLayer model\n";
-
-
+    G4cout << GateTools::Indent(indent) << "DoI dualLayer model"<< Gateendl;
 }
