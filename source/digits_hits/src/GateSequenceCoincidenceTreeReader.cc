@@ -88,10 +88,10 @@ G4int GateSequenceCoincidenceTreeReader::PrepareNextEvent(){
 
     // We've reached the end-of-file
     if ( (currentCoincID==-1) && (currentRunID==-1) )
-      return 0;
+        return 0;
     int  counter=0;
-   int firstEvtID=0;
-   double energyR=0.0;
+    int firstEvtID=0;
+    double energyR=0.0;
     bool isTrueCoinc=true;
     // We loop until the data that have been read are found to be for a different event or run
 
@@ -156,9 +156,9 @@ G4int GateSequenceCoincidenceTreeReader::PrepareNextEventIdeal(){
 
     // We've reached the end-of-file
     if ( (currentCoincID==-1) && (currentRunID==-1) )
-      return 0;
+        return 0;
     int  counter=0;
-   int firstEvtID=0;
+    int firstEvtID=0;
     bool isTrueCoinc=true;
     // We loop until the data that have been read are found to be for a different event or run
 
