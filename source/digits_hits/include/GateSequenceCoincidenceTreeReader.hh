@@ -45,9 +45,7 @@ private:
 
 
       GateComptonCameraCones aCone;
-      int evtID, coinID;
-      double t;
-      float energy,posX,posY,posZ;
+
     
 
 
