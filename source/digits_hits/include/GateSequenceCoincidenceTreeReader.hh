@@ -5,13 +5,12 @@
 
 #include "GateComptonCameraCones.hh"
 
-//root libraries , read Tree
+//root libraries
 #include "TFile.h"
 #include "TTree.h"
-//necesario en Ubuntu
 #include "TSystem.h"
-//Los he tenido que incluir para el isZombie
 #include "TObject.h"
+
 #include "GateCCRootDefs.hh"
 
 

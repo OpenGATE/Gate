@@ -14,10 +14,6 @@ GateCoincidenceTreeReader::GateCoincidenceTreeReader(const std::string path)
 
     oldCoincID=0;
     m_coincBuffer.Clear();
-
-
-
-
 }
 
 void GateCoincidenceTreeReader::PrepareAcquisition(){
@@ -28,6 +24,9 @@ void GateCoincidenceTreeReader::PrepareAcquisition(){
     if (f->IsZombie()) {
         cout << "Error opening file" << endl;
         exit(EXIT_FAILURE);
+    }
+    else{
+        cout<<"Warning: Ideal coincidence reader. Information from the ideal digitizer (Eini, Efin) is employed to create cones"
     }
 
     currentEntry=0;
@@ -72,8 +71,6 @@ void GateCoincidenceTreeReader::LoadCoincData()
 bool GateCoincidenceTreeReader::hasNext(){
 
     if(currentEntry>=nentries){
-        //if(currentEntry<=1000000){
-
 
         return false;
     }
