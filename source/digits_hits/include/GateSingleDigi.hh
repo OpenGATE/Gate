@@ -96,11 +96,38 @@ public:
       inline const GateOutputVolumeID& GetOutputVolumeID() const    { return m_pulse.GetOutputVolumeID(); }
       inline G4int GetComponentID(size_t depth) const    { return m_pulse.GetComponentID(depth); }
 
+      inline void     SetVolumeID(const GateVolumeID& v) {  m_pulse.SetVolumeID(v); }
+
+    
+
       inline GatePulse& GetPulse()             { return m_pulse; }
 
       // HDS : septal penetration
       inline void  SetNSeptal(G4int n)    { m_pulse.SetNSeptal(n); }
       inline G4int GetNSeptal() const     { return m_pulse.GetNSeptal(); }
+
+	//AE: to use offline the idealAdderComptPhot and recover the initial energy of the photon (initial energy of the primary track) and the energy after the interaction (Megalib comparison)
+      inline void     SetFinalEnergy(G4double value)      { m_pulse.SetEnergyFin(value); }
+      inline G4double GetFinalEnergy() const                   { return m_pulse.GetEnergyFin(); }
+
+      inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
+      inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+
+
+      inline void SetSourceEnergy(G4double value)           	      { m_pulse.SetSourceEnergy(value); }
+      inline G4double GetSourceEnergy() const                    	      { return m_pulse.GetSourceEnergy(); }
+
+      inline void SetSourcePDG(G4int value)           	              { m_pulse.SetSourcePDG(value); }
+      inline G4int GetSourcePDG() const                    	      	      { return m_pulse.GetSourcePDG(); }
+
+      inline void SetNCrystalConv(G4int value)           	              { m_pulse.SetNCrystalConv(value); }
+      inline G4int GetNCrystalConv() const                    	      	      { return m_pulse.GetNCrystalConv(); }
+
+
+
+
+  
+     
 
 private:
       GatePulse m_pulse;
@@ -145,3 +172,4 @@ inline void GateSingleDigi::operator delete(void* aDigi)
 }
 
 #endif
+

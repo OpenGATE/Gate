@@ -309,7 +309,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
 
   if (command == pPrint)
     {
-      char par1[30];
+      G4String par1;
       std::istringstream is(param);
       is >> par1;
       pPhylist->Write(par1);
@@ -320,8 +320,8 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
       pPhylist->GetCuts();
     }
 
-  char par1[30];
-  char par2[30];
+  G4String par1;
+  G4String par2;
   std::istringstream is(param);
   is >> par1 >> par2;
 

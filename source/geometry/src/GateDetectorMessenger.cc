@@ -19,6 +19,8 @@ See LICENSE.md for further details
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADouble.hh"
 #include "G4UnitsTable.hh"
 #include "G4Material.hh"
 #include "GateMiscFunctions.hh"
@@ -91,6 +93,67 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   pMagFieldCmd->SetUnitCategory("Magnetic flux density");
   pMagFieldCmd->SetDefaultUnit("tesla");
 
+  pMagTabulatedField3DCmd = new G4UIcmdWithAString("/gate/geometry/setMagTabulateField3D",this);
+  pMagTabulatedField3DCmd->SetGuidance("Sets the data filename of magnetic field 3D.");
+  pMagTabulatedField3DCmd->SetParameterName(" Magnetic field tabulate filename ",false);
+
+  pElectFieldCmd = new G4UIcmdWith3VectorAndUnit("/gate/geometry/setElectField",this);
+  pElectFieldCmd->SetGuidance("Define electric field.");
+//  pElectFieldCmd->SetParameterName("Ex","Ey","Ez",false);
+//  pElectFieldCmd->SetUnitCategory("Electric flux density");
+//  pElectFieldCmd->SetDefaultUnit("volt");
+
+  pElectTabulatedField3DCmd = new G4UIcmdWithAString("/gate/geometry/setElectTabulateField3D",this);
+  pElectTabulatedField3DCmd->SetGuidance("Sets the data filename of electric field 3D.");
+  pElectTabulatedField3DCmd->SetParameterName(" Electric field tabulate filename ",false);
+
+  G4String dir = "/gate/geometry/setMagTabulateField3D/";
+  G4String cmdName;
+
+  cmdName = dir+"setStepMinimum";
+  pMagStepMinimumCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
+  pMagStepMinimumCmd->SetGuidance("Set a minimum step size used during integration"
+          "to compute the motion of a charged track in a general field.");
+  pMagStepMinimumCmd->SetUnitCategory("Length");
+  pMagStepMinimumCmd->SetDefaultUnit("m");
+
+  cmdName = dir+"setMissDistance";
+  pMagDeltaChordCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
+  pMagDeltaChordCmd->SetGuidance("Set a miss distance between the 'real' "
+		  "curved trajectory and the approximate linear trajectory of the chord");
+  pMagDeltaChordCmd->SetUnitCategory("Length");
+  pMagDeltaChordCmd->SetDefaultUnit("m");
+
+  cmdName = dir+"setDeltaIntersection";
+  pMagDeltaIntersectionCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
+  pMagDeltaIntersectionCmd->SetGuidance(" Set the accuracy to which an intersection"
+		  " with a volume boundary is calculated.");
+  pMagDeltaIntersectionCmd->SetUnitCategory("Length");
+  pMagDeltaIntersectionCmd->SetDefaultUnit("m");
+
+  cmdName = dir+"setDeltaOneStep";
+  pMagDeltaOneStepCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
+  pMagDeltaOneStepCmd->SetGuidance("Set a limit on the estimated error of the endpoint"
+		  " of each physics step.");
+  pMagDeltaOneStepCmd->SetUnitCategory("Length");
+  pMagDeltaOneStepCmd->SetDefaultUnit("m");
+
+  cmdName = dir+"setMinimumEpsilonStep";
+  pMagMinimumEpsilonStepCmd = new G4UIcmdWithADouble(cmdName.c_str(),this);
+  pMagMinimumEpsilonStepCmd->SetGuidance("Impose a minimum limit on the relative error"
+		  " of the position/momentum inaccuracy.");
+
+  cmdName = dir+"setMaximumEpsilonStep";
+  pMagMaximumEpsilonStepCmd = new G4UIcmdWithADouble(cmdName.c_str(),this);
+  pMagMaximumEpsilonStepCmd->SetGuidance("Impose a maximum limit on the relative error"
+		  " of the position/momentum inaccuracy.");
+
+  cmdName = dir+"setIntegratorStepper";
+  pMagIntegratorStepperCmd = new G4UIcmdWithAString(cmdName,this);
+  pMagIntegratorStepperCmd->SetGuidance("Set integrator stepper to compute the motion"
+		  " of a charged track in a general field.");
+  pMagIntegratorStepperCmd->SetParameterName(" Integrator Stepper Type ",false);
+
   G4String cmd;
   cmd = "/gate/geometry/setMaterialDatabase";
   pMaterialDatabaseFilenameCmd = new G4UIcmdWithAString(cmd, this);
@@ -135,6 +198,36 @@ void GateDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   }
   else if( command == pMagFieldCmd )
     { pDetectorConstruction->SetMagField(pMagFieldCmd->GetNew3VectorValue(newValue));}
+
+  else if( command == pMagTabulatedField3DCmd )
+    { pDetectorConstruction->SetMagFieldTabulatedFile(newValue);}
+
+  else if( command == pElectFieldCmd )
+    { pDetectorConstruction->SetElectField(pMagFieldCmd->GetNew3VectorValue(newValue));}
+
+  else if( command == pElectTabulatedField3DCmd )
+    { pDetectorConstruction->SetElectFieldTabulatedFile(newValue);}
+
+  else if( command == pMagStepMinimumCmd )
+    { pDetectorConstruction->SetMagStepMinimum(pMagStepMinimumCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagDeltaChordCmd )
+    { pDetectorConstruction->SetMagDeltaChord(pMagDeltaChordCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagDeltaOneStepCmd )
+    { pDetectorConstruction->SetMagDeltaOneStep(pMagDeltaOneStepCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagDeltaIntersectionCmd )
+    { pDetectorConstruction->SetMagDeltaIntersection(pMagDeltaIntersectionCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagMinimumEpsilonStepCmd )
+    { pDetectorConstruction->SetMagMinimumEpsilonStep(pMagMinimumEpsilonStepCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagMaximumEpsilonStepCmd )
+    { pDetectorConstruction->SetMagMaximumEpsilonStep(pMagMaximumEpsilonStepCmd->GetNewDoubleValue(newValue));}
+
+  else if( command == pMagIntegratorStepperCmd )
+     { pDetectorConstruction->SetMagIntegratorStepper(newValue);}
  
   else if( command == pListCreatorsCmd )
     { pDetectorConstruction->GetObjectStore()->ListCreators(); }

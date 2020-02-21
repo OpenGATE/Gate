@@ -30,9 +30,9 @@ See LICENSE.md for further details
 G4int GateCoincidenceSorter::gm_coincSectNum=0;
 // Constructs a new coincidence sorter, attached to a GateDigitizer and to a system
 GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
-      	      	      	      	      	     const G4String& itsOutputName,
-      	      	      	      	      	     G4double itsWindow,
-      	      	      	      	      	     const G4String& itsInputName)
+                                             const G4String& itsOutputName,
+                                             G4double itsWindow,
+                                             const G4String& itsInputName, const bool& IsCCSorter)
   : GateClockDependent(itsDigitizer->GetObjectName()+"/"+itsOutputName),
     m_digitizer(itsDigitizer),
     m_system(0),
@@ -47,12 +47,16 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_allPulseOpenCoincGate(false),
     m_depth(1),
     m_presortBufferSize(256),
-    m_presortWarning(false)
+    m_presortWarning(false),
+    m_CCSorter(IsCCSorter),
+    m_triggerOnlyByAbsorber(0)
 {
 
   // Create the messenger
   m_messenger = new GateCoincidenceSorterMessenger(this);
+  //if(m_CCSorter==true)
 
+  coincID_CC=0;
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
@@ -64,6 +68,7 @@ GateCoincidenceSorter::~GateCoincidenceSorter()
 {
   while(m_presortBuffer.size() > 0)
   {
+     // G4cout<<"[GateCoincidenceSorter::~GateCoincidenceSorter()] m_presortBuffer.size="<<m_presortBuffer.size()<<G4endl;
     delete m_presortBuffer.back();
     m_presortBuffer.pop_back();
   }
@@ -143,7 +148,32 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
   if (!IsEnabled())
     return;
 
+//  if(inp!=0){
+//      G4cout<<"######before"<<G4endl;
+//      G4cout<<"size of input pulse= "<<inp->size()<<G4endl;
+//      GatePulseConstIterator iterIn;
+//      for (iterIn = inp->begin() ; iterIn != inp->end() ; ++iterIn){
+//          GatePulse* inp1 = *iterIn;
+//          G4cout<<"evtID= "<<inp1->GetEventID()<<"  energy="<< inp1->GetEnergy()<<G4endl;
+//      }
+//  }
+
+
+
   GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName );
+
+
+//  if(inputPulseList!=0){
+//  G4cout<<"#######after"<<G4endl;
+//    G4cout<<"size of input pulse= "<<inputPulseList->size()<<G4endl;
+//    GatePulseConstIterator iterIn;
+//  for (iterIn = inputPulseList->begin() ; iterIn != inputPulseList->end() ; ++iterIn){
+//    GatePulse* input1 = *iterIn;
+//    G4cout<<"evtID= "<<input1->GetEventID()<<"  energy="<< input1->GetEnergy()<<"  time="<< input1->GetTime()<<G4endl;
+//  }
+//  }
+
+
 
   if (!inputPulseList)
     return ;
@@ -151,41 +181,53 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
   // put input pulses in sorted input buffer
   for(gpl_iter = inputPulseList->begin();gpl_iter != inputPulseList->end();gpl_iter++)
   {
-    // make a copy of the pulse
-    pulse = new GatePulse(**gpl_iter);
+      // make a copy of the pulse
+      pulse = new GatePulse(**gpl_iter);
 
-    if(m_presortBuffer.empty())
-      m_presortBuffer.push_back(pulse);
-    else if(pulse->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
-    {
-      if(!m_presortWarning)
-        GateWarning("Event is earlier than earliest event in coincidence presort buffer. Consider using a larger buffer.");
-      m_presortWarning = true;
-      m_presortBuffer.push_back(pulse); // this will probably not cause a problem, but coincidences may be missed
-    }
-    else // put the event into the presort buffer in the right place
-    {
-      buf_iter = m_presortBuffer.begin();
-      while(pulse->GetTime() < (*buf_iter)->GetTime())
-        buf_iter++;
-      m_presortBuffer.insert(buf_iter, pulse);
-    }
+      if(m_presortBuffer.empty())
+          m_presortBuffer.push_back(pulse);
+      else if(pulse->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
+      {
+          if(!m_presortWarning)
+              GateWarning("Event is earlier than earliest event in coincidence presort buffer. Consider using a larger buffer.");
+          m_presortWarning = true;
+          m_presortBuffer.push_back(pulse); // this will probably not cause a problem, but coincidences may be missed
+      }
+      else // put the event into the presort buffer in the right place
+      {
+          buf_iter = m_presortBuffer.begin();
+          while(pulse->GetTime() < (*buf_iter)->GetTime())
+              buf_iter++;
+          m_presortBuffer.insert(buf_iter, pulse);
+          //      G4cout<<"presortBuffer filled in position "<<std::distance(m_presortBuffer.begin(),buf_iter)<<G4endl;
+          //      G4cout<<"pulseTime "<<pulse->GetTime()<<G4endl;
+          //      G4cout<<"pulseTime "<<pulse->GetTime()/ns<<G4endl;
+      }
 
   }
+
 
   //  once buffer reaches the specified size look for coincidences
   for(G4int i = m_presortBuffer.size();i > m_presortBufferSize;i--)
   {
+
     pulse = m_presortBuffer.back();
     m_presortBuffer.pop_back();
 
     // process completed coincidence pulse window at front of list
     while(!m_coincidencePulses.empty() && m_coincidencePulses.front()->IsAfterWindow(pulse))
     {
-      coincidence = m_coincidencePulses.front();
-      m_coincidencePulses.pop_front();
 
-      ProcessCompletedCoincidenceWindow(coincidence);
+        coincidence = m_coincidencePulses.front();
+
+        m_coincidencePulses.pop_front();
+
+        if(m_CCSorter==true){
+            ProcessCompletedCoincidenceWindow4CC(coincidence);
+        }
+        else{
+            ProcessCompletedCoincidenceWindow(coincidence);
+        }
     }
 
     // add event to coincidences
@@ -194,6 +236,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     while( coince_iter != m_coincidencePulses.end() && (*coince_iter)->IsInCoincidence(pulse) )
     {
       inCoincidence = true;
+       //AE here fill coincidence
       (*coince_iter)->push_back(new GatePulse(pulse)); // add a copy so we can delete safely
       coince_iter++;
     }
@@ -214,13 +257,60 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
       else
         offset = m_offset;
 
-      coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
-      m_coincidencePulses.push_back(coincidence);
+      if(m_triggerOnlyByAbsorber==1){
+
+          if(((pulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
+          //if(pulse->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
+              coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+               //AE here open coincidence
+               m_coincidencePulses.push_back(coincidence);
+
+          }
+      }
+      else{
+        coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+         //AE here open window with the pulse
+         m_coincidencePulses.push_back(coincidence);
+      }
     }
     else
       delete pulse; // pulses that don't open a coincidence window can be discarded
   }
 
+}
+
+
+void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidencePulse *coincidence)
+{
+
+
+    G4int nPulses = coincidence->size();
+    if (nPulses<2)
+    {
+        delete coincidence;
+        return;
+    }
+    else if (nPulses>=2)
+    {
+
+        if(IsCoincidenceGood4CC(coincidence)==true){
+            // Introduce some conditions to check if  is good
+            coincidence->SetCoincID(coincID_CC);
+            m_digitizer->StoreCoincidencePulse(coincidence);
+            coincID_CC++;
+            // delete coincidence; // ?
+            return;
+        }
+       else{
+             //G4cout<<"bad coinc"<<G4endl;
+            delete coincidence;
+            return;
+
+        }
+    }
+
+    delete coincidence;
+    return;
 }
 
 // look for valid coincidences
@@ -422,7 +512,12 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
     	GateSystemComponent* comp = m_system->GetBaseComponent();
 	G4int depth=0;
 	while (comp){
-	    gkSectorNumber.push_back(comp->GetAngularRepeatNumber());
+	    G4int rep_num = comp->GetAngularRepeatNumber();
+	    if (rep_num == 1)
+	        // Check for generic repeater
+	        rep_num = comp->GetGenericRepeatNumber();
+	    gkSectorNumber.push_back(rep_num);
+
 	    if ( (depth<m_depth) && ( comp->GetChildNumber() == 1)   ){
 	    	comp = comp->GetChildComponent(0);
 		depth++;
@@ -445,8 +540,33 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 
     return ans;
 }
-//------------------------------------------------------------------------------------------------------
 
+
+//------------------------------------------------------------------------------------------------------
+  G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
+
+      GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
+      G4String volBName1=((coincidence->at(0)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+     // G4cout<<"volBName1="<<volBName1<<G4endl;
+      G4bool isGood=false;
+      //Restriction at least coincidence in two different volumesID
+        //std::vector<GateVolumeID>::iterator  it;
+      unsigned int numCoincPulses=coincidence->size();
+
+      for(unsigned int i=1;i<numCoincPulses;i++){
+           //find in the vector
+            //it= find (diffVID.begin(),diffVID.end(), coincidence->at(i)->GetVolumeID());
+            //if(coincidence->at(i)->GetVolumeID()!=volID1) {
+            if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()!=volBName1){
+                 // G4cout<<"volBName="<<((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()<<G4endl;
+                isGood=true;
+                break;
+            }
+
+      }
+
+     return isGood;
+  }
 
 //------------------------------------------------------------------------------------------------------
 // Check whether a coincidence is invalid: ring difference or sector difference too small...

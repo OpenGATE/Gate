@@ -49,22 +49,22 @@ void GateFastI124::InitializeFastI124()
 	m_simpleDecay = new GateSimplifiedDecay();
 	m_particleVector = new std::vector<psd>;
 	
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0175,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.376   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0488,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.509   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.1189,  mem_fun( &GateSimplifiedDecayTransition::issueNone )              )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.2359,  mem_fun( &GateSimplifiedDecayTransition::issuePositron),  1.534,  1.4,  0.4407471595713562, 53) );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0175,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     1.376   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0488,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     1.509   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.1189,  mem_fn( &GateSimplifiedDecayTransition::issueNone )              )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.2359,  mem_fn( &GateSimplifiedDecayTransition::issuePositron),  1.534,  1.4,  0.4407471595713562, 53) );
   
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3447,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.691   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3515,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     2.283   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3598,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     0.645   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.6422,  mem_fun( &GateSimplifiedDecayTransition::issueNone )              )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3447,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     1.691   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3515,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     2.283   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.3598,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     0.645   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 2, 0.6422,  mem_fn( &GateSimplifiedDecayTransition::issueNone )              )  );
   
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0,-1, 0.7502,  mem_fun( &GateSimplifiedDecayTransition::issuePositron),  2.137,  1.0,  0.10072654633851122,53) );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0,-1, 1.,      mem_fun( &GateSimplifiedDecayTransition::issueNone )              )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(1, 2, 0.8690,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     0.722   )  );
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(1,-1, 1.0000,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.325   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0,-1, 0.7502,  mem_fn( &GateSimplifiedDecayTransition::issuePositron),  2.137,  1.0,  0.10072654633851122,53) );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0,-1, 1.,      mem_fn( &GateSimplifiedDecayTransition::issueNone )              )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(1, 2, 0.8690,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     0.722   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(1,-1, 1.0000,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     1.325   )  );
   
-  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(2,-1, 1.0000,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     0.602   )  );
+  m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(2,-1, 1.0000,  mem_fn( &GateSimplifiedDecayTransition::issueGamma),     0.602   )  );
 }
 
 void GateFastI124::GenerateVertex( G4Event* aEvent )

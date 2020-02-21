@@ -27,7 +27,7 @@ class GateSimplifiedDecayTransition {
 
  public:
 
-  GateSimplifiedDecayTransition(int cs, int ns, double pr,  std::mem_fun_t<psd,GateSimplifiedDecayTransition> act, double en=0, double ampl=0, double norm=0, int Z=0):
+  GateSimplifiedDecayTransition(int cs, int ns, double pr,  std::function<psd(GateSimplifiedDecayTransition*)> act, double en=0, double ampl=0, double norm=0, int Z=0):
     currentState(cs),
     nextState(ns),
     probability(pr),
@@ -91,7 +91,7 @@ class GateSimplifiedDecayTransition {
   int    currentState;
   int    nextState;
   double probability;
-  std::mem_fun_t<psd,GateSimplifiedDecayTransition> action;
+  std::function<psd(GateSimplifiedDecayTransition*)> action;
   double energy;                                    //  Maximum energy (inMeV)
   double amplitude;                                 //  Majoring function amplitude (for positrons)
   double normalisationFactor;                       //  normalisation factor for PDF (for positrons)

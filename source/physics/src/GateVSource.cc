@@ -455,8 +455,9 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
 
   TrackingMode theMode =myAction->GetMode();
 
-  G4bool test = (theMode ==1 ) || ( theMode == 2 );
-  if ( test == 1  )
+  G4bool test = (theMode == TrackingMode::kBoth ) || ( theMode == TrackingMode::kTracker );
+  //
+  if ( test ) // replace if ( test == TrackingMode::kBoth  ) // mdupont
     {
       if (GetType() == G4String("backtoback"))    { GeneratePrimariesForBackToBackSource(event); }
       else if (GetType() == G4String("fastI124")) { GeneratePrimariesForFastI124Source(event); }
@@ -496,7 +497,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       return numVertices;
     }// standard or tracker mode PY Descourt 08/09/2008
 
-  if ( theMode == 3 )// detector mode     here we have a fictive source
+  if ( theMode == TrackingMode::kDetector )// detector mode     here we have a fictive source
     {
       if ( fAbortNow == true ) { fAbortNow= false;
         return 0; }
@@ -672,7 +673,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 
   /* PY Descourt 08/09/2009 */
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
-  if (  theMode == kBoth || theMode == kTracker )
+  if (  theMode == TrackingMode::kBoth || theMode == TrackingMode::kTracker )
     {
       G4ThreeVector particle_position;
       if(mIsUserFluenceActive) { particle_position = UserFluencePosGenerateOne(); }
@@ -747,7 +748,7 @@ G4String nameMaterial = material->GetName();*/
   /////  HERE we are in DETECTOR MODE
   /* PY Descourt 08/09/2009 */
 
-  if ( theMode == kDetector )
+  if ( theMode == TrackingMode::kDetector )
     {
       // create a new vertex
       G4PrimaryVertex* vertex =  new G4PrimaryVertex(G4ThreeVector(0.,0.,0.),GetTime());

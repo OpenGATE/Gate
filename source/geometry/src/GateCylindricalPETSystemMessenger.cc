@@ -1,14 +1,14 @@
 /*----------------------
-   OpenGATE Collaboration 
-     
-   Daniel Strul <daniel.strul@iphe.unil.ch> 
-     
-   Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne 
+  OpenGATE Collaboration
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See LICENSE.md for further details 
-----------------------*/
+  Daniel Strul <daniel.strul@iphe.unil.ch>
+
+  Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne
+
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 #include "GateCylindricalPETSystemMessenger.hh"
 
@@ -24,41 +24,30 @@ See LICENSE.md for further details
 
 #include "GateCylindricalPETSystem.hh"
 
-
-
-
 // Constructor
 // The flags are passed to the base-class GateNamedObjectMessenger
 GateCylindricalPETSystemMessenger::GateCylindricalPETSystemMessenger(GateCylindricalPETSystem* itsCylindricalPETSystem,
-    			     				 const G4String& itsDirectoryName)
-: GateClockDependentMessenger(itsCylindricalPETSystem,itsDirectoryName)
+                                                                     const G4String& itsDirectoryName)
+  : GateClockDependentMessenger(itsCylindricalPETSystem,itsDirectoryName)
 {
-  SetDirectoryGuidance(G4String("Controls the system '") + itsCylindricalPETSystem->GetObjectName() + "'" ); 
+  SetDirectoryGuidance(G4String("Controls the system '") + itsCylindricalPETSystem->GetObjectName() + "'" );
   G4String guidance;
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"addAnewRsector";
   addNewRsectorcmd = new G4UIcmdWithAString(cmdName,this);
-
-G4cout<< " CREATED THE COMMAND " << cmdName << Gateendl;
-
 }
-
 
 
 GateCylindricalPETSystemMessenger::~GateCylindricalPETSystemMessenger()
 {
-    delete addNewRsectorcmd ;
+  delete addNewRsectorcmd ;
 }
-
 
 
 // UI command interpreter method
 void GateCylindricalPETSystemMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-    if ( command == addNewRsectorcmd ) GetCylindricalPETSystem()->AddNewRSECTOR( newValue );
-    GateNamedObjectMessenger::SetNewValue(command,newValue);
+{
+  if ( command == addNewRsectorcmd ) GetCylindricalPETSystem()->AddNewRSECTOR( newValue );
+  GateNamedObjectMessenger::SetNewValue(command,newValue);
 }
-
-
-

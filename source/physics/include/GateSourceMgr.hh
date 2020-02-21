@@ -15,7 +15,7 @@
 #include "G4Event.hh"
 #include "G4Run.hh"
 #include "GateVSource.hh"
-#include "GateSourcePhaseSpace.hh"
+
 #include "GateApplicationMgr.hh"
 #include "GateSourcePencilBeam.hh"
 #include "GateSourceTPSPencilBeam.hh"

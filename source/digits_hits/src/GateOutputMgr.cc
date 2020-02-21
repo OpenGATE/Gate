@@ -6,6 +6,8 @@
   See LICENSE.md for further details
   ----------------------*/
 
+
+
 #include "GateOutputMgr.hh"
 #include "GateVOutputModule.hh"
 #include "GateOutputMgrMessenger.hh"
@@ -19,14 +21,17 @@
 #include "G4UImanager.hh"
 #include "G4UserSteppingAction.hh"
 #include "G4SteppingManager.hh"
+#include "G4Run.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4VVisManager.hh"
+#include "GateActorManager.hh"
 
 #include "GateMessageManager.hh"
 #include "GateToDigi.hh"
 #include "GateToASCII.hh"
 #include "GateToBinary.hh"
+#include "GateToSummary.hh"
 #include "GateDigitizer.hh"
 #include "GateCrystalSD.hh"
 #include "GatePhantomSD.hh"
@@ -34,6 +39,8 @@
 #include "GateRandomEngine.hh"
 #include "GateARFDataToRoot.hh"
 #include "GateToRoot.hh"
+
+#include "GateToTree.hh"
 
 GateOutputMgr* GateOutputMgr::instance = 0;
 
@@ -107,6 +114,12 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   GateARFDataToRoot* gateARFDataToRoot = new GateARFDataToRoot("arf", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
 #endif
+
+  auto g = new GateToTree("tree", this, m_digiMode);
+  AddOutputModule(g);
+
+  auto gs = new GateToSummary("summary", this, m_digiMode);
+  AddOutputModule(gs);
 
   GateMessage("Output",4,"GateOutputMgr() -- end\n");
 }

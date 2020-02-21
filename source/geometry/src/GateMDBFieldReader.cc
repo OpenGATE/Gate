@@ -57,7 +57,15 @@ GateCodePair GateMDBFieldReader::theAtomicNumberPrefixTable[N_ATOMICNUMBERPREFIX
   };  
 GateCodeMap GateMDBFieldReader::theAtomicNumberPrefixMap = GateCodeMap(N_ATOMICNUMBERPREFIX,theAtomicNumberPrefixTable);
 
-  
+
+#define N_NUCLEONNUMBERPREFIX 2
+GateCodePair GateMDBFieldReader::theNucleonNumberPrefixTable[N_NUCLEONNUMBERPREFIX] = {
+    GateCodePair ("N",        prefix_nucleonnumber),
+    GateCodePair ("Neff",     prefix_nucleonnumber)
+  };
+GateCodeMap GateMDBFieldReader::theNucleonNumberPrefixMap = GateCodeMap(N_NUCLEONNUMBERPREFIX,theNucleonNumberPrefixTable);
+
+
 #define N_MOLARMASSPREFIX 2
 GateCodePair GateMDBFieldReader::theMolarMassPrefixTable[N_MOLARMASSPREFIX] = {
     GateCodePair ("A",        prefix_molarmass),
@@ -153,11 +161,19 @@ GateUnitPair GateMDBFieldReader::theAtomicNumberUnitTable[N_ATOMICNUMBERUNIT] = 
   };
 GateUnitMap GateMDBFieldReader::theAtomicNumberUnitMap = GateUnitMap(N_ATOMICNUMBERUNIT,theAtomicNumberUnitTable);
 
+
+#define N_NUCLEONNUMBERUNIT 1
+GateUnitPair GateMDBFieldReader::theNucleonNumberUnitTable[N_NUCLEONNUMBERUNIT] = {
+    GateUnitPair("" , 1)
+  };
+GateUnitMap GateMDBFieldReader::theNucleonNumberUnitMap = GateUnitMap(N_NUCLEONNUMBERUNIT,theNucleonNumberUnitTable);
+
+
 #define N_MOLARMASSUNIT 1
-GateUnitPair GateMDBFieldReader::theMolarMasUnitTable[N_MOLARMASSUNIT] = {
+GateUnitPair GateMDBFieldReader::theMolarMassUnitTable[N_MOLARMASSUNIT] = {
     GateUnitPair("g/mole" , gram/mole)
   };
-GateUnitMap GateMDBFieldReader::theMolarMassUnitMap = GateUnitMap(N_MOLARMASSUNIT,theMolarMasUnitTable);
+GateUnitMap GateMDBFieldReader::theMolarMassUnitMap = GateUnitMap(N_MOLARMASSUNIT,theMolarMassUnitTable);
 
 #define N_DENSITYUNIT 9
 GateUnitPair GateMDBFieldReader::theDensityUnitTable[N_DENSITYUNIT] = {
@@ -208,6 +224,15 @@ GateCodeMap* GateMDBFieldReader::theFMFPrefixMapArray[N_FMFPREFIXMAPS] ={
   &theDensityPrefixMap
   };
 GateCodeMap GateMDBFieldReader::theFMFPrefixMap = GateCodeMap(N_FMFPREFIXMAPS,theFMFPrefixMapArray);
+
+
+#define N_FEFPREFIXMAPS 2
+GateCodeMap* GateMDBFieldReader::theFEFPrefixMapArray[N_FEFPREFIXMAPS] ={
+  &theSymbolPrefixMap,
+  &theNComponentsPrefixMap
+  };
+GateCodeMap GateMDBFieldReader::theFEFPrefixMap = GateCodeMap(N_FMFPREFIXMAPS,theFEFPrefixMapArray);
+
 
 #define N_ABUNDANCEPREFIXMAPS 2
 GateCodeMap* GateMDBFieldReader::theAbundancePrefixMapArray[N_ABUNDANCEPREFIXMAPS] ={
@@ -266,6 +291,7 @@ GateMDBFieldReader::ElemComponentType GateMDBFieldReader::EvaluateElemComponentT
 // Read the very first field of a material's component line to check what kind of component it will be
 // +el/+elem --> element-type component
 // +mat --> material-type component
+// +iso --> isotopes-type component
 // The appropriate component type-code is returned.
 GateMDBFieldReader::ComponentType GateMDBFieldReader::EvaluateComponentType(const G4String& materialName, G4String field,
       	      	      	      	      	      	      	      	      	    const G4String& componentOrdinal)
@@ -275,14 +301,38 @@ GateMDBFieldReader::ComponentType GateMDBFieldReader::EvaluateComponentType(cons
     return componenttype_elem;
   else if (field=="+mat") 
     return componenttype_mat;
+  else if (field=="+iso")
+    return componenttype_iso;
   else {
 	G4String msg = "Incorrect definition line for the " +  componentOrdinal +  " component of the compound material '" + materialName + "'.";
-	msg += "This line should start with '+el:' or '+mat:'. You should check the list of components in the database file for this material.";
+	msg += "This line should start with '+el:' or '+mat:' or '+iso:'. You should check the list of components in the database file for this material.";
 	G4Exception( "GateMDBFieldReader::EvaluateComponentType", "EvaluateComponentType", FatalException, msg );
   }
   return componenttype_error;
 }
 
+// Read the prefix of the first field of a material line to check what kind of material it will be
+// If this field contains an atomic number (Z), it will be a "scratch material"
+// If this fields contains a density, it will be a compound material
+// The appropriate material type-code is returned.
+GateMDBFieldReader::ElementType GateMDBFieldReader::EvaluateElementType(const G4String& elementName, const G4String& field)
+{
+  G4String fieldAfterPrefix;
+  PrefixCode prefix = DecodeFieldPrefix(elementName,field, "first material's", theFEFPrefixMap, fieldAfterPrefix);
+
+  switch (prefix) {
+    case prefix_symbol:
+      return elementtype_scratch;
+    case prefix_ncomponents:
+      return elementtype_compound;
+    default:
+			G4String msg = "Abnormal prefix code found for the first field of element '";
+			msg += elementName;
+			msg += "'";
+      G4Exception( "GateMDBFieldReader::EvaluateElementType", "EvaluateElementType", FatalException, msg );
+  }
+  return elementtype_error;
+}
 
 
 
@@ -324,6 +374,13 @@ G4String GateMDBFieldReader::ReadElementSymbol(const G4String&  name, const G4St
 G4double GateMDBFieldReader::ReadAtomicNumber(const G4String& elementName, const G4String& field)
 {
   return DecodeNumericField(elementName, field, "atomic number", theAtomicNumberPrefixMap, theAtomicNumberUnitMap);
+}
+
+
+// Read the nucleon number of an element
+G4double GateMDBFieldReader::ReadNucleonNumber(const G4String& elementName, const G4String& field)
+{
+  return DecodeNumericField(elementName, field, "nucleon number", theNucleonNumberPrefixMap, theNucleonNumberUnitMap);
 }
 
 

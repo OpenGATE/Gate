@@ -17,6 +17,7 @@ GateCoincidencePulse::GateCoincidencePulse(const GateCoincidencePulse& src)
     m_startTime = src.m_startTime;
     m_endTime = src.m_endTime;
     m_delayed = src.m_delayed;
+    m_coincID=src.m_coincID;
 }
 
 std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)

@@ -51,10 +51,18 @@ public:
   void SetVerboseLevel(G4int value) { nVerboseLevel = value; }
 
   void SetTimeInterval(G4double v);
+
   void SetTotalNumberOfPrimaries(double n);
   long int GetTotalNumberOfPrimaries(){return mRequestedAmountOfPrimaries;}
+  
   void SetNumberOfPrimariesPerRun(double n);
   long int GetNumberOfPrimariesPerRun(){return mRequestedAmountOfPrimariesPerRun;}
+
+  //LSLS
+  void ReadNumberOfPrimariesInAFile(G4String filename);
+  bool IsReadNumberOfPrimariesInAFileModeEnabled(){return mReadNumberOfPrimariesInAFileIsUsed;}
+
+
 
   void SetNoOutputMode();
   bool GetOutputMode(){return mOutputMode;}
@@ -89,6 +97,12 @@ protected:
 
   G4double mTimeSliceDuration;
   std::vector<G4double> mTimeSlices;
+  
+  //LSLS
+  std::vector<G4int> mNumberOfPrimariesPerRun;
+  bool mReadNumberOfPrimariesInAFileIsUsed;
+
+
 
   bool mOutputMode;
   bool mTimeSliceIsSetUsingAddSlice;

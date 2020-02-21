@@ -22,6 +22,7 @@
 #include "GateObjectChildList.hh"
 #include "GateLinearRepeater.hh"
 #include "GateAngularRepeater.hh"
+#include "GateGenericRepeater.hh"
 #include "GateSphereRepeater.hh"
 #include "GateSystemComponentList.hh"
 #include "GateObjectRepeaterList.hh"
@@ -276,7 +277,7 @@ G4VPhysicalVolume* GateSystemComponent::GetPhysicalVolume(size_t copyNumber) con
 
 //-------------------------------------------------------------------------------------------
 // Returns the translation vector for one of the physical volumes created by the creator
-const G4ThreeVector& GateSystemComponent::GetCurrentTranslation(size_t copyNumber) const
+G4ThreeVector GateSystemComponent::GetCurrentTranslation(size_t copyNumber) const
 {
   static G4ThreeVector defaultPosition;
 
@@ -350,7 +351,7 @@ GateEccentRotMove* GateSystemComponent::FindEccentRotMove() const
 
 //-------------------------------------------------------------------------------------------
 // The function returns the creator's translation velocity, if a translation can be find was found in the creator's move list
-const G4ThreeVector& GateSystemComponent::GetTranslationVelocity() const
+G4ThreeVector GateSystemComponent::GetTranslationVelocity() const
 {
   static const G4ThreeVector defaultVelocity;
 
@@ -659,6 +660,29 @@ G4double GateSystemComponent::GetSphereRadius()
   return repeater ? repeater->GetRadius() : 0.;
 }
 //-------------------------------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------------------------------
+// Finds the first generic repeater in the creator's repeater list
+GateGenericRepeater* GateSystemComponent::FindGenericRepeater()
+{
+  return FindRepeater<GateGenericRepeater>();
+}
+//-------------------------------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------------------------------
+// Finds the first linear-repeater's repeat number
+G4int GateSystemComponent::GetGenericRepeatNumber()
+{
+  GateGenericRepeater* repeater = FindGenericRepeater();
+  return repeater ? repeater->GetRepeatNumber() : 1;
+}
+//-------------------------------------------------------------------------------------------
+
+
 
 void GateSystemComponent::setInCoincidenceWith(G4String aRsectorName )
 {

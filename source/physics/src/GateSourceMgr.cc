@@ -30,6 +30,8 @@
 #include "GateActions.hh"
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
+#include "GateSourcePhaseSpace.hh"
+#include "GateExtendedVSource.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -241,6 +243,10 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetType("gps");
         source->SetSourceID( m_sourceProgressiveNumber );
         source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)
+      }
+      else if (sourceGeomType == "Extended"){
+    	source = new GateExtendedVSource( sourceName );
+    	source->SetSourceID( m_sourceProgressiveNumber );
       }
       else {
         GateError("Unknown source type '" << sourceGeomType
@@ -547,7 +553,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 
   G4int numVertices = 0;
 
-  if ( (theMode == 1)  || (theMode == 2) )
+  if ( (theMode == TrackingMode::kBoth)  || (theMode == TrackingMode::kTracker) )
     {
       GateRTPhantomMgr::GetInstance()->UpdatePhantoms(m_time); /* PY Descourt 11/12/2008 */
 
@@ -582,7 +588,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
           G4cout << "GateSourceMgr::PrepareNextEvent :  m_time (s) " << m_time/s
                  << "  m_timeLimit (s) " << m_timeLimit/s << Gateendl;
 
-        if( m_time <= m_timeLimit || appMgr->IsTotalAmountOfPrimariesModeEnabled())
+        if( m_time <= m_timeLimit || appMgr->IsTotalAmountOfPrimariesModeEnabled() || appMgr->IsReadNumberOfPrimariesInAFileModeEnabled() )
           {
             if( mVerboseLevel > 1 )
               G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"
@@ -610,7 +616,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       mNbOfParticleInTheCurrentRun++;
     } // normal or Tracker Modes
 
-  if ( theMode == 3 ) // detector mode
+  if ( theMode == TrackingMode::kDetector ) // detector mode
     {
       m_currentSources.push_back(m_fictiveSource);
       //G4cout << "GateSourceMgr::PrepareNextEvent :   m_fictiveSource = " << m_fictiveSource << Gateendl;

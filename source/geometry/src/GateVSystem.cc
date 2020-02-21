@@ -30,19 +30,21 @@
 
 #include "GateConfiguration.h"
 
+#include "GateToTree.hh"
+
 G4int GateVSystem::m_insertionOrder=-1;
 //-----------------------------------------------------------------------------
 /* Constructor
 
-  itsName:      the name chosen for this system
-  isWithGantry:	tells whether there is a gantry (PET) or not (SPECT)
+   itsName:      the name chosen for this system
+   isWithGantry:	tells whether there is a gantry (PET) or not (SPECT)
 */    
 GateVSystem::GateVSystem(const G4String& itsName,G4bool isWithGantry)
-: GateClockDependent( itsName , false ),
-  m_BaseComponent(0),
-  m_mainComponentDepth( isWithGantry ? 1 : 0 ) 
+  : GateClockDependent( itsName , false ),
+    m_BaseComponent(0),
+    m_mainComponentDepth( isWithGantry ? 1 : 0 ) 
 {
-   // Next lines were added for the multi-system approach
+  // Next lines were added for the multi-system approach
   G4String itsOwnName = GateSystemListManager::GetInstance()->GetInsertedSystemsNames()->back();
 
   // Papa's Debugging : number of system for headID in case of multi-system
@@ -59,9 +61,9 @@ GateVSystem::GateVSystem(const G4String& itsName,G4bool isWithGantry)
   GateSystemListManager::GetInstance()->RegisterSystem(this);
   
 
- #ifdef G4ANALYSIS_USE_ROOT
+#ifdef G4ANALYSIS_USE_ROOT
   GateRootDefs::SetDefaultOutputIDNames();
- #endif
+#endif
 }
 //-----------------------------------------------------------------------------
 
@@ -78,9 +80,11 @@ GateVSystem::~GateVSystem()
 // Set the outputID name for a depth of the tree
 void GateVSystem::SetOutputIDName(char * anOutputIDName, size_t depth)
 {
- #ifdef G4ANALYSIS_USE_ROOT
+#ifdef G4ANALYSIS_USE_ROOT
   GateRootDefs::SetOutputIDName(anOutputIDName,depth);
- #endif
+
+#endif
+  GateToTree::SetOutputIDName(m_itsNumber, anOutputIDName, depth);
 }
 //-----------------------------------------------------------------------------
 
@@ -88,7 +92,7 @@ void GateVSystem::SetOutputIDName(char * anOutputIDName, size_t depth)
 /* Method overloading the base-class virtual method Describe().
    This methods prints-out a description of the system
 
-  indent: the print-out indentation (cosmetic parameter)
+   indent: the print-out indentation (cosmetic parameter)
 */    
 void GateVSystem::Describe(size_t indent)
 {
@@ -201,9 +205,9 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
 //-----------------------------------------------------------------------------
 // Compute a subsection of an output-volumeID for the subtree starting from a component
 G4int GateVSystem::ComputeSubtreeID(GateSystemComponent* aComponent, 
-				   const GateVolumeID& volumeID,
-				   GateOutputVolumeID& outputVolumeID,
-				   size_t depth)
+                                    const GateVolumeID& volumeID,
+                                    GateOutputVolumeID& outputVolumeID,
+                                    size_t depth)
 {
   // Compute the ID for the current component
   G4int result = ComputeComponentID(aComponent,volumeID);
@@ -213,8 +217,8 @@ G4int GateVSystem::ComputeSubtreeID(GateSystemComponent* aComponent,
   for ( size_t i=0 ; i<aComponent->GetChildNumber() ; ++i) {
     subtreeResult = ComputeSubtreeID(aComponent->GetChildComponent(i),volumeID,outputVolumeID,depth+1);
     if (subtreeResult>=0) {
-        outputVolumeID[depth+1]=subtreeResult;
-      	break;
+      outputVolumeID[depth+1]=subtreeResult;
+      break;
     }
   }
 	
@@ -297,31 +301,31 @@ G4int GateVSystem::ComputeMainComponentID(GateSystemComponent* aComponent, const
 /* Check whether an creator is connected to the system
    (directly or through one of its ancestors)
       	
-    anCreator: the creator we want to check
+   anCreator: the creator we want to check
 	
-    returns true if the creatr belongs (directly or inderectly) to the system
+   returns true if the creatr belongs (directly or inderectly) to the system
 */
 G4bool GateVSystem::CheckConnectionToCreator(GateVVolume* anCreator) const
 {
-//  G4cout << " DEBUT CheckConnectionToCreator \n";
+  //  G4cout << " DEBUT CheckConnectionToCreator \n";
   
   // Loop as long as we have a valid creator
   while (anCreator)
-  {
-    // Ask the component tree to look for a connection with the current creator
-    G4bool result = m_BaseComponent->CheckConnectionToCreator(anCreator);
+    {
+      // Ask the component tree to look for a connection with the current creator
+      G4bool result = m_BaseComponent->CheckConnectionToCreator(anCreator);
 
-//    G4cout << " result = " << result << Gateendl;
-    // A conncetion was found: return true
-    if (result)
-      return true;
+      //    G4cout << " result = " << result << Gateendl;
+      // A conncetion was found: return true
+      if (result)
+        return true;
       
-    // No connection was found: move up by one step in the creator tree
-    GateVVolume *motherCreator = anCreator->GetMotherCreator();
+      // No connection was found: move up by one step in the creator tree
+      GateVVolume *motherCreator = anCreator->GetMotherCreator();
     
-//    G4cout << " motherCreator "  << Gateendl;
-    anCreator = motherCreator ?  motherCreator->GetCreator() : 0;
-  }
+      //    G4cout << " motherCreator "  << Gateendl;
+      anCreator = motherCreator ?  motherCreator->GetCreator() : 0;
+    }
   
   // No connection was found with the creator or with its ancestors: return false
   return false;
@@ -334,16 +338,16 @@ GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) cons
   compList_t* currentList = new compList_t;
   currentList->push_back(m_BaseComponent);
   while ( (level>0) && !currentList->empty() ){
-      level--;
-      compList_t*  newList = new compList_t;
-      for (size_t i=0;i<currentList->size();++i){
-      	 for (size_t ichild=0;ichild<(*currentList)[i]->GetChildNumber();++ichild){
-	    GateSystemComponent* comp = (*currentList)[i]->GetChildComponent(ichild);
-      	    newList->push_back(comp);
-	 }
+    level--;
+    compList_t*  newList = new compList_t;
+    for (size_t i=0;i<currentList->size();++i){
+      for (size_t ichild=0;ichild<(*currentList)[i]->GetChildNumber();++ichild){
+        GateSystemComponent* comp = (*currentList)[i]->GetChildComponent(ichild);
+        newList->push_back(comp);
       }
-      delete currentList;
-      currentList = newList;
+    }
+    delete currentList;
+    currentList = newList;
   }
   return currentList;
 }
@@ -355,10 +359,10 @@ size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const
   compList_t* currentList = MakeComponentListAtLevel(level);
   size_t ans = 0;
   for (size_t i=0;i<currentList->size();++i){
-   if ( (*currentList)[i]->IsActive() ){
-	 size_t nofVol = (*currentList)[i]->GetVolumeNumber();
-	 ans += nofVol ? nofVol : 1;
-      }
+    if ( (*currentList)[i]->IsActive() ){
+      size_t nofVol = (*currentList)[i]->GetVolumeNumber();
+      ans += nofVol ? nofVol : 1;
+    }
   }
   delete currentList;
   return ans;
@@ -368,93 +372,93 @@ size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const
 //-----------------------------------------------------------------------------
 size_t GateVSystem::ComputeNofSubCrystalsAtLevel(size_t level, std::vector<G4bool>& enableList) const
 {
-   size_t treeDepth = GetTreeDepth();
-   if (level>=treeDepth) return 0;
-   if (level == treeDepth-1 ) {
-      return 1;
-   } else {
-      size_t n=enableList[level +1] ? ComputeNofElementsAtLevel(level+1) : 1;
-      size_t ans = ComputeNofSubCrystalsAtLevel(level+1,enableList)*n;
+  size_t treeDepth = GetTreeDepth();
+  if (level>=treeDepth) return 0;
+  if (level == treeDepth-1 ) {
+    return 1;
+  } else {
+    size_t n=enableList[level +1] ? ComputeNofElementsAtLevel(level+1) : 1;
+    size_t ans = ComputeNofSubCrystalsAtLevel(level+1,enableList)*n;
 
-      return ans;
-   }
+    return ans;
+  }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 size_t GateVSystem::ComputeIdFromVolID(const GateOutputVolumeID& volID,std::vector<G4bool>& enableList) const
 {
-   static G4bool isFirstPass=true;
-   static std::vector<G4int> nofCrystalList;
-   if (isFirstPass){
-      isFirstPass=false;
-      for (size_t i=0;i<GetTreeDepth();i++){
-      	 G4cout<<"nofSubCrystal @ level "<<i<< Gateendl;
-      	 nofCrystalList.push_back(ComputeNofSubCrystalsAtLevel(i,enableList));
-	 G4cout<<"= "<<nofCrystalList[i]<< Gateendl;
-      }
-   }
-   size_t ans = 0;
-   for (size_t i=0;i<GetTreeDepth();i++){
-      if (enableList[i] && volID[i]>=0)  ans += volID[i] * nofCrystalList[i];
-   }
-   return ans; 
+  static G4bool isFirstPass=true;
+  static std::vector<G4int> nofCrystalList;
+  if (isFirstPass){
+    isFirstPass=false;
+    for (size_t i=0;i<GetTreeDepth();i++){
+      G4cout<<"nofSubCrystal @ level "<<i<< Gateendl;
+      nofCrystalList.push_back(ComputeNofSubCrystalsAtLevel(i,enableList));
+      G4cout<<"= "<<nofCrystalList[i]<< Gateendl;
+    }
+  }
+  size_t ans = 0;
+  for (size_t i=0;i<GetTreeDepth();i++){
+    if (enableList[i] && volID[i]>=0)  ans += volID[i] * nofCrystalList[i];
+  }
+  return ans; 
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
 {
-   GateSystemComponent* comp = GetBaseComponent();
-   if (!comp) return 0;
-   G4VPhysicalVolume *vol=comp->GetPhysicalVolume(0), *last_vol=vol;
-   GateVolumeID* ans = new GateVolumeID;
-   ans->push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
-   if (vol) ans->push_back( GateVolumeSelector(vol)); else return ans;
+  GateSystemComponent* comp = GetBaseComponent();
+  if (!comp) return 0;
+  G4VPhysicalVolume *vol=comp->GetPhysicalVolume(0), *last_vol=vol;
+  GateVolumeID* ans = new GateVolumeID;
+  ans->push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
+  if (vol) ans->push_back( GateVolumeSelector(vol)); else return ans;
    
-   for (size_t i=1;i<numList.size();++i){
-      if (comp->GetChildNumber()<1) break;
-      G4int num = numList[i];
-      if (num>=0){
-      	 size_t numChild=0;
-      	 while (num >= (G4int)comp->GetChildComponent(numChild)->GetVolumeNumber()){
-      	    num -= comp->GetChildComponent(numChild)->GetVolumeNumber();
-	    if (numChild < comp->GetChildNumber()-1)
-	       numChild++;
-	    else
-	       break;
-	 }
-
-	 comp = comp->GetChildComponent(numChild);
-	 if (!comp || !comp->IsActive()) continue;
-      	 vol = comp->GetPhysicalVolume(num);
-
-    	 while (last_vol){
-    	     G4LogicalVolume* logical = last_vol->GetLogicalVolume();
-	     if (!logical->IsDaughter(vol)){
-	     	G4bool pb=true;
-	     	for (G4int ii=0;ii<logical->GetNoDaughters();++ii){
-	    	    last_vol=logical->GetDaughter(ii);
-		    if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
-		    	ans->push_back(last_vol);
-			pb=false;
-			break;
-		    }
-		}
-		if (pb) return ans; // no last_vol child is ancestor of vol...
-	     } else {
-	     	ans->push_back(vol);
-		last_vol=vol;
-	     	break;
-	     }
-    	 }
-      } else {
-      	 if (comp->GetChildNumber() != 1) break;
-      	 comp = comp->GetChildComponent(0);
-	 if (!comp || comp->IsActive()) break;
+  for (size_t i=1;i<numList.size();++i){
+    if (comp->GetChildNumber()<1) break;
+    G4int num = numList[i];
+    if (num>=0){
+      size_t numChild=0;
+      while (num >= (G4int)comp->GetChildComponent(numChild)->GetVolumeNumber()){
+        num -= comp->GetChildComponent(numChild)->GetVolumeNumber();
+        if (numChild < comp->GetChildNumber()-1)
+          numChild++;
+        else
+          break;
       }
-   }
-   return ans;
+
+      comp = comp->GetChildComponent(numChild);
+      if (!comp || !comp->IsActive()) continue;
+      vol = comp->GetPhysicalVolume(num);
+
+      while (last_vol){
+        G4LogicalVolume* logical = last_vol->GetLogicalVolume();
+        if (!logical->IsDaughter(vol)){
+          G4bool pb=true;
+          for (unsigned int ii=0;ii<logical->GetNoDaughters();++ii){
+            last_vol=logical->GetDaughter(ii);
+            if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
+              ans->push_back(last_vol);
+              pb=false;
+              break;
+            }
+          }
+          if (pb) return ans; // no last_vol child is ancestor of vol...
+        } else {
+          ans->push_back(vol);
+          last_vol=vol;
+          break;
+        }
+      }
+    } else {
+      if (comp->GetChildNumber() != 1) break;
+      comp = comp->GetChildComponent(0);
+      if (!comp || comp->IsActive()) break;
+    }
+  }
+  return ans;
 }
 //-----------------------------------------------------------------------------
 
@@ -462,32 +466,32 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
 G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
 {
 
-   G4RotationMatrix rotation ;
-   G4ThreeVector translation ;
-   G4VPhysicalVolume* vol=0;
-   for (size_t i=0;i<volID->size();i++){
-      vol = volID->GetVolume(i);
-      G4RotationMatrix rot= vol->GetObjectRotationValue() ;
-      G4ThreeVector transl= vol->GetObjectTranslation() ;
+  G4RotationMatrix rotation ;
+  G4ThreeVector translation ;
+  G4VPhysicalVolume* vol=0;
+  for (size_t i=0;i<volID->size();i++){
+    vol = volID->GetVolume(i);
+    G4RotationMatrix rot= vol->GetObjectRotationValue() ;
+    G4ThreeVector transl= vol->GetObjectTranslation() ;
 
-      translation = translation + rotation*transl;
-      rotation = rotation * rot;
-   }
-   if (!vol) return G4ThreeVector();
-   G4VSolid* solid = vol->GetLogicalVolume()->GetSolid();
-   const G4VoxelLimits noLimits;
-   G4double x[2],y[2],z[2];
-   G4bool ok=true;
+    translation = translation + rotation*transl;
+    rotation = rotation * rot;
+  }
+  if (!vol) return G4ThreeVector();
+  G4VSolid* solid = vol->GetLogicalVolume()->GetSolid();
+  const G4VoxelLimits noLimits;
+  G4double x[2],y[2],z[2];
+  G4bool ok=true;
    
-   G4AffineTransform transform(rotation,translation);
-   ok = ok && solid->CalculateExtent(kXAxis,noLimits,transform,x[0],x[1]) ;
-   ok = ok && solid->CalculateExtent(kYAxis,noLimits,transform,y[0],y[1]) ;
-   ok = ok && solid->CalculateExtent(kZAxis,noLimits,transform,z[0],z[1]) ;
+  G4AffineTransform transform(rotation,translation);
+  ok = ok && solid->CalculateExtent(kXAxis,noLimits,transform,x[0],x[1]) ;
+  ok = ok && solid->CalculateExtent(kYAxis,noLimits,transform,y[0],y[1]) ;
+  ok = ok && solid->CalculateExtent(kZAxis,noLimits,transform,z[0],z[1]) ;
 
-   return ok ? G4ThreeVector  ((x[0]+x[1])/2
+  return ok ? G4ThreeVector  ((x[0]+x[1])/2
                               ,(y[0]+y[1])/2
 			      ,(z[0]+z[1])/2)
-		:
-		    	      G4ThreeVector(0,0,0);
+    :
+    G4ThreeVector(0,0,0);
 }
 //-----------------------------------------------------------------------------

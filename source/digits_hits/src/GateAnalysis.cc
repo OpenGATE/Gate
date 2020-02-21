@@ -14,7 +14,6 @@
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4VProcess.hh"
-#include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
 #include "G4ParticleDefinition.hh"
@@ -320,7 +319,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 
 
-          if (  theMode == kTracker ) // in tracker mode we store the infos about the number of compton and rayleigh
+          if (  theMode == TrackingMode::kTracker ) // in tracker mode we store the infos about the number of compton and rayleigh
             { // G4cout << " GateAnalysis eventID "<<eventID<< Gateendl;
               GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
               ComptonRayleighData aCRData;
@@ -336,7 +335,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
               // return;
             }
 
-          if (  theMode == kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
+          if (  theMode == TrackingMode::kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
             {
               // we are in detector mode
               GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));

@@ -14,7 +14,7 @@ See LICENSE.md for further details
 #define GateAnalysis_H
 
 #include "GateVOutputModule.hh"
-#include "GateDetectorConstruction.hh"
+
 
 class GateTrajectoryNavigator;
 class GateAnalysisMessenger;

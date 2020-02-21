@@ -67,6 +67,7 @@ protected:
   GateImage mParticleInVolumeImage;
 
   G4String mParticleInVolumeFilename;
+  G4int mCurrentEvent;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(ParticleInVolumeActor,GateParticleInVolumeActor)

@@ -18,7 +18,8 @@
 #include "G4NeutrinoE.hh"
 #include "G4SteppingManager.hh"
 #include "GateActions.hh"
-#include "GateRecorderBase.hh"
+#include "GateUserActions.hh"
+#include "GateTrack.hh"
 
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_GENERAL
@@ -54,8 +55,8 @@ GateRunAction* GateRunAction::prunAction=0;
 GateEventAction* GateEventAction::peventAction=0;
 
 //-----------------------------------------------------------------------------
-GateRunAction::GateRunAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r), flagBasicOutput(false)
+GateRunAction::GateRunAction(GateUserActions * cbm)
+  : pCallbackMan(cbm), flagBasicOutput(false)
 { SetRunAction(this); runIDcounter = 0; }
 //-----------------------------------------------------------------------------
 
@@ -67,10 +68,7 @@ void GateRunAction::BeginOfRunAction(const G4Run* aRun)
 
   //#ifdef GATE_BasicROOT_Output
   //if(GateApplicationMgr::GetInstance()->GetOutputMode()){
-  if (GetFlagBasicOutput()){
-    // Basic ROOT output -------------------------------------------
-    ((G4Run *)(aRun))->SetRunID(runIDcounter++);
-    if (recorder != 0) recorder->RecordBeginOfRun(aRun);}
+
   //--------------------------------------------------------------
   //}
   //#endif
@@ -93,11 +91,7 @@ inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
 {
   GateMessage("Core", 1, "End Of Run " << aRun->GetRunID() << Gateendl);
 
-  //#ifdef GATE_BasicROOT_Output
-  if (GetFlagBasicOutput()){
-    // Basic ROOT output
-    if (recorder != 0) recorder->RecordEndOfRun(aRun);}
-  //#endif
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the Analysis manager
@@ -114,8 +108,8 @@ inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
 
 
 //-----------------------------------------------------------------------------
-GateEventAction::GateEventAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r), flagBasicOutput(false)
+GateEventAction::GateEventAction(GateUserActions * cbm)
+  : pCallbackMan(cbm), flagBasicOutput(false)
 { SetEventAction(this); }
 //-----------------------------------------------------------------------------
 
@@ -126,11 +120,9 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
   GateMessage("Core", 2, "Begin Of Event " << anEvent->GetEventID() << "\n");
 
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
-  if ( theMode != kTracker )
+  if ( theMode != TrackingMode::kTracker )
     {
-      if (GetFlagBasicOutput()){
-        // Basic ROOT output
-        if (recorder != NULL) recorder->RecordBeginOfEvent(anEvent);}
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
       // Here we fill the histograms of the OutputMgr manager
@@ -150,9 +142,7 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
 inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
-  if (GetFlagBasicOutput()){
-    anEvent->GetEventID();
-    if (recorder != 0) recorder->RecordEndOfEvent(anEvent);}
+
 
 
 #ifdef G4ANALYSIS_USE_GENERAL
@@ -169,7 +159,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
 
-  if ( theMode == kTracker )
+  if ( theMode == TrackingMode::kTracker )
     {
 
       G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
@@ -205,7 +195,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 
 
 //-----------------------------------------------------------------------------
-GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase*)
+GateTrackingAction::GateTrackingAction(GateUserActions * cbm)
   : pCallbackMan(cbm)
 {
 }
@@ -227,7 +217,7 @@ void GateTrackingAction::PreUserTrackingAction(const G4Track* a)
 
   TrackingMode theMode = myAction->GetMode();
 
-  if ( theMode == kDetector )
+  if ( theMode == TrackingMode::kDetector )
     {
       std::vector<GateTrack*>* aTrackVector = myAction->GetPPTrackVector();
       G4int size =  aTrackVector->size() ;
@@ -313,7 +303,7 @@ void GateTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 
   GateSteppingAction*  myAction = (GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()) ;
   TrackingMode theMode = myAction->GetMode();
-  if ( theMode == kDetector )
+  if ( theMode == TrackingMode::kDetector )
     {
       //G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
       // In Detector Mode : look at trajectories
@@ -513,14 +503,14 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
 
 
 //-----------------------------------------------------------------------------
-GateSteppingAction::GateSteppingAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r)
+GateSteppingAction::GateSteppingAction(GateUserActions * cbm)
+  : pCallbackMan(cbm)
 {
   m_drawTrjLevel = 1;
   m_verboseLevel = 0;
   /* PY Descourt Tracker/Detector 18/12/2008 */
   m_steppingMessenger = new GateSteppingActionMessenger(this);
-  TheMode = kBoth;
+  m_trackingMode = TrackingMode::kBoth;
   Boundary = 1;
   fStpAKill = fStopAndKill;
   fKeepOnlyP = 0;
@@ -596,11 +586,11 @@ void GateSteppingAction::StopAndKill(G4String aString )
 }
 void GateSteppingAction::SetMode( TrackingMode aMode)
 {
-  TheMode = aMode;
+  m_trackingMode = aMode;
 }
 
 TrackingMode  GateSteppingAction::GetMode()
-{ return TheMode;}
+{ return m_trackingMode;}
 
 //-----------------------------------------------------------------------------
 void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
@@ -773,7 +763,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
         }
     } // generate ARF - Data PY Descourt 08/09/2008
 
-  if ( TheMode == kTracker )
+  if (m_trackingMode == TrackingMode::kTracker )
     {
       G4int EventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
       G4int RunID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
@@ -1235,7 +1225,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
         }
     } // generate ARF - Data PY Descourt 11/12/2008
 
-  if ( TheMode == kTracker )
+  if (m_trackingMode == TrackingMode::kTracker )
     {
       G4int EventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
       G4int RunID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
