@@ -21,11 +21,10 @@
 #include "GateMessageManager.hh"
 #include "GateObjectMoveListMessenger.hh"
 #include "GateARFSD.hh"
+#include "GateMagTabulatedField3D.hh"
+#include "GateElectricTabulatedField3D.hh"
 
 #include "globals.hh"
-#include "G4UniformMagField.hh"
-#include "G4FieldManager.hh"
-#include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 #include "G4SDManager.hh"
 #include "G4Material.hh"
@@ -47,7 +46,22 @@ GateDetectorConstruction::GateDetectorConstruction()
      m_phantomSD(0),
      pdetectorMessenger(0),
      moveFlag(0),
-     m_magField(0), m_magFieldValue(0)
+     m_magField(0), m_magFieldValue(0),
+	 e_electField(0), e_electFieldValue(0),
+     m_magFieldUniform(false), m_magFieldTabulated(false),
+	 e_electFieldUniform(false), e_electFieldTabulated(false),
+	 m_MagField(0), e_ElecField(0),
+	 fEquation_B(0), fEquation_E(0),
+	 fFieldMgr(0), fStepper(0),
+	 fMinStep(1*um),
+	 fDeltaChord(1*um),
+	 fDeltaIntersection(1*nm),
+	 fDeltaOneStep(1*nm),
+	 fMinimumEpsilonStep(1e-11),
+	 fMaximumEpsilonStep(1e-10),
+	 fIntegratorStepper("ClassicalRK4"),
+	 nvarOfIntegratorStepper(8) // The Equation of motion for Electric (or combined Electric/Magnetic)
+                                // field requires 8 integration variables
 {
 
   GateMessage("Geometry", 1, "GateDetectorConstruction instantiating...\n");
@@ -62,6 +76,7 @@ GateDetectorConstruction::GateDetectorConstruction()
   pdetectorMessenger = new GateDetectorMessenger(this);
 
   m_magFieldValue = G4ThreeVector(0.,0.,0. * tesla);
+  e_electFieldValue = G4ThreeVector(0.,0.,0. * keV);
 
   G4double pworld_x = 50.*cm;
   G4double pworld_y = 50.*cm;
@@ -154,7 +169,7 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
 #ifdef GATE_USE_OPTICAL
   BuildSurfaces();
 #endif
-  BuildMagField();
+  BuildField();
 
   return pworldPhysicalVolume;
 }
@@ -167,31 +182,183 @@ void GateDetectorConstruction::AddFileToMaterialDatabase(const G4String& f)
   mMaterialDatabase.AddMDBFile(f);
 }
 //---------------------------------------------------------------------------------
-
+void GateDetectorConstruction::SetElectField(G4ThreeVector fieldValue)
+{
+  e_electFieldValue = fieldValue;
+  e_electFieldUniform = true;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetElectFieldTabulatedFile(G4String filenameFieldTable)
+{
+  e_electFieldTabulatedFile = filenameFieldTable;
+  e_electFieldTabulated = true;
+}
 //---------------------------------------------------------------------------------
 void GateDetectorConstruction::SetMagField(G4ThreeVector fieldValue)
 {
   m_magFieldValue = fieldValue;
+  m_magFieldUniform = true;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagFieldTabulatedFile(G4String filenameFieldTable)
+{
+  m_magFieldTabulatedFile = filenameFieldTable;
+  m_magFieldTabulated = true;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagStepMinimum(G4double MinStep){
+  fMinStep = MinStep;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagDeltaChord(G4double DeltaChord){
+  fDeltaChord = DeltaChord;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagDeltaIntersection(G4double DeltaIntersection){
+  fDeltaIntersection = DeltaIntersection;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagDeltaOneStep(G4double DeltaOneStep){
+  fDeltaOneStep = DeltaOneStep;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagMinimumEpsilonStep(G4double MinEpsilonStep){
+  fMinimumEpsilonStep = MinEpsilonStep;
+}
+//---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetMagMaximumEpsilonStep(G4double MaxEpsilonStep){
+  fMaximumEpsilonStep = MaxEpsilonStep;
+}
+
+void GateDetectorConstruction::SetMagIntegratorStepper(G4String IntegratorStepper ){
+  fIntegratorStepper = IntegratorStepper;
 }
 //---------------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------------
-void GateDetectorConstruction::BuildMagField()
+void GateDetectorConstruction::SetField(){
+
+	if (m_magFieldTabulated){
+
+		fEquation_B = new G4Mag_UsualEqRhs (m_MagField);
+
+		if (fIntegratorStepper == "ExplicitEuler"){
+		  fStepper  = new G4ExplicitEuler (fEquation_B, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "ImplicitEuler") {
+		  fStepper  = new G4ImplicitEuler (fEquation_B, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleRunge") {
+		  fStepper  = new G4SimpleRunge (fEquation_B, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleHeum") {
+		  fStepper  = new G4SimpleHeum (fEquation_B, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "NystromRK4") {
+		  fStepper  = new G4NystromRK4 (fEquation_B);
+		}
+		else {
+		  fStepper  = new G4ClassicalRK4 (fEquation_B,nvarOfIntegratorStepper);
+		}
+
+		fFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+		G4MagInt_Driver* pIntgrDriver_B = new G4MagInt_Driver(1*mm,fStepper,nvarOfIntegratorStepper);
+		G4ChordFinder* fChordFinder_B = new G4ChordFinder(pIntgrDriver_B);
+		fFieldMgr->SetChordFinder(fChordFinder_B);
+		fFieldMgr->SetDetectorField(m_MagField);
+
+		GateMessage("Core", 0, " THE FOLLOWING INTEGRATOR STEPPER FOR MAGNETIC FIELD HAS BEEN ACTIVATED: "
+								<< fIntegratorStepper << Gateendl);
+	}
+
+	if (e_electFieldTabulated){
+
+		fEquation_E = new G4EqMagElectricField(e_ElecField);
+
+		if (fIntegratorStepper == "ExplicitEuler"){
+		  fStepper  = new G4ExplicitEuler (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "ImplicitEuler") {
+		  fStepper  = new G4ImplicitEuler (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleRunge") {
+		  fStepper  = new G4SimpleRunge (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleHeum") {
+		  fStepper  = new G4SimpleHeum (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else {
+		  fStepper  = new G4ClassicalRK4 (fEquation_E,nvarOfIntegratorStepper);
+		}
+
+		fFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+		G4MagInt_Driver  *pIntgrDriver_E = new G4MagInt_Driver(1*mm, fStepper, nvarOfIntegratorStepper);
+		G4ChordFinder *fChordFinder_E = new G4ChordFinder(pIntgrDriver_E);
+		fFieldMgr -> SetChordFinder(fChordFinder_E);
+		fFieldMgr->SetDetectorField(e_ElecField);
+
+		GateMessage("Core", 0, " THE FOLLOWING INTEGRATOR STEPPER FOR ELECTRIC FIELD HAS BEEN ACTIVATED: "
+										<< fIntegratorStepper << Gateendl);
+	}
+
+	fFieldMgr->GetChordFinder()->SetDeltaChord(fDeltaChord);
+	fFieldMgr->SetDeltaIntersection(fDeltaIntersection);
+	fFieldMgr->SetDeltaOneStep(fDeltaOneStep);
+
+	G4PropagatorInField *fPropInField = G4TransportationManager::GetTransportationManager()->GetPropagatorInField();
+	fPropInField->SetMinimumEpsilonStep(fMinimumEpsilonStep);
+	fPropInField->SetMaximumEpsilonStep(fMaximumEpsilonStep);
+
+	GateMessage("Core", 0, "\n" <<
+			  "---> fMinStep " << fMinStep/mm << " mm \n"
+			  "---> fDeltaChord "<<fDeltaChord/mm <<" mm \n"
+			  "---> fDeltaIntersection "<<fFieldMgr->GetDeltaIntersection()/mm <<" mm \n"
+			  "---> fDeltaChord "<<fFieldMgr->GetDeltaOneStep()/mm <<" mm \n"
+			  "---> fMinimumEpsilonStep "<<fMinimumEpsilonStep << " \n"
+			  "---> fMaximumEpsilonStep "<<fMaximumEpsilonStep << " \n"
+			  "-----------------------------------------------------------"<< Gateendl);
+}
+
+
+void GateDetectorConstruction::BuildField()
 {
-  //apply a global uniform magnetic field along Z axis
-  G4FieldManager* fieldMgr
-    = G4TransportationManager::GetTransportationManager()->GetFieldManager();
 
-  if(m_magField) delete m_magField;             //delete the existing magn field
+  if (m_magFieldUniform){
 
-  if(m_magFieldValue.mag()!=0.)                 // create a new one if non nul
-    { m_magField = new G4UniformMagField(m_magFieldValue);
-      fieldMgr->SetDetectorField(m_magField);
-      fieldMgr->CreateChordFinder(m_magField);
-    } else {
-    m_magField = NULL;
-    fieldMgr->SetDetectorField(m_magField);
-  }
+	  fFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+	  if(m_magField) delete m_magField;             //delete the existing mag field
+	  if(m_magFieldValue.mag()!=0.){               // create a new one if non null
+		  m_magField = new G4UniformMagField(m_magFieldValue);
+		  fFieldMgr->SetDetectorField(m_magField);
+		  fFieldMgr->CreateChordFinder(m_magField);
+	  } else {
+		  m_magField = NULL;
+		  fFieldMgr->SetDetectorField(m_magField);
+	  }
+
+  } else if (m_magFieldTabulated) {
+
+	  if(m_MagField) delete m_MagField;
+	  m_MagField = new GateMagTabulatedField3D(m_magFieldTabulatedFile);
+	  SetField();
+
+  } else if (e_electFieldUniform){
+
+  	  fFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+  	  if(e_ElecField) delete e_ElecField;             //delete the existing elect field
+  	  if(e_electFieldValue.mag()!=0.){               // create a new one if non null
+  		  e_ElecField = new G4UniformElectricField(e_electFieldValue);
+  		  fFieldMgr->SetDetectorField(e_ElecField);
+  	  } else {
+  		  e_ElecField = NULL;
+  		  fFieldMgr->SetDetectorField(m_magField);
+  	  }
+
+  } else if (e_electFieldTabulated) {
+
+      fFieldMgr = new G4FieldManager();
+	  e_ElecField = new GateElectricTabulatedField3D(e_electFieldTabulatedFile);
+	  SetField();
+    }
 }
 //---------------------------------------------------------------------------------
 
