@@ -16,5 +16,5 @@ G4double GateDepositedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse) const {
 
 
 void GateDepositedEnergyLaw::DescribeMyself (size_t indent) const {
-    G4cout << "Deposited energy  law \n"<< Gateendl;
+    G4cout << GateTools::Indent(indent) << "Deposited energy  law "<< Gateendl;
 }

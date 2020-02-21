@@ -156,7 +156,7 @@ GatePulseList* GateClustering::ProcessPulseList(const GatePulseList* inputPulseL
 
 void  GateClustering::checkClusterCentersDistance(GatePulseList& outputPulseList){
     //Not very efficient
-    if(!outputPulseList.size()>1){
+    if(outputPulseList.size()>1){
         std::vector<unsigned int> pos2Delete;
         std::vector<unsigned int>::iterator it;
         //1)  Check if there are clusters with the same  de getVolumeID y

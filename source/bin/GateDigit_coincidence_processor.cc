@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
    G4String command = "/control/execute ";
    UImanager->ApplyCommand( command + options_macrofile );
 
-   //PRIMER PROBLEMA ASI ME CREA EL TREE SI PONGO EL VECTOR DE ABAJO CON LOS POSIBLES TREES nO ME LO crea
+
    TFile* pTfile = new TFile(sequenCoinc_filePathName.c_str(),"RECREATE");
 
    std::vector<G4String> coincidenceChainNames;
@@ -99,7 +99,6 @@ int main(int argc, char *argv[])
 
 
 
-   //Tengo que crear  GateCCCoincidenceTreeReader parecido al  GateCoincidenceTreeReader preo que me devuelva  td::vector<GateCoincidencePulse*>
    GateCCCoincidencesFileReader* m_coincFileReader= GateCCCoincidencesFileReader::GetInstance(coinc_filePathName);
    m_coincFileReader->PrepareAcquisition();
 
@@ -179,7 +178,6 @@ int main(int argc, char *argv[])
 
 
     pTfile->Write();
-    //delete digitizer;
 
 
     m_coincFileReader->TerminateAfterAcquisition();

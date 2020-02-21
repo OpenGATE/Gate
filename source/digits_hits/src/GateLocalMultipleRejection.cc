@@ -28,7 +28,7 @@ GateLocalMultipleRejection::~GateLocalMultipleRejection()
 G4int GateLocalMultipleRejection::ChooseVolume(G4String val)
 {
   GateObjectStore* m_store = GateObjectStore::GetInstance();
-  if (m_store->FindCreator(val)!=0) {
+  if (m_store->FindCreator(val)!=nullptr) {
     m_param.multipleDef=kvolumeName;
     m_param.rejectionAllPolicy=true;
 
@@ -47,8 +47,6 @@ void GateLocalMultipleRejection::ProcessOnePulse(const GatePulse* inputPulse,Gat
     im=m_table.find(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName());
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     if(im != m_table.end()){
-        //LLenar si no está llena
-        //multiplesRejPol;
 
        currentVolumeName=(outputPulse->GetVolumeID().GetBottomCreator())->GetObjectName();
        if((*im).second.multipleDef==kvolumeID){
@@ -78,13 +76,13 @@ void GateLocalMultipleRejection::ProcessOnePulse(const GatePulse* inputPulse,Gat
 GatePulseList* GateLocalMultipleRejection::ProcessPulseList(const GatePulseList* inputPulseList)
 {
   if (!inputPulseList)
-    return 0;
+    return nullptr;
 
   size_t n_pulses = inputPulseList->size();
   if (nVerboseLevel==1)
         G4cout << "[" << GetObjectName() << "::ProcessPulseList]: processing input list with " << n_pulses << " entries\n";
   if (!n_pulses)
-    return 0;
+    return nullptr;
 
   GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
 
@@ -101,8 +99,7 @@ GatePulseList* GateLocalMultipleRejection::ProcessPulseList(const GatePulseList*
                  if(x.second.size()>1){
                      //multiples
                      //If one have Reject all policy  I need to delete the whole event otherwise just the pulses with the index of that volume
-                     //Here save indexes to delete unless reject all policy found
-                     //Check If delete all flags
+                     //Here indexes are saved to delete pulses unless reject all policy is  found
                       if(multiplesRejPol.find(x.first)!=multiplesRejPol.end()){
                          if(multiplesRejPol[x.first]==1){
                              flagDeleteAll=true;

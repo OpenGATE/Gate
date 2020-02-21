@@ -35,18 +35,20 @@ class GateLocalMultipleRejection : public GateVPulseProcessor
     //@{
     //! This function set a MultipleRejection for a volume called 'name'.
 
-    void SetRejectionPolicy(G4String name, G4bool val) { m_table[name].rejectionAllPolicy = val;  };
-   void SetMultipleDefinition(G4String name, G4String policy){
-       if (policy=="volumeID"){
+    void SetRejectionPolicy(G4String name, G4bool val) { m_table[name].rejectionAllPolicy = val;  }
+    void SetMultipleDefinition(G4String name, G4String policy){
+        if (policy=="volumeID"){
             m_table[name].multipleDef = kvolumeID;
-       }
-       else{
-            if (policy!="volumeName")
-                G4cout<<"WARNING : policy not recognized, using default : volumeName for multiple consideration \n";
+        }
+        else {
+            if(policy=="volumeName"){
                 m_table[name].multipleDef = kvolumeName;
-       }
-
-   };
+            }
+            else{
+                G4cout<<"WARNING : multiple rejection policy not recognized. Default volumeName policy is employed \n";
+            }
+        }
+    }
     //@}
 
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
@@ -68,11 +70,11 @@ class GateLocalMultipleRejection : public GateVPulseProcessor
         multiple_def_t multipleDef;
 
     };
-      std::map<G4String , std::vector<int>> multiplesIndex;
-      std::map<G4String , G4bool> multiplesRejPol;
+    std::map<G4String , std::vector<int>> multiplesIndex;
+    std::map<G4String , G4bool> multiplesRejPol;
 
-       int currentNumber;
-  G4String currentVolumeName;
+    int currentNumber;
+    G4String currentVolumeName;
     param m_param;                                 //!<
     G4String m_name;                               //! Name of the volume
     GateMap<G4String,param> m_table ;  //! Table which contains the names of volume with their characteristics

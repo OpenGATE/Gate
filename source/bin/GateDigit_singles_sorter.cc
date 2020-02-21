@@ -12,7 +12,7 @@
 #include "GateCCCoincidenceDigi.hh"
 
 
-//in order to have volumeID Geomtery neeede
+//in order to have volumeID Geomtery needed
 #include "GateDetectorConstruction.hh"
 #include "GateRunManager.hh"
 #include "GateSignalHandler.hh"
@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
 
 
 
-    //Digitizer (Imagino que tengo que crear layer chains y llenarla con lo que lea. o igual no ?
     GateDigitizer*  digitizer =    GateDigitizer::GetInstance();
 
 
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
      //Read singles file
      GateCCSinglesFileReader* m_singlesFileReader= GateCCSinglesFileReader::GetInstance(singles_filePathName);
      m_singlesFileReader->PrepareAcquisition();
-     //Saca un pulseList por cada eventID with the corresponfing number of pulses
      while(m_singlesFileReader->HasNextEvent()){
          //cout<<"prepareNext"<<endl;
          m_singlesFileReader->PrepareNextEvent();

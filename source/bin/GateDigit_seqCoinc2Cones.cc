@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
    int coincCounter=0;
     GateSequenceCoincidenceTreeReader* m_coincFileReader= new GateSequenceCoincidenceTreeReader(input_filePathName);
          m_coincFileReader->PrepareAcquisition();
-         //Saca un pulseList por cada eventID with the corresponfing number of pulses
 	 GateComptonCameraCones aCon;
          while( m_coincFileReader->hasNext()){
              //cout<<"prepareNext"<<endl;
@@ -61,8 +60,7 @@ int main(int argc, char *argv[])
                      //cout<<"buffer filled"<<endl;
                      m_ConesTree->Fill();
                      //cout<<"tree filled"<<endl;
-                     m_ConesBuffer.Clear();
-		    // escribir el .txt el tre 
+                     m_ConesBuffer.Clear();		    
                    //writeTraEvent( m_coincFileReader->PrepareEndOfEvent(), coincCounter,ossCones);
              }
            }
