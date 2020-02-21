@@ -204,7 +204,11 @@ void GateEnergySpectrumActor::Construct()
       allEnabledTH1DHistograms.push_back(pLETFluenceSpectrum);
   }
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
-      pLETtoMaterialFluenceSpectrum = new TH1D("LETtoMaterialFluenceSpectrum","LET to Material Fluence Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
+      std::string histBranchName = "";
+      std::string materialToConvertToName = mOtherMaterial;
+      histBranchName = "LETto" + materialToConvertToName + "FluenceSpectrum" ; 
+      std::string histTitle = "LET to " + materialToConvertToName + " Fluence Spectrum";
+      pLETtoMaterialFluenceSpectrum = new TH1D(histBranchName.c_str(),histTitle.c_str(),GetNLETBins(),GetLETmin() ,GetLETmax() );
       pLETtoMaterialFluenceSpectrum->SetXTitle("LET to other material (keV/um)");
       pLETtoMaterialFluenceSpectrum->SetYTitle("Fluence * Volume [mm]");
       allEnabledTH1DHistograms.push_back(pLETtoMaterialFluenceSpectrum);
