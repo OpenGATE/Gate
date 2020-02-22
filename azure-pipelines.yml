@@ -203,8 +203,10 @@ jobs:
               -DGATE_USE_RTK=$GATE_USE_RTK \
               -DITK_DIR=$(Pipeline.Workspace)/rtk/bin/ \
               -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
+              -DBUILD_TESTING=ON \
+              -DBUILDNAME=azure_$(STRATEGY_NAME) \
               ../s
-        make -j4
+        make -j4 test ARGS="-D Nightly"
       else
         echo "Just store cache now"
         echo "Run the CI again to compile Gate"
