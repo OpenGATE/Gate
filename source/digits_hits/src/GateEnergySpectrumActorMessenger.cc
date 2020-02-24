@@ -105,18 +105,18 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   pEnableLETFluenceSpectrumCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable LET Fluence spectrum");
   pEnableLETFluenceSpectrumCmd->SetGuidance(guidance);
-  
-  
+
+
   bb = base+"/enableLETtoMaterialFluenceSpectrum";
   pEnableLETtoMaterialFluenceSpectrumCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable LET to material Fluence spectrum");
   pEnableLETtoMaterialFluenceSpectrumCmd->SetGuidance(guidance);
-  
+
   bb = base+"/setOtherMaterial";
   pSetOtherMaterialCmd = new G4UIcmdWithAString(bb, this);
   guidance = G4String("Set Other Material Name");
   pSetOtherMaterialCmd->SetGuidance(guidance);
-  
+
   bb = base+"/enableLETSpectrum";
   pEnableLETSpectrumCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable LET spectrum");

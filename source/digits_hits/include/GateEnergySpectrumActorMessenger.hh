@@ -82,7 +82,6 @@ protected:
   G4UIcmdWithABool          * pEnableEnergyPerUnitMassCMD;
   G4UIcmdWithABool          * pEnableRelativePrimEventsCMD;
   
-  
 
 }; // end class GateEnergySpectrumActorMessenger
 //-----------------------------------------------------------------------------

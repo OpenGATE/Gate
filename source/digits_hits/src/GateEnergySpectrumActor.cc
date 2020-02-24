@@ -77,6 +77,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableRelativePrimEvents = false;
   mOtherMaterial = "G4_WATER";
   
+  
   emcalc = new G4EmCalculator;
 
   pMessenger = new GateEnergySpectrumActorMessenger(this);
@@ -132,7 +133,7 @@ void GateEnergySpectrumActor::Construct()
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       mEnableLETFluenceSpectrumFlag = true;
   }
-      
+
   pTfile = new TFile(mSaveFilename,"RECREATE");
   if (!mEnableLogBinning){
       if (mEnableEnergySpectrumNbPartFlag){
@@ -206,7 +207,7 @@ void GateEnergySpectrumActor::Construct()
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       std::string histBranchName = "";
       std::string materialToConvertToName = mOtherMaterial;
-      histBranchName = "LETto" + materialToConvertToName + "FluenceSpectrum" ; 
+      histBranchName = "LETto" + materialToConvertToName + "FluenceSpectrum" ;
       std::string histTitle = "LET to " + materialToConvertToName + " Fluence Spectrum";
       pLETtoMaterialFluenceSpectrum = new TH1D(histBranchName.c_str(),histTitle.c_str(),GetNLETBins(),GetLETmin() ,GetLETmax() );
       pLETtoMaterialFluenceSpectrum->SetXTitle("LET to other material (keV/um)");
@@ -457,7 +458,6 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   }
   G4double stepLength = step->GetStepLength();
    if (mEnableEnergySpectrumFluenceTrackFlag){
-       
        pEnergySpectrumFluenceTrack->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*stepLength/mm);
        
    }
@@ -476,7 +476,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
             
   }  
   if(mEnableLETFluenceSpectrumFlag) {
-      G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 
+      G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
       G4double energyPre = step->GetPreStepPoint()->GetKineticEnergy();
       G4double energyPost = step->GetPostStepPoint()->GetKineticEnergy();
       G4double energyMean=(energyPre+energyPost)/2;
@@ -484,9 +484,9 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
       G4double dedx;
       dedx = emcalc->ComputeElectronicDEDX(energyMean, partdef, material);
       pLETFluenceSpectrum->Fill(dedx/(keV/um),step->GetTrack()->GetWeight()*stepLength/mm);
-            
+
      if(mEnableLETtoMaterialFluenceSpectrumFlag) {
-          
+
            //other material
           static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);
 
@@ -496,7 +496,7 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
           dedx = emcalc->ComputeTotalDEDX(energyMean,step->GetTrack()->GetParticleDefinition(), OtherMaterial);
           pLETtoMaterialFluenceSpectrum->Fill(dedx/(keV/um),step->GetTrack()->GetWeight()*stepLength/mm);
      }
-  }  
+  }
   
   if(mEnableQSpectrumFlag) {
      
