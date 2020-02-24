@@ -28,6 +28,12 @@ MACRO (DD in)
 ENDMACRO(DD)
 
 #=========================================================
+# Do not use RPATH for Mac, it fails to run Gate when install it
+IF (APPLE)
+  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+ENDIF()
+
+#=========================================================
 # Default build type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release CACHE STRING
