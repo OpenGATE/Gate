@@ -89,7 +89,7 @@ Pytorch is usually used via a Python module, but here we need an additional libr
 Follow instruction on https://pytorch.org getting started page, selecting "LibTorch" in the "Package" line. It is a zip file that must be downloaded and unziped somewhere on your disk. No compilation required here.
 
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
-
+    GATE_USE_TORCH     ON
     Torch_DIR          /home/YOURNAME/libtorch-1.2.0/share/cmake/Torch
     
 In some configuration, the following path should also be set ::
