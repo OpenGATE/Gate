@@ -20,12 +20,12 @@ GatePulse::GatePulse(const void* itsMother)
       m_energy(0),
       m_nPhantomCompton(-1),
       m_nPhantomRayleigh(-1),
-      m_energyError(0.0),
-      m_globalPosError(0.0),
-      m_localPosError(0.0),
       #ifdef GATE_USE_OPTICAL
       m_optical(false),
       #endif
+      m_energyError(0.0),
+      m_globalPosError(0.0),
+      m_localPosError(0.0),
       m_mother(itsMother)
 {
 }

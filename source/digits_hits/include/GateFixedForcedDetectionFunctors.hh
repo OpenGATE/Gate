@@ -221,7 +221,7 @@ namespace GateFixedForcedDetectionFunctor
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         G4ProcessVector* processList = particle->GetProcessManager()->GetProcessList();
         std::vector<G4String> processNameVector;
-        for (G4int process = 0; process < processList->size(); process++)
+        for (unsigned int process = 0; process < processList->size(); process++)
           {
           G4ProcessType type = (*processList)[process]->GetProcessType();
           std::string name = (*processList)[process]->GetProcessName();
