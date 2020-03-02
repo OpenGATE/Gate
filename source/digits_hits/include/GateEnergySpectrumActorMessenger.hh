@@ -65,6 +65,9 @@ protected:
   G4UIcmdWithABool          * pSaveAsText;
   G4UIcmdWithABool          * pSaveAsTextDiscreteEnergySpectrum;
   G4UIcmdWithABool          * pEnableLETSpectrumCmd;
+  G4UIcmdWithABool          * pEnableLETFluenceSpectrumCmd;
+  G4UIcmdWithABool          * pEnableLETtoMaterialFluenceSpectrumCmd;
+  G4UIcmdWithAString * pSetOtherMaterialCmd;
   G4UIcmdWithABool          * pEnableQSpectrumCmd;
   G4UIcmdWithABool          * pEnableEnergySpectrumNbPartCmd;
   G4UIcmdWithABool          * pEnableEnergySpectrumFluenceCosCmd;
