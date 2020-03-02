@@ -121,7 +121,7 @@ jobs:
 
   - task: Cache@2
     inputs:
-      key: 'ccache | "$(Agent.OS)_$(OSVERSION)_root_$(ROOT_VERSION)_geant4_$(GEANT4_VERSION)"'
+      key: 'ccache | "$(Agent.OS)_$(OSVERSION)_root_$(ROOT_VERSION)_geant4_$(GEANT4_VERSION)_v2"'
       path: $(Pipeline.Workspace)/software
       cacheHitVar: CACHE_RESTORED
     displayName: ccache
@@ -152,7 +152,6 @@ jobs:
           cd bin
           cmake -DGEANT4_INSTALL_DATA=ON \
                 -DGEANT4_INSTALL_DATADIR=$(GEANT4_DIR)/data \
-                -DGEANT4_USE_QT=ON \
                 -DCMAKE_INSTALL_PREFIX=$(GEANT4_DIR)/install \
                 ../src
           make -j4 install
@@ -203,13 +202,92 @@ jobs:
               -DGATE_USE_RTK=$GATE_USE_RTK \
               -DITK_DIR=$(Pipeline.Workspace)/rtk/bin/ \
               -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
+              -DBUILD_TESTING=ON \
               ../s
-        make -j4
       else
         echo "Just store cache now"
         echo "Run the CI again to compile Gate"
         if [ ! "$STRATEGY_NAME" == "Linux" ] && [ ! "$STRATEGY_NAME" == "macOS" ]; then
           exit 1
         fi
+      fi
+    displayName: 'Configure Gate'
+
+  - bash: |
+      cd $(Pipeline.Workspace)
+      cat > dashboard.cmake << EOF
+      set(CTEST_SITE "Azure.\$ENV{AGENT_MACHINENAME}")
+      file(TO_CMAKE_PATH "\$ENV{AGENT_BUILDDIRECTORY}" CTEST_DASHBOARD_ROOT)
+      file(TO_CMAKE_PATH "\$ENV{BUILD_SOURCESDIRECTORY}" CTEST_SOURCE_DIRECTORY)
+      file(TO_CMAKE_PATH "\$ENV{AGENT_BUILDDIRECTORY}/build" CTEST_BINARY_DIRECTORY)
+      set(dashboard_source_name "$(Build.Repository.Name)")
+      if(DEFINED ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH})
+        set(branch "-\$ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH}")
+        set(dashboard_model "Experimental")
+      elseif(ENV{BUILD_SOURCEBRANCHNAME} STREQUAL "master")
+        set(branch "-master")
+        set(dashboard_model "Continuous")
+      else()
+        set(branch "-\$ENV{BUILD_SOURCEBRANCHNAME}")
+        set(dashboard_model "Experimental")
+      endif()
+      if(DEFINED ENV{SYSTEM_PULLREQUEST_PULLREQUESTNUMBER})
+        set(pr "-PR\$ENV{SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}")
+      else()
+        set(pr "")
+      endif()
+      set(CTEST_BUILD_NAME "azure_$(STRATEGY_NAME)-Build$(Build.BuildId)\${pr}\${branch}")
+      set(CTEST_UPDATE_VERSION_ONLY 1)
+      set(CTEST_TEST_ARGS \${CTEST_TEST_ARGS} PARALLEL_LEVEL \${PARALLEL_LEVEL})
+      set(CTEST_CONFIGURATION_TYPE "Release")
+      set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+      set(CTEST_BUILD_FLAGS "${CTEST_BUILD_FLAGS} -j4")
+      set(CTEST_CUSTOM_WARNING_EXCEPTION
+        \${CTEST_CUSTOM_WARNING_EXCEPTION}
+        # macOS Azure Pipelines
+        "ld: warning: text-based stub file"
+        )
+      set(dashboard_no_clean 1)
+      set(ENV{CC} $(cCompiler))
+      set(ENV{CXX} $(cxxCompiler))
+      string(TIMESTAMP build_date "%Y-%m-%d")
+      message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
+      message("CTEST_SITE = \${CTEST_SITE}")
+      ctest_start(Experimental)
+      ctest_configure(RETURN_VALUE configure_Results)
+      if (NOT ${configure_Results} EQUAL 0)
+        message( SEND_ERROR "Configuration error" )
+      endif()
+      ctest_build(RETURN_VALUE build_Results)
+      if (NOT ${build_Results} EQUAL 0)
+        message( SEND_ERROR "Build error" )
+      endif()
+      ctest_test(RETURN_VALUE test_Results)
+      if (NOT ${test_Results} EQUAL 0)
+        message( SEND_ERROR "Test error" )
+      endif()
+      ctest_submit(RETURN_VALUE submit_Results)
+      if (NOT ${submit_Results} EQUAL 0)
+        message( SEND_ERROR "Submit error" )
+      endif()
+      EOF
+      cat dashboard.cmake
+    displayName: 'Configure CTest'
+
+  - bash: |
+      if [ "$CACHE_RESTORED" == "true" ]; then
+        cd $(Pipeline.Workspace)/build
+        cp ../dashboard.cmake .
+        export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
+        export PATH=${ROOTSYS}:${PATH}
+        source $(ROOT_DIR)/bin/bin/thisroot.sh
+        source $(GEANT4_DIR)/install/bin/geant4.sh
+        ls -lrt ../s/benchmarks/benchRT/output
+        ctest -S dashboard.cmake -VV
+        ls -lrt ../s/benchmarks/benchRT/output
+        cd ../s/benchmarks/benchRT
+      else
+        echo "Just store cache now"
+        echo "Run the CI again to compile Gate"
       fi
     displayName: 'Build Gate'
