@@ -138,8 +138,19 @@ G4double G4XrayBoundaryProcess::GetRindex(G4Material *Material, G4double) {
     G4double Density = Material->GetDensity() / (g / cm3);
 
 #ifdef GATE_USE_XRAYLIB
+#if XRAYLIB_MAJOR > 3
+    xrl_error *error = NULL;
+    for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i) {
+      delta += (1 - Refractive_Index_Re(Material->GetElementVector()->at(i)->GetSymbol(), Energy/(keV), 1.0,&error)) * Material->GetFractionVector()[i];
+      if (error != NULL) {
+	G4cerr << "error message: " << error->message << "\n";
+	xrl_clear_error(&error);
+      }
+    }
+#else
     for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i)
-        delta += (1 - Refractive_Index_Re(Material->GetElementVector()->at(i)->GetSymbol(), Energy/(keV), 1.0)) * Material->GetFractionVector()[i];
+      delta += (1 - Refractive_Index_Re(Material->GetElementVector()->at(i)->GetSymbol(), Energy/(keV), 1.0)) * Material->GetFractionVector()[i];
+#endif    
 #else
     G4Exception( "G4XrayBoundaryProcess::GetRindex", "GetRindex", FatalException, "Xraylib is not available\n");
 #endif
