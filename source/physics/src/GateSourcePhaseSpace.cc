@@ -788,7 +788,7 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 
   // Store the results into the vectors
   for (auto i=0; i < output.sizes()[0]; ++i) {
-    const float * v = output[i].data<float>();
+    const float * v = output[i].data_ptr<float>();
     mPTEnergy[i] = u(v, mPTEnergyIndex, def_E);
     mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex, def_X),
                                    u(v, mPTPositionYIndex, def_Y),

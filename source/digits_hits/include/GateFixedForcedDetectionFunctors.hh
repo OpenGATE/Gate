@@ -221,7 +221,7 @@ namespace GateFixedForcedDetectionFunctor
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         G4ProcessVector* processList = particle->GetProcessManager()->GetProcessList();
         std::vector<G4String> processNameVector;
-        for (G4int process = 0; process < processList->size(); process++)
+        for (unsigned int process = 0; process < processList->size(); process++)
           {
           G4ProcessType type = (*processList)[process]->GetProcessType();
           std::string name = (*processList)[process]->GetProcessName();
@@ -325,10 +325,20 @@ namespace GateFixedForcedDetectionFunctor
             double delta = 0.0;
             double Density = mat->GetDensity() / (g/cm3);
 #ifdef GATE_USE_XRAYLIB
+#if XRAYLIB_MAJOR > 3
+	    xrl_error *error = NULL;
             for (unsigned int i = 0; i < mat->GetElementVector()->size(); ++i)
               {
-              delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0)) * mat->GetFractionVector()[i];
+		delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0, &error)) * mat->GetFractionVector()[i];
+		if (error != NULL) {
+		  G4cerr << "error message: " << error->message << "\n";
+		  xrl_clear_error(&error); 
+		}
               }
+#else
+            for (unsigned int i = 0; i < mat->GetElementVector()->size(); ++i)
+              delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0)) * mat->GetFractionVector()[i];
+#endif	      
 #else
             G4Exception( "GateFixedForcedDetectionFunctors::CreateMaterialDeltaMap", "CreateMaterialDeltaMap", FatalException, "Xraylib is not available\n");
 #endif

@@ -20,6 +20,7 @@
 
 #include "globals.hh"
 #include "G4PhysicalConstants.hh"
+#include "GateConfiguration.h"
 #include <vector>
 
 #include "G4Material.hh"
@@ -109,7 +110,7 @@ class GateIsotopeComponentCreator : public GateComponentCreator {
 public:
   inline GateIsotopeComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName) {}
   virtual inline ~GateIsotopeComponentCreator() {}
-  virtual void AddToMaterial(G4Material* material) {(void)material;}
+  virtual void AddToMaterial(G4Material* material) {UNUSED(material);}
   virtual void AddToElement(G4Element* element)=0;
 } ;
 //-------------------------------------------------------------------------------------------------
@@ -121,7 +122,7 @@ public:
   inline GateElemComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName) {}
   virtual inline ~GateElemComponentCreator() {}
   virtual void AddToMaterial(G4Material* material)=0;
-  virtual void AddToElement(G4Element* element) {(void)element;}
+  virtual void AddToElement(G4Element* element) {UNUSED(element);}
 } ;
 //-------------------------------------------------------------------------------------------------
 
@@ -171,7 +172,7 @@ public:
   inline GateMatComponentCreator( GateMaterialDatabase* db, const G4String& itsName="") : GateComponentCreator(db,itsName),fraction(0.) {}
   virtual inline ~GateMatComponentCreator() {}
   virtual void AddToMaterial(G4Material* material);
-  virtual void AddToElement(G4Element* element) {(void)element;}
+  virtual void AddToElement(G4Element* element) {UNUSED(element);}
 
 public:
   G4double  	  fraction;

@@ -82,6 +82,7 @@ private:
   template <typename T>
   void retrieve(T* p, G4int system_id) //p == GateCrystalHit, GateSingleDigi, or &GatePulses
   {
+      UNUSED(system_id);
       m_runID = p->GetRunID();
       m_eventID[0] = p->GetEventID();
       m_sourceID[0] = p->GetSourceID();
