@@ -62,4 +62,6 @@
 
 #cmakedefine GATE_USE_OPENGL               @GATE_USE_OPENGL@
 
+#define UNUSED(x) (void)(x)
+
 #endif // GATE_CONFIGURATION_H

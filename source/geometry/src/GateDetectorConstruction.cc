@@ -47,7 +47,7 @@ GateDetectorConstruction::GateDetectorConstruction()
      pdetectorMessenger(0),
      moveFlag(0),
      m_magField(0), m_magFieldValue(0),
-	 e_electField(0), e_electFieldValue(0),
+     e_electFieldValue(0),
      m_magFieldUniform(false), m_magFieldTabulated(false),
 	 e_electFieldUniform(false), e_electFieldTabulated(false),
 	 m_MagField(0), e_ElecField(0),
