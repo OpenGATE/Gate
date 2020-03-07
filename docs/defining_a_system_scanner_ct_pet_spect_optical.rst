@@ -76,11 +76,11 @@ where :
    +----------------+--------------------------------+-----------------------------------------------------------------+
    | System         | Components and Shape           | Available Outputs                                               |
    +================+===========+====================+=================================================================+
-   | scanner        | level1    | geometry not fixed | Basic output: ASCII or ROOT, coincidences only for PETscanner   |
-   |                +-----------+                    |                                                                 |
+   | scanner or     | level1    | geometry not fixed | Basic output: ASCII or ROOT. Coincidences are only available    |
+   | PETscanner     +-----------+                    | for the "PETscanner" system                                     |
    |                | level2    |                    |                                                                 |
-   |                +-----------+                    |                                                                 |
-   |                | level3    |                    |                                                                 |
+   |                +-----------+                    | The "level5" key was introduced after Gate v8.2. For Gate v8.2, |
+   |                | level3    |                    | the key layer0 and layer1 were used                             |
    |                +-----------+                    |                                                                 |
    |                | level4    |                    |                                                                 |
    |                +-----------+                    |                                                                 |
