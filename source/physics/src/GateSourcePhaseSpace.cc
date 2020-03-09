@@ -535,7 +535,8 @@ void GateSourcePhaseSpace::AddFile(G4String file)
 
   G4cout << "GateSourcePhaseSpace::AddFile Add " << file << G4endl;
 
-  if(extension != "npy" && extension != "root" && extension != "pt")
+  if(extension != "IAEAphsp" && extension != "IAEAheader" && 
+    extension != "npy" && extension != "root" && extension != "pt")
     GateError( "Unknow phase space file extension. Knowns extensions are : "
                << Gateendl
                << ".IAEAphsp (or IAEAheader) .root .npy .pt (pytorch) \n");
