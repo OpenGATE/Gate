@@ -36,6 +36,20 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 #=========================================================
+# Native compilation
+OPTION(GATE_COMPILE_WITH_NATIVE "Build with -march=native (works if build type is Release)" OFF)
+IF(UNIX AND GATE_COMPILE_WITH_NATIVE)
+  string(FIND ${CMAKE_CXX_FLAGS_RELEASE} -march=native pos_march_cxx)
+  string(FIND ${CMAKE_C_FLAGS_RELEASE} -march=native pos_march_c)
+  IF(${pos_march_cxx} EQUAL -1)
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+  ENDIF() 
+  IF(${pos_march_c} EQUAL -1)
+    SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
+  ENDIF()
+ENDIF(UNIX AND GATE_COMPILE_WITH_NATIVE)
+
+#=========================================================
 # Option to use visualisation feature of G4
 OPTION(GATE_USE_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 IF(GATE_USE_GEANT4_UIVIS)
