@@ -224,8 +224,8 @@ jobs:
       if(DEFINED ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH})
         set(branch "-\$ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH}")
         set(dashboard_model "Experimental")
-      elseif(ENV{BUILD_SOURCEBRANCHNAME} STREQUAL "master")
-        set(branch "-master")
+      elseif(ENV{BUILD_SOURCEBRANCHNAME} STREQUAL "develop")
+        set(branch "-develop")
         set(dashboard_model "Continuous")
       else()
         set(branch "-\$ENV{BUILD_SOURCEBRANCHNAME}")
@@ -241,7 +241,7 @@ jobs:
       set(CTEST_TEST_ARGS \${CTEST_TEST_ARGS} PARALLEL_LEVEL \${PARALLEL_LEVEL})
       set(CTEST_CONFIGURATION_TYPE "Release")
       set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
-      set(CTEST_BUILD_FLAGS "${CTEST_BUILD_FLAGS} -j4")
+      set(CTEST_BUILD_FLAGS "\${CTEST_BUILD_FLAGS} -j4")
       set(CTEST_CUSTOM_WARNING_EXCEPTION
         \${CTEST_CUSTOM_WARNING_EXCEPTION}
         # macOS Azure Pipelines
@@ -253,22 +253,22 @@ jobs:
       string(TIMESTAMP build_date "%Y-%m-%d")
       message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
       message("CTEST_SITE = \${CTEST_SITE}")
-      ctest_start(Experimental)
-      ctest_configure(RETURN_VALUE configure_Results)
-      if (NOT ${configure_Results} EQUAL 0)
-        message( SEND_ERROR "Configuration error" )
-      endif()
-      ctest_build(RETURN_VALUE build_Results)
-      if (NOT ${build_Results} EQUAL 0)
-        message( SEND_ERROR "Build error" )
-      endif()
-      ctest_test(RETURN_VALUE test_Results)
-      if (NOT ${test_Results} EQUAL 0)
-        message( SEND_ERROR "Test error" )
-      endif()
+      ctest_start(dashboard_model)
+      ctest_configure(CAPTURE_CMAKE_ERROR configure_errors RETURN_VALUE configure_Results)
+      ctest_build(NUMBER_ERRORS build_errors RETURN_VALUE build_Results)
+      ctest_test(CAPTURE_CMAKE_ERROR test_errors RETURN_VALUE test_Results)
       ctest_submit(RETURN_VALUE submit_Results)
-      if (NOT ${submit_Results} EQUAL 0)
-        message( SEND_ERROR "Submit error" )
+      if ((NOT \${configure_errors} EQUAL 0) OR (NOT \${configure_Results} EQUAL 0))
+        message( FATAL_ERROR "Configuration error" )
+      endif()
+      if ((NOT \${build_errors} EQUAL 0) OR (NOT \${build_Results} EQUAL 0))
+        message( FATAL_ERROR "Build error" )
+      endif()
+      if ((NOT \${test_errors} EQUAL 0) OR (NOT \${test_Results} EQUAL 0))
+        message( FATAL_ERROR "Test error" )
+      endif()
+      if (NOT \${submit_Results} EQUAL 0)
+        message( FATAL_ERROR "Submit error" )
       endif()
       EOF
       cat dashboard.cmake
@@ -284,6 +284,9 @@ jobs:
         source $(GEANT4_DIR)/install/bin/geant4.sh
         ls -lrt ../s/benchmarks/benchRT/output
         ctest -S dashboard.cmake -VV
+        if [ ! $? -eq 0 ]; then
+          exit 1
+        fi
         ls -lrt ../s/benchmarks/benchRT/output
         cd ../s/benchmarks/benchRT
       else
