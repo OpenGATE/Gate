@@ -179,7 +179,7 @@ jobs:
           mkdir src bin
           git clone https://github.com/InsightSoftwareConsortium/ITK.git --depth 1 src
           cd bin
-          cmake -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
+          cmake -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DITK_MINIMUM_COMPLIANCE_LEVEL=3 -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
           make -j4
         fi
       else
