@@ -53,7 +53,7 @@ class GateOutputVolumeID : public std::vector<G4int>
 };
 
 inline GateOutputVolumeID::GateOutputVolumeID(size_t itsSize)
- : std::vector<G4int>(itsSize)
+ : std::vector<G4int>(itsSize, -1)
 {}
 
 
