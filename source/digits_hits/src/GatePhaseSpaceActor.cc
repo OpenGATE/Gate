@@ -140,6 +140,7 @@ void GatePhaseSpaceActor::Construct()
   }
 
   if (extension == "IAEAphsp" || extension == "IAEAheader" ) {
+    mFileType = "iaeaFile";
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
     pIAEAheader->initialize_counters();
     pIAEARecordType = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
@@ -168,12 +169,18 @@ void GatePhaseSpaceActor::Construct()
     }
     if ( pIAEAheader->set_record_contents(pIAEARecordType) == FAIL) GateError("Record contents not setted.");
   } else  {
-    if(extension == "root")
+    if(extension == "root") {
+      mFileType = "rootFile";
       mFile.add_file(mSaveFilename,  "root");
-    else if(extension == "npy")
+    }
+    else if(extension == "npy") {
+      mFileType = "npyFile";
       mFile.add_file(mSaveFilename, "npy");
-    else if(extension == "txt")
+    }
+    else if(extension == "txt") {
+      mFileType = "txtFile";
       mFile.add_file(mSaveFilename, "txt");
+    }
     else
       GateError("Unknown extension for phasespace");
 
@@ -437,7 +444,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   // hadElastic = 1
   // protonInelastic = 2
   //===============================================================================================================
- 
+
   if(EnableNuclearFlag)
     {
       GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
@@ -447,7 +454,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         {
           creator = 0;
           nucprocess = 0;
-          order = info->GetScatterOrder(); 
+          order = info->GetScatterOrder();
 
           if (!step->GetTrack()->GetCreatorProcess())
             creator = 0;
@@ -617,7 +624,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   strcpy(pro_step, st.c_str());
 
 
-  if (mFileType == "IAEAFile") {
+  if (mFileType == "iaeaFile") {
 
     const G4Track *aTrack = step->GetTrack();
     int pdg = aTrack->GetDefinition()->GetPDGEncoding();
@@ -668,7 +675,7 @@ void GatePhaseSpaceActor::SaveData()
 {
   GateVActor::SaveData();
 
-  if (mFileType == "IAEAFile") {
+  if (mFileType == "iaeaFile") {
     pIAEAheader->orig_histories = mNevent;
     G4String IAEAHeaderExt = ".IAEAheader";
 
@@ -684,17 +691,10 @@ void GatePhaseSpaceActor::SaveData()
 
     fclose(pIAEAheader->fheader);
     fclose(pIAEARecordType->p_file);
-  } else {
-    G4cout << "Close TreeFileManager" << G4endl;
+  }
+  else {
     mFile.close();
   }
-
-
-
-
-
-
-
 }
 // --------------------------------------------------------------------
 
@@ -702,10 +702,6 @@ void GatePhaseSpaceActor::SaveData()
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::ResetData()
 {
-
   GateError("Can't reset phase space");
 }
 // --------------------------------------------------------------------
-
-
-
