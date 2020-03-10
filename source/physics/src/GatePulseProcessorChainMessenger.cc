@@ -49,7 +49,6 @@ See LICENSE.md for further details
 #include "GatePulseAdderComptPhotIdealLocal.hh"
 #include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
-#include "GatePulseAdderGPUSpect.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
@@ -102,7 +101,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter adderGPUSpect  gridDiscretization  localMultipleRejection";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter gridDiscretization  localMultipleRejection";
   return theList;
 }
 
@@ -175,9 +174,7 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateLocalClustering(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="clustering")
     newProcessor = new GateClustering(GetProcessorChain(),newInsertionName);
-  else if (childTypeName=="adderGPUSpect")
-		newProcessor = new GatePulseAdderGPUSpect(GetProcessorChain(),newInsertionName);
-	else if (childTypeName=="crystalblurring")
+  else if (childTypeName=="crystalblurring")
     newProcessor = new GateCrystalBlurring(GetProcessorChain(),newInsertionName,-1.,-1.,1.,-1.*keV);
   else if (childTypeName=="localEfficiency")
     newProcessor = new GateLocalEfficiency(GetProcessorChain(),newInsertionName);
