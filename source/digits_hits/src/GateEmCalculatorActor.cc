@@ -16,6 +16,7 @@
 #include "GateMiscFunctions.hh"
 #include "G4Event.hh"
 #include "G4MaterialTable.hh"
+#include "G4IonTable.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ProcessManager.hh"
@@ -38,6 +39,7 @@ GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
 
   mEnergy = 100 ;
   mPartName = "proton";
+  mIsGenericIon = false;
 
   pActorMessenger = new GateEmCalculatorActorMessenger(this);
   emcalc = new G4EmCalculator;
@@ -115,8 +117,9 @@ void GateEmCalculatorActor::SaveData()
   G4String material;
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
 
-  G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-  G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
+  const G4ParticleDefinition* gamma_definition = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+  const G4ParticleDefinition* particle_definition = mIsGenericIon? GetIonDefinition() : G4ParticleTable::GetParticleTable()->FindParticle(mPartName);
+  G4ProcessVector* plist = gamma_definition->GetProcessManager()->GetProcessList();
   std::vector<G4String> processNameVector;
   for (unsigned int j = 0; j < plist->size(); j++)
     {
@@ -128,7 +131,7 @@ void GateEmCalculatorActor::SaveData()
 
   os << "# Output calculted for the following parameters:\n";
   os << "# Energy\t" << mEnergy << " MeV\n";
-  os << "# Particle\t" << mPartName << "\n\n";
+  os << "# Particle\t" << mPartName << " " << mParticleParameters << "\n\n"; // parameters are empty unless mPartName=GenericIon
   os << "# And for the following materials\n";
   // labels
   os << "Material\t";
@@ -158,13 +161,13 @@ void GateEmCalculatorActor::SaveData()
       eDensity = (*matTbl)[k]->GetElectronDensity();
       radLength = (*matTbl)[k]->GetRadlen();
       I = (*matTbl)[k]->GetIonisation()->GetMeanExcitationEnergy();
-      EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut) / density;
-      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material) / density;
-      TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut) / density;
+      EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, particle_definition, (*matTbl)[k], cut) / density;
+      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, particle_definition, (*matTbl)[k]) / density;
+      TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, particle_definition, (*matTbl)[k], cut) / density;
       MuMassCoeficient = 0.;
       for( size_t j = 0; j < processNameVector.size(); j++)
         {
-          CrossSectionProcess = emcalc->ComputeCrossSectionPerVolume( mEnergy, mPartName, processNameVector[j], material, cut);
+          CrossSectionProcess = emcalc->ComputeCrossSectionPerVolume( mEnergy, particle_definition, processNameVector[j], (*matTbl)[k], cut);
           MuMassCoeficient += CrossSectionProcess / density;
         }
 
@@ -179,7 +182,7 @@ void GateEmCalculatorActor::SaveData()
       os << density*e_SI << "\t\t";
       os << eDensity << "\t";
       os << radLength << "\t\t";
-      os << I*1.e6 << "\t";
+      os << I/eV << "\t";
       os << EmDEDX / (MeV*cm2/g) << "\t\t";
       os << NuclearDEDX / (MeV*cm2/g) << "\t";
       os << TotalDEDX / (MeV*cm2/g) << "\t\t";
@@ -199,4 +202,51 @@ void GateEmCalculatorActor::SaveData()
 void GateEmCalculatorActor::ResetData()
 {
 }
+
 //-----------------------------------------------------------------------------
+const G4ParticleDefinition*
+GateEmCalculatorActor::GetIonDefinition()
+  {
+    if (mPartName!="GenericIon"){
+      // A bit late to do this here and now, but in the messenger the two options may come in in any order,
+      // so it is not easy to check there. PencilBeam and TPSPencilBeam have a simlar problem (not by coincidence,
+      // because I tried to keep the options in the same style.)
+      GateError("Got ion parameters '" << mParticleParameters << "' but particle name " << mPartName << "!=GenericIon");
+    }
+    //// 4 possible arguments are Z, A, Charge, Excite Energy
+    //int atomic_number = 0;
+    //int atomic_mass = 0;
+    //std::istringstream iss((const char*)mParticleParameters);
+    //iss >> atomic_number >> atomic_mass;
+    //
+    // 4 possible arguments are Z, A, Charge, Excite Energy (implementation copied/adapted from GateSourcePencilBeamActor)
+    G4Tokenizer next(ParticleParameters);
+    atomic_number = StoI(next());
+    atomic_mass = StoI(next());
+    G4String sQ = next();
+    if (sQ.isNull())
+      {
+	ion_charge = atomic_number;
+      }
+    else
+      {
+	ion_charge = StoI(sQ);
+	sQ = next();
+	if (sQ.isNull())
+	  {
+	    ion_excite_energy = 0.0;
+	  }
+	else
+	  {
+	    ion_excite_energy = StoD(sQ) * keV;
+	  }
+      }
+
+    GateMessage("Output",2,"Got atomic number = " << atomic_number << " and atomic mass = " << atomic_mass << Gateendl );
+    //const G4ParticleDefinition* p = G4IonTable::GetIonTable()->GetIon(atomic_number,atomic_mass,ion_charge,ion_excite_energy);
+    const G4ParticleDefinition* p = G4IonTable::GetIonTable()->GetIon(atomic_number,atomic_mass,ion_excite_energy);
+    GateMessage("Output",2,"particle name = " << p->GetParticleName()<< Gateendl );
+    GateMessage("Output",2,"particle type = " << p->GetParticleType()<< Gateendl );
+    GateMessage("Output",2,"particle pdg mass = " << p->GetPDGMass()<< Gateendl );
+    return p;
+  }
