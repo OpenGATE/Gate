@@ -15,8 +15,12 @@
 #ifdef GATE_USE_TORCH
 // Need to be *before* include GateIAEAHeader because it define macros
 // that mess with torch
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <torch/script.h>
 #include "json.hpp"
+#pragma GCC diagnostic pop
 #endif
 
 #include "G4Event.hh"
