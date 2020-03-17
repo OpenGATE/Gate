@@ -29,9 +29,7 @@
 #include "GateVImage.hh"
 #include "GateMachine.hh"
 #include "GateMHDImage.hh"
-#ifndef __CUDACC__
 #include "GateDICOMImage.hh"
-#endif
 #include "GateMiscFunctions.hh"
 
 // root

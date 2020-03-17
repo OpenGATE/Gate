@@ -14,7 +14,6 @@
 #include "GateOutputMgr.hh"
 #include "GateToProjectionSet.hh"
 #include "GateToInterfile.hh"
-#include "GateToGPUImageSPECT.hh"
 #include "GateARFSD.hh"  /* PY Descourt 08/09/2009 */ 
 #include "GateDetectorConstruction.hh" /* PY Descourt 08/09/2009 */ 
 
@@ -47,13 +46,6 @@ GateSPECTHeadSystem::GateSPECTHeadSystem(const G4String& itsName) :
                                           this,
                                           GateOutputMgr::GetDigiMode());
   outputMgr->AddOutputModule((GateVOutputModule*)m_gateToInterfile);
-
-	// GPU output
-	m_gateToGPUImageSPECT = new GateToGPUImageSPECT( "spectGPU",
-                                                  outputMgr,
-                                                  this,
-                                                  GateOutputMgr::GetDigiMode());
-	outputMgr->AddOutputModule((GateVOutputModule*)m_gateToGPUImageSPECT);
 
   SetOutputIDName((char *)"headID",0);
   SetOutputIDName((char *)"crystalID",1);

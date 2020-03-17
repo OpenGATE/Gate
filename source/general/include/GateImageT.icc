@@ -67,9 +67,7 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else if (extension == "h33" || extension == "iff") ReadInterfile(filename);
   else if (extension == "i33") ReadInterfile(filename);
-#ifndef __CUDACC__
   else if (extension == "dcm") ReadDICOM(filename);
-#endif
   else {
     GateError( "Unknown image file extension." << Gateendl
                << "Your file name is [" << filename << "] and the extension [" << extension << "]." << Gateendl
@@ -312,7 +310,6 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 //-----------------------------------------------------------------------------
 
 
-#ifndef __CUDACC__
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::ReadDICOM(G4String filename) {
@@ -353,7 +350,6 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
   #endif
 }
-#endif
 //-----------------------------------------------------------------------------
 
 
@@ -420,10 +416,8 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
     WriteMHD(filename);
   else if (extension == "root")
     WriteRoot(filename);
-#ifndef __CUDACC__
   else if (extension == "dcm")
     WriteDICOM(filename);
-#endif
   else {
     GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
                 << " format... I try ASCII file\n");
@@ -645,7 +639,6 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
 
 
 //-----------------------------------------------------------------------------
-#ifndef __CUDACC__
 template<class PixelType>
 void GateImageT<PixelType>::WriteDICOM(std::string filename)
 {
@@ -665,7 +658,6 @@ void GateImageT<PixelType>::WriteDICOM(std::string filename)
     GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
   #endif
 }
-#endif
 //-----------------------------------------------------------------------------
 
 

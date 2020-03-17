@@ -14,7 +14,6 @@
 class GateClockDependentMessenger;
 class GateToProjectionSet;
 class GateToInterfile;
-class GateToGPUImageSPECT;
 
 /*! \class  GateSPECTHeadSystem
     \brief  The GateSPECTHeadSystem is a model for SPECT scanners and gamma cameras
@@ -81,7 +80,6 @@ class GateSPECTHeadSystem : public GateVSystem
 
     GateToProjectionSet       	*m_gateToProjectionSet;
     GateToInterfile   	      	*m_gateToInterfile;
-    GateToGPUImageSPECT         *m_gateToGPUImageSPECT;
 
 	G4int m_ARFStage;/* PY Descourt 08/09/2009 */ 
 };
