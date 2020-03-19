@@ -50,6 +50,10 @@ class GateEmCalculatorActor : public GateVActor
   // other methods
   void SetEnergy (double E) {mEnergy=E;}
   void SetParticleName (G4String Name) {mPartName=Name;}
+  //Particle Properties If GenericIon
+  void SetIonParameter(G4String ParticleParameters) {mParticleParameters=ParticleParameters;}
+  //Specify how to define the particle type
+  void SetIsGenericIon(bool IsGenericIon) {mIsGenericIon=IsGenericIon;}
 
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
@@ -57,9 +61,12 @@ class GateEmCalculatorActor : public GateVActor
   virtual void ResetData();
 
 protected:
+  const G4ParticleDefinition* GetIonDefinition();
 
   double mEnergy;
   G4String mPartName;
+  G4String mParticleParameters;
+  bool mIsGenericIon;
 
   G4EmCalculator * emcalc;
   GateEmCalculatorActor(G4String name, G4int depth=0);
