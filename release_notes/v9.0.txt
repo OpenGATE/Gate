@@ -1,0 +1,58 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                        #
+#       GATE v9.0        #
+#                        #
+#        03/2020         #
+#                        #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+
+------------
+Main new features
+------------
+
+- MultiSystem and GateToTree (numpy output)
+  https://opengate.readthedocs.io/en/latest/data_output_management.html#new-unified-tree-output-root-numpy-and-more
+  https://github.com/OpenGATE/Gate/pull/289
+  
+- Compton Camera module
+  https://opengate.readthedocs.io/en/latest/compton_camera_imaging_simulations.html
+  https://github.com/OpenGATE/Gate/pull/273
+
+- Extended source
+  https://github.com/OpenGATE/GateContrib/tree/master/imaging/ExtendedVSource
+  https://github.com/OpenGATE/Gate/pull/271
+
+- PhaseSpaceActor with npy output
+  https://github.com/OpenGATE/Gate/pull/242
+
+- Read number of primaries per run in a file
+  https://github.com/OpenGATE/Gate/pull/233 
+
+- pytorch (ARF-NN and GAN phase-space)
+  https://opengate.readthedocs.io/en/latest/compilation_instructions.html#libtorch-optional
+  https://github.com/OpenGATE/GateContrib/tree/master/imaging/garf
+  https://github.com/OpenGATE/GateContrib/tree/master/dosimetry/gaga-phsp
+
+
+----------
+Bugs fixed
+----------
+
+- See the github "issues" section https://github.com/OpenGATE/Gate/issues
+- PET debug Noise and DeadTime
+- GateEnergySpectrumActor bug and options
+- PhaseSpaceActor
+- Enable coincidence sorting with generic repeater
+- no more unmaintained GPU stuff
+- etc ...
+
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+Gate examples:      https://github.com/OpenGATE/GateContrib
