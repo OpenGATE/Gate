@@ -103,10 +103,9 @@ GATE V9.0
 ---------
 
 First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.0.zip
-
 Unzip the downloaded file::
 
-   unzip v9.0.zip
+   unzip Gate-9.0.zip
 
 Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.0* release tag.
 
@@ -125,7 +124,7 @@ Move into the GATE build directory::
 
 Run ccmake as follows::
 
-   ccmake ../Gate_v9.0
+   ccmake ../Gate-9.0
 
 You need to change the *CMAKE_INSTALL_PREFIX*, it should be set to the install directory (defined above). The default given by CMake is */usr/local*; if you have root/sudo permissions on your machine then it's possible to install Gate there, but it's not recommended, especially if you need to work with more than one version of Gate (for instance, if you want to do development on Gate, or if you want to verify that a new release is compatible with the old release that you have been using).
 You should get something like this (the screen shot is taken from the 8.0 release, the only difference is the version number):
