@@ -14,7 +14,7 @@ More details : http://www.opengatecollaboration.org
 
 Documentation : https://opengate.readthedocs.io
 
-* The stable version is branch 'master' (or tag 8.2): https://github.com/OpenGATE/Gate/tree/v8.2
+* The stable version is branch 'master' (or tag 9.0): https://github.com/OpenGATE/Gate/tree/v9.0 with Geant4 10.6
 * The current development version is branch 'develop' (default): http://github.com/OpenGATE/Gate/tree/develop
 * [Examples](https://github.com/OpenGATE/GateContrib)
 * [Exercises](https://davidsarrut.pages.in2p3.fr/gate-exercices-site)
