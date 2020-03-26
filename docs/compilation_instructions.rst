@@ -1,6 +1,6 @@
 .. _compilation_instructions-label:
 
-Compiling GATE (V8.2)
+Compiling GATE (V9.0)
 =============================
 
 .. contents:: Table of Contents
@@ -12,17 +12,16 @@ Compiling GATE (V8.2)
 Required dependencies
 ----------------
 
-The minimal software distribution should be the following::
+For compiling GATE V9.0, the required dependencies are ::
 
-   Geant4 10.05  # including the embedded CLHEP
-   GATE V8.2
+   Geant4 10.06  # including the embedded CLHEP
    ROOT (ROOT 6.xx) # still required, but it may become optional in the future
    
 
 Optional packages ::
  
    CLHEP 2.3.4.3  # by default the one provided in Geant4 is used
-   ITK (version 4.10.xx or later)
+   ITK (version 5.xx or later)
    ECAT
    LMF
    libTorch # see section below
@@ -47,11 +46,11 @@ Finally, update your environment variables file with the following command lines
 
 * bash or zsh:
 
-   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
+   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
 
 * [t]csh:
 
-   source /PATH_TO/geant4.10.05-install/bin/geant4.csh
+   source /PATH_TO/geant4.10.06-install/bin/geant4.csh
 
 For details, read the official GEANT4 installation procedure.
 
@@ -91,7 +90,7 @@ To download 'libtorch', go to https://pytorch.org at the section QUICK START LOC
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
 
     GATE_USE_TORCH     ON
-    Torch_DIR          /home/YOURNAME/libtorch-1.2.0/share/cmake/Torch
+    Torch_DIR          /home/YOURNAME/libtorch-1.3.0/share/cmake/Torch
     
 In some configuration, the following path should also be set ::
 
@@ -100,33 +99,33 @@ In some configuration, the following path should also be set ::
 
 
 
-GATE V8.2
+GATE V9.0
 ---------
 
-First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v8.2.tar.gz
+First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.0.zip
 
-Unzip and untar the downloaded file::
+Unzip the downloaded file::
 
-   tar -xzf Gate-8.2.tar.gz
+   unzip v9.0.zip
 
-Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v8.2* release tag.
+Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.0* release tag.
 
-   git clone https://github.com/OpenGATE/Gate.git Gate_v8.2
-   cd Gate_v8.2
-   git checkout v8.2
+   git clone https://github.com/OpenGATE/Gate.git Gate
+   cd Gate
+   git checkout v9.0
 
 Create two directories to build and install GATE::
 
-   mkdir gate_v8.2-build
-   mkdir gate_v8.2-install
+   mkdir gate_v9.0-build
+   mkdir gate_v9.0-install
 
 Move into the GATE build directory::
 
-   cd gate_v8.2-build
+   cd gate_v9.0-build
 
 Run ccmake as follows::
 
-   ccmake ../Gate_v8.2
+   ccmake ../Gate_v9.0
 
 You need to change the *CMAKE_INSTALL_PREFIX*, it should be set to the install directory (defined above). The default given by CMake is */usr/local*; if you have root/sudo permissions on your machine then it's possible to install Gate there, but it's not recommended, especially if you need to work with more than one version of Gate (for instance, if you want to do development on Gate, or if you want to verify that a new release is compatible with the old release that you have been using).
 You should get something like this (the screen shot is taken from the 8.0 release, the only difference is the version number):
@@ -160,11 +159,11 @@ Finally, update your environment variables file with the following command lines
 
 * bash or zsh:
 
-   export PATH=/PATH_TO/gate_v8.1-install/bin:$PATH
+   export PATH=/PATH_TO/gate_v9.0-install/bin:$PATH
 
 * [t]csh
 
-   setenv PATH /PATH_TO/gate_v8.1-install/bin:${PATH}
+   setenv PATH /PATH_TO/gate_v9.0-install/bin:${PATH}
    
 
 Environment configuration and starting GATE
@@ -177,8 +176,8 @@ This file should be defined as follows:
 * bash or zsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
-   export PATH=$PATH:/PATH_TO/gate_v8.2-install/bin
+   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
+   export PATH=$PATH:/PATH_TO/gate_v9.0-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    export PATH=$PATH:/PATH_TO/2.3.4.3/CLHEP/bin
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/PATH_TO/2.3.4.3/CLHEP/lib
@@ -186,19 +185,19 @@ This file should be defined as follows:
 * csh or tcsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.csh
-   source /PATH_TO/geant4.10.05-install/bin/geant4.csh
-   setenv PATH ${PATH}:$/PATH_TO/gate_v8.2-install/bin
+   source /PATH_TO/geant4.10.06-install/bin/geant4.csh
+   setenv PATH ${PATH}:$/PATH_TO/gate_v9.0-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    setenv PATH ${PATH}:/PATH_TO/2.3.4.3/CLHEP/bin
    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/PATH_TO/2.3.4.3/CLHEP/lib
 
 Save this file in */PATH_TO/gate_v8.2-install/bin*. Finally, before to start a GATE session::
 
-   source /PATH_TO/gate_v8.2-install/bin/gate_env.sh
+   source /PATH_TO/gate_v9.0-install/bin/gate_env.sh
 
 In order to save typing, you may want to define an alias for that: include the following line in your *$HOME/.bashrc* or *$HOME/.bash_aliases* file::
 
-   alias gate82='source /PATH_TO/gate_v8.2-install/bin/gate_env.sh'
+   alias gate90='source /PATH_TO/gate_v9.0-install/bin/gate_env.sh'
 
 (For csh and tcsh the syntax is different but the idea is the same.)
 
@@ -213,44 +212,20 @@ With your shell environment properly set up, you should be able to run Gate. To 
 ITK
 ---
 
-First, download the ITK library sources at this address:
+See: https://itk.org and follow the instructions. 
 
-https://itk.org/ITK/resources/software.html
-
-Unzip and tar the downloaded file::
-
-   tar -xzf InsightToolkit-4.10.xx.tar.gz
-
-Move into the InsightToolkit-4.10.xx directory::
-
-   cd InsightToolkit-4.10.xx
-
-In this directory, create a bin/ sub-directory::
-
-   mkdir bin
-
-Move into the bin/ sub-directory::
-
-   cd bin
-
-Run ccmake as follows::
+Here are some additional cmake options::
 
    ccmake -DITK_USE_REVIEW=ON ..
 
 You will obtain the following screen and you need to configure the different options as follows::
 
-   BUILD_EXAMPLES                   ON
-   BUILD_TESTING                    ON
+   BUILD_EXAMPLES                   OFF
+   BUILD_TESTING                    OFF
    ITKV3_COMPATIBILITY              OFF
    ITK_BUILD_DEFAULT_MODULES        ON
    ITK_WRAP_PYTHON                  OFF
 
-Press 'c' to configure and 'g' to generate the compilation environment.
-
-After this step you will automatically back to the prompt terminal and then, you can launch the compilation::
-
-   make -jN (N is the number of processor(s) in your PC)
-   make install
 
 ECAT7
 -----
@@ -356,14 +331,14 @@ Installation of cluster tools
 jobsplitter
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v8.2/cluster_tools/jobsplitter::
+Go to /PATH_TO/gate_v9.0/cluster_tools/jobsplitter::
 
-   cd /PATH_TO/gate_v8.2/cluster_tools/jobsplitter
+   cd /PATH_TO/gate_v9.0/cluster_tools/jobsplitter
 
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
+   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
 
 Compile::
 
@@ -371,16 +346,16 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v8.2/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v8.2-install/bin
+   cp /PATH_TO/gate_v9.0/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.0-install/bin
 
 filemerger
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v8.2/cluster_tools/filemerger
+Go to /PATH_TO/gate_v9.0/cluster_tools/filemerger
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.05-install/bin/geant4.sh
+   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
 
 Compile::
 
@@ -388,16 +363,6 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v8.2/cluster_tools/filemerger/gjm /PATH_TO/gate_v8.2-install/bin
+   cp /PATH_TO/gate_v9.0/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.0-install/bin
 
-GPU & CUDA tools
-----------------
 
-You need to download 2 packages which are the CUDA toolkit provided by NVIDIA and the GPU computing SDK.
-All details are provided on this web site : http://doc.ubuntu-fr.org/cuda
-
-During the GATE configuration by using ccmake, you need to set ON the GATE_USE_GPU variable and give the correct path for CUDA_SDK_ROOT_DIR and CUDA_TOOLKIT_ROOT_DIR (as illustrated by the following print screen).
-
-.. figure:: Ccmake.png
-   :alt: Figure 2: Ccmake
-   :name: Ccmake
