@@ -7,9 +7,9 @@ vGate (virtual Gate)
    :depth: 15
    :local:
 
-.. figure:: vgate_scshot_little.png
+.. figure:: vgate_9.0_scshot.png
    :alt: Figure 1: vgate_9.0_scshot
-   :name: vgate_scshot_little
+   :name: vgate_9.0_scshot
 
 Generalities
 ------------
@@ -22,6 +22,7 @@ vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubun
 With vGate you can launch your first GATE simulation in just a few steps! No need to install anything, no need to configure anything, and no time spent to understand compilation and related stuff. A full Linux environment is totally set up to be able to use GATE just by launching a simple command: "Gate".
 
 The following software is installed on this machine:
+
 * Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
 * GATE 9.0
 * Geant4 10.06.1
@@ -61,6 +62,7 @@ Once Virtual Box is installed, here are the steps to get your virtual machine wo
 That's it!
 
 Login credentials are (qwerty keyboard):
+
 * user: gate
 * password: virtual
 * ('gate' is sudo)
@@ -72,7 +74,9 @@ Everything is already configured in the virtual machine to be able to launch GAT
 
 Once you start the virtual machine, you can launch the web browser Firefox. Firefox is directly showing the documentation pages (in HTML) that are inside the virtual machine. So please refer to this documentation.
 
-To launch Gate simply open a terminal and type `Gate` or `Gate --qt`.
+To launch Gate simply open a terminal and type::
+
+   Gate
 
 Any additional questions can be posted on the gate-users mailing-list.
 
