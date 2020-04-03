@@ -11,8 +11,6 @@ vGate (virtual Gate)
    :alt: Figure 1: vgate_9.0_scshot
    :name: vgate_scshot_little
 
-   VGate
-
 Generalities
 ------------
 
@@ -24,21 +22,21 @@ vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubun
 With vGate you can launch your first GATE simulation in just a few steps! No need to install anything, no need to configure anything, and no time spent to understand compilation and related stuff. A full Linux environment is totally set up to be able to use GATE just by launching a simple command: "Gate".
 
 The following software is installed on this machine:
-- Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
-- GATE 9.0
-- Geant4 10.06.1
-- GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
-- Gate tools
-- Gate exercises
-- Root 6.14.00
-- libtorch cxx11 (cpu) 1.4.0
-- ITK 4.13.1 with Module_RTK=ON (v2.0.0)
-- VTK v7.1.0
-- vV 1.4
-- ImageJ (Fiji) 1.52d
-- Visual studio code
-- Jupyter Notebook, Jupyter Lab
-- Python3 libraries: numpy, matplotlib, scipy, pydicom, pandas, SimpleITK, uproot
+* Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
+* GATE 9.0
+* Geant4 10.06.1
+* GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
+* Gate tools
+* Gate exercises
+* Root 6.14.00
+* libtorch cxx11 (cpu) 1.4.0
+* ITK 4.13.1 with Module_RTK=ON (v2.0.0)
+* VTK v7.1.0
+* vV 1.4
+* ImageJ (Fiji) 1.52d
+* Visual studio code
+* Jupyter Notebook, Jupyter Lab
+* Python3 libraries: numpy, matplotlib, scipy, pydicom, pandas, SimpleITK, uproot
 
 How to get vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
@@ -63,9 +61,9 @@ Once Virtual Box is installed, here are the steps to get your virtual machine wo
 That's it!
 
 Login credentials are (qwerty keyboard):
-user: gate
-password: virtual
-('gate' is sudo)
+* user: gate
+* password: virtual
+* ('gate' is sudo)
 
 How can I find and launch GATE in vGate?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
