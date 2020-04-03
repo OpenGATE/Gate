@@ -8,7 +8,7 @@ vGate (virtual Gate)
    :local:
 
 .. figure:: vgate_scshot_little.png
-   :alt: Figure 1: vgate_scshot_little
+   :alt: Figure 1: vgate_9.0_scshot
    :name: vgate_scshot_little
 
    VGate
@@ -19,50 +19,62 @@ Generalities
 What is vGate?
 ~~~~~~~~~~~~~~~
 
-vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubuntu <http://www.ubuntu.com/>`_ 32 or 64 bits operating system and made using the free software `Virtual Box <http://www.virtualbox.org/>`_. This virtual machine can be run on any host machine (Linux, Windows, MacOS, ...) (32 or 64 bits) provided the Virtual Box program is installed and ready for use.
+vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubuntu <http://www.ubuntu.com/>`_ 64 bits operating system and made using the free software `Virtual Box <http://www.virtualbox.org/>`_. This virtual machine can be run on any host machine (Linux, Windows, MacOS, ...) provided the Virtual Box program is installed and ready for use. Note: also install the VirtualBox Extension Pack that provides support for USB 2.0 and USB 3.0 devices, and will allow you to create a shared folder between your computer and vGate.
 
 With vGate you can launch your first GATE simulation in just a few steps! No need to install anything, no need to configure anything, and no time spent to understand compilation and related stuff. A full Linux environment is totally set up to be able to use GATE just by launching a simple command: "Gate".
+
+The following software is installed on this machine:
+- Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
+- GATE 9.0
+- Geant4 10.06.1
+- GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
+- Gate tools
+- Gate exercises
+- Root 6.14.00
+- libtorch cxx11 (cpu) 1.4.0
+- ITK 4.13.1 with Module_RTK=ON (v2.0.0)
+- VTK v7.1.0
+- vV 1.4
+- ImageJ (Fiji) 1.52d
+- Visual studio code
+- Jupyter Notebook, Jupyter Lab
+- Python3 libraries: numpy, matplotlib, scipy, pydicom, pandas, SimpleITK, uproot
 
 How to get vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
 
 Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu.
 
-Be aware that the file you will download a pretty big (about 2 Gbytes), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
-
-The file to download is a ".7z" file, it is a file that has been compressed using the program `7-zip <http://www.7-zip.org/>`_ (that is free, open-source, and that can be easily installed on any operating system). So you have to decompress your file and then you get a ".vdi" file which is a VDI file (Virtual Disk Image). This is the file to be used with the Virtual Box software.
-
-The program can be found in Debian-based distributions in the 'p7zip-full' package. It should be approximately the same on Red-Hat based distributions. On Windows or Mac, automatic installer can be found.
-
-With Linux, just use the following command to decompress the file::
-
-  7za x the_file.7z
-
-If using other operating systems, probably just right-click on the file and click on the 7-zip menu and then decompress or something similar.
+Be aware that the file you will download a pretty big (about 10 Gbytes), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
 
 How to use vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
 
-As the vGate machine has been built using the Virtual Box software, you will have to install this software on your host machine first. And since the version of Virtual Box used to build vGate was the release 3.1.2, you have to install at least this version to be able to run the virtual machine.
+As the vGate machine has been built using the Virtual Box software, you will have to install this software on your host machine first. And since the version of Virtual Box used to build vGate was the release 6.0.18, you have to install at least this version to be able to run the virtual machine.
 
 Once Virtual Box is installed, here are the steps to get your virtual machine working:
 
-* Launch Virtual Box and click on "New" to create a new virtual machine.
-* Click on "Next", and give a name to your machine.
-* Choose 'Linux' as Operating System, and 'Ubuntu' as Version. If you are asked to, precise 64 bits system. Click on "Next".
-* Select the amount of RAM that you want to give to the virtual machine (at least 1Go if possible, the higher the better). Click on "Next".
-* Select "Use existing hard disk" and then go in the menu on the right, click on "Hard drive" "Add" and find the VDI file that you have just downloaded. Click on "Next".
-* Click on "Finish", and you can change settings of your virtual machine and start it.
-* The only user in the machine is named "gate" and its associated password is "virtual".
+* Launch Virtual Box and in the File menu, select Import Appliance. The Appliance Import wizard is displayed in a new window.
+* Click on the small yellow folder icon 'Choose', browse to the location containing the *.ovf or *.ova file of the virtual machine you want to import, and click Open. The Appliance Import Settings step will display.
+* Click Import. The Appliance Import Wizard is closed and after a few moments, the imported virtual machine will be listed in Oracle VM VirtualBox Manager.
+* After the import, select the imported virtual machine and in the toolbar click the Settings button. Review the virtual machine settings to make sure that the virtual machine has the hardware it needs to operate. You can adjust the number of CPUs and the RAM you want to give to the VM.
+* Once you have reviewed the settings, select the imported virtual machine and in the toolbar click the Start button.
 
 That's it!
+
+Login credentials are (qwerty keyboard):
+user: gate
+password: virtual
+('gate' is sudo)
 
 How can I find and launch GATE in vGate?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Everything is already configured in the virtual machine to be able to launch GATE without any difficulty. If you want to know how the machine has been configured, you can find all information inside the virtual machine.
 
-Once you start the virtual machine, you will have on your Desktop an icon to launch the web browser Firefox. When you double-click on this icon, Firefox is directly showing the documentation pages (in HTML) that are inside the virtual machine. So please refer to this documentation.
+Once you start the virtual machine, you can launch the web browser Firefox. Firefox is directly showing the documentation pages (in HTML) that are inside the virtual machine. So please refer to this documentation.
+
+To launch Gate simply open a terminal and type `Gate` or `Gate --qt`.
 
 Any additional questions can be posted on the gate-users mailing-list.
 
@@ -83,6 +95,8 @@ It should work now.
 
 How to get the network working in my virtual machine?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default settings should just work fine.
 
 There is several ways to get a network connection in the virtual machine. This strictly depends on the characteristics of the network of the host machine (public network, private network, dhcp server policy, dynamic IP, static IP, ...). So ask your network administrator or yourself if your are the administrator.
 
