@@ -29,7 +29,7 @@ class GateVImageActor: public GateVActor
 {
 public :
   //-----------------------------------------------------------------------------
-  enum StepHitType {PreStepHitType, PostStepHitType, MiddleStepHitType, RandomStepHitType};
+  enum StepHitType {PreStepHitType, PostStepHitType, MiddleStepHitType, RandomStepHitType, RandomStepHitTypeCylindricalCS, PostStepHitTypeCylindricalCS};
 
   //-----------------------------------------------------------------------------
   /// Constructs the class
