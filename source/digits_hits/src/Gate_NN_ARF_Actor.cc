@@ -423,6 +423,8 @@ void Gate_NN_ARF_Actor::ResetData()
   mNNOutput = at::empty({0,0});
 #endif
 
+  mNumberOfBatch = 0;
+  mCurrentSaveNNOutput = 0;
   mNDataset = 0; // needed for normalization at the end
 }
 //-----------------------------------------------------------------------------
@@ -585,7 +587,7 @@ void Gate_NN_ARF_Actor::ProcessBatch()
   GateMessage("Actor", 1, "NN_ARF_Actor process batch of "
               << mBatchInputs.size() << " particles" << G4endl);
   mNumberOfBatch++;
-      
+
   //Convert NN inputs to Tensor
   std::vector<torch::jit::IValue> inputTensorContainer;
   torch::Tensor inputTensor = torch::zeros({(unsigned int)mBatchInputs.size(), 3});
