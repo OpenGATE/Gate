@@ -22,6 +22,11 @@
  #define G4ANALYSIS_USE_ROOT 1
 #endif
 
+#ifdef GATE_USE_GEANT4_UIVIS
+ #define G4VIS_USE 1
+ #define G4UI_USE 1
+#endif
+
 #ifdef GATE_ANALYSIS_USE_GENERAL
  #define G4ANALYSIS_USE_GENERAL 1
 #endif
