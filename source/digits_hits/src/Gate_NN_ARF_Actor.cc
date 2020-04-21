@@ -391,8 +391,10 @@ void Gate_NN_ARF_Actor::SaveData()
       for(auto p = mImageSquared->begin(); p<mImageSquared->end(); p++) *p /= mNDataset;
       
       // write
-      mImage->Write(mImagePath);
-      auto mImagePathSquared = removeExtension(mImagePath)+"-Squared.mhd";
+      G4String s = G4String(mImagePath);
+      auto currentImagePath = GetSaveCurrentFilename(s);
+      mImage->Write(currentImagePath);
+      auto mImagePathSquared = removeExtension(currentImagePath)+"-Squared.mhd";
       mImageSquared->Write(mImagePathSquared);
       GateMessage("Actor", 1, "NN_ARF_Actor Projection written in " << mImagePath << G4endl);
       GateMessage("Actor", 1, "NN_ARF_Actor Number of energy windows " << nb_ene << G4endl);
@@ -414,6 +416,13 @@ void Gate_NN_ARF_Actor::ResetData()
 {
   mTrainData.clear();
   mTestData.clear();
+  mBatchInputs.clear();
+  mListOfWindowIds.clear();
+
+#ifdef GATE_USE_TORCH
+  mNNOutput = at::empty({0,0});
+#endif
+
   mNDataset = 0; // needed for normalization at the end
 }
 //-----------------------------------------------------------------------------
