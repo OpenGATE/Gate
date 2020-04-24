@@ -131,6 +131,8 @@ class GateSingleParticleSourceMessenger : public GateMessenger
 
   //G4ParticleTable* particleTable ;
   G4String histtype ;
+  G4int    fNArbEHistPoints;
+  G4bool   fArbInterModeSet;
   GateVSource* fParticleGun ;
      
  private: //commands
@@ -238,7 +240,7 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   G4UIcmdWithABool*           diffspecCmd ;
 
   G4UIcmdWith3Vector*         histpointCmd1;
-  G4UIcmdWithAString*         histnameCmd1;
+  G4UIcmdWithAString*         histtypeCmd;
   G4UIcmdWithAString*         arbintCmd1;
   G4UIcmdWithAString*         resethistCmd1;
   

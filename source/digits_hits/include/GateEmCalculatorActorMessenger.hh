@@ -20,6 +20,7 @@ See LICENSE.md for further details
 
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAString;
+class G4UIcommand;
 
 class GateEmCalculatorActor;
 class GateEmCalculatorActorMessenger : public GateActorMessenger
@@ -36,6 +37,7 @@ protected:
 
   G4UIcmdWithADoubleAndUnit * pSetEnergyCmd;
   G4UIcmdWithAString * pSetParticleNameCmd;
+  G4UIcommand * pIonCmd;
 };
 
 #endif /* end #define GATEEmCalculatorActorMESSENGER_HH*/

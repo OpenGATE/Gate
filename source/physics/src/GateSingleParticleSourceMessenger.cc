@@ -38,6 +38,8 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
     fParticleGun(fPtclGun),fShootIon(false)
 {
   histtype = "biasx";
+  fNArbEHistPoints=0;
+  fArbInterModeSet=false;
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String cmdName;
 
@@ -277,22 +279,23 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   setImageCmd1->SetParameterName("Image",true,true);
   setImageCmd1->SetDefaultValue("");
 
-  // old implementations
+  // old implementation
   cmdName = GetDirectoryName() + "type";
   typeCmd = new G4UIcmdWithAString(cmdName,this);
-  typeCmd->SetGuidance("Sets source distribution type.");
-  typeCmd->SetGuidance("Either, Point, Beam, Plane, Surface or Volume");
+  typeCmd->SetGuidance("DEPRECATED: use 'pos/type' instead! Sets source distribution type.");
   typeCmd->SetParameterName("DisType",true,true);
   typeCmd->SetDefaultValue("Point");
   typeCmd->SetCandidates("Point Beam Plane Surface Volume");
 
+  // old implementation
   cmdName = GetDirectoryName() + "shape";
   shapeCmd = new G4UIcmdWithAString(cmdName,this);
-  shapeCmd->SetGuidance("Sets source shape type.");
+  shapeCmd->SetGuidance("DEPRECATED: use 'pos/shape' instead! Sets source shape type.");
   shapeCmd->SetParameterName("Shape",true,true);
   shapeCmd->SetDefaultValue("NULL");
   shapeCmd->SetCandidates("Circle Annulus Ellipse Square Rectangle Sphere Ellipsoid Cylinder Para");
 
+  // this is NOT an old implementation (I don't see a replacement for it; DJB)
   cmdName = GetDirectoryName() + "positronRange";
   positronRangeCmd = new G4UIcmdWithAString(cmdName,this);
   positronRangeCmd->SetGuidance("Sets positron range.");
@@ -300,108 +303,108 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   positronRangeCmd->SetDefaultValue("NULL");
   positronRangeCmd->SetCandidates("Fluor18 Carbon11 Oxygen15");
 
-
+  // old implementation
   cmdName = GetDirectoryName() + "centre";
   centreCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
-  centreCmd->SetGuidance("Set centre coordinates of source.");
+  centreCmd->SetGuidance("DEPRECATED: use 'pos/centre' instead! Set centre coordinates of source.");
   centreCmd->SetParameterName("X","Y","Z",true,true);
   centreCmd->SetDefaultUnit("cm");
   centreCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "posrot1";
   posrot1Cmd = new G4UIcmdWith3Vector(cmdName,this);
-  posrot1Cmd->SetGuidance("Set rotation matrix of x'.");
+  posrot1Cmd->SetGuidance("DEPRECATED: use 'pos/rot1' instead! Set rotation matrix of x'.");
   posrot1Cmd->SetGuidance("Posrot1 does not need to be a unit vector.");
   posrot1Cmd->SetParameterName("R1x","R1y","R1z",true,true);
   posrot1Cmd->SetRange("R1x != 0 || R1y != 0 || R1z != 0");
 
   cmdName = GetDirectoryName() + "posrot2";
   posrot2Cmd = new G4UIcmdWith3Vector(cmdName,this);
-  posrot2Cmd->SetGuidance("Set rotation matrix of y'.");
+  posrot2Cmd->SetGuidance("DEPRECATED: use 'pos/rot2' instead! Set rotation matrix of y'.");
   posrot2Cmd->SetGuidance("Posrot2 does not need to be a unit vector.");
   posrot2Cmd->SetParameterName("R2x","R2y","R2z",true,true);
   posrot2Cmd->SetRange("R2x != 0 || R2y != 0 || R2z != 0");
 
   cmdName = GetDirectoryName() + "halfx";
   halfxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  halfxCmd->SetGuidance("Set x half length of source.");
+  halfxCmd->SetGuidance("DEPRECATED: use 'pos/halfx' instead! Set x half length of source.");
   halfxCmd->SetParameterName("Halfx",true,true);
   halfxCmd->SetDefaultUnit("cm");
   halfxCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "halfy";
   halfyCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  halfyCmd->SetGuidance("Set y half length of source.");
+  halfyCmd->SetGuidance("DEPRECATED: use 'pos/halfy' instead! Set y half length of source.");
   halfyCmd->SetParameterName("Halfy",true,true);
   halfyCmd->SetDefaultUnit("cm");
   halfyCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "halfz";
   halfzCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  halfzCmd->SetGuidance("Set z half length of source.");
+  halfzCmd->SetGuidance("DEPRECATED: use 'pos/halfz' instead! Set z half length of source.");
   halfzCmd->SetParameterName("Halfz",true,true);
   halfzCmd->SetDefaultUnit("cm");
   halfzCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "radius";
   radiusCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  radiusCmd->SetGuidance("Set radius of source.");
+  radiusCmd->SetGuidance("DEPRECATED: use 'pos/radius' instead! Set radius of source.");
   radiusCmd->SetParameterName("Radius",true,true);
   radiusCmd->SetDefaultUnit("cm");
   radiusCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "radius0";
   radius0Cmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  radius0Cmd->SetGuidance("Set inner radius of source.");
+  radius0Cmd->SetGuidance("DEPRECATED: use 'pos/inner_radius' instead! Set inner radius of source.");
   radius0Cmd->SetParameterName("Radius0",true,true);
   radius0Cmd->SetDefaultUnit("cm");
   radius0Cmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "sigmaposr";
   possigmarCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  possigmarCmd->SetGuidance("Set standard deviation of beam position in radial");
+  possigmarCmd->SetGuidance("DEPRECATED: use 'pos/sigma_r' instead! Set standard deviation of beam position in radial");
   possigmarCmd->SetParameterName("Sigmar",true,true);
   possigmarCmd->SetDefaultUnit("cm");
   possigmarCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "sigmaposx";
   possigmaxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  possigmaxCmd->SetGuidance("Set standard deviation of beam position in x-dir");
+  possigmaxCmd->SetGuidance("DEPRECATED: use 'pos/sigma_x' instead! Set standard deviation of beam position in x-dir");
   possigmaxCmd->SetParameterName("Sigmax",true,true);
   possigmaxCmd->SetDefaultUnit("cm");
   possigmaxCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "sigmaposy";
   possigmayCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  possigmayCmd->SetGuidance("Set standard deviation of beam position in y-dir");
+  possigmayCmd->SetGuidance("DEPRECATED: use 'pos/sigma_y' instead! Set standard deviation of beam position in y-dir");
   possigmayCmd->SetParameterName("Sigmay",true,true);
   possigmayCmd->SetDefaultUnit("cm");
   possigmayCmd->SetUnitCandidates("mum mm cm m km");
 
   cmdName = GetDirectoryName() + "paralp";
   paralpCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  paralpCmd->SetGuidance("Angle from y-axis of y' in Para");
+  paralpCmd->SetGuidance("DEPRECATED: use 'pos/paralp' instead! Angle from y-axis of y' in Para");
   paralpCmd->SetParameterName("paralp",true,true);
   paralpCmd->SetDefaultUnit("rad");
   paralpCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "parthe";
   partheCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  partheCmd->SetGuidance("Polar angle through centres of z faces");
+  partheCmd->SetGuidance("DEPRECATED: use 'pos/parthe' instead! Polar angle through centres of z faces");
   partheCmd->SetParameterName("parthe",true,true);
   partheCmd->SetDefaultUnit("rad");
   partheCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "parphi";
   parphiCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  parphiCmd->SetGuidance("Azimuth angle through centres of z faces");
+  parphiCmd->SetGuidance("DEPRECATED: use 'pos/parphi' instead! Azimuth angle through centres of z faces");
   parphiCmd->SetParameterName("parphi",true,true);
   parphiCmd->SetDefaultUnit("rad");
   parphiCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "confine";
   confineCmd = new G4UIcmdWithAString(cmdName,this);
-  confineCmd->SetGuidance("Confine source to volume (NULL to unset).");
+  confineCmd->SetGuidance("DEPRECATED: use 'pos/confine' instead! Confine source to volume (NULL to unset).");
   confineCmd->SetGuidance("usage: confine VolName");
   confineCmd->SetParameterName("VolName",true,true);
   confineCmd->SetDefaultValue("NULL");
@@ -518,7 +521,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   // old ones
   cmdName = GetDirectoryName() + "angtype";
   angtypeCmd = new G4UIcmdWithAString( cmdName,this) ;
-  angtypeCmd->SetGuidance( "Sets angular source distribution type") ;
+  angtypeCmd->SetGuidance( "DEPRECATED: use 'ang/type' instead! Sets angular source distribution type") ;
   angtypeCmd->SetGuidance( "Possible variables are: iso, cos planar beam1d beam2d or user") ;
   angtypeCmd->SetParameterName( "AngDis",true,true) ;
   angtypeCmd->SetDefaultValue( "iso") ;
@@ -526,28 +529,28 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   cmdName = GetDirectoryName() + "angrot1";
   angrot1Cmd = new G4UIcmdWith3Vector(cmdName,this);
-  angrot1Cmd->SetGuidance("Sets the x' vector for angular distribution");
+  angrot1Cmd->SetGuidance("DEPRECATED: use 'ang/rot1' instead! Sets the x' vector for angular distribution");
   angrot1Cmd->SetGuidance("Need not be a unit vector");
   angrot1Cmd->SetParameterName("AR1x","AR1y","AR1z",true,true);
   angrot1Cmd->SetRange("AR1x != 0 || AR1y != 0 || AR1z != 0");
 
   cmdName = GetDirectoryName() + "angrot2";
   angrot2Cmd = new G4UIcmdWith3Vector(cmdName,this);
-  angrot2Cmd->SetGuidance("Sets the y' vector for angular distribution");
+  angrot2Cmd->SetGuidance("DEPRECATED: use 'ang/rot2' instead! Sets the y' vector for angular distribution");
   angrot2Cmd->SetGuidance("Need not be a unit vector");
   angrot2Cmd->SetParameterName("AR2x","AR2y","AR2z",true,true);
   angrot2Cmd->SetRange("AR2x != 0 || AR2y != 0 || AR2z != 0");
 
   cmdName = GetDirectoryName() + "mintheta";
   minthetaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  minthetaCmd->SetGuidance("Set minimum theta");
+  minthetaCmd->SetGuidance("DEPRECATED: use 'ang/mintheta' instead! Set minimum theta");
   minthetaCmd->SetParameterName("MinTheta",true,true);
   minthetaCmd->SetDefaultUnit("rad");
   minthetaCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "maxtheta";
   maxthetaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  maxthetaCmd->SetGuidance("Set maximum theta");
+  maxthetaCmd->SetGuidance("DEPRECATED: use 'ang/maxtheta' instead! Set maximum theta");
   maxthetaCmd->SetParameterName("MaxTheta",true,true);
   maxthetaCmd->SetDefaultValue(pi);
   maxthetaCmd->SetDefaultUnit("rad");
@@ -555,49 +558,49 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   cmdName = GetDirectoryName() + "minphi";
   minphiCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  minphiCmd->SetGuidance("Set minimum phi");
+  minphiCmd->SetGuidance("DEPRECATED: use 'ang/minphi' instead! Set minimum phi");
   minphiCmd->SetParameterName("MinPhi",true,true);
   minphiCmd->SetDefaultUnit("rad");
   minphiCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "maxphi";
   maxphiCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  maxphiCmd->SetGuidance("Set maximum phi");
+  maxphiCmd->SetGuidance("DEPRECATED: use 'ang/maxphi' instead! Set maximum phi");
   maxphiCmd->SetParameterName("MaxPhi",true,true);
   maxphiCmd->SetDefaultUnit("rad");
   maxphiCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "sigmaangr";
   angsigmarCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  angsigmarCmd->SetGuidance("Set standard deviation of beam direction in radial.");
+  angsigmarCmd->SetGuidance("DEPRECATED: use 'ang/sigma_r' instead! Set standard deviation of beam direction in radial.");
   angsigmarCmd->SetParameterName("Sigmara",true,true);
   angsigmarCmd->SetDefaultUnit("rad");
   angsigmarCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "sigmaangx";
   angsigmaxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  angsigmaxCmd->SetGuidance("Set standard deviation of beam direction in x-direc.");
+  angsigmaxCmd->SetGuidance("DEPRECATED: use 'ang/sigma_x' instead! Set standard deviation of beam direction in x-direc.");
   angsigmaxCmd->SetParameterName("Sigmaxa",true,true);
   angsigmaxCmd->SetDefaultUnit("rad");
   angsigmaxCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "sigmaangy";
   angsigmayCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  angsigmayCmd->SetGuidance("Set standard deviation of beam direction in y-direc.");
+  angsigmayCmd->SetGuidance("DEPRECATED: use 'ang/sigma_y' instead! Set standard deviation of beam direction in y-direc.");
   angsigmayCmd->SetParameterName("Sigmaya",true,true);
   angsigmayCmd->SetDefaultUnit("rad");
   angsigmayCmd->SetUnitCandidates("rad deg");
 
   cmdName = GetDirectoryName() + "useuserangaxis";
   useuserangaxisCmd = new G4UIcmdWithABool(cmdName,this);
-  useuserangaxisCmd->SetGuidance("true for using user defined angular co-ordinates");
+  useuserangaxisCmd->SetGuidance("DEPRECATED: use 'ang/user_coor' instead! Set to true for using user defined angular co-ordinates");
   useuserangaxisCmd->SetGuidance("Default is false");
   useuserangaxisCmd->SetParameterName("useuserangaxis",true);
   useuserangaxisCmd->SetDefaultValue(false);
 
   cmdName = GetDirectoryName() + "surfnorm";
   surfnormCmd = new G4UIcmdWithABool(cmdName,this);
-  surfnormCmd->SetGuidance("Makes a user-defined distribution with respect to surface normals rather than x,y,z axes.");
+  surfnormCmd->SetGuidance("DEPRECATED: use 'ang/surfnorm' instead! Makes a user-defined distribution with respect to surface normals rather than x,y,z axes.");
   surfnormCmd->SetGuidance("Default is false");
   surfnormCmd->SetParameterName("surfnorm",true);
   surfnormCmd->SetDefaultValue(false);
@@ -650,7 +653,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   ezeroCmd1->SetParameterName("ezero",true,true);
 
   cmdName = GetDirectoryName() + "ene/gradient";
-  gradientCmd1 = new G4UIcmdWithADouble("/gps/ene/gradient",this);
+  gradientCmd1 = new G4UIcmdWithADouble(cmdName,this);
   gradientCmd1->SetGuidance("Sets the gradient for Lin distribution (in 1/MeV)");
   gradientCmd1->SetParameterName("gradient",true,true);
 
@@ -664,7 +667,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   calculateCmd1->SetGuidance("Calculates the distributions for Cdg and BBody");
 
   cmdName = GetDirectoryName() + "ene/emspec";
-  energyspecCmd1 = new G4UIcmdWithABool("/gps/ene/emspec",this);
+  energyspecCmd1 = new G4UIcmdWithABool(cmdName,this);
   energyspecCmd1->SetGuidance("True for energy and false for momentum spectra");
   energyspecCmd1->SetParameterName("energyspec",true);
   energyspecCmd1->SetDefaultValue(true);
@@ -678,7 +681,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   cmdName = GetDirectoryName() + "energytype";
   energytypeCmd = new G4UIcmdWithAString(cmdName,this);
-  energytypeCmd->SetGuidance("Sets energy distribution type");
+  energytypeCmd->SetGuidance("DEPRECATED: use 'ene/type' instead! Sets energy distribution type");
   energytypeCmd->SetParameterName("EnergyDis",true,true);
   energytypeCmd->SetDefaultValue("Mono");
   energytypeCmd->SetCandidates("Mono Fluor18 Oxygen15 Carbon11 Lin Pow Exp Gauss Brem Bbody Cdg User Arb Epn UserSpectrum");
@@ -692,70 +695,70 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   cmdName = GetDirectoryName() + "emin";
   eminCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  eminCmd->SetGuidance("Sets Emin");
+  eminCmd->SetGuidance("DEPRECATED: use 'ene/min' instead! Sets Emin");
   eminCmd->SetParameterName("emin",true,true);
   eminCmd->SetDefaultUnit("keV");
   eminCmd->SetUnitCandidates("eV keV MeV GeV TeV PeV");
 
   cmdName = GetDirectoryName() + "emax";
   emaxCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  emaxCmd->SetGuidance("Sets Emax");
+  emaxCmd->SetGuidance("DEPRECATED: use 'ene/max' instead! Sets Emax");
   emaxCmd->SetParameterName("emax",true,true);
   emaxCmd->SetDefaultUnit("keV");
   emaxCmd->SetUnitCandidates("eV keV MeV GeV TeV PeV");
 
   cmdName = GetDirectoryName() + "monoenergy";
   monoenergyCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  monoenergyCmd->SetGuidance("Sets Monoenergy (obsolete, use gps/energy instead!)");
+  monoenergyCmd->SetGuidance("DEPRECATED: use 'ene/mono' instead! Sets Monoenergy");
   monoenergyCmd->SetParameterName("monoenergy",true,true);
   monoenergyCmd->SetDefaultUnit("keV");
   monoenergyCmd->SetUnitCandidates("eV keV MeV GeV TeV PeV");
 
   cmdName = GetDirectoryName() + "sigmae";
   engsigmaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  engsigmaCmd->SetGuidance("Sets the standard deviation for Gaussian energy dist.");
+  engsigmaCmd->SetGuidance("DEPRECATED: use 'ene/sigma' instead! Sets the standard deviation for Gaussian energy dist.");
   engsigmaCmd->SetParameterName("Sigmae",true,true);
   engsigmaCmd->SetDefaultUnit("keV");
   engsigmaCmd->SetUnitCandidates("eV keV MeV GeV TeV PeV");
 
   cmdName = GetDirectoryName() + "alpha";
   alphaCmd = new G4UIcmdWithADouble(cmdName,this);
-  alphaCmd->SetGuidance("Sets Alpha (index) for power-law energy dist.");
+  alphaCmd->SetGuidance("DEPRECATED: use 'ene/alpha' instead! Sets Alpha (index) for power-law energy dist.");
   alphaCmd->SetParameterName("alpha",true,true);
 
   cmdName = GetDirectoryName() + "temp";
   tempCmd = new G4UIcmdWithADouble(cmdName,this);
-  tempCmd->SetGuidance("Sets the temperature for Brem and BBody (in Kelvin)");
+  tempCmd->SetGuidance("DEPRECATED: use 'ene/temp' instead! Sets the temperature for Brem and BBody (in Kelvin)");
   tempCmd->SetParameterName("temp",true,true);
 
   cmdName = GetDirectoryName() + "ezero";
   ezeroCmd = new G4UIcmdWithADouble(cmdName,this);
-  ezeroCmd->SetGuidance("Sets ezero exponential distributions (in MeV)");
+  ezeroCmd->SetGuidance("DEPRECATED: use 'ene/ezero' instead! Sets ezero exponential distributions (in MeV)");
   ezeroCmd->SetParameterName("ezero",true,true);
 
   cmdName = GetDirectoryName() + "gradient";
   gradientCmd = new G4UIcmdWithADouble(cmdName,this);
-  gradientCmd->SetGuidance("Sets the gradient for Lin distributions (in 1/MeV)");
+  gradientCmd->SetGuidance("DEPRECATED: use 'ene/gradient' instead! Sets the gradient for Lin distributions (in 1/MeV)");
   gradientCmd->SetParameterName("gradient",true,true);
 
   cmdName = GetDirectoryName() + "intercept";
   interceptCmd = new G4UIcmdWithADouble(cmdName,this);
-  interceptCmd->SetGuidance("Sets the intercept for Lin distributions (in MeV)");
+  interceptCmd->SetGuidance("DEPRECATED: use 'ene/intercept' instead! Sets the intercept for Lin distributions (in MeV)");
   interceptCmd->SetParameterName("intercept",true,true);
 
   cmdName = GetDirectoryName() + "calculate";
   calculateCmd = new G4UIcmdWithoutParameter(cmdName,this);
-  calculateCmd->SetGuidance("Calculates distributions for Cdg and BBody");
+  calculateCmd->SetGuidance("DEPRECATED: use 'ene/calculate' instead! Calculates distributions for Cdg and BBody");
 
   cmdName = GetDirectoryName() + "energyspec";
   energyspecCmd = new G4UIcmdWithABool(cmdName,this);
-  energyspecCmd->SetGuidance("True for energy and false for momentum spectra");
+  energyspecCmd->SetGuidance("DEPRECATED: use 'ene/emspec' instead! True for energy and false for momentum spectra");
   energyspecCmd->SetParameterName("energyspec",true);
   energyspecCmd->SetDefaultValue(true);
 
   cmdName = GetDirectoryName() + "diffspec";
   diffspecCmd = new G4UIcmdWithABool(cmdName,this);
-  diffspecCmd->SetGuidance("True for differential and flase for integral spectra");
+  diffspecCmd->SetGuidance("DEPRECATED: use 'ene/diffspec' instead! True for differential and false for integral spectra");
   diffspecCmd->SetParameterName("diffspec",true);
   diffspecCmd->SetDefaultValue(true);
 
@@ -763,11 +766,11 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   // Biasing + histograms in general
   cmdName = GetDirectoryName() + "hist/type";
-  histnameCmd1 = new G4UIcmdWithAString(cmdName,this);
-  histnameCmd1->SetGuidance("Sets histogram type");
-  histnameCmd1->SetParameterName("HistType",true,true);
-  histnameCmd1->SetDefaultValue("biasx");
-  histnameCmd1->SetCandidates("biasx biasy biasz biast biasp biase biaspt biaspp theta phi energy arb epn");
+  histtypeCmd = new G4UIcmdWithAString(cmdName,this);
+  histtypeCmd->SetGuidance("Sets histogram type. Should be set *before* providing histogram points with 'hist/point'.");
+  histtypeCmd->SetParameterName("HistType",true,true);
+  histtypeCmd->SetDefaultValue("biasx");
+  histtypeCmd->SetCandidates("biasx biasy biasz biast biasp biase biaspt biaspp theta phi energy arb epn");
 
   cmdName = GetDirectoryName() + "hist/reset";
   resethistCmd1 = new G4UIcmdWithAString(cmdName,this);
@@ -778,7 +781,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   cmdName = GetDirectoryName() + "hist/point";
   histpointCmd1 = new G4UIcmdWith3Vector(cmdName,this);
-  histpointCmd1->SetGuidance("Allows user to define a histogram");
+  histpointCmd1->SetGuidance("Allows user to define a histogram. Make sure to first set the type with 'hist/type'.");
   histpointCmd1->SetGuidance("Enter: Ehi Weight");
   histpointCmd1->SetParameterName("Ehi","Weight","Junk",true,true);
   histpointCmd1->SetRange("Ehi >= 0. && Weight >= 0.");
@@ -793,28 +796,28 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   // old ones
   cmdName = GetDirectoryName() + "histname";
   histnameCmd = new G4UIcmdWithAString(cmdName,this);
-  histnameCmd->SetGuidance("Sets histogram type");
+  histnameCmd->SetGuidance("DEPRECATED, use 'hist/type' instead! Sets histogram *type*.");
   histnameCmd->SetParameterName("HistType",true,true);
   histnameCmd->SetDefaultValue("biasx");
   histnameCmd->SetCandidates("biasx biasy biasz biast biasp biase theta phi energy arb epn");
 
   cmdName = GetDirectoryName() + "resethist";
   resethistCmd = new G4UIcmdWithAString(cmdName,this);
-  resethistCmd->SetGuidance("Re-Set the histogram ");
+  resethistCmd->SetGuidance("DEPRECATED, use 'hist/reset' instead! Re-Set the histogram.");
   resethistCmd->SetParameterName("HistType",true,true);
   resethistCmd->SetDefaultValue("energy");
   resethistCmd->SetCandidates("biasx biasy biasz biast biasp biase theta phi energy arb epn");
 
   cmdName = GetDirectoryName() + "histpoint";
   histpointCmd = new G4UIcmdWith3Vector(cmdName,this);
-  histpointCmd->SetGuidance("Allows user to define a histogram");
+  histpointCmd->SetGuidance("DEPRECATED, use 'hist/point' instead! Allows user to define a histogram");
   histpointCmd->SetGuidance("Enter: Ehi Weight");
   histpointCmd->SetParameterName("Ehi","Weight","Junk",true,true);
   histpointCmd->SetRange("Ehi >= 0. && Weight >= 0.");
 
   cmdName = GetDirectoryName() + "arbint";
   arbintCmd = new G4UIcmdWithAString(cmdName,this);
-  arbintCmd->SetGuidance("Sets Arbitrary Interpolation type.");
+  arbintCmd->SetGuidance("DEPRECATED, use 'hist/inter' instead! Sets Arbitrary Interpolation type.");
   arbintCmd->SetParameterName("int",true,true);
   arbintCmd->SetDefaultValue("NULL");
   arbintCmd->SetCandidates("Lin Log Exp Spline");
@@ -942,7 +945,7 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete histpointCmd;
   delete arbintCmd;
 
-  delete histnameCmd1;
+  delete histtypeCmd;
   delete resethistCmd1;
   delete histpointCmd1;
   delete arbintCmd1;
@@ -977,60 +980,78 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     fParticleGun->SetRelativePlacementVolume(newValues);
   }
   else if (command == typeCmd) {
+    GateWarning("The 'type' option is DEPRECATED, use 'pos/type' instead!");
     fParticleGun->GetPosDist()->SetPosDisType(newValues) ;
   }
   else if (command == shapeCmd) {
+    GateWarning("The 'shape' option is DEPRECATED, use 'pos/shape' instead!");
     fParticleGun->GetPosDist()->SetPosDisShape(newValues) ;
   }
   else if (command == positronRangeCmd) {
+    // this command actually does no seem to have a 'modern' replacement. No other "SetPositronRange" calls anywhere.
     fParticleGun->GetPosDist()->SetPositronRange(newValues) ;
   }
   else if (command == centreCmd) {
+    GateWarning("The 'centre' option is DEPRECATED, use 'pos/centre' instead!");
     fParticleGun->GetPosDist()->SetCentreCoords( centreCmd->GetNew3VectorValue(newValues)) ;
     fParticleGun->SetCentreCoords( centreCmd->GetNew3VectorValue(newValues));
   }
   else if (command == posrot1Cmd) {
+    GateWarning("The 'posrot1' option is DEPRECATED, use 'pos/rot1' instead!");
     fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd->GetNew3VectorValue(newValues)) ;
     fParticleGun->SetPosRot1(posrot1Cmd->GetNew3VectorValue(newValues));
   }
   else if (command == posrot2Cmd) {
+    GateWarning("The 'posrot2' option is DEPRECATED, use 'pos/rot2' instead!");
     fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
     fParticleGun->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
   }
   else if (command == halfxCmd) {
+    GateWarning("The 'halfx' option is DEPRECATED, use 'pos/halfx' instead!");
     fParticleGun->GetPosDist()->SetHalfX( halfxCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == halfyCmd) {
+    GateWarning("The 'halfy' option is DEPRECATED, use 'pos/halfy' instead!");
     fParticleGun->GetPosDist()->SetHalfY( halfyCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == halfzCmd) {
+    GateWarning("The 'halfz' option is DEPRECATED, use 'pos/halfz' instead!");
     fParticleGun->GetPosDist()->SetHalfZ( halfzCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == radiusCmd) {
+    GateWarning("The 'radius' option is DEPRECATED, use 'pos/radius' instead!");
     fParticleGun->GetPosDist()->SetRadius( radiusCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == radius0Cmd) {
+    GateWarning("The 'radius0' option is DEPRECATED, use 'pos/inner_radius' instead!");
     fParticleGun->GetPosDist()->SetRadius0( radius0Cmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == possigmarCmd) {
+    GateWarning("The 'sigmaposr' option is DEPRECATED, use 'pos/sigma_r' instead!");
     fParticleGun->GetPosDist()->SetBeamSigmaInR( possigmarCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == possigmaxCmd) {
+    GateWarning("The 'sigmaposx' option is DEPRECATED, use 'pos/sigma_x' instead!");
     fParticleGun->GetPosDist()->SetBeamSigmaInX( possigmaxCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == possigmayCmd) {
+    GateWarning("The 'sigmaposy' option is DEPRECATED, use 'pos/sigma_y' instead!");
     fParticleGun->GetPosDist()->SetBeamSigmaInY( possigmayCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == paralpCmd) {
+    GateWarning("The 'paralp' option is DEPRECATED, use 'pos/paralp' instead!");
     fParticleGun->GetPosDist()->SetParAlpha(paralpCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == partheCmd) {
+    GateWarning("The 'parthe' option is DEPRECATED, use 'pos/parthe' instead!");
     fParticleGun->GetPosDist()->SetParTheta( partheCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == parphiCmd) {
+    GateWarning("The 'parphi' option is DEPRECATED, use 'pos/parphi' instead!");
     fParticleGun->GetPosDist()->SetParPhi( parphiCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == confineCmd) {
+    GateWarning("The 'confine' option is DEPRECATED, use 'pos/confine' instead!");
     // Modif DS/FS: for all names exept NULL, we add the tag "_phys" at the end
     // of the volume name when the user forgot to do it
     if ( newValues != "NULL")
@@ -1048,6 +1069,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues) ;
   }
   else if (command == ForbidCmd) {
+    // this command actually does no seem to have a 'modern' replacement. No other "ForbidSourceToVolume" calls anywhere.
     if ( newValues != "NULL") {
       if (newValues.substr( newValues.length()-5) != "_phys")
         newValues += "_phys";
@@ -1056,86 +1078,113 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     fParticleGun->GetPosDist()->ForbidSourceToVolume(newValues);
   }
   else if (command == angtypeCmd) {
+    GateWarning("The 'angtype' option is DEPRECATED, use 'ang/type' instead!");
     fParticleGun->GetAngDist()->SetAngDistType(newValues) ;
   }
   else if (command == angrot1Cmd) {
+    GateWarning("The 'angrot1' option is DEPRECATED, use 'ang/rot1' instead!");
     G4String a = "angref1";
     fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot1Cmd->GetNew3VectorValue(newValues)) ;
   }
   else if (command == angrot2Cmd) {
+    GateWarning("The 'angrot2' option is DEPRECATED, use 'ang/rot2' instead!");
     G4String a = "angref2";
     fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot2Cmd->GetNew3VectorValue(newValues)) ;
   }
   else if (command == minthetaCmd) {
+    GateWarning("The 'mintheta' option is DEPRECATED, use 'ang/mintheta' instead!");
     fParticleGun->GetAngDist()->SetMinTheta( minthetaCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == minphiCmd) {
+    GateWarning("The 'minphi' option is DEPRECATED, use 'ang/minphi' instead!");
     fParticleGun->GetAngDist()->SetMinPhi( minphiCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == maxthetaCmd) {
+    GateWarning("The 'maxtheta' option is DEPRECATED, use 'ang/maxtheta' instead!");
     fParticleGun->GetAngDist()->SetMaxTheta( maxthetaCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == maxphiCmd) {
+    GateWarning("The 'maxphi' option is DEPRECATED, use 'ang/maxphi' instead!");
     fParticleGun->GetAngDist()->SetMaxPhi( maxphiCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == angsigmarCmd) {
+    GateWarning("The 'sigmaangr' option is DEPRECATED, use 'ang/sigma_r' instead!");
     fParticleGun->GetAngDist()->SetBeamSigmaInAngR( angsigmarCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == angsigmaxCmd) {
+    GateWarning("The 'sigmaangx' option is DEPRECATED, use 'ang/sigma_x' instead!");
     fParticleGun->GetAngDist()->SetBeamSigmaInAngX( angsigmaxCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == angsigmayCmd) {
+    GateWarning("The 'sigmaangy' option is DEPRECATED, use 'ang/sigma_y' instead!");
     fParticleGun->GetAngDist()->SetBeamSigmaInAngY( angsigmayCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == useuserangaxisCmd) {
+    GateWarning("The 'useuserangaxis' option is DEPRECATED, use 'ang/user_coor' instead!");
     fParticleGun->GetAngDist()->SetUseUserAngAxis( useuserangaxisCmd->GetNewBoolValue(newValues)) ;
   }
   else if (command == surfnormCmd) {
+    GateWarning("The 'surfnorm' option is DEPRECATED, use 'ang/surfnorm' instead!");
     fParticleGun->GetAngDist()->SetUserWRTSurface( surfnormCmd->GetNewBoolValue(newValues)) ;
   }
   else if (command == energytypeCmd) {
+    GateWarning("The 'energytype' option is DEPRECATED, use 'ene/type' instead!");
     fParticleGun->GetEneDist()->SetEnergyDisType(newValues) ;
   }
   else if (command == eminCmd) {
+    GateWarning("The 'emin' option is DEPRECATED, use 'ene/min' instead!");
     fParticleGun->GetEneDist()->SetEmin( eminCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == emaxCmd) {
+    GateWarning("The 'emax' option is DEPRECATED, use 'ene/max' instead!");
     fParticleGun->GetEneDist()->SetEmax( emaxCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == monoenergyCmd) {
+    GateWarning("The 'monoenergy' option is DEPRECATED, use 'ene/mono' instead!");
     fParticleGun->GetEneDist()->SetMonoEnergy( monoenergyCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == engsigmaCmd) {
+    GateWarning("The 'sigmae' option is DEPRECATED, use 'ene/sigma' instead!");
     fParticleGun->GetEneDist()->SetBeamSigmaInE( engsigmaCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == alphaCmd) {
+    GateWarning("The 'alpha' option is DEPRECATED, use 'ene/alpha' instead!");
     fParticleGun->GetEneDist()->SetAlpha( alphaCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == tempCmd) {
+    GateWarning("The 'temp' option is DEPRECATED, use 'ene/temp' instead!");
     fParticleGun->GetEneDist()->SetTemp( tempCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == ezeroCmd) {
+    GateWarning("The 'ezero' option is DEPRECATED, use 'ene/ezero' instead!");
     fParticleGun->GetEneDist()->SetEzero( ezeroCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == gradientCmd) {
+    GateWarning("The 'gradient' option is DEPRECATED, use 'ene/gradient' instead!");
     fParticleGun->GetEneDist()->SetGradient( gradientCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == interceptCmd) {
+    GateWarning("The 'intercept' option is DEPRECATED, use 'ene/intercept' instead!");
     fParticleGun->GetEneDist()->SetInterCept( interceptCmd->GetNewDoubleValue(newValues)) ;
   }
   else if (command == calculateCmd) {
+    GateWarning("The 'calculate' option is DEPRECATED, use 'ene/calculate' instead!");
     fParticleGun->GetEneDist()->Calculate() ;
   }
   else if (command == energyspecCmd) {
+    GateWarning("The 'energyspec' option is DEPRECATED, use 'ene/emspec' instead!");
     fParticleGun->GetEneDist()->InputEnergySpectra( energyspecCmd->GetNewBoolValue(newValues)) ;
   }
   else if (command == diffspecCmd) {
+    GateWarning("The 'diffspec' option is DEPRECATED, use 'ene/diffspec' instead!");
     fParticleGun->GetEneDist()->InputDifferentialSpectra( diffspecCmd->GetNewBoolValue(newValues)) ;
   }
   else if (command == histnameCmd) {
+    GateWarning("The 'histname' option is DEPRECATED, use 'hist/type' instead!");
     histtype = newValues ;
   }
   else if (command == histpointCmd) {
+    GateWarning("The 'histpoint' option is DEPRECATED, use 'hist/point' instead!");
     if( histtype == "biasx")
       fParticleGun->GetBiasRndm()->SetXBias( histpointCmd->GetNew3VectorValue(newValues)) ;
     if( histtype == "biasy")
@@ -1154,16 +1203,27 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       fParticleGun->GetAngDist()->UserDefAngPhi( histpointCmd->GetNew3VectorValue(newValues)) ;
     if( histtype == "energy")
       fParticleGun->GetEneDist()->UserEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
-    if( histtype == "arb")
+    if( histtype == "arb"){
+      if(fArbInterModeSet){
+	GateError("ERROR: After setting the interpolation mode, you cannot add any more points to the energy histogram.");
+      }
       fParticleGun->GetEneDist()->ArbEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
+      ++fNArbEHistPoints;
+    }
     if( histtype == "epn")
       fParticleGun->GetEneDist()->EpnEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
   }
   else if (command == resethistCmd) {
+    GateWarning("The 'histreset' option is DEPRECATED, use 'hist/reset' instead!");
     fParticleGun->GetAngDist()->ReSetHist(newValues) ;
   }
   else if (command == arbintCmd) {
+    GateWarning("The 'arbint' option is DEPRECATED, use 'hist/inter' instead!");
+    if (fNArbEHistPoints < 2){
+      GateError("ERROR: Please set the interpolation mode AFTER providing at ALL (and least two) energy histogram points.");
+    }
     fParticleGun->GetEneDist()->ArbInterpolate(newValues) ;
+    fArbInterModeSet = true;
   }
   else if (command == verbosityCmd) {
     fParticleGun->SetVerbosity( verbosityCmd->GetNewIntValue(newValues)) ;
@@ -1222,12 +1282,14 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     fParticleGun->GetPosDist()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
     fParticleGun->SetCentreCoords( centreCmd1->GetNew3VectorValue(newValues));
   }
+  /* DEAD CODE (posrot{1,2}Cmd1 are already checked above)
   else if(command == posrot1Cmd1) {
     fParticleGun->GetPosDist()->SetPosRot1(posrot1Cmd1->GetNew3VectorValue(newValues));
   }
   else if(command == posrot2Cmd1) {
     fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
   }
+  */
   else if(command == halfxCmd1) {
     fParticleGun->GetPosDist()->SetHalfX(halfxCmd1->GetNewDoubleValue(newValues));
   }
@@ -1262,6 +1324,21 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     fParticleGun->GetPosDist()->SetParPhi(parphiCmd1->GetNewDoubleValue(newValues));
   }
   else if(command == confineCmd1) {
+    // CORRECTION COPIED FROM OLD 'confine' COMMAND
+    // Modif DS/FS: for all names exept NULL, we add the tag "_phys" at the end
+    // of the volume name when the user forgot to do it
+    if ( newValues != "NULL")
+      {
+        bool test = false;
+        if (newValues.length() < 5) { test = true; }
+        else if (newValues.substr( newValues.length()-5) != "_phys") { test = true; }
+
+        if (test)
+          {
+            newValues += "_phys";
+            G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
+          }
+      }
     fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues);
   }
   else if(command == setImageCmd1) {
@@ -1363,7 +1440,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if(command == diffspecCmd1) {
     fParticleGun->GetEneDist()->InputDifferentialSpectra(diffspecCmd1->GetNewBoolValue(newValues));
   }
-  else if(command == histnameCmd1) {
+  else if(command == histtypeCmd) {
     histtype = newValues;
   }
   else if(command == histpointCmd1) {
@@ -1389,8 +1466,13 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       fParticleGun->GetAngDist()->UserDefAngPhi(histpointCmd1->GetNew3VectorValue(newValues));
     if(histtype == "energy")
       fParticleGun->GetEneDist()->UserEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
-    if(histtype == "arb")
+    if(histtype == "arb"){
+      if(fArbInterModeSet){
+	GateError("ERROR: After setting the interpolation mode, you cannot add any more points to the energy histogram.");
+      }
       fParticleGun->GetEneDist()->ArbEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
+      ++fNArbEHistPoints;
+    }
     if(histtype == "epn")
       fParticleGun->GetEneDist()->EpnEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
   }
@@ -1404,7 +1486,16 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     }
   }
   else if(command == arbintCmd1) {
+    if( (fParticleGun->GetEneDist()->GetEnergyDisType() != "Arb") || (histtype != "arb") ){
+      GateWarning("'hist/inter' only works if the energy type is 'Arb' "
+		  << "and the histograms type is 'arb', not on type '" << histtype
+		  << "'. Unexpected behavior or crashes may happen...");
+    }
+    if (fNArbEHistPoints < 2){
+      GateError("ERROR: Please set the interpolation mode AFTER providing at ALL (and least two) energy histogram points.");
+    }
     fParticleGun->GetEneDist()->ArbInterpolate(newValues);
+    fArbInterModeSet = true;
   }
   else if (command == setUserSpectrumCmd) {
     GateSPSEneDistribution* speEn =  fParticleGun->GetEneDist(); //->ContructUserSpectrum(newValues);
@@ -1495,3 +1586,4 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues)
   }
 }
 //-------------------------------------------------------------------------------------------------
+// vim: ai sw=2 ts=2 et

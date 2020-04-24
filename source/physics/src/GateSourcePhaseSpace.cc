@@ -11,8 +11,12 @@
 #ifdef GATE_USE_TORCH
 // Need to be *before* include GateIAEAHeader because it define macros
 // that mess with torch
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <torch/script.h>
 #include "json.hpp"
+#pragma GCC diagnostic pop
 #endif
 
 #include "GateSourcePhaseSpace.hh"
@@ -535,7 +539,8 @@ void GateSourcePhaseSpace::AddFile(G4String file)
 
   G4cout << "GateSourcePhaseSpace::AddFile Add " << file << G4endl;
 
-  if(extension != "npy" && extension != "root" && extension != "pt")
+  if(extension != "IAEAphsp" && extension != "IAEAheader" && 
+    extension != "npy" && extension != "root" && extension != "pt")
     GateError( "Unknow phase space file extension. Knowns extensions are : "
                << Gateendl
                << ".IAEAphsp (or IAEAheader) .root .npy .pt (pytorch) \n");
@@ -788,7 +793,7 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch()
 
   // Store the results into the vectors
   for (auto i=0; i < output.sizes()[0]; ++i) {
-    const float * v = output[i].data<float>();
+    const float * v = output[i].data_ptr<float>();
     mPTEnergy[i] = u(v, mPTEnergyIndex, def_E);
     mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex, def_X),
                                    u(v, mPTPositionYIndex, def_Y),

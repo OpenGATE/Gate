@@ -22,7 +22,11 @@
 #include "GateImage.hh"
 
 #ifdef GATE_USE_TORCH
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <torch/script.h>
+#pragma GCC diagnostic pop
 #endif
 
 //-----------------------------------------------------------------------------

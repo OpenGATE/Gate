@@ -2,6 +2,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 CMAKE_POLICY(SET CMP0012 NEW)
 CMAKE_POLICY(SET CMP0025 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.11.0")
+    CMAKE_POLICY(SET CMP0072 NEW)
+endif()
 
 #=========================================================
 PROJECT(Gate)
@@ -34,6 +37,20 @@ IF(NOT CMAKE_BUILD_TYPE)
     "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
     FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
+
+#=========================================================
+# Native compilation
+OPTION(GATE_COMPILE_WITH_NATIVE "Build with -march=native (works if build type is Release)" OFF)
+IF(UNIX AND GATE_COMPILE_WITH_NATIVE)
+  string(FIND ${CMAKE_CXX_FLAGS_RELEASE} -march=native pos_march_cxx)
+  string(FIND ${CMAKE_C_FLAGS_RELEASE} -march=native pos_march_c)
+  IF(${pos_march_cxx} EQUAL -1)
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+  ENDIF() 
+  IF(${pos_march_c} EQUAL -1)
+    SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
+  ENDIF()
+ENDIF(UNIX AND GATE_COMPILE_WITH_NATIVE)
 
 #=========================================================
 # Option to use visualisation feature of G4
@@ -91,7 +108,6 @@ OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
-OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
 
 #=========================================================
 # Option for libTorch
@@ -147,16 +163,6 @@ IF(GATE_USE_SYSTEM_CLHEP)
 
   #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
 ENDIF()
-
-#=========================================================
-# Option for GPU use
-IF(GATE_USE_GPU)
-  FIND_PACKAGE(CUDA)
-  INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
-  FILE(GLOB sourcesGPU
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu
-    )
-ENDIF(GATE_USE_GPU)
 
 #=========================================================
 # Option for LMF use
@@ -219,12 +225,12 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
-  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include/*.hh
-  ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include/*.hh)
 
 #=========================================================
 IF(GATE_USE_TORCH)
   FIND_PACKAGE(Torch REQUIRED)
+  INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
 
 #=========================================================
@@ -255,21 +261,18 @@ ENDIF()
 
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
-IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-G;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;--use_fast_math;-w;--ptxas-options=-v")
-  CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
-ELSE(GATE_USE_GPU AND CUDA_FOUND)
-  ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
-  ADD_EXECUTABLE(GateDigit_singles_sorter ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_singles_sorter.cc  ${sources} ${headers})
-  ADD_EXECUTABLE(GateDigit_hits_digitizer ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_hits_digitizer.cc ${sources} ${headers})
-  ADD_EXECUTABLE(GateDigit_coincidence_processor ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_coincidence_processor.cc ${sources} ${headers})
-  ADD_EXECUTABLE(GateDigit_seqCoinc2Cones ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_seqCoinc2Cones.cc ${sources} ${headers})
-ENDIF(GATE_USE_GPU AND CUDA_FOUND)
+ADD_LIBRARY(GateLib OBJECT ${sources} ${headers})
+#TARGET_LINK_LIBRARIES(GateLib ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+ADD_EXECUTABLE(Gate Gate.cc $<TARGET_OBJECTS:GateLib> )
+ADD_EXECUTABLE(GateDigit_singles_sorter ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_singles_sorter.cc $<TARGET_OBJECTS:GateLib> )
+ADD_EXECUTABLE(GateDigit_hits_digitizer ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_hits_digitizer.cc  $<TARGET_OBJECTS:GateLib>)
+ADD_EXECUTABLE(GateDigit_coincidence_processor ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_coincidence_processor.cc $<TARGET_OBJECTS:GateLib>)
+ADD_EXECUTABLE(GateDigit_seqCoinc2Cones ${PROJECT_SOURCE_DIR}/source/bin/GateDigit_seqCoinc2Cones.cc $<TARGET_OBJECTS:GateLib>)
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
-TARGET_LINK_LIBRARIES(GateDigit_singles_sorter  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
-TARGET_LINK_LIBRARIES(GateDigit_hits_digitizer  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
-TARGET_LINK_LIBRARIES(GateDigit_coincidence_processor  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
-TARGET_LINK_LIBRARIES(GateDigit_seqCoinc2Cones  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_singles_sorter ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_hits_digitizer ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_coincidence_processor ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(GateDigit_seqCoinc2Cones ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
@@ -292,13 +295,8 @@ ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
-# such warning related to clhep/g4 system of units. Additionally,
-# we force the c++11 std. This is mandatory for Geant4 >= 10.2.
+# such warning related to clhep/g4 system of units.
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-set(CMAKE_CXX_STANDARD 11)
-
 #=========================================================
 
 #=========================================================
@@ -313,3 +311,7 @@ IF(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} -pg")
 ENDIF()
 #=========================================================
+
+IF(BUILD_TESTING)
+  ADD_TEST(NAME FIRST_EXECUTION_TEST COMMAND ${PROJECT_SOURCE_DIR}/benchmarks/benchRT/testCarbon.sh ${ROOT_INCLUDE_DIR}/../ )
+ENDIF(BUILD_TESTING)

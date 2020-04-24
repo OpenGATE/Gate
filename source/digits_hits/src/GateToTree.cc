@@ -316,7 +316,7 @@ void GateToTree::RecordBeginOfAcquisition()
         }
         else
         {
-          for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+          for(unsigned int k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
           {
             auto system = GateSystemListManager::GetInstance()->GetSystem(k);
 
@@ -451,7 +451,7 @@ void GateToTree::RecordBeginOfAcquisition()
           }
           else
           {
-            for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+            for(unsigned int k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
             {
               auto system = GateSystemListManager::GetInstance()->GetSystem(k);
               for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
@@ -625,7 +625,7 @@ void GateToTree::RecordBeginOfAcquisition()
         {
           for(auto side = 1; side <= 2; ++side)
           {
-            for(auto k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
+            for(unsigned int k = 0; k < GateSystemListManager::GetInstance()->size(); ++k)
             {
               auto system = GateSystemListManager::GetInstance()->GetSystem(k);
               for(auto depth = 0; depth < m_max_depth_system[k]; ++depth)
@@ -669,17 +669,17 @@ void GateToTree::RecordEndOfAcquisition()
 
 void GateToTree::RecordBeginOfRun(const G4Run *run)
 {
-
+  UNUSED(run);
 }
 
 void GateToTree::RecordEndOfRun(const G4Run *run)
 {
-
+  UNUSED(run);
 }
 
 void GateToTree::RecordBeginOfEvent(const G4Event *event)
 {
-
+  UNUSED(event);
 }
 
 void GateToTree::RecordEndOfEvent(const G4Event *event)
@@ -698,7 +698,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
 //    auto writeVolumeIDs = m_hitsParams_to_write.at("volumeIDs").toSave();
 
   m_systemID = -1;
-  for( G4int iHit = 0; iHit < CHC->entries(); ++iHit )
+  for( unsigned int iHit = 0; iHit < CHC->entries(); ++iHit )
   {
     auto hit = (*CHC)[ iHit ];
     if(!hit->GoodForAnalysis())
@@ -924,7 +924,7 @@ void GateToTree::retrieve(GateCoincidenceDigi *aDigi, G4int side, G4int system_i
 
 void GateToTree::RecordStepWithVolume(const GateVVolume *v, const G4Step *aStep)
 {
-
+  UNUSED(v);
   auto partDef = aStep->GetTrack()->GetDefinition();
   if (partDef == G4OpticalPhoton::OpticalPhotonDefinition()) {
     G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
@@ -937,7 +937,7 @@ void GateToTree::RecordStepWithVolume(const GateVVolume *v, const G4Step *aStep)
 
 void GateToTree::RecordVoxels(GateVGeometryVoxelStore *store)
 {
-
+  UNUSED(store);
 }
 
 const G4String &GateToTree::GiveNameOfFile()

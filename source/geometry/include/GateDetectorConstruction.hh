@@ -192,7 +192,6 @@ private:
   G4ThreeVector      m_magFieldValue;
   G4String           m_magFieldTabulatedFile;
 
-  G4UniformElectricField* e_electField;
   G4ThreeVector      e_electFieldValue;
   G4String           e_electFieldTabulatedFile;
 
