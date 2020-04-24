@@ -458,10 +458,10 @@ int GateVImageActor::GetIndexFromStepPosition2(const GateVVolume * v,
     //GateDebugMessageCont("Step", 4, "\tdirection = " << direction << Gateendl);
     G4ThreeVector position = prePosition + x*direction;
     GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tRandomStep = " << position << Gateendl);
-    index = mImage.GetIndexFromPositionCylindricalCS(position);
+    index = image.GetIndexFromPositionCylindricalCS(position);
   }
   if (mStepHitType == PostStepHitTypeCylindricalCS) {
-    index = mImage.GetIndexFromPositionCylindricalCS(postPosition);
+    index = image.GetIndexFromPositionCylindricalCS(postPosition);
   }
   GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tVoxel index = " << index << Gateendl);
   return index;
