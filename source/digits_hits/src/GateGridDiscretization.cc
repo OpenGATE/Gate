@@ -12,43 +12,27 @@
 #include "GateTools.hh"
 
 
-
-
-
-
 GateGridDiscretization::GateGridDiscretization(GatePulseProcessorChain* itsChain,
-                                                               const G4String& itsName)
+                                               const G4String& itsName)
     : GateVPulseProcessor(itsChain,itsName)
 {
 
 
- m_messenger = new GateGridDiscretizationMessenger(this);
+    m_messenger = new GateGridDiscretizationMessenger(this);
 
     DescribeMyself(1);
     //GateMap<G4String,param> ::iterator im;
 
+    // G4cout<<"access to m_name in constructor"<< m_name<<G4endl;
+    im=m_table.begin();
 
 
-
-
-    //sizeVol=new double [2];
-
-  // G4cout<<"access to m_name in constructor"<< m_name<<G4endl;
-
-//Es como que lo guarda mas tarde
-   im=m_table.begin();
-   //pitchX=0;
-   //pitchY=0;
-   //VolCN="";
-
-  // G4cout<<(*im).second.numberStripsX<<G4endl;
-   G4cout<<" GateGridDiscretizATION::Constructor"<<G4endl;
-//   G4cout<<(G4String)(*im).first<<G4endl;
-    //No tengo ahi acceso a los parameteros
-   //G4cout<<"access to m_param number of strips in constructor"<< m_param.numberStripsX<<G4endl;
-   // G4cout<<"access to m_param number of strips in constructor"<<   m_table[m_name].numberStripsX<<G4endl;
-    //No recupero parametros introducidos
-       //pitchX=(sizeVol[0]-2*)
+    // G4cout<<(*im).second.numberStripsX<<G4endl;
+    //G4cout<<" GateGridDiscretizATION::Constructor"<<G4endl;
+    //G4cout<<(G4String)(*im).first<<G4endl;
+    //I do not have access at this point to these values
+    //G4cout<<"access to m_param number of strips in constructor"<< m_param.numberStripsX<<G4endl;
+    // G4cout<<"access to m_param number of strips in constructor"<<   m_table[m_name].numberStripsX<<G4endl;
 }
 
 GateGridDiscretization::~GateGridDiscretization()
@@ -59,59 +43,59 @@ GateGridDiscretization::~GateGridDiscretization()
 
 G4int GateGridDiscretization::ChooseVolume(G4String val)
 {
- G4cout<<" GateGridDiscretizATION::ChooseVolume Begin"<<G4endl;
-  GateObjectStore* m_store = GateObjectStore::GetInstance();
+    G4cout<<" GateGridDiscretizATION::ChooseVolume Begin"<<G4endl;
+    GateObjectStore* m_store = GateObjectStore::GetInstance();
 
 
-  if (m_store->FindCreator(val)!=0) {
-    //  m_param.threshold = -1;
-      m_param.numberStripsX= -1;
-      m_param.numberStripsY= -1;
-      m_param.numberReadOutBlocksX= -1;
-      m_param.numberReadOutBlocksY= -1;
-      m_param.stripOffsetX=0;
-      m_param.stripOffsetY=0;
-      m_param.stripWidthX=-1;
-      m_param.stripWidthY=-1;
+    if (m_store->FindCreator(val)!=0) {
+        //  m_param.threshold = -1;
+        m_param.numberStripsX= -1;
+        m_param.numberStripsY= -1;
+        m_param.numberReadOutBlocksX= -1;
+        m_param.numberReadOutBlocksY= -1;
+        m_param.stripOffsetX=0;
+        m_param.stripOffsetY=0;
+        m_param.stripWidthX=-1;
+        m_param.stripWidthY=-1;
 
-      m_param.deadSpX=0;
-      m_param.deadSpY=0;
-
-
-
-      //G4VoxelLimits limits;
-     // G4double min, max;
-     // G4AffineTransform at;
-      //G4ThreeVector volSize;
-      //G4cout<<"name"<<m_store->FindCreator(val)->GetLogicalVolumeName()<< G4endl;
-    //BErofre it was working.After the new Gate realise 8.2  Now the Solid() volume does nnot exit at this stage It exits after the initialization
-    // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
-      //sizeVol[0] = max-min;
-     //m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
-      //sizeVol[1] = max-min;
-      //G4cout<<"size in x direction"<< sizeVol[0]<<"size in y direction"<< sizeVol[1]<<G4endl;
-
-     // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
-     // G4cout<<"Xmin"<< min<<G4endl;
-      //volSize.setX(max-min);
-     // sizeVol[0] = max-min;
-      //m_param.volSize.setX(max-min);
-     // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
-      //sizeVol[1] = max-min;
-      //m_param.volSize.setY(max-min);
+        m_param.deadSpX=0;
+        m_param.deadSpY=0;
 
 
 
+        //G4VoxelLimits limits;
+        // G4double min, max;
+        // G4AffineTransform at;
+        //G4ThreeVector volSize;
+        //G4cout<<"name"<<m_store->FindCreator(val)->GetLogicalVolumeName()<< G4endl;
+        //BErofre it was working.After the new Gate realise 8.2  Now the Solid() volume does nnot exit at this stage It exits after the initialization
+        // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
+        //sizeVol[0] = max-min;
+        //m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+        //sizeVol[1] = max-min;
+        //G4cout<<"size in x direction"<< sizeVol[0]<<"size in y direction"<< sizeVol[1]<<G4endl;
 
-     m_table[val] = m_param;
+        // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
+        // G4cout<<"Xmin"<< min<<G4endl;
+        //volSize.setX(max-min);
+        // sizeVol[0] = max-min;
+        //m_param.volSize.setX(max-min);
+        // m_store->FindCreator(val)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+        //sizeVol[1] = max-min;
+        //m_param.volSize.setY(max-min);
 
-      return 1;
-  }
-  else {
-    G4cout << "Wrong Volume Name\n";
 
-    return 0;
-  }
+
+
+        m_table[val] = m_param;
+
+        return 1;
+    }
+    else {
+        G4cout << "Wrong Volume Name\n";
+
+        return 0;
+    }
 
 
 }
@@ -140,22 +124,22 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
             //We enter once per each volume
 
 
-
             outputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
             (*im).second.volSize.setX(max-min);
-             outputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+            outputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
             (*im).second.volSize.setY(max-min);
             outputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
             (*im).second.volSize.setZ(max-min);
 
 
 
-             (*im).second.deadSpX=((*im).second.volSize.getX()-2*(*im).second.stripOffsetX-(*im).second.stripWidthX)/((*im).second.numberStripsX-1)-(*im).second.stripWidthX;
-              if( (*im).second.deadSpX<EPSILON) (*im).second.deadSpX=0;
+            (*im).second.deadSpX=((*im).second.volSize.getX()-2*(*im).second.stripOffsetX-(*im).second.stripWidthX)/((*im).second.numberStripsX-1)-(*im).second.stripWidthX;
+            if( (*im).second.deadSpX<EPSILON) (*im).second.deadSpX=0;
             (*im).second.pitchX=(*im).second.stripWidthX+(*im).second.deadSpX;
-             (*im).second.deadSpY=((*im).second.volSize.getY()-2*(*im).second.stripOffsetY-(*im).second.stripWidthY)/((*im).second.numberStripsY-1)-(*im).second.stripWidthY;
-             if( (*im).second.deadSpY<EPSILON) (*im).second.deadSpY=0;
-              (*im).second.pitchY=(*im).second.stripWidthY+(*im).second.deadSpY;
+
+            (*im).second.deadSpY=((*im).second.volSize.getY()-2*(*im).second.stripOffsetY-(*im).second.stripWidthY)/((*im).second.numberStripsY-1)-(*im).second.stripWidthY;
+            if( (*im).second.deadSpY<EPSILON) (*im).second.deadSpY=0;
+            (*im).second.pitchY=(*im).second.stripWidthY+(*im).second.deadSpY;
         }
 
         //G4cout<<"Numb stripsX"<<(*im).second.numberStripsX<<G4endl;
@@ -163,7 +147,6 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
         outputPulse->SetEnergyFin(-1);
 
 
-        //Si es zero tengo porblme  Par defecto-1 Si es diff de invalid
         if((*im).second.numberReadOutBlocksX>0 && (*im).second.numberReadOutBlocksY>0){
             NumberPB_X=int((*im).second.numberStripsX/(*im).second.numberReadOutBlocksX);
             NumberPB_Y=int((*im).second.numberStripsY/(*im).second.numberReadOutBlocksY);
@@ -198,19 +181,19 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
             outputPulse->SetLocalPos(PosLocal);
             outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos()));
             //Check output pulses from the end if there is a pulse with the same indexX an Y are summed in energy otherwise  a new input
-             bool flagPulseIsAdded=false;
+            bool flagPulseIsAdded=false;
             if(outputPulseList.empty()){
                 //index_X_list and outputlist same size
                 outputPulseList.push_back(outputPulse);
                 index_X_list.push_back(current_indexX);
                 index_Y_list.push_back(current_indexY);
 
-                 blockTempIndex.first=int (current_indexX/NumberPB_X);
-                 blockTempIndex.second=int (current_indexY/NumberPB_Y);
+                blockTempIndex.first=int (current_indexX/NumberPB_X);
+                blockTempIndex.second=int (current_indexY/NumberPB_Y);
 
-                 if(NumberPB_X!=(*im).second.numberStripsX ||NumberPB_Y!=(*im).second.numberStripsY){
+                if(NumberPB_X!=(*im).second.numberStripsX ||NumberPB_Y!=(*im).second.numberStripsY){
                     blockIndex.insert(std::pair<std::pair<int,int>, std::vector<int>>(blockTempIndex,{int(outputPulseList.size()-1)}));
-                 }
+                }
 
 
             }
@@ -222,7 +205,7 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
                 int indexYCounter=std::count(index_Y_list.begin(), index_Y_list.end(), current_indexY);
 
                 if (indexXCounter==0 ||indexYCounter==0 ){
-                //if( std::find (index_X_list.begin(), index_X_list.end(), current_indexX)==index_X_list.end()){
+                    //if( std::find (index_X_list.begin(), index_X_list.end(), current_indexX)==index_X_list.end()){
 
                     outputPulseList.push_back(outputPulse);
                     index_X_list.push_back(current_indexX);
@@ -231,39 +214,39 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
                 else{
                     //If there is a pulse in the same volumeID with the same index, they are merged
 
-                     while ((it_indexX = std::find(it_indexX, index_X_list.end(), current_indexX)) != index_X_list.end()) {
+                    while ((it_indexX = std::find(it_indexX, index_X_list.end(), current_indexX)) != index_X_list.end()) {
 
-                         //For that event there is already a pulse created with the same  X-index
-                         int posListX=std::distance(index_X_list.begin(),it_indexX);
-                         //See if I have also coincidence in Y indexes (in the same position)
+                        //For that event there is already a pulse created with the same  X-index
+                        int posListX=std::distance(index_X_list.begin(),it_indexX);
+                        //See if I have also coincidence in Y indexes (in the same position)
 
-                         if(index_Y_list.at(posListX)==current_indexY){
-                             //Check volumeID not to mix indexes beteween differnet volumes created by the repeater
-                             if(outputPulseList.at(posListX)->GetVolumeID()==outputPulse->GetVolumeID()){
-                                 outputPulseList.at(posListX)->CentroidMerge(outputPulse);
-                                 delete outputPulse;
-                                 flagPulseIsAdded=true;
-                                 break;
-                             }
+                        if(index_Y_list.at(posListX)==current_indexY){
+                            //Check volumeID not to mix indexes beteween differnet volumes created by the repeater
+                            if(outputPulseList.at(posListX)->GetVolumeID()==outputPulse->GetVolumeID()){
+                                outputPulseList.at(posListX)->CentroidMerge(outputPulse);
+                                delete outputPulse;
+                                flagPulseIsAdded=true;
+                                break;
+                            }
 
-                         }
-                          it_indexX++;
-                     }
+                        }
+                        it_indexX++;
+                    }
 
-                     //If there is no pulse stored in the smae volume with the same indexes create one
-                     if (flagPulseIsAdded==false){
-                         outputPulseList.push_back(outputPulse);
-                         index_X_list.push_back(current_indexX);
-                         index_Y_list.push_back(current_indexY);
-                     }
+                    //If there is no pulse stored in the smae volume with the same indexes create one
+                    if (flagPulseIsAdded==false){
+                        outputPulseList.push_back(outputPulse);
+                        index_X_list.push_back(current_indexX);
+                        index_Y_list.push_back(current_indexY);
+                    }
 
                 }
-                     if(flagPulseIsAdded==false){
-                        if(NumberPB_X!=(*im).second.numberStripsX ||NumberPB_Y!=(*im).second.numberStripsY){
+                if(flagPulseIsAdded==false){
+                    if(NumberPB_X!=(*im).second.numberStripsX ||NumberPB_Y!=(*im).second.numberStripsY){
 
-                             blockTempIndex.first=int (current_indexX/NumberPB_X);
-                             blockTempIndex.second=int (current_indexY/NumberPB_Y);
-                             //buscar si el keyvalue existe
+                        blockTempIndex.first=int (current_indexX/NumberPB_X);
+                        blockTempIndex.second=int (current_indexY/NumberPB_Y);
+                        //buscar si el keyvalue existe
                              if(blockIndex.find(blockTempIndex)!=blockIndex.end()){
                                // G4cout<<"size before "<<  blockIndex[blockTempIndex].size()<<G4endl;
                                 //if(blockIndex[blockTempIndex].size()>0) G4cout<<"element="<< blockIndex[blockTempIndex].back()<<G4endl;
