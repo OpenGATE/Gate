@@ -188,12 +188,10 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	
 	  // Special case for right borders  :
 	  if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
-	  //if (fabs(y - resolution.y()) <= kCarTolerance*0.5) y -= 2*kCarTolerance;
 	  if (fabs(y - resolution.y()) <= kCarTolerance*0.5) y -= 2*kCarTolerance;
 	   
 	  // to floor values
 	  int ix = (int)floor(x);
-	  //int iy =  0;// (int)floor(y);
 	  int iy = (int)floor(y);
 
 	  // Check if not out of the volume ... (should not append with 'middle' ?)
@@ -233,16 +231,13 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	   
 	  // to floor values
 	  int ix = (int)floor(x);
-	  //int iy =  0;// (int)floor(y);
 	  int iz = (int)floor(z);
 
 		
 	  // Check if not out of the volume ... (should not append with 'middle' ?)
 	  if (ix*2 >= resolution.x()) return -1; //  /2 because radius is only half of diameter
-	  //if (iy >= resolution.y()) return -1;
 	  if (iz >= resolution.z()) return -1;
 	  if (ix < 0) return -1;
-	  //if (iy < 0) return -1;
 	  if (iz < 0) return -1;
 	  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
 	  return (ix+iz*planeSize);
