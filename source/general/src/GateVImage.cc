@@ -54,14 +54,9 @@ GateVImage::~GateVImage() {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//A.Resch
-//-----------------------------------------------------------------------------
 void GateVImage::SetResolutionAndHalfSizeCylinder(G4ThreeVector r, G4ThreeVector h, G4ThreeVector position) {
-  //resolution = r;
-  //halfSize = h;
-  //G4cout<<"we come here: do we???" <<G4endl;
   mPosition = position;
-   SetResolutionAndHalfSizeCylinder(r,h); //UpdateSizesFromResolutionAndHalfSize();
+   SetResolutionAndHalfSizeCylinder(r,h);
 }
 //-----------------------------------------------------------------------------
 
@@ -159,11 +154,6 @@ int GateVImage::GetIndexFromPosition(const G4ThreeVector& position) const{
 }
 //-----------------------------------------------------------------------------
 
-
-
-/*
- * A.Resch 28.09.2016
- */
 //-----------------------------------------------------------------------------
 int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position) const{
   //std::cout.precision(20);
@@ -178,8 +168,7 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
   if (resolution.z()==1)
   {
 	  
-	  //G4ThreeVector myV = G4ThreeVector(position.y(), position.z(), position.x());
-	  		  double rSq = position.z()*position.z() + position.y()*position.y();
+	  	double rSq = position.z()*position.z() + position.y()*position.y();
 		
 		// calculating the square root of rSq using Babylonian Method
 		// equal to std::sqrt(rSq)
@@ -189,14 +178,11 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 		while (std::abs(r2 - r1) > abortCriterion) {
 			 r2 = (r1 + r2) / 2;
 			 r1 = rSq / r2;
-			//cout << "r1: "<< r1<<endl;
 		}
 	   // ------------------- end sqrt
 	   
 	  // compute position in voxels (non-integer)
 	  double y = (r1)/voxelSize.y();
-	  //if ( (floor(rPosition) - floor(r1) )>1){G4cout<< "sqrt problem!"<<G4endl;}
-	  //double y = (position.y()+halfSize.y())/voxelSize.y();
 	  double x = (position.x()+halfSize.x())/voxelSize.x();
 	  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
 	
@@ -210,18 +196,12 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	  //int iy =  0;// (int)floor(y);
 	  int iy = (int)floor(y);
 
-		
 	  // Check if not out of the volume ... (should not append with 'middle' ?)
-	  if (iy*2 >= resolution.y()) return -1; //A.Resch /2 because radius is only half of diameter
-	  //if (iy >= resolution.y()) return -1;
+	  if (iy*2 >= resolution.y()) return -1; //  /2 because radius is only half of diameter
 	  if (ix >= resolution.x()) return -1;
 	  if (ix < 0) return -1;
-	  //if (iy < 0) return -1;
 	  if (iy < 0) return -1;
 	  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
-	  //G4cout<< "iy  " << iy <<G4endl;
-	  //G4cout<< "ix  " << ix <<G4endl;
-	 //G4cout<< "return ind " << ix+iy*lineSize+iz*planeSize <<G4endl;
 	  return (ix+iy*lineSize);
   }
   
@@ -239,20 +219,16 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 		while (std::abs(r2 - r1) > abortCriterion) {
 			 r2 = (r1 + r2) / 2;
 			 r1 = rSq / r2;
-			//cout << "r1: "<< r1<<endl;
 		}
 	   // ------------------- end sqrt
 	   
 	  // compute position in voxels (non-integer)
 	  double x = (r1)/voxelSize.x();
-	  //if ( (floor(rPosition) - floor(r1) )>1){G4cout<< "sqrt problem!"<<G4endl;}
-	  //double y = (position.y()+halfSize.y())/voxelSize.y();
 	  double z = (position.z()+halfSize.z())/voxelSize.z();
 	  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
 	
 	  // Special case for right borders  :
 	  if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
-	  //if (fabs(y - resolution.y()) <= kCarTolerance*0.5) y -= 2*kCarTolerance;
 	  if (fabs(z - resolution.z()) <= kCarTolerance*0.5) z -= 2*kCarTolerance;
 	   
 	  // to floor values
@@ -262,16 +238,13 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 
 		
 	  // Check if not out of the volume ... (should not append with 'middle' ?)
-	  if (ix*2 >= resolution.x()) return -1; //A.Resch /2 because radius is only half of diameter
+	  if (ix*2 >= resolution.x()) return -1; //  /2 because radius is only half of diameter
 	  //if (iy >= resolution.y()) return -1;
 	  if (iz >= resolution.z()) return -1;
 	  if (ix < 0) return -1;
 	  //if (iy < 0) return -1;
 	  if (iz < 0) return -1;
 	  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
-	  //G4cout<< "iy  " << iy <<G4endl;
-	  //G4cout<< "ix  " << ix <<G4endl;
-	 //G4cout<< "return ind " << ix+iy*lineSize+iz*planeSize <<G4endl;
 	  return (ix+iz*planeSize);
 	  
   }
@@ -279,71 +252,6 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
   {
 	  return -1;
   }
-  //old ===========================================
-	//double rSq = position.x()*position.x() + position.y()*position.y();
-    ////double rPosition = std::sqrt(rSq);
-    
-    //// ------------------
-    //// calculating the square root of rSq using Babylonian Method
-    //// equal to std::sqrt(rSq)
-	//double r1 = rSq / 2;
-	//double r2 = r1+(rSq-r1)/2;
-	//double abortCriterion = voxelSize.x()/100;
-	//while (std::abs(r2 - r1) > abortCriterion) {
-		 //r2 = (r1 + r2) / 2;
-		 //r1 = rSq / r2;
-		////cout << "r1: "<< r1<<endl;
-	//}
-   //// ------------------- end sqrt
-   
-  //// compute position in voxels (non-integer)
-  //double x = (r1)/voxelSize.x();
-  ////if ( (floor(rPosition) - floor(r1) )>1){G4cout<< "sqrt problem!"<<G4endl;}
-  ////double y = (position.y()+halfSize.y())/voxelSize.y();
-  //double z = (position.z()+halfSize.z())/voxelSize.z();
-  //GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
-    ////G4cout<< "=== " <<G4endl;
-    ////G4cout<< "x " << x <<G4endl;
-    ////G4cout<< "position.x() " << position.x() <<G4endl;
-    ////G4cout<< "voxelSize.x() " << voxelSize.x() <<G4endl;
-   
-    ////G4cout<< "halfSize.x() " << halfSize.x() <<G4endl;
-    ////G4cout<< "resolution.x() " << resolution.x() <<G4endl;
-    ////G4cout << "r   = " << r1 <<G4endl;
-    ////G4cout<< "kCarTolerance " << kCarTolerance*0.5 <<G4endl;
-  //// Special case for right borders  :
-  //if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
-  ////if (fabs(y - resolution.y()) <= kCarTolerance*0.5) y -= 2*kCarTolerance;
-  //if (fabs(z - resolution.z()) <= kCarTolerance*0.5) z -= 2*kCarTolerance;
-   
-   
-   
-    
-    ////G4cout<< "position.y() " << position.y() <<G4endl;
-    ////G4cout << "rSq = " << rSq<<G4endl;
-    ////G4cout << "r   = " << rPosition <<G4endl;
-   //// babylonian method
-   ////int num = 4567;
-
-
-  //// to floor values
-  //int ix = (int)floor(x);
-  ////int iy =  0;// (int)floor(y);
-  //int iz = (int)floor(z);
-
-    
-  //// Check if not out of the volume ... (should not append with 'middle' ?)
-  //if (ix*2 >= resolution.x()) return -1; //A.Resch /2 because radius is only half of diameter
-  ////if (iy >= resolution.y()) return -1;
-  //if (iz >= resolution.z()) return -1;
-  //if (ix < 0) return -1;
-  ////if (iy < 0) return -1;
-  //if (iz < 0) return -1;
-  //GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
-  ////G4cout<< "iy  " << iy <<G4endl;
-  ////G4cout<< "ix  " << ix <<G4endl;
- ////G4cout<< "return ind " << ix+iy*lineSize+iz*planeSize <<G4endl;
-  //return (ix+iz*planeSize);
 }
 
 
@@ -660,13 +568,9 @@ void GateVImage::UpdateSizesFromResolutionAndHalfSizeCylinder() {
   size = G4ThreeVector(halfSize.x()*2.0,
 		       halfSize.y()*2.0,
 		       halfSize.z()*2.0);
-  //G4cout <<"size.x "<< size.x()<< G4endl;
-  //G4cout <<"size.y "<< size.y()<< G4endl;
   voxelSize = G4ThreeVector(size.x()/resolution.x(),
 			    size.y()/resolution.y(),
 			    size.z()/resolution.z());
-  //G4cout <<"voxelSize.x "<< voxelSize.x()<< G4endl;
-  //G4cout <<"voxelSize.y "<< voxelSize.y()<< G4endl;
   voxelVolume = voxelSize.x()*voxelSize.y()*voxelSize.z();
   halfSizeMinusVoxelCenter =
     G4ThreeVector(-halfSize.x()+voxelSize.x()/2.0,

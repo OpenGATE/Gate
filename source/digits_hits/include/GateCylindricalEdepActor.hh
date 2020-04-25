@@ -47,25 +47,8 @@ class GateCylindricalEdepActor : public GateVImageActor
 
   void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
   
-  void EnableEdepHadElasticImage(bool b) { mIsEdepHadElasticImageEnabled = b; }
-  void EnableEdepInelasticImage(bool b) { mIsEdepInelasticImageEnabled = b; }
-  void EnableEdepRestImage(bool b) { mIsEdepRestImageEnabled = b; }
-  
-  void EnableEdepSquaredImage(bool b) { mIsEdepSquaredImageEnabled = b; }
-  void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
+ 
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
-  void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
-  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
-  void EnableDoseToWaterImage(bool b) { mIsDoseToWaterImageEnabled = b; }
-  void EnableDoseToWaterSquaredImage(bool b) { mIsDoseToWaterSquaredImageEnabled = b; }
-  void EnableDoseToWaterUncertaintyImage(bool b) { mIsDoseToWaterUncertaintyImageEnabled = b; }
-  void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
-  void EnableDoseNormalisationToMax(bool b);
-  void EnableDoseNormalisationToIntegral(bool b);
-  void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
-  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
-  void ImportMassImage(G4String b) { mImportMassImage = b; }
-  void ExportMassImage(G4String b) { mExportMassImage = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -90,49 +73,15 @@ protected:
   int mCurrentEvent;
   StepHitType mUserStepHitType;
    bool mIsCylindricalSymmetryImage;
-  bool mIsLastHitEventImageEnabled;
   bool mIsEdepImageEnabled;
-  
-  bool mIsEdepHadElasticImageEnabled;
-  bool mIsEdepInelasticImageEnabled;
-  bool mIsEdepRestImageEnabled;
-  
-  bool mIsEdepSquaredImageEnabled;
-  bool mIsEdepUncertaintyImageEnabled;
   bool mIsDoseImageEnabled;
-  bool mIsDoseSquaredImageEnabled;
-  bool mIsDoseUncertaintyImageEnabled;
-  bool mIsDoseToWaterImageEnabled;
-  bool mIsDoseToWaterSquaredImageEnabled;
-  bool mIsDoseToWaterUncertaintyImageEnabled;
-  bool mIsNumberOfHitsImageEnabled;
-  bool mIsDoseNormalisationEnabled;
-  bool mIsDoseToWaterNormalisationEnabled;
 
   GateImageWithStatistic mEdepImage;
-  GateImageWithStatistic mEdepHadElasticImage;
-  GateImageWithStatistic mEdepInelasticImage;
-  GateImageWithStatistic mEdepRestImage;
   
   GateImageWithStatistic mDoseImage;
-  GateImageWithStatistic mDoseToWaterImage;
-  GateImageInt mNumberOfHitsImage;
-  GateImageInt mLastHitEventImage;
-  GateImageDouble mMassImage;
-
-  G4String mEdepFilename;
-  G4String mEdepHadElasticFilename;
-  G4String mEdepInelasticFilename;
-  G4String mEdepRestFilename;
   
+  G4String mEdepFilename;
   G4String mDoseFilename;
-  G4String mDoseToWaterFilename;
-  G4String mNbOfHitsFilename;
-  G4String mDoseAlgorithmType;
-  G4String mImportMassImage;
-  G4String mExportMassImage;
-
-  G4EmCalculator* emcalc;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(CylindricalEdepActor,GateCylindricalEdepActor)

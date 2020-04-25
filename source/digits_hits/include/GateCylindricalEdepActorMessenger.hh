@@ -33,26 +33,7 @@ protected:
   GateCylindricalEdepActor * pCylindicalEdepActor;
 
   G4UIcmdWithABool * pEnableDoseCmd;
-  G4UIcmdWithABool * pEnableDoseSquaredCmd;
-  G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
   G4UIcmdWithABool * pEnableEdepCmd;
-  
-  G4UIcmdWithABool * pEnableEdepHadElasticCmd;
-  G4UIcmdWithABool * pEnableEdepInelasticCmd;
-  G4UIcmdWithABool * pEnableEdepRestCmd;
-  
-  G4UIcmdWithABool * pEnableEdepSquaredCmd;
-  G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
-  G4UIcmdWithABool * pEnableNumberOfHitsCmd;
-  G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
-  G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
-  G4UIcmdWithAString * pSetDoseAlgorithmCmd;
-  G4UIcmdWithAString * pImportMassImageCmd;
-  G4UIcmdWithAString * pExportMassImageCmd;
 };
 
 #endif /* end #define GateCylindricalEdepActorMESSENGER_HH*/

@@ -101,7 +101,6 @@ public:
   void SetLETSpectrumCalc(bool b) {mEnableLETSpectrumFlag = b; }
   void SetLETFluenceSpectrumCalc(bool b) {mEnableLETFluenceSpectrumFlag = b; }
   void SetLETtoMaterialFluenceSpectrumCalc(bool b) {mEnableLETtoMaterialFluenceSpectrumFlag = b; }
-  
   void SetOtherMaterial(G4String b) { mOtherMaterial = b; }
   
   void SetQSpectrumCalc(bool b) {mEnableQSpectrumFlag = b; }

@@ -47,7 +47,7 @@ public:
   void SetResolutionAndVoxelSize(G4ThreeVector r, G4ThreeVector v);
   void SetResolutionAndVoxelSize(G4ThreeVector r, G4ThreeVector v, G4ThreeVector position);
   
-  
+  /// Sets the image dimensions from resolution and half size for cylindrical symmetry 
   void SetResolutionAndHalfSizeCylinder(G4ThreeVector r, G4ThreeVector h, G4ThreeVector position);
   void SetResolutionAndHalfSizeCylinder(G4ThreeVector r, G4ThreeVector h);
 
