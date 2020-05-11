@@ -62,8 +62,8 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     pMessenger = new GateComptonCameraActorMessenger(this);
 
     EnableEnergy=1;
-    EnableEnergyIni=0;
-    EnableEnergyFin=0;
+    EnableEnergyIni=1;
+    EnableEnergyFin=1;
     EnableTime=1;
     EnableXPosition=1;
     EnableYPosition=1;
@@ -75,11 +75,11 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     EnableYSourcePosition=1;
     EnableZSourcePosition=1;
     EnableVolumeID=1;
-    EnableSourceEnergy=0;
-    EnableSourcePDG=0;
-    EnablenCrystalCompt=0;
-    EnablenCrystalConv=0;
-    EnablenCrystalRayl=0;
+    EnableSourceEnergy=1;
+    EnableSourcePDG=1;
+    EnablenCrystalCompt=1;
+    EnablenCrystalConv=1;
+    EnablenCrystalRayl=1;
 
     emcalc = new G4EmCalculator;
     m_digitizer = GateDigitizer::GetInstance();

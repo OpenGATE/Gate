@@ -168,7 +168,7 @@ void  GateClustering::checkClusterCentersDistance(GatePulseList& outputPulseList
                         if(getDistance(outputPulseList.at(i)->GetGlobalPos(),  outputPulseList.at(k)->GetGlobalPos())<m_acceptedDistance){
                             outputPulseList.at(i)->CentroidMerge(outputPulseList.at(k));
                             pos2Delete.push_back(k);
-                            G4cout<<" Adding CLUSTERs  since they are CLOSER THAN ACCEPTED DISTANCE   "<<G4endl;
+                            //G4cout<<" Adding CLUSTERs  since they are CLOSER THAN ACCEPTED DISTANCE   "<<G4endl;
                         }
                     }
                 }
@@ -179,7 +179,7 @@ void  GateClustering::checkClusterCentersDistance(GatePulseList& outputPulseList
                     if(getDistance(outputPulseList.at(i)->GetGlobalPos(),  outputPulseList.at(k)->GetGlobalPos())<m_acceptedDistance){
                         outputPulseList.at(i)->CentroidMerge(outputPulseList.at(k));
                         pos2Delete.push_back(k);
-                        G4cout<<" Adding CLUSTERs  since they are CLOSER THAN ACCEPTED DISTANCE  "<<G4endl;
+                        //G4cout<<" Adding CLUSTERs  since they are CLOSER THAN ACCEPTED DISTANCE  "<<G4endl;
                     }
                 }
             }
