@@ -91,6 +91,7 @@ jobs:
                                 python3.7-dev \
                                 ccache \
                                 fftw3-dev
+        gcc -v
       elif [ "$(Agent.OS)" == "Darwin" ]; then
         brew update
         brew install  qt5 \
@@ -106,6 +107,7 @@ jobs:
       fi
       cd $(Pipeline.Workspace)
       mkdir software
+      cmake --version
     displayName: 'Install dependencies'
 
   - script: |
