@@ -567,7 +567,7 @@ bool GateMergeManager::MergeGate(TChain* chainG) {
    //Allow for large files and do not write every bit separately
    m_RootTarget->cd();
    TTree * newTree = chainG->CloneTree(0);
-   newTree->SetAutoSave(2000000000);
+   newTree->SetAutoSave(1000000000);
    if(m_maxRoot!=0) newTree->SetMaxTreeSize(m_maxRoot);
    else newTree->SetMaxTreeSize(17179869184LL);
 
@@ -644,7 +644,7 @@ bool GateMergeManager::MergeSing(TChain* chainS){
 
    m_RootTarget->cd();
    TTree * newSing = chainS->CloneTree(0);
-   newSing->SetAutoSave(2000000000);
+   newSing->SetAutoSave(1000000000);
    if(m_maxRoot!=0) newSing->SetMaxTreeSize(m_maxRoot);
    else newSing->SetMaxTreeSize(17179869184LL);
 
@@ -704,7 +704,7 @@ bool GateMergeManager::MergeCoin(TChain* chainC){
 
     m_RootTarget->cd();
     TTree * newCoin = chainC->CloneTree(0);
-    newCoin->SetAutoSave(2000000000);
+    newCoin->SetAutoSave(1000000000);
     if(m_maxRoot!=0) newCoin->SetMaxTreeSize(m_maxRoot);
     else newCoin->SetMaxTreeSize(17179869184LL);
 

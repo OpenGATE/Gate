@@ -139,7 +139,7 @@ void GateCCHitTree::Init(GateCCRootHitBuffer& buffer)
     //   procedure. Some branches may have buffers holding many entries.
     //   AutoSave is automatically called by TTree::Fill when the number ofbytes
     //   generated since the previous AutoSave is greater than fAutoSave bytes.
-    SetAutoSave(10000);
+    SetAutoSave(1000000000);
     Branch("PDGEncoding",    &buffer.PDGEncoding,"PDGEncoding/I");
     Branch("trackID",        &buffer.trackID,"trackID/I");
     Branch("parentID",       &buffer.parentID,"parentID/I");
@@ -291,7 +291,7 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 //-----------------------------------------------------------------------------
 void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
 {
-    SetAutoSave(2000);
+    SetAutoSave(1000000000);
     if ( GateSingleDigi::GetSingleASCIIMask(0) )
         Branch("runID",          &buffer.runID,"runID/I");
     if ( GateSingleDigi::GetSingleASCIIMask(1) )
@@ -490,7 +490,7 @@ void GateCCRootCoincBuffer::Fill(GateCCCoincidenceDigi* aDigi)
 //-----------------------------------------------------------------------------
 void GateCCCoincTree::Init(GateCCRootCoincBuffer& buffer)
 {
-    SetAutoSave(2000);
+    SetAutoSave(1000000000);
     Branch("coincID",          &buffer.coincID,"coincID/I");
     Branch("runID",          &buffer.runID,"runID/I");
     Branch("eventID",        &buffer.eventID,"eventID/I");
@@ -653,7 +653,7 @@ void GateCCRootConesBuffer::Fill(GateComptonCameraCones* aCon)
 //-----------------------------------------------------------------------------
 void GateCCConesTree::Init(GateCCRootConesBuffer& buffer)
 {
-    SetAutoSave(2000);
+    SetAutoSave(1000000000);
     //Branch("coincID",          &buffer.coincID,"coincID/I");
     Branch("energy1",         &buffer.energy1,"energy1/F");
     Branch("energyR",         &buffer.energyR,"energyR/F");

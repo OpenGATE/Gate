@@ -234,7 +234,7 @@ GateCrystalHit* GateRootHitBuffer::CreateHit()
 
 void GateHitTree::Init(GateRootHitBuffer& buffer)
 {
-  SetAutoSave(1000);
+  SetAutoSave(1000000000);
   Branch("PDGEncoding",    &buffer.PDGEncoding,"PDGEncoding/I");
   Branch("trackID",        &buffer.trackID,"trackID/I");
   Branch("parentID",       &buffer.parentID,"parentID/I");
@@ -382,7 +382,7 @@ void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 
 void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 {
-  SetAutoSave(1000);
+  SetAutoSave(1000000000);
   if ( GateSingleDigi::GetSingleASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
   if ( GateSingleDigi::GetSingleASCIIMask(1) )
@@ -575,7 +575,7 @@ G4double GateRootCoincBuffer::ComputeSinogramS()
 
 void GateCoincTree::Init(GateRootCoincBuffer& buffer)
 {
-  SetAutoSave(1000);
+  SetAutoSave(1000000000);
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(16) )
