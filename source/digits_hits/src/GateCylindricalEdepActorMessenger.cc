@@ -50,6 +50,12 @@ void GateCylindricalEdepActorMessenger::BuildCommands(G4String base)
   pEnableEdepCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable edep computation");
   pEnableEdepCmd->SetGuidance(guid);
+  
+  
+  n = base+"/enableFluence";
+  pEnableFluenceCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable fluence computation");
+  pEnableFluenceCmd->SetGuidance(guid);
 
 
 }
@@ -61,6 +67,7 @@ void GateCylindricalEdepActorMessenger::SetNewValue(G4UIcommand* cmd, G4String n
 {
   if (cmd == pEnableDoseCmd) pCylindicalEdepActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableEdepCmd) pCylindicalEdepActor->EnableEdepImage(pEnableEdepCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableFluenceCmd) pCylindicalEdepActor->EnableFluenceImage(pEnableFluenceCmd->GetNewBoolValue(newValue));
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------

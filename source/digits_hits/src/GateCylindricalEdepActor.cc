@@ -28,6 +28,7 @@ GateCylindricalEdepActor::GateCylindricalEdepActor(G4String name, G4int depth):
   mCurrentEvent=-1;
   mIsEdepImageEnabled = false;  
   mIsDoseImageEnabled = false;
+  mIsFluenceImageEnabled = false;  
 
   pMessenger = new GateCylindricalEdepActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateCylindricalEdepActor() -- end\n");
@@ -62,7 +63,7 @@ void GateCylindricalEdepActor::Construct() {
   EnableUserSteppingAction(true);
 
   // Check if at least one image is enabled
-  if (!mIsEdepImageEnabled && !mIsDoseImageEnabled)  {
+  if (!mIsEdepImageEnabled && !mIsDoseImageEnabled &&!mIsFluenceImageEnabled)  {
     GateError("The CylindricalEdepActor " << GetObjectName()
               << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)");
   }
@@ -70,10 +71,12 @@ void GateCylindricalEdepActor::Construct() {
   // Output Filename
   mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
+  mFluenceFilename = G4String(removeExtension(mSaveFilename))+"-Fluence."+G4String(getExtension(mSaveFilename));
   
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mEdepImage);
   SetOriginTransformAndFlagToImage(mDoseImage);
+  SetOriginTransformAndFlagToImage(mFluenceImage);
 
   if (mIsEdepImageEnabled) {
     mEdepImage.SetResolutionAndHalfSizeCylinder(mResolution, mHalfSize, mPosition);
@@ -88,6 +91,11 @@ void GateCylindricalEdepActor::Construct() {
     G4cout<< "allocate dose image and set resolution and file name" <<G4endl<<G4endl;
   }
  
+  if (mIsFluenceImageEnabled) {
+    mFluenceImage.SetResolutionAndHalfSizeCylinder(mResolution, mHalfSize, mPosition);
+    mFluenceImage.Allocate();
+    mFluenceImage.SetFilename(mFluenceFilename);
+  }
   // Print information
   //GateMessage("Actor", 1,
               //"Dose DoseActor    = '" << GetObjectName() << "'\n" <<
@@ -121,6 +129,7 @@ void GateCylindricalEdepActor::SaveData() {
   GateVActor::SaveData(); // (not needed because done into GateImageWithStatistic)
 
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1);
+  if (mIsFluenceImageEnabled) mFluenceImage.SaveData(mCurrentEvent+1);
   if (mIsDoseImageEnabled) {
 	  mDoseImage.SaveData(mCurrentEvent+1);
   }
@@ -132,6 +141,7 @@ void GateCylindricalEdepActor::SaveData() {
 //-----------------------------------------------------------------------------
 void GateCylindricalEdepActor::ResetData() {
   if (mIsEdepImageEnabled) mEdepImage.Reset();
+  if (mIsFluenceImageEnabled) mFluenceImage.Reset();
   if (mIsDoseImageEnabled) mDoseImage.Reset();
 
 }
@@ -172,51 +182,61 @@ void GateCylindricalEdepActor::UserSteppingActionInVoxel(const int index, const 
   GateDebugMessageInc("Actor", 4, "GateCylindricalEdepActor -- UserSteppingActionInVoxel - begin\n");
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
-  const double weight = step->GetTrack()->GetWeight();
-  const double edep = step->GetTotalEnergyDeposit()/MeV*weight;//*step->GetTrack()->GetWeight();
 
-  // if no energy is deposited or energy is deposited outside image => do nothing
-  if (edep == 0) {
-    GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
-    GateDebugMessageDec("Actor", 4, "GateCylindricalEdepActor -- UserSteppingActionInVoxel -- end\n");
-    return;
-  }
+
+	  const double weight = step->GetTrack()->GetWeight();
+
+  // if energy is deposited outside image => do nothing
+
   if (index < 0) {
     GateDebugMessage("Actor", 5, "index < 0 : do nothing\n");
     GateDebugMessageDec("Actor", 4, "GateCylindricalEdepActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
-
-
-
-  ////---------------------------------------------------------------------------------
-  //// Volume weighting
-  double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
-  ////---------------------------------------------------------------------------------
-
-  double dose=0.;
-  if (mIsDoseImageEnabled) {
-    // ------------------------------------
-    // Convert deposited energy into Gray
-    dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
-    // ------------------------------------
-
-    GateDebugMessage("Actor", 2,  "GateCylindricalEdepActor -- UserSteppingActionInVoxel:\tdose = "
-		     << G4BestUnit(dose, "Dose")
-		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
-  }
-
-  if (mIsDoseImageEnabled)
+    if (mIsFluenceImageEnabled)
     {
-      mDoseImage.AddValue(index, dose);
+		
+		 const double weightedsteplength = step->GetStepLength()*weight;
+		mFluenceImage.AddValue(index, weightedsteplength);
     }
+    
+    
+  if (mIsEdepImageEnabled || mIsDoseImageEnabled) {
+	  
+	  const double edep = step->GetTotalEnergyDeposit()/MeV*weight;//*step->GetTrack()->GetWeight();
+  
+	  // if no energy is deposited => do nothing
+	  if (edep == 0) {
+		GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
+		GateDebugMessageDec("Actor", 4, "GateCylindricalEdepActor -- UserSteppingActionInVoxel -- end\n");
+		return;
+	  }
 
-  if (mIsEdepImageEnabled)
-    {
-		mEdepImage.AddValue(index, edep);
-    }
 
+	  double dose=0.;
+	  if (mIsDoseImageEnabled) {
+		  
+		  ////---------------------------------------------------------------------------------
+		  //// Volume weighting
+		  double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
+		  ////---------------------------------------------------------------------------------
+		// ------------------------------------
+		// Convert deposited energy into Gray
+		dose = edep/density/gray;
+		// ------------------------------------
+
+		GateDebugMessage("Actor", 2,  "GateCylindricalEdepActor -- UserSteppingActionInVoxel:\tdose = "
+				 << G4BestUnit(dose, "Dose")
+				 << " rho = "
+				 << G4BestUnit(density, "Volumic Mass")<< Gateendl );
+		// here dose is added to voxel with index
+		mDoseImage.AddValue(index, dose);
+	  }
+	  else if (mIsEdepImageEnabled)
+		{
+			mEdepImage.AddValue(index, edep);
+		}
+	}
   
 
   GateDebugMessageDec("Actor", 4, "GateCylindricalEdepActor -- UserSteppingActionInVoxel -- end\n");

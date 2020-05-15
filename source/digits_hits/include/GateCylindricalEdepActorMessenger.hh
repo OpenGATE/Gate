@@ -34,6 +34,7 @@ protected:
 
   G4UIcmdWithABool * pEnableDoseCmd;
   G4UIcmdWithABool * pEnableEdepCmd;
+  G4UIcmdWithABool * pEnableFluenceCmd;
 };
 
 #endif /* end #define GateCylindricalEdepActorMESSENGER_HH*/

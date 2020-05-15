@@ -46,6 +46,7 @@ class GateCylindricalEdepActor : public GateVImageActor
   virtual void Construct();
 
   void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
+  void EnableFluenceImage(bool b) { mIsFluenceImageEnabled = b; }
   
  
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
@@ -74,13 +75,16 @@ protected:
   StepHitType mUserStepHitType;
    bool mIsCylindricalSymmetryImage;
   bool mIsEdepImageEnabled;
+  bool mIsFluenceImageEnabled;
   bool mIsDoseImageEnabled;
 
   GateImageWithStatistic mEdepImage;
+  GateImageWithStatistic mFluenceImage;
   
   GateImageWithStatistic mDoseImage;
   
   G4String mEdepFilename;
+  G4String mFluenceFilename;
   G4String mDoseFilename;
 };
 
