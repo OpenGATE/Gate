@@ -259,6 +259,8 @@ void GateVImageActor::SetStepHitType(G4String t)
   if (t == "post")   { mStepHitType = PostStepHitType; return; }
   if (t == "middle") { mStepHitType = MiddleStepHitType; return; }
   if (t == "random") { mStepHitType = RandomStepHitType; return; }
+  if (t == "randomCylindricalCS") { mStepHitType = RandomStepHitTypeCylindricalCS; return;}
+  if (t == "postCylindricalCS") { mStepHitType = PostStepHitTypeCylindricalCS; return;}
 
   GateError("GateVImageActor -- SetStepHitType: StepHitType is set to '" << t << "' while I only know 'pre', 'post', 'random' or 'middle'.");
 }
@@ -447,7 +449,20 @@ int GateVImageActor::GetIndexFromStepPosition2(const GateVVolume * v,
     GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tRandomStep = " << position << Gateendl);
     index = image.GetIndexFromPosition(position);
   }
-
+ if (mStepHitType == RandomStepHitTypeCylindricalCS) {
+    G4double x = G4UniformRand();
+    GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tx         = " << x << Gateendl);
+    G4ThreeVector direction = postPosition-prePosition;
+    GateDebugMessageCont("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tdirection = " << direction << Gateendl);
+    //normalize(direction);
+    //GateDebugMessageCont("Step", 4, "\tdirection = " << direction << Gateendl);
+    G4ThreeVector position = prePosition + x*direction;
+    GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tRandomStep = " << position << Gateendl);
+    index = image.GetIndexFromPositionCylindricalCS(position);
+  }
+  if (mStepHitType == PostStepHitTypeCylindricalCS) {
+    index = image.GetIndexFromPositionCylindricalCS(postPosition);
+  }
   GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tVoxel index = " << index << Gateendl);
   return index;
 }
