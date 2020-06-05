@@ -1,7 +1,7 @@
 Introduction
 ============
 
-.. figure:: GoldGate.jpg
+.. figure:: gate_logo.png
    :alt: Figure 1: GoldGate
    :name: GoldGate
 

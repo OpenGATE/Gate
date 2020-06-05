@@ -91,6 +91,7 @@ html_theme_options = {
   'analytics_id': "UA-138643878-1",
   'fixed_sidebar': True,
   'show_relbar_bottom': True,
+  'logo': 'gate_logo.png',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
