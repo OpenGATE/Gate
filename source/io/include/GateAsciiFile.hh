@@ -137,6 +137,7 @@ class GateOutputAsciiTreeFile: public GateAsciiTree, public GateOutputTreeFile
   }
 
   void write_header() override;
+  void write() override;
   void fill() override;
 
 private:

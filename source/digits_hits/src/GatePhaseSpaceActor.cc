@@ -111,6 +111,7 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor()
   free(pIAEARecordType);
   pIAEAheader = 0;
   pIAEARecordType = 0;
+  mFile.close();
   delete pMessenger;
   GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end\n");
 }
@@ -693,7 +694,7 @@ void GatePhaseSpaceActor::SaveData()
     fclose(pIAEARecordType->p_file);
   }
   else {
-    mFile.close();
+    mFile.write();
   }
 }
 // --------------------------------------------------------------------

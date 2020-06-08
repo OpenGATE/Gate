@@ -90,6 +90,7 @@ public:
 
   virtual void open(const std::string& s) = 0;
   virtual void write_header() = 0;
+  virtual void write() = 0;
   virtual void fill() = 0;
 
 
