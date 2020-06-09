@@ -164,7 +164,7 @@ jobs:
     displayName: 'Install geant4'
     
   - script: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)
         if [ "$GATE_USE_TORCH" == "ON" ]; then
           if [ "$(Agent.OS)" == "Linux" ]; then
@@ -191,7 +191,7 @@ jobs:
     displayName: 'Install gate compilation dependencies'
 
   - script: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)
         export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
         export PATH=${ROOTSYS}:${PATH}
@@ -277,7 +277,7 @@ jobs:
     displayName: 'Configure CTest'
 
   - bash: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)/build
         cp ../dashboard.cmake .
         export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
