@@ -61,6 +61,7 @@ public:
   void fill();
   void close();
   void write_header();
+  void write();
 
 
 

@@ -102,6 +102,11 @@ void GateInputRootTreeFile::open(const std::string& s)
 
 }
 
+void GateOutputRootTreeFile::write()
+{
+  m_file->Write();
+}
+
 void GateRootTree::close()
 {
   m_file->Close();
@@ -110,7 +115,7 @@ void GateRootTree::close()
 
 void GateOutputRootTreeFile::close()
 {
-  m_file->Write();
+  GateOutputRootTreeFile::write();
   GateRootTree::close();
 }
 
