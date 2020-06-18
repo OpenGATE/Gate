@@ -201,6 +201,7 @@ jobs:
         cd build
         cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
               -DTorch_DIR=$(Pipeline.Workspace)/libtorch/share/cmake/Torch \
+              -DGATE_COMPILE_GATEDIGIT=ON \
               -DGATE_USE_RTK=$GATE_USE_RTK \
               -DITK_DIR=$(Pipeline.Workspace)/rtk/bin/ \
               -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
