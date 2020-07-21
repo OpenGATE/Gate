@@ -1153,6 +1153,38 @@ The following output, named "summary", will write a txt file at the end of the s
 
 Usually, the 'hits' and 'singles' output lead to very large files, often only needed for debug purpose. We recommend to disable the output of 'hits' and 'Singles' and only keep the 'Coincidences' output. The Summary output can still be used to get the total numbers. 
 
+Numpy or Root outputs: what to choose?
+You will remark that npy outputs are bigger than ROOT ones. You can therefore decide to zip your npy output in order to load it with Python as suggested after:
+data = np.load('myfile.zip')
+tab_1 = data['tab_1.npy']
+tab_2 = data['tab_2.npy']
+
+Or, you can decide to keep the ROOT files and analyse them using Python and the associated pandas and uproot libraries:
+
+To load a ROOT tree file, read the Hits and/or Singles trees and recover some leaf information:
+
+import uproot
+import pandas as pd
+f=uproot.open("myfile.root")
+rawSingles = f['Singles'].pandas.df().to_records()
+rawHits = f['Hits'].pandas.df().to_records()
+posx = rawSingles['globalPosX']
+posy = rawSingles['globalPosY']
+posz = rawSingles['globalPosZ']
+
+
+To load a ROOT histogram and plot it with Python, you can do:
+
+import uproot
+import matplotlib.pyplot as plt
+f=uproot.open("myfile.root")
+f.allclasses()
+h1=f["histo;1"]
+plt.plot(line.get_xdata(),line.get_ydata())
+
+
+
+
 
 
 
