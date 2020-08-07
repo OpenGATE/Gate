@@ -91,6 +91,7 @@ jobs:
                                 python3.7-dev \
                                 ccache \
                                 fftw3-dev
+        gcc -v
       elif [ "$(Agent.OS)" == "Darwin" ]; then
         brew update
         brew install  qt5 \
@@ -106,6 +107,7 @@ jobs:
       fi
       cd $(Pipeline.Workspace)
       mkdir software
+      cmake --version
     displayName: 'Install dependencies'
 
   - script: |
@@ -162,7 +164,7 @@ jobs:
     displayName: 'Install geant4'
     
   - script: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)
         if [ "$GATE_USE_TORCH" == "ON" ]; then
           if [ "$(Agent.OS)" == "Linux" ]; then
@@ -189,7 +191,7 @@ jobs:
     displayName: 'Install gate compilation dependencies'
 
   - script: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)
         export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
         export PATH=${ROOTSYS}:${PATH}
@@ -199,6 +201,7 @@ jobs:
         cd build
         cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
               -DTorch_DIR=$(Pipeline.Workspace)/libtorch/share/cmake/Torch \
+              -DGATE_COMPILE_GATEDIGIT=ON \
               -DGATE_USE_RTK=$GATE_USE_RTK \
               -DITK_DIR=$(Pipeline.Workspace)/rtk/bin/ \
               -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
@@ -224,7 +227,7 @@ jobs:
       if(DEFINED ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH})
         set(branch "-\$ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH}")
         set(dashboard_model "Experimental")
-      elseif(ENV{BUILD_SOURCEBRANCHNAME} STREQUAL "develop")
+      elseif("\$ENV{BUILD_SOURCEBRANCHNAME}" STREQUAL "develop")
         set(branch "-develop")
         set(dashboard_model "Continuous")
       else()
@@ -253,7 +256,7 @@ jobs:
       string(TIMESTAMP build_date "%Y-%m-%d")
       message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
       message("CTEST_SITE = \${CTEST_SITE}")
-      ctest_start(dashboard_model)
+      ctest_start("\${dashboard_model}")
       ctest_configure(CAPTURE_CMAKE_ERROR configure_errors RETURN_VALUE configure_Results)
       ctest_build(NUMBER_ERRORS build_errors RETURN_VALUE build_Results)
       ctest_test(CAPTURE_CMAKE_ERROR test_errors RETURN_VALUE test_Results)
@@ -275,7 +278,7 @@ jobs:
     displayName: 'Configure CTest'
 
   - bash: |
-      if [ "$CACHE_RESTORED" == "true" ]; then
+      if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)/build
         cp ../dashboard.cmake .
         export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config

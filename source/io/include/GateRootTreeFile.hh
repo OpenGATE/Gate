@@ -64,6 +64,7 @@ class GateOutputRootTreeFile: public GateRootTree, public GateOutputTreeFile
   void close() override ;
 
   void write_header() override ;
+  void write() override ;
   virtual void fill() override;
 
 

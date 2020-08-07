@@ -270,8 +270,7 @@ void GateOutputNumpyTreeFile::fill()
   //  cout << "\n";
 }
 
-
-void GateOutputNumpyTreeFile::close()
+void GateOutputNumpyTreeFile::write()
 {
 
   if(!m_file.is_open())
@@ -293,6 +292,15 @@ void GateOutputNumpyTreeFile::close()
       }
     //    throw std::runtime_error("NumpyTreeFile::close: no se");
   }
+}
+
+void GateOutputNumpyTreeFile::close()
+{
+
+  if(!m_file.is_open())
+    return;
+
+  GateOutputNumpyTreeFile::write();
 
   m_file.close();
 }

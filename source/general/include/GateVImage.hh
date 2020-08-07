@@ -46,6 +46,10 @@ public:
   /// Sets the image dimensions from resolution and voxel size
   void SetResolutionAndVoxelSize(G4ThreeVector r, G4ThreeVector v);
   void SetResolutionAndVoxelSize(G4ThreeVector r, G4ThreeVector v, G4ThreeVector position);
+  
+  /// Sets the image dimensions from resolution and half size for cylindrical symmetry 
+  void SetResolutionAndHalfSizeCylinder(G4ThreeVector r, G4ThreeVector h, G4ThreeVector position);
+  void SetResolutionAndHalfSizeCylinder(G4ThreeVector r, G4ThreeVector h);
 
   /// Allocates the data
   virtual void Allocate() = 0;
@@ -122,6 +126,8 @@ public:
   int GetIndexFromPostPositionAndDirection(const G4ThreeVector& position, const G4ThreeVector& direction) const;
   int GetIndexFromPostPosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;
   int GetIndexFromPrePosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;
+  int GetIndexFromPositionCylindricalCS(const G4ThreeVector& position) const; 
+  
   int GetIndexFromPostPosition(const double t, const double pret, const double postt, const double resolutiont) const;
   int GetIndexFromPrePosition(const double t, const double pret, const double postt, const double resolutiont) const;
 
@@ -171,6 +177,9 @@ protected:
   void UpdateSizesFromResolutionAndHalfSize();
   void UpdateSizesFromResolutionAndVoxelSize();
 
+  void UpdateSizesFromResolutionAndHalfSizeCylinder();
+  void UpdateSizesFromResolutionAndVoxelSizeCylinder();
+  
   // data for root output
   void UpdateDataForRootOutput();
   int mRootHistoDim;

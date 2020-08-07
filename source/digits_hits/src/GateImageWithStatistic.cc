@@ -102,6 +102,30 @@ void GateImageWithStatistic::SetResolutionAndHalfSize(const G4ThreeVector & reso
 
 
 //-----------------------------------------------------------------------------
+void GateImageWithStatistic::SetResolutionAndHalfSizeCylinder(const G4ThreeVector & resolution,
+						      const G4ThreeVector & halfSize, const G4ThreeVector & position)  {
+  
+  mValueImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+  if (mIsUncertaintyImageEnabled) {
+    mUncertaintyImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+    if (!mIsSquaredImageEnabled) {
+      mSquaredImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+      mTempImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+      mScaledSquaredImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+    }
+  }
+  if (mIsSquaredImageEnabled) {
+    mSquaredImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+    mTempImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+    mScaledSquaredImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+  }
+
+  mScaledValueImage.SetResolutionAndHalfSizeCylinder(resolution, halfSize, position);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateImageWithStatistic::Allocate() {
   mValueImage.Allocate();
   if (mIsUncertaintyImageEnabled) {

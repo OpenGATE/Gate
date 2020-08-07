@@ -110,6 +110,7 @@ public:
   void close() override;
 
   void write_header() override ;
+  void write() override ;
   virtual void fill() override;
 
   void write_variable(const std::string &name, const void *p, std::type_index t_index) override;

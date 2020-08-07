@@ -195,6 +195,9 @@ void GateOutputAsciiTreeFile::open(const std::string& s)
   m_file << std::setprecision(10);
 }
 
+void GateOutputAsciiTreeFile::write()
+{ }
+
 void GateOutputAsciiTreeFile::close()
 {
   m_file.close();
