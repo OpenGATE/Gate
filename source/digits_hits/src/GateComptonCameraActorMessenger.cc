@@ -185,20 +185,20 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   pEnablePositionZCmd->SetParameterName("State",false);
 
 
-  bb = base+"/EnableLocalPositionX";
+  bb = base+"/enableLocalPositionX";
   pEnableLocalPositionXCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save local X position)";
   pEnableLocalPositionXCmd->SetGuidance(guidance);
   pEnableLocalPositionXCmd->SetParameterName("State",false);
 
-  bb = base+"/EnableLocalPositionY";
+  bb = base+"/enableLocalPositionY";
   pEnableLocalPositionYCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save local Y position)";
   pEnableLocalPositionYCmd->SetGuidance(guidance);
   pEnableLocalPositionYCmd->SetParameterName("State",false);
 
 
-  bb = base+"/EnableLocalPositionZ";
+  bb = base+"/enableLocalPositionZ";
   pEnableLocalPositionZCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save local Z position)";
   pEnableLocalPositionZCmd->SetGuidance(guidance);
