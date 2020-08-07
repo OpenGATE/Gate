@@ -56,6 +56,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     mSaveSinglesTreeFlag=1;
     mSaveCoincidencesTreeFlag=1;
     mSaveCoincidenceChainsTreeFlag=1;
+    mSaveEventInfoTreeFlag=false;
     mParentIDSpecificationFlag=false;
 
     //Messenger load values
@@ -238,6 +239,7 @@ void GateComptonCameraActor::Construct()
         if(EnablenCrystalRayl) mFileHits.write_variable("nCrystalRayl", &m_HitsBuffer.nCrystalRayl);
         if(EnableEnergyFin)mFileHits.write_variable("energyFinal",&m_HitsBuffer.energyFin);
         if(EnableEnergyIni)mFileHits.write_variable("energyIniT",&m_HitsBuffer.energyIniT);
+       // if(EnableIsAnyElectronEscaped)mFileHits.write_variable("AnyElectronEscape", &m_HitsBuffer.IsAnyElectronEscape);
         mFileHits.write_variable("postStepProcess", m_HitsBuffer.postStepProcess, sizeof(m_HitsBuffer.postStepProcess));
         mFileHits.write_variable("processName", m_HitsBuffer.processName, sizeof(m_HitsBuffer.processName));
         //It is not necessary
@@ -398,6 +400,29 @@ void GateComptonCameraActor::Construct()
        }
    }
 
+  // General event Info. In this case Electron escape info
+   if(mSaveEventInfoTreeFlag){
+       G4String filenameC=filename+"_eventGlobalInfo."+extension;
+       if(extension == "root")
+           mFileEvent.add_file(filenameC,  "root");
+       else if(extension == "npy")
+           mFileEvent.add_file(filenameC, "npy");
+       else if(extension == "txt")
+           mFileEvent.add_file(filenameC, "txt");
+       else
+           GateError("Unknown extension for CC actor output");
+
+       mFileEvent.set_tree_name("EventGlobalInfo");
+
+       mFileEvent.write_variable("runID",&runID);
+       mFileEvent.write_variable("eventID", &evtID);
+       mFileEvent.write_variable("nElectronsEscaped", &nElectronEscapedEvt);
+       mFileEvent.write_variable("energyElectronsEscaped", &energyElectronEscapedEvt);
+
+       mFileEvent.write_header();
+   }
+
+
 
 
 
@@ -429,6 +454,9 @@ void GateComptonCameraActor::SaveData()
             mVectorFileCoinChain.at(i)->close();
         }
     }
+    if(mSaveEventInfoTreeFlag){
+        mFileEvent.close();
+    }
 
 
 }
@@ -440,7 +468,7 @@ void GateComptonCameraActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::ResetData()
 {
-    //nEvent = 0;
+
 
 }
 //-----------------------------------------------------------------------------
@@ -489,6 +517,9 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     nCrystalConv=0;
     nCrystalRayl=0;
     nCrystalCompt=0;
+
+    nElectronEscapedEvt=0;
+    energyElectronEscapedEvt=0.0;
     //std::cout<<"eventID="<<evtID<<std::endl;
 
     //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
@@ -500,11 +531,12 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 {
-    //G4cout<<"######start of  :END OF EVENT ACTION####################################   "<<nEvent<<G4endl;
+    //G4cout<<"######start of  :END OF EVENT ACTION#################################### "  <<G4endl;
     GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
     if (edepEvt > 0) {
         // if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
         if(hitsList.size()>0){
+            mFileEvent.fill();
             m_digitizer->Digitize(hitsList);
             processPulsesIntoSinglesTree();
             std::vector<GateCoincidencePulse*> coincidencePulseV =m_digitizer->FindCoincidencePulse(thedigitizerSorterName);
@@ -584,7 +616,7 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 
     }
 
-    //nEvent++;
+
 
 
     //G4cout<<"######END OF :END OF EVENT ACTION####################################"<<G4endl;
@@ -716,8 +748,6 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         processPostStep="NULL";
     }
     //=================================================
-    //To check if  step ends in the  boundary
-    // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
     if (newEvt) {
         //      double pretof = step->GetPreStepPoint()->GetGlobalTime();
@@ -756,7 +786,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     }
     else if (parentID==0){
         //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
-        if(Ef_oldPrimary!=0)Ei=Ef_oldPrimary;
+        if(Ef_oldPrimary>0)Ei=Ef_oldPrimary;
         Ef_oldPrimary=Ef;
 
     }
@@ -764,6 +794,19 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
     std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), VolNameStep);
     if (it != layerNames.end()){
+        //Hits with preStep in sensitive volumes.
+
+        //To check if  step ends in the  boundary
+        if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
+            //This is an electron  with a preStep in sensitive volume s and the post-step in the boundary (escaping from the SD)
+            //Applying a condition to the energy of the electron?
+            //G4cout<<"Energy of escaping electron "<<Ef/MeV<<G4endl;
+            nElectronEscapedEvt++;
+            energyElectronEscapedEvt=energyElectronEscapedEvt+Ef/MeV;
+
+        }
+
+
         //I add energy to the event only if it is deposited in the layers
         edepEvt += step->GetTotalEnergyDeposit();
         if(processPostStep=="conv")  nCrystalConv++;

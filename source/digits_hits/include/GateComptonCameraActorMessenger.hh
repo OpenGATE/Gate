@@ -49,6 +49,7 @@ protected:
   G4UIcmdWithABool          * pSaveSinglesTree;
   G4UIcmdWithABool          * pSaveCoincidencesTree;
   G4UIcmdWithABool          * pSaveCoincidenceChainsTree;
+  G4UIcmdWithABool          * pSaveEventInfoTree;
 
 
   //Include flags for variables it affects to all the trees (hits, singles, coincidences)
