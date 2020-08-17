@@ -30,7 +30,6 @@ bool ConvertFromString( const std::string & Str, T & Dest )
 //------------------------------------------------------------------------------------------------------
 template<typename T, int N>
 typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, const std::string& fname){
-  GateMessage("Beam", 5, "[TPSPencilBeam] trying to parse line " << lineno << " from file " << fname << Gateendl );
   std::istringstream iss(line);
   typename std::istream_iterator<T> iss_end;
   typename std::istream_iterator<T> isiT(iss);
@@ -43,7 +42,6 @@ typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, co
            << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
     throw std::runtime_error(errMsg.str());
   }
-  GateMessage("Beam", 5, "[TPSPencilBeam] successfully read " << N << " values of type " << typeid(T).name() << Gateendl );
   return vecT;
 }
 
