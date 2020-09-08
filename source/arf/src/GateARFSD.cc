@@ -79,6 +79,46 @@ GateARFSD::~GateARFSD()
   delete mArfTableMgr;
   }
 
+GateARFSD *GateARFSD::Clone() const
+  {
+  auto clone = new GateARFSD(SensitiveDetectorName, mName);
+  clone->thePathName = thePathName;
+  clone->fullPathName = fullPathName;
+  clone->verboseLevel = verboseLevel;
+  clone->active = active;
+  clone->ROgeometry = ROgeometry;
+  clone->filter = filter;
+
+  clone->mSystem = mSystem;
+  clone->mArfHitCollection = mArfHitCollection;
+  clone->mInserter = mInserter;
+  clone->mFile = mFile;
+  clone->mSinglesTree = mSinglesTree;
+  clone->mNbOfPhotonsTree = mNbOfPhotonsTree;
+  clone->mNbOfSourcePhotons = mNbOfSourcePhotons;
+  clone->mNbOfSimuPhotons = mNbOfSimuPhotons;
+  clone->mNbofGoingOutPhotons = mNbofGoingOutPhotons;
+  clone->mNbofGoingInPhotons = mNbofGoingInPhotons;
+  clone->mNbofStraightPhotons = mNbofStraightPhotons;
+  clone->mNbofStoredPhotons = mNbofStoredPhotons;
+  clone->mNbOfGoodPhotons = mNbOfGoodPhotons;
+  clone->mInCamera = mInCamera;
+  clone->mOutCamera = mOutCamera;
+  clone->mNbOfRejectedPhotons = mNbOfRejectedPhotons;
+  clone->mArfData = mArfData;
+  clone->mProjectionSet = mProjectionSet;
+  clone->mHeadID = mHeadID;
+  clone->mNbOfHeads = mNbOfHeads;
+  clone->mDetectorXDepth = mDetectorXDepth;
+  clone->mEnergyWindows = mEnergyWindows;
+  clone->mEnergyWindowsNumberOfPrimaries = mEnergyWindowsNumberOfPrimaries;
+  clone->mEnergyDepositionThreshold = mEnergyDepositionThreshold;
+  clone->mArfStage = mArfStage;
+  clone->mShortcutARF = mShortcutARF;
+
+  return clone;
+  }
+
 /* Method overloading the virtual method Initialize() of G4VSensitiveDetector */
 void GateARFSD::Initialize(G4HCofThisEvent*HCE)
   {

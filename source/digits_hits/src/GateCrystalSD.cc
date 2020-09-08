@@ -53,6 +53,24 @@ GateCrystalSD::~GateCrystalSD()
 
 
 //------------------------------------------------------------------------------
+GateCrystalSD *GateCrystalSD::Clone() const {
+    auto clone = new GateCrystalSD(SensitiveDetectorName);
+    clone->thePathName = thePathName;
+    clone->fullPathName = fullPathName;
+    clone->verboseLevel = verboseLevel;
+    clone->active = active;
+    clone->ROgeometry = ROgeometry;
+    clone->filter = filter;
+
+    clone->m_system = m_system;
+    clone->m_systemList = m_systemList;
+    clone->crystalCollection = crystalCollection;
+
+    return clone;
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Method overloading the virtual method Initialize() of G4VSensitiveDetector
 void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 {
