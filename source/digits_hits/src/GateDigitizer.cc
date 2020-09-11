@@ -169,9 +169,7 @@ void GateDigitizer::StorePulseList(GatePulseList* newPulseList)
   if (newPulseList) {
     if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::StorePulseList]: Storing new pulse-list '" << newPulseList->GetListName() << "'\n";
-       if(newPulseList->size()>0){
     m_pulseListVector.push_back(newPulseList);
-       }
   }
 }
 //-----------------------------------------------------------------
