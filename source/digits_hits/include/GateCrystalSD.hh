@@ -54,6 +54,8 @@ class GateCrystalSD : public G4VSensitiveDetector
       //! Destructor
       ~GateCrystalSD();
 
+      GateCrystalSD* Clone() const override;
+
       //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
       void Initialize(G4HCofThisEvent*HCE);
 
@@ -78,7 +80,6 @@ class GateCrystalSD : public G4VSensitiveDetector
       GateVSystem* FindSystem(G4String& systemName);
 
       G4int PrepareCreatorAttachment(GateVVolume* aCreator);
-
 
   protected:
      GateVSystem* m_system;                           //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach

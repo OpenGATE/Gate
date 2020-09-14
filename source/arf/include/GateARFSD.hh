@@ -70,6 +70,8 @@ public:
   //! Destructor
   ~GateARFSD();
 
+  GateARFSD* Clone() const override;
+
   //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
   void Initialize(G4HCofThisEvent*HCE);
 

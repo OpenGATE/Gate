@@ -270,9 +270,10 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
       G4String detectorName = "MFD_"+ num.str();
       G4String detectorName2 = "MSD_"+ num.str();
 
-      // Deactivate previously attached SD
-      G4String name = volume->GetLogicalVolume()->GetSensitiveDetector()->GetName().prepend("/gate/");
-      G4SDManager::GetSDMpointer()->Activate(name, false);
+      // Remove attached SD by replacing with a deactivated clone SD
+      G4VSensitiveDetector* replacementSD = volume->GetLogicalVolume()->GetSensitiveDetector()->Clone();
+      G4SDManager::GetSDMpointer()->AddNewDetector(replacementSD);
+      replacementSD->Activate(false);
 
       theListOfMultiSensitiveDetector.push_back(new GateMultiSensitiveDetector(detectorName2));
 

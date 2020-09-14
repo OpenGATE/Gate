@@ -42,6 +42,20 @@ GatePhantomSD::GatePhantomSD(const G4String& name)
 */
 GatePhantomSD::~GatePhantomSD(){;}
 
+GatePhantomSD *GatePhantomSD::Clone() const {
+    auto clone = new GatePhantomSD(SensitiveDetectorName);
+    clone->thePathName = thePathName;
+    clone->fullPathName = fullPathName;
+    clone->verboseLevel = verboseLevel;
+    clone->active = active;
+    clone->ROgeometry = ROgeometry;
+    clone->filter = filter;
+
+    clone->phantomCollection = phantomCollection;
+
+    return clone;
+}
+
 void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
 {
   static int HCID = -1;
