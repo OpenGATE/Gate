@@ -177,6 +177,9 @@ protected:
 
   G4int nElectronEscapedEvt;
   G4double energyElectronEscapedEvt;
+  G4bool IseExitingSDVol;
+  G4String eEspVolName;
+
 
   G4int nCrystalConv;
   G4int nCrystalCompt;

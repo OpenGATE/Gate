@@ -416,8 +416,13 @@ void GateComptonCameraActor::Construct()
 
        mFileEvent.write_variable("runID",&runID);
        mFileEvent.write_variable("eventID", &evtID);
-       mFileEvent.write_variable("nElectronsEscaped", &nElectronEscapedEvt);
+       //mFileEvent.write_variable("nElectronsEscaped", &nElectronEscapedEvt);
        mFileEvent.write_variable("energyElectronsEscaped", &energyElectronEscapedEvt);
+       //Is exiting a volume
+       mFileEvent.write_variable("isElectronsExistingSD", &IseExitingSDVol);
+       //which volume (entering or exiting)
+       mFileEvent.write_variable("eEscpVolName", eEspVolName, sizeof(eEspVolName));
+
 
        mFileEvent.write_header();
    }
@@ -520,6 +525,10 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 
     nElectronEscapedEvt=0;
     energyElectronEscapedEvt=0.0;
+    IseExitingSDVol=false;
+    eEspVolName="NULL";
+
+
     //std::cout<<"eventID="<<evtID<<std::endl;
 
     //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
@@ -536,7 +545,7 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
     if (edepEvt > 0) {
         // if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
         if(hitsList.size()>0){
-            mFileEvent.fill();
+            //mFileEvent.fill();
             m_digitizer->Digitize(hitsList);
             processPulsesIntoSinglesTree();
             std::vector<GateCoincidencePulse*> coincidencePulseV =m_digitizer->FindCoincidencePulse(thedigitizerSorterName);
@@ -796,13 +805,19 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     if (it != layerNames.end()){
         //Hits with preStep in sensitive volumes.
 
-        //To check if  step ends in the  boundary
+        //To check if  step ends in the  boundary and it is an electron. Here is the case in which the pre-step is in a sensitive volume
         if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
             //This is an electron  with a preStep in sensitive volume s and the post-step in the boundary (escaping from the SD)
             //Applying a condition to the energy of the electron?
             //G4cout<<"Energy of escaping electron "<<Ef/MeV<<G4endl;
-            nElectronEscapedEvt++;
-            energyElectronEscapedEvt=energyElectronEscapedEvt+Ef/MeV;
+            //nElectronEscapedEvt++;
+            //energyElectronEscapedEvt=energyElectronEscapedEvt+Ef/MeV;
+            energyElectronEscapedEvt=Ef/MeV;
+            //I have also de info VolNameStep
+            IseExitingSDVol=true;
+            eEspVolName=VolNameStep;
+            //If I do the fill here allways only one electron that enters or escapes
+            mFileEvent.fill();
 
         }
 
@@ -872,6 +887,33 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
             delete aHit;
         }
 
+    }
+    else{
+        //pre-step not in a SD
+        if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
+            //This is an electron  with a preStep in sensitive volume s and the post-step in the boundary (escaping from the SD)
+            //Applying a condition to the energy of the electron?
+            //G4cout<<"Energy of escaping electron "<<Ef/MeV<<G4endl;
+            //nElectronEscapedEvt++;
+            //energyElectronEscapedEvt=energyElectronEscapedEvt+Ef/MeV;
+            energyElectronEscapedEvt=Ef/MeV;
+            //I have also de info VolNameStep
+            IseExitingSDVol=false;
+           // eEspVolName=
+            G4TouchableHandle touchable_pos=step->GetPostStepPoint()->GetTouchableHandle();
+            int copyNumberStep_pos=touchable_pos->GetVolume(0)->GetCopyNo();
+            G4String vName=touchable_pos->GetVolume(0)->GetName();
+            if(copyNumberStep!=0 && vName!=mNameOfAbsorberSDVol){
+                vName=vName+std::to_string(copyNumberStep_pos);
+            }
+            eEspVolName=vName;
+            //If I do the fill here allways only one electron that enters or escapes
+            std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), eEspVolName);
+           if (it != layerNames.end()){
+            mFileEvent.fill();
+           }
+
+        }
     }
 
     // G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
