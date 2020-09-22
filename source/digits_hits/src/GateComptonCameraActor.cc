@@ -901,12 +901,20 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
             IseExitingSDVol=false;
            // eEspVolName=
             G4TouchableHandle touchable_pos=step->GetPostStepPoint()->GetTouchableHandle();
-            int copyNumberStep_pos=touchable_pos->GetVolume(0)->GetCopyNo();
             G4String vName=touchable_pos->GetVolume(0)->GetName();
-            if(copyNumberStep!=0 && vName!=mNameOfAbsorberSDVol){
-                vName=vName+std::to_string(copyNumberStep_pos);
+            unsigned extPos=vName.rfind("_phys");
+            vName=vName.substr(0,extPos);
+            int nCp_pos=touchable_pos->GetVolume(0)->GetCopyNo();
+            if(nCp_pos>0 && vName!=mNameOfAbsorberSDVol){
+
+                vName=vName+std::to_string(nCp_pos);
+                //G4cout<<"!!"<<vName<<G4endl;
             }
             eEspVolName=vName;
+            //G4cout<<vName<<G4endl;
+
+
+
             //If I do the fill here allways only one electron that enters or escapes
             std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), eEspVolName);
            if (it != layerNames.end()){
