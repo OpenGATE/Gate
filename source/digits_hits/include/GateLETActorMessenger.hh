@@ -35,6 +35,7 @@ protected:
   G4UIcmdWithABool * pSetLETtoWaterCmd;
   G4UIcmdWithAString * pAveragingTypeCmd; 
   G4UIcmdWithABool * pSetParallelCalculationCmd;
+  G4UIcmdWithAString * pSetOtherMaterialCmd; 
 };
 
 #endif /* end #define GATELETACTORMESSENGER_HH*/

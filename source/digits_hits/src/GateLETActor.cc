@@ -38,6 +38,7 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
   mAveragingType = "DoseAverage";
+  mSetMaterial = "G4_WATER";
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -61,7 +62,8 @@ void GateLETActor::Construct() {
 
   // Find G4_WATER. This it needed here because we will used this
   // material for dedx computation for LETtoWater.
-  G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+  
+  G4NistManager::Instance()->FindOrBuildMaterial(mSetMaterial);
 
   // Enable callbacks
   EnableBeginOfRunAction(true);
@@ -99,7 +101,7 @@ void GateLETActor::Construct() {
     mLETFilename= removeExtension(mLETFilename) + "-gqqZerofourthOrder."+ getExtension(mLETFilename);
   }
   else if (mIsLETtoWaterEnabled){
-    mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
+    mLETFilename= removeExtension(mLETFilename) + "-letTo" + mSetMaterial + "."+ getExtension(mLETFilename);
   }
   if (mIsAverageKinEnergy){
     mLETFilename= removeExtension(mLETFilename) + "-kinEnergyFluenceAverage."+getExtension(mLETFilename);

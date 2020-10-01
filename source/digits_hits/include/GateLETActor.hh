@@ -44,6 +44,7 @@ public:
   void SetLETtoWater(bool b) { mIsLETtoWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
+  void SetMaterial(G4String s) { mSetMaterial = s; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -69,6 +70,7 @@ protected:
   int mCurrentEvent;
   bool mIsLETtoWaterEnabled;
   G4String mAveragingType;
+  G4String mSetMaterial;
   
   GateImageDouble mWeightedLETImage;
   GateImageDouble mNormalizationLETImage;

@@ -20,6 +20,8 @@ GateLETActorMessenger::GateLETActorMessenger(GateLETActor* sensor)
 {
   pSetLETtoWaterCmd = 0;
   pAveragingTypeCmd = 0;
+  pSetParallelCalculationCmd = 0;
+  pSetOtherMaterialCmd = 0;
   BuildCommands(baseName+sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -30,6 +32,8 @@ GateLETActorMessenger::~GateLETActorMessenger()
 {
   if(pSetLETtoWaterCmd) delete pSetLETtoWaterCmd;
   if(pAveragingTypeCmd) delete pAveragingTypeCmd;
+  if(pSetParallelCalculationCmd) delete pSetParallelCalculationCmd;
+  if(pSetOtherMaterialCmd) delete pSetOtherMaterialCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -51,6 +55,13 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   pAveragingTypeCmd = new G4UIcmdWithAString(n,this);
   guid = G4String("Sets  averaging method ('DoseAveraged', 'TrackAveraged'). Default is 'DoseAveraged'.");
   pAveragingTypeCmd->SetGuidance(guid);
+  
+  n = base+"/setOtherMaterial";
+  pSetOtherMaterialCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set Other Material Name");
+  pSetOtherMaterialCmd->SetGuidance(guid);
+
+  
 }
 //-----------------------------------------------------------------------------
 
@@ -62,6 +73,7 @@ void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pSetParallelCalculationCmd) pLETActor->SetParallelCalculation(pSetParallelCalculationCmd->GetNewBoolValue(newValue));
 
   if (cmd == pAveragingTypeCmd) pLETActor->SetLETType(newValue);
+  if (cmd == pSetOtherMaterialCmd) pLETActor->SetMaterial(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
