@@ -45,6 +45,7 @@ public:
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
   void SetMaterial(G4String s) { mSetMaterial = s; }
+  void SetCutVal(G4double d) { mCutVal = d; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -80,6 +81,11 @@ protected:
   G4String denominatorFileName;
   G4String sigmaFilename;
   
+  bool mKGrosswendt;
+  G4double mCutVal;
+  double k_FitParWAir;
+  bool mIsSwairApprox;
+  bool mIsMeanEnergyToProduceIonPairInAir;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;

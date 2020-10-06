@@ -61,6 +61,12 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   guid = G4String("Set Other Material Name");
   pSetOtherMaterialCmd->SetGuidance(guid);
 
+  n = base+"/setCutVal";
+  pCutValCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("Set cut value for restricted LET");
+  pCutValCmd->SetGuidance(guid);
+  pCutValCmd->SetParameterName("CutValue", false);
+  pCutValCmd->SetDefaultUnit("MeV");
   
 }
 //-----------------------------------------------------------------------------
@@ -74,6 +80,7 @@ void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 
   if (cmd == pAveragingTypeCmd) pLETActor->SetLETType(newValue);
   if (cmd == pSetOtherMaterialCmd) pLETActor->SetMaterial(newValue);
+  if (cmd == pCutValCmd) pLETActor->SetCutVal(pCutValCmd->GetNewDoubleValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

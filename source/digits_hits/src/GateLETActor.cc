@@ -34,11 +34,17 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   mIsAverageKinEnergy=false;
   mIsGqq0EBT31stOrder=false;
   mIsGqq0EBT34thOrder=false;
-
+  mIsSwairApprox = false;
+  mIsMeanEnergyToProduceIonPairInAir = false;
+  mKGrosswendt = false;
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
   mAveragingType = "DoseAverage";
   mSetMaterial = "G4_WATER";
+  k_FitParWAir = 0.08513;
+  //mRestrictedLET = false;
+  mCutVal = DBL_MAX ; // 10*keV;
+  
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -62,7 +68,7 @@ void GateLETActor::Construct() {
 
   // Find G4_WATER. This it needed here because we will used this
   // material for dedx computation for LETtoWater.
-  
+  G4cout << "Build material: " << mSetMaterial << G4endl;
   G4NistManager::Instance()->FindOrBuildMaterial(mSetMaterial);
 
   // Enable callbacks
@@ -73,6 +79,7 @@ void GateLETActor::Construct() {
   EnableUserSteppingAction(true);
 
 
+   
   if (mAveragingType == "DoseAveraged" || mAveragingType == "DoseAverage" || mAveragingType == "doseaverage" || mAveragingType == "dose"){mIsDoseAverageDEDX = true;}
   else if (mAveragingType == "DoseAveragedEdep" || mAveragingType == "DoseAverageEdep" ){mIsDoseAverageEdepDX = true;}
   else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAverage" || mAveragingType == "Track" || mAveragingType == "track" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAverageDEDX = true;}
@@ -80,9 +87,18 @@ void GateLETActor::Construct() {
   else if (mAveragingType == "AverageKinEnergy"){mIsAverageKinEnergy = true;}
   else if (mAveragingType == "gqq0EBT3linear"){mIsGqq0EBT31stOrder = true;mIsLETtoWaterEnabled=true;mIsDoseAverageDEDX = true;}
   else if (mAveragingType == "gqq0EBT3fourth"){mIsGqq0EBT34thOrder = true;mIsLETtoWaterEnabled=true;mIsDoseAverageDEDX = true;}
+  else if (mAveragingType == "massSprWaterAirApprox") {mIsSwairApprox = true;}
+  else if (mAveragingType == "meanEnergyToProduceIonPairApproxDennis") { mIsMeanEnergyToProduceIonPairInAir = true; }
+  else if (mAveragingType == "meanEnergyToProduceIonPairApproxGrosswendt") { mIsMeanEnergyToProduceIonPairInAir = true; mKGrosswendt =true;}
   else {GateError("The LET averaging Type" << GetObjectName()
                   << " is not valid ...\n Please select 'DoseAveraged' or 'TrackAveraged')");}
 
+  //if (mCutVal < DBL_MAX){  mRestrictedLET = true; }
+        //const double k_dennis = 0.08513;
+      //const double k_grosswendt = 0.05264;
+   if (mKGrosswendt){
+       k_FitParWAir = 0.05264; // this is the k value fitted to the grosswendt data; default value is set to the dennis data (0.08513)
+   }
   // Output Filename
   mLETFilename = mSaveFilename;
   if (mIsDoseAverageDEDX)
@@ -106,6 +122,24 @@ void GateLETActor::Construct() {
   if (mIsAverageKinEnergy){
     mLETFilename= removeExtension(mLETFilename) + "-kinEnergyFluenceAverage."+getExtension(mLETFilename);
   }
+  if (mIsSwairApprox ) {
+      mLETFilename= removeExtension(mLETFilename) + "-massSPRwaterAirApprox."+getExtension(mLETFilename);
+  }
+  if (mIsMeanEnergyToProduceIonPairInAir ) {
+      if (mKGrosswendt){
+          
+        mLETFilename= removeExtension(mLETFilename) + "-meanEProduceIonPairApproxGross."+getExtension(mLETFilename);
+       }
+       else {
+           
+        mLETFilename= removeExtension(mLETFilename) + "-meanEProduceIonPairApproxDennis."+getExtension(mLETFilename);
+       }
+  }  
+  
+  if (mCutVal < DBL_MAX){  
+     mLETFilename= removeExtension(mLETFilename) + "-restricted."+getExtension(mLETFilename);
+      }
+
   if (mIsParallelCalculationEnabled)
     {
       numeratorFileName= removeExtension(mLETFilename) + "-numerator."+ getExtension(mLETFilename);
@@ -299,12 +333,21 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
 
   // Compute the dedx for the current particle in the current material
   double weightedLET =0;
-  G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
+  double normalizationVal = 0;
+  
+  G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mCutVal);
+  //if (mRestrictedLET){
+      //dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mCutVal);
+  //}
   // SPR to water is unity, but is overwritten if LET to water is enabled
   G4double SPR_ToWater =1.0;
   
   if (mIsLETtoWaterEnabled){
-    G4double dedx_Water = emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
+    G4double dedx_Water = emcalc->ComputeElectronicDEDX(energy, partname->GetParticleName(), mSetMaterial, mCutVal) ;
+    
+    //if (mRestrictedLET){
+        //dedx_Water = emcalc->ComputeElectronicDEDX(energy, partname->GetParticleName(), mSetMaterial, mCutVal) ;
+    //}
     
     if ((dedx > 0) && (dedx_Water >0 ))
     {
@@ -312,10 +355,9 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
         edep *=SPR_ToWater;
         dedx *=SPR_ToWater;
     }
-    
   }
 
-  double normalizationVal = 0;
+
   if (mIsDoseAverageDEDX) {
     weightedLET=edep*dedx*weight; // /(density/(g/cm3));
     normalizationVal = edep*weight;
@@ -335,6 +377,30 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   else if (mIsAverageKinEnergy) {
     weightedLET=steplength*energy*weight;
     normalizationVal = steplength*weight;
+  }
+  else  if (mIsSwairApprox ) {
+      const double a_con = 1.1425;
+      const double b_con = 0.025;
+      const double n_con = 0.0012;
+      // avoid singularity if E approaches zero; assumes saturation
+      if ( energy1 <= b_con ) {
+          energy1 = b_con*1.05;
+      }
+      weightedLET=steplength*weight * a_con*energy1/(pow(energy1-b_con , (1+n_con)));
+      normalizationVal = steplength*weight;
+      
+  }
+  else if (mIsMeanEnergyToProduceIonPairInAir) {
+      const double weovere_con = 33.97;
+
+      // avoid singularity if E approaches k;
+      if ( energy1 <= k_FitParWAir ) {
+          energy1 = k_FitParWAir*1.05;
+      }
+      weightedLET=steplength*weight * weovere_con*energy1/(energy1-k_FitParWAir);
+      normalizationVal = steplength*weight;
+      
+      
   }
 
   mWeightedLETImage.AddValue(index, weightedLET);
