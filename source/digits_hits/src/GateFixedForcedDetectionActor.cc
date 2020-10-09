@@ -1177,7 +1177,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
     // Compute the direct FFT
     typedef itk::ComplexToComplexFFTImageFilter <ComplexImageType> FFTFilterType;
     FFTFilterType::Pointer fftFilterImage = FFTFilterType::New();
-    fftFilterImage->SetTransformDirection(FFTFilterType::FORWARD);
+    fftFilterImage->SetTransformDirection(FFTFilterType::TransformDirectionEnum::FORWARD);
     fftFilterImage->SetInput(trans->GetOutput());
 
     // Multiplication in Frequency domain
@@ -1188,7 +1188,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
 
     // Compute the inverse FFT
     FFTFilterType::Pointer fftFilterOutputImage = FFTFilterType::New();
-    fftFilterOutputImage->SetTransformDirection(FFTFilterType::INVERSE);
+    fftFilterOutputImage->SetTransformDirection(FFTFilterType::TransformDirectionEnum::INVERSE);
     fftFilterOutputImage->SetInput(multiplyFilter->GetOutput());
 
     // Compute image modulus

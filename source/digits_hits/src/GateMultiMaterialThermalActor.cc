@@ -316,9 +316,9 @@ void GateMultiMaterialThermalActor::ApplyStepDiffusion(double timeStep, bool for
       gaussianFilterX->SetSigma(sigma);
       gaussianFilterY->SetSigma(sigma);
       gaussianFilterZ->SetSigma(sigma);
-      gaussianFilterX->SetOrder(GaussianFilterType::OrderEnumType::ZeroOrder);
-      gaussianFilterY->SetOrder(GaussianFilterType::OrderEnumType::ZeroOrder);
-      gaussianFilterZ->SetOrder(GaussianFilterType::OrderEnumType::ZeroOrder);
+      gaussianFilterX->SetOrder(itk::GaussianOrderEnum::ZeroOrder);
+      gaussianFilterY->SetOrder(itk::GaussianOrderEnum::ZeroOrder);
+      gaussianFilterZ->SetOrder(itk::GaussianOrderEnum::ZeroOrder);
       gaussianFilterX->SetNormalizeAcrossScale(false);
       gaussianFilterY->SetNormalizeAcrossScale(false);
       gaussianFilterZ->SetNormalizeAcrossScale(false);
