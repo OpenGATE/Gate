@@ -25,7 +25,8 @@ GateRadioactiveDecayPB::GateRadioactiveDecayPB():GateVProcess("RadioactiveDecay"
 //-----------------------------------------------------------------------------
 G4VProcess* GateRadioactiveDecayPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4RadioactiveDecay(GetG4ProcessName());
+  //return new G4RadioactiveDecay(GetG4ProcessName());
+  return new G4Radioactivation(GetG4ProcessName());
 }
 //-----------------------------------------------------------------------------
 
