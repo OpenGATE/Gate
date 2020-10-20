@@ -24,15 +24,15 @@ class GatePhantomSD : public G4VSensitiveDetector
 
       GatePhantomSD* Clone() const override;
 
-      void Initialize(G4HCofThisEvent*HCE);
-      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-      void EndOfEvent(G4HCofThisEvent*HCE);
+      void Initialize(G4HCofThisEvent*HCE) override;
+      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist) override;
+      void EndOfEvent(G4HCofThisEvent*HCE) override;
      //! Tool method returning the name of the hit-collection where the phantom hits are stored
       static inline const G4String& GetPhantomCollectionName()
       	  { return thePhantomCollectionName; }
-      void clear();
-      void DrawAll();
-      void PrintAll();
+      void clear() override;
+      void DrawAll() override;
+      void PrintAll() override;
 
   private:
       GatePhantomHitsCollection * phantomCollection;

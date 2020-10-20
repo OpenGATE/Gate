@@ -212,7 +212,7 @@ void Gate_NN_ARF_Actor::Construct()
   EnableUserSteppingAction(true);
 
 #ifdef GATE_USE_TORCH
-  
+  if (mTrainingModeFlag) {
   // Load the nn and the json dictionary
   
   if (mNNModelPath == "")
@@ -260,6 +260,7 @@ void Gate_NN_ARF_Actor::Construct()
   
   mNNOutput = at::empty({0,0});
   //assert(mNNModule != nullptr);
+  }
 #endif
 
   ResetData();

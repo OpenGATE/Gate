@@ -57,11 +57,11 @@ class GateCrystalSD : public G4VSensitiveDetector
       GateCrystalSD* Clone() const override;
 
       //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
-      void Initialize(G4HCofThisEvent*HCE);
+      void Initialize(G4HCofThisEvent*HCE) override;
 
       //! Implementation of the pure virtual method ProcessHits().
       //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
-      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist) override;
 
       //! Tool method returning the name of the hit-collection where the crystal hits are stored
       static inline const G4String& GetCrystalCollectionName()
@@ -71,7 +71,7 @@ class GateCrystalSD : public G4VSensitiveDetector
       inline GateVSystem* GetSystem()
       	  { return m_system;}
       //! Set the system to which the SD is attached
-      void SetSystem(GateVSystem* aSystem); //mhadi_obso, obsollete, because we use naw the a system list.
+      void SetSystem(GateVSystem* aSystem); // mhadi_obso, obsolete, because we now use a system list.
 
       //! next methods are for the multi-system approach
       inline GateSystemList* GetSystemList() const { return m_systemList; }
