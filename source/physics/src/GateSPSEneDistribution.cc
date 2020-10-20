@@ -30,6 +30,9 @@ GateSPSEneDistribution::GateSPSEneDistribution()
     mEnergyRange(), mMode(), mDimSpectrum(),
     mSumProba(), mTabProba(), mTabSumProba(), mTabEnergy()
 {
+    // Contrary to G4's G4SPSEneDistribution, we decided to initialize
+    // the default energy to 0.0 not to 1.0
+    SetMonoEnergy(0.0 * MeV);
 }
 //-----------------------------------------------------------------------------
 
