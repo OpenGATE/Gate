@@ -14,6 +14,7 @@ See LICENSE.md for further details
 #include "GateVProcess.hh"
 
 #include "G4RadioactiveDecay.hh"
+#include "G4Radioactivation.hh"
 
 MAKE_PROCESS_AUTO_CREATOR(GateRadioactiveDecayPB)
 
