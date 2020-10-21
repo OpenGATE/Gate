@@ -158,7 +158,7 @@ protected:
   int bSpotID;
   bool bEnableCompact;
   bool bEnablePDGCode;
-  long int bPDGCode;
+  int bPDGCode;
 
   bool mMaskIsEnabled;
   G4String mMaskFilename;
