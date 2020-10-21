@@ -26,6 +26,10 @@ See LICENSE.md for further details
  * or SLOWSCINTILLATIONRISETIME in MaterialPropertiesTable for the current G4Material
  * and set the FiniteRiseTime flag of G4Scintillation consequently.
  *
+ * 2020/10/21: Implementation of IsApplicable has been changed between geant4 10.05 and geant4 10.06 which
+ * made Scintillation not applicable for gamma. Because gamma has a PDGCharge of 0.0. Here we go back to previous
+ * implementation until we find another solution.
+ *
  *
  */
 
@@ -35,7 +39,12 @@ class GateScintillation : public G4Scintillation
   using G4Scintillation::G4Scintillation;
 
 	G4VParticleChange* PostStepDoIt(const G4Track& aTrack, 
-			                const G4Step&  aStep);
+			                const G4Step&  aStep) override ;
+
+  G4bool IsApplicable(
+      const G4ParticleDefinition& aParticleType) override;
+
+
 
 };
 
