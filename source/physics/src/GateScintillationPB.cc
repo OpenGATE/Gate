@@ -56,7 +56,12 @@ G4VProcess* GateScintillationPB::CreateProcess(G4ParticleDefinition *)
 //-----------------------------------------------------------------------------
 void GateScintillationPB::ConstructProcess(G4ProcessManager * manager)
 {
-  manager->AddDiscreteProcess(GetProcess());  
+
+  auto ret = manager->AddDiscreteProcess(GetProcess());
+  if(ret < 0)
+  {
+    GateError("Can not add scintillation to particle '" << manager->GetParticleType()->GetParticleName() << "'."   );
+  }
   manager->SetProcessOrderingToLast(GetProcess(), idxAtRest);
   manager->SetProcessOrderingToLast(GetProcess(), idxPostStep);
 }
