@@ -94,6 +94,7 @@ private:
   G4double m_bufferSize;  //!< contains the rebirth time.
   std::vector<double> m_bufferCurrentSize;  //!< contains the buffers sizes
   G4int m_bufferMode; //! 0 : DT during writing, 1 : DT if writing AND buffer full
+  G4int m_init_done_run_id;
   GateDeadTimeMessenger *m_messenger;    //!< Messenger
 };
 
