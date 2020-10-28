@@ -29,6 +29,7 @@ GateDeadTime::GateDeadTime(GatePulseProcessorChain* itsChain, const G4String& it
   m_isParalysable = false;
   m_deadTime = 0;
   m_messenger = new GateDeadTimeMessenger(this);
+  m_init_done_run_id = -1;
 }
 
 
@@ -44,7 +45,7 @@ GateDeadTime::~GateDeadTime()
 
 void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse, GatePulseList& outputPulseList)
 {
-  static G4int m_init_done_run_id = -1;
+
 
   if (!inputPulse) return;
 
