@@ -94,7 +94,7 @@ void GateTEPCActor::Construct()
   }
 
   // ROOT histogram - axis titles - options
-  pLETspectrum->Sumw2();
+  //pLETspectrum->Sumw2();
   pLETspectrum->SetXTitle("y (keV/#mum)");
   pLETspectrum->SetYTitle("f(y)");
   ResetData();
@@ -102,7 +102,7 @@ void GateTEPCActor::Construct()
   // Calculation of the effective chord of the TEPC
   // WARNING : the attached volume MUST be a GateSphere
   GateMessage("Actor",0, "WARNING: For now, only spherical volumes are compatible with the TEPCactor. Please check that the attached volume is a 'sphere'." << G4endl);
-  effectiveChord = (2.0 / 3.0) * 2.0 * ((GateSphere *)GetVolume())->GetSphereRmax() * GetVolume()->GetMaterial()->GetDensity() / (g/cm3);
+  effectiveChord = (2.0 / 3.0) * 2.0 * ((GateSphere *)GetVolume())->GetSphereRmax()  * GetVolume()->GetMaterial()->GetDensity() / (g/cm3); // tested by A.Resch 29thOct2020: works and is correct
 }
 //-----------------------------------------------------------------------------
 
@@ -207,7 +207,9 @@ void GateTEPCActor::BeginOfEventAction(const G4Event*)
 void GateTEPCActor::EndOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateTEPCActor -- End of Event\n");
-
+    //myEvent->GetUserInformation();
+    //myEvent->GetPrimaryVertex()->Print();
+    
   double y = (edepByEvent / keV) / (effectiveChord / um);
   if(edepByEvent > 0.0) { pLETspectrum->Fill(y, 1.0); }
   
@@ -215,7 +217,7 @@ void GateTEPCActor::EndOfEventAction(const G4Event*)
 }
 //-----------------------------------------------------------------------------
 
-
+ 
 //-----------------------------------------------------------------------------
 void GateTEPCActor::PreUserTrackingAction(const GateVVolume *, const G4Track *)
 {
