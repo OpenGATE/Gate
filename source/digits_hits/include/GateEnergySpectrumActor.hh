@@ -185,6 +185,7 @@ protected:
   double edep;
   double tof;
   double edepTrack;
+  double edepEvent;
 
   GateActorMessenger* pMessenger;
 

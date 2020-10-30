@@ -52,7 +52,8 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   sumM1=0.;
   sumM2=0.;
   sumM3=0.;
-  edep = 0.;
+  edepEvent = 0.;
+  
   
   mSaveAsTextFlag = true;
   mSaveAsDiscreteSpectrumTextFlag = false;
@@ -161,6 +162,16 @@ void GateEnergySpectrumActor::Construct()
           pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
           allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
       } 
+      if (mEnableEdepHistoFlag){
+          pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+          pEdep->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdep);
+      } 
+      if (mEnableEdepTrackHistoFlag){
+          pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+          pEdepTrack->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdepTrack);
+          }       
   }
   else
   {
@@ -187,7 +198,17 @@ void GateEnergySpectrumActor::Construct()
           pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
           pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
           allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
-      } 
+          }
+      if (mEnableEdepHistoFlag){
+          pEdep  = new TH1D("edepHisto","Energy deposited per event",mENBins,eBinV);
+          pEdep->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdep);
+          } 
+      if (mEnableEdepTrackHistoFlag){
+          pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",mENBins,eBinV );
+          pEdepTrack->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdepTrack);
+          } 
   }
 
 
@@ -220,11 +241,7 @@ void GateEnergySpectrumActor::Construct()
       allEnabledTH1DHistograms.push_back(pQSpectrum);
   }
   
-  if (mEnableEdepHistoFlag){
-      pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-      pEdep->SetXTitle("E_{dep} (MeV)");
-      allEnabledTH1DHistograms.push_back(pEdep);
-  } 
+
 
   if (mEnableEdepTimeHistoFlag){
       pEdepTime  = new TH2D("edepHistoTime","Energy deposited with time per event",
@@ -234,11 +251,7 @@ void GateEnergySpectrumActor::Construct()
 
   } 
 
-  if (mEnableEdepTrackHistoFlag){
-      pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-      pEdepTrack->SetXTitle("E_{dep} (MeV)");
-      allEnabledTH1DHistograms.push_back(pEdepTrack);
-  } 
+
 
   if (mEnableElossHistoFlag){
       pDeltaEc = new TH1D("eLossHisto","Energy loss",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
@@ -317,9 +330,9 @@ void GateEnergySpectrumActor::ResetData()
       //pEdep->Reset();
   //}
   // timeHisto is a 2D hist - others are 1D
-  if (mEnableEdepTimeHistoFlag){
-      pEdepTime->Reset();
-  }
+  //if (mEnableEdepTimeHistoFlag){
+      //pEdepTime->Reset();
+  //}
   
   //if (mEnableEdepTrackHistoFlag){
       //pEdepTrack->Reset();
@@ -347,7 +360,7 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Event\n");
   newEvt = true;
-  edep = 0.;
+  edepEvent = 0.;
   tof  = 0;
 }
 //-----------------------------------------------------------------------------
@@ -360,10 +373,10 @@ void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
   
     if (edep > 0) {
         if (mEnableEdepHistoFlag){
-            pEdep->Fill(edep/MeV);
+            pEdep->Fill(edepEvent/MeV);
         }
         if (mEnableEdepTimeHistoFlag){
-            pEdepTime->Fill(tof/ns,edep/MeV);
+            pEdepTime->Fill(tof/ns,edepEvent/MeV);
         }
       }
   
@@ -406,9 +419,10 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   if(step->GetTotalEnergyDeposit()>0.01) sumM1+=step->GetTotalEnergyDeposit();
   else if(step->GetTotalEnergyDeposit()>0.00001) sumM2+=step->GetTotalEnergyDeposit();
   else sumM3+=step->GetTotalEnergyDeposit();
-
-  edep += step->GetTotalEnergyDeposit();
-  edepTrack += step->GetTotalEnergyDeposit();
+  G4double edep = step->GetTotalEnergyDeposit();
+  edepEvent += edep;
+  edepTrack += edep;
+  
 
   if (newEvt) {
     double pretof = step->GetPreStepPoint()->GetGlobalTime();

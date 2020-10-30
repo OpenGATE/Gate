@@ -70,21 +70,21 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   pNBinsCmd->SetGuidance(guidance);
   pNBinsCmd->SetParameterName("Nbins", false);
 
-  bb = base+"/energyLossHisto/setEmin";
+  bb = base+"/energyLossHisto/setEdepMin";
   pEdepminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set minimum energy of the energy loss histogram");
   pEdepminCmd->SetGuidance(guidance);
   pEdepminCmd->SetParameterName("Emin", false);
   pEdepminCmd->SetDefaultUnit("MeV");
 
-  bb = base+"/energyLossHisto/setEmax";
+  bb = base+"/energyLossHisto/setEdepMax"; 
   pEdepmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum energy of the energy loss histogram");
   pEdepmaxCmd->SetGuidance(guidance);
   pEdepmaxCmd->SetParameterName("Emax", false);
   pEdepmaxCmd->SetDefaultUnit("MeV");
 
-  bb = base+"/energyLossHisto/setNumberOfBins";
+  bb = base+"/energyLossHisto/setNumberOfEdepBins";
   pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = G4String("Set number of bins of the energy loss histogram");
   pEdepNBinsCmd->SetGuidance(guidance);
