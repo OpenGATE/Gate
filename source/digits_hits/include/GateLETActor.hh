@@ -62,11 +62,15 @@ public:
   // Scorer related
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-
+    
+  
 
 protected:
   GateLETActor(G4String name, G4int depth=0);
   GateLETActorMessenger * pMessenger;
+  
+  //virtual void polynomial(double* coefs, double deg, double x) {double yv;}
+  virtual double polynomial(double * coefs, int deg, double x);
 
   int mCurrentEvent;
   bool mIsLETtoWaterEnabled;
@@ -86,6 +90,7 @@ protected:
   double k_FitParWAir;
   bool mIsSwairApprox;
   bool mIsMeanEnergyToProduceIonPairInAir;
+  bool mIsMeanEnergyToProduceIonPairInAirAR;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
