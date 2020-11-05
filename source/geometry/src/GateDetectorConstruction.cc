@@ -312,7 +312,7 @@ void GateDetectorConstruction::SetField(){
 			  "---> fMinStep " << fMinStep/mm << " mm \n"
 			  "---> fDeltaChord "<<fDeltaChord/mm <<" mm \n"
 			  "---> fDeltaIntersection "<<fFieldMgr->GetDeltaIntersection()/mm <<" mm \n"
-			  "---> fDeltaChord "<<fFieldMgr->GetDeltaOneStep()/mm <<" mm \n"
+			  "---> fDeltaOneStep "<<fFieldMgr->GetDeltaOneStep()/mm <<" mm \n"
 			  "---> fMinimumEpsilonStep "<<fMinimumEpsilonStep << " \n"
 			  "---> fMaximumEpsilonStep "<<fMaximumEpsilonStep << " \n"
 			  "-----------------------------------------------------------"<< Gateendl);
