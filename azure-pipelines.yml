@@ -67,7 +67,7 @@ jobs:
 
   variables:
     ROOT_VERSION: 'v6-19-02'
-    GEANT4_VERSION: 'v10.6.0'
+    GEANT4_VERSION: 'v10.7.0'
     ROOT_DIR: $(Pipeline.Workspace)/software/root
     GEANT4_DIR: $(Pipeline.Workspace)/software/geant4
     OSVERSION: 0
