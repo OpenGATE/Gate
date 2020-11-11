@@ -14,6 +14,7 @@ See LICENSE.md for further details
 #ifndef GATE_GATETOTREEMESSENGER_HH
 #define GATE_GATETOTREEMESSENGER_HH
 
+#include <memory>
 #include <unordered_map>
 #include "GateOutputModuleMessenger.hh"
 
@@ -33,22 +34,32 @@ public:
   void SetNewValue(G4UIcommand *icommand, G4String string) override;
 
 private:
+  void DeleteMap( std::unordered_map<G4UIcmdWithoutParameter*, G4String>& m );
 
-  G4UIcmdWithAString* m_addFileNameCmd;
-  G4UIcmdWithoutParameter *m_enableHitsOutput;
-  G4UIcmdWithoutParameter *m_disableHitsOutput;
+private:
 
-  G4UIcmdWithoutParameter *m_enableOpticalDataOutput;
-  G4UIcmdWithoutParameter *m_disableOpticalDataOutput;
+  std::unique_ptr<G4UIcmdWithAString> m_addFileNameCmd;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_enableHitsOutput;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableHitsOutput;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableAllHitsBranches;
 
-  G4UIcmdWithAString* m_addCollectionCmd;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_enableOpticalDataOutput;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableOpticalDataOutput;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableOpticalDataBranches;
+
+  std::unique_ptr<G4UIcmdWithAString> m_addCollectionCmd;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableAllSinglesBranches;
+  std::unique_ptr<G4UIcmdWithoutParameter> m_disableAllCoincidencesBranches;
   GateToTree *m_gateToTree;
 
-  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_maphits_cmdParameter_toTreeParameter;
-  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapoptical_cmdParameter_toTreeParameter;
-  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapsingles_cmdParameter_toTreeParameter;
-  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter;
-
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_maphits_cmdParameter_toTreeParameter_disable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_maphits_cmdParameter_toTreeParameter_enable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapoptical_cmdParameter_toTreeParameter_disable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapoptical_cmdParameter_toTreeParameter_enable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapsingles_cmdParameter_toTreeParameter_disable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapsingles_cmdParameter_toTreeParameter_enable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter_disable;
+  std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter_enable;
 
 };
 

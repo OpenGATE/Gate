@@ -65,10 +65,15 @@ public:
   G4bool getHitsEnabled() const;
   void setHitsEnabled(G4bool mHitsEnabled);
   void addCollection(const std::string &str); //called by messenger
+  void setHitsBranchesEnable(G4bool enable);
 
 
   G4bool getOpticalDataEnabled() const;
   void setOpticalDataEnabled(G4bool mOpticalDataEnabled);
+  void setOpticalDataBranchesEnable(G4bool enable);
+  
+  void setSingleDigiBranchesEnable(G4bool enable);
+  void setCoincidenceDigiBranchesEnable(G4bool enable);
 
   std::unordered_map<std::string, SaveDataParam> &getHitsParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getOpticalParamsToWrite();
@@ -178,6 +183,10 @@ private:
   G4float m_sinogramTheta;
   G4float m_sinogramS;
 
+ //Additional information from ExtendedVSource
+ G4int m_sourceKind = 0;
+ G4int m_decayModel = 0;
+ G4int m_gammaKind = 0;
 
 
   static const auto VOLUMEID_SIZE = 10;

@@ -103,6 +103,9 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("volumeIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("componentsIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("systemID", SaveDataParam());
+    m_hitsParams_to_write.emplace("sourceKind", SaveDataParam());
+    m_hitsParams_to_write.emplace("decayModel", SaveDataParam());
+    m_hitsParams_to_write.emplace("gammaKind", SaveDataParam());
 
     m_opticalParams_to_write.emplace("NumScintillation", SaveDataParam());
     m_opticalParams_to_write.emplace("NumCrystalWLS", SaveDataParam());
@@ -337,7 +340,15 @@ void GateToTree::RecordBeginOfAcquisition()
 
       if(m_hitsParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
         m_manager_hits.write_variable("systemID", &m_systemID);
-
+        
+      if(m_hitsParams_to_write.at("sourceKind").toSave())
+        m_manager_hits.write_variable("sourceKind", &m_sourceKind);
+        
+      if(m_hitsParams_to_write.at("decayModel").toSave())
+        m_manager_hits.write_variable("decayModel", &m_decayModel);
+        
+      if(m_hitsParams_to_write.at("gammaKind").toSave())
+        m_manager_hits.write_variable("gammaKind", &m_gammaKind);
 
       m_manager_hits.write_header();
     }
@@ -698,7 +709,8 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
 //    auto writeVolumeIDs = m_hitsParams_to_write.at("volumeIDs").toSave();
 
   m_systemID = -1;
-  for( unsigned int iHit = 0; iHit < CHC->entries(); ++iHit )
+  const unsigned int n_entries = CHC->entries();
+  for( unsigned int iHit = 0; iHit < n_entries; ++iHit )
   {
     auto hit = (*CHC)[ iHit ];
     if(!hit->GoodForAnalysis())
@@ -1180,4 +1192,26 @@ void GateToTree::RecordOpticalData(const G4Event *event)
       m_manager_optical.fill();
 }
 
+void GateToTree::setHitsBranchesEnable(G4bool enable )
+{
+ for ( std::unordered_map<std::string, SaveDataParam>::iterator it = m_hitsParams_to_write.begin(); it != m_hitsParams_to_write.end(); ++it )
+  it->second.setToSave(enable);
+}
 
+void GateToTree::setOpticalDataBranchesEnable(G4bool enable)
+{
+ for ( std::unordered_map<std::string, SaveDataParam>::iterator it = m_opticalParams_to_write.begin(); it != m_opticalParams_to_write.end(); ++it )
+  it->second.setToSave(enable);
+}
+
+void GateToTree::setSingleDigiBranchesEnable(G4bool enable)
+{
+ for ( std::unordered_map<std::string, SaveDataParam>::iterator it = m_singlesParams_to_write.begin(); it != m_singlesParams_to_write.end(); ++it )
+  it->second.setToSave(enable);
+}
+
+void GateToTree::setCoincidenceDigiBranchesEnable(G4bool enable)
+{
+ for ( std::unordered_map<std::string, SaveDataParam>::iterator it = m_coincidencesParams_to_write.begin(); it != m_coincidencesParams_to_write.end(); ++it )
+  it->second.setToSave(enable);
+}

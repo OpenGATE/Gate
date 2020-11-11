@@ -53,38 +53,38 @@ class GateCrystalHit : public G4VHit
       friend std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit);
 
 private:
-  G4double m_edep;            // energy deposit for the current hit
-  G4double m_stepLength;      // length of the step for the current hit
-  G4double m_trackLength;      // length of the track 
-  G4double m_time;            // time of the current hit
-  G4double m_trackLocalTime;  // time of the current track
+  G4double m_edep = 0;            // energy deposit for the current hit
+  G4double m_stepLength = 0;      // length of the step for the current hit
+  G4double m_trackLength = 0;      // length of the track 
+  G4double m_time = 0;            // time of the current hit
+  G4double m_trackLocalTime = 0;  // time of the current track
   G4ThreeVector m_pos;        // position of the current hit
-  G4double m_posx;
-  G4double m_posy;
-  G4double m_posz;
+  G4double m_posx = 0;
+  G4double m_posy = 0;
+  G4double m_posz = 0;
   G4ThreeVector m_momDir;        // momentum Direction of the current hit
   G4ThreeVector m_localPos;   // position of the current hit
   G4String m_process;         // process on the current hit
-  G4int m_PDGEncoding;        // G4 PDGEncoding
-  G4int m_trackID;            // track ID
-  G4int m_parentID;           // parent track ID
-  G4int m_sourceID;           // source progressive number
+  G4int m_PDGEncoding = 0;        // G4 PDGEncoding
+  G4int m_trackID = 0;            // track ID
+  G4int m_parentID = 0;           // parent track ID
+  G4int m_sourceID = 0;           // source progressive number
   G4ThreeVector m_sourcePosition; // position of the source (NOT the positron) that generated the hit
-  G4int m_photonID;           // photon ID (1 or 2, 0 if not caused by one of the 2 gammas)
-  G4int m_nPhantomCompton;    // # of compton processes in the phantom occurred to the photon
-  G4int m_nCrystalCompton;    // # of compton processes in the crystal occurred to the photon
-  G4int m_nPhantomRayleigh;    // # of Rayleigh processes in the phantom occurred to the photon
-  G4int m_nCrystalRayleigh;    // # of Rayleigh processes in the crystal occurred to the photon
+  G4int m_photonID = 0;           // photon ID (1 or 2, 0 if not caused by one of the 2 gammas)
+  G4int m_nPhantomCompton = 0;    // # of compton processes in the phantom occurred to the photon
+  G4int m_nCrystalCompton = 0;    // # of compton processes in the crystal occurred to the photon
+  G4int m_nPhantomRayleigh = 0;    // # of Rayleigh processes in the phantom occurred to the photon
+  G4int m_nCrystalRayleigh = 0;    // # of Rayleigh processes in the crystal occurred to the photon
   G4String m_comptonVolumeName; // name of the volume of the last (if any) compton scattering
   G4String m_RayleighVolumeName; // name of the volume of the last (if any) Rayleigh scattering
   G4int m_primaryID;          // primary that caused the hit
-  G4int m_eventID;            // eventID
-  G4int m_runID;              // runID
+  G4int m_eventID = 0;            // eventID
+  G4int m_runID = 0;              // runID
   GateVolumeID m_volumeID;    // Volume ID in the world volume tree
   G4ThreeVector m_scannerPos; // Position of the scanner
-  G4double m_scannerRotAngle; // Rotation angle of the scanner
+  G4double m_scannerRotAngle = 0; // Rotation angle of the scanner
   GateOutputVolumeID m_outputVolumeID;
-  G4int m_systemID;           // system ID in for the multi-system approach
+  G4int m_systemID = 0;           // system ID in for the multi-system approach
 
   // To use with GateROOTBasicOutput classes
   G4ThreeVector pos;  // position
@@ -94,12 +94,17 @@ private:
 
 
 // AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume
-   G4String m_Postprocess;         // PostStep process 
-   G4double m_energyIniTrack;         // Initial energy of the track
-   G4double m_energyFin;         // final energy of the particle
-   G4double m_sourceEnergy;//AE
-   G4int m_sourcePDG;//AE
-   G4int m_nCrystalConv;    // # of pair creation process in the crystal occurred to the photon
+  G4String m_Postprocess;         // PostStep process 
+  G4double m_energyIniTrack = 0;         // Initial energy of the track
+  G4double m_energyFin = 0;         // final energy of the particle
+  G4double m_sourceEnergy = 0;//AE
+  G4int m_sourcePDG = 0;//AE
+  G4int m_nCrystalConv = 0;    // # of pair creation process in the crystal occurred to the photon
+   
+   //Additional information from ExtendedVSource
+  G4int m_sourceKind = 0;
+  G4int m_decayModel = 0;
+  G4int m_gammaKind = 0;
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -240,7 +245,14 @@ private:
       inline void  SetZPos(const G4double & z)    { m_posz = z; }
       inline const G4double& GetZPos() const      { return m_posz; }
       /////--------------------------------------------------------------
-
+      inline void SetSourceKind( G4int sk ) { m_sourceKind = sk; }
+      inline G4int GetSourceKind() const { return m_sourceKind; }
+ 	
+      inline void SetDecayModel( G4int dm ) { m_decayModel = dm; }
+      inline G4int GetDecayModel() const { return m_decayModel; }
+ 	
+      inline void SetGammaKind( G4int gk ) { m_gammaKind = gk; }
+      inline G4int GetGammaKind() { return m_gammaKind; }
 };
 
 typedef G4THitsCollection<GateCrystalHit> GateCrystalHitsCollection;
