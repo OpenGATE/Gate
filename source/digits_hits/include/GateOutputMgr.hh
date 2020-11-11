@@ -19,6 +19,8 @@
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
+#include <memory>
+
 class G4Run;
 class G4Step;
 class G4Event;
@@ -142,30 +144,31 @@ protected :
   static GateOutputMgr* instance;
 
   //! Verbose level
-  G4int                      nVerboseLevel;
+  G4int nVerboseLevel = 0;
 
   //! List of the output modules
-  std::vector<GateVOutputModule*>   m_outputModules;
+  std::vector<std::unique_ptr<GateVOutputModule>> m_outputModules;
 
   //! messenger for the Mgr specific commands
-  GateOutputMgrMessenger*    m_messenger;
+  std::unique_ptr<GateOutputMgrMessenger>    m_messenger;
 
   //! class name, used by the messenger
-  G4String                   mName;
+  G4String mName = "";
 
   //! Code for the current digitizer mode (runtime or offline)
-  static DigiMode    	     m_digiMode;
+  static DigiMode m_digiMode;
 
   //! Flag to check that an acquisition has started
-  G4bool m_acquisitionStarted;
+  G4bool m_acquisitionStarted = false;
 
   //! Flag to say if the user allow to launch a simulation
   //! without any output nor actor
-  G4bool m_allowNoOutput;
+  G4bool m_allowNoOutput = false;
 
-  G4bool   m_saveVoxelTuple;
+  G4bool m_saveVoxelTuple = false;
 
-  G4Timer m_timer;      	  //!< Timer
+  //! Timer
+  G4Timer m_timer;
 
 };
 

@@ -42,11 +42,13 @@
 
 #include "GateToTree.hh"
 
+#include "GateExtendedAnalysis.hh"
+
 GateOutputMgr* GateOutputMgr::instance = 0;
 
 
 // By default, the output-managers are set in run-time mode
-DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
+DigiMode   GateOutputMgr::m_digiMode = kruntimeMode;
 
 
 /*
@@ -58,6 +60,7 @@ DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 
   - GateFastAnalysis (fast alternative for GateAnalysis, disabled by default)
   - GateAnalysis
+  - GateExtendedAnalysis (version of GateAnalysis for gammas from ExtendedVSource)
   - GateToDigi
   - GateToASCII
   - GateToRoot
@@ -72,54 +75,38 @@ DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 //--------------------------------------------------------------------------------
 GateOutputMgr::GateOutputMgr(const G4String name)
   : nVerboseLevel(0),
-    m_messenger(0),
-    mName(name),
-    m_acquisitionStarted(false),
-    m_allowNoOutput(false)
+    mName(name)
 {
   GateMessage("Output",4,"GateOutputMgr() -- begin\n");
 
+  m_messenger.reset( new GateOutputMgrMessenger(this) );
 
-  m_messenger = new GateOutputMgrMessenger(this);
-
-#ifdef GATE_USE_OPTICAL
-  // fastanalysis should come before GateAnalysis. It does not matter then that both are enabled (only a little
-  // speed loss).
-  if (m_digiMode==kruntimeMode) {
-    GateFastAnalysis* gateFastAnalysis = new GateFastAnalysis("fastanalysis", this,m_digiMode);
-    AddOutputModule((GateVOutputModule*)gateFastAnalysis);
-  }
-#endif
-
-  if (m_digiMode==kruntimeMode) {
-    GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
-    AddOutputModule((GateVOutputModule*)gateAnalysis);
+  if ( m_digiMode == kruntimeMode ) 
+  {
+   #ifdef GATE_USE_OPTICAL
+   // fastanalysis should come before GateAnalysis. It does not matter then that both are enabled (only a little speed loss).
+   AddOutputModule( new GateFastAnalysis( "fastanalysis", this, m_digiMode ) );
+   #endif
+  
+   AddOutputModule( new GateAnalysis( "analysis", this, m_digiMode ) );
+   AddOutputModule( new GateExtendedAnalysis( "extendedanalysis", this, m_digiMode ) );
   }
 
-  GateToDigi* gateToDigi = new GateToDigi("digi", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToDigi);
+  AddOutputModule( new GateToDigi("digi", this, m_digiMode ) );
 
 #ifdef G4ANALYSIS_USE_FILE
-  GateToASCII* gateToASCII = new GateToASCII("ascii", this, m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToASCII);
+  AddOutputModule( new GateToASCII("ascii", this, m_digiMode) );
   // For BINARY output
-  GateVOutputModule* gateToBinary = new GateToBinary( "binary", this,
-                                                      m_digiMode );
-  AddOutputModule( gateToBinary );
+  AddOutputModule( new GateToBinary( "binary", this, m_digiMode ) );
 #endif
 
 #ifdef G4ANALYSIS_USE_ROOT
-  GateToRoot* gateToRoot = new GateToRoot("root", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToRoot);
-  GateARFDataToRoot* gateARFDataToRoot = new GateARFDataToRoot("arf", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
+  AddOutputModule( new GateToRoot( "root", this, m_digiMode ) );
+  AddOutputModule( new GateARFDataToRoot( "arf", this , m_digiMode ) );
 #endif
 
-  auto g = new GateToTree("tree", this, m_digiMode);
-  AddOutputModule(g);
-
-  auto gs = new GateToSummary("summary", this, m_digiMode);
-  AddOutputModule(gs);
+  AddOutputModule( new GateToTree( "tree", this, m_digiMode ) );
+  AddOutputModule( new GateToSummary( "summary", this, m_digiMode ) );
 
   GateMessage("Output",4,"GateOutputMgr() -- end\n");
 }
@@ -131,13 +118,7 @@ GateOutputMgr::~GateOutputMgr()
   if (m_acquisitionStarted)
     RecordEndOfAcquisition();
 
-  for (size_t iMod = 0; iMod < m_outputModules.size(); iMod++) {
-    delete m_outputModules[iMod];
-  }
-  m_outputModules.clear();
-  delete m_messenger;
-
-  if (nVerboseLevel > 0) G4cout << "GateOutputMgr deleting...\n";
+  if ( nVerboseLevel > 0 ) { G4cout << "GateOutputMgr deleting..." << G4endl; }
 
 }
 //----------------------------------------------------------------------------------
@@ -149,7 +130,7 @@ void GateOutputMgr::AddOutputModule(GateVOutputModule* module)
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::AddOutputModule\n";
 
-  m_outputModules.push_back(module);
+  m_outputModules.push_back( std::unique_ptr<GateVOutputModule>( module ) );
 }
 //----------------------------------------------------------------------------------
 
@@ -411,14 +392,11 @@ void GateOutputMgr::RegisterNewCoincidenceDigiCollection(const G4String& aCollec
 //----------------------------------------------------------------------------------
 GateVOutputModule* GateOutputMgr::GetModule(G4String aName)
 {
-  std::vector<GateVOutputModule*>::iterator aIt;
-  for ( aIt = m_outputModules.begin(); aIt != m_outputModules.end(); aIt++)
-    { if ( (*aIt)->GetName() == aName )
-        { return (*aIt);
-          break;
-        }
-    }
-  return 0;
+  for ( std::vector<std::unique_ptr<GateVOutputModule>>::iterator it = m_outputModules.begin(); it != m_outputModules.end(); ++it )
+  { 
+   if( it->get()->GetName() == aName ) { return it->get(); }
+  }
+  return nullptr;
 }
 //----------------------------------------------------------------------------------
 
@@ -427,26 +405,35 @@ void GateOutputMgr::CheckFileNameForAllOutput()
 {
   G4int nbActor = GateActorManager::GetInstance()->GetTheListOfActors().size();
   G4int nbModuleEnabled = 0;
-  std::vector<GateVOutputModule*>::iterator aIt;
-  for ( aIt = m_outputModules.begin(); aIt != m_outputModules.end(); aIt++)
+  
+  for ( std::vector<std::unique_ptr<GateVOutputModule>>::iterator it = m_outputModules.begin(); it != m_outputModules.end(); ++it )
+  {
+   if ( it->get()->IsEnabled() )
+   {
+    if ( it->get()->GiveNameOfFile() == " " ) // Filename with a space are the default one
     {
-      if ( (*aIt)->IsEnabled() )
-        {
-          if ((*aIt)->GiveNameOfFile()==" ") // Filename with a space are the default one
-            {
-              (*aIt)->Enable(false);
-              GateWarning("Output module '"+(*aIt)->GetName()+"' was found enabled but no file name was given !!! Output module is so DISABLED !!");
-            }
-          else if ((*aIt)->GiveNameOfFile()!="  ") nbModuleEnabled++; // Output modules with nofileName return 2 spaces
-        }
+     it->get()->Enable(false);
+     GateWarning("Output module '"+it->get()->GetName()+"' was found enabled but no file name was given !!! Output module is so DISABLED !!");
     }
-  if (nbActor==0 && nbModuleEnabled==0)
-    {
-      if (m_allowNoOutput) GateWarning("Be careful !! No output module nor actor at all are enabled !!");
-      else GateError("No output module nor actor are enabled. This simulation will store no result at all.\n \
-                    All output modules and actors have to be explicitly enabled now.\n \
-                    However if you want to launch this simulation, use the command /gate/output/allowNoOutput\n");
+    else if ( it->get()->GiveNameOfFile() != "  " ) 
+    { 
+      // Output modules with nofileName return 2 spaces
+      nbModuleEnabled++;
     }
+   }
+  }
+  
+  if (nbActor == 0 && nbModuleEnabled == 0 )
+  {
+   if ( m_allowNoOutput ) { GateWarning("Be careful !! No output module nor actor at all are enabled !!"); }
+   else 
+   {
+    G4String msg = "No output module nor actor are enabled. This simulation will store no result at all.\n";
+    msg += "All output modules and actors have to be explicitly enabled now.\n";
+    msg += "However if you want to launch this simulation, use the command /gate/output/allowNoOutput\n";
+    GateError( msg );
+   }
+  }
 }
 //----------------------------------------------------------------------------------
 
@@ -567,10 +554,8 @@ void GateOutputMgr::UserSteppingAction(const GateVVolume * /*v*/, const G4Step *
 
 /* PY Descourt 11/12/2008 */
 
-void GateOutputMgr::RecordTracks(GateSteppingAction* mySteppingAction){
-
-
-
+void GateOutputMgr::RecordTracks(GateSteppingAction* mySteppingAction)
+{
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
     if ( m_outputModules[iMod]->IsEnabled() )
       m_outputModules[iMod]->RecordTracks(mySteppingAction);
