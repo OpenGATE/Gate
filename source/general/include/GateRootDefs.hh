@@ -191,6 +191,9 @@ class GateRootHitBuffer
     Char_t   RayleighVolumeName[40];   	      	//!< Name of the last phantom-volume generating a Rayleigh
     Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
     Int_t    septalNb;							//!< HDS : septal penetration
+    Int_t sourceKind; //Kind of gamma source (check ExtendedVSource)
+    Int_t decoyModel; //Model of positronium decay (check ExtendedVSource)
+    Int_t gammaKind; //Gamma kind - single, annhilation, prompt (check ExtendedVSource)
     //@}
 
 };

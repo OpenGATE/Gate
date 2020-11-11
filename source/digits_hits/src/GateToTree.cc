@@ -756,6 +756,11 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       hit->GetVolumeID().StoreDaughterIDs(m_volumeID, VOLUMEID_SIZE);
 
     m_photonID = hit->GetPhotonID();
+    
+    m_sourceKind = hit->GetSourceKind();
+    m_decayModel = hit->GetDecayModel();
+    m_gammaKind = hit->GetGammaKind();
+    
     m_manager_hits.fill();
   }
 
