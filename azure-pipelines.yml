@@ -191,6 +191,20 @@ jobs:
     displayName: 'Install gate compilation dependencies'
 
   - script: |
+      echo "-------------"
+      ls $(Pipeline.Workspace)
+      echo "-------------"
+      ls $(Pipeline.Workspace)/software
+      echo "-------------"
+      echo $(ROOT_DIR)
+      echo "-------------"
+      source $(Pipeline.Workspace)/root/bin/bin/thisroot.sh
+      echo "-------------"
+      echo $(GEANT4_DIR)
+      echo "-------------"
+      source $(Pipeline.Workspace)/geant4/install/bin/geant4.sh
+      echo "-------------"
+
       if [ "$CACHE_RESTORED" == "true" ] || [ "$STRATEGY_NAME" == "Linux" ] || [ "$STRATEGY_NAME" == "macOS" ]; then
         cd $(Pipeline.Workspace)
         export ROOTSYS=$(ROOT_DIR)/bin/bin/root-config
