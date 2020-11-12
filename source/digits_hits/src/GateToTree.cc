@@ -277,7 +277,10 @@ void GateToTree::RecordBeginOfAcquisition()
         for(auto i = 0; i < VOLUMEID_SIZE; ++i)
         {
           std::stringstream ss;
-          ss << "volumeID[" << i << "]";
+          if (m_useRootFriendlyFormat)
+           ss << "volumeID_" << i;
+          else
+           ss << "volumeID[" << i << "]";
           m_manager_hits.write_variable(ss.str(), &m_volumeID[i]);
         }
       }
@@ -328,7 +331,10 @@ void GateToTree::RecordBeginOfAcquisition()
               if(!m_outputIDHasName[k][depth])
                 continue;
               std::stringstream ss;
-              ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+              if(m_useRootFriendlyFormat)
+               ss << system->GetOwnName() << "_" << m_outputIDName[k][depth];
+              else
+               ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
               m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
             }
           }
@@ -470,7 +476,10 @@ void GateToTree::RecordBeginOfAcquisition()
                 if(!m_outputIDHasName[k][depth])
                   continue;
                 std::stringstream ss;
-                ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+                if(m_useRootFriendlyFormat)
+                 ss << system->GetOwnName() << "_" << m_outputIDName[k][depth];
+                else
+                 ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
                 mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
               }
             }
@@ -1220,3 +1229,5 @@ void GateToTree::setCoincidenceDigiBranchesEnable(G4bool enable)
  for ( std::unordered_map<std::string, SaveDataParam>::iterator it = m_coincidencesParams_to_write.begin(); it != m_coincidencesParams_to_write.end(); ++it )
   it->second.setToSave(enable);
 }
+
+void GateToTree::setRootFriendlyFormat(G4bool enable) { m_useRootFriendlyFormat = enable; }

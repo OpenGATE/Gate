@@ -61,6 +61,7 @@ private:
   std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter_disable;
   std::unordered_map<G4UIcmdWithoutParameter*, G4String> m_mapscoincidences_cmdParameter_toTreeParameter_enable;
 
+  std::unique_ptr<G4UIcmdWithoutParameter> m_useRootFriendlyFormat;
 };
 
 

@@ -74,6 +74,7 @@ public:
   
   void setSingleDigiBranchesEnable(G4bool enable);
   void setCoincidenceDigiBranchesEnable(G4bool enable);
+  void setRootFriendlyFormat(G4bool enable);
 
   std::unordered_map<std::string, SaveDataParam> &getHitsParamsToWrite();
   std::unordered_map<std::string, SaveDataParam> &getOpticalParamsToWrite();
@@ -211,7 +212,7 @@ private:
   std::unordered_map<std::string, SaveDataParam> m_singlesParams_to_write;
   std::unordered_map<std::string, SaveDataParam> m_coincidencesParams_to_write;
 
-
+  G4bool m_useRootFriendlyFormat = false;
 
 public:
 

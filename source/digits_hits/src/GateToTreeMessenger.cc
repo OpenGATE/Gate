@@ -94,6 +94,8 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     c = new G4UIcmdWithoutParameter(s, this);
     m_mapscoincidences_cmdParameter_toTreeParameter_enable.emplace(c, name);
   }
+  
+  m_useRootFriendlyFormat.reset(new G4UIcmdWithoutParameter("/gate/output/tree/enableRootFriendlyFormat", this));
 }
 
 GateToTreeMessenger::~GateToTreeMessenger()
@@ -139,6 +141,9 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
    
   if(icommand == m_disableAllCoincidencesBranches.get())
    m_gateToTree->setCoincidenceDigiBranchesEnable(false);
+   
+  if(icommand == m_useRootFriendlyFormat.get())
+   m_gateToTree->setRootFriendlyFormat(true);
 
   auto c = static_cast<G4UIcmdWithoutParameter*>(icommand);
   if(m_maphits_cmdParameter_toTreeParameter_disable.count(c))
