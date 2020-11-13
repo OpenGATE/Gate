@@ -111,6 +111,9 @@ void GateRootHitBuffer::Clear()
   runID           = -1;
   axialPos        = 0.;
   rotationAngle   = 0.;
+  sourceType = 0;
+  decayType = 0;
+  gammaType = 0;
 
   strcpy (processName, " ");
   strcpy (comptonVolumeName," ");
@@ -159,6 +162,9 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   momDirZ         = aHit->GetMomentumDir().z();
   SetAxialPos(      aHit->GetScannerPos().z() );
   SetRotationAngle( aHit->GetScannerRotAngle() );
+  sourceType = aHit->GetSourceType();
+  decayType = aHit->GetDecayType();
+  gammaType = aHit->GetGammaType();
 
   // HDS : septal
 	septalNb = aHit->GetNSeptal();
@@ -228,7 +234,10 @@ GateCrystalHit* GateRootHitBuffer::CreateHit()
   aHit->SetScannerRotAngle( 	GetRotationAngle() );
   aHit->SetVolumeID(	      	aVolumeID);
   aHit->SetOutputVolumeID(  	anOutputVolumeID );
-	aHit->SetNSeptal( septalNb );  // HDS : septal penetration
+  aHit->SetNSeptal( septalNb );  // HDS : septal penetration
+  aHit->SetSourceType(sourceType);
+  aHit->SetDecayType(decayType);
+  aHit->SetGammaType(gammaType);  
   return aHit;
 }
 
@@ -275,6 +284,10 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
   Branch("RayleighVolName",   (void *)buffer.RayleighVolumeName,"RayleighVolName/C");
   // HDS : record septal penetration
   if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
+  
+  Branch("sourceType", &buffer.sourceType,"sourceType/I");
+  Branch("decayType", &buffer.decayType,"decayType/I");
+  Branch("gammaType", &buffer.gammaType,"gammaType/I");
 }
 
 void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
@@ -315,6 +328,9 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("comptVolName",&buffer.comptonVolumeName);
   hitTree->SetBranchAddress("RayleighVolName",&buffer.RayleighVolumeName);
   hitTree->SetBranchAddress("volumeID",buffer.volumeID);
+  hitTree->SetBranchAddress("sourceType",&buffer.sourceType);
+  hitTree->SetBranchAddress("decayType",&buffer.decayType);
+  hitTree->SetBranchAddress("gammaType",&buffer.gammaType);
 }
 
 

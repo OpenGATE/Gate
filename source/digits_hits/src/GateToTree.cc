@@ -103,6 +103,9 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("volumeIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("componentsIDs", SaveDataParam());
     m_hitsParams_to_write.emplace("systemID", SaveDataParam());
+    m_hitsParams_to_write.emplace("sourceType", SaveDataParam());
+    m_hitsParams_to_write.emplace("decayType", SaveDataParam());
+    m_hitsParams_to_write.emplace("gammaType", SaveDataParam());
 
     m_opticalParams_to_write.emplace("NumScintillation", SaveDataParam());
     m_opticalParams_to_write.emplace("NumCrystalWLS", SaveDataParam());
@@ -268,7 +271,6 @@ void GateToTree::RecordBeginOfAcquisition()
       if(m_hitsParams_to_write.at("RayleighVolName").toSave())
         m_manager_hits.write_variable("RayleighVolName", &m_RayleighVolumeName[0], MAX_NB_CHARACTER);
 
-
       if(m_hitsParams_to_write.at("volumeIDs").toSave())
       {
         for(auto i = 0; i < VOLUMEID_SIZE; ++i)
@@ -278,8 +280,6 @@ void GateToTree::RecordBeginOfAcquisition()
           m_manager_hits.write_variable(ss.str(), &m_volumeID[i]);
         }
       }
-
-
 
       if(m_hitsParams_to_write.at("sourcePosX").toSave())
         m_manager_hits.write_variable("sourcePosX", &m_sourcePosX[0]);
@@ -337,6 +337,15 @@ void GateToTree::RecordBeginOfAcquisition()
 
       if(m_hitsParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
         m_manager_hits.write_variable("systemID", &m_systemID);
+        
+      if(m_hitsParams_to_write.at("sourceType").toSave())
+        m_manager_hits.write_variable("sourceType", &m_sourceType);
+        
+      if(m_hitsParams_to_write.at("decayType").toSave())
+        m_manager_hits.write_variable("decayType", &m_decayType);
+        
+      if(m_hitsParams_to_write.at("gammaType").toSave())
+        m_manager_hits.write_variable("gammaType", &m_gammaType);
 
 
       m_manager_hits.write_header();
@@ -401,13 +410,7 @@ void GateToTree::RecordBeginOfAcquisition()
 
     m_manager_optical.write_header();
 
-    }
-
-
-
-
-
-
+  }
 
     for(auto &&m: m_mmanager_singles)
     {
@@ -744,6 +747,11 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       hit->GetVolumeID().StoreDaughterIDs(m_volumeID, VOLUMEID_SIZE);
 
     m_photonID = hit->GetPhotonID();
+    
+    m_sourceType = hit->GetSourceType();
+    m_decayType = hit->GetDecayType();
+    m_gammaType = hit->GetGammaType();
+    
     m_manager_hits.fill();
   }
 
@@ -757,8 +765,6 @@ void GateToTree::RecordEndOfEvent(const G4Event *event)
       m_singles_to_collectionID.emplace(m.first, collectionID);
     }
   }
-
-
 
   for(auto&& m: m_mmanager_singles)
   {

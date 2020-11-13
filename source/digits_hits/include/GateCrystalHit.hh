@@ -94,12 +94,17 @@ private:
 
 
 // AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume
-   G4String m_Postprocess;         // PostStep process 
-   G4double m_energyIniTrack;         // Initial energy of the track
-   G4double m_energyFin;         // final energy of the particle
-   G4double m_sourceEnergy;//AE
-   G4int m_sourcePDG;//AE
-   G4int m_nCrystalConv;    // # of pair creation process in the crystal occurred to the photon
+  G4String m_Postprocess;         // PostStep process 
+  G4double m_energyIniTrack;         // Initial energy of the track
+  G4double m_energyFin;         // final energy of the particle
+  G4double m_sourceEnergy;//AE
+  G4int m_sourcePDG;//AE
+  G4int m_nCrystalConv;    // # of pair creation process in the crystal occurred to the photon
+  
+  //Additional information from ExtendedVSource
+  G4int m_sourceType = 0;//0 means 'by default not known'; sourceType says what type of positronium (Ps) is used: pPs, oPs 
+  G4int m_decayType = 0;//0 means 'by default not known'; decayType says what type of Ps decay is used: standard (without prompt gamma), deexcitation (with prompt gamma)
+  G4int m_gammaType = 0;//0 means 'by default not known'; gammaType says what type of gamma is emitted: annihilation, prompt, other
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -240,7 +245,14 @@ private:
       inline void  SetZPos(const G4double & z)    { m_posz = z; }
       inline const G4double& GetZPos() const      { return m_posz; }
       /////--------------------------------------------------------------
-
+      inline void SetSourceType(G4int value) { m_sourceType = value; }
+      inline G4int GetSourceType() const { return m_sourceType; }
+      
+      inline void SetDecayType(G4int value) { m_decayType = value; }
+      inline G4int GetDecayType() const { return m_decayType; }
+      
+      inline void SetGammaType(G4int value){ m_gammaType = value; }
+      inline G4int GetGammaType() const { return m_gammaType; }
 };
 
 typedef G4THitsCollection<GateCrystalHit> GateCrystalHitsCollection;
