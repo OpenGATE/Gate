@@ -1067,7 +1067,9 @@ In hits, variables that can be disabled are::
     sourcePosX,sourcePosY,sourcePosZ,
     nPhantomCompton,nCrystalCompton,
     nPhantomRayleigh,nCrystalRayleigh,
-    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,photonID #/!\ depend on the system type
+    gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,photonID, #/!\ depend on the system type
+    gammaType,decayType,sourceType # for Extended source
+    
 
 
 In Singles, variables that can be disabled are::
