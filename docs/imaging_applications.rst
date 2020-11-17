@@ -11,5 +11,6 @@ Imaging application
    data_output_management
    generating_and_tracking_optical_photons
    compton_camera_imaging_simulations
+   third_party_reconstruction_software
 
 `list of examples <https://github.com/OpenGATE/GateContrib/tree/master/imaging>`_
