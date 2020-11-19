@@ -419,7 +419,7 @@ void GateComptonCameraActor::Construct()
        //mFileEvent.write_variable("nElectronsEscaped", &nElectronEscapedEvt);
        mFileEvent.write_variable("energyElectronsEscaped", &energyElectronEscapedEvt);
        //Is exiting a volume
-       mFileEvent.write_variable("isElectronsExistingSD", &IseExitingSDVol);
+       mFileEvent.write_variable("isElectronsExitingSD", &IseExitingSDVol);
        //which volume (entering or exiting)
        mFileEvent.write_variable("eEscpVolName", eEspVolName, sizeof(eEspVolName));
 
