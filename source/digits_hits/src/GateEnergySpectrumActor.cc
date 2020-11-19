@@ -92,6 +92,7 @@ GateEnergySpectrumActor::~GateEnergySpectrumActor()
 {
   GateDebugMessageInc("Actor",4,"~GateEnergySpectrumActor() -- begin\n");
   GateDebugMessageDec("Actor",4,"~GateEnergySpectrumActor() -- end\n");
+  delete pMessenger;
 }
 //-----------------------------------------------------------------------------
 
@@ -283,14 +284,6 @@ void GateEnergySpectrumActor::SaveData()
       {
           SaveAsText((*it),mSaveFilename);
       }
-    ////SaveAsText(pEnergySpectrumNbPart, mSaveFilename);
-    ////SaveAsText(pEnergySpectrumFluenceCos, mSaveFilename);
-    //SaveAsText(pEnergySpectrumFluenceTrack, mSaveFilename);
-    ////SaveAsText(pEnergyEdepSpectrum, mSaveFilename);
-    ////SaveAsText(pEdep, mSaveFilename);
-    ////// SaveAsText(pEdepTime, mSaveFilename); no TH2D
-    ////SaveAsText(pEdepTrack, mSaveFilename);
-    ////SaveAsText(pDeltaEc, mSaveFilename);
   }
   pTfile->Close();
 }
@@ -304,43 +297,6 @@ void GateEnergySpectrumActor::ResetData()
       {
           (*it)->Reset();
       }
-  //if (mEnableEnergySpectrumNbPartFlag){
-    //pEnergySpectrumNbPart->Reset();
-  //}
-  
-  //if (mEnableEnergySpectrumFluenceCosFlag){
-      //pEnergySpectrumFluenceCos->Reset();
-  //}
-  
-  //if (mEnableEnergySpectrumFluenceTrackFlag){
-      //pEnergySpectrumFluenceTrack->Reset();
-  //}
-  //if (mEnableEnergySpectrumEdepFlag){
-      //pEnergyEdepSpectrum->Reset();
-  //}
-   
-  //if (mEnableLETSpectrumFlag) {
-      //pLETSpectrum->Reset();
-  //}
-  //if (mEnableQSpectrumFlag){
-      //pQSpectrum->Reset();
-  //}
-  
-  //if (mEnableEdepHistoFlag){
-      //pEdep->Reset();
-  //}
-  // timeHisto is a 2D hist - others are 1D
-  //if (mEnableEdepTimeHistoFlag){
-      //pEdepTime->Reset();
-  //}
-  
-  //if (mEnableEdepTrackHistoFlag){
-      //pEdepTrack->Reset();
-  //}
-  
-  //if (mEnableElossHistoFlag){
-      //pDeltaEc->Reset();
-  //}
   nEvent = 0;
 }
 //-----------------------------------------------------------------------------
@@ -362,18 +318,26 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
   newEvt = true;
   edepEvent = 0.;
   tof  = 0;
+  
+   //G4cout<<"======================================"<<G4endl;
+   //G4cout<<"=========== Pre Event Action ========="<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
+void GateEnergySpectrumActor::EndOfEventAction(const G4Event* evH)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
   
     if (edep > 0) {
         if (mEnableEdepHistoFlag){
             pEdep->Fill(edepEvent/MeV);
+              //G4cout<<"--------------Post Event Action ------------"<<G4endl;
+              ////G4cout<<"Particle Name: " << evH->GetUserInformation()->print() <<G4endl;
+              //G4cout<<"EdepEvent [eV]: " << edepEvent/eV<<G4endl;
+              //G4cout<<"=========== End Event  ==============="<<G4endl;
+              //G4cout<<"======================================"<<G4endl;
         }
         if (mEnableEdepTimeHistoFlag){
             pEdepTime->Fill(tof/ns,edepEvent/MeV);
@@ -395,6 +359,10 @@ void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G
   newTrack = true;
   if (t->GetParentID()==1) nTrack++;
   edepTrack = 0.;
+  //G4cout<<"--------------- Pre User Tracking Action ---------------"<<G4endl;
+  //G4cout<<"Particle Name: " << t->GetParticleDefinition()->GetParticleName() <<G4endl;
+  //G4cout<<"EdepTrack [eV]: " << edepTrack/eV<<G4endl;
+  //G4cout<< "-------------------------------------------------"<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -406,7 +374,14 @@ void GateEnergySpectrumActor::PostUserTrackingAction(const GateVVolume *, const 
   double eloss = Ei-Ef;
   if (mEnableElossHistoFlag && eloss > 0) pDeltaEc->Fill(eloss/MeV,t->GetWeight() );
   
-  if (mEnableEdepTrackHistoFlag && edepTrack > 0)  pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
+  if (mEnableEdepTrackHistoFlag && edepTrack > 0)  {
+      pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
+  //G4cout<<"--------------- Post User Tracking Action ---------------"<<G4endl;
+  //G4cout<<"Particle Name: " << t->GetParticleDefinition()->GetParticleName() <<G4endl;
+  //G4cout<<"EdepTrack [eV]: " << edepTrack/eV<<G4endl;
+  //G4cout<< "-------------------------------------------------"<<G4endl;
+  //G4cout<< << <<G4endl;
+    }
 }
 //-----------------------------------------------------------------------------
 
@@ -421,6 +396,8 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   else sumM3+=step->GetTotalEnergyDeposit();
   G4double edep = step->GetTotalEnergyDeposit();
   edepEvent += edep;
+  
+  //G4cout<<"  Edep [eV]: " << edep/eV<<G4endl;
   edepTrack += edep;
   
 
@@ -444,6 +421,9 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
     }
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   Ei=step->GetPreStepPoint()->GetKineticEnergy();
+  
+  
+  //G4cout<<"  Eloss [eV]: " << Ei/eV -Ef/eV<<G4endl;
   if(newTrack){
     
 

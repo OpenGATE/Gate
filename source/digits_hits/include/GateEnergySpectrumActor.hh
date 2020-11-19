@@ -182,10 +182,10 @@ protected:
   double sumM2;
   double sumM3;
 
-  double edep;
+  G4double edep;
   double tof;
-  double edepTrack;
-  double edepEvent;
+  G4double edepTrack;
+  G4double edepEvent;
 
   GateActorMessenger* pMessenger;
 

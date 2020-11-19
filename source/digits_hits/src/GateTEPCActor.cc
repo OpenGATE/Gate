@@ -46,6 +46,7 @@ GateTEPCActor::~GateTEPCActor()
 {
   GateDebugMessageInc("Actor",4,"~GateTEPCActor() -- begin\n");
   GateDebugMessageDec("Actor",4,"~GateTEPCActor() -- end\n");
+  delete pMessenger;
 }
 //-----------------------------------------------------------------------------
 
@@ -103,6 +104,10 @@ void GateTEPCActor::Construct()
   // WARNING : the attached volume MUST be a GateSphere
   GateMessage("Actor",0, "WARNING: For now, only spherical volumes are compatible with the TEPCactor. Please check that the attached volume is a 'sphere'." << G4endl);
   effectiveChord = (2.0 / 3.0) * 2.0 * ((GateSphere *)GetVolume())->GetSphereRmax()  * GetVolume()->GetMaterial()->GetDensity() / (g/cm3); // tested by A.Resch 29thOct2020: works and is correct
+  G4cout<<"Effective chord length mm: " << effectiveChord<<G4endl;
+  G4cout<<"Effective chord length um: "<< (effectiveChord / um)<<G4endl;
+  G4cout<<"Radius Sphere: " << ((GateSphere *)GetVolume())->GetSphereRmax() <<G4endl;
+  G4cout<<"Density: " << GetVolume()->GetMaterial()->GetDensity()/ (g/cm3) <<G4endl;
 }
 //-----------------------------------------------------------------------------
 
