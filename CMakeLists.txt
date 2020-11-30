@@ -265,6 +265,12 @@ ELSE()
 ENDIF()
 
 #=========================================================
+#Link lfreetype with Homebrew and Mac
+if(APPLE AND NOT CMAKE_CROSSCOMPILING AND NOT DEFINED ENV{LDFLAGS} AND EXISTS "/usr/local/lib")
+  link_directories("/usr/local/lib")
+endif()
+
+#=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 ADD_LIBRARY(GateLib OBJECT ${sources} ${headers})
 TARGET_LINK_LIBRARIES(GateLib ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${TORCH_LIBRARIES} ${ITK_LIBRARIES} pthread)
