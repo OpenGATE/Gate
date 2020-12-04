@@ -1373,23 +1373,38 @@ void GateFixedForcedDetectionActor::SetGeometryFromInputRTKGeometryFile(GateVSou
     GateError("Error: SetGeometryFromInputRTKGeometryFile: you have more runs than what file " << mInputRTKGeometryFilename << " describes.");
     }
 
-  /*  Source */
+  // RTK source and detector parameters
+  const double px = mInputGeometry->GetProjectionOffsetsX()[run->GetRunID()];
+  const double py = mInputGeometry->GetProjectionOffsetsY()[run->GetRunID()];
+  const double sdd = mInputGeometry->GetSourceToDetectorDistances()[run->GetRunID()];
+  const double sx = mInputGeometry->GetSourceOffsetsX()[run->GetRunID()];
+  const double sy = mInputGeometry->GetSourceOffsetsY()[run->GetRunID()];
+  const double sid = mInputGeometry->GetSourceToIsocenterDistances()[run->GetRunID()];
+
   if (source->GetRelativePlacementVolume() != "world")
     {
     GateError("Error: SetGeometryFromInputRTKGeometryFile" << "expects a source attached to the world.");
     }
   G4ThreeVector srcTrans;
-  srcTrans[0] = mInputGeometry->GetSourceOffsetsX()[run->GetRunID()];
-  srcTrans[1] = mInputGeometry->GetSourceOffsetsY()[run->GetRunID()];
-  srcTrans[2] = mInputGeometry->GetSourceToIsocenterDistances()[run->GetRunID()];
+  srcTrans[0] = sx;
+  srcTrans[1] = sy;
+  srcTrans[2] = sid;
   if (source->GetPosDist()->GetPosDisType() == "Point")
     {
     source->GetPosDist()->SetCentreCoords(srcTrans);
     } /*  point */
   else
     {
-    G4ThreeVector offset = source->GetPosDist()->GetCentreCoords()
-                           - source->GetAngDist()->GetFocusPointCopy();
+    // Source is assumed to be a rectangle focused on the detector
+    G4ThreeVector offset;
+    // The z offset is set by Gate macro and cannot be inferred from RTK's geometry
+    offset[2] = source->GetPosDist()->GetCentreCoords()[2]
+                - source->GetAngDist()->GetFocusPointCopy()[2];
+    // The following two lines aim at moving the emitting rectangle according
+    // to the movement of the detector, i.e., adjust the collimation
+    offset[0] = -px * offset[2]/sdd;
+    offset[1] = -py * offset[2]/sdd;
+
     source->GetAngDist()->SetFocusPoint(srcTrans);
     source->GetAngDist()->SetFocusPointCopy(srcTrans);
     source->GetPosDist()->SetCentreCoords(srcTrans + offset);
@@ -1402,9 +1417,9 @@ void GateFixedForcedDetectionActor::SetGeometryFromInputRTKGeometryFile(GateVSou
     }
   G4ThreeVector detTrans;
   /* FIXME: detector->GetOrigin()? */
-  detTrans[0] = mInputGeometry->GetProjectionOffsetsX()[run->GetRunID()];
-  detTrans[1] = mInputGeometry->GetProjectionOffsetsY()[run->GetRunID()];
-  detTrans[2] = srcTrans[2] - mInputGeometry->GetSourceToDetectorDistances()[run->GetRunID()];
+  detTrans[0] = px;
+  detTrans[1] = py;
+  detTrans[2] = srcTrans[2] - sdd;
   detector->GetPhysicalVolume()->SetTranslation(detTrans);
 
   /*  Create rotation matrix and rotate CT */
