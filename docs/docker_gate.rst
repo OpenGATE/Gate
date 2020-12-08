@@ -7,14 +7,10 @@ GATE using Docker
    :depth: 15
    :local:
 
-.. figure:: vgate_9.0_scshot.png
-   :alt: Figure 1: vgate_9.0_scshot
-   :name: vgate_9.0_scshot
-
 GATE 9.0 on docker
 ------------------
 
-A docker image for gate version 9.0 is available here: `Click here to download GATE 9.0 on docker<https://hub.docker.com/r/opengatecollaboration/gate>`_
+A docker image for gate version 9.0 is available here: `Click here to download GATE 9.0 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
 
 Example to install GATE with Docker on Amazon Web Services (AWS) (Amazon Linux machine):
 ---------------------------------------------------------------------------------------
