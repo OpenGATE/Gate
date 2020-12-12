@@ -223,11 +223,6 @@ void GateElectricMagTabulatedField3D::GetFieldValue(const double point[4],
   } else{
         // Full 3-dimensional version
 
-        // Set first three components to 0 when only wanting E-Field
-        // Efield[0] = 0.0;
-        // Efield[1] = 0.0;
-        // Efield[2] = 0.0;
-
         EBfield[0] =
           xBField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
           xBField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
