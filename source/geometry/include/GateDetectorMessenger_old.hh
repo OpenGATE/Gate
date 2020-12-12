@@ -46,8 +46,6 @@ class GateDetectorMessenger: public G4UImessenger
     G4UIcmdWith3VectorAndUnit* pElectFieldCmd;
     G4UIcmdWithAString* 	   pElectTabulatedField3DCmd;
 
-    G4UIcmdWithAString* 	   pElectMagTabulatedField3DCmd;
-
     G4UIcmdWithAString*        pMagIntegratorStepperCmd;
     G4UIcmdWithADoubleAndUnit* pMagStepMinimumCmd;
     G4UIcmdWithADoubleAndUnit* pMagDeltaChordCmd;

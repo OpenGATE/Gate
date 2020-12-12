@@ -78,7 +78,6 @@ public:
   virtual void SetMagFieldTabulatedFile (G4String);
   virtual void SetElectField (G4ThreeVector);
   virtual void SetElectFieldTabulatedFile (G4String);
-  virtual void SetElectMagFieldTabulatedFile (G4String);
   virtual void BuildField ();
 
   void SetMagStepMinimum(G4double);
@@ -196,19 +195,14 @@ private:
   G4ThreeVector      e_electFieldValue;
   G4String           e_electFieldTabulatedFile;
 
-  G4String           em_electmagFieldTabulatedFile;
-
   G4bool             m_magFieldUniform;
   G4bool             m_magFieldTabulated;
 
   G4bool             e_electFieldUniform;
   G4bool             e_electFieldTabulated;
 
-  G4bool             em_electmagFieldTabulated;
-
   G4MagneticField*   m_MagField;
   G4ElectricField*   e_ElecField;
-  G4ElectroMagneticField*   em_ElecMagField; 
 
   G4Mag_UsualEqRhs* fEquation_B;
   G4EqMagElectricField* fEquation_E;
