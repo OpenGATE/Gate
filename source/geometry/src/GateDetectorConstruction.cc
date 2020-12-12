@@ -23,6 +23,7 @@
 #include "GateARFSD.hh"
 #include "GateMagTabulatedField3D.hh"
 #include "GateElectricTabulatedField3D.hh"
+#include "GateElectricMagTabulatedField3D.hh"
 
 #include "globals.hh"
 #include "G4Navigator.hh"
@@ -50,7 +51,8 @@ GateDetectorConstruction::GateDetectorConstruction()
      e_electFieldValue(0),
      m_magFieldUniform(false), m_magFieldTabulated(false),
 	 e_electFieldUniform(false), e_electFieldTabulated(false),
-	 m_MagField(0), e_ElecField(0),
+   em_electmagFieldTabulated(false), 
+	 m_MagField(0), e_ElecField(0), em_ElecMagField(0),
 	 fEquation_B(0), fEquation_E(0),
 	 fFieldMgr(0), fStepper(0),
 	 fMinStep(1*um),
@@ -194,6 +196,12 @@ void GateDetectorConstruction::SetElectFieldTabulatedFile(G4String filenameField
   e_electFieldTabulated = true;
 }
 //---------------------------------------------------------------------------------
+void GateDetectorConstruction::SetElectMagFieldTabulatedFile(G4String filenameFieldTable)
+{
+  em_electmagFieldTabulatedFile = filenameFieldTable;
+  em_electmagFieldTabulated = true;
+}
+//---------------------------------------------------------------------------------
 void GateDetectorConstruction::SetMagField(G4ThreeVector fieldValue)
 {
   m_magFieldValue = fieldValue;
@@ -300,6 +308,36 @@ void GateDetectorConstruction::SetField(){
 										<< fIntegratorStepper << Gateendl);
 	}
 
+  if (em_electmagFieldTabulated){
+
+		fEquation_E = new G4EqMagElectricField(em_ElecMagField);
+
+		if (fIntegratorStepper == "ExplicitEuler"){
+		  fStepper  = new G4ExplicitEuler (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "ImplicitEuler") {
+		  fStepper  = new G4ImplicitEuler (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleRunge") {
+		  fStepper  = new G4SimpleRunge (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else if (fIntegratorStepper == "SimpleHeum") {
+		  fStepper  = new G4SimpleHeum (fEquation_E, nvarOfIntegratorStepper);
+		}
+		else {
+		  fStepper  = new G4ClassicalRK4 (fEquation_E,nvarOfIntegratorStepper);
+		}
+
+		fFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+		G4MagInt_Driver  *pIntgrDriver_EB = new G4MagInt_Driver(1*mm, fStepper, nvarOfIntegratorStepper);
+		G4ChordFinder *fChordFinder_EB = new G4ChordFinder(pIntgrDriver_EB);
+		fFieldMgr -> SetChordFinder(fChordFinder_EB);
+		fFieldMgr->SetDetectorField(em_ElecMagField);
+
+		GateMessage("Core", 0, " THE FOLLOWING INTEGRATOR STEPPER FOR ELECTROMAGNETIC FIELD HAS BEEN ACTIVATED: "
+										<< fIntegratorStepper << Gateendl);
+	}
+
 	fFieldMgr->GetChordFinder()->SetDeltaChord(fDeltaChord);
 	fFieldMgr->SetDeltaIntersection(fDeltaIntersection);
 	fFieldMgr->SetDeltaOneStep(fDeltaOneStep);
@@ -357,6 +395,12 @@ void GateDetectorConstruction::BuildField()
 
       fFieldMgr = new G4FieldManager();
 	  e_ElecField = new GateElectricTabulatedField3D(e_electFieldTabulatedFile);
+	  SetField();
+  
+  } else if (em_electmagFieldTabulated) {
+
+      fFieldMgr = new G4FieldManager();
+	  em_ElecMagField = new GateElectricMagTabulatedField3D(em_electmagFieldTabulatedFile);
 	  SetField();
     }
 }
