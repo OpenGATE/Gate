@@ -117,6 +117,7 @@ public:
   void SetEdepTrackHistoCalc(bool b) {mEnableEdepTrackHistoFlag = b; }
   void SetElossHistoCalc(bool b) {mEnableElossHistoFlag = b; }
   
+  void SetEdepStepHistoCalc(bool b) {mEnableEdepStepHistoFlag = b; }
   
   void SetLogBinning(bool b) {mEnableLogBinning = b; }
   void SetEnergyPerUnitMass(bool b) {mEnableEnergyPerUnitMass = b; }
@@ -145,6 +146,7 @@ protected:
   TH1D * pEdep;
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
+  TH1D * pEdepStep;
   
   std::list<TH1D*> allEnabledTH1DHistograms;
 
@@ -202,6 +204,7 @@ protected:
   bool mEnableEnergySpectrumFluenceCosFlag;
   bool mEnableEnergySpectrumFluenceTrackFlag;
   bool mEnableEnergySpectrumEdepFlag;
+  bool mEnableEdepStepHistoFlag;
   bool mEnableEdepHistoFlag;
   bool mEnableEdepTimeHistoFlag;
   bool mEnableEdepTrackHistoFlag;

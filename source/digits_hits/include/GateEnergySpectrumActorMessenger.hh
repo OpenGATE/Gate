@@ -76,6 +76,7 @@ protected:
   G4UIcmdWithABool          * pEnableEdepHistoCmd;
   G4UIcmdWithABool          * pEnableEdepTimeHistoCmd;
   G4UIcmdWithABool          * pEnableEdepTrackHistoCmd;
+  G4UIcmdWithABool          * pEnableEdepStepHistoCmd;
   G4UIcmdWithABool          * pEnableElossHistoCmd;
   
   G4UIcmdWithABool          * pEnableLogBinningCMD;

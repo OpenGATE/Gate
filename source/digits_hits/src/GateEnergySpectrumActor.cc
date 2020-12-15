@@ -71,6 +71,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableEdepHistoFlag = false;
   mEnableEdepTimeHistoFlag = false;
   mEnableEdepTrackHistoFlag = false;
+  mEnableEdepStepHistoFlag = false;
   mEnableElossHistoFlag = false;
   
   mEnableLogBinning = false;  
@@ -173,6 +174,11 @@ void GateEnergySpectrumActor::Construct()
           pEdepTrack->SetXTitle("E_{dep} (MeV)");
           allEnabledTH1DHistograms.push_back(pEdepTrack);
           }       
+          if (mEnableEdepStepHistoFlag){
+          pEdepStep  = new TH1D("edepStepHisto","Energy deposited per step",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+          pEdepStep->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdepStep);
+          }    
   }
   else
   {
@@ -209,6 +215,11 @@ void GateEnergySpectrumActor::Construct()
           pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",mENBins,eBinV );
           pEdepTrack->SetXTitle("E_{dep} (MeV)");
           allEnabledTH1DHistograms.push_back(pEdepTrack);
+          } 
+      if (mEnableEdepStepHistoFlag){
+          pEdepStep  = new TH1D("edepStepHisto","Energy deposited per step",mENBins,eBinV );
+          pEdepStep->SetXTitle("E_{dep} (MeV)");
+          allEnabledTH1DHistograms.push_back(pEdepStep);
           } 
   }
 
@@ -399,6 +410,14 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   
   //G4cout<<"  Edep [eV]: " << edep/eV<<G4endl;
   edepTrack += edep;
+    if (mEnableEdepStepHistoFlag && edep > 0)  {
+      pEdepStep->Fill(edep/MeV );
+  //G4cout<<"--------------- Post User Tracking Action ---------------"<<G4endl;
+  //G4cout<<"Particle Name: " << t->GetParticleDefinition()->GetParticleName() <<G4endl;
+  //G4cout<<"EdepTrack [eV]: " << edepTrack/eV<<G4endl;
+  //G4cout<< "-------------------------------------------------"<<G4endl;
+  //G4cout<< << <<G4endl;
+    }
   
 
   if (newEvt) {
