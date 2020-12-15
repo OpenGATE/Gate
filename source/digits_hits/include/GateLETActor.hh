@@ -46,6 +46,8 @@ public:
   void SetLETType(G4String s) { mAveragingType = s; }
   void SetMaterial(G4String s) { mSetMaterial = s; }
   void SetCutVal(G4double d) { mCutVal = d; }
+  void SetLETthrMin(G4double d) { mLETthrMin = d; }
+  void SetLETthrMax(G4double d) { mLETthrMax = d; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -87,6 +89,10 @@ protected:
   
   bool mKGrosswendt;
   G4double mCutVal;
+  G4double mLETthrMin;
+  G4double mLETthrMax;
+  
+  
   double k_FitParWAir;
   bool mIsSwairApprox;
   bool mIsMeanEnergyToProduceIonPairInAir;

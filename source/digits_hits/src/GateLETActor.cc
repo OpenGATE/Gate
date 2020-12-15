@@ -46,6 +46,9 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   //mRestrictedLET = false;
   mCutVal = DBL_MAX ; // 10*keV;
   
+  mLETthrMin = 0.;
+  mLETthrMax = DBL_MAX; 
+  
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -330,6 +333,8 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     GateDebugMessage("Actor", 5, "GateLETActor pixel index < 0 : do nothing\n");
     return;
   }
+  
+
 
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
   G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
@@ -364,6 +369,14 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
         edep *=SPR_ToWater;
         dedx *=SPR_ToWater;
     }
+  }
+  
+    // max and min LET thresholds
+  if ( dedx < mLETthrMin) {
+      return;
+  }
+  if (dedx > mLETthrMax) {
+      return;
   }
 
 

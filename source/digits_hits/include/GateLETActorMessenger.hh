@@ -37,6 +37,8 @@ protected:
   G4UIcmdWithABool * pSetParallelCalculationCmd;
   G4UIcmdWithAString * pSetOtherMaterialCmd; 
   G4UIcmdWithADoubleAndUnit * pCutValCmd;
+  G4UIcmdWithADoubleAndUnit * pThrMinCmd;
+  G4UIcmdWithADoubleAndUnit * pThrMaxCmd;
 };
 
 #endif /* end #define GATELETACTORMESSENGER_HH*/

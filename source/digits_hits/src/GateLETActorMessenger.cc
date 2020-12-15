@@ -68,6 +68,19 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   pCutValCmd->SetParameterName("CutValue", false);
   pCutValCmd->SetDefaultUnit("MeV");
   
+  n = base+"/setLETthresholdMin";
+  pThrMinCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("Set cut value for restricted LET");
+  pThrMinCmd->SetGuidance(guid);
+  pThrMinCmd->SetParameterName("LETthresholdMin", false);
+  pThrMinCmd->SetDefaultUnit("MeV/mm");
+  
+  n = base+"/setLETthresholdMax";
+  pThrMaxCmd = new G4UIcmdWithADoubleAndUnit(n, this);
+  guid = G4String("Set cut value for restricted LET");
+  pThrMaxCmd->SetGuidance(guid);
+  pThrMaxCmd->SetParameterName("LETthresholdMax", false);
+  pThrMaxCmd->SetDefaultUnit("MeV/mm");
 }
 //-----------------------------------------------------------------------------
 
@@ -81,6 +94,8 @@ void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pAveragingTypeCmd) pLETActor->SetLETType(newValue);
   if (cmd == pSetOtherMaterialCmd) pLETActor->SetMaterial(newValue);
   if (cmd == pCutValCmd) pLETActor->SetCutVal(pCutValCmd->GetNewDoubleValue(newValue));
+  if (cmd == pThrMinCmd) pLETActor->SetLETthrMin(pThrMinCmd->GetNewDoubleValue(newValue));
+  if (cmd == pThrMaxCmd) pLETActor->SetLETthrMax(pThrMaxCmd->GetNewDoubleValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
