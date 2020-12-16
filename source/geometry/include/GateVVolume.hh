@@ -78,7 +78,7 @@ public :
   virtual void PropagateGlobalSensitiveDetector() {}
 
 protected :
-  //! Pure virtual mathod, will be defined in concrete
+  //! Pure virtual method, will be defined in concrete
   //! classes GateBox, GateCylinder ...
   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool)=0;
   virtual void ConstructOwnPhysicalVolume(G4bool flagUpdateOnly);
