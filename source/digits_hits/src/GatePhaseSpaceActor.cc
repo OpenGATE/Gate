@@ -105,13 +105,12 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 GatePhaseSpaceActor::~GatePhaseSpaceActor()
 {
   GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin\n");
-  // if(pIAEAFile) fclose(pIAEAFile);
-  //  pIAEAFile = 0;
+
   free(pIAEAheader);
   free(pIAEARecordType);
   pIAEAheader = 0;
   pIAEARecordType = 0;
-  mFile.close();
+
   delete pMessenger;
   GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end\n");
 }
@@ -125,12 +124,14 @@ void GatePhaseSpaceActor::Construct()
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
+  EnableRecordEndOfAcquisition(true);
 
   // bEnableEmissionPoint=true;
   if (bEnablePrimaryEnergy || bEnableEmissionPoint || bEnableSpotID) EnableBeginOfEventAction(true);
 
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
+  EnableBeginOfRunAction(true);
 
   G4String extension = getExtension(mSaveFilename);
 
@@ -169,78 +170,106 @@ void GatePhaseSpaceActor::Construct()
       GateWarning("'Mass' is not available in IAEA phase space.");
     }
     if ( pIAEAheader->set_record_contents(pIAEARecordType) == FAIL) GateError("Record contents not setted.");
-  } else  {
-    if(extension == "root") {
-      mFileType = "rootFile";
-      mFile.add_file(mSaveFilename,  "root");
-    }
-    else if(extension == "npy") {
-      mFileType = "npyFile";
-      mFile.add_file(mSaveFilename, "npy");
-    }
-    else if(extension == "txt") {
-      mFileType = "txtFile";
-      mFile.add_file(mSaveFilename, "txt");
-    }
-    else
-      GateError("Unknown extension for phasespace");
+  } else {
+      if (extension == "root") {
+          mFileType = "rootFile";
+      } else if (extension == "npy") {
+          mFileType = "npyFile";
+      } else if (extension == "txt") {
+          mFileType = "txtFile";
+      } else
+          GateError("Unknown extension for phasespace");
+  }
+}
+// --------------------------------------------------------------------
 
-    mFile.set_tree_name("PhaseSpace");
+void GatePhaseSpaceActor::InitTree()
+{
+    mFile = new GateOutputTreeFileManager();
 
+    if (mFileType == "npyFile")
+        mFile->add_file(mSaveFilename, "npy");
+    if (mFileType == "rootFile")
+        mFile->add_file(mSaveFilename, "root");
+    if (mFileType == "txtFile")
+        mFile->add_file(mSaveFilename, "txt");
 
-    if (EnableCharge) mFile.write_variable("AtomicNumber", &Za);
+    mFile->set_tree_name("PhaseSpace");
 
-    if (EnableElectronicDEDX) mFile.write_variable("ElectronicDEDX", &elecDEDX);
-    if (EnableElectronicDEDX) mFile.write_variable("StepLength", &stepLength);
-    if (EnableElectronicDEDX) mFile.write_variable("Edep", &edep);
-    if (EnableTotalDEDX) mFile.write_variable("TotalDEDX", &totalDEDX);
+    if (EnableCharge) mFile->write_variable("AtomicNumber", &Za);
 
-    if (EnableEkine) mFile.write_variable("Ekine", &e);
-    if (EnableElectronicDEDX) mFile.write_variable("Ekpost", &ekPost);
-    if (EnableElectronicDEDX) mFile.write_variable("Ekpre", &ekPre);
-    if (EnableWeight) mFile.write_variable("Weight", &w);
-    if (EnableTime || EnableLocalTime) mFile.write_variable("Time", &t);
-    if (EnableMass) mFile.write_variable("Mass", &m); // in MeV/c2
-    if (EnableXPosition) mFile.write_variable("X", &x);
-    if (EnableYPosition) mFile.write_variable("Y", &y);
-    if (EnableZPosition) mFile.write_variable("Z", &z);
-    if (EnableXDirection) mFile.write_variable("dX", &dx);
-    if (EnableYDirection) mFile.write_variable("dY", &dy);
-    if (EnableZDirection) mFile.write_variable("dZ", &dz);
+    if (EnableElectronicDEDX) mFile->write_variable("ElectronicDEDX", &elecDEDX);
+    if (EnableElectronicDEDX) mFile->write_variable("StepLength", &stepLength);
+    if (EnableElectronicDEDX) mFile->write_variable("Edep", &edep);
+    if (EnableTotalDEDX) mFile->write_variable("TotalDEDX", &totalDEDX);
 
-    if (EnablePartName /*&& bEnableCompact==false*/) mFile.write_variable("ParticleName", pname, sizeof(pname) );
-    if (EnableProdVol && bEnableCompact == false) mFile.write_variable("ProductionVolume", vol, sizeof(vol));
-    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("CreatorProcess", creator_process, sizeof(creator_process));
-    if (EnableProdProcess && bEnableCompact == false) mFile.write_variable("ProcessDefinedStep", pro_step, sizeof(pro_step));
-    if (bEnableCompact == false) mFile.write_variable("TrackID", &trackid);
-    if (bEnableCompact == false) mFile.write_variable("ParentID", &parentid);
-    if (bEnableCompact == false) mFile.write_variable("EventID", &eventid);
-    if (bEnableCompact == false) mFile.write_variable("RunID", &runid);
-    if (bEnablePrimaryEnergy) mFile.write_variable("PrimaryEnergy", &bPrimaryEnergy);
-    if (bEnablePDGCode) mFile.write_variable("PDGCode", &bPDGCode);
+    if (EnableEkine) mFile->write_variable("Ekine", &e);
+    if (EnableElectronicDEDX) mFile->write_variable("Ekpost", &ekPost);
+    if (EnableElectronicDEDX) mFile->write_variable("Ekpre", &ekPre);
+    if (EnableWeight) mFile->write_variable("Weight", &w);
+    if (EnableTime || EnableLocalTime) mFile->write_variable("Time", &t);
+    if (EnableMass) mFile->write_variable("Mass", &m); // in MeV/c2
+    if (EnableXPosition) mFile->write_variable("X", &x);
+    if (EnableYPosition) mFile->write_variable("Y", &y);
+    if (EnableZPosition) mFile->write_variable("Z", &z);
+    if (EnableXDirection) mFile->write_variable("dX", &dx);
+    if (EnableYDirection) mFile->write_variable("dY", &dy);
+    if (EnableZDirection) mFile->write_variable("dZ", &dz);
+
+    if (EnablePartName /*&& bEnableCompact==false*/) mFile->write_variable("ParticleName", pname, sizeof(pname) );
+    if (EnableProdVol && bEnableCompact == false) mFile->write_variable("ProductionVolume", vol, sizeof(vol));
+    if (EnableProdProcess && bEnableCompact == false) mFile->write_variable("CreatorProcess", creator_process, sizeof(creator_process));
+    if (EnableProdProcess && bEnableCompact == false) mFile->write_variable("ProcessDefinedStep", pro_step, sizeof(pro_step));
+    if (bEnableCompact == false) mFile->write_variable("TrackID", &trackid);
+    if (bEnableCompact == false) mFile->write_variable("ParentID", &parentid);
+    if (bEnableCompact == false) mFile->write_variable("EventID", &eventid);
+    if (bEnableCompact == false) mFile->write_variable("RunID", &runid);
+    if (bEnablePrimaryEnergy) mFile->write_variable("PrimaryEnergy", &bPrimaryEnergy);
+    if (bEnablePDGCode) mFile->write_variable("PDGCode", &bPDGCode);
     if (bEnableEmissionPoint) {
-      mFile.write_variable("EmissionPointX", &bEmissionPointX);
-      mFile.write_variable("EmissionPointY", &bEmissionPointY);
-      mFile.write_variable("EmissionPointZ", &bEmissionPointZ);
+      mFile->write_variable("EmissionPointX", &bEmissionPointX);
+      mFile->write_variable("EmissionPointY", &bEmissionPointY);
+      mFile->write_variable("EmissionPointZ", &bEmissionPointZ);
     }
-    if (bEnableSpotID) mFile.write_variable("SpotID", &bSpotID);
+    if (bEnableSpotID) mFile->write_variable("SpotID", &bSpotID);
 
-    if (EnableTOut) mFile.write_variable("TOut", &tOut);
-    if (EnableTProd) mFile.write_variable("TProd", &tProd);
+    if (EnableTOut) mFile->write_variable("TOut", &tOut);
+    if (EnableTProd) mFile->write_variable("TProd", &tProd);
 
     if (EnableNuclearFlag)
       {
-        mFile.write_variable("CreatorProcess", &creator);
-        mFile.write_variable("NuclearProcess", &nucprocess);
-        mFile.write_variable("Order", &order);
+        mFile->write_variable("CreatorProcess", &creator);
+        mFile->write_variable("NuclearProcess", &nucprocess);
+        mFile->write_variable("Order", &order);
       }
+    mFile->write_header();
+}
+
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::BeginOfRunAction(const G4Run *r)
+{
+    if (!this->mOverWriteFilesFlag) {
+        mSaveFilename = GetSaveCurrentFilename(mSaveInitialFilename);
+        InitTree();
+    }
+    else {
+        // Only init the tree at the first run
+        if (r->GetRunID() == 0) {
+            InitTree();
+        }
+    }
+}
+// --------------------------------------------------------------------
 
 
-    mFile.write_header();
-
-
-  }
-
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::RecordEndOfAcquisition()
+{
+    // For npy output, write and close must be done at the end.
+    if (this->mOverWriteFilesFlag) {
+        mFile->write();
+        mFile->close();
+    }
 }
 // --------------------------------------------------------------------
 
@@ -407,7 +436,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     GateVVolume *v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
     if (v == NULL) {
       if (mFileType == "rootFile") {
-        mFile.close();
+        mFile->close();
       }
       GateError("Error, cannot find the volume '" << GetCoordFrame() << "' -> (see the setCoordinateFrame)");
     }
@@ -658,7 +687,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     pIAEAheader->update_counters(pIAEARecordType);
 
   } else {
-    mFile.fill();
+    mFile->fill();
   }
   mIsFirstStep = false;
 
@@ -694,7 +723,11 @@ void GatePhaseSpaceActor::SaveData()
     fclose(pIAEARecordType->p_file);
   }
   else {
-    mFile.write();
+      if (!this->mOverWriteFilesFlag) {
+          // Write and close only whe we know that mFile will be recreated next run
+          mFile->write();
+          mFile->close();
+      }
   }
 }
 // --------------------------------------------------------------------

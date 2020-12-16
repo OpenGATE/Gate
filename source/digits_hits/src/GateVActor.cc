@@ -31,6 +31,7 @@ GateVActor::GateVActor(G4String name, G4int depth)
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(false);
   EnableResetDataAtEachRun(false);
+  EnableRecordEndOfAcquisition(false);
   mSaveFilename = "FilnameNotGivenForThisActor";
   mSaveInitialFilename = mSaveFilename;
   mVolumeName = "";

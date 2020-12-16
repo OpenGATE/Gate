@@ -73,6 +73,7 @@ public:
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) {}
   virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) {}
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*) {}
+  virtual void RecordEndOfAcquisition() {};
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -88,6 +89,7 @@ public:
   void EnablePreUserTrackingAction(bool b)  { mIsPreUserTrackingActionEnabled = b; }
   void EnablePostUserTrackingAction(bool b) { mIsPostUserTrackingActionEnabled = b; }
   void EnableUserSteppingAction(bool b)     { mIsUserSteppingActionEnabled = b; }
+  void EnableRecordEndOfAcquisition(bool b) { mIsRecordEndOfAcquisitionEnabled = b; }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -98,6 +100,7 @@ public:
   bool IsPreUserTrackingActionEnabled() const  { return mIsPreUserTrackingActionEnabled; }
   bool IsPostUserTrackingActionEnabled() const { return mIsPostUserTrackingActionEnabled; }
   bool IsUserSteppingActionEnabled() const     { return mIsUserSteppingActionEnabled; }
+  bool IsRecordEndOfAcquisitionEnabled() const { return mIsRecordEndOfAcquisitionEnabled; }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -138,6 +141,7 @@ protected:
   bool mIsPreUserTrackingActionEnabled;
   bool mIsPostUserTrackingActionEnabled;
   bool mIsUserSteppingActionEnabled;
+  bool mIsRecordEndOfAcquisitionEnabled;
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
