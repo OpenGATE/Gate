@@ -17,6 +17,7 @@ Welcome to GATE's documentation!
    parallel_computing
    gate_tools
    vgate
+   docker_gate
 
 Indices and tables
 ==================

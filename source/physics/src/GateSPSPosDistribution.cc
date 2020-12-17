@@ -174,7 +174,7 @@ G4ThreeVector GateSPSPosDistribution::GenerateOne()
       }
     else 
       { 
-        GetPosDisType() = "Point" ;
+        SetPosDisType("Point");
         particle_position = G4SPSPosDistribution::GenerateOne() ;
       }      
     if( positronrange != "NULL" )

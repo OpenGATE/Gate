@@ -21,30 +21,33 @@
 class Gate_NN_ARF_Actor;
 
 //-----------------------------------------------------------------------------
-class Gate_NN_ARF_ActorMessenger : public GateActorMessenger
-{
+class Gate_NN_ARF_ActorMessenger : public GateActorMessenger {
 public:
-  Gate_NN_ARF_ActorMessenger(Gate_NN_ARF_Actor* sensor);
-  virtual ~Gate_NN_ARF_ActorMessenger();
+    Gate_NN_ARF_ActorMessenger(Gate_NN_ARF_Actor *sensor);
 
-  void BuildCommands(G4String base);
-  void SetNewValue(G4UIcommand*, G4String);
+    virtual ~Gate_NN_ARF_ActorMessenger();
+
+    void BuildCommands(G4String base);
+
+    void SetNewValue(G4UIcommand *, G4String);
 
 protected:
-  Gate_NN_ARF_Actor         * pDIOActor;
-  G4UIcmdWithAString        * pSetEnergyWindowNamesCmd;
-  G4UIcmdWithAString        * pSetModeFlagCmd;
-  G4UIcmdWithADoubleAndUnit * pSetMaxAngleCmd;
-  G4UIcmdWithAnInteger      * pSetRRFactorCmd;
-  G4UIcmdWithAString        * pSetNNModelCmd;
-  G4UIcmdWithAString        * pSetNNDictCmd;
-  G4UIcmdWithAString        * pSetImageCmd;
-  G4UIcmdWithADoubleAndUnit * pSetSpacingXCmd;
-  G4UIcmdWithADoubleAndUnit * pSetSpacingYCmd;
-  G4UIcmdWithAnInteger      * pSetSizeXCmd;
-  G4UIcmdWithAnInteger      * pSetSizeYCmd;
-  G4UIcmdWithADoubleAndUnit * pSetCollimatorLengthCmd;
-  G4UIcmdWithADouble        * pSetBatchSizeCmd;
+    Gate_NN_ARF_Actor *pDIOActor;
+    G4UIcmdWithAString *pSetEnergyWindowNamesCmd;
+    G4UIcmdWithAString *pSetModeFlagCmd;
+    G4UIcmdWithADoubleAndUnit *pSetMaxAngleCmd;
+    G4UIcmdWithAnInteger *pSetRRFactorCmd;
+    G4UIcmdWithAString *pSetNNModelCmd;
+    G4UIcmdWithAString *pSetNNDictCmd;
+    G4UIcmdWithAString *pSaveListModeCmd;
+    G4UIcmdWithABool * pSaveSquareCmd;
+    G4UIcmdWithAString *pSaveARFCmd;
+    G4UIcmdWithADoubleAndUnit *pSetSpacingXCmd;
+    G4UIcmdWithADoubleAndUnit *pSetSpacingYCmd;
+    G4UIcmdWithAnInteger *pSetSizeXCmd;
+    G4UIcmdWithAnInteger *pSetSizeYCmd;
+    G4UIcmdWithADoubleAndUnit *pSetCollimatorLengthCmd;
+    G4UIcmdWithADouble *pSetBatchSizeCmd;
 };
 //-----------------------------------------------------------------------------
 

@@ -39,6 +39,9 @@
 #include "G4EmStandardPhysics_option2.hh"
 #include "G4EmStandardPhysics_option3.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysicsSS.hh"
+#include "G4EmStandardPhysicsGS.hh"
+#include "G4EmLowEPPhysics.hh"
 #include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
@@ -313,6 +316,15 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   }
   if (mUserPhysicListName == "emstandard_opt4") {
     pl = new G4EmStandardPhysics_option4();
+  }
+  if (mUserPhysicListName == "emstandard_SS") {
+    pl = new G4EmStandardPhysicsSS();
+  }
+  if (mUserPhysicListName == "emstandard_GS") {
+    pl = new G4EmStandardPhysicsGS();
+  }
+  if (mUserPhysicListName == "emLowEP") {
+    pl = new G4EmLowEPPhysics();
   }
   if (mUserPhysicListName == "emlivermore") {
     pl = new G4EmLivermorePhysics();

@@ -515,7 +515,7 @@ Inputs::
 
 The detector response δ(E) is modeled with a continuous energy-function that describes the average measured signal for a given incident energy E. The output signal in each image depends on the detector response (parameter responseDetectorFilename). For examples, if δ(E)=1, then the output signal is the number of photons, and if δ(E)=E (as responseDetector.txt in the github example), then the output signal is the total energy of photons.
 
-One can separate compton, rayleigh and fluorescence photons, secondary (compton+rayleigh+fluorescence), primary or total (secondary+primary). flatfield is available to compute the measured primary signal if there is no object, which is useful for CT to apply the Beer Lambert law. The attenuation is ln(flatfield/primary) to get the line integral, i.e., the input of most CT reconstruction algorithms.
+One can separate compton, rayleigh and fluorescence photons, secondary (compton+rayleigh+fluorescence), primary or total (secondary+primary). flatfield is available to compute the measured primary signal if there is no object, which is useful for CT to apply the Beer Lambert law. The attenuation is ln(flatfield/primary) to get the line integral, i.e., the input of most CT reconstruction algorithms. To include the secondary signal (compton+rayleigh+fluorescence) in the attenuation, one can use the images saved by the actor to recompute the attenuation (for example using ITK in Python). The formula for the attenuation would be ln(flatfield / (primary+secondary)).
 
 * **attachTo** ⇒ Attaches the sensor to the given volume
 * **saveEveryNEvents** ⇒ Save sensor every n Events.

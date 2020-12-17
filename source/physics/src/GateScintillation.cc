@@ -28,4 +28,12 @@ GateScintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
 
   return G4Scintillation::PostStepDoIt(aTrack, aStep);
 }
+
+G4bool GateScintillation::IsApplicable(const G4ParticleDefinition &aParticleType)
+{
+  if (aParticleType.GetParticleName() == "opticalphoton") return false;
+  if (aParticleType.IsShortLived()) return false;
+
+  return true;
+}
 //----------------------------------------------------------------------------------------
