@@ -24,7 +24,7 @@ Potassium:  S= K   ; Z= 19. ; A=  39.098 g/mole
 Calcium:    S= Ca  ; Z= 20. ; A=  40.08  g/mole
 Scandium:   S= Sc  ; Z= 21. ; A=  44.956 g/mole
 Titanium:   S= Ti  ; Z= 22. ; A=  47.867 g/mole
-Vandium:    S= V   ; Z= 23. ; A=  50.942 g/mole
+Vanadium:   S= V   ; Z= 23. ; A=  50.942 g/mole
 Chromium:   S= Cr  ; Z= 24. ; A=  51.996 g/mole
 Manganese:  S= Mn  ; Z= 25. ; A=  54.938 g/mole
 Iron:       S= Fe  ; Z= 26. ; A=  55.845 g/mole
@@ -493,7 +493,7 @@ Epidermis: d=0.92 g/cm3 ; n=11
         +el: name=Calcium    ; f=0.001
         +el: name=Scandium   ; f=0.0
         +el: name=Titanium   ; f=0.0
-        +el: name=Vandium    ; f=0.0
+        +el: name=Vanadium   ; f=0.0
         +el: name=Chromium   ; f=0.0
         +el: name=Manganese  ; f=0.0
 
@@ -506,7 +506,7 @@ Hypodermis: d=0.92 g/cm3 ; n=11
         +el: name=Calcium    ; f=0.001
         +el: name=Scandium   ; f=0.0
         +el: name=Titanium   ; f=0.0
-        +el: name=Vandium    ; f=0.0
+        +el: name=Vanadium   ; f=0.0
         +el: name=Chromium   ; f=0.0
         +el: name=Manganese  ; f=0.0
 
@@ -790,7 +790,7 @@ Tumor: d=1 g/cm3 ; n=11
         +el: name=Calcium    ; f=0.001
         +el: name=Scandium   ; f=0.0
         +el: name=Titanium   ; f=0.0
-        +el: name=Vandium    ; f=0.0
+        +el: name=Vanadium   ; f=0.0
         +el: name=Chromium   ; f=0.0
         +el: name=Manganese  ; f=0.0
 
