@@ -98,6 +98,7 @@ void GateActorManager::CreateListsOfEnabledActors()
     if ((*sit)->IsEndOfEventActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForEndOfEvent.push_back( (*sit) );
     if ((*sit)->IsPreUserTrackingActionEnabled()  && IsInitialized<2) theListOfActorsEnabledForPreUserTrackingAction.push_back( (*sit) );
     if ((*sit)->IsPostUserTrackingActionEnabled() && IsInitialized<2) theListOfActorsEnabledForPostUserTrackingAction.push_back( (*sit) );
+    if ((*sit)->IsRecordEndOfAcquisitionEnabled() && IsInitialized<2) theListOfActorsEnabledForRecordEndOfAcquisition.push_back( (*sit) );
 
     //GateMessage("Core", 0, "IsUserSteppingActionEnabled = " << (*sit)->IsUserSteppingActionEnabled() << Gateendl);
 
@@ -228,6 +229,20 @@ void GateActorManager::UserSteppingAction(const G4Step* step)
     }
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateActorManager::RecordEndOfAcquisition()
+{
+  std::vector<GateVActor*>::iterator sit;
+  // GateDebugMessage("Actor", 1, "list = " << theListOfActorsEnabledForUserSteppingAction.size() << Gateendl);
+  for (sit = theListOfActorsEnabledForRecordEndOfAcquisition.begin(); sit!=theListOfActorsEnabledForRecordEndOfAcquisition.end(); ++sit)
+    {
+      // GateDebugMessage("Actor", 1, "Step for " << (*sit)->GetObjectName());
+      (*sit)->RecordEndOfAcquisition();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolume * volume)

@@ -41,11 +41,15 @@ public:
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void BeginOfEventAction(const G4Event * e);
+  virtual void BeginOfRunAction(const G4Run *r);
+  virtual void RecordEndOfAcquisition();
 
   //=======================================================
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
+
+  void InitTree();
 
   void SetIsXPositionEnabled(bool b){EnableXPosition = b;}
   void SetIsYPositionEnabled(bool b){EnableYPosition = b;}
@@ -110,7 +114,7 @@ protected:
   G4String mFileType;
   G4int mNevent;
 
-  GateOutputTreeFileManager mFile;
+  GateOutputTreeFileManager * mFile;
 
 
 

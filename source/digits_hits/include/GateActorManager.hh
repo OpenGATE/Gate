@@ -87,6 +87,7 @@ public:
   void PostUserTrackingAction(const G4Track*);
   /// G4UserSteppingAction callback
   void UserSteppingAction(const G4Step*);
+  void RecordEndOfAcquisition();
   //-----------------------------------------------------------------------------
 
   typedef GateVActor *(*maker_actor)(G4String name, G4int depth);
@@ -112,6 +113,7 @@ protected:
   std::vector<GateVActor*> theListOfActorsEnabledForPreUserTrackingAction;
   std::vector<GateVActor*> theListOfActorsEnabledForPostUserTrackingAction;
   std::vector<GateVActor*> theListOfActorsEnabledForUserSteppingAction;
+  std::vector<GateVActor*> theListOfActorsEnabledForRecordEndOfAcquisition;
 
   GateActorManagerMessenger* pActorManagerMessenger;  //pointer to the Messenger
   G4int mCurrentEventId;
