@@ -354,7 +354,7 @@ This actor stores in a 3D image the position where particles are produced and wh
 
 **< ! >  In Geant4, secondary production occurs at the end of the step, the recommended state for 'stepHitType' is 'post'**
 
-The "prod" output contains the 3D distribution of the location where particles are created (their first step), and the "stop" contains the 3D distribution of the location where particles stop (end of track). Source code is: https://github.com/OpenGATE/Gate/blob/develop/source/digits_hits/src/GateProductionAndStoppingActor.cc
+The "prod" output contains the 3D distribution of the location where particles are created (their first step), and the "stop" contains the 3D distribution of the location where particles stop (end of track). Each voxel of both images thus contains the number of particles that was produced (resp. stopped) in this voxel. Source code is: https://github.com/OpenGATE/Gate/blob/develop/source/digits_hits/src/GateProductionAndStoppingActor.cc
 
 Secondary production
 ~~~~~~~~~~~~~~~~~~~~
