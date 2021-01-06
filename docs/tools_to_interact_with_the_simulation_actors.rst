@@ -698,7 +698,7 @@ An  example  of  a TEPC actor  use  is  provided  in  the  example repository un
 Phase Space Actor
 ~~~~~~~~~~~~~~~~~
 
-Example:
+Example::
 
    /gate/actor/addActor PhaseSpaceActor         MyActor
    /gate/actor/MyActor/save                     MyOutputFile.IAEAphsp
