@@ -344,15 +344,17 @@ By default histograms are saved as .root files. The histograms will be (in addit
 Production and stopping particle position
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This actor stores in a 3D image the position where particles are produced and where particles are stopped. For the output, the suffixes 'Prod' and 'Stop' are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), (.hdr/.img). The root file works only for 1D and 2D distribution::
+This actor stores in a 3D image the position where particles are produced and where particles are stopped. For the output, the suffixes 'Prod' and 'Stop' are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), (.mhd/.raw or .hdr/.img). The root file works only for 1D and 2D distribution::
 
    /gate/actor/addActor ProductionAndStoppingActor      MyActor
-   /gate/actor/MyActor/save                             MyOutputFile.hdr
+   /gate/actor/MyActor/save                             MyOutputFile.mhd
    /gate/actor/MyActor/attachTo                         MyVolume
    /gate/actor/MyActor/setResolution                    10 10 100
    /gate/actor/MyActor/stepHitType                      post
 
 **< ! >  In Geant4, secondary production occurs at the end of the step, the recommended state for 'stepHitType' is 'post'**
+
+The "prod" output contains the 3D distribution of the location where particles are created (their first step), and the "stop" contains the 3D distribution of the location where particles stop (end of track). Source code is: https://github.com/OpenGATE/Gate/blob/develop/source/digits_hits/src/GateProductionAndStoppingActor.cc
 
 Secondary production
 ~~~~~~~~~~~~~~~~~~~~
