@@ -30,11 +30,9 @@
 #include "G4Run.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
-#include "G4VHitsCollection.hh"
 #include "G4Trajectory.hh"
 #include "G4VProcess.hh"
 #include "G4ios.hh"
-#include "G4UImanager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"
@@ -45,7 +43,6 @@
 #include "GateApplicationMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateHitConvertor.hh"
-#include "GateDigitizer.hh"
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateSourceMgr.hh"
@@ -213,6 +210,15 @@ void GateToRoot::Book() {
     hist_title = "total_nb_primaries(#)";
     //primaries_histo = new TH1D(hist_name,hist_title,100,0,900000000000.);
     m_total_nb_primaries_hist = new TH1D(hist_name, hist_title, 100, 0, 900000000000.);
+
+    // Additional tree/branches to store data used for PET analysis
+    /* This is duplicated from the previous 'total_nb_primaries' value, but it was stored as an histogram
+       (dont ask me why) and it is no easy to deal with, in particular with uproot.
+    */
+    auto pet_data = new TTree("pet_data", "data for PET analysis");
+    pet_data->Branch("total_nb_primaries", &nbPrimaries);
+    pet_data->Branch("latest_event_ID", &latestEventID);
+    pet_data->Branch("stop_time_sec", &virtualTimeStop);
 
     m_treeHit = new GateHitTree(GateHitConvertor::GetOutputAlias());
     m_treeHit->Init(m_hitBuffer);
@@ -491,6 +497,19 @@ void GateToRoot::RecordEndOfAcquisition() {
         G4cerr
                 << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !\n";
     }
+
+    // Store the data for pet analysis
+    /* Stored data are the variables linked in the branch of the pet_data tree:
+      nbPrimaries
+      latestEventID
+      virtualTimeStop GateApplicationMgr::GetInstance()->GetVirtualTimeStop()
+     */
+    // Remove 1 because the increment was before the end
+    latestEventID = latestEventID - 1;
+    // get the time in second
+    virtualTimeStop = GateApplicationMgr::GetInstance()->GetVirtualTimeStop() / second;
+    auto t = (TTree *) m_working_root_directory->GetList()->FindObject("pet_data");
+    t->Fill();
 
     /* PY Descourt 08/09/2009 */
 
