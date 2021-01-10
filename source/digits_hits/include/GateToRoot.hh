@@ -294,7 +294,9 @@ private:
 
     G4double latestEventID; // Used by the gjs an d gjm programs (cluster mode)
     G4double nbPrimaries;
-    G4double virtualTimeStop;
+    G4double mTimeStop;
+    G4double mTimeStart;
+    G4int m_nb_of_hits;
 
     G4double m_positronKinEnergy;
     G4int m_recordFlag;

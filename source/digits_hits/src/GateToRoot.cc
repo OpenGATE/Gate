@@ -218,7 +218,8 @@ void GateToRoot::Book() {
     auto pet_data = new TTree("pet_data", "data for PET analysis");
     pet_data->Branch("total_nb_primaries", &nbPrimaries);
     pet_data->Branch("latest_event_ID", &latestEventID);
-    pet_data->Branch("stop_time_sec", &virtualTimeStop);
+    pet_data->Branch("start_time_sec", &mTimeStart);
+    pet_data->Branch("stop_time_sec", &mTimeStop);
 
     m_treeHit = new GateHitTree(GateHitConvertor::GetOutputAlias());
     m_treeHit->Init(m_hitBuffer);
@@ -499,20 +500,18 @@ void GateToRoot::RecordEndOfAcquisition() {
     }
 
     // Store the data for pet analysis
-    /* Stored data are the variables linked in the branch of the pet_data tree:
-      nbPrimaries
-      latestEventID
-      virtualTimeStop GateApplicationMgr::GetInstance()->GetVirtualTimeStop()
-     */
+
     // Remove 1 because the increment was before the end
     latestEventID = latestEventID - 1;
     // get the time in second
-    virtualTimeStop = GateApplicationMgr::GetInstance()->GetVirtualTimeStop() / second;
+    mTimeStop = GateApplicationMgr::GetInstance()->GetTimeStop() / second;
+    mTimeStart = GateApplicationMgr::GetInstance()->GetTimeStart() / second;
+    // all variables linked in the "pet_data" tree (define below) will be written
     auto t = (TTree *) m_working_root_directory->GetList()->FindObject("pet_data");
     t->Fill();
 
-    /* PY Descourt 08/09/2009 */
 
+    /* PY Descourt 08/09/2009 */
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
     TrackingMode theMode = myAction->GetMode();
     if (theMode == TrackingMode::kTracker) {
