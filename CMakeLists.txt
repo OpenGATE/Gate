@@ -184,14 +184,19 @@ ENDIF(GATE_USE_LMF)
 #=========================================================
 # Option for ECAT7 use
 IF(GATE_USE_ECAT7)
-  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
-  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
-  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
-  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
-  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
-  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
+  ADD_SUBDIRECTORY(source/externals/ecat ${PROJECT_BINARY_DIR}/ecat)
+  SET(ECAT7_LIBRARY "-L${PROJECT_BINARY_DIR}/ecat -lecat")
+  INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/source/externals/ecat/src )
 ENDIF(GATE_USE_ECAT7)
+#IF(GATE_USE_ECAT7)
+#  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
+#  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
+#  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
+#  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
+#  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
+#  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
+#  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
+#ENDIF(GATE_USE_ECAT7)
 
 #=========================================================
 # Create configuration file

@@ -1,0 +1,802 @@
+# Microsoft Developer Studio Generated NMAKE File, Format Version 4.20
+# ** DO NOT EDIT **
+
+# TARGTYPE "Win32 (x86) Static Library" 0x0104
+
+CFG=lecat - Win32 Release
+
+!IF "$(CFG)" != "lecat - Win32 Release" && "$(CFG)" != "lecat - Win32 Debug"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE on this makefile
+!MESSAGE by defining the macro CFG on the command line.  For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "lecat.mak" CFG="lecat - Win32 Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "lecat - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "lecat - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
+
+!IF "$(OS)" == "Windows_NT"
+NULL=
+!ELSE 
+NULL=nul
+!ENDIF 
+################################################################################
+# Begin Project
+# PROP Target_Last_Scanned "lecat - Win32 Release"
+CPP=cl.exe
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Release"
+# PROP BASE Intermediate_Dir "Release"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "Release"
+# PROP Intermediate_Dir "Release"
+# PROP Target_Dir ""
+OUTDIR=.\Debug
+INTDIR=.\Debug
+SRCDIR=.
+ALL : "$(OUTDIR)\lecat.lib"
+CLEAN : 
+	-@erase "$(INTDIR)\analyze.obj"
+	-@erase "$(INTDIR)\attn3d_read.obj"
+	-@erase "$(INTDIR)\c3101.obj"
+	-@erase "$(INTDIR)\c_uvlc.obj"
+	-@erase "$(INTDIR)\compress.obj"
+	-@erase "$(INTDIR)\convert_64.obj"
+	-@erase "$(INTDIR)\convert_70.obj"
+	-@erase "$(INTDIR)\crash.obj"
+	-@erase "$(INTDIR)\d3101.obj"
+	-@erase "$(INTDIR)\d_uvlc.obj"
+	-@erase "$(INTDIR)\dclz.obj"
+	-@erase "$(INTDIR)\ecat_model.obj"
+	-@erase "$(INTDIR)\GETOPT.OBJ"
+	-@erase "$(INTDIR)\interfile.obj"
+	-@erase "$(INTDIR)\load_volume7.obj"
+	-@erase "$(INTDIR)\machine_indep.obj"
+	-@erase "$(INTDIR)\make3dfilter.obj"
+	-@erase "$(INTDIR)\makefilter.obj"
+	-@erase "$(INTDIR)\matpkg.obj"
+	-@erase "$(INTDIR)\matrix.obj"
+	-@erase "$(INTDIR)\matrix_64.obj"
+	-@erase "$(INTDIR)\matrix_extra.obj"
+	-@erase "$(INTDIR)\matrix_slice.obj"
+	-@erase "$(INTDIR)\num_sort.obj"
+	-@erase "$(INTDIR)\plandefs.obj"
+	-@erase "$(INTDIR)\save_volume7.obj"
+	-@erase "$(INTDIR)\uvlc.obj"
+	-@erase "$(INTDIR)\z_matrix.obj"
+	-@erase "$(OUTDIR)\lecat.lib"
+
+"$(OUTDIR)" :
+    if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+
+# ADD BASE CPP /nologo /W1 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
+# ADD CPP /nologo /Za /W1 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
+CPP_PROJ=/nologo /ML /Za /W1 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)/lecat.pch" /YX /Fo"$(INTDIR)/" /c 
+CPP_OBJS=.\Release/
+CPP_SBRS=.\.
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o"$(OUTDIR)/lecat.bsc" 
+BSC32_SBRS= \
+	
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)/lecat.lib" 
+LIB32_OBJS= \
+	"$(INTDIR)\analyze.obj" \
+	"$(INTDIR)\attn3d_read.obj" \
+	"$(INTDIR)\c3101.obj" \
+	"$(INTDIR)\c_uvlc.obj" \
+	"$(INTDIR)\compress.obj" \
+	"$(INTDIR)\convert_64.obj" \
+	"$(INTDIR)\convert_70.obj" \
+	"$(INTDIR)\crash.obj" \
+	"$(INTDIR)\d3101.obj" \
+	"$(INTDIR)\d_uvlc.obj" \
+	"$(INTDIR)\dclz.obj" \
+	"$(INTDIR)\ecat_model.obj" \
+	"$(INTDIR)\GETOPT.OBJ" \
+	"$(INTDIR)\interfile.obj" \
+	"$(INTDIR)\load_volume7.obj" \
+	"$(INTDIR)\machine_indep.obj" \
+	"$(INTDIR)\make3dfilter.obj" \
+	"$(INTDIR)\makefilter.obj" \
+	"$(INTDIR)\matpkg.obj" \
+	"$(INTDIR)\matrix.obj" \
+	"$(INTDIR)\matrix_64.obj" \
+	"$(INTDIR)\matrix_extra.obj" \
+	"$(INTDIR)\matrix_slice.obj" \
+	"$(INTDIR)\num_sort.obj" \
+	"$(INTDIR)\plandefs.obj" \
+	"$(INTDIR)\save_volume7.obj" \
+	"$(INTDIR)\uvlc.obj" \
+	"$(INTDIR)\z_matrix.obj"
+
+"$(OUTDIR)\lecat.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+    $(LIB32) @<<
+  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
+<<
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "Debug"
+# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "Debug"
+# PROP Intermediate_Dir "Debug"
+# PROP Target_Dir ""
+OUTDIR=.\Debug
+INTDIR=.\Debug
+
+ALL : "$(OUTDIR)\lecat.lib"
+
+CLEAN : 
+	-@erase "$(INTDIR)\analyze.obj"
+	-@erase "$(INTDIR)\attn3d_read.obj"
+	-@erase "$(INTDIR)\c3101.obj"
+	-@erase "$(INTDIR)\c_uvlc.obj"
+	-@erase "$(INTDIR)\compress.obj"
+	-@erase "$(INTDIR)\convert_64.obj"
+	-@erase "$(INTDIR)\convert_70.obj"
+	-@erase "$(INTDIR)\crash.obj"
+	-@erase "$(INTDIR)\d3101.obj"
+	-@erase "$(INTDIR)\d_uvlc.obj"
+	-@erase "$(INTDIR)\dclz.obj"
+	-@erase "$(INTDIR)\ecat_model.obj"
+	-@erase "$(INTDIR)\GETOPT.OBJ"
+	-@erase "$(INTDIR)\interfile.obj"
+	-@erase "$(INTDIR)\load_volume7.obj"
+	-@erase "$(INTDIR)\machine_indep.obj"
+	-@erase "$(INTDIR)\make3dfilter.obj"
+	-@erase "$(INTDIR)\makefilter.obj"
+	-@erase "$(INTDIR)\matpkg.obj"
+	-@erase "$(INTDIR)\matrix.obj"
+	-@erase "$(INTDIR)\matrix_64.obj"
+	-@erase "$(INTDIR)\matrix_extra.obj"
+	-@erase "$(INTDIR)\matrix_slice.obj"
+	-@erase "$(INTDIR)\num_sort.obj"
+	-@erase "$(INTDIR)\plandefs.obj"
+	-@erase "$(INTDIR)\save_volume7.obj"
+	-@erase "$(INTDIR)\uvlc.obj"
+	-@erase "$(INTDIR)\z_matrix.obj"
+	-@erase "$(OUTDIR)\lecat.lib"
+
+"$(OUTDIR)" :
+    if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+
+# ADD BASE CPP /nologo /W1 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
+# ADD CPP /nologo /Za /W1 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
+CPP_PROJ=/nologo /MLd /Za /W1 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)/lecat.pch" /YX /Fo"$(INTDIR)/" /c 
+CPP_OBJS=.\Debug/
+CPP_SBRS=.\.
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o"$(OUTDIR)/lecat.bsc" 
+BSC32_SBRS= \
+	
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)/lecat.lib" 
+LIB32_OBJS= \
+	"$(INTDIR)\analyze.obj" \
+	"$(INTDIR)\attn3d_read.obj" \
+	"$(INTDIR)\c3101.obj" \
+	"$(INTDIR)\c_uvlc.obj" \
+	"$(INTDIR)\compress.obj" \
+	"$(INTDIR)\convert_64.obj" \
+	"$(INTDIR)\convert_70.obj" \
+	"$(INTDIR)\crash.obj" \
+	"$(INTDIR)\d3101.obj" \
+	"$(INTDIR)\d_uvlc.obj" \
+	"$(INTDIR)\dclz.obj" \
+	"$(INTDIR)\ecat_model.obj" \
+	"$(INTDIR)\GETOPT.OBJ" \
+	"$(INTDIR)\interfile.obj" \
+	"$(INTDIR)\load_volume7.obj" \
+	"$(INTDIR)\machine_indep.obj" \
+	"$(INTDIR)\make3dfilter.obj" \
+	"$(INTDIR)\makefilter.obj" \
+	"$(INTDIR)\matpkg.obj" \
+	"$(INTDIR)\matrix.obj" \
+	"$(INTDIR)\matrix_64.obj" \
+	"$(INTDIR)\matrix_extra.obj" \
+	"$(INTDIR)\matrix_slice.obj" \
+	"$(INTDIR)\num_sort.obj" \
+	"$(INTDIR)\plandefs.obj" \
+	"$(INTDIR)\save_volume7.obj" \
+	"$(INTDIR)\uvlc.obj" \
+	"$(INTDIR)\z_matrix.obj"
+
+"$(OUTDIR)\lecat.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+    $(LIB32) @<<
+  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
+<<
+
+!ENDIF 
+
+.c{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cpp{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cxx{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.c{$(CPP_SBRS)}.sbr:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cpp{$(CPP_SBRS)}.sbr:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cxx{$(CPP_SBRS)}.sbr:
+   $(CPP) $(CPP_PROJ) $<  
+
+################################################################################
+# Begin Target
+
+# Name "lecat - Win32 Release"
+# Name "lecat - Win32 Debug"
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\analyze.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\attn3d_read.c
+DEP_CPP_ATTN3=\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\attn3d_read.obj" : $(SOURCE) $(DEP_CPP_ATTN3) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\convert_64.c
+DEP_CPP_CONVE=\
+	"$(SRCDIR)\matrix.h"\
+	"$(SRCDIR)\matrix_64.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\convert_64.obj" : $(SOURCE) $(DEP_CPP_CONVE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\convert_70.c
+DEP_CPP_CONVER=\
+	"$(SRCDIR)\isotope_info.h"\
+	"$(SRCDIR)\matrix.h"\
+	"$(SRCDIR)\matrix_64.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\convert_70.obj" : $(SOURCE) $(DEP_CPP_CONVER) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\crash.c
+
+"$(INTDIR)\crash.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\ecat_model.c
+DEP_CPP_ECAT_=\
+	"$(SRCDIR)\ecat_model.h"\
+	
+
+"$(INTDIR)\ecat_model.obj" : $(SOURCE) $(DEP_CPP_ECAT_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\ecat_model.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\ecatAcs.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\ecatRts.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\GETOPT.C
+
+"$(INTDIR)\GETOPT.OBJ" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\interfile.c
+DEP_CPP_INTER=\
+	"$(SRCDIR)\interfile.h"\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\interfile.obj" : $(SOURCE) $(DEP_CPP_INTER) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\interfile.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\isotope_info.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\machine_indep.c
+DEP_CPP_MACHI=\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\machine_indep.obj" : $(SOURCE) $(DEP_CPP_MACHI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\make3dfilter.c
+
+"$(INTDIR)\make3dfilter.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\makefilter.c
+
+"$(INTDIR)\makefilter.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matpkg.c
+DEP_CPP_MATPK=\
+	"$(SRCDIR)\matpkg.h"\
+	"$(SRCDIR)\sincos.h"\
+	
+
+"$(INTDIR)\matpkg.obj" : $(SOURCE) $(DEP_CPP_MATPK) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix.c
+DEP_CPP_MATRI=\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\matrix.obj" : $(SOURCE) $(DEP_CPP_MATRI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix_64.c
+DEP_CPP_MATRIX=\
+	"$(SRCDIR)\matrix.h"\
+	"$(SRCDIR)\matrix_64.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\matrix_64.obj" : $(SOURCE) $(DEP_CPP_MATRIX) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix_extra.c
+DEP_CPP_MATRIX_=\
+	"$(SRCDIR)\interfile.h"\
+	"$(SRCDIR)\matrix.h"\
+	"$(SRCDIR)\num_sort.h"\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\matrix_extra.obj" : $(SOURCE) $(DEP_CPP_MATRIX_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix_slice.c
+DEP_CPP_MATRIX_S=\
+	"$(SRCDIR)\interfile.h"\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\matrix_slice.obj" : $(SOURCE) $(DEP_CPP_MATRIX_S) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\num_sort.c
+
+"$(INTDIR)\num_sort.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\plandefs.c
+
+"$(INTDIR)\plandefs.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\save_volume7.c
+DEP_CPP_SAVE_=\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\save_volume7.obj" : $(SOURCE) $(DEP_CPP_SAVE_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\load_volume7.c
+DEP_CPP_LOAD_=\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\load_volume7.obj" : $(SOURCE) $(DEP_CPP_LOAD_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\sincos.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matpkg.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\matrix_64.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\num_sort.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\plandefs.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\load_volume.h
+
+!IF  "$(CFG)" == "lecat - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "lecat - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\analyze.c
+DEP_CPP_ANALY=\
+	"$(SRCDIR)\analyze.h"\
+	"$(SRCDIR)\interfile.h"\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\analyze.obj" : $(SOURCE) $(DEP_CPP_ANALY) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\z_matrix.c
+DEP_CPP_Z_MAT=\
+	"$(SRCDIR)\lib_compress\compress.h"\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\z_matrix.obj" : $(SOURCE) $(DEP_CPP_Z_MAT) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\c3101.c
+DEP_CPP_C3101=\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\c3101.obj" : $(SOURCE) $(DEP_CPP_C3101) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\compress.c
+DEP_CPP_COMPR=\
+	"$(SRCDIR)\lib_compress\compress.h"\
+	"$(SRCDIR)\matrix.h"\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\compress.obj" : $(SOURCE) $(DEP_CPP_COMPR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\d_uvlc.c
+DEP_CPP_D_UVL=\
+	"$(SRCDIR)\lib_compress\uvlc.h"\
+	
+
+"$(INTDIR)\d_uvlc.obj" : $(SOURCE) $(DEP_CPP_D_UVL) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\d3101.c
+DEP_CPP_D3101=\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\d3101.obj" : $(SOURCE) $(DEP_CPP_D3101) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\dclz.c
+DEP_CPP_DCLZ_=\
+	{$(INCLUDE)}"\sys\stat.h"\
+	{$(INCLUDE)}"\sys\types.h"\
+	
+
+"$(INTDIR)\dclz.obj" : $(SOURCE) $(DEP_CPP_DCLZ_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\uvlc.c
+
+"$(INTDIR)\uvlc.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=$(SRCDIR)\lib_compress\c_uvlc.c
+DEP_CPP_C_UVL=\
+	"$(SRCDIR)\lib_compress\uvlc.h"\
+	
+
+"$(INTDIR)\c_uvlc.obj" : $(SOURCE) $(DEP_CPP_C_UVL) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+# End Target
+# End Project
+################################################################################

@@ -1,0 +1,35 @@
+Author : Merence Sibomana <Sibomana@topo.ucl.ac.be>
+
+Supported plateforms are : digital unix, solaris, sunos 4.1 , linux, win32
+
+The software may be modified for your own purposes, but modified
+versions may not be distributed without prior consent of the author.
+
+The library is based on ecat 6.x and allow read/write 6.x and 7.0 file format.
+Some supplied utilities (show_header, matlist,...) are CTI 6.x utilities that
+has been adapted to the new library. 
+
+The include file matrix.h contains C++ function prototyping.
+
+There has been changes in the low lever i/o routines such as 
+mat_read_image_subheader.
+
+Ecat 6.4 programs that use generic matrix structures (MatrixFile, MatrixData)
+and routines (matrix_open, matrix_close, matrix_read, matrix_write) defined in
+the file matrix_extra.c can be linked with this library with minor changes.
+We recommend to use the generic function (see matrix.h).
+
+Since Ecat7.0 frame slices are stored in one volumic matrix,
+"matrix_read_slice" function has been added read a single slice of
+the volume to save time and memory.
+
+Interfile and ANALYZE formats reading are also supported and encapsulated in
+the generic matrix structures.
+
+Send comments and bug reports to Sibomana@topo.ucl.ac.be(Merence Sibomana).
+
+Modification History:
+Sep-25-2002: Bugs fixes for Windows plateform.
+             Add support for CYGWIN provided by Kris.Thielemans@csc.mrc.ac.uk
+02-oct-02: Added modifications (922 ACSII support) from Dr. Harald Fricke <HFricke@dhz-nrw.de>
+
