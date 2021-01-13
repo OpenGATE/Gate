@@ -1,0 +1,59 @@
+subject identification&&1
+scan file name&&1
+scan type&&1
+scan date&&3
+scan duration&&4
+energy threshold&&10
+detector rotation mode&&1
+detector separation&&2
+axial FOV Trimming&&2
+radial FOV Trimming&&2
+tracer identification&&1
+isotope identification&&1
+injected dose&&11
+dose injection time&&5
+subject weight&&12
+subject gender&&1
+subject orientation&&1
+number of bed positions&&2
+bed overlap&&13
+bed axial speed&&8
+scanner identification&&1
+bed scan mode&&1
+byte swapping order of acquisition hardware&&1
+time slice for the count rate record&&4
+detector rotation speed&&9
+subject temperature&&15
+detector temperature&&15
+scan start time&&5
+scanner identification&&1
+tracer identification&&1
+geometrical design type&&2
+ring diameter&&13
+rsector axial pitch&&13
+rsector azimuthal pitch&&14
+rsector tangential size&&13
+rsector axial size&&13
+module axial size&&13
+module tangential size&&13
+module axial pitch&&13
+module tangential pitch&&13
+submodule axial size&&13
+submodule tangential size&&13
+submodule axial pitch&&13
+submodule tangential pitch&&13
+crystal axial size&&13
+crystal tangential size&&13
+crystal radial size&&13
+crystal axial pitch&&13
+crystal tangential pitch&&13
+layer0 radial size&&13
+layer1 radial size&&13
+in layer0 interaction length&&13
+in layer1 interaction length&&13
+azimuthal step&&14
+axial step&&13
+angular gantry position&&2
+axial gantry position&&
+energy step&&10
+clock time step&&4
