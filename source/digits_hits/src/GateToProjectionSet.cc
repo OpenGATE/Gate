@@ -360,6 +360,19 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
 
   // Retrieve the parameters of the repeater (number of heads)
   m_headNb = baseComponent->GetAngularRepeatNumber();
+  if ((size_t) baseComponent->GetGenericRepeatNumber()> m_headNb){
+        if (m_headNb==1){ //No angular repeater
+          m_headNb=baseComponent->GetGenericRepeatNumber();
+          //Number of heads set to generic repeater number
+        }
+        else{
+            G4Exception("GateToProjectionSet::RecordBeginOfAcquisition()",
+                        "SetVerboseToProjectionSetAndInterfile",
+                        FatalException,
+                        "Both angular and generic repeaters were employed");
+        }
+    }
+
   m_headAngularPitch = baseComponent->GetAngularRepeatPitch();
   if (!m_headAngularPitch)
     m_headAngularPitch = 360. * deg;
