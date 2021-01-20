@@ -1,0 +1,247 @@
+
+name: CI
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  schedule:
+    - cron: '0 0 * * 0,3'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        options: [none, rtk, torch, optic]
+
+    env:
+      ROOT_VERSION: 'v6-19-02'
+      GEANT4_VERSION: 'v10.7.0'
+      ROOT_DIR: $(HOME)/software/root
+      GEANT4_DIR: $(HOME)/software/geant4
+
+    steps:
+    - name: Checkout github repo
+      uses: actions/checkout@v2
+      with:
+          lfs: true
+    - name: Checkout LFS objects
+      run: git lfs checkout
+    - name: Cache
+      id: cache_gate_dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/software
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build2
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build2
+    - name: Install dependencies
+      run: |
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          sudo apt-get update -qq
+          sudo apt-get install -y gcc \
+                                  g++ \
+                                  make \
+                                  binutils \
+                                  libx11-dev \
+                                  libxpm-dev \
+                                  libxft-dev \
+                                  libxext-dev \
+                                  qt5-default \
+                                  git \
+                                  cmake \
+                                  python3.7-dev \
+                                  ccache \
+                                  fftw3-dev
+          gcc -v
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+          brew update
+          brew install  qt5 \
+                        ccache \
+                        fftw \
+                        llvm \
+                        libomp \
+                        wget
+          brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
+          export PATH=/usr/local/opt/qt/bin:$PATH
+          export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
+          export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
+        fi
+        cd $HOME/
+        mkdir -p software option_dependencies
+        cmake --version
+    - name: Install root
+      run: |
+        if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" != 'true' ] && [ "${{ matrix.options }}" == 'none' ]; then
+          cd $HOME/software
+          mkdir root
+          cd root
+          mkdir src bin install
+          git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
+          cd bin
+          cmake ../src -Dpython=OFF \
+                       -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
+          make -j4 install
+          cd ..
+          rm -rf bin src
+        fi
+    - name: Install Geant4
+      run: |
+        if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" != 'true' ] && [ "${{ matrix.options }}" == 'none' ]; then
+          cd $HOME/software
+          mkdir geant4
+          cd geant4
+          mkdir src bin install data
+          git clone  --branch $GEANT4_VERSION https://github.com/Geant4/geant4.git --depth 1 src
+          cd bin
+          cmake -DGEANT4_INSTALL_DATA=ON \
+                -DGEANT4_INSTALL_DATADIR=$HOME/software/geant4/data \
+                -DCMAKE_INSTALL_PREFIX=$HOME/software/geant4/install \
+                ../src
+          make -j4 install
+          cd ..
+          rm -rf src bin
+        fi
+    - name: Install option dependencies
+      run: |
+        if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" == 'true' ]; then
+          cd $HOME/option_dependencies
+          if [ "${{ matrix.options }}" == 'torch' ]; then
+            if [ "${{ matrix.os }}" == 'ubuntu-latest' ]; then
+              wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip
+              unzip libtorch-cxx11-abi-shared-with-deps-1.4.0+cpu.zip
+            elif [ "${{ matrix.os }}" == 'macos-latest' ]; then
+              wget https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.4.0.zip
+              unzip libtorch-macos-1.4.0.zip
+            fi
+          fi
+          if [ "${{ matrix.options }}" == 'rtk' ]; then
+            mkdir rtk
+            cd rtk
+            mkdir src bin
+            git clone https://github.com/InsightSoftwareConsortium/ITK.git --depth 1 src
+            cd bin
+            cmake -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DITK_MINIMUM_COMPLIANCE_LEVEL=3 -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
+            make -j4
+          fi
+          cd $HOME/option_dependencies
+          ls
+        else
+          if [ "${{ matrix.options }}" != 'none' ]; then
+            echo "Create the cache first and run the job again"
+            exit 1
+          fi
+        fi
+    - name: Configure Gate
+      run: |
+        if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" == 'true' ]; then
+          cd $HOME
+          export ROOTSYS=$HOME/software/root/install
+          export PATH=${ROOTSYS}:${PATH}
+          source $HOME/software/root/install/bin/thisroot.sh
+          source $HOME/software/geant4/install/bin/geant4.sh 
+          mkdir build
+          cd build
+          which cmake
+          cmake --version
+          export GATE_USE_TORCH=OFF
+          export GATE_USE_RTK=OFF
+          export GATE_USE_OPTICAL=OFF
+          if [ "${{ matrix.options }}" == 'torch' ]; then
+            export GATE_USE_TORCH=ON
+          fi
+          if [ "${{ matrix.options }}" == 'rtk' ]; then
+            export GATE_USE_RTK=ON
+          fi
+          if [ "${{ matrix.options }}" == 'optic' ]; then
+            export GATE_USE_OPTIC=ON
+          fi
+          cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
+                -DTorch_DIR=$HOME/option_dependencies/libtorch/share/cmake/Torch \
+                -DGATE_COMPILE_GATEDIGIT=ON \
+                -DGATE_USE_RTK=$GATE_USE_RTK \
+                -DITK_DIR=$HOME/option_dependencies/rtk/bin/ \
+                -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
+                -DBUILD_TESTING=ON \
+                $GITHUB_WORKSPACE
+        fi
+    - name: Configure CTest
+      if: steps.cache_gate_dependencies.outputs.cache-hit == 'true'
+      run: |
+          cd $HOME
+          cat > dashboard.cmake << EOF
+          set(CTEST_SITE "Github.macos-latest.none")
+          file(TO_CMAKE_PATH "$HOME" CTEST_DASHBOARD_ROOT)
+          file(TO_CMAKE_PATH "$GITHUB_WORKSPACE" CTEST_SOURCE_DIRECTORY)
+          file(TO_CMAKE_PATH "$HOME/build" CTEST_BINARY_DIRECTORY)
+          set(dashboard_source_name "$GITHUB_REPOSITORY")
+          if("$GITHUB_REF" MATCHES "^refs/pull/")
+            set(branch "")
+            set(pr "-PR$GITHUB_REF")
+            set(dashboard_model "Experimental")
+          elseif("$GITHUB_REF" STREQUAL "refs/heads/develop")
+            set(branch "-develop")
+            set(pr "")
+            set(dashboard_model "Continuous")
+          else()
+            set(branch "-BRANCH$GITHUB_REF")
+            set(pr "")
+            set(dashboard_model "Experimental")
+          endif()
+          set(CTEST_BUILD_NAME "github_macos-latest.none-Build$GITHUB_RUN_NUMBER\${pr}\${branch}")
+          set(CTEST_UPDATE_VERSION_ONLY 1)
+          set(CTEST_TEST_ARGS \${CTEST_TEST_ARGS} PARALLEL_LEVEL \${PARALLEL_LEVEL})
+          set(CTEST_CONFIGURATION_TYPE "Release")
+          set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+          set(CTEST_BUILD_FLAGS "\${CTEST_BUILD_FLAGS} -j4")
+          set(CTEST_CUSTOM_WARNING_EXCEPTION
+            \${CTEST_CUSTOM_WARNING_EXCEPTION}
+            # macOS Azure Pipelines
+            "ld: warning: text-based stub file"
+            )
+          set(dashboard_no_clean 1)
+          set(ENV{CC} $(cCompiler))
+          set(ENV{CXX} $(cxxCompiler))
+          string(TIMESTAMP build_date "%Y-%m-%d")
+          message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
+          message("CTEST_SITE = \${CTEST_SITE}")
+          ctest_start("\${dashboard_model}")
+          ctest_configure(CAPTURE_CMAKE_ERROR configure_errors RETURN_VALUE configure_Results)
+          ctest_build(NUMBER_ERRORS build_errors RETURN_VALUE build_Results)
+          ctest_test(CAPTURE_CMAKE_ERROR test_errors RETURN_VALUE test_Results)
+          ctest_submit(RETURN_VALUE submit_Results)
+          if ((NOT \${configure_errors} EQUAL 0) OR (NOT \${configure_Results} EQUAL 0))
+            message( FATAL_ERROR "Configuration error" )
+          endif()
+          if ((NOT \${build_errors} EQUAL 0) OR (NOT \${build_Results} EQUAL 0))
+            message( FATAL_ERROR "Build error" )
+          endif()
+          if ((NOT \${test_errors} EQUAL 0) OR (NOT \${test_Results} EQUAL 0))
+            message( FATAL_ERROR "Test error" )
+          endif()
+          if (NOT \${submit_Results} EQUAL 0)
+            message( FATAL_ERROR "Submit error" )
+          endif()
+          EOF
+          cat dashboard.cmake
+    - name: Build Gate
+      run: |
+        if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" == 'true' ]; then
+          cd $HOME/build
+          cp ../dashboard.cmake .
+          export ROOTSYS=$HOME/software/root/install
+          export PATH=${ROOTSYS}:${PATH}
+          source $HOME/software/root/install/bin/thisroot.sh
+          source $HOME/software/geant4/install/bin/geant4.sh
+          ls -lrt $GITHUB_WORKSPACE/benchmarks/benchRT/output
+          ctest -S dashboard.cmake -VV
+          if [ ! $? -eq 0 ]; then
+            exit 1
+          fi
+          ls -lrt $GITHUB_WORKSPACE/benchmarks/benchRT/output
+        fi
+
