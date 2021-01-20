@@ -55,9 +55,8 @@ G4int GateGridDiscretization::ChooseVolume(G4String val)
         m_param.numberReadOutBlocksY= -1;
         m_param.stripOffsetX=0;
         m_param.stripOffsetY=0;
-        m_param.stripWidthX=-1;
-        m_param.stripWidthY=-1;
-
+        m_param.stripWidthX=0;
+        m_param.stripWidthY=0;
         m_param.deadSpX=0;
         m_param.deadSpY=0;
 
@@ -132,16 +131,21 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
             (*im).second.volSize.setZ(max-min);
             //G4cout<<"vol "<<(*im).second.volSize.getX()/cm<<"  "<<(*im).second.volSize.getY()/cm<<"  "<<(*im).second.volSize.getZ()/cm<<G4endl;
 
-             //Fill deadSpace and pitch
-            (*im).second.deadSpX=((*im).second.volSize.getX()-2*(*im).second.stripOffsetX-(*im).second.stripWidthX)/((*im).second.numberStripsX-1)-(*im).second.stripWidthX;
-            if( (*im).second.deadSpX<EPSILON) (*im).second.deadSpX=0;
-            (*im).second.pitchX=(*im).second.stripWidthX+(*im).second.deadSpX;
-            //G4cout<<"deadSpcX "<<(*im).second.deadSpX<<G4endl;
-            //G4cout<<"PitchX "<<(*im).second.pitchX<<G4endl;
+            if( (*im).second.volSize.getX()<((*im).second.numberStripsX*(*im).second.stripWidthX+2*(*im).second.stripOffsetX) || (*im).second.volSize.getY()<((*im).second.numberStripsY*(*im).second.stripWidthY+2*(*im).second.stripOffsetY)){
+                 GateError("The volume defined by number of strips, width and offset is larger that the SD");
+            }
+            else{
+                //Fill deadSpace and pitch
+                (*im).second.deadSpX=((*im).second.volSize.getX()-2*(*im).second.stripOffsetX-(*im).second.stripWidthX)/((*im).second.numberStripsX-1)-(*im).second.stripWidthX;
+                if( (*im).second.deadSpX<EPSILON) (*im).second.deadSpX=0;
+                (*im).second.pitchX=(*im).second.stripWidthX+(*im).second.deadSpX;
+                //G4cout<<"deadSpcX "<<(*im).second.deadSpX<<G4endl;
+                //G4cout<<"PitchX "<<(*im).second.pitchX<<G4endl;
 
-            (*im).second.deadSpY=((*im).second.volSize.getY()-2*(*im).second.stripOffsetY-(*im).second.stripWidthY)/((*im).second.numberStripsY-1)-(*im).second.stripWidthY;
-            if( (*im).second.deadSpY<EPSILON) (*im).second.deadSpY=0;
-            (*im).second.pitchY=(*im).second.stripWidthY+(*im).second.deadSpY;
+                (*im).second.deadSpY=((*im).second.volSize.getY()-2*(*im).second.stripOffsetY-(*im).second.stripWidthY)/((*im).second.numberStripsY-1)-(*im).second.stripWidthY;
+                if( (*im).second.deadSpY<EPSILON) (*im).second.deadSpY=0;
+                (*im).second.pitchY=(*im).second.stripWidthY+(*im).second.deadSpY;
+            }
         }
 
         //G4cout<<"Numb stripsX"<<(*im).second.numberStripsX<<G4endl;
