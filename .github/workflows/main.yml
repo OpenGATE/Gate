@@ -63,7 +63,6 @@ jobs:
           brew install  qt5 \
                         ccache \
                         fftw \
-                        llvm \
                         libomp \
                         wget
           brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
