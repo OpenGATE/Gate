@@ -99,6 +99,59 @@ GateEnergySpectrumActor::~GateEnergySpectrumActor()
 
 
 //-----------------------------------------------------------------------------
+
+
+
+TH1D* GateEnergySpectrumActor::FactoryTH1D(const char *name, const char *title, Int_t nbinsx, Double_t xlow, Double_t xup, const char *xtitle, const char *ytitle)
+{
+    TH1D* th1d = new TH1D(name, title, nbinsx, xlow, xup);
+    th1d->SetXTitle(xtitle);  
+    th1d->SetYTitle(ytitle);
+    return th1d;
+}
+
+TH1D* GateEnergySpectrumActor::FactoryTH1D2(const char *name, const char *title, const char *xtitle, const char *ytitle, double* binV, int nbins)
+{
+    //G4cout<< "nbins: " << nbins << G4endl;
+    //G4cout << "============="<<G4endl<<G4endl;
+    TH1D* th1d = new TH1D(name, title, nbins, binV);
+    th1d->SetXTitle(xtitle);  
+    th1d->SetYTitle(ytitle);
+    return th1d;
+}
+
+
+double* GateEnergySpectrumActor::CreateBinVector(double emin, double emax, int nbins, bool enableLogBin)
+{
+    int nedges = nbins + 1;
+    double* binV = new double[nedges];
+    double dEn;
+    //G4cout << "E: min, max " << emin<< ", "<<emax<< "; nbins " << nbins<< G4endl;
+    if (enableLogBin){
+      G4double eminLog = emin/MeV; // MeV is the default unit for energy in this actor
+      if (eminLog < 0.000001) eminLog = 0.000001;
+      double energyLogBinV_LB = TMath::Log10(eminLog/MeV);
+      double energyLogBinV_UB = TMath::Log10(emax/MeV); 
+      dEn = (energyLogBinV_UB - energyLogBinV_LB)/((double)nbins );
+      for (int j = 0; j < nedges; j++) {
+          double linSpacedV = energyLogBinV_LB + (double)j   * dEn;
+          binV[j] = TMath::Power(10,  linSpacedV);
+      }
+      //G4cout<<"Log bin ind 0 1 and end " << binV[0]<< "; "<< binV[1]<< "; " << binV[nedges-1]<<G4endl;
+    }
+    else{
+      dEn = (emax - emin)/((double)nbins );
+      for (int j = 0; j < nedges; j++) {
+          double linSpacedV = emin + (double)j   * dEn;
+          binV[j] =  linSpacedV;
+      }
+      //G4cout<<"den: " << dEn << G4endl; 
+      //G4cout<<"Lin bin ind 0 1 and end " << binV[0]<< "; "<< binV[1]<< "; " << binV[nedges-1]<<G4endl;
+    }
+    
+    return binV;
+}
+
 /// Construct
 void GateEnergySpectrumActor::Construct()
 {
@@ -118,173 +171,164 @@ void GateEnergySpectrumActor::Construct()
   // Find OtherMaterial
   G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
   
-  if (mEnableLogBinning){
-      G4double mEminLog = mEmin/MeV; // MeV is the default unit for energy in this actor
-      if (mEminLog < 0.000001) mEminLog = 0.000001;
-      double energyLogBinV_LB = TMath::Log10(mEminLog/MeV);
-      double energyLogBinV_UB = TMath::Log10(mEmax/MeV); 
-      dEn = (energyLogBinV_UB - energyLogBinV_LB)/((double)mENBins );
-      eBinV = new double[mENBins+1];
-      for (int j = 0; j < (mENBins+1); j++) {
-          
-          double linSpacedV = energyLogBinV_LB + (double)j   * dEn;
-          eBinV[j] = TMath::Power(10,  linSpacedV);
-      }
-  }
+  
+  //eBinV = CreateBinVector(mEmin, mEmax, mENBins, mEnableLogBinning);
   
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       mEnableLETFluenceSpectrumFlag = true;
   }
       
   pTfile = new TFile(mSaveFilename,"RECREATE");
-  if (!mEnableLogBinning){
+
       if (mEnableEnergySpectrumNbPartFlag){
-          pEnergySpectrumNbPart = new TH1D("energySpectrumNbPart","Energy Spectrum Number of particles",GetENBins(),GetEmin() ,GetEmax() );
-          pEnergySpectrumNbPart->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumNbPart->SetYTitle("Number of particles");
+          
+         pEnergySpectrumNbPart = this->FactoryTH1D2(
+         "energySpectrumNbPart",
+         "Energy Spectrum Number of particles", 
+         "Energy (MeV)",
+         "Number of particles",
+          CreateBinVector(GetEmin() ,GetEmax(), GetENBins(), mEnableLogBinning), GetENBins());
           allEnabledTH1DHistograms.push_back(pEnergySpectrumNbPart);
       }
       if (mEnableEnergySpectrumFluenceCosFlag){
-          pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos",GetENBins(),GetEmin() ,GetEmax() );
-          pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumFluenceCos->SetYTitle("Fluence * Area [1]");
+          
+          pEnergySpectrumFluenceCos = this->FactoryTH1D2(
+          "energySpectrumFluenceCos",
+          "Energy Spectrum fluence 1/cos",
+          "Energy (MeV)",
+          "Fluence * Area [1]" ,
+          CreateBinVector(GetEmin() ,GetEmax(), GetENBins(), mEnableLogBinning), GetENBins() );
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);
       }
 
       if (mEnableEnergySpectrumFluenceTrackFlag){
-          pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track",GetENBins(),GetEmin() ,GetEmax() );
-          pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
-          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [mm]");
+          pEnergySpectrumFluenceTrack = this->FactoryTH1D2(
+          "energySpectrumFluenceTrack",
+          "Energy Spectrum fluence track",
+          "Energy (MeV)",
+          "Fluence * Area [1]" ,
+          CreateBinVector(GetEmin() ,GetEmax(), GetENBins(), mEnableLogBinning), GetENBins() );
           allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
       } 
         
       if (mEnableEnergySpectrumEdepFlag){
-          pEnergyEdepSpectrum = new TH1D("energyEdepSpectrum","Energy Edep Spectrum",GetENBins(),GetEmin() ,GetEmax() );
-          pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
-          pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
+          pEnergyEdepSpectrum = this->FactoryTH1D2(
+          "energyEdepSpectrum",
+          "Energy Spectrum Edep",
+          "Energy (MeV)",
+          "Energy deposition (MeV)" ,
+          CreateBinVector(GetEmin() ,GetEmax(), GetENBins(), mEnableLogBinning), GetENBins() );
           allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
+          
       } 
       if (mEnableEdepHistoFlag){
-          pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-          pEdep->SetXTitle("E_{dep} (MeV)");
+          pEdep = this->FactoryTH1D2(
+          "edepHisto",
+          "Energy deposited per event",
+          "Energy deposition (MeV)" ,
+          "Frequency",
+          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(),mEnableLogBinning) , GetENBins());
           allEnabledTH1DHistograms.push_back(pEdep);
       } 
       if (mEnableEdepTrackHistoFlag){
-          pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-          pEdepTrack->SetXTitle("E_{dep} (MeV)");
+          pEdepTrack = this->FactoryTH1D2(
+          "edepTrackHisto",
+          "Energy deposited per track",
+          "Energy deposition (MeV)" ,
+          "Frequency",
+          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(), mEnableLogBinning), GetEdepNBins() );
           allEnabledTH1DHistograms.push_back(pEdepTrack);
           }       
-          if (mEnableEdepStepHistoFlag){
-          pEdepStep  = new TH1D("edepStepHisto","Energy deposited per step",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-          pEdepStep->SetXTitle("E_{dep} (MeV)");
-          allEnabledTH1DHistograms.push_back(pEdepStep);
-          }    
-  }
-  else
-  {
-      if (mEnableEnergySpectrumNbPartFlag){
-          pEnergySpectrumNbPart = new TH1D("energySpectrumNbPart","Energy Spectrum Number of particles",mENBins,eBinV);
-          pEnergySpectrumNbPart->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumNbPart->SetYTitle("Number of particles");
-          allEnabledTH1DHistograms.push_back(pEnergySpectrumNbPart);
-          }
-      if (mEnableEnergySpectrumFluenceCosFlag){
-          pEnergySpectrumFluenceCos = new TH1D("energySpectrumFluenceCos","Energy Spectrum fluence 1/cos", mENBins,eBinV );
-          pEnergySpectrumFluenceCos->SetXTitle("Energy (MeV)");  
-          pEnergySpectrumFluenceCos->SetYTitle("Fluence * Area [1]");   
-          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceCos);   
-          }
-      if (mEnableEnergySpectrumFluenceTrackFlag){
-          pEnergySpectrumFluenceTrack = new TH1D("energySpectrumFluenceTrack","Energy Spectrum fluence Track", mENBins,eBinV );
-          pEnergySpectrumFluenceTrack->SetXTitle("Energy (MeV)");
-          pEnergySpectrumFluenceTrack->SetYTitle("Fluence * Volume [mm]");
-          allEnabledTH1DHistograms.push_back(pEnergySpectrumFluenceTrack);
-          } 
-      if (mEnableEnergySpectrumEdepFlag){
-          pEnergyEdepSpectrum = new TH1D("energyEdepSpectrum","Energy Edep Spectrum", mENBins,eBinV);
-          pEnergyEdepSpectrum->SetXTitle("Energy (MeV)");
-          pEnergyEdepSpectrum->SetYTitle("Energy deposition (MeV)");
-          allEnabledTH1DHistograms.push_back(pEnergyEdepSpectrum);
-          }
-      if (mEnableEdepHistoFlag){
-          pEdep  = new TH1D("edepHisto","Energy deposited per event",mENBins,eBinV);
-          pEdep->SetXTitle("E_{dep} (MeV)");
-          allEnabledTH1DHistograms.push_back(pEdep);
-          } 
-      if (mEnableEdepTrackHistoFlag){
-          pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",mENBins,eBinV );
-          pEdepTrack->SetXTitle("E_{dep} (MeV)");
-          allEnabledTH1DHistograms.push_back(pEdepTrack);
-          } 
-      if (mEnableEdepStepHistoFlag){
-          pEdepStep  = new TH1D("edepStepHisto","Energy deposited per step",mENBins,eBinV );
-          pEdepStep->SetXTitle("E_{dep} (MeV)");
+     if (mEnableEdepStepHistoFlag){
+          pEdepStep = this->FactoryTH1D2(
+          "edepStepHisto",
+          "Energy deposited per step",
+          "Energy deposition (MeV)" ,
+          "Frequency",
+          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(), mEnableLogBinning), GetEdepNBins() );
           allEnabledTH1DHistograms.push_back(pEdepStep);
           } 
-  }
-
+         
 
   if (mEnableLETSpectrumFlag) {
-      pLETSpectrum = new TH1D("LETSpectrum","LET Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
-      pLETSpectrum->SetXTitle("LET (keV/um)");
-      pLETSpectrum->SetYTitle("Energy deposition (MeV)");
-      allEnabledTH1DHistograms.push_back(pLETSpectrum);
-  }
+          pLETSpectrum = this->FactoryTH1D2(
+          "LETSpectrum",
+          "LET Spectrum",
+          "LET (keV/um)" ,
+          "Energy deposition (MeV)",
+          CreateBinVector(GetLETmin() ,GetLETmax(), GetNLETBins(), mEnableLogBinning) , GetNLETBins());
+          allEnabledTH1DHistograms.push_back(pLETSpectrum);
+           
+    }
   if (mEnableLETFluenceSpectrumFlag) {
-      pLETFluenceSpectrum = new TH1D("LETFluenceSpectrum","LET Fluence Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
-      pLETFluenceSpectrum->SetXTitle("LET (keV/um)");
-      pLETFluenceSpectrum->SetYTitle("Fluence * Volume [mm]");
-      allEnabledTH1DHistograms.push_back(pLETFluenceSpectrum);
-  }
+          pLETFluenceSpectrum = this->FactoryTH1D2(
+          "LETFluenceSpectrum",
+          "LET Fluence Spectrum",
+          "LET (keV/um)" ,
+          "Fluence * Volume [mm]",
+          CreateBinVector(GetLETmin() ,GetLETmax(), GetNLETBins(), mEnableLogBinning), GetNLETBins() );
+          allEnabledTH1DHistograms.push_back(pLETFluenceSpectrum);
+      } 
+       
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       std::string histBranchName = "";
       std::string materialToConvertToName = mOtherMaterial;
       histBranchName = "LETto" + materialToConvertToName + "FluenceSpectrum" ; 
       std::string histTitle = "LET to " + materialToConvertToName + " Fluence Spectrum";
-      pLETtoMaterialFluenceSpectrum = new TH1D(histBranchName.c_str(),histTitle.c_str(),GetNLETBins(),GetLETmin() ,GetLETmax() );
-      pLETtoMaterialFluenceSpectrum->SetXTitle("LET to other material (keV/um)");
-      pLETtoMaterialFluenceSpectrum->SetYTitle("Fluence * Volume [mm]");
-      allEnabledTH1DHistograms.push_back(pLETtoMaterialFluenceSpectrum);
+          pLETtoMaterialFluenceSpectrum = this->FactoryTH1D2(
+          histBranchName.c_str(),
+          histTitle.c_str(),
+          "LET to other material (keV/um)" ,
+          "Fluence * Volume [mm]",
+          CreateBinVector(GetLETmin() ,GetLETmax(), GetNLETBins(), mEnableLogBinning), GetNLETBins() );
+          allEnabledTH1DHistograms.push_back(pLETtoMaterialFluenceSpectrum);
   }
   if (mEnableQSpectrumFlag) {
-      pQSpectrum = new TH1D("QSpectrum","Q Spectrum",GetNQBins(),GetQmin() ,GetQmax() );
-      pQSpectrum->SetXTitle("Q (qq/MeV)");
-      pQSpectrum->SetYTitle("Energy deposition (MeV)");
-      allEnabledTH1DHistograms.push_back(pQSpectrum);
+          pQSpectrum = this->FactoryTH1D2(
+          "QSpectrum",
+          "Q Spectrum",
+          "Q (qq/MeV)" ,
+          "Energy Deposition (MeV)",
+          CreateBinVector(GetQmin() ,GetQmax(), GetNQBins(), mEnableLogBinning), GetNQBins() );
+          allEnabledTH1DHistograms.push_back(pQSpectrum);
   }
   
-
 
   if (mEnableEdepTimeHistoFlag){
       pEdepTime  = new TH2D("edepHistoTime","Energy deposited with time per event",
                             GetEdepNBins(),0,20,GetEdepNBins(),GetEdepmin(),GetEdepmax());
       pEdepTime->SetXTitle("t (ns)");
       pEdepTime->SetYTitle("E_{dep} (MeV)");
-
   } 
-
-
 
   if (mEnableElossHistoFlag){
-      pDeltaEc = new TH1D("eLossHisto","Energy loss",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-      pDeltaEc ->SetXTitle("E_{loss} (MeV)");
-      allEnabledTH1DHistograms.push_back(pDeltaEc);
-  } 
+     pDeltaEc = this->FactoryTH1D2(
+          "eLossHisto",
+          "Energy loss",
+          "E_{loss} (MeV)" ,
+          "n.a.",
+          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(), mEnableLogBinning) , GetEdepNBins());
+          allEnabledTH1DHistograms.push_back(pDeltaEc);
+   } 
   ResetData();
 }
 //-----------------------------------------------------------------------------
+
 
 
 //-----------------------------------------------------------------------------
 /// Save data
 void GateEnergySpectrumActor::SaveData()
 {
+    double scaleFactor = 1.0;
    if (mEnableRelativePrimEvents){
+       scaleFactor = nEvent;
+    }
     for(std::list<TH1D*>::iterator it=allEnabledTH1DHistograms.begin();it!=allEnabledTH1DHistograms.end();++it)
       {
-          (*it)->Scale(1./nEvent);
+          (*it)->Scale(1./scaleFactor);
       }
-   }
+   
   
   GateVActor::SaveData();
   pTfile->Write();
@@ -343,7 +387,7 @@ void GateEnergySpectrumActor::EndOfEventAction(const G4Event* evH)
   
     if (edep > 0) {
         if (mEnableEdepHistoFlag){
-            pEdep->Fill(edepEvent/MeV);
+            pEdep->Fill(edepEvent/MeV, 1);
               //G4cout<<"--------------Post Event Action ------------"<<G4endl;
               ////G4cout<<"Particle Name: " << evH->GetUserInformation()->print() <<G4endl;
               //G4cout<<"EdepEvent [eV]: " << edepEvent/eV<<G4endl;
@@ -572,11 +616,12 @@ void GateEnergySpectrumActor::SaveAsText(TH1D * histo, G4String initial_filename
         << "# Number of bins = " << histo->GetNbinsX() << std::endl
         << "# Content below the first bin: " << histo->GetBinContent(0) << std::endl
         << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
-        << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
         << "# Number of events: " << nEvent << std::endl
         << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
-    for(int i=1; i<histo->GetNbinsX()+1; i++) {
-      oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
+    for(int i=histo->GetXaxis()->GetFirst(); i< histo->GetXaxis()->GetLast(); i++) {
+      //oss << pLETspectrum->GetBinCenter(i) << " " << pLETspectrum->GetBinWidth(i) << " " << pLETspectrum->GetBinContent(i) << std::endl;
+      oss << histo->GetBinCenter(i) << " " << histo->GetBinWidth(i)    << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
+    //oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
     }
     oss.close();
   }
