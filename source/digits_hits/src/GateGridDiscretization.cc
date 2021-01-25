@@ -131,8 +131,12 @@ void GateGridDiscretization::ProcessOnePulse(const GatePulse* inputPulse,GatePul
             (*im).second.volSize.setZ(max-min);
             //G4cout<<"vol "<<(*im).second.volSize.getX()/cm<<"  "<<(*im).second.volSize.getY()/cm<<"  "<<(*im).second.volSize.getZ()/cm<<G4endl;
 
-            if( (*im).second.volSize.getX()<((*im).second.numberStripsX*(*im).second.stripWidthX+2*(*im).second.stripOffsetX) || (*im).second.volSize.getY()<((*im).second.numberStripsY*(*im).second.stripWidthY+2*(*im).second.stripOffsetY)){
-                 GateError("The volume defined by number of strips, width and offset is larger that the SD");
+            if( (*im).second.volSize.getX()<((*im).second.numberStripsX*(*im).second.stripWidthX+2*(*im).second.stripOffsetX)){
+                 GateError("The volume defined by number of strips, width and offset is larger that the SD size in X-axis direction ");
+            }
+            else if ( (*im).second.volSize.getY()<((*im).second.numberStripsY*(*im).second.stripWidthY+2*(*im).second.stripOffsetY)) {
+                GateError("The volume defined by number of strips, width and offset is larger that the SD size in Y-axis direction ");
+
             }
             else{
                 //Fill deadSpace and pitch
