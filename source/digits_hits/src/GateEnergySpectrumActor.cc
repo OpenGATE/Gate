@@ -395,10 +395,6 @@ void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
             pEdepTime->Fill(tof/ns,edepEvent/MeV);
         }
       }
-  
-  
-  
-      
   nEvent++;
 }
 //-----------------------------------------------------------------------------
