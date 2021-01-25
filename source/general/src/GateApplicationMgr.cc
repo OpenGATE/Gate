@@ -418,6 +418,9 @@ void GateApplicationMgr::StartDAQ()
 
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
+  // Action for actors: RecordEndOfAcquisition
+  GateActorManager::GetInstance()->RecordEndOfAcquisition();
+
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
     GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
 

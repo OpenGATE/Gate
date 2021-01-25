@@ -54,7 +54,7 @@ void Gate_NN_ARF_Predict_Data::Print(std::ostream &os) const {
 
 //-----------------------------------------------------------------------------
 Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
-    GateVActor(name, depth) {
+        GateVActor(name, depth) {
     GateDebugMessageInc("Actor", 4, "Gate_NN_ARF_Actor() -- begin\n")
     pMessenger = new Gate_NN_ARF_ActorMessenger(this);
     mARFMode = "predict";
@@ -229,7 +229,7 @@ void Gate_NN_ARF_Actor::Construct() {
         if (mNNModelPath == "")
             GateError("Error: Neural Network model filename (.pt) is empty. Use setNNModel");
         if (mNNDictPath == "")
-            GateError("Error: Neural Network dictionay filename (.json) is empty. Use setNNDict");
+            GateError("Error: Neural Network dictionary filename (.json) is empty. Use setNNDict");
         mNNModule = torch::jit::load(mNNModelPath);
 
         // No CUDA for the moment
@@ -283,8 +283,8 @@ void Gate_NN_ARF_Actor::Construct() {
         if (vol->GetVolumeNumber() > 1) {
             if (mNumberOfCopies > 1)
                 GateError("Several ancestors of "
-                              << mVolume->GetObjectName()
-                              << " are repeated, only one is allowed.");
+                                  << mVolume->GetObjectName()
+                                  << " are repeated, only one is allowed.");
             mNumberOfCopies = vol->GetVolumeNumber();
             mVolumeDepth = depth;
         }
@@ -301,7 +301,6 @@ void Gate_NN_ARF_Actor::Construct() {
 void Gate_NN_ARF_Actor::SaveData() {
     // Needed to change filename if ask by user (OverwriteFileFlag)
     GateVActor::SaveData();
-
     if (mARFMode == "train") SaveDataTrainMode();
     else SaveDataPredictMode();
 }
@@ -311,13 +310,13 @@ void Gate_NN_ARF_Actor::SaveData() {
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SaveDataTrainMode() {
     GateMessage("Actor", 1, "NN_ARF_Actor Number of Detected events: "
-        << mNumberOfDetectedEvent
-        << " / " << mTrainData.size()
-        << " = " << (double) mNumberOfDetectedEvent / (double) mTrainData.size() * 100.0
-        << "%" << std::endl);
+            << mNumberOfDetectedEvent
+            << " / " << mTrainData.size()
+            << " = " << (double) mNumberOfDetectedEvent / (double) mTrainData.size() * 100.0
+            << "%" << std::endl);
 
     GateMessage("Actor", 1, "NN_ARF_Actor Max angles: "
-        << mThetaMax << " " << mPhiMax << std::endl);
+            << mThetaMax << " " << mPhiMax << std::endl);
 
     // Write the tree (root or npy)
     G4String extension = getExtension(mSaveFilename);
@@ -457,14 +456,14 @@ void Gate_NN_ARF_Actor::SaveDataProjection(int cp) {
 
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SaveDataListmode() {
-
+    GateError("List Mode output not yet implemented, sorry.");
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void Gate_NN_ARF_Actor::SaveDataARF() {
-
+    GateError("ARF output not yet implemented, sorry.");
 }
 //-----------------------------------------------------------------------------
 
@@ -497,7 +496,7 @@ void Gate_NN_ARF_Actor::BeginOfRunAction(const G4Run *r) {
             auto id = fDM->GetDigiCollectionID(name);
             GateMessage("Actor", 1,
                         "Gate_NN_ARF_Actor -> energy window "
-                            << name << " (id = " << id << ")" << std::endl);
+                                << name << " (id = " << id << ")" << std::endl);
             if (id == -1) {
                 GateError("Cannot find the energy window named: " << name);
             }
@@ -637,7 +636,7 @@ void Gate_NN_ARF_Actor::UserSteppingAction(const GateVVolume * /*v*/, const G4St
 void Gate_NN_ARF_Actor::ProcessBatch() {
 #ifdef GATE_USE_TORCH
     GateMessage("Actor", 1, "NN_ARF_Actor process batch of "
-        << mBatchInputs.size() << " particles" << G4endl);
+            << mBatchInputs.size() << " particles" << G4endl);
     mNumberOfBatch++;
 
     //Convert NN inputs to Tensor
