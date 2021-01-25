@@ -165,14 +165,11 @@ void GateEnergySpectrumActor::Construct()
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
   
-
   // Find G4_WATER.
   G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
   // Find OtherMaterial
   G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
-  
-  
-  //eBinV = CreateBinVector(mEmin, mEmax, mENBins, mEnableLogBinning);
+
   
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       mEnableLETFluenceSpectrumFlag = true;
@@ -227,7 +224,7 @@ void GateEnergySpectrumActor::Construct()
           "Energy deposited per event",
           "Energy deposition (MeV)" ,
           "Frequency",
-          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(),mEnableLogBinning) , GetENBins());
+          CreateBinVector(GetEdepmin() ,GetEdepmax(), GetEdepNBins(),mEnableLogBinning) , GetEdepNBins());
           allEnabledTH1DHistograms.push_back(pEdep);
       } 
       if (mEnableEdepTrackHistoFlag){
@@ -373,7 +370,6 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
   newEvt = true;
   edepEvent = 0.;
   tof  = 0;
-  
    //G4cout<<"======================================"<<G4endl;
    //G4cout<<"=========== Pre Event Action ========="<<G4endl;
 }
@@ -381,7 +377,8 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
 
 
 //-----------------------------------------------------------------------------
-void GateEnergySpectrumActor::EndOfEventAction(const G4Event* evH)
+//void GateEnergySpectrumActor::EndOfEventAction(const G4Event* evH)
+void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
   
@@ -485,8 +482,6 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   Ei=step->GetPreStepPoint()->GetKineticEnergy();
   
-  
-  //G4cout<<"  Eloss [eV]: " << Ei/eV -Ef/eV<<G4endl;
   if(newTrack){
     
 
@@ -502,7 +497,6 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
         if (dz > 0){
             //double Emean = (Ei+Ef)/2/MeV;
             double invAngle = 1/dz;
-            //if (invAngle > 10) invAngle = 10;
             pEnergySpectrumFluenceCos->Fill(Ei/MeV/atomicMassScaleFactor,step->GetTrack()->GetWeight()*invAngle);
         }
     }
@@ -546,7 +540,6 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
           
            //other material
           static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);
-
           //// DISPLAY parameters of particles having DEDX=0
           //// Mainly gamma and neutron
           //DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
@@ -612,16 +605,14 @@ void GateEnergySpectrumActor::SaveAsText(TH1D * histo, G4String initial_filename
     oss << "# First line is two numbers " << std::endl
         << "#     First value is '2', it means 'histogram mode'" << std::endl
         << "#     Second value is 'Emin' of the histogram" << std::endl
-        << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
+        << "# Other lines : 2 columns. 1) energy 2) Bin Width 2) frequency (nb divided by NbEvent)" << std::endl
         << "# Number of bins = " << histo->GetNbinsX() << std::endl
         << "# Content below the first bin: " << histo->GetBinContent(0) << std::endl
         << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
         << "# Number of events: " << nEvent << std::endl
         << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
     for(int i=histo->GetXaxis()->GetFirst(); i< histo->GetXaxis()->GetLast(); i++) {
-      //oss << pLETspectrum->GetBinCenter(i) << " " << pLETspectrum->GetBinWidth(i) << " " << pLETspectrum->GetBinContent(i) << std::endl;
-      oss << histo->GetBinCenter(i) << " " << histo->GetBinWidth(i)    << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
-    //oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i) << std::endl; // removed division by nEvent for case nEvent = 0 ;
+       oss << histo->GetBinCenter(i) << " " << histo->GetBinWidth(i)    << " " << histo->GetBinContent(i) << std::endl;  
     }
     oss.close();
   }
