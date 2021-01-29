@@ -64,6 +64,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) :
     SetIsAllStep(false);
     EnableTOut = false;
     EnableTProd = false;
+    EnableTrackLengthFlag = false;
 
     mSphereProjectionFlag = false;
     mSphereProjectionCenter = G4ThreeVector(0);
@@ -93,7 +94,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) :
     pIAEARecordType = 0;
     pIAEAheader = 0;
     mFileSize = 0;
-    previous_event_id = -1;
+
     GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
 
     emcalc = new G4EmCalculator;
@@ -121,16 +122,12 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor() {
 void GatePhaseSpaceActor::Construct() {
     GateVActor::Construct();
     // Enable callbacks
-    EnableBeginOfRunAction(false);
-    EnableBeginOfEventAction(true); // FIXME
-    EnableRecordEndOfAcquisition(true);
-
-    // bEnableEmissionPoint=true;
-    if (bEnablePrimaryEnergy || bEnableEmissionPoint || bEnableSpotID) EnableBeginOfEventAction(true);
-
-    EnablePreUserTrackingAction(true);
-    EnableUserSteppingAction(true);
     EnableBeginOfRunAction(true);
+    EnableBeginOfEventAction(true);
+    EnableRecordEndOfAcquisition(true);
+    EnablePreUserTrackingAction(true);
+    EnablePostUserTrackingAction(true);
+    EnableUserSteppingAction(true);
 
     G4String extension = getExtension(mSaveFilename);
 
@@ -216,6 +213,8 @@ void GatePhaseSpaceActor::InitTree() {
     if (EnableYDirection) mFile->write_variable("dY", &dy);
     if (EnableZDirection) mFile->write_variable("dZ", &dz);
 
+    if (EnableTrackLengthFlag) mFile->write_variable("trackLength", &trackLength);
+
     if (EnablePartName /*&& bEnableCompact==false*/) mFile->write_variable("ParticleName", pname, sizeof(pname));
     if (EnableProdVol && bEnableCompact == false) mFile->write_variable("ProductionVolume", vol, sizeof(vol));
     if (EnableProdProcess && bEnableCompact == false)
@@ -238,7 +237,6 @@ void GatePhaseSpaceActor::InitTree() {
     if (EnableTOut) mFile->write_variable("TOut", &tOut);
     if (EnableTProd) mFile->write_variable("TProd", &tProd);
 
-    // FIXME
     if (EnableTimeFromBeginOfEvent)
         mFile->write_variable("TimeFromBeginOfEvent", &fTimeFromBeginOfEvent);
 
@@ -302,13 +300,21 @@ void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const
 }
 // --------------------------------------------------------------------
 
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::PostUserTrackingAction(const GateVVolume * /*v*/, const G4Track *t) {
+    if (EnableTrackLengthFlag) {
+        trackLength = t->GetTrackLength();
+    }
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     // Set Primary Energy
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
 
-    // Store the application time of the event (for
+    // Store the application time of the event
     auto app = GateApplicationMgr::GetInstance();
     fBeginOfEventTime = app->GetCurrentTime();
 
@@ -583,6 +589,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         x = x + dx * d;
         y = y + dy * d;
         z = z + dz * d;
+
     }
 
     /*
@@ -657,6 +664,11 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         st = stepPoint->GetProcessDefinedStep()->GetProcessName();
     strcpy(pro_step, st.c_str());
 
+    //----------
+    st = "";
+    if (stepPoint->GetProcessDefinedStep())
+        st = stepPoint->GetProcessDefinedStep()->GetProcessName();
+    strcpy(pro_step, st.c_str());
 
     if (mFileType == "iaeaFile") {
 

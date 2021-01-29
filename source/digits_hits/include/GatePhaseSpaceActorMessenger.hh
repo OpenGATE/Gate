@@ -63,6 +63,7 @@ protected:
     G4UIcmdWithABool *pEnableWeightCmd;
     G4UIcmdWithABool *pEnableTimeCmd;
     G4UIcmdWithABool *pEnableTimeFromBeginOfEventCmd;
+    G4UIcmdWithABool *pEnableTrackLengthCmd;
     G4UIcmdWithABool *pEnableMassCmd;
     G4UIcmdWithABool *pEnableSecCmd;
     G4UIcmdWithABool *pEnableStoreAllStepCmd;
@@ -87,6 +88,7 @@ protected:
     G4UIcmdWithABool *pEnableTProdCmd;
     G4UIcmdWithAString *pUseMaskCmd;
     G4UIcmdWithABool *pEnableKillCmd;
+
 };
 
 #endif /* end #define GATESOURCEACTORMESSENGER_HH*/

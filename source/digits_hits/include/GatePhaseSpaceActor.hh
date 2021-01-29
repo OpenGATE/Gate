@@ -42,6 +42,8 @@ public:
 
     virtual void PreUserTrackingAction(const GateVVolume *, const G4Track *);
 
+    virtual void PostUserTrackingAction(const GateVVolume *, const G4Track *);
+
     virtual void BeginOfEventAction(const G4Event *e);
 
     virtual void BeginOfRunAction(const G4Run *r);
@@ -83,6 +85,8 @@ public:
     void SetIsLocalTimeEnabled(bool b) { EnableLocalTime = b; }
 
     void SetIsTimeFromBeginOfEventEnabled(bool b) { EnableTimeFromBeginOfEvent = b; }
+
+    void SetTrackLengthEnabled(bool b) { EnableTrackLengthFlag = b; }
 
     void SetIsMassEnabled(bool b) { EnableMass = b; }
 
@@ -160,7 +164,6 @@ protected:
 
     GateOutputTreeFileManager *mFile;
 
-
     bool EnableCharge;
     bool EnableElectronicDEDX;
     bool EnableTotalDEDX;
@@ -184,6 +187,7 @@ protected:
     bool mStoreOutPart;
     bool EnableNuclearFlag;
     bool EnableTimeFromBeginOfEvent;
+    bool EnableTrackLengthFlag;
 
     bool EnableTOut;
     bool EnableTProd;
@@ -207,6 +211,7 @@ protected:
     bool bEnableCompact;
     bool bEnablePDGCode;
     int bPDGCode;
+    double trackLength;
 
     bool mMaskIsEnabled;
     G4String mMaskFilename;
@@ -245,6 +250,7 @@ protected:
     double t;//t is either time or local time.
     double fTimeFromBeginOfEvent;
     double fBeginOfEventTime;
+
     G4int m;
     char vol[256];
 
@@ -255,7 +261,6 @@ protected:
     int parentid;
     int eventid;
     int runid;
-    int previous_event_id;
 
     int creator;
     int nucprocess;
