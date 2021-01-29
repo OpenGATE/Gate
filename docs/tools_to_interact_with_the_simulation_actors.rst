@@ -289,8 +289,12 @@ This actor builds one file containing N histograms. By default 3 histograms are 
    /gate/actor/MyActor/LETSpectrum/setLETmin			          0 keV/um
    /gate/actor/MyActor/LETSpectrum/setLETmax			          100 keV/um
    /gate/actor/MyActor/LETSpectrum/setNumberOfBins			    1000
+   
+   /gate/actor/MyActor/energyLossHisto/setEdepMin               0.0001 keV 
+   /gate/actor/MyActor/energyLossHisto/setEdepMax               200 keV
+   /gate/actor/MyActor/energyLossHisto/setNumberOfEdepBins       1000    
 
-By default an equidistant bin width is applied. However, for the spectra differential in energy a logarithmic bin width may be enabled::
+By default an equidistant bin width is applied. However, a logarithmic bin width may be enabled::
 
    /gate/actor/MyActor/setLogBinWidth                   true
 
@@ -320,11 +324,12 @@ The energy deposition differential in energy is scored using GetTotalEnergyDepos
 
  /gate/actor/MyActor/enableEdepSpectrum			true
 
-the energy deposition per event ('edepHisto'), the energy deposition per track ('edepTrackHisto') and the energy loss per track ('eLossHisto'). These histograms are stored in a root file. They take into account the weight of particles::
+the energy deposition per event ('edepHisto'), the energy deposition per track ('edepTrackHisto') and the energy loss per track ('eLossHisto') and the energy deposition per step ('edepStepHisto'). These histograms are stored in a root file. They take into account the weight of particles::
 
    /gate/actor/MyActor/enableEdepHisto		true
    /gate/actor/MyActor/enableEdepTimeHisto		true
    /gate/actor/MyActor/enableEdepTrackHisto		true
+   /gate/actor/MyActor/enableEdepStepHisto		true
    /gate/actor/MyActor/enableElossHisto		true
    /gate/actor/MyActor/energyLossHisto/setEmin              0 eV
    /gate/actor/MyActor/energyLossHisto/setEmax              15 MeV
@@ -618,7 +623,7 @@ LET Actor
 This actor calculates the dose or track averaged linear energy transfer::
 
    /gate/actor/addActor    LETActor       MyActor
-   /gate/actor/MyActor/save               myLETactor.mhd
+   /gate/actor/MyActor/save               output/myLETactor.mhd
    /gate/actor/MyActor/attachTo           phantom
    /gate/actor/MyActor/setResolution      1 1 100
    /gate/actor/MyActor/setType            DoseAveraged
@@ -629,7 +634,7 @@ For splitting the simulation into sevaral sub-simulations (e.g. parallel computa
 
    /gate/actor/yActor/doParallelCalculation true
 
-The default value is false. Enabling this option will produce 2 output images for each LET actor and run, a file labeled as '-numerator' and one labeled as '-denominator'. Building the quotient of these two images results in the averaged LET image. Note that the numerator and denominator images have to be summed up before the division.
+The default value is false. Enabling this option will produce 2 output images for each LET actor and run, a file labeled as '-numerator' and one labeled as '-denominator'. Building the quotient of these two images results in the averaged LET image. Note that the numerator and denominator images have to be summed up before the division. The denominator file equals the dose and fluence if DoseAveraged and TrackAveraged is enabled, respectively, after normalizing by the mass or volume.
 
 By default the unrestricted LET is calculated::
 
@@ -637,9 +642,14 @@ By default the unrestricted LET is calculated::
 
 If the restricted flag is set to true, the restricted LET is calculated, but also the calculation method changes. Instead of using tabulated stopping powers for the mean kinetic energy of the particle, the stopping power is calculated as the quotient of the deposited energy and the step length (ICRU 85). Be aware of potential artifacts (voxel size, step limiter, e- production cuts etc.) reported in literature for this calculation method. The production cut for electrons defines the energy carried away.
 
-By default, the stopping power of the material at the PreStepPoint is used. If the averaged LET to water regardless of the material is of interest, set following line to true::
+By default, the stopping power of the material at the PreStepPoint is used. Often a conversion to the LET (in particular water) is of interest. To convert the stopping power to another material than present in the volume use::
 
-   /gate/actor/MyActor/setLETtoWater false
+   /gate/actor/MyActor/setOtherMaterial G4_WATER
+   
+It may be of interest to separate the LET into several regions. Using following commands
+   /gate/actor/MyActor/setLETthresholdMin 10 keV/um
+   /gate/actor/MyActor/setLETthresholdMax 100 keV/um
+will only score particles having a LET between 10 and 100 keV/um. In this way the average LETd,t in that region can be extracted. Note, when enabling the doParallelCalculation option also the dose and fluence of particles of particles with a certain LET can be extracted.
 
 ID and particle filters can be used::
 
