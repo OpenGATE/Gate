@@ -64,6 +64,7 @@ public:
   void SetIsWeightEnabled(bool b){EnableWeight = b;}
   void SetIsTimeEnabled(bool b){EnableTime = b;}
   void SetIsLocalTimeEnabled(bool b){EnableLocalTime = b;}
+  void SetIsTimeFromBeginOfEventEnabled(bool b){EnableTimeFromBeginOfEvent = b;}
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
@@ -140,6 +141,7 @@ protected:
   bool mUseVolFrame;
   bool mStoreOutPart;
   bool EnableNuclearFlag;
+  bool EnableTimeFromBeginOfEvent;
 
   bool EnableTOut;
   bool EnableTProd;
@@ -199,6 +201,8 @@ protected:
   float tOut;
   float tProd;
   double t;//t is either time or local time.
+  double fTimeFromBeginOfEvent;
+  double fBeginOfEventTime;
   G4int m;
   char vol[256];
 
@@ -209,6 +213,7 @@ protected:
   int parentid;
   int eventid;
   int runid;
+  int previous_event_id;
 
   int creator;
   int nucprocess;
