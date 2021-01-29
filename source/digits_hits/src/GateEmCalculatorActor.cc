@@ -112,6 +112,7 @@ void GateEmCalculatorActor::SaveData()
   double I=0;
   double eDensity=0;
   double radLength=0;
+  double CSDArange = 0;
   G4String material;
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
 
@@ -172,6 +173,7 @@ void GateEmCalculatorActor::SaveData()
       EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, particle_definition, (*matTbl)[k], cut) / density;
       NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, particle_definition, (*matTbl)[k]) / density;
       TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, particle_definition, (*matTbl)[k], cut) / density;
+      CSDArange = emcalc->GetCSDARange(mEnergy, particle_definition, (*matTbl)[k]) / density;
       double MuMassCoeficient = 0.;
       for( const auto& process_name : processNameVector)
         {
@@ -195,6 +197,7 @@ void GateEmCalculatorActor::SaveData()
       os << EmDEDX / (MeV*cm2/g) << "\t\t";
       os << NuclearDEDX / (MeV*cm2/g) << "\t";
       os << TotalDEDX / (MeV*cm2/g) << "\t\t";
+      os << CSDArange / (MeV*cm2/g) << "\t\t";
       os << MuMassCoeficient / (cm2/g) << Gateendl;
     }
 
