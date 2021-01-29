@@ -550,8 +550,10 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     // time from the production to the leaving of the volume. Useful only for the outgoing particles
     tOut = step->GetTrack()->GetLocalTime();
+
     // production time of the particle wrt to the primary production (defined as a GlobalTime - LocalTime)"
     tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
+
     // time from the time at event creation (could be different from the globaltime-localtime as globaltime is the
     fTimeFromBeginOfEvent = step->GetTrack()->GetGlobalTime() - fBeginOfEventTime;
 
@@ -589,7 +591,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         x = x + dx * d;
         y = y + dy * d;
         z = z + dz * d;
-
     }
 
     /*
@@ -657,12 +658,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     if (step->GetTrack()->GetCreatorProcess())
         st = step->GetTrack()->GetCreatorProcess()->GetProcessName();
     strcpy(creator_process, st.c_str());
-
-    //----------
-    st = "";
-    if (stepPoint->GetProcessDefinedStep())
-        st = stepPoint->GetProcessDefinedStep()->GetProcessName();
-    strcpy(pro_step, st.c_str());
 
     //----------
     st = "";
