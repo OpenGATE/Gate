@@ -279,8 +279,16 @@ In order to enable it the following command must be employed::
 
 	/gate/digitizer/Coincidences/setTriggerOnlyByAbsorber 1
 
+Different coincidence acceptance policies are available for Compton camera: *keepIfMultipleVolumeIDsInvolved*, *keepIfMultipleVolumeNamesInvolved*, *keepAll*.
+They can be selected using the following command line::
 
-The criterion set to accept coincidences in CCMod is that at least two of the *singles* within the  within the *coincidence* are recorded in different volume names.
+	/gate/digitizer/Coincidences/setAcceptancePolicy4CC keepAll
+
+*KeepAll* policy accepts all coincidences, no restriction applied.
+
+*KeepIfMultipleVolumeIDsInvolved* policy accepts *coincidences* with at least two *singles* in different volumeIDs.  
+
+*KeepIfMultipleVolumeNamesInvolved* is the default *coincidence* acceptance policy. *Coincidences* are accepted if at least two of the *singles*  within the *coincidence* are recorded in different SD  volume names. Volumes created by a repeater have same volume name but different volumeID.
  
 Coincidence processing
 -----------------------
@@ -336,6 +344,13 @@ For example, the information of the energy deposition can be disabled using the 
 	/gate/actor/[Actor Name]/enableEnergy 0
 
 
+An additional file with electron escape information can be stored::
+	
+	/gate/actor/CC_digi_BB/saveEventInfoTree            [1/0]
+
+If this option is enabled and the chosen general FileName is for example *test.root*,  a new file *test_eventGlobalInfo.root* is generated.
+For each electron that goes through a SD volume, a flag that indicates if the electron enters or exits the volume, the SD detector volume name, the energy of the electron, the eventID and the runID are stored.
+
 
 Optional additional source information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -362,6 +377,7 @@ The following executables:
 * GateDigit_coincidence_processor  
 
 perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
+In order to use these executables during GATE compilation GATE_COMPILE_GATEDIGIT must be set to ON.     
 
 
 
