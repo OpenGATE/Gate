@@ -874,7 +874,7 @@ The LMF format was originally designed for the development of small animal PET s
 Image CT output
 ---------------
 
-The *imageCT* output is a binary matrix of float numbers that stores the simulated CT image and is produced for each time slice::
+The *imageCT* output is a binary matrix of float numbers that stores the number of Singles per pixel and is produced for each time slice::
  
    /gate/output/imageCT/enable
    /gate/output/imageCT/setFileName     test
