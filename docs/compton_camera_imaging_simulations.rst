@@ -344,6 +344,12 @@ For example, the information of the energy deposition can be disabled using the 
 	/gate/actor/[Actor Name]/enableEnergy 0
 
 
+An additional file with electron escape information can be stored::
+	/gate/actor/CC_digi_BB/saveEventInfoTree            [1/0]
+
+If this option is enabled and the chosen general FileName is for example *test.root*,  a new file *test_eventGlobalInfo.root* is generated.
+For each electron that goes through a SD volume, a flag that indicates if the electron enters or exits the volume, theSD detector volume name, the energy of the electron, the eventID and the runID are stored.
+
 
 Optional additional source information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
