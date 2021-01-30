@@ -345,10 +345,11 @@ For example, the information of the energy deposition can be disabled using the 
 
 
 An additional file with electron escape information can be stored::
+	
 	/gate/actor/CC_digi_BB/saveEventInfoTree            [1/0]
 
 If this option is enabled and the chosen general FileName is for example *test.root*,  a new file *test_eventGlobalInfo.root* is generated.
-For each electron that goes through a SD volume, a flag that indicates if the electron enters or exits the volume, theSD detector volume name, the energy of the electron, the eventID and the runID are stored.
+For each electron that goes through a SD volume, a flag that indicates if the electron enters or exits the volume, the SD detector volume name, the energy of the electron, the eventID and the runID are stored.
 
 
 Optional additional source information
@@ -376,6 +377,6 @@ The following executables:
 * GateDigit_coincidence_processor  
 
 perform respectively an offline digitization, an offline sorter and an offline sequence coincidence reconstruction.
-
+In order to use these executables during GATE compilation GATE_COMPILE_GATEDIGIT must be set to ON.     
 
 
