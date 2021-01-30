@@ -286,9 +286,9 @@ They can be selected using the following command line::
 
 *KeepAll* policy accepts all coincidences, no restriction applied.
 
-*KeepIfMultipleVolumeIDsInvolved* policy accepts *coincidences* with at least two of the *singles* in different volumeID.  
+*KeepIfMultipleVolumeIDsInvolved* policy accepts *coincidences* with at least two *singles* in different volumeIDs.  
 
-*KeepIfMultipleVolumeNamesInvolved* is the default *coincidence* acceptence policy. *Coincidences* are accepted if at least two of the *singles*  within the *coincidence* are recorded in different SD  volume names. Volumes created by a repeater have same volume name but different volumeID.
+*KeepIfMultipleVolumeNamesInvolved* is the default *coincidence* acceptance policy. *Coincidences* are accepted if at least two of the *singles*  within the *coincidence* are recorded in different SD  volume names. Volumes created by a repeater have same volume name but different volumeID.
  
 Coincidence processing
 -----------------------
