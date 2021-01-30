@@ -380,3 +380,4 @@ perform respectively an offline digitization, an offline sorter and an offline s
 In order to use these executables during GATE compilation GATE_COMPILE_GATEDIGIT must be set to ON.     
 
 
+
