@@ -279,8 +279,10 @@ In order to enable it the following command must be employed::
 
 	/gate/digitizer/Coincidences/setTriggerOnlyByAbsorber 1
 
-
-The criterion set to accept coincidences in CCMod is that at least two of the *singles* within the  within the *coincidence* are recorded in different volume names.
+Different coincidence acceptance policies are available for Compton camera: *keepIfMultipleVolumeIDsInvolved*, *keepIfMultipleVolumeNamesInvolved*,*keepAll*.
+*KeepAll* policy accepts all coincidences, no restriction applied.
+*KeepIfMultipleVolumeIDsInvolved* policy accepts *coincidences* with at least two of the *singles* in different volumeID.  
+*KeepIfMultipleVolumeNamesInvolved* is the default *coincidence* acceptence policy. *Coincidences* are accepted if at least two of the *singles*  within the *coincidence* are recorded in different SD  volume names. Volumes created by a repeater have same volume name but different volumeID.
  
 Coincidence processing
 -----------------------
