@@ -45,6 +45,7 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger() {
     delete pCoordinateInVolumeFrameCmd;
     delete pEnableWeightCmd;
     delete pEnableTimeCmd;
+    delete pEnableTimeFromBeginOfEventCmd;
     delete pMaxSizeCmd;
     delete pInOrOutGoingParticlesCmd;
     delete pEnableSecCmd;
@@ -163,6 +164,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base) {
     guidance = "Save the time of particles in the phase space file.";
     pEnableTimeCmd->SetGuidance(guidance);
     pEnableTimeCmd->SetParameterName("State", false);
+
+    bb = base + "/enableTimeFromBeginOfEvent";
+    pEnableTimeFromBeginOfEventCmd = new G4UIcmdWithABool(bb, this);
+    guidance = "Save the time of particles since the begin of event time.";
+    pEnableTimeFromBeginOfEventCmd->SetGuidance(guidance);
+    pEnableTimeFromBeginOfEventCmd->SetParameterName("State", false);
 
     bb = base + "/enableTrackLength";
     pEnableTrackLengthCmd = new G4UIcmdWithABool(bb, this);
@@ -320,6 +327,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
         pActor->SetIsParticleNameEnabled(pEnableParticleNameCmd->GetNewBoolValue(param));
     if (command == pEnableWeightCmd) pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
     if (command == pEnableTimeCmd) pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
+    if (command == pEnableTimeFromBeginOfEventCmd)
+        pActor->SetIsTimeFromBeginOfEventEnabled(pEnableTimeFromBeginOfEventCmd->GetNewBoolValue(param));
     if (command == pEnableTrackLengthCmd) pActor->SetTrackLengthEnabled(pEnableTrackLengthCmd->GetNewBoolValue(param));
     if (command == pEnableMassCmd) pActor->SetIsMassEnabled(pEnableMassCmd->GetNewBoolValue(param));
     if (command == pCoordinateInVolumeFrameCmd)

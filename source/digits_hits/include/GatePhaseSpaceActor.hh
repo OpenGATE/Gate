@@ -82,9 +82,11 @@ public:
 
     void SetIsTimeEnabled(bool b) { EnableTime = b; }
 
-    void SetTrackLengthEnabled(bool b) { EnableTrackLengthFlag = b; }
-
     void SetIsLocalTimeEnabled(bool b) { EnableLocalTime = b; }
+
+    void SetIsTimeFromBeginOfEventEnabled(bool b) { EnableTimeFromBeginOfEvent = b; }
+
+    void SetTrackLengthEnabled(bool b) { EnableTrackLengthFlag = b; }
 
     void SetIsMassEnabled(bool b) { EnableMass = b; }
 
@@ -184,6 +186,7 @@ protected:
     bool mUseVolFrame;
     bool mStoreOutPart;
     bool EnableNuclearFlag;
+    bool EnableTimeFromBeginOfEvent;
     bool EnableTrackLengthFlag;
 
     bool EnableTOut;
@@ -245,6 +248,9 @@ protected:
     float tOut;
     float tProd;
     double t;//t is either time or local time.
+    double fTimeFromBeginOfEvent;
+    double fBeginOfEventTime;
+
     G4int m;
     char vol[256];
 

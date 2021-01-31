@@ -54,6 +54,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) :
     EnableWeight = true;
     EnableTime = false;
     EnableLocalTime = false;
+    EnableTimeFromBeginOfEvent = false;
     EnableMass = true;
     EnableSec = false;
     EnableNuclearFlag = false;
@@ -93,6 +94,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) :
     pIAEARecordType = 0;
     pIAEAheader = 0;
     mFileSize = 0;
+
     GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
 
     emcalc = new G4EmCalculator;
@@ -120,17 +122,12 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor() {
 void GatePhaseSpaceActor::Construct() {
     GateVActor::Construct();
     // Enable callbacks
-    EnableBeginOfRunAction(false);
-    EnableBeginOfEventAction(false);
+    EnableBeginOfRunAction(true);
+    EnableBeginOfEventAction(true);
     EnableRecordEndOfAcquisition(true);
-
-    // bEnableEmissionPoint=true;
-    if (bEnablePrimaryEnergy || bEnableEmissionPoint || bEnableSpotID) EnableBeginOfEventAction(true);
-
     EnablePreUserTrackingAction(true);
     EnablePostUserTrackingAction(true);
     EnableUserSteppingAction(true);
-    EnableBeginOfRunAction(true);
 
     G4String extension = getExtension(mSaveFilename);
 
@@ -240,6 +237,9 @@ void GatePhaseSpaceActor::InitTree() {
     if (EnableTOut) mFile->write_variable("TOut", &tOut);
     if (EnableTProd) mFile->write_variable("TProd", &tProd);
 
+    if (EnableTimeFromBeginOfEvent)
+        mFile->write_variable("TimeFromBeginOfEvent", &fTimeFromBeginOfEvent);
+
     if (EnableNuclearFlag) {
         mFile->write_variable("CreatorProcess", &creator);
         mFile->write_variable("NuclearProcess", &nucprocess);
@@ -308,10 +308,15 @@ void GatePhaseSpaceActor::PostUserTrackingAction(const GateVVolume * /*v*/, cons
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     // Set Primary Energy
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
+
+    // Store the application time of the event
+    auto app = GateApplicationMgr::GetInstance();
+    fBeginOfEventTime = app->GetCurrentTime();
 
     // Set SourceID
     if (GetIsSpotIDEnabled()) {
@@ -320,7 +325,6 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
                         bSpotIDFromSource));
         bSpotID = tpspencilsource->GetCurrentSpotID();
     }
-    //-------------------------------------------------------------------
 }
 // --------------------------------------------------------------------
 
@@ -367,7 +371,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         }
     }
 
-    //-----------Write volumename -------------
+    //----------- Write volume name -------------
     G4String st = "";
     if (step->GetTrack()->GetLogicalVolumeAtVertex())
         st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
@@ -544,9 +548,14 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     dy = localMomentum.y();
     dz = localMomentum.z();
 
+    // time from the production to the leaving of the volume. Useful only for the outgoing particles
     tOut = step->GetTrack()->GetLocalTime();
+
+    // production time of the particle wrt to the primary production (defined as a GlobalTime - LocalTime)"
     tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
 
+    // time from the time at event creation (could be different from the globaltime-localtime as globaltime is the
+    fTimeFromBeginOfEvent = step->GetTrack()->GetGlobalTime() - fBeginOfEventTime;
 
     //------------- Option to project position on a sphere
     /* Sometimes it is useful to store the particle position on a different
@@ -655,7 +664,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     if (stepPoint->GetProcessDefinedStep())
         st = stepPoint->GetProcessDefinedStep()->GetProcessName();
     strcpy(pro_step, st.c_str());
-
 
     if (mFileType == "iaeaFile") {
 
