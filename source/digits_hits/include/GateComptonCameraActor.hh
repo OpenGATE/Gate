@@ -185,6 +185,7 @@ protected:
   G4int nCrystalCompt;
   G4int nCrystalRayl;
 
+  std::vector<double> nCrystalCompt_posZ;
 
 
 

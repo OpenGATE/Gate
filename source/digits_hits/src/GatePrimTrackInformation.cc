@@ -20,6 +20,7 @@ GatePrimTrackInformation::GatePrimTrackInformation()
 
     m_energyPrimaryTrack=-1;
     m_PDGPrimaryTrack=0;
+    m_NCompton=0;
 
 
 
@@ -41,6 +42,7 @@ GatePrimTrackInformation::GatePrimTrackInformation(const G4Track* aTrack)
     //MAybe include some other parameter to set my an specific track
     m_energyPrimaryTrack=-1;
      m_PDGPrimaryTrack=0;
+     m_NCompton=0;
 }
 
 
@@ -58,6 +60,7 @@ GatePrimTrackInformation
 
     m_energyPrimaryTrack=aTrackInfo->m_energyPrimaryTrack;
     m_PDGPrimaryTrack=aTrackInfo->m_PDGPrimaryTrack;
+     m_NCompton=aTrackInfo->m_NCompton;
 
 
 
@@ -83,6 +86,7 @@ GatePrimTrackInformation& GatePrimTrackInformation
 
     m_energyPrimaryTrack=aTrackInfo.m_energyPrimaryTrack;
     m_PDGPrimaryTrack=aTrackInfo.m_PDGPrimaryTrack;
+    m_NCompton=aTrackInfo.m_NCompton;
     return *this;
 }
 

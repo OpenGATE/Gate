@@ -520,7 +520,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     nCrystalConv=0;
     nCrystalRayl=0;
     nCrystalCompt=0;
-
+    nCrystalCompt_posZ.clear();
 
     energyElectronEscapedEvt=0.0;
     IseExitingSDVol=false;
@@ -529,7 +529,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 
     //std::cout<<"eventID="<<evtID<<std::endl;
 
-    //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
+    //G4cout<<"###### Begin OF EVENT ACTION################################-----eventID="<<evt->GetEventID()<<G4endl;
 
 }
 //-----------------------------------------------------------------------------
@@ -538,7 +538,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 {
-    //G4cout<<"######start of  :END OF EVENT ACTION#################################### "  <<G4endl;
+    //G4cout<<"######:END OF EVENT ACTION#################################### "  <<G4endl;
     GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
     if (edepEvt > 0) {
         // if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
@@ -683,12 +683,63 @@ void GateComptonCameraActor::PostUserTrackingAction(const GateVVolume *, const G
 
         size_t nSecon = secondaries->size();
         if(nSecon>0){
-            GatePrimTrackInformation info=  *((GatePrimTrackInformation*)(atrack->GetUserInformation()));
             //G4cout<<"CCActor:PostUserTracking: energy value in the info of secondary tracks= "<<info.GetSourceEini()<<G4endl;
             GatePrimTrackInformation* infoNew;
             for(size_t i=0;i<nSecon;i++){
+
+
+                /*if((*secondaries)[i]->GetParentID()==0){//o igual tengo que mirar el uno. Quiero set en GatePrim el numero de comptons a nivel de los primeros secundarios tracks y heredar #PLAN
+                       G4cout<<"#-----nsecondaries="<<nSecon<<G4endl;
+                       G4cout<<"#-----PostUserTracking for tracks with parentID="<<(*secondaries)[i]->GetParentID()<<"-------#"<<G4endl;
+                       G4cout<<"#-----PostUserTracking: Creator process="<<(*secondaries)[i]->GetCreatorProcess()->GetProcessName() <<G4endl;
+                        //const G4VProcess* processTrack = aTrack->GetCreatorProcess();
+                       //G4String processName = ( (processTrack != NULL) ? processTrack->GetProcessName() : G4String() ) ;
+                        G4cout<<"#-----PostUserTracking: trackID"<<(*secondaries)[i]->GetTrackID()<<G4endl;
+                         G4cout<<"#-----PostUserTracking:PDG secon="<<(*secondaries)[i]->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
+                          G4cout<<"#-----PostUserTracking:position ="<<(*secondaries)[i]->GetPosition().getZ()<<G4endl;
+                          if(nCrystalCompt>0){
+                            //Check it with  a vector a 3dPosVector
+                            std::vector<double>::iterator it= find (nCrystalCompt_posZ.begin(), nCrystalCompt_posZ.end(), (*secondaries)[i]->GetPosition().getZ());
+                            if (it != nCrystalCompt_posZ.end()){
+                                int indexCompt=it-nCrystalCompt_posZ.begin();
+                                G4cout<<"indexCompt="<<indexCompt<<G4endl;
+
+                            }
+                          }
+                         G4cout<<"#- current track parentID="<<atrack->GetParentID()<<G4endl;
+                          G4cout<<"#-Current (all) Number of total (prim) Compt ="<<nCrystalCompt<<G4endl;
+
+
+                //}
+
+                G4cout<<"#######################################"<<G4endl;*/
+                GatePrimTrackInformation info=  *((GatePrimTrackInformation*)(atrack->GetUserInformation()));
+
                 // std::shared_ptr<GatePrimTrackInformation> infoNew( new GatePrimTrackInformation(info));
                 infoNew = new GatePrimTrackInformation(info);
+
+
+                if(mParentIDSpecificationFlag){
+                    G4cout<<" nComptos for secondaries. Check parentD values. Selected oned plus 1? To be DONE##########################################"<<G4endl;
+                }
+                else{
+                    if((*secondaries)[i]->GetParentID()==1){//For First secondary tracks set number of comptons. Then it is inherited.
+                        if(nCrystalCompt>0){
+                          //Check it with  a vector a 3dPosVector
+                          std::vector<double>::iterator it= find (nCrystalCompt_posZ.begin(), nCrystalCompt_posZ.end(), (*secondaries)[i]->GetPosition().getZ());
+                          if (it != nCrystalCompt_posZ.end()){
+                              int indexCompt=it-nCrystalCompt_posZ.begin();
+                              //G4cout<<"indexCompt="<<indexCompt<<G4endl;
+                              infoNew->setNCompton(indexCompt+1);
+
+                          }
+                        }
+                    }
+
+
+                }
+
+
                 // G4cout<<"PDG secon="<<(*secondaries)[i]->GetParticleDefinition()->GetPDGEncoding()<<G4endl;
                 // (*secondaries)[i]->SetUserInformation(infoNew.get());
                 (*secondaries)[i]->SetUserInformation(infoNew);
@@ -816,11 +867,40 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
         //I add energy to the event only if it is deposited in the layers
         edepEvt += step->GetTotalEnergyDeposit();
-        if(processPostStep=="conv")  nCrystalConv++;
-        else if(processPostStep=="compt") nCrystalCompt++;
-        else if (processPostStep=="rayl")nCrystalRayl++;
 
+        //??CREatea  new fprocewsName if primary what we hace in the counter otherwhise look at trackUserInfo??
+        //We count them only for primaries (07/02/2021)
+        int nCurrentHitCompton=0;
+        if(mParentIDSpecificationFlag){
+            //not checked for ions
+            itPrtID = find ( specfParentID.begin(),  specfParentID.end(), parentID);
+            if (itPrtID !=  specfParentID.end()){
+                if(processPostStep=="conv")  nCrystalConv++;
+                else if(processPostStep=="compt") {
+                    nCrystalCompt++;
+                    nCrystalCompt_posZ.push_back(hitPostPos.getZ());
+                }
+                else if (processPostStep=="rayl")nCrystalRayl++;
+            }
+            nCurrentHitCompton=nCrystalCompt;
 
+        }
+        else if (parentID==0){
+            if(processPostStep=="conv")  nCrystalConv++;
+            else if(processPostStep=="compt"){
+                nCrystalCompt++;
+                nCrystalCompt_posZ.push_back(hitPostPos.getZ());
+            }
+            else if (processPostStep=="rayl"){
+                nCrystalRayl++;
+            }
+            nCurrentHitCompton=nCrystalCompt;
+        }
+        else{
+           nCurrentHitCompton=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNCompton();
+        }
+
+        //G4cout<<"Currenthit nCompton="<<nCurrentHitCompton<<" trackID= "<<trackID<<" PDG= "<<PDGEncoding<<"  posZ="<<hitPostPos.getZ()<<G4endl;
         sourceEnergy=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourceEini();
         sourcePDG=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetSourcePDG();
 
@@ -833,7 +913,8 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         aHit->SetEnergyFin(Ef);
         aHit->SetEnergyIniTrack(Ei);
         aHit->SetNCrystalConv(nCrystalConv);
-        aHit->SetNCrystalCompton(nCrystalCompt);
+        //aHit->SetNCrystalCompton(nCrystalCompt);
+        aHit->SetNCrystalCompton(nCurrentHitCompton);
         aHit->SetNCrystalRayleigh(nCrystalRayl);
         //    G4ThreeVector hitPos;
         //    hitPos.setX((hitPrePos.getX()+hitPostPos.getX())/2);
@@ -881,6 +962,12 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
     }
     else{
+
+        //int nCurrentHitCompton=0;
+       //if(parentID!=0){
+         //  nCurrentHitCompton=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNCompton();
+        //}
+        //G4cout<<"Not in LAYERS Currenthit nCompton="<<nCurrentHitCompton<<" trackID= "<<trackID<<" PDG= "<<PDGEncoding<<"  posZ="<<hitPostPos.getZ()<<G4endl;
         //pre-step not in a SD
         if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
             //Is the post-step in the boundary of a SD volume (entering to he SD)

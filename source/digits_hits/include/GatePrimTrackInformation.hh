@@ -32,6 +32,8 @@ public:
   inline int GetSourcePDG() const {return m_PDGPrimaryTrack;}
 
 
+   inline void setNCompton(const G4int nCompt) {m_NCompton=nCompt;}
+   inline int GetNCompton() const {return m_NCompton;}
   
 
 private:
@@ -45,6 +47,8 @@ private:
 
   G4double             m_energyPrimaryTrack;
   G4int                m_PDGPrimaryTrack;
+
+  G4int                m_NCompton;
 
 
 
