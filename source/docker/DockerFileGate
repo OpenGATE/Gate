@@ -1,14 +1,14 @@
 #Docker for gate
 #systemctl start docker
 #login: docker login
-#build: docker build -t bishopwolf/gate:9.0 -f DockerFileGate --build-arg Geant4_Version=bishopwolf/geant4:10.6.1 --build-arg Gate_Version=v9.0 .
+#build: docker build -t opengatecollaboration/gate:9.0 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:10.6.1 --build-arg Gate_Version=v9.0 .
 #The geant4 and gate versions can be ommited, and the default values are used instead. 
 #Be aware that gate version is linked to a specific geant4 version.
-#push: docker push bishopwolf/gate:9.0
-#Gate: docker run -i --rm -v $PWD:/APP bishopwolf/gate:9.0 mac/main.mac
-#interactive: docker run -it --rm -v $PWD:/APP --entrypoint /bin/bash bishopwolf/gate:9.0
+#push: docker push opengatecollaboration/gate:9.0
+#Gate: docker run -i --rm -v $PWD:/APP opengatecollaboration/gate:9.0 mac/main.mac
+#interactive: docker run -it --rm -v $PWD:/APP --entrypoint /bin/bash opengatecollaboration/gate:9.0
 
-ARG Geant4_Version=bishopwolf/geant4:10.6.1
+ARG Geant4_Version=opengatecollaboration/geant4:10.6.1
 FROM $Geant4_Version
 ARG Gate_Version=v9.0
 

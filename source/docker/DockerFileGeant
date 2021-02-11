@@ -1,10 +1,10 @@
 #Docker for Geant4
 #systemctl start docker
 #login: docker login
-#build: docker build -t bishopwolf/geant4:10.6.1 -f DockerFileGeant --build-arg ROOT_Version=v6-19-02 --build-arg Geant4_Version=v10.6.1 .
+#build: docker build -t opengatecollaboration/geant4:10.6.1 -f DockerFileGeant --build-arg ROOT_Version=v6-19-02 --build-arg Geant4_Version=v10.6.1 .
 #The root and geant4 versions can be ommited, and the default values are used instead
-#push: docker push bishopwolf/geant4:10.6.1
-#interactive: docker run -it --rm -v $PWD:/APP bishopwolf/geant4:10.6.1 /bin/bash
+#push: docker push opengatecollaboration/geant4:10.6.1
+#interactive: docker run -it --rm -v $PWD:/APP opengatecollaboration/geant4:10.6.1 /bin/bash
 
 FROM centos:8
 ARG ROOT_Version=v6-19-02

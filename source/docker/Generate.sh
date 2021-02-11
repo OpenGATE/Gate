@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Variables to modify
-Repository=bishopwolf
+Repository=opengatecollaboration
 ROOT_Version=v6-19-02
 Geant4_Version=10.6.1
 Gate_Version=9.0
