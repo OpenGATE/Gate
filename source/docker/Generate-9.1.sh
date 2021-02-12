@@ -4,6 +4,7 @@
 Repository=opengatecollaboration
 Centos_Version=centos:8
 ROOT_Version=v6-19-02
+CLHEP_Version=2.4.4.1
 Geant4_Version=10.7.1
 Gate_Version=develop
 

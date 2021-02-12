@@ -21,8 +21,8 @@ RUN mkdir software/gate \
  && mkdir src bin \
  && git clone --branch $Gate_Version https://github.com/OpenGATE/Gate.git src \
  && cd bin \
- && cmake ../src/ -DGeant4_DIR=/software/geant4/install \
- && make -j8 \
+ && cmake ../src/ -DGeant4_DIR=/software/geant4/install -DGEANT4_USE_SYSTEM_CLHEP=ON \
+ && make -j \
  && echo "export PATH=/software/gate/bin/:$PATH" >> /etc/mybashrc
 
 #Prepare entrypoint
