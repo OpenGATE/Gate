@@ -17,6 +17,7 @@ RUN yum install -y  make \
                     libXft-devel.x86_64 \
                     libXext-devel.x86_64 \
                     libXmu-devel.x86_64 \
+                    libxml2-devel.x86_64 \
                     binutils \
                     qt5-qtbase-devel.x86_64 \
                     git \
