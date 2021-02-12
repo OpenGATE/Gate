@@ -15,6 +15,7 @@ Gate_Tag=$Repository/gate:$Gate_Version-docker
 docker build -t $Geant4_Tag -f DockerFileGeant \
     --build-arg Centos_Version=$Centos_Version \
     --build-arg ROOT_Version=$ROOT_Version \
+    --build-arg CLHEP_Version=$CLHEP_Version \
     --build-arg Geant4_Version=v$Geant4_Version .
 docker push $Geant4_Tag
 
