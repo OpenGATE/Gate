@@ -6,7 +6,8 @@
 #push: docker push opengatecollaboration/geant4:10.6.1
 #interactive: docker run -it --rm -v $PWD:/APP opengatecollaboration/geant4:10.6.1 /bin/bash
 
-FROM centos:8
+ARG Centos_Version=centos:8
+FROM $Centos_Version
 ARG ROOT_Version=v6-19-02
 ARG Geant4_Version=v10.6.1
 RUN yum install -y  make \

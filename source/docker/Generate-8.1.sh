@@ -2,10 +2,10 @@
 
 #Variables to modify
 Repository=opengatecollaboration
-Centos_Version=centos:8
-ROOT_Version=v6-19-02
-Geant4_Version=10.7.1
-Gate_Version=develop
+Centos_Version=centos:7
+ROOT_Version=v6-14-02
+Geant4_Version=10.4.2
+Gate_Version=8.1
 
 #Variables to preserve
 Geant4_Tag=$Repository/geant4:$Geant4_Version
