@@ -49,6 +49,7 @@ RUN mkdir software/root-cern \
 #Build CLHEP
 ENV CLHEP_File=clhep-$CLHEP_Version.tgz
 ENV CLHEP_URL=http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/$CLHEP_File
+RUN echo $CLHEP_URL
 RUN mkdir software/clhep \
  && source /etc/mybashrc \
  && cd software/clhep \
