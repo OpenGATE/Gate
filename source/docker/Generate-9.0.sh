@@ -10,7 +10,7 @@ Gate_Version=9.0
 
 #Variables to preserve
 Geant4_Tag=$Repository/geant4:$Geant4_Version
-Gate_Tag=$Repository/gate:$Gate_Version
+Gate_Tag=$Repository/gate:$Gate_Version-docker
 
 docker build -t $Geant4_Tag -f DockerFileGeant \
     --build-arg Centos_Version=$Centos_Version \
