@@ -77,3 +77,22 @@ RUN mkdir software/geant4 \
  && make -j install \
  && cd .. \
  && rm -rf bin src
+
+#Build ITK/RTK (TODO: add ITK version)
+RUN mkdir software/ITK \
+ && source /etc/mybashrc \
+ && cd software/ITK \
+ && mkdir src bin install data \
+ && git clone https://github.com/InsightSoftwareConsortium/ITK.git src \
+ && cd bin \
+ && cmake ../src/ -DCMAKE_CXX_FLAGS:STRING=-std=c++11 \
+                  -DCMAKE_INSTALL_PREFIX=/software/ITK/install \
+                  -DBUILD_DOCUMENTATION=OFF \
+                  -DBUILD_EXAMPLES=OFF \
+                  -DBUILD_TESTING=OFF \
+                  -DModule_RTK=ON \
+                  -DRTK_USE_CUDA=OFF \
+                  -DRTK_BUILD_APPLICATIONS=OFF \
+ && make -j install \
+ && cd .. \
+ && rm -rf bin src
