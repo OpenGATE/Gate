@@ -47,12 +47,14 @@ RUN mkdir software/root-cern \
  && rm -rf bin src
 
 #Build CLHEP
+ENV CLHEP_File=clhep-$CLHEP_Version.tgz
+ENV CLHEP_URL=http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/$CLHEP_File
 RUN mkdir software/clhep \
  && source /etc/mybashrc \
  && cd software/clhep \
  && mkdir src bin install \
- && wget -q http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-$CLHEP_Version.tgz \
- && tar -zxf clhep-$CLHEP_Version.tgz -C ./src --strip-components=1 \
+ && wget -q $CLHEP_URL \
+ && tar -zxf $CLHEP_File -C ./src --strip-components=1 \
  && cd bin \
  && cmake -DCMAKE_INSTALL_PREFIX=/software/clhep/install ../src/CLHEP \
  && cmake --build . -- -j \
