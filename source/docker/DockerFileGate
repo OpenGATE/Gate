@@ -25,7 +25,6 @@ RUN mkdir software/gate \
                   -DGEANT4_USE_SYSTEM_CLHEP=ON \
                   -DGATE_USE_ITK=ON \
                   -DITK_DIR=/software/ITK/bin \
-                  -DRTK_DIR=/software/ITK/src/Modules/Remote/RTK \
                   -DGATE_USE_RTK=ON \
                   -DGATE_USE_OPTICAL=ON \
  && make -j \
