@@ -11,6 +11,7 @@ FROM $Centos_Version
 ARG ROOT_Version=v6-19-02
 ARG CLHEP_Version=2.4.4.1
 ARG Geant4_Version=v10.6.1
+ARG Centos_Version
 RUN yum install -y  make \
                     libX11-devel.x86_64 \
                     libXpm-devel.x86_64 \
