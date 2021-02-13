@@ -28,7 +28,7 @@ RUN yum install -y  make \
                     which nano
 
 RUN if [ "$Centos_Version" = "centos:7" ]; then \
-     yum install -y devtoolset-7-gcc-c++ \
+     yum install -y devtoolset-7-gcc-c++; \
   fi
 
 #create folder and install cmake
