@@ -33,19 +33,6 @@ RUN mkdir software \
  && tar xzvf cmake-3.18.4-Linux-x86_64.tar.gz \
  && echo "export PATH=/software/cmake-3.18.4-Linux-x86_64/bin/:$PATH" >> /etc/mybashrc
 
-#Build root
-RUN mkdir software/root-cern \
- && source /etc/mybashrc \
- && cd software/root-cern \
- && mkdir src bin install \
- && git clone --branch $ROOT_Version https://github.com/root-project/root.git src \
- && cd bin \
- && cmake ../src/ -Dpython=OFF \
-                  -DCMAKE_INSTALL_PREFIX=/software/root-cern/install \
- && make -j install \
- && cd .. \
- && rm -rf bin src
-
 #Build CLHEP
 ENV CLHEP_File=clhep-$CLHEP_Version.tgz
 ENV CLHEP_URL=https://proj-clhep.web.cern.ch/proj-clhep/dist1/$CLHEP_File
@@ -95,3 +82,16 @@ RUN mkdir software/ITK \
                   -DRTK_USE_CUDA=OFF \
                   -DRTK_BUILD_APPLICATIONS=OFF \
  && make -j 
+
+#Build root
+RUN mkdir software/root-cern \
+ && source /etc/mybashrc \
+ && cd software/root-cern \
+ && mkdir src bin install \
+ && git clone --branch $ROOT_Version https://github.com/root-project/root.git src \
+ && cd bin \
+ && cmake ../src/ -Dpython=OFF \
+                  -DCMAKE_INSTALL_PREFIX=/software/root-cern/install \
+ && make -j install \
+ && cd .. \
+ && rm -rf bin src

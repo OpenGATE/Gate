@@ -2,7 +2,8 @@
 
 #Variables to modify
 Repository=opengatecollaboration
-ROOT_Version=v6-14-02
+ROOT_Version=v6-19-02
+# ROOT_Version=v6-14-02 -> This version doesn't compile
 CLHEP_Version=2.3.3.2
 Geant4_Version=10.4.2
 Gate_Version=8.1
