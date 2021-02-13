@@ -27,6 +27,10 @@ RUN yum install -y  make \
                     python3-devel \
                     which nano
 
+RUN if [ "$Centos_Version" = "centos:7" ]; then \
+     yum install -y devtoolset-7-gcc-c++ \
+  fi
+
 #create folder and install cmake
 RUN mkdir software \
  && cd software \
