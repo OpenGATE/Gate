@@ -25,9 +25,13 @@ RUN yum install -y  make \
                     wget \
                     mesa-libGLU-devel.x86_64 \
                     python3-devel \
-                    which nano; \
-  if [ $Centos_Version = centos:7 ]; then \
-     yum install -y devtoolset-7-gcc-c++; \
+                    which nano
+
+RUN  if [ $Centos_Version = centos:7 ]; then \
+     yum install -y devtoolset-7-gcc-c++ && \
+     echo "sucess"; \
+  else \
+     echo "failed"; \
   fi
 
 #create folder and install cmake
