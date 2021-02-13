@@ -25,9 +25,8 @@ RUN yum install -y  make \
                     wget \
                     mesa-libGLU-devel.x86_64 \
                     python3-devel \
-                    which nano
-
-RUN if [ "$Centos_Version" = "centos:7" ]; then \
+                    which nano; \
+  if [ "$Centos_Version" = "centos:7" ]; then \
      yum install -y devtoolset-7-gcc-c++; \
   fi
 
