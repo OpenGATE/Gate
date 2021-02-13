@@ -95,6 +95,4 @@ RUN mkdir software/ITK \
                   -DModule_RTK=ON \
                   -DRTK_USE_CUDA=OFF \
                   -DRTK_BUILD_APPLICATIONS=OFF \
- && make -j \
- && cd .. \
- && rm -rf src
+ && make -j 
