@@ -27,7 +27,7 @@ RUN yum install -y  make \
                     python3-devel \
                     which nano
 
-RUN  if [ $Centos_Version = centos:7 ]; then \
+RUN  if [ "x$Centos_Version" = "xcentos:7" ]; then \
      yum install -y devtoolset-7-gcc-c++ && \
      echo "sucess"; \
   else \
