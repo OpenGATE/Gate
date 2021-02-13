@@ -2,7 +2,6 @@
 
 #Variables to modify
 Repository=opengatecollaboration
-Centos_Version=centos:8
 ROOT_Version=v6-19-02
 CLHEP_Version=2.4.1.3
 Geant4_Version=10.6.1
@@ -13,7 +12,6 @@ Geant4_Tag=$Repository/geant4:$Geant4_Version
 Gate_Tag=$Repository/gate:$Gate_Version-docker
 
 docker build -t $Geant4_Tag -f DockerFileGeant \
-    --build-arg Centos_Version=$Centos_Version \
     --build-arg ROOT_Version=$ROOT_Version \
     --build-arg CLHEP_Version=$CLHEP_Version \
     --build-arg Geant4_Version=v$Geant4_Version .
