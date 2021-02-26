@@ -223,7 +223,7 @@ of any set of characters.
 
 To pass actual values to the macro file, you can run Gate, for instance, as follows::
 
-   $ Gate -a [CoincWindow,10] [lld,350] [uld,650]
+   $ Gate -a [CoincWindow,10][lld,350][uld,650]
 
 It is worth emphasizing the following points about aliases:
 
@@ -335,7 +335,7 @@ It is possible to run a Gate simulation in *batch* mode, i.e. without the need t
 
 If you want to run simulations in *batch* mode, you can do so by typing the alias values or (--qt parameter) before the file name of the macro you want to run. For example::
 
-   $ Gate -a [CoincWindow,10] [lld,350] [uld,650] myScanner.mac
+   $ Gate -a [CoincWindow,10][lld,350][uld,650] myScanner.mac
 
 Or::
 
@@ -350,12 +350,12 @@ command, it will return to the user interface prompt and the rest of the simulat
 
 It is recommended to redirect the terminal output of the simulation (listing of physics processes, sources, run time, etc.) by writing it to a text file instead of printing it in the terminal. This allows one to store the terminal output of each simulation for later viewing. For example::
 
-   $ Gate -a [CoincWindow,10] [lld,350] [uld,650] myScanner.mac > terminal_output.txt
+   $ Gate -a [CoincWindow,10][lld,350][uld,650] myScanner.mac > terminal_output.txt
 
 The above command creates a file named terminal_output.txt and does not print to the terminal window.
 
 When running multiple simulations simultaneously from the command line in batch mode, it is often desirable to have the process run in the background. This can be accomplished by inserting an ampersand "&" symbol at the end of the command. For example::
 
-   $ Gate -a [CoincWindow,10] [lld,350] [uld,650] myScanner.mac > terminal_output.txt &
+   $ Gate -a [CoincWindow,10][lld,350][uld,650] myScanner.mac > terminal_output.txt &
 
 It is recommended (although not compulsory) to avoid running visualization commands in batch mode.
