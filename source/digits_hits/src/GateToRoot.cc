@@ -528,7 +528,7 @@ void GateToRoot::RecordEndOfAcquisition() {
                << m_hfile << " named " << m_hfile->GetName() << Gateendl;
         //  if (m_verboseLevel > 0)
         G4cout << "GateToRoot: ROOT: files writing...\n";
-        m_hfile->Write();
+        m_hfile->Write(0,TObject::kOverwrite);
         //  if (m_verboseLevel > 0)
         G4cout << "GateToRoot: ROOT: files closing...\n";
         if (m_hfile->IsOpen()) { m_hfile->Close(); }
@@ -548,7 +548,7 @@ void GateToRoot::RecordEndOfAcquisition() {
         if (nVerboseLevel > 0)
             G4cout << "GateToRoot: ROOT: files writing...\n";
         //GateMessage("Output", 1, " GateToRoot: ROOT: files writing...\n";);
-        m_hfile->Write();
+        m_hfile->Write(0,TObject::kOverwrite);
 
         if (nVerboseLevel > 0)
             G4cout << "GateToRoot: ROOT: files closing...\n";
@@ -1098,7 +1098,7 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore *voxelStore) {
             }
         }
 
-        voxelsFile->Write();
+        voxelsFile->Write(0,TObject::kOverwrite);
         voxelsFile->Close();
 
         if (m_hfile) m_hfile->cd();
