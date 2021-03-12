@@ -54,7 +54,7 @@ jobs:
                                   qt5-default \
                                   git \
                                   cmake \
-                                  python3.7-dev \
+                                  python3.8-dev \
                                   ccache \
                                   fftw3-dev
           gcc -v
