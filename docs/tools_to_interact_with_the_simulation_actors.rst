@@ -289,8 +289,12 @@ This actor builds one file containing N histograms. By default 3 histograms are 
    /gate/actor/MyActor/LETSpectrum/setLETmin			          0 keV/um
    /gate/actor/MyActor/LETSpectrum/setLETmax			          100 keV/um
    /gate/actor/MyActor/LETSpectrum/setNumberOfBins			    1000
+   
+   /gate/actor/MyActor/energyLossHisto/setEdepMin               0.0001 keV 
+   /gate/actor/MyActor/energyLossHisto/setEdepMax               200 keV
+   /gate/actor/MyActor/energyLossHisto/setNumberOfEdepBins       1000    
 
-By default an equidistant bin width is applied. However, for the spectra differential in energy a logarithmic bin width may be enabled::
+By default an equidistant bin width is applied. However, a logarithmic bin width may be enabled::
 
    /gate/actor/MyActor/setLogBinWidth                   true
 
@@ -320,11 +324,12 @@ The energy deposition differential in energy is scored using GetTotalEnergyDepos
 
  /gate/actor/MyActor/enableEdepSpectrum			true
 
-the energy deposition per event ('edepHisto'), the energy deposition per track ('edepTrackHisto') and the energy loss per track ('eLossHisto'). These histograms are stored in a root file. They take into account the weight of particles::
+the energy deposition per event ('edepHisto'), the energy deposition per track ('edepTrackHisto') and the energy loss per track ('eLossHisto') and the energy deposition per step ('edepStepHisto'). These histograms are stored in a root file. They take into account the weight of particles::
 
    /gate/actor/MyActor/enableEdepHisto		true
    /gate/actor/MyActor/enableEdepTimeHisto		true
    /gate/actor/MyActor/enableEdepTrackHisto		true
+   /gate/actor/MyActor/enableEdepStepHisto		true
    /gate/actor/MyActor/enableElossHisto		true
    /gate/actor/MyActor/energyLossHisto/setEmin              0 eV
    /gate/actor/MyActor/energyLossHisto/setEmax              15 MeV
@@ -344,15 +349,17 @@ By default histograms are saved as .root files. The histograms will be (in addit
 Production and stopping particle position
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This actor stores in a 3D image the position where particles are produced and where particles are stopped. For the output, the suffixes 'Prod' and 'Stop' are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), (.hdr/.img). The root file works only for 1D and 2D distribution::
+This actor stores in a 3D image the position where particles are produced and where particles are stopped. For the output, the suffixes 'Prod' and 'Stop' are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), (.mhd/.raw or .hdr/.img). The root file works only for 1D and 2D distribution::
 
    /gate/actor/addActor ProductionAndStoppingActor      MyActor
-   /gate/actor/MyActor/save                             MyOutputFile.hdr
+   /gate/actor/MyActor/save                             MyOutputFile.mhd
    /gate/actor/MyActor/attachTo                         MyVolume
    /gate/actor/MyActor/setResolution                    10 10 100
    /gate/actor/MyActor/stepHitType                      post
 
 **< ! >  In Geant4, secondary production occurs at the end of the step, the recommended state for 'stepHitType' is 'post'**
+
+The "prod" output contains the 3D distribution of the location where particles are created (their first step), and the "stop" contains the 3D distribution of the location where particles stop (end of track). Each voxel of both images thus contains the number of particles that was produced (resp. stopped) in this voxel. Source code is: https://github.com/OpenGATE/Gate/blob/develop/source/digits_hits/src/GateProductionAndStoppingActor.cc
 
 Secondary production
 ~~~~~~~~~~~~~~~~~~~~
@@ -515,7 +522,7 @@ Inputs::
 
 The detector response δ(E) is modeled with a continuous energy-function that describes the average measured signal for a given incident energy E. The output signal in each image depends on the detector response (parameter responseDetectorFilename). For examples, if δ(E)=1, then the output signal is the number of photons, and if δ(E)=E (as responseDetector.txt in the github example), then the output signal is the total energy of photons.
 
-One can separate compton, rayleigh and fluorescence photons, secondary (compton+rayleigh+fluorescence), primary or total (secondary+primary). flatfield is available to compute the measured primary signal if there is no object, which is useful for CT to apply the Beer Lambert law. The attenuation is ln(flatfield/primary) to get the line integral, i.e., the input of most CT reconstruction algorithms.
+One can separate compton, rayleigh and fluorescence photons, secondary (compton+rayleigh+fluorescence), primary or total (secondary+primary). flatfield is available to compute the measured primary signal if there is no object, which is useful for CT to apply the Beer Lambert law. The attenuation is ln(flatfield/primary) to get the line integral, i.e., the input of most CT reconstruction algorithms. To include the secondary signal (compton+rayleigh+fluorescence) in the attenuation, one can use the images saved by the actor to recompute the attenuation (for example using ITK in Python). The formula for the attenuation would be ln(flatfield / (primary+secondary)).
 
 * **attachTo** ⇒ Attaches the sensor to the given volume
 * **saveEveryNEvents** ⇒ Save sensor every n Events.
@@ -616,7 +623,7 @@ LET Actor
 This actor calculates the dose or track averaged linear energy transfer::
 
    /gate/actor/addActor    LETActor       MyActor
-   /gate/actor/MyActor/save               myLETactor.mhd
+   /gate/actor/MyActor/save               output/myLETactor.mhd
    /gate/actor/MyActor/attachTo           phantom
    /gate/actor/MyActor/setResolution      1 1 100
    /gate/actor/MyActor/setType            DoseAveraged
@@ -627,7 +634,7 @@ For splitting the simulation into sevaral sub-simulations (e.g. parallel computa
 
    /gate/actor/yActor/doParallelCalculation true
 
-The default value is false. Enabling this option will produce 2 output images for each LET actor and run, a file labeled as '-numerator' and one labeled as '-denominator'. Building the quotient of these two images results in the averaged LET image. Note that the numerator and denominator images have to be summed up before the division.
+The default value is false. Enabling this option will produce 2 output images for each LET actor and run, a file labeled as '-numerator' and one labeled as '-denominator'. Building the quotient of these two images results in the averaged LET image. Note that the numerator and denominator images have to be summed up before the division. The denominator file equals the dose and fluence if DoseAveraged and TrackAveraged is enabled, respectively, after normalizing by the mass or volume.
 
 By default the unrestricted LET is calculated::
 
@@ -635,9 +642,14 @@ By default the unrestricted LET is calculated::
 
 If the restricted flag is set to true, the restricted LET is calculated, but also the calculation method changes. Instead of using tabulated stopping powers for the mean kinetic energy of the particle, the stopping power is calculated as the quotient of the deposited energy and the step length (ICRU 85). Be aware of potential artifacts (voxel size, step limiter, e- production cuts etc.) reported in literature for this calculation method. The production cut for electrons defines the energy carried away.
 
-By default, the stopping power of the material at the PreStepPoint is used. If the averaged LET to water regardless of the material is of interest, set following line to true::
+By default, the stopping power of the material at the PreStepPoint is used. Often a conversion to the LET (in particular water) is of interest. To convert the stopping power to another material than present in the volume use::
 
-   /gate/actor/MyActor/setLETtoWater false
+   /gate/actor/MyActor/setOtherMaterial G4_WATER
+   
+It may be of interest to separate the LET into several regions. Using following commands
+   /gate/actor/MyActor/setLETthresholdMin 10 keV/um
+   /gate/actor/MyActor/setLETthresholdMax 100 keV/um
+will only score particles having a LET between 10 and 100 keV/um. In this way the average LETd,t in that region can be extracted. Note, when enabling the doParallelCalculation option also the dose and fluence of particles of particles with a certain LET can be extracted.
 
 ID and particle filters can be used::
 
@@ -696,31 +708,37 @@ An  example  of  a TEPC actor  use  is  provided  in  the  example repository un
 Phase Space Actor
 ~~~~~~~~~~~~~~~~~
 
-This actor records information about particles entering the volume which the actor is attached to. They are two file types for the output: root file (.root) and IAEA file (.IAEAphsp and .IAEAheader). The name of the particle, the kinetic energy, the position along the three axes, the direction along the three axes, the weight are recorded. In a IAEA file, each particle is designated by an integer while the full name of the particle is recorded in the root file. Particles in IAEA files are limited to photons, electrons, positrons, neutrons and protons. The root file has two additional pieces of information: the name of the volume where the particle was produced and the name of the process which produced the particle. It is possible to disable some information in the phase space file::
+Example::
 
-   /gate/actor/source/enableEkine              false
-   /gate/actor/source/enableXPosition          false
-   /gate/actor/source/enableYPosition          false
-   /gate/actor/source/enableZPosition          false
-   /gate/actor/source/enableXDirection         false
-   /gate/actor/source/enableYDirection         false
-   /gate/actor/source/enableZDirection         false
-   /gate/actor/source/enableProductionVolume   false 
-   /gate/actor/source/enableProductionProcess  false
-   /gate/actor/source/enableParticleName       false
-   /gate/actor/source/enableWeight             false
-
-By default the frame used for the position and the direction of the particle is the frame of the world. To use the frame of the volume which the actor is attached to, the following command should be used::
-
-   /gate/actor/source/useVolumeFrame
-
-   /gate/actor/addActor PhaseSpaceActor               MyActor
+   /gate/actor/addActor PhaseSpaceActor         MyActor
    /gate/actor/MyActor/save                     MyOutputFile.IAEAphsp
    /gate/actor/MyActor/attachTo                 MyVolume
    /gate/actor/MyActor/enableProductionProcess  false
    /gate/actor/MyActor/enableDirection          false
    /gate/actor/MyActor/useVolumeFrame
 
+
+This actor records information about particles entering the volume which the actor is attached to. They are two file types for the output: root file (.root) and IAEA file (.IAEAphsp and .IAEAheader). The name of the particle, the kinetic energy, the position along the three axes, the direction along the three axes, the weight are recorded. In a IAEA file, each particle is designated by an integer while the full name of the particle is recorded in the root file. Particles in IAEA files are limited to photons, electrons, positrons, neutrons and protons. The root file has two additional pieces of information: the name of the volume where the particle was produced and the name of the process which produced the particle. It is possible to enable or disable some information in the phase space file::
+
+   /gate/actor/MyActor/enableEkine              false
+   /gate/actor/MyActor/enableXPosition          false
+   /gate/actor/MyActor/enableYPosition          false
+   /gate/actor/MyActor/enableZPosition          false
+   /gate/actor/MyActor/enableXDirection         false
+   /gate/actor/MyActor/enableYDirection         false
+   /gate/actor/MyActor/enableZDirection         false
+   /gate/actor/MyActor/enableProductionVolume   false 
+   /gate/actor/MyActor/enableProductionProcess  false
+   /gate/actor/MyActor/enableParticleName       false
+   /gate/actor/MyActor/enableWeight             false
+   /gate/actor/MyActor/enableTrackLength        true
+
+
+By default the frame used for the position and the direction of the particle is the frame of the world. To use the frame of the volume which the actor is attached to, the following command should be used::
+
+   /gate/actor/source/useVolumeFrame
+
+  
 By default, the phase space stores particles entering the volume. To store particles exiting the volume, the following command should be used::
 
    /gate/actor/MyActor/storeOutgoingParticles true

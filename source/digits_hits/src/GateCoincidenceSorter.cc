@@ -131,6 +131,22 @@ void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
 }
 //------------------------------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------------------------------
+void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
+{
+    if (policy=="keepAll")
+        m_acceptance_policy_4CC=kKeepAll_CC;
+    else if (policy=="keepIfMultipleVolumeIDsInvolved")
+        m_acceptance_policy_4CC=kkeepIfMultipleVolumeIDsInvolved_CC;
+    else if (policy=="keepIfMultipleVolumeNamesInvolved")
+        m_acceptance_policy_4CC=kkeepIfMultipleVolumeNamesInvolved_CC;
+    else {
+          G4cout<<"WARNING : acceptance policy  for CC not recognized, using default : kkeepIfMultipleVolumeNamesInvolved\n";
+          m_acceptance_policy_4CC=kkeepIfMultipleVolumeNamesInvolved_CC;
+    }
+}
+//------------------------------------------------------------------------------------------------------
+
 
 void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 {
@@ -544,28 +560,52 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 
 //------------------------------------------------------------------------------------------------------
   G4bool GateCoincidenceSorter::IsCoincidenceGood4CC(GateCoincidencePulse *coincidence){
-
-      GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
-      G4String volBName1=((coincidence->at(0)->GetVolumeID()).GetBottomCreator())->GetObjectName();
-     // G4cout<<"volBName1="<<volBName1<<G4endl;
       G4bool isGood=false;
-      //Restriction at least coincidence in two different volumesID
-        //std::vector<GateVolumeID>::iterator  it;
-      unsigned int numCoincPulses=coincidence->size();
+      if(m_acceptance_policy_4CC==kKeepAll_CC){
+          return true;
+      }
+      else if (m_acceptance_policy_4CC==kkeepIfMultipleVolumeIDsInvolved_CC){
+          GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
+          G4String volBName1=((coincidence->at(0)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+          G4int cpN1=volID1.GetBottomVolume()->GetCopyNo();
+          volBName1=volBName1+std::to_string(cpN1);
+          //Restriction at least coincidence in two different volumesID
 
-      for(unsigned int i=1;i<numCoincPulses;i++){
-           //find in the vector
-            //it= find (diffVID.begin(),diffVID.end(), coincidence->at(i)->GetVolumeID());
-            //if(coincidence->at(i)->GetVolumeID()!=volID1) {
-            if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()!=volBName1){
-                 // G4cout<<"volBName="<<((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()<<G4endl;
-                isGood=true;
-                break;
-            }
+          unsigned int numCoincPulses=coincidence->size();
+         for(unsigned int i=1;i<numCoincPulses;i++){
+                G4String volN_i=((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+                G4int cpN_i=(coincidence->at(i)->GetVolumeID()).GetBottomVolume()->GetCopyNo();
+                //Distinguish between sensitive volumes (treating repeaters as different volumes)
+                if((volN_i+std::to_string(cpN_i))!=volBName1){
+                    //G4cout<<(volN_i+std::to_string(cpN_i))<<G4endl;
+                   //G4cout<< volBName1<<G4endl;
+                    isGood=true;
+                    break;
+                }
+
+          }
 
       }
+      else if(m_acceptance_policy_4CC==kkeepIfMultipleVolumeNamesInvolved_CC){
+          //GateVolumeID volID1=coincidence->at(0)->GetVolumeID();
+          G4String volBName1=((coincidence->at(0)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+          unsigned int numCoincPulses=coincidence->size();
 
-     return isGood;
+          for(unsigned int i=1;i<numCoincPulses;i++){
+                //it= find (diffVID.begin(),diffVID.end(), coincidence->at(i)->GetVolumeID());
+                //G4String volN_i=((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName();
+                if(((coincidence->at(i)->GetVolumeID()).GetBottomCreator())->GetObjectName()!=volBName1){
+                    isGood=true;
+                    break;
+                }
+          }
+
+      }
+      else{
+          G4cout<<"[GateCoincidenceSorter]: Problems in CC accpetance policy"<<G4endl;
+      }
+
+    return isGood;
   }
 
 //------------------------------------------------------------------------------------------------------

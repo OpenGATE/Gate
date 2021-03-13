@@ -177,6 +177,11 @@ private:
 
   G4float m_sinogramTheta;
   G4float m_sinogramS;
+  
+  //Additional information from ExtendedVSource
+  G4int m_sourceType = 0;
+  G4int m_decayType = 0;
+  G4int m_gammaType = 0;
 
 
 

@@ -246,7 +246,7 @@ Blurring : Energy blurring
 
 The *blurring* pulse-processor module simulates Gaussian blurring of the energy spectrum of a pulse after the *readout* module. This is accomplished by introducing a resolution, :math:`R_0` (FWHM), at a given energy, :math:`E_0`. According to the camera, the energy resolution may follow different laws, such as an inverse square law or a linear law. 
 
-For inverse square law (:math:`R=\frac{R_0E_0}{\sqrt{E}}`), one must specify the inverse square law and fix the attributes like the energy of reference and the resolution (example of a 15% resolution @ 511 KeV)::
+For inverse square law (:math:`R=R_0\frac{\sqrt{E_0}}{\sqrt{E}}`), one must specify the inverse square law and fix the attributes like the energy of reference and the resolution (example of a 15% resolution @ 511 KeV)::
 
    /gate/digitizer/Singles/blurring
    /gate/digitizer/Singles/blurring/setLaw inverseSquare

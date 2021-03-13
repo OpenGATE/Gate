@@ -51,6 +51,11 @@ typedef enum {kKillAll,
               kKeepAll} multiple_policy_t;
 
 
+
+typedef enum {kKeepAll_CC,
+              kkeepIfMultipleVolumeIDsInvolved_CC,
+              kkeepIfMultipleVolumeNamesInvolved_CC} acceptance_policy_4CC_t;
+
 class GateCoincidenceSorter : public GateClockDependent
 {
 public:
@@ -147,6 +152,8 @@ public:
     void SetSystem(G4String& inputName); //This method was added for the multi-system approach
 
     void SetMultiplesPolicy(const G4String& policy);
+    void SetAcceptancePolicy4CC(const G4String& policy);
+
 
 protected:
     //! \name Parameters of the sorter
@@ -162,6 +169,7 @@ protected:
     G4double            m_offsetJitter;                 //!< Offset window jitter
     G4int               m_minSectorDifference;          //!< Minimum sector difference for valid coincidences
     multiple_policy_t   m_multiplesPolicy;              //!< Do what if multiples?
+    acceptance_policy_4CC_t m_acceptance_policy_4CC;    //! <Which is the criteria to accept coincidences in CC sys
     G4bool              m_allPulseOpenCoincGate;        //!< can a pulse be part of two coincs?
     G4int               m_depth;                        //!< Depth of system-level for coincidences
 

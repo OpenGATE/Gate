@@ -70,21 +70,21 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   pNBinsCmd->SetGuidance(guidance);
   pNBinsCmd->SetParameterName("Nbins", false);
 
-  bb = base+"/energyLossHisto/setEmin";
+  bb = base+"/energyLossHisto/setEdepMin";
   pEdepminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set minimum energy of the energy loss histogram");
   pEdepminCmd->SetGuidance(guidance);
   pEdepminCmd->SetParameterName("Emin", false);
   pEdepminCmd->SetDefaultUnit("MeV");
 
-  bb = base+"/energyLossHisto/setEmax";
+  bb = base+"/energyLossHisto/setEdepMax"; 
   pEdepmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum energy of the energy loss histogram");
   pEdepmaxCmd->SetGuidance(guidance);
   pEdepmaxCmd->SetParameterName("Emax", false);
   pEdepmaxCmd->SetDefaultUnit("MeV");
 
-  bb = base+"/energyLossHisto/setNumberOfBins";
+  bb = base+"/energyLossHisto/setNumberOfEdepBins";
   pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = G4String("Set number of bins of the energy loss histogram");
   pEdepNBinsCmd->SetGuidance(guidance);
@@ -204,6 +204,13 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   guidance = G4String("Enable edep track histogram");
   pEnableEdepTrackHistoCmd->SetGuidance(guidance);
   
+  
+  bb = base+"/enableEdepStepHisto";
+  pEnableEdepStepHistoCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable edep step histogram");
+  pEnableEdepStepHistoCmd->SetGuidance(guidance);
+  
+  
   bb = base+"/enableElossHisto";
   pEnableElossHistoCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable energy loss histogram");
@@ -265,6 +272,7 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
   if(cmd == pEnableEdepHistoCmd) pActor->SetEdepHistoCalc (  pEnableEdepHistoCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableEdepTimeHistoCmd) pActor->SetEdepTimeHistoCalc(  pEnableEdepTimeHistoCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableEdepTrackHistoCmd) pActor->SetEdepTrackHistoCalc(  pEnableEdepTrackHistoCmd->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pEnableEdepStepHistoCmd) pActor->SetEdepStepHistoCalc(  pEnableEdepStepHistoCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableElossHistoCmd) pActor->SetElossHistoCalc(  pEnableElossHistoCmd->GetNewBoolValue(newValue)  ) ;
   
   if(cmd == pEnableLogBinningCMD) pActor->SetLogBinning(  pEnableLogBinningCMD->GetNewBoolValue(newValue)  ) ;

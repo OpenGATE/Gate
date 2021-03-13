@@ -77,6 +77,8 @@ This keyword is implemented for PET simulations where two annihilation photons a
 
 Note that there are no radioactive decays simulated when using the back-to-back type and that you still have to define the particle (gamma), energy type (Mono) and energy-value (0.511 MeV).
 
+Note: the 'Accolinearity' flag that once exist in Gate is no more valid. See https://github.com/OpenGATE/Gate/issues/381 for details. 
+
 **FastI124**
 
 FastI124 is a special source implementing a simplified decay scheme of the non-pure beta emitter iodine-124 in which positrons are emitted but not neutrinos, there is no nuclear recoil, gammas are emitted if their emission probability is > 1%; and no atomic de-excitation occurs (no x-rays, Auger electrons). These simplifications allow for an increase in speed with respect to the ion source while retaining important features of iodine-124, i.e. gammas may be emitted concurrently with positrons to possibly create "dirty" coincidences. Since decay is simulated, branching ratios are respected hence no activity compensation is necessary.

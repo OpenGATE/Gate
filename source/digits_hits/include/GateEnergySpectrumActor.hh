@@ -117,10 +117,16 @@ public:
   void SetEdepTrackHistoCalc(bool b) {mEnableEdepTrackHistoFlag = b; }
   void SetElossHistoCalc(bool b) {mEnableElossHistoFlag = b; }
   
+  void SetEdepStepHistoCalc(bool b) {mEnableEdepStepHistoFlag = b; }
   
   void SetLogBinning(bool b) {mEnableLogBinning = b; }
   void SetEnergyPerUnitMass(bool b) {mEnableEnergyPerUnitMass = b; }
   void SetRelativePrimEvents(bool b) {mEnableRelativePrimEvents = b; }
+  
+  TH1D* FactoryTH1D(const char *name, const char *title, Int_t nbinsx, Double_t xlow, Double_t xup, const char *xtitle, const char *ytitle);
+  TH1D* FactoryTH1D2(const char *name, const char *title, const char *xtitle, const char *ytitle,  double* binV, int nbins);
+ 
+  double* CreateBinVector(double emin, double emax, int nbins, bool enableLogBin);
   
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
@@ -145,6 +151,7 @@ protected:
   TH1D * pEdep;
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
+  TH1D * pEdepStep;
   
   std::list<TH1D*> allEnabledTH1DHistograms;
 
@@ -162,7 +169,7 @@ protected:
   int mQBins;
   
   double * eBinV;
-  double dEn;
+  //double dEn;
   
   double mEmin;
   double mEmax;
@@ -182,9 +189,10 @@ protected:
   double sumM2;
   double sumM3;
 
-  double edep;
+  G4double edep;
   double tof;
-  double edepTrack;
+  G4double edepTrack;
+  G4double edepEvent;
 
   GateActorMessenger* pMessenger;
 
@@ -201,6 +209,7 @@ protected:
   bool mEnableEnergySpectrumFluenceCosFlag;
   bool mEnableEnergySpectrumFluenceTrackFlag;
   bool mEnableEnergySpectrumEdepFlag;
+  bool mEnableEdepStepHistoFlag;
   bool mEnableEdepHistoFlag;
   bool mEnableEdepTimeHistoFlag;
   bool mEnableEdepTrackHistoFlag;
