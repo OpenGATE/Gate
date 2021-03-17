@@ -901,3 +901,14 @@ Here is the help for the command::
     Omittable       : True
     Default value   : tesla
     Candidates      : T kG G tesla kilogauss gauss
+
+Electromagnetic field
+---------------------
+
+A custom electromagnetic field can be generated from an external look-up table (e.g., text file) containing the spatial positions (x, y, z) in centimeter and their associated electric and magnetic field strengths (Ex, Ey, Ez) in volt per meter and (Bx, By, Bz) in tesla. The 3 dimensional field grid is read in and interpolated to the entire simulation geometry determined by the minimum and maximum value of the grid using a linear interpolation method.
+
+The structure of the input file is shown in Figure XX. The coordinates specified in the input file are assumed to be absolute cartesian coordinates. The first line of the file must be the number of values per coordinate, e.g., for a field reaching from −5cm ≤ r ≤ 5cm and a grid size of 1cm, the number of values per coordinate is 11. The permittivity and permeability of various materials are assumed to be already taken into account in the field strength.
+
+The following command can be used to activate and define the electromagnetic field::
+   
+   /gate/geometry/setElectMagTabulateField3D PATH_TO_TEXT_FILE
