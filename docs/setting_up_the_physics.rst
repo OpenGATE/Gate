@@ -913,7 +913,7 @@ A custom electromagnetic field can be generated from an external look-up table (
    
    Input file for electromagnetic vector field maps.
 
-The coordinates specified in the input file are assumed to be absolute cartesian coordinates. The first line of the file must be the number of values per coordinate, e.g., for a field reaching from −5cm ≤ x,y,z ≤ 5cm and a grid size of 1cm, the number of values per coordinate is 11. The permittivity and permeability of various materials are assumed to be already taken into account in the field strength.
+The coordinates specified in the input file are assumed to be absolute cartesian coordinates. The first line of the file must be the number of values per coordinate, e.g., for a field reaching from −5cm ≤ x,y,z ≤ 5cm and a grid size of 1cm, the number of values per coordinate is 11. The permittivity and permeability of various materials are assumed to be already taken into account in the field strength. The method can also be used for pure magnetic or electric fields, by setting the corresponding field values to zero.
 
 The following command can be used to activate and define the electromagnetic field::
    
