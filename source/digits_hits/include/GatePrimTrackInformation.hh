@@ -35,6 +35,11 @@ public:
    inline void setNCompton(const G4int nCompt) {m_NCompton=nCompt;}
    inline int GetNCompton() const {return m_NCompton;}
   
+   inline void setNConv(const G4int numConv) {m_NConv=numConv;}
+   inline int GetNConv() const {return m_NConv;}
+
+   inline void setNRayl(const G4int numRayl) {m_NRayl=numRayl;}
+   inline int GetNRayl() const {return m_NRayl;}
 
 private:
   // Information of the primary track at the primary vertex
@@ -49,6 +54,8 @@ private:
   G4int                m_PDGPrimaryTrack;
 
   G4int                m_NCompton;
+  G4int                m_NConv;
+  G4int                m_NRayl;
 
 
 

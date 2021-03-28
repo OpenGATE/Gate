@@ -21,6 +21,8 @@ GatePrimTrackInformation::GatePrimTrackInformation()
     m_energyPrimaryTrack=-1;
     m_PDGPrimaryTrack=0;
     m_NCompton=0;
+    m_NConv=0;
+    m_NRayl=0;
 
 
 
@@ -39,10 +41,11 @@ GatePrimTrackInformation::GatePrimTrackInformation(const G4Track* aTrack)
     fOriginalTime = aTrack->GetGlobalTime();
 
 
-    //MAybe include some other parameter to set my an specific track
     m_energyPrimaryTrack=-1;
-     m_PDGPrimaryTrack=0;
-     m_NCompton=0;
+    m_PDGPrimaryTrack=0;
+    m_NCompton=0;
+    m_NConv=0;
+    m_NRayl=0;
 }
 
 
@@ -60,7 +63,9 @@ GatePrimTrackInformation
 
     m_energyPrimaryTrack=aTrackInfo->m_energyPrimaryTrack;
     m_PDGPrimaryTrack=aTrackInfo->m_PDGPrimaryTrack;
-     m_NCompton=aTrackInfo->m_NCompton;
+    m_NCompton=aTrackInfo->m_NCompton;
+    m_NConv=aTrackInfo->m_NConv;
+    m_NRayl=aTrackInfo->m_NRayl;
 
 
 
@@ -87,6 +92,8 @@ GatePrimTrackInformation& GatePrimTrackInformation
     m_energyPrimaryTrack=aTrackInfo.m_energyPrimaryTrack;
     m_PDGPrimaryTrack=aTrackInfo.m_PDGPrimaryTrack;
     m_NCompton=aTrackInfo.m_NCompton;
+    m_NConv=aTrackInfo.m_NConv;
+    m_NRayl=aTrackInfo.m_NRayl;
     return *this;
 }
 
