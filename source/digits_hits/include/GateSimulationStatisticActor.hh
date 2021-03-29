@@ -19,54 +19,64 @@ See LICENSE.md for further details
 #include "GateVActor.hh"
 #include "GateActorManager.hh"
 #include "GateActorMessenger.hh"
+#include "GateSimulationStatisticActorMessenger.hh"
 
 #include <sys/time.h>
 
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
-class GateSimulationStatisticActor : public GateVActor
-{
- public:
+class GateSimulationStatisticActor : public GateVActor {
+public:
 
-  virtual ~GateSimulationStatisticActor();
+    virtual ~GateSimulationStatisticActor();
 
-  //-----------------------------------------------------------------------------
-  // This macro initialize the CreatePrototype and CreateInstance
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateSimulationStatisticActor)
+    //-----------------------------------------------------------------------------
+    // This macro initialize the CreatePrototype and CreateInstance
+    FCT_FOR_AUTO_CREATOR_ACTOR(GateSimulationStatisticActor)
 
-  //-----------------------------------------------------------------------------
-  // Constructs the sensor
-  virtual void Construct();
+    //-----------------------------------------------------------------------------
+    // Constructs the sensor
+    virtual void Construct();
 
-  //-----------------------------------------------------------------------------
-  // Callbacks
-  virtual void BeginOfRunAction(const G4Run*);
-  virtual void BeginOfEventAction(const G4Event*);
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
+    // Options
+    void SetTrackTypesFlag(bool b) { mTrackTypesFlag = b; }
 
-  //-----------------------------------------------------------------------------
-  /// Saves the data collected to the file
-  virtual void SaveData();
-  virtual void ResetData();
+    //-----------------------------------------------------------------------------
+    // Callbacks
+    virtual void BeginOfRunAction(const G4Run *);
+
+    virtual void BeginOfEventAction(const G4Event *);
+
+    virtual void PreUserTrackingAction(const GateVVolume *, const G4Track *);
+
+    virtual void UserSteppingAction(const GateVVolume *, const G4Step *);
+
+    //-----------------------------------------------------------------------------
+    /// Saves the data collected to the file
+    virtual void SaveData();
+
+    virtual void ResetData();
 
 protected:
-  GateSimulationStatisticActor(G4String name, G4int depth=0);
+    GateSimulationStatisticActor(G4String name, G4int depth = 0);
 
-  long int mNumberOfRuns;
-  long int mNumberOfEvents;
-  long int mNumberOfTrack;
-  long long int mNumberOfSteps;
-  long long int mNumberOfGeometricalSteps;
-  long long int mNumberOfPhysicalSteps;
-  timeval start;
-  timeval start_afterinit;
-  std::string startDateStr;
+    long int mNumberOfRuns;
+    long int mNumberOfEvents;
+    long int mNumberOfTrack;
+    long long int mNumberOfSteps;
+    long long int mNumberOfGeometricalSteps;
+    long long int mNumberOfPhysicalSteps;
+    timeval start;
+    timeval start_afterinit;
+    std::string startDateStr;
 
-  GateActorMessenger * pActor;
+    bool mTrackTypesFlag;
+    std::map<std::string, int> mTrackTypes;
+
+    GateSimulationStatisticActorMessenger *pMessenger;
 };
 
-MAKE_AUTO_CREATOR_ACTOR(SimulationStatisticActor,GateSimulationStatisticActor)
+MAKE_AUTO_CREATOR_ACTOR(SimulationStatisticActor, GateSimulationStatisticActor)
 
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
