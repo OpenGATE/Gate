@@ -178,7 +178,7 @@ void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
 
   // create the new integrated activity map
   m_activityTotal = 0.;
-  GateSourceActivityMap::iterator voxel;
+  //GateSourceActivityMap::iterator voxel;
   for (size_t iVoxel = 0; iVoxel < m_sourceVoxelActivities.size(); iVoxel++) {
 	  if (m_sourceVoxelActivities[iVoxel]>0.0) {
 		  m_activityTotal += m_sourceVoxelActivities[iVoxel];
