@@ -67,8 +67,8 @@ void GateAnnihilationRangeActor::ResetData() {
 void GateAnnihilationRangeActor::PostUserTrackingAction(const GateVVolume * /*vol*/, const G4Track *aTrack) {
 
     // If this is not a e+ (id=319) we do nothing
-    auto id = aTrack->GetParticleDefinition()->GetParticleDefinitionID();
-    if (id != 319) return;
+    auto id = aTrack->GetParticleDefinition()->GetParticleName();
+    if (id != "e+") return;
 
     /* debug
     std::cout << " post track part " << aTrack->GetParticleDefinition()->GetParticleName() << std::endl;
