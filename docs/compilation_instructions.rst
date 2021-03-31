@@ -85,7 +85,7 @@ The goal is here to make Gate use the torch library, an open source machine lear
 
 Pytorch is usually used via a Python module, but here we need an additional library named 'libtorch' that will be used by Gate during compilation.
 
-To download 'libtorch', go to https://pytorch.org at the section QUICK START LOCALLY, and select PyTorch Build stable, Your OS, Package libtorch, Language C++, your CUDA version if you have CUDA installed on your computer or None if you want to use only your CPU (Note: GATE is currently using only CPU with libtorch). Then download the zip file (cxx11 ABI) and unziped somewhere on your disk. No compilation required here.
+To download 'libtorch', go to https://pytorch.org at the section QUICK START LOCALLY, and select PyTorch Build stable, Your OS, Package libtorch, Language C++, your CUDA version if you have CUDA installed on your computer or None if you want to use only your CPU (Note: GATE is currently using only CPU with libtorch). Then download the zip archive. For Linux platform you can choose between Pre-cxx11 ABI or cxx11 ABI versions according to your gcc version. If you cannot compile (or link) Gate with the former version, try the latter version. Finally unziped somewhere on your disk. No compilation required here.
 
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
 
@@ -97,7 +97,7 @@ In some configuration, the following path should also be set ::
     CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
     CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
 
-
+We recommend you to use libtorch version 1.4.0 but if you want to use a version greater than 1.7.0, check https://github.com/OpenGATE/Gate/pull/424
 
 GATE V9.0
 ---------
