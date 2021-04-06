@@ -243,3 +243,45 @@ jobs:
           ls -lrt $GITHUB_WORKSPACE/benchmarks/benchRT/output
         fi
 
+  benchmarks:
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        strategy_name: [t1_edep_profiles, t2_edep_vox, t3_range_e+, t4_necr, t5_pet, t6_dpk, t7_garf, t9_gaga_phsp]
+
+    steps:
+    - name: Checkout github repo
+      uses: actions/checkout@v2
+      with:
+          lfs: true
+    - name: Checkout LFS objects
+      run: git lfs checkout
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y gcc \
+                                g++ \
+                                make \
+                                binutils \
+                                libx11-dev \
+                                libxpm-dev \
+                                libxft-dev \
+                                libxext-dev \
+                                qt5-default \
+                                git \
+                                cmake \
+                                python3.8-dev \
+                                ccache \
+                                fftw3-dev
+        gcc -v
+        cd
+    - name: Run the test in docker
+      run: |
+        mkdir gate_benchmarks
+        git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.1 /home/.github/workflows/runTest.sh
+
