@@ -238,6 +238,7 @@ FILE(GLOB headers
 
 #=========================================================
 IF(GATE_USE_TORCH)
+  set(CMAKE_CXX_STANDARD 14)
   FIND_PACKAGE(Torch REQUIRED)
   INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
