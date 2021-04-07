@@ -44,6 +44,10 @@ public:
   void SetLETtoWater(bool b) { mIsLETtoWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
+  void SetMaterial(G4String s) { mSetMaterial = s; }
+  void SetCutVal(G4double d) { mCutVal = d; }
+  void SetLETthrMin(G4double d) { mLETthrMin = d; }
+  void SetLETthrMax(G4double d) { mLETthrMax = d; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -60,15 +64,20 @@ public:
   // Scorer related
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-
+    
+  
 
 protected:
   GateLETActor(G4String name, G4int depth=0);
   GateLETActorMessenger * pMessenger;
+  
+  //virtual void polynomial(double* coefs, double deg, double x) {double yv;}
+  virtual double polynomial(double * coefs, int deg, double x);
 
   int mCurrentEvent;
   bool mIsLETtoWaterEnabled;
   G4String mAveragingType;
+  G4String mSetMaterial;
   
   GateImageDouble mWeightedLETImage;
   GateImageDouble mNormalizationLETImage;
@@ -78,6 +87,16 @@ protected:
   G4String denominatorFileName;
   G4String sigmaFilename;
   
+  bool mKGrosswendt;
+  G4double mCutVal;
+  G4double mLETthrMin;
+  G4double mLETthrMax;
+  
+  
+  double k_FitParWAir;
+  bool mIsSwairApprox;
+  bool mIsMeanEnergyToProduceIonPairInAir;
+  bool mIsMeanEnergyToProduceIonPairInAirAR;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;

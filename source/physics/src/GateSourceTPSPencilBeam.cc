@@ -98,7 +98,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
     std::ifstream inFile(mPlan);
     if (! inFile) {
-      GateError("Cannot open Treatment plan file!");
+      GateError("Cannot open Treatment plan file: " + mPlan);
     }
 
     // integrating the plan description file data
@@ -412,7 +412,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
 
   std::ifstream inFile(mSourceDescriptionFile);
   if (! inFile) {
-    GateError("Cannot open source description file!");
+    GateError("Cannot open source description file: " + mSourceDescriptionFile);
   }
   // DSP, SMX, SMY
   mDistanceSourcePatient=ParseNextContentLine<double,1>(inFile,lineno,mSourceDescriptionFile)[0];

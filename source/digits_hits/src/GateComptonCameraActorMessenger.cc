@@ -30,6 +30,7 @@ GateComptonCameraActorMessenger::~GateComptonCameraActorMessenger()
     delete pSaveSinglesTree;
     delete pSaveCoincidencesTree;
     delete pSaveCoincidenceChainsTree;
+    delete pSaveEventInfoTree;
 
 
     delete pNameOfAbsorberSDVol;
@@ -87,6 +88,13 @@ void GateComptonCameraActorMessenger::BuildCommands(G4String base)
   pSaveCoincidencesTree = new G4UIcmdWithABool(bb, this);
   guidance = G4String("In addition  save a root tree with the coincidences info inside the attachedVolume");
   pSaveCoincidencesTree->SetGuidance(guidance);
+
+  bb = base+"/saveEventInfoTree";
+  pSaveEventInfoTree= new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition  save a  file with  some extra info of each event such as electron escape");
+  pSaveEventInfoTree->SetGuidance(guidance);
+
+
 
   bb = base+"/saveCoincidenceChainsTree";
   pSaveCoincidenceChainsTree = new G4UIcmdWithABool(bb, this);
@@ -276,6 +284,8 @@ void GateComptonCameraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
   if(cmd == pSaveSinglesTree) pActor->SetSaveSinglesTreeFlag(  pSaveSinglesTree->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveCoincidencesTree) pActor->SetSaveCoincidencesTreeFlag(  pSaveCoincidencesTree->GetNewBoolValue(newValue)  ) ;
   if(cmd == pSaveCoincidenceChainsTree) pActor->SetSaveCoincidenceChainsTreeFlag(  pSaveCoincidenceChainsTree->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveEventInfoTree) pActor->SetSaveEventInfoTreeFlag(  pSaveEventInfoTree->GetNewBoolValue(newValue)  ) ;
+
 
   if(cmd == pNumberofDiffScattererLayers) pActor->SetNumberOfDiffScattererLayers( pNumberofDiffScattererLayers->GetNewIntValue(newValue)  ) ;
    if(cmd == pNumberofTotScattererLayers) pActor->SetNumberOfTotScattererLayers( pNumberofTotScattererLayers->GetNewIntValue(newValue)  ) ;

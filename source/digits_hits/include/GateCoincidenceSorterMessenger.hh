@@ -66,6 +66,7 @@ private:
     G4UIcmdWithAnInteger        *setPresortBufferSizeCmd;  //!< the UI command 'setPresortBufferSize'
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
     G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "MultiplesPolicy"
+    G4UIcmdWithAString          *SetAcceptancePolicy4CCCmd;  //!< The UI command "MultiplesPolicy"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *SetTriggerOnlyByAbsorberCmd;
     

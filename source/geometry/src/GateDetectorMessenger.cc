@@ -107,6 +107,10 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   pElectTabulatedField3DCmd->SetGuidance("Sets the data filename of electric field 3D.");
   pElectTabulatedField3DCmd->SetParameterName(" Electric field tabulate filename ",false);
 
+  pElectMagTabulatedField3DCmd = new G4UIcmdWithAString("/gate/geometry/setElectMagTabulateField3D",this);
+  pElectMagTabulatedField3DCmd->SetGuidance("Sets the data filename of electromagnetic field 3D.");
+  pElectMagTabulatedField3DCmd->SetParameterName(" Electromagnetic field tabulate filename ",false);
+
   G4String dir = "/gate/geometry/setMagTabulateField3D/";
   G4String cmdName;
 
@@ -207,6 +211,9 @@ void GateDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 
   else if( command == pElectTabulatedField3DCmd )
     { pDetectorConstruction->SetElectFieldTabulatedFile(newValue);}
+
+  else if( command == pElectMagTabulatedField3DCmd )
+    { pDetectorConstruction->SetElectMagFieldTabulatedFile(newValue);}
 
   else if( command == pMagStepMinimumCmd )
     { pDetectorConstruction->SetMagStepMinimum(pMagStepMinimumCmd->GetNewDoubleValue(newValue));}

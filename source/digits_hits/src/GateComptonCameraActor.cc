@@ -56,6 +56,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     mSaveSinglesTreeFlag=1;
     mSaveCoincidencesTreeFlag=1;
     mSaveCoincidenceChainsTreeFlag=1;
+    mSaveEventInfoTreeFlag=false;
     mParentIDSpecificationFlag=false;
 
     //Messenger load values
@@ -398,6 +399,33 @@ void GateComptonCameraActor::Construct()
        }
    }
 
+  // General event Info. In this case Electron escape info
+   if(mSaveEventInfoTreeFlag){
+       G4String filenameC=filename+"_eventGlobalInfo."+extension;
+       if(extension == "root")
+           mFileEvent.add_file(filenameC,  "root");
+       else if(extension == "npy")
+           mFileEvent.add_file(filenameC, "npy");
+       else if(extension == "txt")
+           mFileEvent.add_file(filenameC, "txt");
+       else
+           GateError("Unknown extension for CC actor output");
+
+       mFileEvent.set_tree_name("EventGlobalInfo");
+
+       mFileEvent.write_variable("runID",&runID);
+       mFileEvent.write_variable("eventID", &evtID);
+       mFileEvent.write_variable("energyElectronEscaped", &energyElectronEscapedEvt);
+       //Is exiting a volume or entering a colume
+       mFileEvent.write_variable("isElectronExitingSD", &IseExitingSDVol);
+       //which volume (entering or exiting)
+       mFileEvent.write_variable("SDVolName", eEspVolName, sizeof(eEspVolName));
+
+
+       mFileEvent.write_header();
+   }
+
+
 
 
 
@@ -429,6 +457,9 @@ void GateComptonCameraActor::SaveData()
             mVectorFileCoinChain.at(i)->close();
         }
     }
+    if(mSaveEventInfoTreeFlag){
+        mFileEvent.close();
+    }
 
 
 }
@@ -440,7 +471,7 @@ void GateComptonCameraActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::ResetData()
 {
-    //nEvent = 0;
+
 
 }
 //-----------------------------------------------------------------------------
@@ -489,6 +520,13 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
     nCrystalConv=0;
     nCrystalRayl=0;
     nCrystalCompt=0;
+
+
+    energyElectronEscapedEvt=0.0;
+    IseExitingSDVol=false;
+    eEspVolName="NULL";
+
+
     //std::cout<<"eventID="<<evtID<<std::endl;
 
     //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
@@ -500,7 +538,7 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 {
-    //G4cout<<"######start of  :END OF EVENT ACTION####################################   "<<nEvent<<G4endl;
+    //G4cout<<"######start of  :END OF EVENT ACTION#################################### "  <<G4endl;
     GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
     if (edepEvt > 0) {
         // if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
@@ -584,7 +622,7 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event* )
 
     }
 
-    //nEvent++;
+
 
 
     //G4cout<<"######END OF :END OF EVENT ACTION####################################"<<G4endl;
@@ -716,8 +754,6 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         processPostStep="NULL";
     }
     //=================================================
-    //To check if  step ends in the  boundary
-    // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
     if (newEvt) {
         //      double pretof = step->GetPreStepPoint()->GetGlobalTime();
@@ -756,7 +792,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
     }
     else if (parentID==0){
         //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
-        if(Ef_oldPrimary!=0)Ei=Ef_oldPrimary;
+        if(Ef_oldPrimary>0)Ei=Ef_oldPrimary;
         Ef_oldPrimary=Ef;
 
     }
@@ -764,6 +800,20 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
     std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), VolNameStep);
     if (it != layerNames.end()){
+        //Hits with preStep in sensitive volumes.
+
+        //To check if  step ends in the  boundary and it is an electron. Here is the case in which the pre-step is in a sensitive volume
+        if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
+            //This is an electron  with a preStep in sensitive volumes and the post-step in the boundary (escaping from the SD)
+            energyElectronEscapedEvt=Ef/MeV;
+            IseExitingSDVol=true;
+            eEspVolName=VolNameStep;
+            //Fill file each time that an electron exits a SD volume. There can be several entries per event.
+            mFileEvent.fill();
+
+        }
+
+
         //I add energy to the event only if it is deposited in the layers
         edepEvt += step->GetTotalEnergyDeposit();
         if(processPostStep=="conv")  nCrystalConv++;
@@ -830,12 +880,39 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         }
 
     }
+    else{
+        //pre-step not in a SD
+        if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && PDGEncoding==11){
+            //Is the post-step in the boundary of a SD volume (entering to he SD)
+            energyElectronEscapedEvt=Ef/MeV;
+            IseExitingSDVol=false;
+
+           // eEspVolName=
+            G4TouchableHandle touchable_pos=step->GetPostStepPoint()->GetTouchableHandle();
+            G4String vName=touchable_pos->GetVolume(0)->GetName();
+            unsigned extPos=vName.rfind("_phys");
+            vName=vName.substr(0,extPos);
+            int nCp_pos=touchable_pos->GetVolume(0)->GetCopyNo();
+            if(nCp_pos>0 && vName!=mNameOfAbsorberSDVol){
+
+                vName=vName+std::to_string(nCp_pos);
+                //G4cout<<"!!"<<vName<<G4endl;
+            }
+            eEspVolName=vName;
+
+            //If the post step volume is a SD: store info of electron entering a SD
+            std::vector<G4String>::iterator it= find (layerNames.begin(), layerNames.end(), eEspVolName);
+            if (it != layerNames.end()){
+               //Fill file each time that an electron enters a SD volume.
+                mFileEvent.fill();
+            }
+
+        }
+    }
 
     // G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
 }
 //-----------------------------------------------------------------------------
-
-
 
 
 

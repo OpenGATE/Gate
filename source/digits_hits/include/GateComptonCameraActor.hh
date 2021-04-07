@@ -76,6 +76,7 @@ public:
   void SetSaveSinglesTreeFlag( bool b ){  mSaveSinglesTreeFlag= b; }
   void SetSaveCoincidencesTreeFlag( bool b ){  mSaveCoincidencesTreeFlag= b; }
   void SetSaveCoincidenceChainsTreeFlag( bool b ){  mSaveCoincidenceChainsTreeFlag= b; }
+  void SetSaveEventInfoTreeFlag( bool b ){  mSaveEventInfoTreeFlag= b; }
 
   void SetNumberOfDiffScattererLayers( int numS){mNumberDiffScattLayers=numS;}
   void SetNumberOfTotScattererLayers( int numS){mNumberTotScattLayers=numS;}
@@ -126,6 +127,7 @@ protected:
   GateOutputTreeFileManager mFileHits;
   GateOutputTreeFileManager mFileSingles;
   GateOutputTreeFileManager mFileCoinc;
+  GateOutputTreeFileManager mFileEvent;
   std::vector<std::unique_ptr<GateOutputTreeFileManager>> mVectorFileCoinChain;
 
   GateCCRootHitBuffer  m_HitsBuffer;
@@ -159,7 +161,7 @@ protected:
 
   double Ei,Ef;
 
-  int nEvent;
+
   bool newEvt;
   bool newTrack;
   double sumNi;
@@ -172,9 +174,18 @@ protected:
   G4String VolNameStep;
   G4int evtID;
   G4int runID;
+
+  G4int nElectronEscapedEvt;
+  G4double energyElectronEscapedEvt;
+  G4bool IseExitingSDVol;
+  G4String eEspVolName;
+
+
   G4int nCrystalConv;
   G4int nCrystalCompt;
   G4int nCrystalRayl;
+
+
 
 
   G4double hitEdep;
@@ -213,7 +224,7 @@ protected:
   bool mSaveSinglesTreeFlag;
   bool mSaveCoincidencesTreeFlag;
   bool mSaveCoincidenceChainsTreeFlag;
-
+  bool mSaveEventInfoTreeFlag;
 
   int mNumberDiffScattLayers;
   int mNumberTotScattLayers;
