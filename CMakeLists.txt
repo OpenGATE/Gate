@@ -5,6 +5,10 @@ CMAKE_POLICY(SET CMP0025 NEW)
 CMAKE_POLICY(SET CMP0057 NEW)
 CMAKE_POLICY(SET CMP0072 NEW)
 
+
+set (CMAKE_CXX_STANDARD 14)
+
+
 #=========================================================
 PROJECT(Gate)
 
@@ -234,6 +238,7 @@ FILE(GLOB headers
 
 #=========================================================
 IF(GATE_USE_TORCH)
+  set(CMAKE_CXX_STANDARD 14)
   FIND_PACKAGE(Torch REQUIRED)
   INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
