@@ -5,10 +5,6 @@ CMAKE_POLICY(SET CMP0025 NEW)
 CMAKE_POLICY(SET CMP0057 NEW)
 CMAKE_POLICY(SET CMP0072 NEW)
 
-
-set (CMAKE_CXX_STANDARD 14)
-
-
 #=========================================================
 PROJECT(Gate)
 
