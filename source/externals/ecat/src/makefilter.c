@@ -3,7 +3,7 @@
 /* Make the frequency filter */
 
 #include <math.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #define	NO_FILTER	0
 #define	RAMP		1
@@ -22,76 +22,6 @@
 static char sccsid[]="@(#)makefilter.c	1.1 6/13/90 Copyright 1990 CTI Pet Systems, Inc.";
 #endif	/* lint */
 
-makefilter(nprojs, fx, fcode, fpars)
-
-int	fcode, nprojs ;
-float	*fx, fpars[] ;
-
-{
-int	i, retcode ;
-float	*ptr ;
-
-	retcode = 1 ;
-	switch (fcode) {
-	  case NO_FILTER :
-	     ptr = fx ;
-	     for (i=0 ; i<nprojs/2 ; i++) {
-		*ptr++ = 1.0 ;
-		*ptr++ = 0.0 ;
-	     } 
-	     fx[1] = 1.0;
-	     break ;
-	  case RAMP :
-	     ramp(fx, fpars, nprojs) ;
-	     break ;
-	  case BUTTERWORTH :
-	     break ;
-	  case HANN :
-	     ramp(fx, fpars, nprojs) ;
-	     hann(fx, fpars, nprojs) ;
-	     break ;
-	  case HAMMING:
-	     ramp(fx, fpars, nprojs) ;
-	     hamm(fx, fpars, nprojs) ;
-	     break ;
-	  case PARZEN :
-	     ramp(fx, fpars, nprojs) ;
-	     parz(fx, fpars, nprojs) ;
-	     break ;
-	  case SHEPP :
-	     break ;
-	  case EXP:
-	     exp_filter(fx, fpars, nprojs);
-	     break;
-	  case -RAMP :
-	     xramp(fx, fpars, nprojs) ;
-	     break ;
-	  case -BUTTERWORTH :
-	     break ;
-	  case -HANN :
-	     xramp(fx, fpars, nprojs) ;
-	     hann(fx, fpars, nprojs) ;
-	     break ;
-	  case -HAMMING:
-	     xramp(fx, fpars, nprojs) ;
-	     hamm(fx, fpars, nprojs) ;
-	     break ;
-	  case -PARZEN :
-	     xramp(fx, fpars, nprojs) ;
-	     parz(fx, fpars, nprojs) ;
-	     break ;
-	  case -SHEPP :
-	     break ;
-	  case -EXP:
-	     exp_filter(fx, fpars, nprojs);
-	     break;
-	  default :
-	     retcode = 0 ;
-	     break ;
-
-	}  /* end switch */
-	return retcode ;
-}
 
 static float *tramp=0;
 static int tramp_size=0;
@@ -227,3 +157,73 @@ exp_filter( fx, fpars, nprojs)
 	fx[1] = 0.5*exp(-xpow(1.0/cutoff));
 }
 
+makefilter(nprojs, fx, fcode, fpars)
+
+int	fcode, nprojs ;
+float	*fx, fpars[] ;
+
+{
+int	i, retcode ;
+float	*ptr ;
+
+	retcode = 1 ;
+	switch (fcode) {
+	  case NO_FILTER :
+	     ptr = fx ;
+	     for (i=0 ; i<nprojs/2 ; i++) {
+		*ptr++ = 1.0 ;
+		*ptr++ = 0.0 ;
+	     } 
+	     fx[1] = 1.0;
+	     break ;
+	  case RAMP :
+	     ramp(fx, fpars, nprojs) ;
+	     break ;
+	  case BUTTERWORTH :
+	     break ;
+	  case HANN :
+	     ramp(fx, fpars, nprojs) ;
+	     hann(fx, fpars, nprojs) ;
+	     break ;
+	  case HAMMING:
+	     ramp(fx, fpars, nprojs) ;
+	     hamm(fx, fpars, nprojs) ;
+	     break ;
+	  case PARZEN :
+	     ramp(fx, fpars, nprojs) ;
+	     parz(fx, fpars, nprojs) ;
+	     break ;
+	  case SHEPP :
+	     break ;
+	  case EXP:
+	     exp_filter(fx, fpars, nprojs);
+	     break;
+	  case -RAMP :
+	     xramp(fx, fpars, nprojs) ;
+	     break ;
+	  case -BUTTERWORTH :
+	     break ;
+	  case -HANN :
+	     xramp(fx, fpars, nprojs) ;
+	     hann(fx, fpars, nprojs) ;
+	     break ;
+	  case -HAMMING:
+	     xramp(fx, fpars, nprojs) ;
+	     hamm(fx, fpars, nprojs) ;
+	     break ;
+	  case -PARZEN :
+	     xramp(fx, fpars, nprojs) ;
+	     parz(fx, fpars, nprojs) ;
+	     break ;
+	  case -SHEPP :
+	     break ;
+	  case -EXP:
+	     exp_filter(fx, fpars, nprojs);
+	     break;
+	  default :
+	     retcode = 0 ;
+	     break ;
+
+	}  /* end switch */
+	return retcode ;
+}
