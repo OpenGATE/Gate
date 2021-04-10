@@ -1,7 +1,0 @@
-
-/control/execute mac/actors_totaldose1D.mac
-
-/gate/actor/addActor SimulationStatisticActor SimulationStatistic
-/gate/actor/SimulationStatistic/save output/SimulationStatistic.txt
-#/gate/actor/SimulationStatistic/saveEveryNSeconds     900
-

@@ -1,7 +1,0 @@
-diff pet_sinogram_frame0.s
-diff_stat pet_sinogram_frame0.s.hdr
-diff pet_sinogram_frame0.ra.s
-diff_stat pet_sinogram_frame0.ra.s.hdr
-diff pet_sinogram_frame0.sc.s
-diff_stat pet_sinogram_frame0.sc.s.hdr
-diff_stat stat-pet.txt

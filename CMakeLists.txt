@@ -291,15 +291,6 @@ IF(GATE_COMPILE_GATEDIGIT)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
 #=========================================================
-option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-  INCLUDE(cmake-modules/GateExternalData.cmake)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-  ADD_SUBDIRECTORY(benchmarks)
-  ExternalData_add_target(GateBenchmarkData)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-#=========================================================
 
 
 #=========================================================
@@ -321,6 +312,3 @@ IF(NOT APPLE)
 ENDIF()
 #=========================================================
 
-IF(BUILD_TESTING)
-  ADD_TEST(NAME FIRST_EXECUTION_TEST COMMAND ${PROJECT_SOURCE_DIR}/benchmarks/benchRT/testCarbon.sh ${ROOT_INCLUDE_DIR}/../ )
-ENDIF(BUILD_TESTING)
