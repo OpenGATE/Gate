@@ -1,9 +1,0 @@
-diff gamma-3d-Dose.mhd
-diff gamma-3d-Dose.raw
-diff gamma-3d-Edep.mhd
-diff gamma-3d-Edep.raw
-diff gamma-3d-Edep-Squared.mhd
-diff gamma-3d-Edep-Squared.raw
-diff gamma-3d-Edep-Uncertainty.mhd
-diff gamma-3d-Edep-Uncertainty.raw
-diff_stat stat-gamma.txt

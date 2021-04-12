@@ -1,3 +1,0 @@
-diff_stat optical_projection.hdr
-diff optical_projection.bin
-diff_stat stat-optical.txt

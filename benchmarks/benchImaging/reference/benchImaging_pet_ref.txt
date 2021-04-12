@@ -1,9 +1,0 @@
-This reference was created by launching a Gate simulation on
-Thu Mar 23 14:28:55 UTC 2017
-with the configuration file benchmarks/benchImaging/mac/pet.mac
-from the commit
-commit 2c971277537a0392b183b526b3b9785082a9a8be
-with the version of gcc
-gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
-on the architecture Linux
-Linux IMNC-EURYDICE 4.4.0-59-generic #80~14.04.1-Ubuntu SMP Fri Jan 6 18:02:02 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux

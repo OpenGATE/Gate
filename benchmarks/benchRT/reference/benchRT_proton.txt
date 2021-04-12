@@ -1,9 +1,0 @@
-diff proton-3d-Dose.mhd
-diff proton-3d-Dose.raw
-diff proton-3d-Edep.mhd
-diff proton-3d-Edep.raw
-diff proton-3d-Edep-Squared.mhd
-diff proton-3d-Edep-Squared.raw
-diff proton-3d-NbOfHits.mhd
-diff proton-3d-NbOfHits.raw
-diff_stat stat-proton.txt
