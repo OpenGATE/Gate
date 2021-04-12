@@ -210,16 +210,12 @@ jobs:
           ctest_start("\${dashboard_model}")
           ctest_configure(CAPTURE_CMAKE_ERROR configure_errors RETURN_VALUE configure_Results)
           ctest_build(NUMBER_ERRORS build_errors RETURN_VALUE build_Results)
-          ctest_test(CAPTURE_CMAKE_ERROR test_errors RETURN_VALUE test_Results)
           ctest_submit(RETURN_VALUE submit_Results)
           if ((NOT \${configure_errors} EQUAL 0) OR (NOT \${configure_Results} EQUAL 0))
             message( FATAL_ERROR "Configuration error" )
           endif()
           if ((NOT \${build_errors} EQUAL 0) OR (NOT \${build_Results} EQUAL 0))
             message( FATAL_ERROR "Build error" )
-          endif()
-          if ((NOT \${test_errors} EQUAL 0) OR (NOT \${test_Results} EQUAL 0))
-            message( FATAL_ERROR "Test error" )
           endif()
           if (NOT \${submit_Results} EQUAL 0)
             message( FATAL_ERROR "Submit error" )
@@ -235,12 +231,10 @@ jobs:
           export PATH=${ROOTSYS}:${PATH}
           source $HOME/software/root/install/bin/thisroot.sh
           source $HOME/software/geant4/install/bin/geant4.sh
-          ls -lrt $GITHUB_WORKSPACE/benchmarks/benchRT/output
           ctest -S dashboard.cmake -VV
           if [ ! $? -eq 0 ]; then
             exit 1
           fi
-          ls -lrt $GITHUB_WORKSPACE/benchmarks/benchRT/output
         fi
 
   benchmarks:
