@@ -1,0 +1,93 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.1          #
+#                          #
+#        04/2021           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 10.7 only. 
+
+
+-----------------
+Main new features
+-----------------
+
+- new Benchmarks system 
+  https://github.com/OpenGATE/GateBenchmarks
+
+- Decay now works with all Physics Lists
+  https://github.com/OpenGATE/Gate/pull/421
+
+- SimulationStatisticActor: add options to get track types
+  https://github.com/OpenGATE/Gate/pull/420
+
+- range actor (in particular for e+)
+  https://github.com/OpenGATE/Gate/pull/400
+
+- add options to Phase Space
+  enableTrackLength and enableTimeFromBeginOfEvent
+  https://github.com/OpenGATE/Gate/pull/409
+
+- CCMod (Compton Camera module) improvements
+  electron escape info and coincidence sorter policies
+  and documentation updates
+  https://github.com/OpenGATE/Gate/pull/408
+
+- improvements in LET and EnergySpectrum-Actor
+  https://github.com/OpenGATE/Gate/pull/405
+
+- 3 additional Physics Lists: 
+  Single scattering = emstandard_SS
+  Goudsmit Saunderson = emstandard_GS
+  Low-energy = emLowEP
+  https://github.com/OpenGATE/Gate/pull/370
+
+- default energy for ion is now 0 MeV and not 1.0 MeV (like in Geant4), which was confusing
+  https://github.com/OpenGATE/Gate/pull/366
+
+- Score energy deposition exploiting polar/cylindrical symmetry
+  https://github.com/OpenGATE/Gate/pull/331
+
+- Mask options in phase space (use a binary image)
+  (was already there in the 9.0 but not advertised in the log)
+  https://github.com/OpenGATE/Gate/commit/28be98c2db95e47e5486de28f86fb890d0117f76
+
+
+----------
+Bugs fixed
+----------
+
+- corrected multi-systems
+
+- Fixed: twice saved trees to root output file
+  https://github.com/OpenGATE/Gate/pull/418
+
+- Fix source collimation to follow the detector with input RTK geometry
+  https://github.com/OpenGATE/Gate/pull/383
+
+- correct PDG in phase space
+  https://github.com/OpenGATE/Gate/pull/367
+
+- several other fixes
+
+
+----------
+Gate Tools
+----------
+
+- upgrade to uproot4
+- additional tools for PET analysis
+- improvement in cluster tools
+- new tool to compute DVH (Dose Volume Histogram)
+- updated RT Struct conversion
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
