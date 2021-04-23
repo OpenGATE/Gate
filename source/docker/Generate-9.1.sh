@@ -9,7 +9,7 @@ Gate_Version=9.1
 
 #Variables to preserve
 Geant4_Tag=$Repository/geant4:$Geant4_Version
-Gate_Tag=$Repository/gate:$Gate_Version
+Gate_Tag=$Repository/gate:$Gate_Version-docker
 
 docker build -t $Geant4_Tag -f DockerFileGeant \
     --build-arg ROOT_Version=$ROOT_Version \
@@ -19,5 +19,5 @@ docker push $Geant4_Tag
 
 docker build -t $Gate_Tag -f DockerFileGate \
     --build-arg Geant4_Version=$Geant4_Tag \
-    --build-arg Gate_Version=$Gate_Version .
+    --build-arg Gate_Version=v$Gate_Version .
 docker push $Gate_Tag
