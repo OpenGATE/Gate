@@ -11,6 +11,7 @@
 ARG Geant4_Version=opengatecollaboration/geant4:10.6.1
 FROM $Geant4_Version
 ARG Gate_Version=v9.0
+ARG USE_RTK=ON
 
 #Prepare for gate
 RUN mkdir software/gate \
@@ -25,7 +26,7 @@ RUN mkdir software/gate \
                   -DGEANT4_USE_SYSTEM_CLHEP=ON \
                   -DGATE_USE_ITK=ON \
                   -DITK_DIR=/software/ITK/bin \
-                  -DGATE_USE_RTK=ON \
+                  -DGATE_USE_RTK=$USE_RTK \
                   -DGATE_USE_OPTICAL=ON \
  && make -j \
  && echo "export PATH=/software/gate/bin/:$PATH" >> /etc/mybashrc
