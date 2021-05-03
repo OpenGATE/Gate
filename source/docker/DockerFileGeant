@@ -1,0 +1,97 @@
+#Docker for Geant4
+#systemctl start docker
+#login: docker login
+#build: docker build -t opengatecollaboration/geant4:10.6.1 -f DockerFileGeant --build-arg ROOT_Version=v6-19-02 --build-arg Geant4_Version=v10.6.1 .
+#The root and geant4 versions can be ommited, and the default values are used instead
+#push: docker push opengatecollaboration/geant4:10.6.1
+#interactive: docker run -it --rm -v $PWD:/APP opengatecollaboration/geant4:10.6.1 /bin/bash
+
+FROM centos:8
+ARG ROOT_Version=v6-19-02
+ARG CLHEP_Version=2.4.4.1
+ARG Geant4_Version=v10.6.1
+RUN yum install -y  make \
+                    libX11-devel.x86_64 \
+                    libXpm-devel.x86_64 \
+                    libXft-devel.x86_64 \
+                    libXext-devel.x86_64 \
+                    libXmu-devel.x86_64 \
+                    libxml2-devel.x86_64 \
+                    binutils \
+                    qt5-qtbase-devel.x86_64 \
+                    git \
+                    cmake \
+                    wget \
+                    mesa-libGLU-devel.x86_64 \
+                    python3-devel \
+                    which nano
+
+#create folder and install cmake
+RUN mkdir software \
+ && cd software \
+ && wget https://github.com/Kitware/CMake/releases/download/v3.18.4/cmake-3.18.4-Linux-x86_64.tar.gz \
+ && tar xzvf cmake-3.18.4-Linux-x86_64.tar.gz \
+ && echo "export PATH=/software/cmake-3.18.4-Linux-x86_64/bin/:$PATH" >> /etc/mybashrc
+
+#Build CLHEP
+ENV CLHEP_File=clhep-$CLHEP_Version.tgz
+ENV CLHEP_URL=https://proj-clhep.web.cern.ch/proj-clhep/dist1/$CLHEP_File
+RUN mkdir software/clhep \
+ && source /etc/mybashrc \
+ && cd software/clhep \
+ && mkdir src bin install \
+ && wget -q $CLHEP_URL \
+ && tar -zxf $CLHEP_File -C ./src --strip-components=1 \
+ && cd bin \
+ && cmake -DCMAKE_INSTALL_PREFIX=/software/clhep/install ../src/CLHEP \
+ && cmake --build . -- -j \
+ && cmake --build . --target install \
+ && cd .. \
+ && rm -rf bin src 
+
+#Build geant4
+RUN mkdir software/geant4 \
+ && source /etc/mybashrc \
+ && cd software/geant4 \
+ && mkdir src bin install data \
+ && git clone --branch $Geant4_Version https://github.com/Geant4/geant4.git src \
+ && cd bin \
+ && cmake ../src/ -DGEANT4_INSTALL_DATA=ON \
+                  -DGEANT4_INSTALL_DATADIR=/software/geant4/data \
+                  -DGEANT4_USE_QT=ON \
+                  -DCMAKE_INSTALL_PREFIX=/software/geant4/install \
+                  -DGEANT4_USE_OPENGL_X11=ON \
+                  -DGEANT4_USE_SYSTEM_CLHEP=ON \
+                  -DCLHEP_ROOT_DIR=/software/clhep/install \
+ && make -j install \
+ && cd .. \
+ && rm -rf bin src
+
+#Build ITK/RTK (TODO: add ITK version)
+RUN mkdir software/ITK \
+ && source /etc/mybashrc \
+ && cd software/ITK \
+ && mkdir src bin \
+ && git clone https://github.com/InsightSoftwareConsortium/ITK.git src \
+ && cd bin \
+ && cmake ../src/ -DCMAKE_CXX_FLAGS:STRING=-std=c++11 \
+                  -DBUILD_DOCUMENTATION=OFF \
+                  -DBUILD_EXAMPLES=OFF \
+                  -DBUILD_TESTING=OFF \
+                  -DModule_RTK=ON \
+                  -DRTK_USE_CUDA=OFF \
+                  -DRTK_BUILD_APPLICATIONS=OFF \
+ && make -j 
+
+#Build root
+RUN mkdir software/root-cern \
+ && source /etc/mybashrc \
+ && cd software/root-cern \
+ && mkdir src bin install \
+ && git clone --branch $ROOT_Version https://github.com/root-project/root.git src \
+ && cd bin \
+ && cmake ../src/ -Dpython=OFF \
+                  -DCMAKE_INSTALL_PREFIX=/software/root-cern/install \
+ && make -j install \
+ && cd .. \
+ && rm -rf bin src
