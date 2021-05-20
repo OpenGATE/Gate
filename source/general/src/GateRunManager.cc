@@ -110,7 +110,7 @@ void GateRunManager::InitializeAll() {
 
         // There are two phys list :
         // - GatePhysicsList::GetInstance() is the one of Gate
-        // - mUserPhysicList : the one created by G4 if user choose a buildin PL.
+        // - mUserListOfPhysicList : the one created by G4 if user choose a buildin PL.
         // the Gate one is used to store/retrieve cuts parameters.
 
         // Consider the e- cut as default (in mm)

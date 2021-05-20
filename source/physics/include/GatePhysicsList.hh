@@ -123,7 +123,7 @@ protected:
   G4UserLimits * userlimits;
 
   // Physic list management
-  G4VModularPhysicsList * mUserPhysicList;
+  std::vector<G4VPhysicsConstructor*>  mUserListOfPhysicList;
   //Mixed EM and DNA Physics List
   G4VModularPhysicsList* emPhysicsListMixed;
 

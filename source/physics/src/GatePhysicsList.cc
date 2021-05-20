@@ -217,13 +217,13 @@ void GatePhysicsList::ConstructProcess()
     }
   else if(mLoadState==1)
     {
-      if (mUserPhysicListName == "") { // if a user physic list is set, transportation is already set
-        AddTransportation();
+      if (mUserListOfPhysicList.empty()) { // if a user physic list is set, transportation is already set
+          AddTransportation();
       }
 
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
         (*GetTheListOfProcesss())[i]->ConstructProcess();
-
+//
       //opt->SetVerbose(2);
       if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
       if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
@@ -301,7 +301,7 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   mUserPhysicListName = name;
 
   // First, try to create EM only Physic lists
-  G4VPhysicsConstructor * pl = NULL;
+  G4VPhysicsConstructor * pl = nullptr;
   if (mUserPhysicListName == "emstandard") {
     pl = new G4EmStandardPhysics();
   }
@@ -342,11 +342,17 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     pl = new G4OpticalPhysics();
   }
 
-  if (pl != NULL) {
-    pl->ConstructParticle();
-    pl->ConstructProcess();
-    //pl->SetVerboseLevel(2);
-    AddTransportation(); // don't forget transportation process.
+    if(pl != nullptr)  {
+        mUserListOfPhysicList.push_back(pl);
+          pl->ConstructParticle();
+          pl->ConstructProcess();
+    }
+
+  if(mUserListOfPhysicList.size() == 1)  {
+      AddTransportation();
+  }
+
+  if (!mUserListOfPhysicList.empty()) {
     GateRunManager::GetRunManager()->SetUserPhysicListName("");
   }
   else {
