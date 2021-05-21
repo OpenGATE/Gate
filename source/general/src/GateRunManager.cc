@@ -110,6 +110,9 @@ void GateRunManager::InitializeAll() {
                               << " emlivermore_polar"
                               << " empenelope"
                               << " emDNAphysics"
+#ifdef GATE_USE_OPTICAL
+                              << " optical"
+#endif
                               << GatePhysicsList::GetInstance()->GetListOfPhysicsLists());
         }
 

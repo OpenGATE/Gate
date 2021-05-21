@@ -338,9 +338,13 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   if (mUserPhysicListName == "emDNAphysics") {
     pl = new G4EmDNAPhysics();
   }
-  if (mUserPhysicListName == "optical") {
+
+#ifdef GATE_USE_OPTICAL
+    if (mUserPhysicListName == "optical") {
     pl = new G4OpticalPhysics();
   }
+#endif
+
 
     if(pl != nullptr)  {
         mUserListOfPhysicList.push_back(pl);

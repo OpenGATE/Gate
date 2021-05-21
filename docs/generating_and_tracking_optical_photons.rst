@@ -7,12 +7,65 @@ Generating and tracking optical photons
    :depth: 15
    :local:
 
+
+
+
+Important note for Geant4 10.7 and newer
+----------------------------------------
+
+If you compile GATE with Geant4 10.7 or newer, PDG code for optical photon has changed `from 0 (zéro) to -22 <https://geant4.kek.jp/lxr/diff/particles/bosons/src/G4OpticalPhoton.cc?v=10.6.p3;diffval=10.7;diffvar=v>`_
+.
+
+
 Introduction
 ------------
 
-To use the optical photon capabilities of GATE, the **GATE_USE_OPTICAL** variable has to be set to **ON** in the configuration process using ccmake. 
+To use the optical photon capabilities of GATE, the **GATE_USE_OPTICAL** variable has to be set to **ON** in the configuration process using ccmake.
+
+
 
 Before discussing how to use the optical photon tracking, it has to be mentioned that there are a few disadvantages in using optical transport. First, the simulation time will increase dramatically. For example, most scintillators used in PET generate in the order of 10,000 optical photons at 511 keV, which means that approximately 10,000 more particles have to be tracked for each annihilation photon that is detected. Although the tracking of optical photons is relatively fast, a simulation with optical photon tracking can easily be a factor thousand slower than one without. Finally, in order to perform optical simulations, many parameters are needed for the materials and surfaces, some of which may be difficult to determine.
+
+Enabling optical processes in GATE
+----------------------------------
+
+There are two ways to add optical processes in GATE :
+
+Adding manually each processes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The de facto manner to add optical processes on GATE is to manually add each of wanted optical processes, like this::
+
+    /gate/physics/addPhysicsList emlivermore #Standard physics
+    /gate/physics/addProcess OpticalAbsorption
+    /gate/physics/addProcess OpticalRayleigh
+    /gate/physics/addProcess OpticalBoundary
+    /gate/physics/addProcess OpticalMie
+    /gate/physics/addProcess OpticalWLS
+    /gate/physics/addProcess Scintillation
+
+This manner is used in the rest of the documentation.
+
+
+The ``G4OpticalPhysics`` physics list from geant4:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Or you can use the `predefined list ``G4OpticalPhysics`` `list <https://gitlab.cern.ch/geant4/geant4/-/blob/e2d2f9810a9c69a246ddee17ae224bf9d5ac3453/source/physics_lists/builders/include/G4OpticalPhysics.hh>`_ of Geant4::
+
+    /gate/physics/addPhysicsList emlivermore
+    /gate/physics/addPhysicsList optical
+
+This will add all optical processes define in G4OpticalPhysics.
+
+Be careful, GATE also redefined some processes to make them more easy to use or to keep. For example the G4Scintillation process is nore more appliable for gamma in Geant4 10.6, so one have to use GateScintillation version, which is of course not used with the G4OpticalPhysics. To circumvent this, the G4Scintillation can be replaced::
+
+    /gate/physics/addPhysicsList emlivermore
+    /gate/physics/addPhysicsList optical
+    /gate/physics/addProcess  Scintillation
+
+
+
+
 
 Optical Photon Generation
 -------------------------
