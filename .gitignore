@@ -5,6 +5,6 @@ GPATH
 GRTAGS
 GTAGS
 .DS_Store
-/.idea/
-/cmake-build-debug/
+-/.idea/
+cmake-build-*
 
