@@ -23,6 +23,8 @@
 #include "G4LossTableManager.hh"
 #include "G4EmStandardPhysics.hh"
 
+#include "G4RadioactiveDecayPhysics.hh"
+
 #if (G4VERSION_MAJOR > 9)
 
 #include "G4StepLimiterPhysics.hh"
@@ -87,6 +89,9 @@ void GateRunManager::InitializeAll() {
 
         // Get G4 physics list from the name
         mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName);
+
+        dynamic_cast<G4VModularPhysicsList*>(mUserPhysicList)->RegisterPhysics(new G4RadioactiveDecayPhysics());
+
 
         // Check if it exists
         if (mUserPhysicList == NULL) {
