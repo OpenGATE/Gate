@@ -15,6 +15,7 @@
 #include "G4Hybridino.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
+
 #include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
@@ -48,6 +49,7 @@
 #include "G4EmDNAPhysics.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
+#include "G4RadioactiveDecayPhysics.hh"
 
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
@@ -596,6 +598,15 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 {
   if ( processname == "UHadronElastic")
     G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,"####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
+
+    if ((processname == "Decay") or (processname == "RadioactiveDecay")) {
+        G4RadioactiveDecayPhysics p;
+        p.ConstructParticle();
+        p.ConstructProcess();
+        return;
+    }
+
+
 
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
