@@ -13,7 +13,9 @@
 #include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Hybridino.hh"
+#include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
+
 #include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
@@ -25,19 +27,41 @@
 #include "G4VPhysicsConstructor.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
+#include "G4LogicalVolumeStore.hh"
 #include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
+#include "G4ExceptionHandler.hh"
 #include "G4StateManager.hh"
+
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysicsSS.hh"
+#include "G4EmStandardPhysicsGS.hh"
+#include "G4EmLowEPPhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmDNAPhysics.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
+#include "G4RadioactiveDecayPhysics.hh"
 
+#include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
 #include "GateConfiguration.h"
+#include "GatePhysicsListMessenger.hh"
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
 #include "GateMixedDNAPhysics.hh"
+
+#include "G4OpticalPhoton.hh"
+#include "G4OpticalPhysics.hh"
+
 #include "GateParaPositronium.hh"
 #include "GateOrthoPositronium.hh"
 
@@ -195,13 +219,13 @@ void GatePhysicsList::ConstructProcess()
     }
   else if(mLoadState==1)
     {
-      if (mUserPhysicListName == "") { // if a user physic list is set, transportation is already set
-        AddTransportation();
+      if (mUserListOfPhysicList.empty()) { // if a user physic list is set, transportation is already set
+          AddTransportation();
       }
 
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
         (*GetTheListOfProcesss())[i]->ConstructProcess();
-
+//
       //opt->SetVerbose(2);
       if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
       if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
@@ -276,9 +300,71 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     mListOfPhysicsLists += " " ;
   }
 
-  // Physic list will be setup by GateRunManager
   mUserPhysicListName = name;
-  GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+
+  // First, try to create EM only Physic lists
+  G4VPhysicsConstructor * pl = nullptr;
+  if (mUserPhysicListName == "emstandard") {
+    pl = new G4EmStandardPhysics();
+  }
+  if (mUserPhysicListName == "emstandard_opt1") {
+    pl = new G4EmStandardPhysics_option1();
+  }
+  if (mUserPhysicListName == "emstandard_opt2") {
+    pl = new G4EmStandardPhysics_option2();
+  }
+  if (mUserPhysicListName == "emstandard_opt3") {
+    pl = new G4EmStandardPhysics_option3();
+  }
+  if (mUserPhysicListName == "emstandard_opt4") {
+    pl = new G4EmStandardPhysics_option4();
+  }
+  if (mUserPhysicListName == "emstandard_SS") {
+    pl = new G4EmStandardPhysicsSS();
+  }
+  if (mUserPhysicListName == "emstandard_GS") {
+    pl = new G4EmStandardPhysicsGS();
+  }
+  if (mUserPhysicListName == "emLowEP") {
+    pl = new G4EmLowEPPhysics();
+  }
+  if (mUserPhysicListName == "emlivermore") {
+    pl = new G4EmLivermorePhysics();
+  }
+  if (mUserPhysicListName == "emlivermore_polar") {
+    pl = new G4EmLivermorePolarizedPhysics();
+  }
+  if (mUserPhysicListName == "empenelope") {
+    pl = new G4EmPenelopePhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics") {
+    pl = new G4EmDNAPhysics();
+  }
+
+#ifdef GATE_USE_OPTICAL
+    if (mUserPhysicListName == "optical") {
+    pl = new G4OpticalPhysics();
+  }
+#endif
+
+
+    if(pl != nullptr)  {
+        mUserListOfPhysicList.push_back(pl);
+          pl->ConstructParticle();
+          pl->ConstructProcess();
+    }
+
+  if(mUserListOfPhysicList.size() == 1)  {
+      AddTransportation();
+  }
+
+  if (!mUserListOfPhysicList.empty()) {
+    GateRunManager::GetRunManager()->SetUserPhysicListName("");
+  }
+  else {
+    // Set the phys list name. It will be build in GateRunManager.
+    GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+  }
 
   // Fluorescence processes
   // - default activation of deexcitation process
@@ -511,21 +597,26 @@ std::vector<GateVProcess*> GatePhysicsList::FindProcess(G4String name)
 void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 {
   if ( processname == "UHadronElastic")
-      G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,
-                   "####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
+    G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,"####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
 
-  if ((processname == "Decay") or (processname == "RadioactiveDecay")) {
-        GateRunManager::GetRunManager()->EnableDecay(true);
+    if ((processname == "Decay") or (processname == "RadioactiveDecay")) {
+        G4RadioactiveDecayPhysics p;
+        p.ConstructParticle();
+        p.ConstructProcess();
         return;
-  }
+    }
+
+
 
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
-      for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
-  else {
+    for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
+  else
+    {
       GateWarning("Unknown process: "<<processname );
       return;
-  }
+    }
+
 }
 //-----------------------------------------------------------------------------------------
 
