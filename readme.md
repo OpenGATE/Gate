@@ -23,7 +23,7 @@ Documentation : https://opengate.readthedocs.io
 
 References collaboration papers:
 
-* 2004 http://www.ncbi.nlm.nih.gov/pubmed/15552416
-* 2011 http://www.ncbi.nlm.nih.gov/pubmed/21248393
+* 2021 http://www.ncbi.nlm.nih.gov/pubmed/33770774
 * 2014 http://www.ncbi.nlm.nih.gov/pubmed/24877844
-
+* 2011 http://www.ncbi.nlm.nih.gov/pubmed/21248393
+* 2004 http://www.ncbi.nlm.nih.gov/pubmed/15552416
