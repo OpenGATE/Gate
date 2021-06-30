@@ -77,6 +77,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEnableLogBinning = false;  
   mEnableEnergyPerUnitMass = false;
   mEnableRelativePrimEvents = false;
+  mOtherMaterialFlag = false;
   mOtherMaterial = "G4_WATER";
   
   emcalc = new G4EmCalculator;
@@ -168,9 +169,16 @@ void GateEnergySpectrumActor::Construct()
   // Find G4_WATER.
   G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
   // Find OtherMaterial
-  G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
-
-  
+  if (mOtherMaterialFlag ){
+        mSaveFilename = G4String(removeExtension(mSaveFilename))+"-convertedTo"+ mOtherMaterial + "." + G4String(getExtension(mSaveFilename));
+      OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);
+      if (mOtherMaterial.compare("G4_WATER")){
+          G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
+          
+          G4cout<< "===================================== " << G4endl;
+          G4cout<< "Other material found and enabled: " << mOtherMaterial << G4endl;
+      }
+    }
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
       mEnableLETFluenceSpectrumFlag = true;
   }
@@ -442,7 +450,34 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   if(step->GetTotalEnergyDeposit()>0.01) sumM1+=step->GetTotalEnergyDeposit();
   else if(step->GetTotalEnergyDeposit()>0.00001) sumM2+=step->GetTotalEnergyDeposit();
   else sumM3+=step->GetTotalEnergyDeposit();
-  G4double edep = step->GetTotalEnergyDeposit();
+  edep = step->GetTotalEnergyDeposit();
+  
+   if (mOtherMaterialFlag){
+         G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName(); 
+      G4double energyPre = step->GetPreStepPoint()->GetKineticEnergy();
+      G4double energyPost = step->GetPostStepPoint()->GetKineticEnergy();
+      G4double energyMean=(energyPre+energyPost)/2;
+      G4ParticleDefinition* partdef = step->GetTrack()->GetDefinition();//->GetParticleName();
+      G4double dedx;
+      dedx = emcalc->ComputeElectronicDEDX(energyMean, partdef, material)/(keV/um);
+      //G4cout << "dedx first material: " << dedx << G4endl;
+      
+      
+           //other material
+          //static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);
+          //G4cout << mOtherMaterial << " - " << OtherMaterial->GetName()<<G4endl;
+          //// DISPLAY parameters of particles having DEDX=0
+          //// Mainly gamma and neutron
+          //DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
+          G4double  spr_material_otherMaterial, dedx_otherMaterial;
+          dedx_otherMaterial = emcalc->ComputeTotalDEDX(energyMean,step->GetTrack()->GetParticleDefinition(), OtherMaterial);
+          spr_material_otherMaterial = dedx_otherMaterial/ dedx;
+          
+      //G4cout << "dedx second " << mOtherMaterial<< ": "<< dedx_otherMaterial << G4endl << G4endl;
+        edep *= spr_material_otherMaterial;
+     }
+  
+  
   edepEvent += edep;
   
   //G4cout<<"  Edep [eV]: " << edep/eV<<G4endl;

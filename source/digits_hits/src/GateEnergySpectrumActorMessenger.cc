@@ -260,7 +260,7 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
   if(cmd == pSaveAsTextDiscreteEnergySpectrum) pActor->SetSaveAsTextDiscreteEnergySpectrumFlag(  pSaveAsTextDiscreteEnergySpectrum->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableLETFluenceSpectrumCmd) pActor->SetLETFluenceSpectrumCalc(  pEnableLETFluenceSpectrumCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableLETtoMaterialFluenceSpectrumCmd) pActor->SetLETtoMaterialFluenceSpectrumCalc(  pEnableLETtoMaterialFluenceSpectrumCmd->GetNewBoolValue(newValue)  ) ;
-  if (cmd == pSetOtherMaterialCmd) pActor->SetOtherMaterial(newValue);
+  if (cmd == pSetOtherMaterialCmd) pActor->SetOtherMaterial(newValue,true);
   if(cmd == pEnableLETSpectrumCmd) pActor->SetLETSpectrumCalc(  pEnableLETSpectrumCmd->GetNewBoolValue(newValue)  ) ;
   if(cmd == pEnableQSpectrumCmd) pActor->SetQSpectrumCalc(  pEnableQSpectrumCmd->GetNewBoolValue(newValue)  ) ;
   
