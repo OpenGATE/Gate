@@ -603,6 +603,8 @@ Geant4 G4TessellatedSolid class. It's important to note that only one
 material is associated to a tessellated volume. You can use either ASCII
 or binary STL files.
 
+/!\\ STL files are imported in GATE with a unit defined as mm.
+
 Here is an example to create a tessellated volume from an STL file in a
 GATE macro::
 
