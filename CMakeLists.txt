@@ -127,15 +127,16 @@ option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader
 # ROOT
 IF(GATE_USE_ROOT)
   FIND_PACKAGE(ROOT REQUIRED)
-  INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
+  INCLUDE(${ROOT_USE_FILE})
+  #INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
+  #SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
   #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
   #IF(ROOT_INCLUDE_DIR)
     #MESSAGE("Your current Root version is ${ROOT_VERSION}")
   #ELSE()
-  IF(NOT ROOT_INCLUDE_DIR)
-    MESSAGE("Root not found! Please install Root and make it available in PATH")
-  ENDIF()
+  #IF(NOT ROOT_INCLUDE_DIR)
+  #  MESSAGE("Root not found! Please install Root and make it available in PATH")
+  #ENDIF()
 ENDIF()
 
 #=========================================================
