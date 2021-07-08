@@ -1,0 +1,28 @@
+geometrical design type: 1
+ring diameter: 26 cm
+rsector axial pitch: 0 fm
+rsector azimuthal pitch: 8.57143 degree
+rsector tangential size: 1.9 cm
+rsector axial size: 7.66 cm
+module axial size: 1.9 cm
+module tangential size: 1.9 cm
+module axial pitch: 1.92 cm
+module tangential pitch: 0 fm
+submodule axial size: 1.9 cm
+submodule tangential size: 1.9 cm
+submodule axial pitch: 0 fm
+submodule tangential pitch: 0 fm
+crystal axial size: 2.2 mm
+crystal tangential size: 2.2 mm
+crystal radial size: 1 cm
+crystal axial pitch: 2.4 mm
+crystal tangential pitch: 2.4 mm
+layer0 radial size: 1 cm
+clock time step: 1 ps
+azimuthal step: 0 degree
+axial step: 0 fm
+angular gantry position: 0
+axial gantry position: 0
+in layer0 interaction length: 50 mum
+in layer1 interaction length: 50 mum
+scan file name: test

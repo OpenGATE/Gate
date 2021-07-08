@@ -1,0 +1,25 @@
+The ECAT library is very old, originally written in the early nineties of the
+20th century.  The ecat.tar.gz tar ball was distributed for many years by the
+OpenGATE collaboration, separately from the Gate code base, to be compiled
+separately by interested users. This was because there is no maintainer for
+this ECAT code. We are now (January 2021) including ECAT in the "external"
+section of our source code. We still do not officially support/maintain this
+code, but we do provide a CMake file that aims to free the useres of the burden
+of compiling and linking this very ancient code.
+
+The ECAT code as it is available to the OpenGATE collaboration is stored in
+the source/externals/ecat/src directory, with a small change (see below).
+
+If you plan to use and/or distribute this code, please see the copyright notice
+in source/externals/ecat/src/copyright.
+
+It looks like the code is not quite complete: the copyright notice mentions
+a "docs" directory, which is missing. If anyone can provide us with a complete
+source code archive that is compliant with the wishes of the original author,
+that would be wonderful.
+
+The copyright notice demands that we distribute this code without any changes.
+However, I had to make two small changes in order to make it compile on my
+system, namely to rename "cfree" to "free" in src/rtsacs.c and in
+src/rts_cmd.c, because the linker did not recognize "cfree", even though the
+man pages say that "cfree" is just a synonym for "free".

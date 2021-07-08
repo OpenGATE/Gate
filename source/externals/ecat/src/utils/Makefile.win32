@@ -1,0 +1,64 @@
+CPP=cl.exe
+RSC=rc.exe
+LINK32=link.exe
+LINK32_FLAGS=..\lecat.lib
+
+SRCDIR=.
+INTDIR=.
+
+CPP_PROJ=/nologo /ML /W1 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /I".."\
+  /YX /Fo"$(INTDIR)/" /c 
+
+
+ALL : "show_header.exe"	"matlist.exe" "matcopy.exe" \
+	"read_ecat.exe" "write_ecat.exe" "applynorm.exe"
+
+CLEAN : 
+	-@erase show_header.obj
+	-@erase show_header.exe
+	-@erase matlist.obj
+	-@erase matlist.exe
+	-@erase matcopy.obj
+	-@erase matcopy.exe
+	-@erase read_ecat.obj
+	-@erase read_ecat.exe
+	-@erase write_ecat.obj
+	-@erase write_ecat.exe
+	-@erase applynorm.obj
+	-@erase applynorm.exe
+
+	
+show_header.exe : show_header.obj
+    $(LINK32) $(LINK32_FLAGS) show_header.obj
+
+matlist.exe : matlist.obj
+    $(LINK32) $(LINK32_FLAGS) matlist.obj
+
+matcopy.exe : matcopy.obj
+    $(LINK32) $(LINK32_FLAGS) matcopy.obj
+
+read_ecat.exe : read_ecat.obj
+    $(LINK32) $(LINK32_FLAGS) read_ecat.obj
+
+write_ecat.exe : write_ecat.obj
+    $(LINK32) $(LINK32_FLAGS) write_ecat.obj
+
+
+matcopy.obj : "$(SRCDIR)\matcopy.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\matcopy.c"
+
+read_ecat.obj : "$(SRCDIR)\read_ecat.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\read_ecat.c"
+
+write_ecat.obj : "$(SRCDIR)\write_ecat.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\write_ecat.c"
+
+matlist.obj : "$(SRCDIR)\matlist.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\matlist.c"
+
+show_header.obj : "$(SRCDIR)\show_header.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\show_header.c"
+
+applynorm.obj : "$(SRCDIR)\applynorm.c"
+   $(CPP) $(CPP_PROJ) "$(SRCDIR)\applynorm.c"
+

@@ -1,0 +1,41 @@
+CC =	cc
+DEBUG = -O
+LECAT = ../libecat.a 
+LIBNRC = libnrc.a
+LIBS = -lm			
+LIBS = -lrpcsvc -lnsl -lsocket -lm   # for solaris
+INCLUDE_DIR =..
+SRCDIR = .
+CFLAGS =		$(DEBUG) -I$(INCLUDE_DIR) 
+#
+#
+UTILITY_PROGRAMS =	matlist show_header applynorm \
+	get_axial_lor matcopy cti2analyze analyze2ifh \
+	matinfo read_ecat write_ecat scan2if byte_volume \
+	imagemath wb_assemble make_volume
+#
+UTILITY_SOURCES = $(SRCDIR)/matlist.c $(SRCDIR)/show_header.c \
+$(SRCDIR)/applynorm.c $(SRCDIR)/get_axial_lor.c \
+$(SRCDIR)/matcopy.c $(SRCDIR)/cti2analyze.c $(SRCDIR)/analyze2ifh.c \
+$(SRCDIR)/wb_build.c $(SRCDIR)/matinfo.c $(SRCDIR)/read_ecat.c \
+$(SRCDIR)/write_ecat.c  $(SRCDIR)/scan2if.c $(SRCDIR)/byte_volume.c \
+$(SRCDIR)/imagemath.c $(SRCDIR)/wb_assemble.c
+
+all:			utilities
+
+utilities:		$(UTILITY_PROGRAMS)
+
+install: $(UTILITY_PROGRAMS)
+	./instal $? /usr/local/bin
+
+clean:
+	rm -f $(UTILITY_PROGRAMS)
+
+$(UTILITY_PROGRAMS): $(UTILITY_SOURCES) $(LECAT)
+	$(CC) $(CFLAGS) -o $@ $(SRCDIR)/$@.c $(LECAT) $(LIBS)
+
+phantom_attn: $(SRCDIR)/phantom_attn.c $(LIBNRC)
+	$(CC) $(CFLAGS) -o $@  $(SRCDIR)/$@.c $(LECAT) $(LIBNRC) $(LIBS)
+
+$(LIBNRC): 
+	cd  NRC; cc -c *.c; ar r libnrc.a
