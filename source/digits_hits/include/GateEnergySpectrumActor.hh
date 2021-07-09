@@ -101,7 +101,7 @@ public:
   void SetLETSpectrumCalc(bool b) {mEnableLETSpectrumFlag = b; }
   void SetLETFluenceSpectrumCalc(bool b) {mEnableLETFluenceSpectrumFlag = b; }
   void SetLETtoMaterialFluenceSpectrumCalc(bool b) {mEnableLETtoMaterialFluenceSpectrumFlag = b; }
-  void SetOtherMaterial(G4String b) { mOtherMaterial = b; }
+  void SetOtherMaterial(G4String b, bool c) { mOtherMaterial = b; mOtherMaterialFlag = c;}
   
   void SetQSpectrumCalc(bool b) {mEnableQSpectrumFlag = b; }
   void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
@@ -190,6 +190,7 @@ protected:
   double sumM3;
 
   G4double edep;
+  G4Material* OtherMaterial;
   double tof;
   G4double edepTrack;
   G4double edepEvent;
@@ -217,11 +218,14 @@ protected:
   bool mEnableLogBinning;
   bool mEnableEnergyPerUnitMass;
   bool mEnableRelativePrimEvents;
+  bool mOtherMaterialFlag;
   G4String mOtherMaterial;
   
-  
   G4EmCalculator * emcalc;
+
 };
+
+
 
 MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
 
