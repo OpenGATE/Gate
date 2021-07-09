@@ -44,7 +44,7 @@ public:
   void SetLETtoWater(bool b) { mIsLETtoWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
-  void SetMaterial(G4String s) { mSetMaterial = s; }
+  void SetMaterial(G4String s) { mSetMaterial = s; mIsLETtoWaterEnabled = true;}
   void SetCutVal(G4double d) { mCutVal = d; }
   void SetLETthrMin(G4double d) { mLETthrMin = d; }
   void SetLETthrMax(G4double d) { mLETthrMax = d; }

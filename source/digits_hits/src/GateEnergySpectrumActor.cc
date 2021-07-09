@@ -175,8 +175,8 @@ void GateEnergySpectrumActor::Construct()
       if (mOtherMaterial.compare("G4_WATER")){
           G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
           
-          G4cout<< "===================================== " << G4endl;
-          G4cout<< "Other material found and enabled: " << mOtherMaterial << G4endl;
+          //G4cout<< "===================================== " << G4endl;
+          //G4cout<< "Other material found and enabled: " << mOtherMaterial << G4endl;
       }
     }
   if (mEnableLETtoMaterialFluenceSpectrumFlag) {
