@@ -984,7 +984,7 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
         aHit->SetEnergyFin(Ef);
         aHit->SetEnergyIniTrack(Ei);
         //aHit->SetNCrystalConv(nCrystalConv);
-        aHit->SetNCrystalCompton(nCurrentHitConv);
+        aHit->SetNCrystalConv(nCurrentHitConv);
         //aHit->SetNCrystalCompton(nCrystalCompt);
         aHit->SetNCrystalCompton(nCurrentHitCompton);
         aHit->SetNCrystalRayleigh(nCurrentHitRayl);
