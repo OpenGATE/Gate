@@ -118,6 +118,13 @@ public:
     inline void SetIfTriggerOnlyByAbsorber(G4bool b)
     { m_triggerOnlyByAbsorber = b; }
 
+
+    inline G4bool GetIfEventIDCoinc() const
+    { return m_eventIDCoinc; }
+    inline void SetIfEventIDCoinc(G4bool b)
+    { m_eventIDCoinc = b; }
+
+
     const G4String& GetInputName() const
     { return m_inputName; }
     void SetInputName(const G4String& anInputName)
@@ -187,7 +194,7 @@ private:
     bool                m_CCSorter;     // compton camera sorter
     G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
     G4String      m_absorberSD;// absorber "SD' volume name CC
-
+    G4bool             m_eventIDCoinc; //
 
 
     std::deque<GateCoincidencePulse*> m_coincidencePulses;  // open coincidence windows
