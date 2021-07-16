@@ -49,7 +49,8 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_presortBufferSize(256),
     m_presortWarning(false),
     m_CCSorter(IsCCSorter),
-    m_triggerOnlyByAbsorber(0)
+    m_triggerOnlyByAbsorber(0),
+    m_eventIDCoinc(0)
 {
 
   // Create the messenger
@@ -176,25 +177,68 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 
 
 
-  GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName );
+  GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName ); //Loaded by eventID
 
-
-//  if(inputPulseList!=0){
-//  G4cout<<"#######after"<<G4endl;
-//    G4cout<<"size of input pulse= "<<inputPulseList->size()<<G4endl;
-//    GatePulseConstIterator iterIn;
-//  for (iterIn = inputPulseList->begin() ; iterIn != inputPulseList->end() ; ++iterIn){
-//    GatePulse* input1 = *iterIn;
-//    G4cout<<"evtID= "<<input1->GetEventID()<<"  energy="<< input1->GetEnergy()<<"  time="<< input1->GetTime()<<G4endl;
-//  }
-//  }
-
+  //if(inputPulseList!=0){
+   // G4cout<<m_inputName<<G4endl;
+    //G4cout<<"size of input pulse= "<<inputPulseList->size()<<G4endl;
+   // GatePulseConstIterator iterIn;
+  //for (iterIn = inputPulseList->begin() ; iterIn != inputPulseList->end() ; ++iterIn){
+    //GatePulse* input1 = *iterIn;
+    //G4cout<<"evtID= "<<input1->GetEventID()<<"  energy="<< input1->GetEnergy()<<"  time="<< input1->GetTime()<<G4endl;
+  //}
+  //}
 
 
   if (!inputPulseList)
     return ;
 
-  // put input pulses in sorted input buffer
+  if(m_eventIDCoinc){
+      bool isCoincCreated=false;
+      if(inputPulseList->size()>1){
+          if(m_coincidenceWindowJitter > 0.0)
+            window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
+          else
+            window = m_coincidenceWindow;
+
+          if(m_offsetJitter > 0.0)
+            offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
+          else
+            offset = m_offset;
+
+
+          for(gpl_iter = inputPulseList->begin();gpl_iter != inputPulseList->end();gpl_iter++)
+          {
+              pulse = new GatePulse(**gpl_iter);
+              if(!isCoincCreated){
+                  isCoincCreated=true;
+                  coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+              }
+              else{
+                   coincidence->push_back(new GatePulse(pulse)); // add a copy so we can delete safely
+                   delete pulse;
+              }
+
+          }
+
+          if(m_CCSorter==true){
+              ProcessCompletedCoincidenceWindow4CC(coincidence);
+          }
+          else{
+              ProcessCompletedCoincidenceWindow(coincidence);
+          }
+
+      }
+   return;
+  }
+
+
+
+
+
+
+
+  //------ put input pulses in sorted input buffer----------
   for(gpl_iter = inputPulseList->begin();gpl_iter != inputPulseList->end();gpl_iter++)
   {
       // make a copy of the pulse
@@ -261,36 +305,36 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     // so there's no need to check the rest of the coincidence list
 
     // update coincidence pulse list
-    if(m_allPulseOpenCoincGate || !inCoincidence)
-    {
-      if(m_coincidenceWindowJitter > 0.0)
-        window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
-      else
-        window = m_coincidenceWindow;
+        if(m_allPulseOpenCoincGate || !inCoincidence)
+        {
+          if(m_coincidenceWindowJitter > 0.0)
+            window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
+          else
+            window = m_coincidenceWindow;
 
-      if(m_offsetJitter > 0.0)
-        offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
-      else
-        offset = m_offset;
+          if(m_offsetJitter > 0.0)
+            offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
+          else
+            offset = m_offset;
 
-      if(m_triggerOnlyByAbsorber==1){
+          if(m_triggerOnlyByAbsorber==1){
 
-          if(((pulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
-          //if(pulse->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
-              coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
-               //AE here open coincidence
-               m_coincidencePulses.push_back(coincidence);
+              if(((pulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
+              //if(pulse->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
+                  coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+                   //AE here open coincidence
+                   m_coincidencePulses.push_back(coincidence);
 
+              }
           }
-      }
-      else{
-        coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
-         //AE here open window with the pulse
-         m_coincidencePulses.push_back(coincidence);
-      }
-    }
-    else
-      delete pulse; // pulses that don't open a coincidence window can be discarded
+          else{
+            coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+             //AE here open window with the pulse
+             m_coincidencePulses.push_back(coincidence);
+          }
+        }
+        else
+          delete pulse; // pulses that don't open a coincidence window can be discarded
   }
 
 }
@@ -314,7 +358,6 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidence
             coincidence->SetCoincID(coincID_CC);
             m_digitizer->StoreCoincidencePulse(coincidence);
             coincID_CC++;
-            // delete coincidence; // ?
             return;
         }
        else{

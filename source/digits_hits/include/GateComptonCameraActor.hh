@@ -185,7 +185,11 @@ protected:
   G4int nCrystalCompt;
   G4int nCrystalRayl;
 
-
+  //std::vector<double> nCrystalCompt_posZ;
+  //std::vector<double> nCrystalConv_posZ;
+  std::vector<double> nCrystalCompt_gTime;
+  std::vector<double> nCrystalConv_gTime;
+  std::vector<double> nCrystalRayl_gTime;
 
 
   G4double hitEdep;

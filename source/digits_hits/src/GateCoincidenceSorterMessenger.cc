@@ -86,6 +86,10 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   SetAcceptancePolicy4CCCmd ->SetGuidance("Coincidence acceptance policy in CC");
   SetAcceptancePolicy4CCCmd ->SetCandidates("keepIfMultipleVolumeIDsInvolved keepIfMultipleVolumeNamesInvolved keepAll");
 
+  cmdName = GetDirectoryName()+"setEventIDCoinc";
+  SetEventIDCoincCmd = new G4UIcmdWithABool(cmdName,this);
+  SetEventIDCoincCmd->SetGuidance("Set to one for event identification coincidencences");
+
 
 }
 
@@ -103,6 +107,7 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
     delete AllPulseOpenCoincGateCmd;
     delete SetTriggerOnlyByAbsorberCmd;
     delete SetAcceptancePolicy4CCCmd;
+    delete SetEventIDCoincCmd;
 
 }
 
@@ -136,6 +141,8 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { GetCoincidenceSorter()->SetAllPulseOpenCoincGate(AllPulseOpenCoincGateCmd->GetNewBoolValue(newValue)); }
   else if (aCommand == SetTriggerOnlyByAbsorberCmd)
     { GetCoincidenceSorter()->SetIfTriggerOnlyByAbsorber(SetTriggerOnlyByAbsorberCmd->GetNewBoolValue(newValue));}
+  else if (aCommand == SetEventIDCoincCmd)
+    { GetCoincidenceSorter()->SetIfEventIDCoinc(SetEventIDCoincCmd->GetNewBoolValue(newValue));}
   else
     GateClockDependentMessenger::SetNewValue(aCommand,newValue);
 }
