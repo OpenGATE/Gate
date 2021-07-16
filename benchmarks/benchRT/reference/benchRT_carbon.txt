@@ -1,9 +1,0 @@
-diff carbon-3d-Dose.mhd
-diff carbon-3d-Dose.raw
-diff carbon-3d-Edep.mhd
-diff carbon-3d-Edep.raw
-diff carbon-3d-Edep-Squared.mhd
-diff carbon-3d-Edep-Squared.raw
-diff carbon-3d-NbOfHits.mhd
-diff carbon-3d-NbOfHits.raw
-diff_stat stat-carbon.txt

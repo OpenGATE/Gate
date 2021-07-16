@@ -1,2 +1,0 @@
-diff ct_projection_000.dat
-diff_stat stat-ct.txt

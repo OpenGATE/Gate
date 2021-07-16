@@ -97,8 +97,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.6 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.7)
-  MESSAGE("Warning! GATE version 9.0 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.7 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.7)
+  MESSAGE("Warning! GATE version 9.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.7 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -234,6 +234,7 @@ FILE(GLOB headers
 
 #=========================================================
 IF(GATE_USE_TORCH)
+  set(CMAKE_CXX_STANDARD 14)
   FIND_PACKAGE(Torch REQUIRED)
   INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
@@ -291,15 +292,6 @@ IF(GATE_COMPILE_GATEDIGIT)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
 #=========================================================
-option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-  INCLUDE(cmake-modules/GateExternalData.cmake)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
-IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-  ADD_SUBDIRECTORY(benchmarks)
-  ExternalData_add_target(GateBenchmarkData)
-ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-#=========================================================
 
 
 #=========================================================
@@ -321,6 +313,3 @@ IF(NOT APPLE)
 ENDIF()
 #=========================================================
 
-IF(BUILD_TESTING)
-  ADD_TEST(NAME FIRST_EXECUTION_TEST COMMAND ${PROJECT_SOURCE_DIR}/benchmarks/benchRT/testCarbon.sh ${ROOT_INCLUDE_DIR}/../ )
-ENDIF(BUILD_TESTING)

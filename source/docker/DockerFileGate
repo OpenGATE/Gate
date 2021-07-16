@@ -1,0 +1,43 @@
+#Docker for gate
+#systemctl start docker
+#login: docker login
+#build: docker build -t opengatecollaboration/gate:9.0 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:10.6.1 --build-arg Gate_Version=v9.0 .
+#The geant4 and gate versions can be ommited, and the default values are used instead. 
+#Be aware that gate version is linked to a specific geant4 version.
+#push: docker push opengatecollaboration/gate:9.0
+#Gate: docker run -i --rm -v $PWD:/APP opengatecollaboration/gate:9.0 mac/main.mac
+#interactive: docker run -it --rm -v $PWD:/APP --entrypoint /bin/bash opengatecollaboration/gate:9.0
+
+ARG Geant4_Version=opengatecollaboration/geant4:10.6.1
+FROM $Geant4_Version
+ARG Gate_Version=v9.0
+ARG USE_RTK=ON
+
+#Prepare for gate
+RUN mkdir software/gate \
+ && echo "source /software/geant4/install/bin/geant4.sh" >> /etc/mybashrc \
+ && echo "source /software/root-cern/install/bin/thisroot.sh" >> /etc/mybashrc \
+ && source /etc/mybashrc \
+ && cd software/gate \
+ && mkdir src bin \
+ && git clone --branch $Gate_Version https://github.com/OpenGATE/Gate.git src \
+ && cd bin \
+ && cmake ../src/ -DGeant4_DIR=/software/geant4/install \
+                  -DGEANT4_USE_SYSTEM_CLHEP=ON \
+                  -DGATE_USE_ITK=ON \
+                  -DITK_DIR=/software/ITK/bin \
+                  -DGATE_USE_RTK=$USE_RTK \
+                  -DGATE_USE_OPTICAL=ON \
+ && make -j \
+ && echo "export PATH=/software/gate/bin/:$PATH" >> /etc/mybashrc
+
+#Prepare entrypoint
+RUN echo "#!/bin/bash" >> /runGate.sh \
+ && echo "source /etc/mybashrc" >> /runGate.sh \
+ && echo "cd /APP" >> /runGate.sh \
+ && echo "Gate \$1" >> /runGate.sh \
+ && chmod a+x /runGate.sh
+
+WORKDIR /APP
+ENTRYPOINT ["/runGate.sh"]
+CMD [" mac/main.mac"]

@@ -158,7 +158,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "*************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version 9.0 (March 2020)" << G4endl);
+  GateMessage("Core", 0, " GATE version 9.1 (2021)" << G4endl);
   GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49 (2004) 4543-4561" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56 (2011) 881-901" << G4endl);
@@ -254,7 +254,7 @@ int main( int argc, char* argv[] )
           break;
         case 'v':
           ss << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
-          std::cout << "Gate version is 9.0 ; Geant4 version is " << ss.str() << std::endl;
+          std::cout << "Gate version is 9.1 ; Geant4 version is " << ss.str() << std::endl;
           exit(0);
           break;
         case 'a':

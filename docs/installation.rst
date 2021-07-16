@@ -1,6 +1,6 @@
 .. _installation_guide-label:
 
-Installation Guide V9.0
+Installation Guide V9.1
 =======================
 
 .. contents:: Table of Contents
@@ -106,9 +106,9 @@ GATE compilation and installation
 Recommended configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the 9.0 release, the recommended configuration is the following:
+For the 9.1 release, the recommended configuration is the following:
 
-* Geant4 10.6 (available in http://geant4.web.cern.ch/geant4/support/download.shtml), but remains backward compatible with 10.5 also. 
+* Geant4 10.7 (available in http://geant4.web.cern.ch/geant4/support/download.shtml), but remains backward compatible with 10.6 also. 
 * The `GateRTion 1.0 <http://opengatecollaboration.org/GateRTion>`_ release, which is very similar to Gate 8.1, can *only* be built with Geant4 10.03.p03.
 * CMake minimal version: 3.3 (with SSL support)
 

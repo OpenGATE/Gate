@@ -23,6 +23,8 @@
 #include "G4LossTableManager.hh"
 #include "G4EmStandardPhysics.hh"
 
+#include "G4RadioactiveDecayPhysics.hh"
+
 #if (G4VERSION_MAJOR > 9)
 
 #include "G4StepLimiterPhysics.hh"
@@ -88,6 +90,9 @@ void GateRunManager::InitializeAll() {
         // Get G4 physics list from the name
         mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName);
 
+        dynamic_cast<G4VModularPhysicsList*>(mUserPhysicList)->RegisterPhysics(new G4RadioactiveDecayPhysics());
+
+
         // Check if it exists
         if (mUserPhysicList == NULL) {
             GateError("Error the physic list named '"
@@ -105,12 +110,15 @@ void GateRunManager::InitializeAll() {
                               << " emlivermore_polar"
                               << " empenelope"
                               << " emDNAphysics"
+#ifdef GATE_USE_OPTICAL
+                              << " optical"
+#endif
                               << GatePhysicsList::GetInstance()->GetListOfPhysicsLists());
         }
 
         // There are two phys list :
         // - GatePhysicsList::GetInstance() is the one of Gate
-        // - mUserPhysicList : the one created by G4 if user choose a buildin PL.
+        // - mUserListOfPhysicList : the one created by G4 if user choose a buildin PL.
         // the Gate one is used to store/retrieve cuts parameters.
 
         // Consider the e- cut as default (in mm)

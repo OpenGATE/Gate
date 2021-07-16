@@ -382,7 +382,7 @@ void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
   
-    if (edep > 0) {
+    if (edepEvent > 0) {
         if (mEnableEdepHistoFlag){
             pEdep->Fill(edepEvent/MeV, 1);
               //G4cout<<"--------------Post Event Action ------------"<<G4endl;
