@@ -83,6 +83,38 @@ Any additional questions can be posted on the gate-users mailing-list.
 Miscellaneous
 -------------
 
+How to share a folder?
+~~~~~~~~~~~~~~~~~~~~~~
+
+1. Share a folder on the host OS
+
+• In VirtualBox, click your OS on the left and click on Settings.
+• Click on the Shared Folders tab.
+• Click on the folder with the plus on the right.
+• Browse to a folder of your choice in the folder path.
+• Enter a folder name with no spaces e.g. “Share”.
+• Check Auto-mount and Make Permanent, if available.
+• Click on OK.
+
+2. Mount the folder in the guest OS
+
+• Create a folder in your guest OS that you want to share, like mkdir /media/Share
+• Open up Terminal.
+• Switch to the root user using sudo su and enter your password.
+• Browse to the etc folder using cd /etc.
+• Edit the rc.local file using vi fstab
+• Move your cursor to the last line and press the letter “i” on your keyboard to insert text.
+• Type in the following: Share /media/Share vboxsf  uid=1000,gid=1000 0 0 
+• Share should match the folder name from step 1.
+• username should match your Linux username.
+• /media/Share should be the absolute path of the new folder you created.
+• Now hit “ESC”, type :wq and hit ENTER to save and quit the file editing.
+
+After you restart the guest OS, your shared folder will be automatically mounted.
+
+
+
+
 How to get my keyboard properly working?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
