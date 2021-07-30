@@ -84,7 +84,7 @@ void GateGridDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String
 
                cmdName6 = m_volDirectory[m_count]->GetCommandPath() + "setStripOffsetY";
                pStripOffsetY.push_back(new G4UIcmdWithADoubleAndUnit(cmdName6,this));
-               pStripOffsetX[m_count]->SetGuidance("Set offset of the strip in Y direction from negative axis");
+               pStripOffsetY[m_count]->SetGuidance("Set offset of the strip in Y direction from negative axis");
                pStripOffsetY[m_count]->SetUnitCategory("Length");
 
 
