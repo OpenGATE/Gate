@@ -1,0 +1,34 @@
+Institutions who contributed code:
+
+1. 
+   Laboratory for High Energy Physics (LPHE)
+   École Polytechnique Fédérale de Lausanne (EPFL)
+   CH-1015 Lausanne, Switzerland
+
+   Ex-Institute for High Enegry Physics (IPHE)
+   University of Lausanne (UNIL)
+   CH-1015 Lausanne, Switzerland
+
+2. Inter-University Institute for High Energies (IIHE)
+   Free University of Brussels (VUB)
+   B-1050 Brussels, Belgium
+
+Programmers:
+
+	Martin REY (EPFL)
+        Luc SIMON (UNIL)
+        Magalie KRIEGUER (VUB)
+
+
+Design:
+
+        Christian MOREL (UNIL)
+	Martin REY (EPFL)
+        Daniel STRUL (UNIL)
+        Luc SIMON (UNIL)
+        Magalie KRIEGUER (VUB)
+         
+
+Supervisor:
+
+        Christian MOREL (UNIL) 

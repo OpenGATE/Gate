@@ -1,0 +1,13 @@
+INSTALLATION:
+
+1. extract all files from the UCL archive in the right directory
+   (by typing 'tar zxvf ecat.tar.gz')
+2. copy the right Makefile.<os> to Makefile
+3. type 'make depend'
+   this will put the file dependencies in the Makefile
+4. type 'make'
+   this will build the library
+5. goto the utils directory
+6. copy the right Makefile.<os> to Makefile
+7. type 'make'
+   this will create some ultility programs
