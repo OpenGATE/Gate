@@ -42,7 +42,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHalfSize = G4ThreeVector(0,0,0);
   mIsoCenterIsSetByUser = false;
   mIsoCenterRotationFlag = false;
-  pOwnMaterial = theMaterialDatabase.GetMaterial("Air");
+  pOwnMaterial = theMaterialDatabase.GetMaterial("G4_AIR");
   mBuildDistanceTransfo = false;
   mLoadImageMaterialsFromHounsfieldTable = false;
   mLoadImageMaterialsFromLabelTable = false;

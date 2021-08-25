@@ -68,7 +68,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 
   m_forcedUnstableFlag  = false;
   m_forcedLifeTime      = -1.*s;
-  m_materialName = "Air";
+  m_materialName = "G4_AIR";
   mRelativePlacementVolumeName = "world";
   mEnableRegularActivity = false;
 

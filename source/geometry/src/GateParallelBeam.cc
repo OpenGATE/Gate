@@ -35,28 +35,28 @@ GateParallelBeam::GateParallelBeam(const G4String& itsName, G4bool acceptsChildr
    m_boxInserter = new GateBoxReplicaPlacement(this,"boxes",mMaterialName,b_Length,b_Width,m_Height,b_Delta,kXAxis,b_N);
    m_lineInserter->GetCreator()->GetTheChildList()->AddChild(m_boxInserter);
    
-   m_CentralHole = new GateHexagone ("central hole","Air",m_InnerRadius,m_Height);
+   m_CentralHole = new GateHexagone ("central hole","G4_AIR",m_InnerRadius,m_Height);
    m_boxInserter->GetCreator()->GetTheChildList()->AddChild(m_CentralHole);
 
 
-   m_SideTrap1 = new GateTrap ("side hole 1","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
+   m_SideTrap1 = new GateTrap ("side hole 1","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
    	0.5*m_TrapSideSmall,-m_TrapAngle,0.5*m_InnerRadius,0.25*m_TrapSideSmall,0.5*m_TrapSideSmall,-m_TrapAngle);   
    m_SideTrap1->GetVolumePlacement()->SetTranslation(m_Translation1);
    
    
    
-   m_SideTrap2 = new GateTrap ("side hole 2","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
+   m_SideTrap2 = new GateTrap ("side hole 2","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
    	0.5*m_TrapSideSmall,m_TrapAngle,0.5*m_InnerRadius,0.25*m_TrapSideSmall,0.5*m_TrapSideSmall,m_TrapAngle);
    m_SideTrap2->GetVolumePlacement()->SetTranslation(m_Translation2);
    
    
-   m_SideTrap3 = new GateTrap ("side hole 3","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
+   m_SideTrap3 = new GateTrap ("side hole 3","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
    	0.25*m_TrapSideSmall,m_TrapAngle,0.5*m_InnerRadius,0.5*m_TrapSideSmall,0.25*m_TrapSideSmall,m_TrapAngle);
    m_SideTrap3->GetVolumePlacement()->SetTranslation(m_Translation3);
    
    
    	
-   m_SideTrap4 = new GateTrap ("side hole 4","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
+   m_SideTrap4 = new GateTrap ("side hole 4","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
    	0.25*m_TrapSideSmall,-m_TrapAngle,0.5*m_InnerRadius,0.5*m_TrapSideSmall,0.25*m_TrapSideSmall,-m_TrapAngle);
    m_SideTrap4->GetVolumePlacement()->SetTranslation(m_Translation4);
  
@@ -86,28 +86,28 @@ GateParallelBeam::GateParallelBeam(const G4String& itsName,const G4String& itsMa
    m_boxInserter = new GateBoxReplicaPlacement(this,"boxes",mMaterialName,b_Length,b_Width,m_Height,b_Delta,kXAxis,b_N);
    m_lineInserter->GetCreator()->GetTheChildList()->AddChild(m_boxInserter);
    
-   m_CentralHole = new GateHexagone ("central hole","Air",m_InnerRadius,m_Height);
+   m_CentralHole = new GateHexagone ("central hole","G4_AIR",m_InnerRadius,m_Height);
    m_boxInserter->GetCreator()->GetTheChildList()->AddChild(m_CentralHole);
 
 
-   m_SideTrap1 = new GateTrap ("side hole 1","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
+   m_SideTrap1 = new GateTrap ("side hole 1","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
    	0.5*m_TrapSideSmall,-m_TrapAngle,0.5*m_InnerRadius,0.25*m_TrapSideSmall,0.5*m_TrapSideSmall,-m_TrapAngle);   
    m_SideTrap1->GetVolumePlacement()->SetTranslation(m_Translation1);
    
    
    
-  m_SideTrap2 = new GateTrap ("side hole 2","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
+  m_SideTrap2 = new GateTrap ("side hole 2","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.25*m_TrapSideSmall,
 			      0.5*m_TrapSideSmall,m_TrapAngle,0.5*m_InnerRadius,0.25*m_TrapSideSmall,0.5*m_TrapSideSmall,m_TrapAngle);
   m_SideTrap2->GetVolumePlacement()->SetTranslation(m_Translation2);
    
    
-  m_SideTrap3 = new GateTrap ("side hole 3","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
+  m_SideTrap3 = new GateTrap ("side hole 3","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
 			      0.25*m_TrapSideSmall,m_TrapAngle,0.5*m_InnerRadius,0.5*m_TrapSideSmall,0.25*m_TrapSideSmall,m_TrapAngle);
   m_SideTrap3->GetVolumePlacement()->SetTranslation(m_Translation3);
    
    
    	
-  m_SideTrap4 = new GateTrap ("side hole 4","Air",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
+  m_SideTrap4 = new GateTrap ("side hole 4","G4_AIR",0.5*m_Height,0.0,0.0,0.5*m_InnerRadius,0.5*m_TrapSideSmall,
 			      0.25*m_TrapSideSmall,-m_TrapAngle,0.5*m_InnerRadius,0.5*m_TrapSideSmall,0.25*m_TrapSideSmall,-m_TrapAngle);
   m_SideTrap4->GetVolumePlacement()->SetTranslation(m_Translation4);
  

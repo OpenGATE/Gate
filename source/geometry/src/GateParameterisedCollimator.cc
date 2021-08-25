@@ -31,7 +31,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
   
   G4cout << " m_InnerRadius = " << m_InnerRadius << Gateendl;
   
-  m_holeInserter = new GateParameterisedHole("hole","Air",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
+  m_holeInserter = new GateParameterisedHole("hole","G4_AIR",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
   		                                          m_InnerRadius,m_Height,m_DimensionX,m_DimensionY);
   
   GetCreator()->GetTheChildList()->AddChild(m_holeInserter);
@@ -52,7 +52,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
      m_SeptalThickness(itsSeptalThickness),m_InnerRadius(itsInnerRadius),m_Height(itsHeight),
      m_DimensionX(itsDimensionX),m_DimensionY (itsDimensionY)
 {
-  m_holeInserter = new GateParameterisedHole("hole","Air",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
+  m_holeInserter = new GateParameterisedHole("hole","G4_AIR",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
   		m_InnerRadius,m_Height,m_DimensionX,m_DimensionY);
   GetCreator()->GetTheChildList()->AddChild(m_holeInserter);
 

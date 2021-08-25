@@ -51,12 +51,12 @@ G4VPhysicalVolume* GateFakeDetectorConstruction::Construct() {
   G4Element* O  = new G4Element(name="Oxygen"  ,symbol="O" , z= 8., a);
 
   density = 1.290*mg/cm3;
-  G4Material* Air = new G4Material(name="Air"  , density, ncomponents=2);
+  G4Material* Air = new G4Material(name="G4_AIR"  , density, ncomponents=2);
   Air->AddElement(N, fractionmass=0.7);
   Air->AddElement(O, fractionmass=0.3);
 
   density = 1.000*g/cm3;
-  G4Material* H2O = new G4Material(name="Water", density, ncomponents=2);
+  G4Material* H2O = new G4Material(name="G4_WATER", density, ncomponents=2);
   H2O->AddElement(H, natoms=2);
   H2O->AddElement(O, natoms=1);
 

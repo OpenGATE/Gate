@@ -87,7 +87,7 @@ GateDetectorConstruction::GateDetectorConstruction()
   //-------------------------------------------------------------------------
   // Create default material (air) for the world
   G4String AirName = "worldDefaultAir";
-  G4Material* Air = G4NistManager::Instance()->FindOrBuildMaterial("Air"); // Use Air for NIST Manager
+  G4Material* Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR"); // Use Air for NIST Manager
   if (Air==NULL)//will never enter here
     {
    	  G4Element* N  = new G4Element("worldDefaultN","N" , 7., 14.01*g/mole );
