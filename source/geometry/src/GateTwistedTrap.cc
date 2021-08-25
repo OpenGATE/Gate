@@ -74,7 +74,7 @@ GateTwistedTrap::GateTwistedTrap(const G4String& itsName,
   m_tiltAngle(45*degree),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTwistedTrapMessenger(this);
 }
 

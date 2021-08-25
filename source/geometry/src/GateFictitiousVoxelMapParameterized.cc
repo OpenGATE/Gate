@@ -38,13 +38,13 @@ typedef G4Region G4Envelope;
 GateFictitiousVoxelMapParameterized::GateFictitiousVoxelMapParameterized ( const G4String& name,
 						   				G4bool acceptsChildren, 
 		 			   	   				G4int  depth) :
-		GateBox ( name,"Vacuum",1,1,1,acceptsChildren,depth )
+		GateBox ( name,"G4_Galactic",1,1,1,acceptsChildren,depth )
 {
 	Init ( name,GateFictitiousVoxelMapParameterized::Box );
 }
 
 GateFictitiousVoxelMapParameterized::GateFictitiousVoxelMapParameterized ( const G4String& name) :
-		GateBox ( name,"Vacuum",1,1,1,false,false)
+		GateBox ( name,"G4_Galactic",1,1,1,false,false)
 {
 	Init ( name,GateFictitiousVoxelMapParameterized::Box );
 }

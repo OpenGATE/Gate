@@ -53,7 +53,7 @@ GateTwistedTrd::GateTwistedTrd(const G4String& itsName,
   m_ZLength(1.0*cm), m_twistAngle(45.0*degree),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTwistedTrdMessenger(this);
 }
 

@@ -56,7 +56,7 @@ GateTwistedTubs::GateTwistedTubs(const G4String& itsName,
   m_nSegment(1), m_totalPhi(90*degree),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTwistedTubsMessenger(this);
 }
 

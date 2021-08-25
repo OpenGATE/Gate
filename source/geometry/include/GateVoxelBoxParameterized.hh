@@ -28,7 +28,7 @@ public:
   GateVoxelBoxParameterized(const G4String& name,
   				    G4bool acceptsChildren=true, 
 		 		    G4int depth=0)
-  : GateBox(name,"Vacuum",1,1,1,acceptsChildren,depth),
+  : GateBox(name,"G4_Galactic",1,1,1,acceptsChildren,depth),
     m_name(name),
     m_messenger(new GateVoxelBoxParameterizedMessenger(this)),
     m_voxelReader(0),
@@ -40,7 +40,7 @@ public:
   }
 
   // Constructor2
-  GateVoxelBoxParameterized(const G4String& name):GateBox(name,"Vacuum",1,1,1,false,false),
+  GateVoxelBoxParameterized(const G4String& name):GateBox(name,"G4_Galactic",1,1,1,false,false),
 							  m_name(name),
 							  m_messenger(new GateVoxelBoxParameterizedMessenger(this)),
 							  m_voxelReader(0),

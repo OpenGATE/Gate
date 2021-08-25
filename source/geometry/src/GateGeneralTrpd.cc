@@ -60,7 +60,7 @@ GateGeneralTrpd::GateGeneralTrpd(const G4String& itsName,
     m_general_trpd_solid(0), m_general_trpd_log(0),pGeneralTrpdPhys(0),
     m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateGeneralTrpdMessenger(this);
   m_X1= 0.;
   m_X2= 0.;

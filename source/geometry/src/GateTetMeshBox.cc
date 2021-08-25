@@ -54,7 +54,7 @@ GateTetMeshBox::GateTetMeshBox(const G4String& itsName,
                 "doesn't support additional child volumes.");
   
   // set default material name
-  GateVVolume::SetMaterialName("Vacuum");
+  GateVVolume::SetMaterialName("G4_Galactic");
 }
 
 //----------------------------------------------------------------------------------------

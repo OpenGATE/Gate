@@ -38,7 +38,7 @@ GateTessellated::GateTessellated(G4String const &itsName, G4bool itsFlagAcceptCh
       m_PathToSTLFile(""),
       m_Messenger(NULL)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTessellatedMessenger(this);
 }
 

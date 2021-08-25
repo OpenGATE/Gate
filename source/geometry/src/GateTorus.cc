@@ -52,7 +52,7 @@ GateTorus::GateTorus(const G4String& itsName,
   m_torusR(2.0*cm),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTorusMessenger(this);
 }
 

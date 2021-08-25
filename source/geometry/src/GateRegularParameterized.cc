@@ -25,7 +25,7 @@
 GateRegularParameterized::GateRegularParameterized(const  G4String& name,
 						   G4bool acceptsChildren,
 		 			   	   G4int  depth)
-: GateBox(name,"Vacuum",1,1,1,acceptsChildren,depth),
+: GateBox(name,"G4_Galactic",1,1,1,acceptsChildren,depth),
   m_name(name),
   m_messenger(new GateRegularParameterizedMessenger(this)),
   m_voxelReader(0),
@@ -41,7 +41,7 @@ GateRegularParameterized::GateRegularParameterized(const  G4String& name,
 
 
 GateRegularParameterized::GateRegularParameterized(const G4String& name) :
-GateBox(name,"Vacuum",1,1,1,false,false),
+GateBox(name,"G4_Galactic",1,1,1,false,false),
                                m_name(name),
                                m_messenger(new GateRegularParameterizedMessenger(this)),
                                m_voxelReader(0),

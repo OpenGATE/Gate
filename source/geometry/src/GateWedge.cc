@@ -39,7 +39,7 @@ GateWedge::GateWedge(const G4String& itsName,
 : GateVVolume(itsName, itsFlagAcceptChildren, depth),
   m_Wedge_solid(0), m_Wedge_log(0), m_Messenger(0) 
 {
- SetMaterialName("Vacuum");
+ SetMaterialName("G4_Galactic");
  m_WedgeLength[0] = 1.0*cm;
  m_WedgeLength[1] = 1.0*cm;
  m_WedgeLength[2] = 1.0*cm;

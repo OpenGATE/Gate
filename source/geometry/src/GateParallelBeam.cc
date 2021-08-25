@@ -23,9 +23,9 @@ See LICENSE.md for further details
 
 //----------------------------------------------------------------------------------------------------------
 GateParallelBeam::GateParallelBeam(const G4String& itsName, G4bool acceptsChildren, G4int depth)
-   : GateBox(itsName,"Vacuum",1,1,1,acceptsChildren,depth),
+   : GateBox(itsName,"G4_Galactic",1,1,1,acceptsChildren,depth),
      m_SeptalThickness(1.),m_InnerRadius(1.),m_Height(1.),
-     m_DimensionX(1.),m_DimensionY(1.),mMaterialName("Vacuum")
+     m_DimensionX(1.),m_DimensionY(1.),mMaterialName("G4_Galactic")
 {
    PreComputeConstants ();
 

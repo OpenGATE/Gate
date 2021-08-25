@@ -31,7 +31,7 @@ public:
   //Constructor 1  
   GateCompressedVoxelParameterized(const G4String& name,
 			           G4bool acceptsChildren=false, 
-		 	           G4int depth=0):GateBox(name,"Vacuum",1,1,1,acceptsChildren,depth),
+		 	           G4int depth=0):GateBox(name,"G4_Galactic",1,1,1,acceptsChildren,depth),
     m_name(name),
     m_messenger(new GateCompressedVoxelParameterizedMessenger(this)),
     m_voxelReader(0),
