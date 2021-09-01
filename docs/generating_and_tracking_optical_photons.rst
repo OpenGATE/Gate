@@ -43,6 +43,7 @@ The de facto manner to add optical processes on GATE is to manually add each of 
     /gate/physics/addProcess OpticalMie
     /gate/physics/addProcess OpticalWLS
     /gate/physics/addProcess Scintillation
+    /gate/physics/addProcess Cerenkov
 
 This manner is used in the rest of the documentation.
 
@@ -133,6 +134,20 @@ where :math:`R` is the energy resolution (FWHM - Full width at half maximum ) at
         </propertyvector>
       </propertiestable>
     </material>
+
+Cerenkov photons
+~~~~~~~~~~
+
+The radiation of Cerenkov light occurs when a charged particle moves through a dispersive medium faster than the group velocity of light in that medium. Photons are emitted on the surface of a cone, whose opening angle with respect to the particle’s instantaneous direction decreases as the particle slows down. To generate Cerenkov optical photons in a material, refractive index must be specified using the material property name RINDEX. The user may limit the step size by specifying a maximum (average) number of Cerenkov photons created during the step, using the setMaxPhotons command. The actual number generated will necessarily be different due to the Poissonian nature of the production. In the present implementation, the production density of photons is distributed evenly along the particle’s track segment, even if the particle has slowed significantly during the step. The step can also be limited with the setMaxBetaChange command, where the argument is the allowed change in percent.
+
+ **Warning about Cherenkov process:**
+It has been shown in recent Gate releases that activating the Cherenkov using in the physics list
+/gate/physics/addPhysicsList empenelope (or others)
+/gate/physics/addProcess    Cerenkov
+is not enough to add the Cerenkov process in a Volume 
+one **needs** to define an appropriate physics cut in the volume of interest, for the particule type of interest
+/gate/physics/Electron/SetCutInRegion  Volume  0.1 mm 
+in order to generate Cherenkov photon.
 
 Absorption
 ~~~~~~~~~~
