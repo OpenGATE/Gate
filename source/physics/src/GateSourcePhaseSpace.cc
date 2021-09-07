@@ -67,12 +67,12 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name) :
     m_sourceMessenger = new GateSourcePhaseSpaceMessenger(this);
     mFileType = "";
     mParticleTime = 0.;//->GetTime();
-    pIAEAFile = 0;
-    pIAEARecordType = 0;
-    pIAEAheader = 0;
-    pParticleDefinition = 0;
-    pParticle = 0;
-    pVertex = 0;
+    pIAEAFile = nullptr;
+    pIAEARecordType = nullptr;
+    pIAEAheader = nullptr;
+    pParticleDefinition = nullptr;
+    pParticle = nullptr;
+    pVertex = nullptr;
     mMomentum = 0.;
     mParticlePosition = G4ThreeVector();
     mParticleMomentum = G4ThreeVector();
@@ -95,14 +95,12 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name) :
 // ----------------------------------------------------------------------------------
 GateSourcePhaseSpace::~GateSourcePhaseSpace() {
     listOfPhaseSpaceFile.clear();
-    //delete translation/rotation vectors
-
     if (pIAEAFile) fclose(pIAEAFile);
-    pIAEAFile = 0;
+    pIAEAFile = nullptr;
     free(pIAEAheader);
     free(pIAEARecordType);
-    pIAEAheader = 0;
-    pIAEARecordType = 0;
+    pIAEAheader = nullptr;
+    pIAEARecordType = nullptr;
 }
 // ----------------------------------------------------------------------------------
 
@@ -158,7 +156,6 @@ void GateSourcePhaseSpace::InitializeROOT() {
     mChain.read_header();
 
     mTotalNumberOfParticles = mChain.nb_elements();
-    DD(mTotalNumberOfParticles); // FIXME
     mNumberOfParticlesInFile = mTotalNumberOfParticles;
 
     if (mChain.has_variable("ParticleName")) {
@@ -176,7 +173,6 @@ void GateSourcePhaseSpace::InitializeROOT() {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::InitializeROOTSingle() {
-    DD("ROOT Single");
     mIsPair = false;
     mChain.read_variable("Ekine", &energy);
     mChain.read_variable("X", &x);
@@ -203,7 +199,6 @@ void GateSourcePhaseSpace::InitializeROOTSingle() {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::InitializeROOTPairs() {
-    DD("ROOT Pairs");
     mIsPair = true;
 
     //  E1 E2 X1 Y1 Z1 X2 Y2 Z2 dX1 dY1 dZ1 dX2 dY2 dZ2 t1 t2
@@ -236,8 +231,6 @@ void GateSourcePhaseSpace::InitializeROOTPairs() {
     } else {
         w1 = w2 = 1.0;
     }
-
-    DD("done reading mChain for pairs");
 }
 // ----------------------------------------------------------------------------------
 
@@ -281,7 +274,6 @@ void GateSourcePhaseSpace::InitializePyTorch() {
     catch (...) {
         GateError("GateSourcePhaseSpace: cannot open the .pt file: " << filename);
     }
-    DD("Read PT done");
 
     // No CUDA mode yet
     // mPTmodule.to(torch::kCUDA);
@@ -294,7 +286,6 @@ void GateSourcePhaseSpace::InitializePyTorch() {
     } catch (std::exception &e) {
         GateError("GateSourcePhaseSpace: cannot open json file: " << mPTJsonFilename);
     }
-    DD("Read JSON done");
 
     // un normalize
     std::vector<double> x_mean = nnDict["x_mean"];
@@ -386,7 +377,6 @@ void GateSourcePhaseSpace::GenerateROOTVertex(G4Event * /*aEvent*/ ) {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateROOTVertexSingle() {
-    DD("GenerateROOTVertexSingle");
     mParticlePosition = G4ThreeVector(x * mm, y * mm, z * mm);
 
     //parameter not used: double charge = particle_definition->GetPDGCharge();
@@ -400,7 +390,6 @@ void GateSourcePhaseSpace::GenerateROOTVertexSingle() {
     mMomentum = std::sqrt(energy * energy + 2 * energy * mass);
 
     if (dtot == 0) GateError("No momentum defined in phase space file!");
-    //if (dtot>1) GateError("Sum of square normalized directions should be equal to 1");
 
     px = mMomentum * dx / dtot;
     py = mMomentum * dy / dtot;
@@ -416,9 +405,6 @@ void GateSourcePhaseSpace::GenerateROOTVertexSingle() {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateROOTVertexPairs() {
-    //FIXME TODO
-    DD("GenerateROOTVertexPairs");
-
     mParticlePositionPair1 = G4ThreeVector(X1 * mm, Y1 * mm, Z1 * mm);
     mParticlePositionPair2 = G4ThreeVector(X2 * mm, Y2 * mm, Z2 * mm);
 
@@ -426,12 +412,6 @@ void GateSourcePhaseSpace::GenerateROOTVertexPairs() {
 
     double dtot1 = std::sqrt(dX1 * dX1 + dY1 * dY1 + dZ1 * dZ1);
     double dtot2 = std::sqrt(dX2 * dX2 + dY2 * dY2 + dZ2 * dZ2);
-
-    DD(t1);
-    DD(t2);
-
-    DD(E1);
-    DD(E2);
 
     if (E1 < 0 or E2 < 0) GateError("Energy < 0 in phase space file!");
     if (E1 == 0 or E2 == 0) GateError("Energy = 0 in phase space file!");
@@ -442,15 +422,15 @@ void GateSourcePhaseSpace::GenerateROOTVertexPairs() {
     if (dtot1 == 0 or dtot2 == 0)
         GateError("No momentum defined in phase space file!");
 
-    auto px = mMomentum1 * dX1 / dtot1;
-    auto py = mMomentum1 * dY1 / dtot1;
-    auto pz = mMomentum1 * dZ1 / dtot1;
-    mParticleMomentumPair1 = G4ThreeVector(px, py, pz);
+    auto ppx = mMomentum1 * dX1 / dtot1;
+    auto ppy = mMomentum1 * dY1 / dtot1;
+    auto ppz = mMomentum1 * dZ1 / dtot1;
+    mParticleMomentumPair1 = G4ThreeVector(ppx, ppy, ppz);
 
-    px = mMomentum2 * dX2 / dtot2;
-    py = mMomentum2 * dY2 / dtot2;
-    pz = mMomentum2 * dZ2 / dtot2;
-    mParticleMomentumPair2 = G4ThreeVector(px, py, pz);
+    ppx = mMomentum2 * dX2 / dtot2;
+    ppy = mMomentum2 * dY2 / dtot2;
+    ppz = mMomentum2 * dZ2 / dtot2;
+    mParticleMomentumPair2 = G4ThreeVector(ppx, ppy, ppz);
 }
 // ----------------------------------------------------------------------------------
 
@@ -644,7 +624,6 @@ G4int GateSourcePhaseSpace::GeneratePrimaries(G4Event *event) {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GeneratePrimariesSingle(G4Event *event) {
-    DD("GeneratePrimariesSingle");
     UpdatePositionAndMomentum(mParticlePosition, mParticleMomentum);
     GenerateVertex(event, mParticlePosition, mParticleMomentum, mParticleTime, weight);
 }
@@ -653,17 +632,14 @@ void GateSourcePhaseSpace::GeneratePrimariesSingle(G4Event *event) {
 
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GeneratePrimariesPairs(G4Event *event) {
-    DD("GeneratePrimariesPairs");
     UpdatePositionAndMomentum(mParticlePositionPair1, mParticleMomentumPair1);
     UpdatePositionAndMomentum(mParticlePositionPair2, mParticleMomentumPair2);
     GenerateVertex(event, mParticlePositionPair1, mParticleMomentumPair1, mParticlePairTime1, weight);
     GenerateVertex(event, mParticlePositionPair2, mParticleMomentumPair2, mParticlePairTime2, weight);
 
-    DD(event->GetNumberOfPrimaryVertex());
+    // Get both vertices
     auto vertex1 = event->GetPrimaryVertex(0);
     auto vertex2 = event->GetPrimaryVertex(1);
-    auto prim1 = vertex1->GetPrimary(0);
-    auto prim2 = vertex2->GetPrimary(0);
 
     // Set timing
     vertex1->SetT0(t1);
@@ -672,15 +648,6 @@ void GateSourcePhaseSpace::GeneratePrimariesPairs(G4Event *event) {
     // Set weight
     vertex1->SetWeight(w1);
     vertex2->SetWeight(w2);
-
-    DD(prim1->GetTrackID());
-    DD(prim2->GetTrackID());
-    DD(prim1->GetKineticEnergy());
-    DD(prim2->GetKineticEnergy());
-    DD(vertex1->GetPosition());
-    DD(vertex2->GetPosition());
-    DD(vertex1->GetT0());
-    DD(vertex2->GetT0());
 }
 // ----------------------------------------------------------------------------------
 
@@ -688,7 +655,6 @@ void GateSourcePhaseSpace::GeneratePrimariesPairs(G4Event *event) {
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateVertex(G4Event *event, G4ThreeVector &position,
                                           G4ThreeVector &momentum, double time, double w) {
-    DD("GenerateVertex");
     pParticle = new G4PrimaryParticle(pParticleDefinition,
                                       momentum.x(),
                                       momentum.y(),

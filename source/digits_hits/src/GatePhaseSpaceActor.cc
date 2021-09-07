@@ -615,16 +615,16 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     } else t = stepPoint->GetGlobalTime();
 
     //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
-    GateMessage("Actor", 4, st
+    GateDebugMessage("Actor", 4, st
             << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
             << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time")
             << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << Gateendl);
-    GateMessage("Actor", 4, "trackid="
+    GateDebugMessage("Actor", 4, "trackid="
             << step->GetTrack()->GetParentID()
             << " event=" << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
             << " run=" << GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID() << Gateendl);
-    GateMessage("Actor", 4, "pos = " << x << " " << y << " " << z << Gateendl);
-    GateMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
+    GateDebugMessage("Actor", 4, "pos = " << x << " " << y << " " << z << Gateendl);
+    GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
 
     //---------Write energy of step present at the simulation--------------------------
     e = stepPoint->GetKineticEnergy();
@@ -729,7 +729,7 @@ void GatePhaseSpaceActor::SaveData() {
         pIAEAheader->fheader = open_file(const_cast<char *>(IAEAFileName.c_str()),
                                          const_cast<char *>(IAEAHeaderExt.c_str()), (char *) "wb");
 
-        if (pIAEAheader->write_header() != OK) GateError("Phase space header not writed.");
+        if (pIAEAheader->write_header() != OK) GateError("Phase space header not written.");
 
         fclose(pIAEAheader->fheader);
         fclose(pIAEARecordType->p_file);
