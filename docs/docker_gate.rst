@@ -12,6 +12,16 @@ GATE 9.1 on docker
 
 A docker image for gate version 9.1 is available here: `Click here to download GATE 9.1 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
 
+Example to run GATE with Docker on your computer (unix-system):
+--------------------------------------------------------------
+
+We consider you already have the macro in your computer, you can do::
+
+  cd folder/containing/macFolder
+  docker run -i --rm -v $PWD:/APP opengatecollaboration/gate mac/main.mac
+
+You can find more information about the docker image on `github <https://github.com/OpenGATE/Gate/tree/develop/source/docker>`_
+
 Example to install GATE with Docker on Amazon Web Services (AWS) (Amazon Linux machine):
 ---------------------------------------------------------------------------------------
 
