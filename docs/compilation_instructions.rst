@@ -1,6 +1,6 @@
 .. _compilation_instructions-label:
 
-Compiling GATE (V9.0)
+Compiling GATE (V9.1)
 =============================
 
 .. contents:: Table of Contents
@@ -12,9 +12,9 @@ Compiling GATE (V9.0)
 Required dependencies
 ----------------
 
-For compiling GATE V9.0, the required dependencies are ::
+For compiling GATE V9.1, the required dependencies are ::
 
-   Geant4 10.06  # including the embedded CLHEP
+   Geant4 10.7.0  # including the embedded CLHEP
    ROOT (ROOT 6.xx) # still required, but it may become optional in the future
    
 
@@ -90,37 +90,37 @@ To download 'libtorch', go to https://pytorch.org at the section QUICK START LOC
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
 
     GATE_USE_TORCH     ON
-    Torch_DIR          /home/YOURNAME/libtorch-1.3.0/share/cmake/Torch
+    Torch_DIR          /home/YOURNAME/libtorch-1.4.0/share/cmake/Torch
     
 In some configuration, the following path should also be set ::
 
     CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
     CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
 
-We recommend you to use libtorch version 1.4.0 but if you want to use a version greater than 1.7.0, check https://github.com/OpenGATE/Gate/pull/424
+We recommend you to use libtorch version 1.4.0 but if you want to use a version greater than 1.7.0, check https://github.com/OpenGATE/Gate/pull/424 . For example, you can download libtorch with the following links: https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.4.0%2Bcpu.zip or https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip for Linux systems according to you version of gcc. You can change "1.4.0" in the link by the version you want.
 
-GATE V9.0
+GATE V9.1
 ---------
 
-First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.0.zip
+First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.1.zip
 Unzip the downloaded file::
 
-   unzip Gate-9.0.zip
+   unzip Gate-9.1.zip
 
-Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.0* release tag.
+Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.1* release tag.
 
    git clone https://github.com/OpenGATE/Gate.git Gate
    cd Gate
-   git checkout v9.0
+   git checkout v9.1
 
 Create two directories to build and install GATE::
 
-   mkdir gate_v9.0-build
-   mkdir gate_v9.0-install
+   mkdir gate-build
+   mkdir gate-install
 
 Move into the GATE build directory::
 
-   cd gate_v9.0-build
+   cd gate-build
 
 Run ccmake as follows::
 
@@ -158,11 +158,11 @@ Finally, update your environment variables file with the following command lines
 
 * bash or zsh:
 
-   export PATH=/PATH_TO/gate_v9.0-install/bin:$PATH
+   export PATH=/PATH_TO/gate-install/bin:$PATH
 
 * [t]csh
 
-   setenv PATH /PATH_TO/gate_v9.0-install/bin:${PATH}
+   setenv PATH /PATH_TO/gate-install/bin:${PATH}
    
 
 Environment configuration and starting GATE
@@ -175,8 +175,8 @@ This file should be defined as follows:
 * bash or zsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
-   export PATH=$PATH:/PATH_TO/gate_v9.0-install/bin
+   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
+   export PATH=$PATH:/PATH_TO/gate-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    export PATH=$PATH:/PATH_TO/2.3.4.3/CLHEP/bin
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/PATH_TO/2.3.4.3/CLHEP/lib
@@ -184,19 +184,19 @@ This file should be defined as follows:
 * csh or tcsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.csh
-   source /PATH_TO/geant4.10.06-install/bin/geant4.csh
-   setenv PATH ${PATH}:$/PATH_TO/gate_v9.0-install/bin
+   source /PATH_TO/geant4.10.07-install/bin/geant4.csh
+   setenv PATH ${PATH}:$/PATH_TO/gate-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    setenv PATH ${PATH}:/PATH_TO/2.3.4.3/CLHEP/bin
    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/PATH_TO/2.3.4.3/CLHEP/lib
 
 Save this file in */PATH_TO/gate_v8.2-install/bin*. Finally, before to start a GATE session::
 
-   source /PATH_TO/gate_v9.0-install/bin/gate_env.sh
+   source /PATH_TO/gate-install/bin/gate_env.sh
 
 In order to save typing, you may want to define an alias for that: include the following line in your *$HOME/.bashrc* or *$HOME/.bash_aliases* file::
 
-   alias gate90='source /PATH_TO/gate_v9.0-install/bin/gate_env.sh'
+   alias gate90='source /PATH_TO/gate-install/bin/gate_env.sh'
 
 (For csh and tcsh the syntax is different but the idea is the same.)
 
@@ -330,14 +330,14 @@ Installation of cluster tools
 jobsplitter
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.0/cluster_tools/jobsplitter::
+Go to /PATH_TO/gate_v9.1/cluster_tools/jobsplitter::
 
-   cd /PATH_TO/gate_v9.0/cluster_tools/jobsplitter
+   cd /PATH_TO/gate_v9.1/cluster_tools/jobsplitter
 
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
+   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
 
 Compile::
 
@@ -345,16 +345,16 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.0/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.0-install/bin
+   cp /PATH_TO/gate_v9.1/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.1-install/bin
 
 filemerger
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.0/cluster_tools/filemerger
+Go to /PATH_TO/gate_v9.1/cluster_tools/filemerger
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
+   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
 
 Compile::
 
@@ -362,6 +362,6 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.0/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.0-install/bin
+   cp /PATH_TO/gate_v9.1/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.1-install/bin
 
 

@@ -7,10 +7,20 @@ GATE using Docker
    :depth: 15
    :local:
 
-GATE 9.0 on docker
+GATE 9.1 on docker
 ------------------
 
-A docker image for gate version 9.0 is available here: `Click here to download GATE 9.0 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
+A docker image for gate version 9.1 is available here: `Click here to download GATE 9.1 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
+
+Example to run GATE with Docker on your computer (unix-system):
+--------------------------------------------------------------
+
+We consider you already have the macro in your computer, you can do::
+
+  cd folder/containing/macFolder
+  docker run -i --rm -v $PWD:/APP opengatecollaboration/gate mac/main.mac
+
+You can find more information about the docker image on `github <https://github.com/OpenGATE/Gate/tree/develop/source/docker>`_
 
 Example to install GATE with Docker on Amazon Web Services (AWS) (Amazon Linux machine):
 ---------------------------------------------------------------------------------------
@@ -31,7 +41,7 @@ Example::
   # log back in
   ssh ec2-user@ec2-"IPv4".eu-west-3.compute.amazonaws.com
   docker info
-  docker run -it opengatecollaboration/gate:8.2
+  docker run -it opengatecollaboration/gate:9.1
   Gate
 
 Example to install GATE with Docker on Amazon Web Services (AWS) (Ubuntu Linux machine):
@@ -49,6 +59,6 @@ Example::
   # to run docker without sudo
   sudo usermod -a -G docker ubuntu # and then log out and back in
   # launch a docker container with GATE
-  docker run -it opengatecollaboration/gate:8.2
+  docker run -it opengatecollaboration/gate:9.1
   Gate
 
