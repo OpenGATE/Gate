@@ -18,8 +18,10 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wpedantic"
+
 #include <torch/script.h>
 #include "json.hpp"
+
 #pragma GCC diagnostic pop
 #endif
 
@@ -36,9 +38,6 @@
 
 #include "GateVSource.hh"
 #include "GateSourcePhaseSpaceMessenger.hh"
-
-//#include "GateRunManager.hh"
-
 #include "GateUserActions.hh"
 #include "GateTreeFileManager.hh"
 #include <typeindex>
@@ -56,6 +55,10 @@ public:
 
     void GenerateROOTVertex(G4Event *);
 
+    void GenerateROOTVertexSingle();
+
+    void GenerateROOTVertexPairs();
+
     void GenerateIAEAVertex(G4Event *);
 
     void GeneratePyTorchVertex(G4Event *);
@@ -65,6 +68,15 @@ public:
     G4int OpenIAEAFile(G4String file);
 
     G4int GeneratePrimaries(G4Event *event);
+
+    void GeneratePrimariesSingle(G4Event *event);
+
+    void GeneratePrimariesPairs(G4Event *event);
+
+    void GenerateVertex(G4Event *event, G4ThreeVector &position,
+                        G4ThreeVector &momentum, double time, double w);
+
+    void UpdatePositionAndMomentum(G4ThreeVector &position, G4ThreeVector &momentum);
 
     void SetSourceInitialization(bool t) { mInitialized = t; }
 
@@ -102,24 +114,25 @@ public:
 
     void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
 
-    void SetRmax(float r) { mRmax = r; }
-
-    void SetSphereRadius(float r) { mSphereRadius = r; }
-
     void SetStartingParticleId(long id) { mStartingParticleId = id; }
 
     void SetIgnoreWeight(bool b) { mIgnoreWeight = b; }
 
     void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
 
+    void InitializeIAEA();
+
+    void InitializeROOT();
+
+    void InitializeROOTSingle();
+
+    void InitializeROOTPairs();
+
     void InitializePyTorch();
 
     void SetPytorchParams(G4String &name) { mPTJsonFilename = name; }
 
 protected:
-
-
-    //TEntryList
     std::vector<unsigned int> pListOfSelectedEvents;
 
     G4long mCurrentParticleNumber;
@@ -149,16 +162,37 @@ protected:
     std::type_index time_type = typeid(nullptr);
     float weight;
 
-    //  char volumeName;
+    // below variables for pairs of events
+    // FIXME float or double ?
+    bool mIsPair;
+    float E1;
+    float E2;
+    float X1;
+    float Y1;
+    float Z1;
+    float X2;
+    float Y2;
+    float Z2;
+    float dX1;
+    float dY1;
+    float dZ1;
+    float dX2;
+    float dY2;
+    float dZ2;
+    float t1;
+    float t2;
+    float w1;
+    float w2;
+
+
     char particleName[64];
     G4String mParticleTypeNameGivenByUser;
-    double mParticleTime;//m_source->GetTime();
+    double mParticleTime;
+    double mParticlePairTime1;
+    double mParticlePairTime2;
     G4double mMomentum;
 
     bool mAlreadyLoad;
-
-    float mRmax;
-    double mSphereRadius;
 
     double px;
     double py;
@@ -177,8 +211,12 @@ protected:
     G4PrimaryVertex *pVertex;
     G4ThreeVector mParticlePosition;
     G4ThreeVector mParticleMomentum;
-    G4ThreeVector mParticlePosition2;
-    G4ThreeVector mParticleMomentum2;
+    //G4ThreeVector mParticlePosition2; FIXME
+    // FIXME G4ThreeVector mParticleMomentum2;
+    G4ThreeVector mParticlePositionPair1;
+    G4ThreeVector mParticlePositionPair2;
+    G4ThreeVector mParticleMomentumPair1;
+    G4ThreeVector mParticleMomentumPair2;
 
     std::vector<const G4RotationMatrix *> mListOfRotation;
     std::vector<G4ThreeVector> mListOfTranslation;

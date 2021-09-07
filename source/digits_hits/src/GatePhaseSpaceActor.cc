@@ -615,16 +615,16 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     } else t = stepPoint->GetGlobalTime();
 
     //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
-    GateDebugMessage("Actor", 4, st
+    GateMessage("Actor", 4, st
             << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
             << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time")
             << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << Gateendl);
-    GateDebugMessage("Actor", 4, "trackid="
+    GateMessage("Actor", 4, "trackid="
             << step->GetTrack()->GetParentID()
             << " event=" << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
             << " run=" << GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID() << Gateendl);
-    GateDebugMessage("Actor", 4, "pos = " << x << " " << y << " " << z << Gateendl);
-    GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
+    GateMessage("Actor", 4, "pos = " << x << " " << y << " " << z << Gateendl);
+    GateMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
 
     //---------Write energy of step present at the simulation--------------------------
     e = stepPoint->GetKineticEnergy();

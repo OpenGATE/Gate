@@ -14,8 +14,10 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wpedantic"
+
 #include <torch/script.h>
 #include "json.hpp"
+
 #pragma GCC diagnostic pop
 #endif
 
@@ -74,8 +76,6 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name) :
     mMomentum = 0.;
     mParticlePosition = G4ThreeVector();
     mParticleMomentum = G4ThreeVector();
-    mParticlePosition2 = G4ThreeVector();
-    mParticleMomentum2 = G4ThreeVector();
     x = y = z = dx = dy = dz = px = py = pz = energy = 0.;
     dtime = -1.;
     ftime = -1.;
@@ -85,10 +85,9 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name) :
     mPTCurrentIndex = mPTBatchSize;
     mTotalSimuTime = 0.;
     mAlreadyLoad = false;
-    mRmax = 0;
-    mSphereRadius = -1;
     mCurrentParticleInIAEAFiles = 0;
     mCurrentUsedParticleInIAEAFiles = 0;
+    mIsPair = false;
 }
 // ----------------------------------------------------------------------------------
 
@@ -114,80 +113,15 @@ void GateSourcePhaseSpace::Initialize() {
     mTotalSimuTime =
         GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
 
-    if (mFileType == "IAEAFile") {
-        int totalEvent = 0;
-        int totalEventInFile = 0;
-        mCurrentParticleNumberInFile = -1;
-        G4String IAEAFileName = " ";
-        for (uint j = 0; j < listOfPhaseSpaceFile.size(); j++) {
-            IAEAFileName = G4String(removeExtension(listOfPhaseSpaceFile[j]));
-            totalEventInFile = OpenIAEAFile(IAEAFileName);
-            mTotalNumberOfParticles += totalEventInFile;
+    mInitialized = false;
+    if (mFileType == "IAEAFile") InitializeIAEA();
+    if (mFileType == "pytorch") InitializePyTorch();
+    if (mFileType == "root") InitializeROOT();
 
-            if (mRmax > 0) {
-                for (int j = 0; j < totalEventInFile; j++) {
-                    pIAEARecordType->read_particle();
-                    if (std::abs(pIAEARecordType->x * cm) < mRmax && std::abs(pIAEARecordType->y * cm) < mRmax) {
-                        pListOfSelectedEvents.push_back(totalEvent);
-                        // G4cout<<" --> OK  "<<totalEvent<< Gateendl;
-                    }
-                    totalEvent++;
-                }
-            }
-        }
-        if (mRmax > 0) mTotalNumberOfParticles = pListOfSelectedEvents.size();
-    } else if (mFileType == "pytorch") {
-        InitializePyTorch();
-    } else {
-        for (auto file: listOfPhaseSpaceFile) {
-            GateMessage("Beam", 1, "Phase Space Source. Read file " << file << Gateendl);
-            auto extension = getExtension(file);
-            mChain.add_file(file, extension);
-        }
-        mChain.set_tree_name("PhaseSpace");
-        mChain.read_header();
-
-        mTotalNumberOfParticles = mChain.nb_elements();
-        mNumberOfParticlesInFile = mTotalNumberOfParticles;
-
-        if (mChain.has_variable("ParticleName")) {
-            mChain.read_variable("ParticleName", particleName, 64);
-        }
-        mChain.read_variable("Ekine", &energy);
-
-        mChain.read_variable("X", &x);
-        mChain.read_variable("Y", &y);
-        mChain.read_variable("Z", &z);
-        mChain.read_variable("dX", &dx);
-        mChain.read_variable("dY", &dy);
-        mChain.read_variable("dZ", &dz);
-
-        if (mChain.has_variable("Weight") and not mIgnoreWeight)
-            mChain.read_variable("Weight", &weight);
-
-        if (mChain.has_variable("Time")) {
-            if (mChain.get_type_of_variable("Time") == typeid(float)) {
-                mChain.read_variable("Time", &ftime);
-                time_type = typeid(float);
-            } else {
-                mChain.read_variable("Time", &dtime);
-                time_type = typeid(double);
-            }
-        }
-
-        if (mRmax > 0) {
-            for (int i = 0; i < mTotalNumberOfParticles; i++) {
-                mChain.read_entrie(i);
-                if (std::abs(x) < mRmax && std::abs(y) < mRmax) {
-                    pListOfSelectedEvents.push_back(i);
-                }
-            }
-            mTotalNumberOfParticles = pListOfSelectedEvents.size();
-            mNumberOfParticlesInFile = mTotalNumberOfParticles;
-        }
+    if (!mInitialized) {
+        DD(mFileType);
+        GateError("Cannot initialize source-phsp. Wrong mFileType?");
     }
-
-    mInitialized = true;
 
     if (mUseNbOfParticleAsIntensity)
         SetIntensity(mNumberOfParticlesInFile);
@@ -199,8 +133,239 @@ void GateSourcePhaseSpace::Initialize() {
 
 
 // ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::InitializeIAEA() {
+    int totalEventInFile = 0;
+    mCurrentParticleNumberInFile = -1;
+    G4String IAEAFileName = " ";
+    for (const auto &j : listOfPhaseSpaceFile) {
+        IAEAFileName = G4String(removeExtension(j));
+        totalEventInFile = OpenIAEAFile(IAEAFileName);
+        mTotalNumberOfParticles += totalEventInFile;
+
+    }
+    mInitialized = true;
+}
+// ----------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::InitializeROOT() {
+    for (const auto &file: listOfPhaseSpaceFile) {
+        GateMessage("Beam", 1, "Phase Space Source. Read file " << file << Gateendl);
+        auto extension = getExtension(file);
+        mChain.add_file(file, extension);
+    }
+    mChain.set_tree_name("PhaseSpace");
+    mChain.read_header();
+
+    mTotalNumberOfParticles = mChain.nb_elements();
+    DD(mTotalNumberOfParticles); // FIXME
+    mNumberOfParticlesInFile = mTotalNumberOfParticles;
+
+    if (mChain.has_variable("ParticleName")) {
+        mChain.read_variable("ParticleName", particleName, 64);
+    }
+
+    // switch to single particle or pairs
+    if (mChain.has_variable("X1")) InitializeROOTPairs();
+    else InitializeROOTSingle();
+
+    mInitialized = true;
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::InitializeROOTSingle() {
+    DD("ROOT Single");
+    mIsPair = false;
+    mChain.read_variable("Ekine", &energy);
+    mChain.read_variable("X", &x);
+    mChain.read_variable("Y", &y);
+    mChain.read_variable("Z", &z);
+    mChain.read_variable("dX", &dx);
+    mChain.read_variable("dY", &dy);
+    mChain.read_variable("dZ", &dz);
+
+    if (mChain.has_variable("Weight") and not mIgnoreWeight)
+        mChain.read_variable("Weight", &weight);
+
+    if (mChain.has_variable("Time")) {
+        if (mChain.get_type_of_variable("Time") == typeid(float)) {
+            mChain.read_variable("Time", &ftime);
+            time_type = typeid(float);
+        } else {
+            mChain.read_variable("Time", &dtime);
+            time_type = typeid(double);
+        }
+    }
+}
+// ----------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::InitializeROOTPairs() {
+    DD("ROOT Pairs");
+    mIsPair = true;
+
+    //  E1 E2 X1 Y1 Z1 X2 Y2 Z2 dX1 dY1 dZ1 dX2 dY2 dZ2 t1 t2
+    mChain.read_variable("E1", &E1);
+    mChain.read_variable("E2", &E2);
+
+    mChain.read_variable("t1", &t1);
+    mChain.read_variable("t2", &t2);
+
+    mChain.read_variable("X1", &X1);
+    mChain.read_variable("Y1", &Y1);
+    mChain.read_variable("Z1", &Z1);
+
+    mChain.read_variable("X2", &X2);
+    mChain.read_variable("Y2", &Y2);
+    mChain.read_variable("Z2", &Z2);
+
+    mChain.read_variable("dX1", &dX1);
+    mChain.read_variable("dY1", &dY1);
+    mChain.read_variable("dZ1", &dZ1);
+
+    mChain.read_variable("dX2", &dX2);
+    mChain.read_variable("dY2", &dY2);
+    mChain.read_variable("dZ2", &dZ2);
+
+    // consider one single weight
+    if (mChain.has_variable("Weight") and not mIgnoreWeight) {
+        mChain.read_variable("w1", &w1);
+        mChain.read_variable("w2", &w2);
+    } else {
+        w1 = w2 = 1.0;
+    }
+
+    DD("done reading mChain for pairs");
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::InitializePyTorch() {
+    GateMessage("Actor", 1, "GateSourcePhaseSpace InitializePyTorch" << std::endl);
+
+    // allocate batch samples of particles
+    mPTPosition.resize(mPTBatchSize);
+    mPTDX.resize(mPTBatchSize);
+    mPTDY.resize(mPTBatchSize);
+    mPTDZ.resize(mPTBatchSize);
+    mPTEnergy.resize(mPTBatchSize);
+
+    // set current index to batch size to force compute a first batch of samples
+    mPTCurrentIndex = mPTBatchSize;
+
+    // get particle name
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    if (mParticleTypeNameGivenByUser == "none") {
+        GateError("No particle type defined. Use macro setParticleType");
+    }
+    pParticleDefinition = particleTable->FindParticle(mParticleTypeNameGivenByUser);
+    mPTmass = pParticleDefinition->GetPDGMass();
+
+    // dummy variable
+    mCurrentParticleNumberInFile = 1e12;
+    mTotalNumberOfParticles = 1e12;
+    mNumberOfParticlesInFile = 1e12;
+
+#ifdef GATE_USE_TORCH
+
+    // load the model
+    auto filename = listOfPhaseSpaceFile[0];
+    GateMessage("Actor", 1, "GateSourcePhaseSpace reading " << filename << std::endl);
+    try {
+        mPTmodule = torch::jit::load(filename);
+    }
+        // check
+    catch (...) {
+        GateError("GateSourcePhaseSpace: cannot open the .pt file: " << filename);
+    }
+    DD("Read PT done");
+
+    // No CUDA mode yet
+    // mPTmodule.to(torch::kCUDA);
+
+    // read json file
+    nlohmann::json nnDict;
+    try {
+        std::ifstream nnDictFile(mPTJsonFilename);
+        nnDictFile >> nnDict;
+    } catch (std::exception &e) {
+        GateError("GateSourcePhaseSpace: cannot open json file: " << mPTJsonFilename);
+    }
+    DD("Read JSON done");
+
+    // un normalize
+    std::vector<double> x_mean = nnDict["x_mean"];
+    std::vector<double> x_std = nnDict["x_std"];
+    mPTx_mean = x_mean;
+    mPTx_std = x_std;
+
+    // list of keys
+    std::vector<std::string> keys;
+    try {
+        std::vector<std::string> k = nnDict["keys"];
+        keys = k;
+    } catch (std::exception &e) {
+        std::vector<std::string> k = nnDict["keys_list"];
+        keys = k;
+    }
+    if (keys.size() < 1) {
+        GateError("GateSourcePhaseSpace: error in json file: keys or keys_list is needed " << mPTJsonFilename);
+    }
+
+    mPTz_dim = nnDict["z_dim"];
+    auto get_index = [&keys, &nnDict, this](std::string s) {
+        auto d = std::find(keys.begin(), keys.end(), s);
+        auto index = d - keys.begin();
+        if (d == keys.end()) {
+            index = -1;
+            // Check if the value exist in the json
+            try {
+                double v = nnDict[s];
+                this->mDefaultKeyValues[s] = v;
+                std::cout << " v = " << v << std::endl;
+            } catch (std::exception &e) {
+                GateError("Cannot find the value for key " << s << " in json file");
+            }
+        }
+        // else this->mPTz_dim++;
+        std::cout << "index for " << s << " = " << index << std::endl;
+        return index;
+    };
+
+    mPTPositionXIndex = get_index("X");
+    mPTPositionYIndex = get_index("Y");
+    mPTPositionZIndex = get_index("Z");
+    mPTDirectionXIndex = get_index("dX");
+    mPTDirectionYIndex = get_index("dY");
+    mPTDirectionZIndex = get_index("dZ");
+    mPTEnergyIndex = get_index("Ekine");
+
+    // Create a vector of random inputs
+    mPTzer = torch::zeros({mPTBatchSize, mPTz_dim});
+
+    std::cout << "index : " << mPTPositionXIndex << " " << mPTPositionYIndex << " " << mPTPositionZIndex << std::endl;
+    std::cout << "index : " << mPTDirectionXIndex << " " << mPTDirectionYIndex << " " << mPTDirectionZIndex
+              << std::endl;
+    std::cout << "index E : " << mPTEnergyIndex << std::endl;
+
+    std::cout << "mean " << mPTx_mean << std::endl;
+    std::cout << "std  " << mPTx_std << std::endl;
+    std::cout << "Zdim  " << mPTz_dim << std::endl;
+
+    strcpy(particleName, mParticleTypeNameGivenByUser);
+#endif
+    mInitialized = true;
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::GenerateROOTVertex(G4Event * /*aEvent*/ ) {
-    if (pListOfSelectedEvents.size()) mChain.read_entrie(pListOfSelectedEvents[mCurrentParticleNumberInFile]);
+    if (pListOfSelectedEvents.size())
+        mChain.read_entrie(pListOfSelectedEvents[mCurrentParticleNumberInFile]);
     else mChain.read_entrie(mCurrentParticleNumberInFile);
 
     G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
@@ -213,6 +378,15 @@ void GateSourcePhaseSpace::GenerateROOTVertex(G4Event * /*aEvent*/ ) {
         if (pParticleDefinition == 0) GateError("No particle type defined in phase space file.");
     }
 
+    if (mIsPair) GenerateROOTVertexPairs();
+    else GenerateROOTVertexSingle();
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::GenerateROOTVertexSingle() {
+    DD("GenerateROOTVertexSingle");
     mParticlePosition = G4ThreeVector(x * mm, y * mm, z * mm);
 
     //parameter not used: double charge = particle_definition->GetPDGCharge();
@@ -238,6 +412,48 @@ void GateSourcePhaseSpace::GenerateROOTVertex(G4Event * /*aEvent*/ ) {
     if (time_type == typeid(float) and ftime > 0) mParticleTime = ftime;
 }
 // ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::GenerateROOTVertexPairs() {
+    //FIXME TODO
+    DD("GenerateROOTVertexPairs");
+
+    mParticlePositionPair1 = G4ThreeVector(X1 * mm, Y1 * mm, Z1 * mm);
+    mParticlePositionPair2 = G4ThreeVector(X2 * mm, Y2 * mm, Z2 * mm);
+
+    double mass = pParticleDefinition->GetPDGMass();
+
+    double dtot1 = std::sqrt(dX1 * dX1 + dY1 * dY1 + dZ1 * dZ1);
+    double dtot2 = std::sqrt(dX2 * dX2 + dY2 * dY2 + dZ2 * dZ2);
+
+    DD(t1);
+    DD(t2);
+
+    DD(E1);
+    DD(E2);
+
+    if (E1 < 0 or E2 < 0) GateError("Energy < 0 in phase space file!");
+    if (E1 == 0 or E2 == 0) GateError("Energy = 0 in phase space file!");
+
+    auto mMomentum1 = std::sqrt(E1 * E1 + 2 * E1 * mass);
+    auto mMomentum2 = std::sqrt(E2 * E2 + 2 * E2 * mass);
+
+    if (dtot1 == 0 or dtot2 == 0)
+        GateError("No momentum defined in phase space file!");
+
+    auto px = mMomentum1 * dX1 / dtot1;
+    auto py = mMomentum1 * dY1 / dtot1;
+    auto pz = mMomentum1 * dZ1 / dtot1;
+    mParticleMomentumPair1 = G4ThreeVector(px, py, pz);
+
+    px = mMomentum2 * dX2 / dtot2;
+    py = mMomentum2 * dY2 / dtot2;
+    pz = mMomentum2 * dZ2 / dtot2;
+    mParticleMomentumPair2 = G4ThreeVector(px, py, pz);
+}
+// ----------------------------------------------------------------------------------
+
 
 
 // ----------------------------------------------------------------------------------
@@ -326,7 +542,6 @@ void GateSourcePhaseSpace::GenerateIAEAVertex(G4Event * /*aEvent*/ ) {
 G4int GateSourcePhaseSpace::GeneratePrimaries(G4Event *event) {
     G4int numVertices = 0;
     double timeSlice = 0.;
-    G4RotationMatrix rotation;
 
     if (mCurrentRunNumber < GateUserActions::GetUserActions()->GetCurrentRun()->GetRunID()) {
         mCurrentRunNumber = GateUserActions::GetUserActions()->GetCurrentRun()->GetRunID();
@@ -397,115 +612,126 @@ G4int GateSourcePhaseSpace::GeneratePrimaries(G4Event *event) {
         mResidu = mRequestedNumberOfParticlesPerRun - mTotalNumberOfParticles * mLoop;
     }
 
-    mParticleMomentum2 = mParticleMomentum;
-    mParticlePosition2 = mParticlePosition;
-
-    if (GetPositionInWorldFrame())
-        mParticleMomentum2 = SetReferenceMomentum(mParticleMomentum2);
-    //momentum: convert world frame coordinate to local volume coordinate
-
-    if (GetUseRegularSymmetry() && mCurrentUse != 0) {
-        rotation.rotateZ(mAngle * mCurrentUse);
-        mParticleMomentum2 = rotation * mParticleMomentum2;
-    }
-    if (GetUseRandomSymmetry() && mCurrentUse != 0) {
-        G4double randAngle = G4RandFlat::shoot(twopi);
-        rotation.rotateZ(randAngle);
-        mParticleMomentum2 = rotation * mParticleMomentum2;
-    }
-
-    ChangeParticleMomentumRelativeToAttachedVolume(mParticleMomentum2);
-
-    pParticle = new G4PrimaryParticle(pParticleDefinition, mParticleMomentum2.x(), mParticleMomentum2.y(),
-                                      mParticleMomentum2.z());
-
-    /*particle->SetMass( mass );
-      particle->SetCharge( charge );
-      particle->SetPolarization( particle_polarization.x(),
-      particle_polarization.y(),
-      particle_polarization.z());*/
-
-    if (GetPositionInWorldFrame())
-        mParticlePosition2 = SetReferencePosition(mParticlePosition2);
-    //particle: convert world frame coordinate to local volume coordinate
-
-    if (GetUseRegularSymmetry() && mCurrentUse != 0) { mParticlePosition2 = rotation * mParticlePosition2; }
-    if (GetUseRandomSymmetry() && mCurrentUse != 0) { mParticlePosition2 = rotation * mParticlePosition2; }
-
-    ChangeParticlePositionRelativeToAttachedVolume(mParticlePosition2);
-
-    // ----------------------------------------------
-    // change position according to a max radius (experimental)
-    if (mSphereRadius > 0) {
-        //G4cout << "mParticlePosition2 " << mParticlePosition2 << std::endl;
-        G4ThreeVector mSphereCenter(0, 0, 0);
-        //G4cout << "Sphere center/radius" << mSphereCenter << " " << mSphereRadius << std::endl;
-        G4ThreeVector l = mParticleMomentum2 / mParticleMomentum2.mag();
-        G4ThreeVector &o = mParticlePosition2;
-        G4ThreeVector &c = mSphereCenter;
-        double &r = mSphereRadius;
-        // G4cout << "  l " << l << std::endl;
-        // G4cout << "  o " << o << std::endl;
-        // G4cout << "  c " << c << std::endl;
-        // G4cout << "  r " << r << std::endl;
-        // G4cout << "  norm " << l.mag2() << std::endl;
-        G4ThreeVector diff = (o - c);
-        double a = -(l.dot(diff));
-        double b = a * a - (diff.mag2() - r * r);
-        // G4cout << "    diff " << diff << std::endl;
-        // G4cout << "    a " << a << std::endl;
-        // G4cout << "    a² " << a*a << std::endl;
-        // G4cout << "    diff² " << diff.mag2() << std::endl;
-        // G4cout << "    r² " << r*r << std::endl;
-        // G4cout << "    b " << b << std::endl;
-
-        if (b > 0) {
-            double c = sqrt(b);
-            double d1 = a + c;
-            double d2 = a - c;
-            // G4cout << "    d1 " << d1 << std::endl;
-            // G4cout << "    d2 " << d2 << std::endl;
-            if (d1 < 0 && d2 < 0) {
-                double d = d2;
-                if (d1 > d2) d = d1;
-                mParticlePosition2 = mParticlePosition2 + d * l;
-            } else {
-                // Ignore
-                GateMessage("Beam", 2,
-                            "WARNING particle is already inside the sphere " << d1 << " " << d2 << std::endl);
-            }
-        }
-    }
-    // ----------------------------------------------
-
-
-    //parameter not used: particle_time
-    pVertex = new G4PrimaryVertex(mParticlePosition2, mParticleTime);
-    pVertex->SetWeight(weight);
-    pVertex->SetPrimary(pParticle);
-
-    event->AddPrimaryVertex(pVertex);
+    // Generate on or two particles
+    if (mIsPair) GeneratePrimariesPairs(event);
+    else GeneratePrimariesSingle(event);
 
     mCurrentUse++;
 
-    if ((mCurrentParticleNumber - mLastPartIndex) < ((mLoop + 1) * mResidu) && mLoop < mCurrentUse) mCurrentUse = 0;
+    if ((mCurrentParticleNumber - mLastPartIndex) < ((mLoop + 1) * mResidu) && mLoop < mCurrentUse)
+        mCurrentUse = 0;
     else if ((mCurrentParticleNumber - mLastPartIndex) >= ((mLoop + 1) * mResidu) &&
              (mLoop - 1) < mCurrentUse)
         mCurrentUse = 0;
 
     mCurrentParticleNumber++;
-
-    GateMessage("Beam", 3, "(" << event->GetEventID() << ") "
-                               << pVertex->GetPrimary()->GetG4code()->GetParticleName()
-                               << " pos=" << pVertex->GetPosition()
-                               << " ene=" << G4BestUnit(pVertex->GetPrimary()->GetMomentum().mag(), "Energy")
-                               << " momentum=" << pVertex->GetPrimary()->GetMomentum()
-                               << " weight=" << pVertex->GetWeight()
-                               << " time=" << pVertex->GetT0()
-                               << Gateendl);
-
+    for (auto i = 0; i < event->GetNumberOfPrimaryVertex(); i++) {
+        auto vertex = event->GetPrimaryVertex(i);
+        GateMessage("Beam", 3, "(" << event->GetEventID() << ") "
+                                   << vertex->GetPrimary()->GetG4code()->GetParticleName()
+                                   << " pos=" << vertex->GetPosition()
+                                   << " ene=" << G4BestUnit(vertex->GetPrimary()->GetMomentum().mag(), "Energy")
+                                   << " momentum=" << vertex->GetPrimary()->GetMomentum()
+                                   << " weight=" << vertex->GetWeight()
+                                   << " time=" << G4BestUnit(vertex->GetT0(), "Time")
+                                   << Gateendl);
+    }
     numVertices++;
     return numVertices;
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::GeneratePrimariesSingle(G4Event *event) {
+    DD("GeneratePrimariesSingle");
+    UpdatePositionAndMomentum(mParticlePosition, mParticleMomentum);
+    GenerateVertex(event, mParticlePosition, mParticleMomentum, mParticleTime, weight);
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::GeneratePrimariesPairs(G4Event *event) {
+    DD("GeneratePrimariesPairs");
+    UpdatePositionAndMomentum(mParticlePositionPair1, mParticleMomentumPair1);
+    UpdatePositionAndMomentum(mParticlePositionPair2, mParticleMomentumPair2);
+    GenerateVertex(event, mParticlePositionPair1, mParticleMomentumPair1, mParticlePairTime1, weight);
+    GenerateVertex(event, mParticlePositionPair2, mParticleMomentumPair2, mParticlePairTime2, weight);
+
+    DD(event->GetNumberOfPrimaryVertex());
+    auto vertex1 = event->GetPrimaryVertex(0);
+    auto vertex2 = event->GetPrimaryVertex(1);
+    auto prim1 = vertex1->GetPrimary(0);
+    auto prim2 = vertex2->GetPrimary(0);
+
+    // Set timing
+    vertex1->SetT0(t1);
+    vertex2->SetT0(t2);
+
+    // Set weight
+    vertex1->SetWeight(w1);
+    vertex2->SetWeight(w2);
+
+    DD(prim1->GetTrackID());
+    DD(prim2->GetTrackID());
+    DD(prim1->GetKineticEnergy());
+    DD(prim2->GetKineticEnergy());
+    DD(vertex1->GetPosition());
+    DD(vertex2->GetPosition());
+    DD(vertex1->GetT0());
+    DD(vertex2->GetT0());
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::GenerateVertex(G4Event *event, G4ThreeVector &position,
+                                          G4ThreeVector &momentum, double time, double w) {
+    DD("GenerateVertex");
+    pParticle = new G4PrimaryParticle(pParticleDefinition,
+                                      momentum.x(),
+                                      momentum.y(),
+                                      momentum.z());
+    pVertex = new G4PrimaryVertex(position, time);
+    pVertex->SetWeight(w);
+    pVertex->SetPrimary(pParticle);
+    event->AddPrimaryVertex(pVertex);
+}
+// ----------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------
+void GateSourcePhaseSpace::UpdatePositionAndMomentum(G4ThreeVector &position, G4ThreeVector &momentum) {
+    G4RotationMatrix rotation;
+
+    // Momentum
+    if (GetPositionInWorldFrame())
+        momentum = SetReferenceMomentum(momentum);
+    //momentum: convert world frame coordinate to local volume coordinate
+
+    if (GetUseRegularSymmetry() && mCurrentUse != 0) {
+        rotation.rotateZ(mAngle * mCurrentUse);
+        momentum = rotation * momentum;
+    }
+    if (GetUseRandomSymmetry() && mCurrentUse != 0) {
+        G4double randAngle = G4RandFlat::shoot(twopi);
+        rotation.rotateZ(randAngle);
+        momentum = rotation * momentum;
+    }
+
+    ChangeParticleMomentumRelativeToAttachedVolume(momentum);
+
+    // Position
+    // convert world frame coordinate to local volume coordinate
+    if (GetPositionInWorldFrame())
+        position = SetReferencePosition(position);
+
+    if (GetUseRegularSymmetry() && mCurrentUse != 0) { position = rotation * position; }
+    if (GetUseRandomSymmetry() && mCurrentUse != 0) { position = rotation * position; }
+
+    ChangeParticlePositionRelativeToAttachedVolume(position);
+
 }
 // ----------------------------------------------------------------------------------
 
@@ -519,6 +745,10 @@ void GateSourcePhaseSpace::AddFile(G4String file) {
             mFileType = "IAEAFile";
         if (extension == "pt")
             mFileType = "pytorch";
+        if (extension == "root")
+            mFileType = "root";
+        if (extension == "npy")
+            mFileType = "root";
     }
 
     if ((extension == "IAEAphsp" || extension == "IAEAheader")) {
@@ -565,6 +795,7 @@ G4ThreeVector GateSourcePhaseSpace::SetReferencePosition(G4ThreeVector coordLoca
 G4ThreeVector GateSourcePhaseSpace::SetReferenceMomentum(G4ThreeVector coordLocal) {
     for (int j = mListOfRotation.size() - 1; j >= 0; j--) {
         const G4RotationMatrix *r = mListOfRotation[j];
+
 
         if (r) coordLocal = (*r) * coordLocal;
     }
@@ -623,122 +854,6 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file) {
 // ----------------------------------------------------------------------------------
 
 
-// ----------------------------------------------------------------------------------
-void GateSourcePhaseSpace::InitializePyTorch() {
-    GateMessage("Actor", 1, "GateSourcePhaseSpace InitializePyTorch" << std::endl);
-
-    // allocate batch samples of particles
-    mPTPosition.resize(mPTBatchSize);
-    mPTDX.resize(mPTBatchSize);
-    mPTDY.resize(mPTBatchSize);
-    mPTDZ.resize(mPTBatchSize);
-    mPTEnergy.resize(mPTBatchSize);
-
-    // set current index to batch size to force compute a first batch of samples
-    mPTCurrentIndex = mPTBatchSize;
-
-    // get particle name
-    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
-    if (mParticleTypeNameGivenByUser == "none") {
-        GateError("No particle type defined. Use macro setParticleType");
-    }
-    pParticleDefinition = particleTable->FindParticle(mParticleTypeNameGivenByUser);
-    mPTmass = pParticleDefinition->GetPDGMass();
-
-    // dummy variable
-    mCurrentParticleNumberInFile = 1e12;
-    mTotalNumberOfParticles = 1e12;
-    mNumberOfParticlesInFile = 1e12;
-
-#ifdef GATE_USE_TORCH
-
-    // load the model
-    auto filename = listOfPhaseSpaceFile[0];
-    GateMessage("Actor", 1, "GateSourcePhaseSpace reading " << filename << std::endl);
-    try {
-    mPTmodule = torch::jit::load(filename);
-    }
-    // check
-    catch (...) {
-      GateError("GateSourcePhaseSpace: cannot open the .pt file: " << filename);
-    }
-    DD("Read PT done");
-
-    // No CUDA mode yet
-    // mPTmodule.to(torch::kCUDA);
-
-    // read json file
-    nlohmann::json nnDict;
-    try {
-      std::ifstream nnDictFile(mPTJsonFilename);
-      nnDictFile >> nnDict;
-    } catch(std::exception & e) {
-      GateError("GateSourcePhaseSpace: cannot open json file: " << mPTJsonFilename);
-    }
-    DD("Read JSON done");
-
-    // un normalize
-    std::vector<double> x_mean = nnDict["x_mean"];
-    std::vector<double> x_std = nnDict["x_std"];
-    mPTx_mean = x_mean;
-    mPTx_std = x_std;
-
-    // list of keys
-    std::vector<std::string> keys;
-    try {
-       std::vector<std::string> k = nnDict["keys"];
-       keys = k;
-    }  catch(std::exception & e) {
-       std::vector<std::string> k = nnDict["keys_list"];
-       keys = k;
-    }
-    if (keys.size() < 1) {
-      GateError("GateSourcePhaseSpace: error in json file: keys or keys_list is needed " << mPTJsonFilename);
-    }
-
-    mPTz_dim = nnDict["z_dim"];
-    auto get_index = [&keys, &nnDict, this](std::string s) {
-                       auto d = std::find(keys.begin(), keys.end(), s);
-                       auto index = d-keys.begin();
-                       if (d == keys.end()) {
-                         index = -1;
-                         // Check if the value exist in the json
-                         try {
-                           double v = nnDict[s];
-                           this->mDefaultKeyValues[s] = v;
-                           std::cout << " v = " << v << std::endl;
-                         } catch(std::exception & e) {
-                           GateError("Cannot find the value for key " << s << " in json file");
-                         }
-                       }
-                       // else this->mPTz_dim++;
-                       std::cout << "index for " << s << " = " << index << std::endl;
-                       return index;
-                     };
-
-    mPTPositionXIndex = get_index("X");
-    mPTPositionYIndex = get_index("Y");
-    mPTPositionZIndex = get_index("Z");
-    mPTDirectionXIndex = get_index("dX");
-    mPTDirectionYIndex = get_index("dY");
-    mPTDirectionZIndex = get_index("dZ");
-    mPTEnergyIndex = get_index("Ekine");
-
-    // Create a vector of random inputs
-    mPTzer = torch::zeros({mPTBatchSize, mPTz_dim});
-
-    std::cout << "index : " << mPTPositionXIndex << " " << mPTPositionYIndex << " " << mPTPositionZIndex << std::endl;
-    std::cout << "index : " << mPTDirectionXIndex << " " << mPTDirectionYIndex << " " << mPTDirectionZIndex << std::endl;
-    std::cout << "index E : " << mPTEnergyIndex << std::endl;
-
-    std::cout << "mean " << mPTx_mean << std::endl;
-    std::cout << "std  " << mPTx_std << std::endl;
-    std::cout << "Zdim  " << mPTz_dim << std::endl;
-
-    strcpy(particleName, mParticleTypeNameGivenByUser);
-#endif
-}
-// ----------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------
@@ -751,10 +866,10 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch() {
 
     // nb of particles to generate
     int N = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries();
-    if (N!= 0 and (N-mCurrentParticleNumberInFile < mPTBatchSize)) {
-      std::cout << "N " << N << " " << mCurrentParticleNumberInFile << std::endl;
-      int n = N-mCurrentParticleNumberInFile + 10;
-      mPTzer = torch::zeros({n, mPTz_dim});
+    if (N != 0 and (N - mCurrentParticleNumberInFile < mPTBatchSize)) {
+        std::cout << "N " << N << " " << mCurrentParticleNumberInFile << std::endl;
+        int n = N - mCurrentParticleNumberInFile + 10;
+        mPTzer = torch::zeros({n, mPTz_dim});
     }
     GateMessage("Beam", 2, "GAN Phase space, generating " << mPTzer.size(0) << " particles " << G4endl);
 
@@ -789,21 +904,21 @@ void GateSourcePhaseSpace::GenerateBatchSamplesFromPyTorch() {
     // un normalize
     std::vector<double> x_mean = mPTx_mean;
     std::vector<double> x_std = mPTx_std;
-    auto u = [&x_mean, &x_std](const float * v, int i, double def) {
-               if (i == -1) return def;
-               return (v[i]*x_std[i])+x_mean[i];
-             };
+    auto u = [&x_mean, &x_std](const float *v, int i, double def) {
+        if (i == -1) return def;
+        return (v[i] * x_std[i]) + x_mean[i];
+    };
 
     // Store the results into the vectors
-    for (auto i=0; i < output.sizes()[0]; ++i) {
-      const float * v = output[i].data_ptr<float>();
-      mPTEnergy[i] = u(v, mPTEnergyIndex, def_E);
-      mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex, def_X),
-                                     u(v, mPTPositionYIndex, def_Y),
-                                     u(v, mPTPositionZIndex, def_Z));
-      mPTDX[i] = u(v,mPTDirectionXIndex, def_dX);
-      mPTDY[i] = u(v,mPTDirectionYIndex, def_dY);
-      mPTDZ[i] = u(v,mPTDirectionZIndex, def_dZ);
+    for (auto i = 0; i < output.sizes()[0]; ++i) {
+        const float *v = output[i].data_ptr<float>();
+        mPTEnergy[i] = u(v, mPTEnergyIndex, def_E);
+        mPTPosition[i] = G4ThreeVector(u(v, mPTPositionXIndex, def_X),
+                                       u(v, mPTPositionYIndex, def_Y),
+                                       u(v, mPTPositionZIndex, def_Z));
+        mPTDX[i] = u(v, mPTDirectionXIndex, def_dX);
+        mPTDY[i] = u(v, mPTDirectionYIndex, def_dY);
+        mPTDZ[i] = u(v, mPTDirectionZIndex, def_dZ);
     }
 
     mPTCurrentIndex = 0;
