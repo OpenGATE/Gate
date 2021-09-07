@@ -46,155 +46,176 @@
 struct iaea_record_type;
 struct iaea_header_type;
 
-class GateSourcePhaseSpace : public GateVSource
-{
+class GateSourcePhaseSpace : public GateVSource {
 public:
-  GateSourcePhaseSpace( G4String name);
-  ~GateSourcePhaseSpace();
+    GateSourcePhaseSpace(G4String name);
 
-  void Initialize();
-  void GenerateROOTVertex( G4Event* );
-  void GenerateIAEAVertex( G4Event* );
-  void GeneratePyTorchVertex( G4Event* );
-  void GenerateBatchSamplesFromPyTorch();
+    ~GateSourcePhaseSpace();
 
-  G4int OpenIAEAFile(G4String file);
+    void Initialize();
 
-  G4int GeneratePrimaries( G4Event* event );
+    void GenerateROOTVertex(G4Event *);
 
-  void SetSourceInitialization(bool t){mInitialized=t;}
-  bool GetSourceInitialization(){return mInitialized;}
+    void GenerateIAEAVertex(G4Event *);
 
-  void AddFile(G4String file);
+    void GeneratePyTorchVertex(G4Event *);
 
-  void InitializeTransformation();
+    void GenerateBatchSamplesFromPyTorch();
 
-  G4ThreeVector SetReferencePosition(G4ThreeVector coordLocal);
-  G4ThreeVector SetReferenceMomentum(G4ThreeVector coordLocal);
+    G4int OpenIAEAFile(G4String file);
 
-  bool GetPositionInWorldFrame(){return mPositionInWorldFrame;}
-  void SetPositionInWorldFrame(bool t){mPositionInWorldFrame = t;}
+    G4int GeneratePrimaries(G4Event *event);
 
-  void SetUseRegularSymmetry(){if(mUseRandomSymmetry) GateError("You cannot use random and regular symmetry for phase space source"); mUseRegularSymmetry = true;}
-  bool GetUseRegularSymmetry(){return mUseRegularSymmetry;}
-  void SetUseRandomSymmetry(){if(mUseRegularSymmetry) GateError("You cannot use random and regular symmetry for phase space source"); mUseRandomSymmetry = true;}
-  bool GetUseRandomSymmetry(){return mUseRandomSymmetry;}
+    void SetSourceInitialization(bool t) { mInitialized = t; }
 
-  void SetParticleType(G4String & name) { mParticleTypeNameGivenByUser = name; }
+    bool GetSourceInitialization() { return mInitialized; }
 
-  void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
+    void AddFile(G4String file);
 
-  void SetRmax(float r) { mRmax = r; }
-  void SetSphereRadius(float r) { mSphereRadius = r; }
+    void InitializeTransformation();
 
-  void SetStartingParticleId(long id) { mStartingParticleId = id; }
+    G4ThreeVector SetReferencePosition(G4ThreeVector coordLocal);
 
-  void SetIgnoreWeight(bool b) { mIgnoreWeight = b; }
-  
-  void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
-  void InitializePyTorch();
-  void SetPytorchParams(G4String & name) { mPTJsonFilename = name; }
+    G4ThreeVector SetReferenceMomentum(G4ThreeVector coordLocal);
+
+    bool GetPositionInWorldFrame() { return mPositionInWorldFrame; }
+
+    void SetPositionInWorldFrame(bool t) { mPositionInWorldFrame = t; }
+
+    void SetUseRegularSymmetry() {
+        if (mUseRandomSymmetry)
+            GateError("You cannot use random and regular symmetry for phase space source");
+        mUseRegularSymmetry = true;
+    }
+
+    bool GetUseRegularSymmetry() { return mUseRegularSymmetry; }
+
+    void SetUseRandomSymmetry() {
+        if (mUseRegularSymmetry)
+            GateError("You cannot use random and regular symmetry for phase space source");
+        mUseRandomSymmetry = true;
+    }
+
+    bool GetUseRandomSymmetry() { return mUseRandomSymmetry; }
+
+    void SetParticleType(G4String &name) { mParticleTypeNameGivenByUser = name; }
+
+    void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
+
+    void SetRmax(float r) { mRmax = r; }
+
+    void SetSphereRadius(float r) { mSphereRadius = r; }
+
+    void SetStartingParticleId(long id) { mStartingParticleId = id; }
+
+    void SetIgnoreWeight(bool b) { mIgnoreWeight = b; }
+
+    void SetPytorchBatchSize(int b) { mPTBatchSize = b; }
+
+    void InitializePyTorch();
+
+    void SetPytorchParams(G4String &name) { mPTJsonFilename = name; }
 
 protected:
 
 
-  //TEntryList
-  std::vector<unsigned int> pListOfSelectedEvents;
+    //TEntryList
+    std::vector<unsigned int> pListOfSelectedEvents;
 
-  G4long mCurrentParticleNumber;
-  G4long mCurrentParticleNumberInFile;
-  G4long mStartingParticleId;
-  G4long mNumberOfParticlesInFile;
-  G4long mTotalNumberOfParticles;
-  G4int mCurrentRunNumber;
-  double mTotalSimuTime;
-  double mRequestedNumberOfParticlesPerRun;
-  G4long mLoop;
-  G4long mLoopFile;
-  G4long mCurrentUse;
-  G4long mResidu;
-  double mResiduRun;
-  G4long mLastPartIndex;
-  unsigned int mCurrentParticleInIAEAFiles;
-  G4long mCurrentUsedParticleInIAEAFiles;
-  bool mInitialized;
-  G4String mFileType;
+    G4long mCurrentParticleNumber;
+    G4long mCurrentParticleNumberInFile;
+    G4long mStartingParticleId;
+    G4long mNumberOfParticlesInFile;
+    G4long mTotalNumberOfParticles;
+    G4int mCurrentRunNumber;
+    double mTotalSimuTime;
+    double mRequestedNumberOfParticlesPerRun;
+    G4long mLoop;
+    G4long mLoopFile;
+    G4long mCurrentUse;
+    G4long mResidu;
+    double mResiduRun;
+    G4long mLastPartIndex;
+    unsigned int mCurrentParticleInIAEAFiles;
+    G4long mCurrentUsedParticleInIAEAFiles;
+    bool mInitialized;
+    G4String mFileType;
 
-  float energy;
-  float x, y, z;
-  float dx, dy, dz;
-  float ftime;
-  double dtime;
-  std::type_index time_type = typeid(nullptr);
-  float weight;
+    float energy;
+    float x, y, z;
+    float dx, dy, dz;
+    float ftime;
+    double dtime;
+    std::type_index time_type = typeid(nullptr);
+    float weight;
 
-  //  char volumeName;
-  char particleName[64];
-  G4String mParticleTypeNameGivenByUser;
-  double mParticleTime ;//m_source->GetTime();
-  G4double mMomentum;
+    //  char volumeName;
+    char particleName[64];
+    G4String mParticleTypeNameGivenByUser;
+    double mParticleTime;//m_source->GetTime();
+    G4double mMomentum;
 
-  bool mAlreadyLoad;
+    bool mAlreadyLoad;
 
-  float mRmax;
-  double mSphereRadius;
+    float mRmax;
+    double mSphereRadius;
 
-  double px ;
-  double py ;
-  double pz ;
+    double px;
+    double py;
+    double pz;
 
-  std::vector<G4String> listOfPhaseSpaceFile;
+    std::vector<G4String> listOfPhaseSpaceFile;
 
-  bool mPositionInWorldFrame;
+    bool mPositionInWorldFrame;
 
-  FILE* pIAEAFile;
-  iaea_record_type *pIAEARecordType;
-  iaea_header_type *pIAEAheader;
+    FILE *pIAEAFile;
+    iaea_record_type *pIAEARecordType;
+    iaea_header_type *pIAEAheader;
 
-  G4ParticleDefinition* pParticleDefinition;
-  G4PrimaryParticle* pParticle;
-  G4PrimaryVertex* pVertex;
-  G4ThreeVector mParticlePosition;
-  G4ThreeVector mParticleMomentum;
-  G4ThreeVector mParticlePosition2;
-  G4ThreeVector mParticleMomentum2;
+    G4ParticleDefinition *pParticleDefinition;
+    G4PrimaryParticle *pParticle;
+    G4PrimaryVertex *pVertex;
+    G4ThreeVector mParticlePosition;
+    G4ThreeVector mParticleMomentum;
+    G4ThreeVector mParticlePosition2;
+    G4ThreeVector mParticleMomentum2;
 
-  std::vector<const G4RotationMatrix *> mListOfRotation;
-  std::vector<G4ThreeVector> mListOfTranslation;
+    std::vector<const G4RotationMatrix *> mListOfRotation;
+    std::vector<G4ThreeVector> mListOfTranslation;
 
-  bool mUseRegularSymmetry;
-  bool mUseRandomSymmetry;
-  double mAngle;
+    bool mUseRegularSymmetry;
+    bool mUseRandomSymmetry;
+    double mAngle;
 
-  bool mUseNbOfParticleAsIntensity;
-  GateInputTreeFileChain mChain;
+    bool mUseNbOfParticleAsIntensity;
+    GateInputTreeFileChain mChain;
 
-  bool mIgnoreWeight;
+    bool mIgnoreWeight;
 
-  int mPTCurrentIndex;
-  int mPTBatchSize;
-  double mPTmass;
-  std::vector<G4ThreeVector> mPTPosition;
-  std::vector<double> mPTDX;
-  std::vector<double> mPTDY;
-  std::vector<double> mPTDZ;
-  std::vector<double> mPTEnergy;
-  std::string mPTJsonFilename;
+    int mPTCurrentIndex;
+    int mPTBatchSize;
+    double mPTmass;
+    std::vector<G4ThreeVector> mPTPosition;
+    std::vector<double> mPTDX;
+    std::vector<double> mPTDY;
+    std::vector<double> mPTDZ;
+    std::vector<double> mPTEnergy;
+    std::string mPTJsonFilename;
 #ifdef GATE_USE_TORCH
-  torch::jit::script::Module mPTmodule;
-  torch::Tensor mPTzer;
-  std::vector<double> mPTx_mean;
-  std::vector<double> mPTx_std;
-  int mPTz_dim;
-  int mPTEnergyIndex;
-  int mPTPositionXIndex;
-  int mPTPositionYIndex;
-  int mPTPositionZIndex;
-  int mPTDirectionXIndex;
-  int mPTDirectionYIndex;
-  int mPTDirectionZIndex;
-  std::map<std::string, double> mDefaultKeyValues;
-#endif  
+    torch::jit::script::Module mPTmodule;
+    torch::Tensor mPTzer;
+    std::vector<double> mPTx_mean;
+    std::vector<double> mPTx_std;
+    int mPTz_dim;
+    int mPTEnergyIndex;
+    int mPTPositionXIndex;
+    int mPTPositionYIndex;
+    int mPTPositionZIndex;
+    int mPTDirectionXIndex;
+    int mPTDirectionYIndex;
+    int mPTDirectionZIndex;
+    std::map<std::string, double> mDefaultKeyValues;
+#endif
 
 };
 
