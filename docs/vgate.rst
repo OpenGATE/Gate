@@ -21,28 +21,23 @@ vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubun
 
 With vGate you can launch your first GATE simulation in just a few steps! No need to install anything, no need to configure anything, and no time spent to understand compilation and related stuff. A full Linux environment is totally set up to be able to use GATE just by launching a simple command: "Gate".
 
-The following software is installed on this machine:
+The following software is installed on this machine (see this `file <https://github.com/OpenGATE/Gate/blob/develop/source/docker/vGate.sh>`_ for more details):
 
-* Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
-* GATE 9.0
-* Geant4 10.06.1
+* Ubuntu LTS 20.04 on Virtual Box (40GB virtual HD)
+* GATE 9.1
+* Geant4 10.7.0
 * GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
-* Gate tools
-* Gate exercises
-* Root 6.14.00
-* libtorch cxx11 (cpu) 1.4.0
-* ITK 4.13.1 with Module_RTK=ON (v2.0.0)
+* Root 6.19.02
+* libtorch cxx11 (cpu) 1.7.0
+* ITK with Module_RTK=ON
 * VTK v7.1.0
 * vV 1.4
-* ImageJ (Fiji) 1.52d
-* Visual studio code
-* Jupyter Notebook, Jupyter Lab
-* Python3 libraries: numpy, matplotlib, scipy, pydicom, pandas, SimpleITK, uproot
+* ImageJ (Fiji)
 
 How to get vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
 
-Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu. The direct (google drive) link is `here <https://drive.google.com/file/d/1tbXtq5KU9J8Rn7zo-EXHA6o7TEbcpHUo/view?usp=sharing>`_.
+Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu. The direct (google drive) link is `here <https://drive.google.com/file/d/1uM0g6z_VcDv3yQJTKmm641tZTjsbHP85/view?usp=sharing>`_.
 
 Be aware that the file you will download a pretty big (about 10 Gbytes), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
 
@@ -63,7 +58,7 @@ That's it!
 
 Login credentials are (qwerty keyboard):
 
-* user: gate
+* user: vgate
 * password: virtual
 * ('gate' is sudo)
 
