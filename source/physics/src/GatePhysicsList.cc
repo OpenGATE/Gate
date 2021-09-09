@@ -231,8 +231,8 @@ void GatePhysicsList::ConstructProcess()
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 //
       //opt->SetVerbose(2);
-      if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-      if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+      //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+      //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
       if(mEmin>0)          emPar->SetMinEnergy(mEmin);
       if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
       emPar->SetSpline(mSplineFlag);
@@ -776,8 +776,8 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-  if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+  //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+  //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
   emPar->SetSpline(mSplineFlag);
@@ -1367,7 +1367,7 @@ void GatePhysicsList::GetCuts()
 void GatePhysicsList::SetOptDEDXBinning(G4int val)
 {
   mDEDXBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mDEDXBinning);
 }
 //-----------------------------------------------------------------------------
 
@@ -1375,8 +1375,8 @@ void GatePhysicsList::SetOptDEDXBinning(G4int val)
 void GatePhysicsList::SetOptLambdaBinning(G4int val)
 {
   mLambdaBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
-  emPar->SetNumberOfBins(mLambdaBinning); 
+  //emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mLambdaBinning);
 }
 //-----------------------------------------------------------------------------
 
