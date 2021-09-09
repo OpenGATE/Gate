@@ -25,7 +25,7 @@ See LICENSE.md for further details
 #include "G4PenelopeAnnihilationModel.hh"
 
 //PhotoElectric
-#include "G4LivermorePolarizedPhotoElectricModel.hh"
+//#include "G4LivermorePolarizedPhotoElectricModel.hh"
 // The following three lines are necessary to work around a bug in the
 // Geant4 10.02 release (December 2015): the "polarized" Livermore
 // photo-electric model include file has the exact same #include guard

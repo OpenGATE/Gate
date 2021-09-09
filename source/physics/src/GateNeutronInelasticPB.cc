@@ -46,7 +46,7 @@ GateNeutronInelasticPB::GateNeutronInelasticPB():GateVProcess("NeutronInelastic"
 //-----------------------------------------------------------------------------
 G4VProcess* GateNeutronInelasticPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4NeutronInelasticProcess(GetG4ProcessName());
+  return new G4HadronInelasticProcess(GetG4ProcessName());
 }
 //-----------------------------------------------------------------------------
 

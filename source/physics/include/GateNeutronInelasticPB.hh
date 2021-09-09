@@ -13,7 +13,7 @@ See LICENSE.md for further details
 
 #include "GateVProcess.hh"
 
-#include "G4NeutronInelasticProcess.hh"
+#include "G4HadronInelasticProcess.hh"
 
 // !!!!!!!!!! Models for High Energy not included !!!!!!!!!!!!!
 

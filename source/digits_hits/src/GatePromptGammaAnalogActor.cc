@@ -15,7 +15,7 @@
 
 #include <G4Proton.hh>
 #include <G4VProcess.hh>
-#include <G4ProtonInelasticProcess.hh>
+//#include <G4ProtonInelasticProcess.hh>
 #include <G4CrossSectionDataStore.hh>
 #include <G4HadronicProcessStore.hh>
 
