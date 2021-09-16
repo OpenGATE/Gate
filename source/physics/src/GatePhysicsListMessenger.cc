@@ -134,12 +134,22 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   positronCutCmd = new G4UIcmdWithAString(bb,this);
   positronCutCmd->SetGuidance("Set positron production cut for a given region (two parameters 'regionName' and 'cutValue')");
 
-  bb = base + "/Electron/RemoveAllCuts";
-  electronRemoveCutCmd = new G4UIcmdWithoutParameter(bb, this);
-
   bb = base+"/Proton/SetCutInRegion";
   protonCutCmd = new G4UIcmdWithAString(bb,this);
   protonCutCmd->SetGuidance("Set proton production cut for a given region (two parameters 'regionName' and 'cutValue')");
+
+  bb = base + "/Gamma/RemoveDefaultCut";
+  gammaRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  gammaRemoveDefaultCutCmd->SetGuidance("Remove the default gamma cut for world, and so for any volume");
+  bb = base + "/Electron/RemoveDefaultCut";
+  electronRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  electronRemoveDefaultCutCmd->SetGuidance("Remove the default electron cut for world, and so for any volume");
+  bb = base + "/Positron/RemoveDefaultCut";
+  positronRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  positronRemoveDefaultCutCmd->SetGuidance("Remove the default positron cut for world, and so for any volume");
+  bb = base + "/Proton/RemoveDefaultCut";
+  protonRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  protonRemoveDefaultCutCmd->SetGuidance("Remove the default proton cut for world, and so for any volume");
 
   bb = base+"/SetMaxStepSizeInRegion";
   pMaxStepSizeCmd = new G4UIcmdWithAString(bb,this);
@@ -296,8 +306,10 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     if (command == pMaxTrackLengthCmd) pPhylist->SetSpecialCutInRegion("MaxTrackLength", regionName, cutValue);
     if (command == pMinRemainingRangeCmd) pPhylist->SetSpecialCutInRegion("MinRemainingRange", regionName, cutValue);  }
 
-    if (command == electronRemoveCutCmd) {pPhylist->DisableAllCuts("e-");}
-    if (command == positronCutCmd) {pPhylist->DisableAllCuts("e+");}
+    if (command == electronRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("e-");}
+    if (command == gammaRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("gamma");}
+    if (command == positronRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("e+");}
+    if (command == protonRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("proton");}
 
   if (command == pActivateStepLimiterCmd) pPhylist->mListOfStepLimiter.push_back(param);
   if (command == pActivateSpecialCutsCmd) pPhylist->mListOfG4UserSpecialCut.push_back(param);

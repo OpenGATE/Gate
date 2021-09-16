@@ -37,15 +37,19 @@ public:
   // Types
   struct ParticleCutType {
     G4double gammaCut;
+    G4bool gammaCutDisabledByDefault;
     G4double electronCut;
     G4bool electronCutDisabledByDefault;
     G4double positronCut;
     G4bool positronCutDisabledByDefault;
     G4double protonCut;
+    G4bool protonCutDisabledByDefault;
   };
   typedef std::map<G4String, ParticleCutType> RegionCutMapType;
-  G4bool electronCutDisabledByDefault; // electron cut disabled for all region
-  G4bool positronCutDisabledByDefault; // positron cut disabled for all region
+  G4bool gammaCutDisabledByDefault; // gamma default cut disabled for all region
+  G4bool electronCutDisabledByDefault; // electron default cut disabled for all region
+  G4bool positronCutDisabledByDefault; // positron default cut disabled for all region
+  G4bool protonCutDisabledByDefault; // positron default cut disabled for all region
   typedef std::map<G4String, GateUserLimits*> VolumeUserLimitsMapType;
 
 
