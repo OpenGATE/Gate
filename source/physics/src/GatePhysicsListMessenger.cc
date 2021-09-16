@@ -134,6 +134,9 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   positronCutCmd = new G4UIcmdWithAString(bb,this);
   positronCutCmd->SetGuidance("Set positron production cut for a given region (two parameters 'regionName' and 'cutValue')");
 
+  bb = base + "/Electron/RemoveAllCuts";
+  electronRemoveCutCmd = new G4UIcmdWithoutParameter(bb, this);
+
   bb = base+"/Proton/SetCutInRegion";
   protonCutCmd = new G4UIcmdWithAString(bb,this);
   protonCutCmd->SetGuidance("Set proton production cut for a given region (two parameters 'regionName' and 'cutValue')");
@@ -285,11 +288,16 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     if (command == positronCutCmd) { pPhylist->SetCutInRegion("e+", regionName, cutValue); }
     if (command == protonCutCmd) { pPhylist->SetCutInRegion("proton", regionName, cutValue);}
 
+
+
     if (command == pMaxStepSizeCmd) pPhylist->SetSpecialCutInRegion("MaxStepSize", regionName, cutValue);
     if (command == pMaxToFCmd) pPhylist->SetSpecialCutInRegion("MaxToF", regionName, cutValue);
     if (command == pMinKineticEnergyCmd) pPhylist->SetSpecialCutInRegion("MinKineticEnergy", regionName, cutValue);
     if (command == pMaxTrackLengthCmd) pPhylist->SetSpecialCutInRegion("MaxTrackLength", regionName, cutValue);
     if (command == pMinRemainingRangeCmd) pPhylist->SetSpecialCutInRegion("MinRemainingRange", regionName, cutValue);  }
+
+    if (command == electronRemoveCutCmd) {pPhylist->DisableAllCuts("e-");}
+    if (command == positronCutCmd) {pPhylist->DisableAllCuts("e+");}
 
   if (command == pActivateStepLimiterCmd) pPhylist->mListOfStepLimiter.push_back(param);
   if (command == pActivateSpecialCutsCmd) pPhylist->mListOfG4UserSpecialCut.push_back(param);

@@ -52,6 +52,9 @@ protected:
   G4UIcmdWithAString * positronCutCmd;
   G4UIcmdWithAString * protonCutCmd;
 
+  G4UIcmdWithoutParameter * electronRemoveCutCmd;
+  G4UIcmdWithoutParameter * positronRemoveCutCmd;
+
   G4UIcmdWithAString * pMaxStepSizeCmd;
   G4UIcmdWithAString * pMaxTrackLengthCmd;
   G4UIcmdWithAString * pMaxToFCmd;
