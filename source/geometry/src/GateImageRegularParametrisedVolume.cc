@@ -116,7 +116,7 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
                           GetImage()->GetVoxelSize().y()/2.0,
                           GetImage()->GetVoxelSize().z()/2.0);
   G4Material * Vacuum =
-    theMaterialDatabase.GetMaterial("Vacuum");
+    theMaterialDatabase.GetMaterial("G4_Galactic");
   mVoxelLog = new G4LogicalVolume(mVoxelSolid, Vacuum, GetObjectName()+"_voxelLog", 0,0,0);
 
   // Create the main Parametrisation

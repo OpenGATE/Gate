@@ -53,7 +53,7 @@ GatePara::GatePara(const G4String& itsName,
   m_phi(0*degree),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateParaMessenger(this);
 }
 

@@ -18,7 +18,7 @@ See LICENSE.md for further details
 ///////////////////
 
 GateFictitiousVoxelMapParam::GateFictitiousVoxelMapParam(const  G4String& itsName, GateFictitiousVoxelMapParameterized* rpi):
-   GateBox(itsName,"Vacuum",1,1,1,false,false),
+   GateBox(itsName,"G4_Galactic",1,1,1,false,false),
     itsInserter(rpi),m_parameterization(0),m_pvParameterized(0)
 {
 }

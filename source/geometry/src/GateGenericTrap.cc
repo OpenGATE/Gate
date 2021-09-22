@@ -46,7 +46,7 @@ GateGenericTrap::GateGenericTrap(const G4String& itsName,
   m_Messenger(0)
 {
   m_vertices.resize(8);
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateGenericTrapMessenger(this);
 }
 

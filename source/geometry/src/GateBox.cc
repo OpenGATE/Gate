@@ -47,7 +47,7 @@ GateBox::GateBox(const G4String& itsName,
 {
      
   // Set default material name
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   mBoxLength[0] = 1.0*cm;
   mBoxLength[1] = 1.0*cm;
   mBoxLength[2] = 1.0*cm;
