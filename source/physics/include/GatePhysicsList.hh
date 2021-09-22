@@ -37,12 +37,21 @@ public:
   // Types
   struct ParticleCutType {
     G4double gammaCut;
+    G4bool gammaCutDisabledByDefault;
     G4double electronCut;
+    G4bool electronCutDisabledByDefault;
     G4double positronCut;
+    G4bool positronCutDisabledByDefault;
     G4double protonCut;
+    G4bool protonCutDisabledByDefault;
   };
   typedef std::map<G4String, ParticleCutType> RegionCutMapType;
+  G4bool gammaCutDisabledByDefault; // gamma default cut disabled for all region
+  G4bool electronCutDisabledByDefault; // electron default cut disabled for all region
+  G4bool positronCutDisabledByDefault; // positron default cut disabled for all region
+  G4bool protonCutDisabledByDefault; // positron default cut disabled for all region
   typedef std::map<G4String, GateUserLimits*> VolumeUserLimitsMapType;
+
 
   // Functions
   static GatePhysicsList *GetInstance() { // static function must be here or icc, not in cc
@@ -81,6 +90,7 @@ public:
   void DefineCuts(G4VUserPhysicsList * phys);
   void DefineCuts() { DefineCuts(this); }
   void SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue);
+  void DisableAllCuts(G4String particleName);
   void SetSpecialCutInRegion(G4String cutType, G4String regionName, G4double cutValue);
   void SetEnergyRangeMinLimit(double val);
   void GetCuts();
