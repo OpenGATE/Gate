@@ -21,7 +21,7 @@ GateGridDiscretizationMessenger::GateGridDiscretizationMessenger(GateGridDiscret
 
       newVolCmd = new G4UIcmdWithAString(cmdName,this);
       newVolCmd->SetGuidance("Choose a volume for applying a grid discretization");
-        G4cout<<"DiscretizationMessenger: "<<cmdName<<Gateendl;
+      G4cout<<"DiscretizationMessenger: "<<cmdName<<Gateendl;
 
 }
 
@@ -33,12 +33,16 @@ GateGridDiscretizationMessenger::~GateGridDiscretizationMessenger()
         //delete pthresholdCmd[i];
         delete pStripOffsetX[i];
         delete pStripOffsetY[i];
+        delete pStripOffsetZ[i];
         delete pStripWidthX[i];
         delete pStripWidthY[i];
+        delete pStripWidthZ[i];
         delete pNumberStripsX[i];
         delete pNumberStripsY[i];
+        delete pNumberStripsZ[i];
         delete pNumberReadOutBlocksY[i];
         delete pNumberReadOutBlocksX[i];
+        delete pNumberReadOutBlocksZ[i];
         //delete pRejectionMultiplesCmd[i];
     }
 }
@@ -76,6 +80,11 @@ void GateGridDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String
                pNumberStripsY.push_back(new G4UIcmdWithAnInteger(cmdName4,this));
                pNumberStripsY[m_count]->SetGuidance("Set Number of Strips in Y direction");
 
+                //It should work with the same name
+               cmdName4 = m_volDirectory[m_count]->GetCommandPath() + "setNumberStripsZ";
+               pNumberStripsZ.push_back(new G4UIcmdWithAnInteger(cmdName4,this));
+               pNumberStripsZ[m_count]->SetGuidance("Set Number of Strips in Z direction");
+
 
                cmdName5 = m_volDirectory[m_count]->GetCommandPath() + "setStripOffsetX";
                pStripOffsetX.push_back(new G4UIcmdWithADoubleAndUnit(cmdName5,this));
@@ -86,6 +95,12 @@ void GateGridDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String
                pStripOffsetY.push_back(new G4UIcmdWithADoubleAndUnit(cmdName6,this));
                pStripOffsetY[m_count]->SetGuidance("Set offset of the strip in Y direction from negative axis");
                pStripOffsetY[m_count]->SetUnitCategory("Length");
+
+                //It should work with the same name
+               cmdName6 = m_volDirectory[m_count]->GetCommandPath() + "setStripOffsetZ";
+               pStripOffsetZ.push_back(new G4UIcmdWithADoubleAndUnit(cmdName6,this));
+               pStripOffsetZ[m_count]->SetGuidance("Set offset of the strip in Y direction from negative axis");
+               pStripOffsetZ[m_count]->SetUnitCategory("Length");
 
 
                cmdName7 = m_volDirectory[m_count]->GetCommandPath() + "setStripWidthX";
@@ -98,6 +113,10 @@ void GateGridDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String
                pStripWidthY[m_count]->SetGuidance("Set width of the strip in Y direction");
                pStripWidthY[m_count]->SetUnitCategory("Length");
 
+               cmdName8 = m_volDirectory[m_count]->GetCommandPath() + "setStripWidthZ";
+               pStripWidthZ.push_back(new G4UIcmdWithADoubleAndUnit(cmdName8,this));
+               pStripWidthZ[m_count]->SetGuidance("Set width of the strip in Z direction");
+               pStripWidthZ[m_count]->SetUnitCategory("Length");
 
                cmdName9 = m_volDirectory[m_count]->GetCommandPath() + "setNumberReadOutBlocksX";
                pNumberReadOutBlocksX.push_back(new G4UIcmdWithAnInteger(cmdName9,this));
@@ -107,6 +126,10 @@ void GateGridDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String
                cmdName10 = m_volDirectory[m_count]->GetCommandPath() + "setNumberReadOutBlocksY";
                pNumberReadOutBlocksY.push_back(new G4UIcmdWithAnInteger(cmdName10,this));
                pNumberReadOutBlocksY[m_count]->SetGuidance("Set Number of Readout blocks Y direction");
+
+               cmdName10 = m_volDirectory[m_count]->GetCommandPath() + "setNumberReadOutBlocksZ";
+               pNumberReadOutBlocksZ.push_back(new G4UIcmdWithAnInteger(cmdName10,this));
+               pNumberReadOutBlocksZ[m_count]->SetGuidance("Set Number of Readout blocks Z direction");
 
 
               // cmdName11 = m_volDirectory[m_count]->GetCommandPath() + "setMultipleRejectionflag";
@@ -152,15 +175,30 @@ void GateGridDiscretizationMessenger::SetNewValue2(G4UIcommand* command, G4Strin
         }
     if(test==0)
         for (G4int i=0;i<m_count;i++)  {
-            if ( command==pStripWidthX[i] ) {
-                GetGridDiscretization()->SetStripWidthX(m_name[i], pStripWidthX[i]->GetNewDoubleValue(newValue));
+            if ( command==pStripOffsetZ[i] ) {
+                GetGridDiscretization()->SetStripOffsetZ(m_name[i], pStripOffsetZ[i]->GetNewDoubleValue(newValue));
                 test=1;
             }
         }
     if(test==0)
         for (G4int i=0;i<m_count;i++)  {
+            if ( command==pStripWidthX[i] ) {
+                GetGridDiscretization()->SetStripWidthX(m_name[i], pStripWidthX[i]->GetNewDoubleValue(newValue));
+                test=1;
+            }
+        }
+
+    if(test==0)
+        for (G4int i=0;i<m_count;i++)  {
             if ( command==pStripWidthY[i] ) {
                 GetGridDiscretization()->SetStripWidthY(m_name[i], pStripWidthY[i]->GetNewDoubleValue(newValue));
+                test=1;
+            }
+        }
+    if(test==0)
+        for (G4int i=0;i<m_count;i++)  {
+            if ( command==pStripWidthZ[i] ) {
+                GetGridDiscretization()->SetStripWidthZ(m_name[i], pStripWidthZ[i]->GetNewDoubleValue(newValue));
                 test=1;
             }
         }
@@ -180,6 +218,13 @@ void GateGridDiscretizationMessenger::SetNewValue2(G4UIcommand* command, G4Strin
         }
     if(test==0)
         for (G4int i=0;i<m_count;i++)  {
+            if ( command== pNumberStripsZ[i] ) {
+                GetGridDiscretization()->SetNumberStripsZ(m_name[i], pNumberStripsZ[i]->GetNewIntValue(newValue));
+                test=1;
+            }
+        }
+    if(test==0)
+        for (G4int i=0;i<m_count;i++)  {
             if ( command== pNumberReadOutBlocksX[i] ) {
                 GetGridDiscretization()->SetNumberReadOutBlocksX(m_name[i], pNumberReadOutBlocksX[i]->GetNewIntValue(newValue));
                 test=1;
@@ -189,6 +234,13 @@ void GateGridDiscretizationMessenger::SetNewValue2(G4UIcommand* command, G4Strin
         for (G4int i=0;i<m_count;i++)  {
             if ( command== pNumberReadOutBlocksY[i] ) {
                 GetGridDiscretization()->SetNumberReadOutBlocksY(m_name[i], pNumberReadOutBlocksY[i]->GetNewIntValue(newValue));
+                test=1;
+            }
+        }
+    if(test==0)
+        for (G4int i=0;i<m_count;i++)  {
+            if ( command== pNumberReadOutBlocksZ[i] ) {
+                GetGridDiscretization()->SetNumberReadOutBlocksZ(m_name[i], pNumberReadOutBlocksZ[i]->GetNewIntValue(newValue));
                 test=1;
             }
         }
