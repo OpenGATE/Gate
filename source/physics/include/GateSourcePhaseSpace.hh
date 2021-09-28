@@ -63,7 +63,13 @@ public:
 
     void GeneratePyTorchVertex(G4Event *);
 
-    void GenerateBatchSamplesFromPyTorch();
+    void GeneratePyTorchVertexSingle(G4Event *);
+
+    void GeneratePyTorchVertexPairs(G4Event *);
+
+    void GenerateBatchSamplesFromPyTorchSingle();
+
+    void GenerateBatchSamplesFromPyTorchPairs();
 
     G4int OpenIAEAFile(G4String file);
 
@@ -89,6 +95,10 @@ public:
     G4ThreeVector SetReferencePosition(G4ThreeVector coordLocal);
 
     G4ThreeVector SetReferenceMomentum(G4ThreeVector coordLocal);
+
+    void SetRelativeTimeFlag(bool b);
+
+    void SetIgnoreTimeFlag(bool b);
 
     bool GetPositionInWorldFrame() { return mPositionInWorldFrame; }
 
@@ -130,6 +140,10 @@ public:
 
     void InitializePyTorch();
 
+    void InitializePyTorchPairs();
+
+    void InitializePyTorchSingle();
+
     void SetPytorchParams(G4String &name) { mPTJsonFilename = name; }
 
 protected:
@@ -153,6 +167,9 @@ protected:
     G4long mCurrentUsedParticleInIAEAFiles;
     bool mInitialized;
     G4String mFileType;
+    bool mRelativeTimeFlag;
+    bool mTimeIsInPhsp;
+    bool mTimeIsUsed;
 
     float energy;
     float x, y, z;
@@ -184,12 +201,9 @@ protected:
     float w1;
     float w2;
 
-
     char particleName[64];
     G4String mParticleTypeNameGivenByUser;
     double mParticleTime;
-    double mParticlePairTime1;
-    double mParticlePairTime2;
     G4double mMomentum;
 
     bool mAlreadyLoad;
@@ -239,12 +253,14 @@ protected:
     std::vector<double> mPTDZ;
     std::vector<double> mPTEnergy;
     std::string mPTJsonFilename;
+
 #ifdef GATE_USE_TORCH
     torch::jit::script::Module mPTmodule;
     torch::Tensor mPTzer;
     std::vector<double> mPTx_mean;
     std::vector<double> mPTx_std;
     int mPTz_dim;
+
     int mPTEnergyIndex;
     int mPTPositionXIndex;
     int mPTPositionYIndex;
@@ -252,6 +268,17 @@ protected:
     int mPTDirectionXIndex;
     int mPTDirectionYIndex;
     int mPTDirectionZIndex;
+
+    int mPTPositionIndex[2][3];
+    int mPTDirectionIndex[2][3];
+    int mPTEnergiesIndex[2];
+    int mPTTimeIndex[2];
+
+    std::vector<G4ThreeVector> mPTPositions[2];
+    std::vector<G4ThreeVector> mPTDirections[2];
+    std::vector<double> mPTEnergies[2];
+    std::vector<double> mPTTimes[2];
+
     std::map<std::string, double> mDefaultKeyValues;
 #endif
 

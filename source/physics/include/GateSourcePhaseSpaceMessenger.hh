@@ -57,6 +57,8 @@ private:
     G4UIcmdWithoutParameter *RandomSymmetryCmd;
     G4UIcmdWithABool *setUseNbParticleAsIntensityCmd;
     G4UIcmdWithABool *ignoreWeightCmd;
+    G4UIcmdWithABool *RelativeTimeCmd;
+    G4UIcmdWithABool *IgnoreTimeCmd;
     G4UIcmdWithADouble *setStartIdCmd;
     G4UIcmdWithAnInteger *setPytorchBatchSizeCmd;
     G4UIcmdWithAString *setPytorchParamsCmd;

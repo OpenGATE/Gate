@@ -41,6 +41,14 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
     RegularSymmetryCmd = new G4UIcmdWithoutParameter(cmdName, this);
     RegularSymmetryCmd->SetGuidance("Use the rotational symmetry axis of the source with a regular step.");
 
+    cmdName = GetDirectoryName() + "useRelativeTime";
+    RelativeTimeCmd = new G4UIcmdWithABool(cmdName, this);
+    RelativeTimeCmd->SetGuidance("Consider that the time in the phsp is summed to the Gate time (default is False : Time in the phsp, if exists, is absolute)");
+
+    cmdName = GetDirectoryName() + "ignoreTime";
+    IgnoreTimeCmd = new G4UIcmdWithABool(cmdName, this);
+    IgnoreTimeCmd->SetGuidance("Do not consider Time in the phsp (Gate time only)");
+
     cmdName = GetDirectoryName() + "useRandomSymmetry";
     RandomSymmetryCmd = new G4UIcmdWithoutParameter(cmdName, this);
     RandomSymmetryCmd->SetGuidance("Use the rotational symmetry axis of the source with a random step.");
@@ -87,6 +95,8 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger() {
     delete setPytorchBatchSizeCmd;
     delete setPytorchParamsCmd;
     delete ignoreWeightCmd;
+    delete RelativeTimeCmd;
+    delete IgnoreTimeCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -99,6 +109,8 @@ void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand *command, G4String n
     if (command == RegularSymmetryCmd) pSource->SetUseRegularSymmetry();
     if (command == RandomSymmetryCmd) pSource->SetUseRandomSymmetry();
     if (command == setParticleTypeCmd) pSource->SetParticleType(newValue);
+    if (command == RelativeTimeCmd) pSource->SetRelativeTimeFlag(RelativeTimeCmd->GetNewBoolValue(newValue));
+    if (command == IgnoreTimeCmd) pSource->SetIgnoreTimeFlag(IgnoreTimeCmd->GetNewBoolValue(newValue));
     if (command == setUseNbParticleAsIntensityCmd)
         pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
     if (command == ignoreWeightCmd) pSource->SetIgnoreWeight(ignoreWeightCmd->GetNewBoolValue(newValue));
