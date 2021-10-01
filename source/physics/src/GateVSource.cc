@@ -472,6 +472,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         GateError("Sorry, I don't know the source type '"<< GetType() << "'. Known source types are"
                   << "<backtoback> <fastI124> <gps>");
       }
+
       numVertices++;
 
       if (event) {

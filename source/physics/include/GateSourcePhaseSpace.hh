@@ -245,21 +245,36 @@ protected:
     bool mIgnoreWeight;
 
     int mPTCurrentIndex;
+    // requested batch size
     int mPTBatchSize;
+    // real umber of generated particle in the batch (can be inferior to mPTBatchSize)
+    int mPTCurrentBatchSize;
     double mPTmass;
     std::vector<G4ThreeVector> mPTPosition;
     std::vector<double> mPTDX;
     std::vector<double> mPTDY;
     std::vector<double> mPTDZ;
     std::vector<double> mPTEnergy;
+
+    nlohmann::json mPTParam;
     std::string mPTJsonFilename;
+    bool mPTPairs;
+    bool mPTnormalize;
+    std::vector<double> mPT_x_mean;
+    std::vector<double> mPT_x_std;
+    std::vector<std::string> mPT_keys;
+    int mPTz_dim;
+    std::map<std::string, double> mDefaultKeyValues;
+
+    int get_key_index(std::string key);
+
+    double get_key_value(const float *v, int i, double def);
 
 #ifdef GATE_USE_TORCH
     torch::jit::script::Module mPTmodule;
     torch::Tensor mPTzer;
     std::vector<double> mPTx_mean;
     std::vector<double> mPTx_std;
-    int mPTz_dim;
 
     int mPTEnergyIndex;
     int mPTPositionXIndex;
@@ -279,7 +294,6 @@ protected:
     std::vector<double> mPTEnergies[2];
     std::vector<double> mPTTimes[2];
 
-    std::map<std::string, double> mDefaultKeyValues;
 #endif
 
 };
