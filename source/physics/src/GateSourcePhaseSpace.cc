@@ -149,6 +149,7 @@ void GateSourcePhaseSpace::InitializeIAEA() {
 }
 // ----------------------------------------------------------------------------------
 
+
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::InitializeROOT() {
     for (const auto &file: listOfPhaseSpaceFile) {
@@ -169,11 +170,6 @@ void GateSourcePhaseSpace::InitializeROOT() {
     // switch to single particle or pairs
     if (mChain.has_variable("X1")) InitializeROOTPairs();
     else InitializeROOTSingle();
-
-    // Activity and decay
-    DD(GetActivity());
-    DD(GetForcedHalfLife());
-    DD(GetForcedUnstableFlag());
 
     mInitialized = true;
 }
@@ -477,17 +473,9 @@ void GateSourcePhaseSpace::GenerateROOTVertexPairs() {
     double dtot1 = std::sqrt(dX1 * dX1 + dY1 * dY1 + dZ1 * dZ1);
     double dtot2 = std::sqrt(dX2 * dX2 + dY2 * dY2 + dZ2 * dZ2);
 
-    if (E1 <= 0) {
-        GateWarning("Energy E1 =< 0 in phase space file!");
-        E1 = 0.000000001;
+    if (E1 <= 0 or E2 <= 0) {
+        GateError("Energy <0 or =0 in phase space file. Cannot deal with that.");
     }
-    if (E2 <= 0) {
-        GateWarning("Energy E2=< 0 in phase space file!");
-        E2 = 0.000000001;
-    }
-    /*if (E1 == 0 or E2 == 0) {
-        GateError("Energy = 0 in phase space file!");
-    }*/
 
     auto mMomentum1 = std::sqrt(E1 * E1 + 2 * E1 * mass);
     auto mMomentum2 = std::sqrt(E2 * E2 + 2 * E2 * mass);
@@ -918,9 +906,7 @@ G4ThreeVector GateSourcePhaseSpace::SetReferencePosition(G4ThreeVector coordLoca
         //for(int j = 0; j<mListOfRotation.size();j++){
         const G4ThreeVector &t = mListOfTranslation[j];
         const G4RotationMatrix *r = mListOfRotation[j];
-
         coordLocal = coordLocal + t;
-
         if (r) coordLocal = (*r) * coordLocal;
     }
 
@@ -933,8 +919,6 @@ G4ThreeVector GateSourcePhaseSpace::SetReferencePosition(G4ThreeVector coordLoca
 G4ThreeVector GateSourcePhaseSpace::SetReferenceMomentum(G4ThreeVector coordLocal) {
     for (int j = mListOfRotation.size() - 1; j >= 0; j--) {
         const G4RotationMatrix *r = mListOfRotation[j];
-
-
         if (r) coordLocal = (*r) * coordLocal;
     }
     return coordLocal;

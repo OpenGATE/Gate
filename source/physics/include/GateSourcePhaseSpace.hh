@@ -84,10 +84,6 @@ public:
 
     void UpdatePositionAndMomentum(G4ThreeVector &position, G4ThreeVector &momentum);
 
-    void SetSourceInitialization(bool t) { mInitialized = t; }
-
-    bool GetSourceInitialization() { return mInitialized; }
-
     void AddFile(G4String file);
 
     void InitializeTransformation();
@@ -100,7 +96,7 @@ public:
 
     void SetIgnoreTimeFlag(bool b);
 
-    bool GetPositionInWorldFrame() { return mPositionInWorldFrame; }
+    bool GetPositionInWorldFrame() const { return mPositionInWorldFrame; }
 
     void SetPositionInWorldFrame(bool t) { mPositionInWorldFrame = t; }
 
@@ -110,7 +106,7 @@ public:
         mUseRegularSymmetry = true;
     }
 
-    bool GetUseRegularSymmetry() { return mUseRegularSymmetry; }
+    bool GetUseRegularSymmetry() const { return mUseRegularSymmetry; }
 
     void SetUseRandomSymmetry() {
         if (mUseRegularSymmetry)
@@ -118,7 +114,7 @@ public:
         mUseRandomSymmetry = true;
     }
 
-    bool GetUseRandomSymmetry() { return mUseRandomSymmetry; }
+    bool GetUseRandomSymmetry() const { return mUseRandomSymmetry; }
 
     void SetParticleType(G4String &name) { mParticleTypeNameGivenByUser = name; }
 
@@ -168,7 +164,6 @@ protected:
     bool mInitialized;
     G4String mFileType;
     bool mRelativeTimeFlag;
-    bool mTimeIsInPhsp;
     bool mTimeIsUsed;
 
     float energy;
@@ -225,8 +220,7 @@ protected:
     G4PrimaryVertex *pVertex;
     G4ThreeVector mParticlePosition;
     G4ThreeVector mParticleMomentum;
-    //G4ThreeVector mParticlePosition2; FIXME
-    // FIXME G4ThreeVector mParticleMomentum2;
+
     G4ThreeVector mParticlePositionPair1;
     G4ThreeVector mParticlePositionPair2;
     G4ThreeVector mParticleMomentumPair1;
@@ -273,8 +267,6 @@ protected:
 #ifdef GATE_USE_TORCH
     torch::jit::script::Module mPTmodule;
     torch::Tensor mPTzer;
-    std::vector<double> mPTx_mean;
-    std::vector<double> mPTx_std;
 
     int mPTEnergyIndex;
     int mPTPositionXIndex;
@@ -293,7 +285,6 @@ protected:
     std::vector<G4ThreeVector> mPTDirections[2];
     std::vector<double> mPTEnergies[2];
     std::vector<double> mPTTimes[2];
-
 #endif
 
 };
