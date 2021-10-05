@@ -171,6 +171,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       source->SetSourceID( m_sourceProgressiveNumber );
       // source->SetActivity( activity );
       //  source->SetStartTime( startTime );
+      //  source->SetStartTime( startTime );
       // dynamic_cast<GateSourcePhaseSpace*>(source)->Initialize();
     }
     else

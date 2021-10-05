@@ -8,3 +8,14 @@ GTAGS
 -/.idea/
 cmake-build-*
 
+/.idea/
+/GateBenchmarks
+/GateTools
+/gaga
+/pet_simulation
+*.save
+*.old
+
+/source/io_old/
+/source/save_bug/
+

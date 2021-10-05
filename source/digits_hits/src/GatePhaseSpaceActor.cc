@@ -729,7 +729,7 @@ void GatePhaseSpaceActor::SaveData() {
         pIAEAheader->fheader = open_file(const_cast<char *>(IAEAFileName.c_str()),
                                          const_cast<char *>(IAEAHeaderExt.c_str()), (char *) "wb");
 
-        if (pIAEAheader->write_header() != OK) GateError("Phase space header not writed.");
+        if (pIAEAheader->write_header() != OK) GateError("Phase space header not written.");
 
         fclose(pIAEAheader->fheader);
         fclose(pIAEARecordType->p_file);

@@ -69,7 +69,7 @@ ENDIF()
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
 IF(Geant4_multithreaded_FOUND)
-    MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    MESSAGE(WARNING "GATE should be compiled with a non-multithreaded installation of Geant4")
 ENDIF()
 #OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
 #IF(Geant4_multithreaded_FOUND)
