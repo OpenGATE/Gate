@@ -252,7 +252,6 @@ protected:
 
     nlohmann::json mPTParam;
     std::string mPTJsonFilename;
-    bool mPTPairs;
     bool mPTnormalize;
     std::vector<double> mPT_x_mean;
     std::vector<double> mPT_x_std;
