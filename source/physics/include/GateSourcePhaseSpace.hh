@@ -20,7 +20,6 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
 
 #include <torch/script.h>
-#include "json.hpp"
 
 #pragma GCC diagnostic pop
 #endif
@@ -41,6 +40,7 @@
 #include "GateUserActions.hh"
 #include "GateTreeFileManager.hh"
 #include <typeindex>
+#include "json.hpp"
 
 struct iaea_record_type;
 struct iaea_header_type;
@@ -263,10 +263,6 @@ protected:
 
     double get_key_value(const float *v, int i, double def);
 
-#ifdef GATE_USE_TORCH
-    torch::jit::script::Module mPTmodule;
-    torch::Tensor mPTzer;
-
     int mPTEnergyIndex;
     int mPTPositionXIndex;
     int mPTPositionYIndex;
@@ -284,6 +280,10 @@ protected:
     std::vector<G4ThreeVector> mPTDirections[2];
     std::vector<double> mPTEnergies[2];
     std::vector<double> mPTTimes[2];
+
+#ifdef GATE_USE_TORCH
+    torch::jit::script::Module mPTmodule;
+    torch::Tensor mPTzer;
 #endif
 
 };
