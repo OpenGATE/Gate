@@ -38,7 +38,7 @@ well-validated physics models, geometry modeling tools, and efficient
 visualization utilities. However these packages are quite complex and
 necessitate a steep learning curve.
 
-GATE, the *GEANT4 Application for Emission Tomography* (MIC02, Siena02,
+GATE, the *GEANT4 Application for Tomographic Emission* (MIC02, Siena02,
 ITBS02, GATE, encapsulates the GEANT4 libraries in order to achieve a
 modular, versatile, scripted simulation toolkit adapted to the field of
 nuclear medicine. In particular, GATE provides the capability for
