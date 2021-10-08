@@ -762,11 +762,11 @@ The data file must be a raw binary containing data in IEEE 32-bit floating point
 ExtendedVSource
 ---------------
 
-The *ExtendedVSource* is an extension of the basic GATE's VSource class which defines sources. With this source it is possible to define sources of gammas from positronium decay.
+The *ExtendedVSource* is an extension of the basic GATE's VSource class, which provides the model for the positronium decay.
 
 All properties of VSource source are inherited by ExtendedVSource.
 
-There are povided two types of positronium decays channels: 2 gammas decay (from parapositronium (pPs) decay) and 3 gammas decay (from orthopositronium (oPs) decay). Additionaly, it is possible to add deexcitation (prompt) gamma for decay.
+Two positronium decays channels are provided: two-photon decay (parapositronium (pPs) decay) and three-photon decay (orthopositronium (oPs) decay). Additionally, it is possible to add de-excitation (prompt) gamma to the decay model.
 
 Creating a source
 ~~~~~~~~~~~~~~~~~
@@ -775,7 +775,7 @@ To create a source use command::
 
   /gate/source/addSource NAME Extended
 
-and choose model for a source::
+and choose the model::
 
   /gate/source/NAME/setType MODEL
 
@@ -786,7 +786,7 @@ There are 4 possible models:
 * **oPs** - three-photon emission from oPs decay
 * **Ps** - mixed emission ( mixed photon emission from oPs and pPs decays )
 
-Additionaly you can set a prompt gamma emission (gamma emitted during deexcitation of atom which is a source of e+ just before the beta+ decay of this atom).
+Additionally one can add a prompt gamma emission (gamma emitted during the de-excitation).
 
 To do that use a command::
 
@@ -798,7 +798,7 @@ To do that use a command::
 Other commands
 ~~~~~~~~~~~~~~
 
-For all models are enable a following commands:
+For all models following commands are available:
 
 * **setFixedEmissionDirection** - set fixed emission direction of single gamma or prompt gamma::
 
@@ -808,18 +808,18 @@ For all models are enable a following commands:
 
   /gate/source/NAME/setEnableFixedEmissionDirection true
 
-For **sg** model there is dedicated command to set emitted photon energy **setEmissionEnergy**::
+For **sg** model there is a dedicated command to set emitted photon energy **setEmissionEnergy**::
 
   /gate/source/NAME/setEmissionEnergy ENERGY UNIT
 
-For models **pPs**, **oPs** and **Ps** is possible to set positronium lifetime. By default are used values of lifetime in vacuum. Lifetime for simulated positronium decay is randomly chosen from exponential distribution. Each annihilation gamma has time increased by this value.
-To do that use a command **setPostroniumLifetime**::
+The positronium mean lifetime can be set for the following models: **pPs**, **oPs** and **Ps** . The mean lifetime values in the vacuum are used as defaults. The lifetime per event is randomly chosen from the exponential distribution. Each annihilation gamma has time increased by this value.
+To set the mean positronium lifetime use a command **setPostroniumLifetime**::
 
   /gate/source/NAME/setPostroniumLifetime POSITRONIUM TIMEVALUE TIMEUNIT
 
 where *POSITRONIUM* is a name of positronium type (pPs or oPs), *TIMEVALUE* is  float number, *TIMEUNIT* is time unit (ns, ps, ...).
 
-For model **Ps** is required to define a probability of emitting gammas from pPs and oPs decay. User has only to define a probability for one type of positronium - second will be calculated automatically.
+For the **Ps**  model it is required to define a fraction (normalized to 1) of emitting photons from pPs and oPs decay. User must define a fraction for one type of positronium - the second one  will be calculated automatically.
 To do that use a command **setPositroniumFraction**::
 
   /gate/source/NAME/setPositroniumFraction POSITRONIUM PROBABILITY
@@ -830,15 +830,15 @@ where *POSITRONIUM* is a name of positronium type (pPs or oPs), *PROBABILITY* is
 Dedicated branches
 ~~~~~~~~~~~~~~~~~~
 
-For this source are enable 3 additional branches in **Hits** tree:
+For this source 3 additional branches in **Hits** tree  are provided :
 
-* **gammaType** - describes what type of gamma is
+* **gammaType** - describes the type of the gamma
 
-* **sourceType** - describes from which source is emitted gamma
+* **sourceType** - describes the source type
 
 * **decayType** - describes from which decay channel of positronium is emitted gamma
 
-Type of value for all three branches is int. Meaning of values in each branch is described in the below tables.
+Int is a type of value stored in all three branches . Meaning of values in each branch is described in the tables below
 
 .. table:: Description of values in gammaType branch
    :widths: auto
