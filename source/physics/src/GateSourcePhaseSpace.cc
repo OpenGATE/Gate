@@ -748,14 +748,27 @@ void GateSourcePhaseSpace::GeneratePrimariesSingle(G4Event *event) {
 void GateSourcePhaseSpace::GeneratePrimariesPairs(G4Event *event) {
     UpdatePositionAndMomentum(mParticlePositionPair1, mParticleMomentumPair1);
     UpdatePositionAndMomentum(mParticlePositionPair2, mParticleMomentumPair2);
-    auto ct1 = t1;
-    auto ct2 = t2;
+
+    // WARNING : must be double because t1 could be very small
+    // (ns) while GetTime could be large (in sec or min)
+    double ct1 = t1;
+    double ct2 = t2;
 
     // Timing : relative or absolute ?
     if (mTimeIsUsed and mRelativeTimeFlag) {
         ct1 += GetTime();
         ct2 += GetTime();
     }
+
+    /*
+    auto app = GateApplicationMgr::GetInstance();
+    auto at = app->GetCurrentTime();
+    std::cout << "Pairs get Time " << G4BestUnit(GetTime(), "Time") << std::endl;
+    std::cout << "Pairs times 1) " << G4BestUnit(t1, "Time") << " " << G4BestUnit(ct1, "Time") << std::endl;
+    std::cout << "Pairs times 2) " << G4BestUnit(t2, "Time") << " " << G4BestUnit(ct2, "Time") << std::endl;
+    std::cout << "Pairs times 1) " << t1 << " " << ct1 << std::endl;
+    std::cout << "Pairs times 2) " << t2 << " " << ct2 << std::endl;
+     */
 
     GenerateVertex(event, mParticlePositionPair1, mParticleMomentumPair1, ct1, weight);
     GenerateVertex(event, mParticlePositionPair2, mParticleMomentumPair2, ct2, weight);
