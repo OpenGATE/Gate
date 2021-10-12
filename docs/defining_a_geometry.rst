@@ -340,13 +340,13 @@ These commands can be found in the directory::
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
    | setXLength: Set the half axis length in the X direction                     | **WEDGE**                                                                                       |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setYLength: Set the half axis length in the Y direction                     | setNarrowerXLength: Set the length of the shorter side of the wedge in the X direction             |
+   | setYLength: Set the half axis length in the Y direction                     | setNarrowerXLength: Set the length of the shorter side of the wedge in the X direction          |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZLength: Set the half axis length in the Z direction                     | setXLength: Set the length of the wedge in the X direction                                         |
+   | setZLength: Set the half axis length in the Z direction                     | setXLength: Set the length of the wedge in the X direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZBottomCut: To cut the ellipsoide along the Z axis                       | setYLength: Set the length of the wedge in the Y direction                                         |
+   | setZBottomCut: To cut the ellipsoide along the Z axis                       | setYLength: Set the length of the wedge in the Y direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZTopCut: To cut the ellipsoide along the Z axis                          | setZLength: Set the length of the wedge in the Z direction                                         |
+   | setZTopCut: To cut the ellipsoide along the Z axis                          | setZLength: Set the length of the wedge in the Z direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
    | **ELLIPTICAL TUBE**                                                         | **TET-MESH BOX**                                                                                |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
