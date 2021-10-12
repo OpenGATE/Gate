@@ -12,7 +12,7 @@ Creating a source
 
 Different type of sources can be defined in the same GATE simulation. Each source is independent. The command to create a source is given below::
 
-   /gate/source/NAME 
+   /gate/source/NAME
 
 where "NAME" defines the name of the source.
 
@@ -20,7 +20,7 @@ Adding a source
 ~~~~~~~~~~~~~~~
 
 The next step is to add the source. For this, user has to type the following GATE command::
- 
+
    /gate/source/addSource NAME
 
 or::
@@ -37,30 +37,30 @@ Defining the type of source
 The ion source type can simulate any ion by defining its atomic number (Z), atomic weight (A), ionic charge in units of energy (Q), and its excitation energy in keV (E). It incorporates both the radioactive decay and the atomic de-excitation. This is the most "realistic" way of simulating a radionuclide; however, it is also the slowest.
 
 To use the ion source::
-  
+
    /gate/source/NAME/gps/particle ion
-   /gate/source/NAME/gps/ion 8 15 0 0 
+   /gate/source/NAME/gps/ion 8 15 0 0
    /gate/source/NAME/setForcedUnstableFlag true
    /gate/source/NAME/useDefaultHalfLife
- 
+
 In the above example, an ion source of oxygen-15 has been defined with Z=8, A=15, Q=0, E=0 . If it is too slow, other options are available, as described below.
 
 **Simple particles**
 
 You can choose from a long list of simple particles :math:`( e^{-} , e^{+}` , gamma, etc) to use in your simulations (use the help command to obtain the full list). For example::
- 
-   /gate/source/NAME/gps/particle gamma 
+
+   /gate/source/NAME/gps/particle gamma
 
 defines a photon source and::
- 
-   /gate/source/NAME/gps/particle e+ 
+
+   /gate/source/NAME/gps/particle e+
 
 defines a positron source. If you choose to use a particle, you will have to define more properties. As an example, the correct use of a positron source simulating fluorine-18 is::
- 
+
    /gate/source/NAME/gps/particle e+
    /gate/source/NAME/gps/energytype Fluor18
    /gate/source/NAME/setForcedUnstableFlag true
-   /gate/source/NAME/setForcedHalfLife 6586 s 
+   /gate/source/NAME/setForcedHalfLife 6586 s
 
 In the above example, more properties of fluorine-18 have been added by using the helper keyword Fluor18 (see below): half-life and energy distribution. Note that the branching ratios are not respected with this kind of simulation because no decay is simulated, i.e. emission is 100% positron. You may want to lower the activity by an appropriate factor to take this better point into account.
 
@@ -72,28 +72,28 @@ For instance, **Fluor18** defines the positron energy spectrum of fluorine-18. N
 
 **Back-to-back**
 This keyword is implemented for PET simulations where two annihilation photons are generated at 180 degrees. This type of source is faster to simulate than the ion source or the positron source and allows for selecting emission angle. To use the back-to-back source type::
- 
-   /gate/source/NAME/setType backtoback 
+
+   /gate/source/NAME/setType backtoback
 
 Note that there are no radioactive decays simulated when using the back-to-back type and that you still have to define the particle (gamma), energy type (Mono) and energy-value (0.511 MeV).
 
-Note: the 'Accolinearity' flag that once exist in Gate is no more valid. See https://github.com/OpenGATE/Gate/issues/381 for details. 
+Note: the 'Accolinearity' flag that once exist in Gate is no more valid. See https://github.com/OpenGATE/Gate/issues/381 for details.
 
 **FastI124**
 
 FastI124 is a special source implementing a simplified decay scheme of the non-pure beta emitter iodine-124 in which positrons are emitted but not neutrinos, there is no nuclear recoil, gammas are emitted if their emission probability is > 1%; and no atomic de-excitation occurs (no x-rays, Auger electrons). These simplifications allow for an increase in speed with respect to the ion source while retaining important features of iodine-124, i.e. gammas may be emitted concurrently with positrons to possibly create "dirty" coincidences. Since decay is simulated, branching ratios are respected hence no activity compensation is necessary.
 
 To use the fastI124 source::
- 
-   /gate/source/NAME/setType fastI124 
+
+   /gate/source/NAME/setType fastI124
 
 The source takes care of particle definitions (gamma, positron) and energy distribution so that there is no need to specify a particle or mention its energy.
 
 **Defining the activity**
 
 To define the activity of the given source, the user defines the amount of activity and its unit using the following command::
- 
-   /gate/source/NAME/setActivity 5. becquerel 
+
+   /gate/source/NAME/setActivity 5. becquerel
 
 In this example, the total activity of the source referred to as "NAME" is set to 5 Bq. The activity can be defined in Curie (Ci) as well as in Becquerel (Bq).
 
@@ -102,57 +102,57 @@ Defining the energy
 
 **Energy distribution**
 
-If the source does not take care of the type of energy distribution (e.g. fastI124), then it has to be explicitly defined. This can be achieved either by using a pre-defined spectrum (see helper keywords above) or by using built-in distributions. 
+If the source does not take care of the type of energy distribution (e.g. fastI124), then it has to be explicitly defined. This can be achieved either by using a pre-defined spectrum (see helper keywords above) or by using built-in distributions.
 
 Candidates for built-in energy distributions are: mono-energetic "Mono", linear "Lin", powerlaw "Pow", exponential "Exp", Gaussian "Gauss", bremstrahlung "Brem", black-body "Bbody", cosmic diffuse gamma ray "Cdg", user-defined histogram "UserSpectrum", arbitrary point-wise spectrum "Arb", and user-defined energy per nucleon histogram "Epn". Capitalization is important: only strings given exactly as above will be recognized.
 
 In the following example, all particles have the same energy::
- 
-   /gate/source/NAME/gps/energytype Mono 
- 
+
+   /gate/source/NAME/gps/energytype Mono
+
 
 **Energy value**
 
 You may have to specify the energy value (or bounds) depending on the type of energy distribution you have selected. For example, for monoenergetic distributions (like back-to-back sources), you specify the energy value with::
- 
-   /gate/source/NAME/gps/monoenergy 511. keV 
- 
+
+   /gate/source/NAME/gps/monoenergy 511. keV
+
 In the case of ions, the kinetic energy must be 0 since the ions are at rest::
- 
-   /gate/source/NAME/gps/monoenergy 0. ev 
- 
+
+   /gate/source/NAME/gps/monoenergy 0. ev
+
 Any type of energy unit within the International System of Units (SI) can be used: eV, GeV, MeV, keV...
 
 **Examples**
 
 1) ion source for fluorine-18::
 
-   /gate/source/NAME/gps/particle ion 
-   /gate/source/NAME/gps/ion 9 18 0 0 
-   /gate/source/NAME/gps/monoenergy 0. keV 
+   /gate/source/NAME/gps/particle ion
+   /gate/source/NAME/gps/ion 9 18 0 0
+   /gate/source/NAME/gps/monoenergy 0. keV
    /gate/source/NAME/setForcedUnstableFlag true # WARNING - DEBUG - New command line to debug the use of ion particle type
-   /gate/source/F18/useDefaultHalfLife  
+   /gate/source/F18/useDefaultHalfLife
 
 2) positron source for flourine-18::
 
-   /gate/source/NAME/gps/particle e+ 
-   /gate/source/NAME/gps/energytype Fluor18 
-   /gate/source/NAME/setForcedUnstableFlag true 
+   /gate/source/NAME/gps/particle e+
+   /gate/source/NAME/gps/energytype Fluor18
+   /gate/source/NAME/setForcedUnstableFlag true
    /gate/source/NAME/setForcedHalfLife 6586 s
 
 3) backtoback for fluorine-18::
 
-   /gate/source/NAME/setType backtoback 
-   /gate/source/NAME/gps/particle gamma 
-   /gate/source/NAME/gps/monoenergy 511. keV 
-   /gate/source/NAME/setForcedUnstableFlag true 
+   /gate/source/NAME/setType backtoback
+   /gate/source/NAME/gps/particle gamma
+   /gate/source/NAME/gps/monoenergy 511. keV
+   /gate/source/NAME/setForcedUnstableFlag true
    /gate/source/NAME/setForcedHalfLife 6586 s
 
 4) fast iodine-124 source::
 
-   /gate/source/NAME/setType fastI124 
-   /gate/source/NAME/setForcedUnstableFlag true 
-   /gate/source/NAME/setForcedHalfLife 360806 s 
+   /gate/source/NAME/setType fastI124
+   /gate/source/NAME/setForcedUnstableFlag true
+   /gate/source/NAME/setForcedHalfLife 360806 s
 
 .. figure:: Table_rad_source_properties.jpg
    :alt: Figure 1: Properties of radioactive source
@@ -171,8 +171,8 @@ Another way to define the energy of a radioactive source is to use the energytyp
    /gate/source/spectrumLine/gps/setSpectrumFile ../data/DiscreteSpectrum.txt
    /gate/source/spectrumLine/setIntensity 1
     #################### Mode 1: Discrete Spectrum ####################
-    
-     
+
+
     #################### Mode 2: Histogram ####################
    /gate/source/addSource histogram gps
    /gate/source/histogram/gps/particle e-
@@ -180,13 +180,13 @@ Another way to define the energy of a radioactive source is to use the energytyp
    /gate/source/histogram/gps/setSpectrumFile ../data/Histogram.txt
    /gate/source/histogram/setIntensity 10
    #################### Mode 2: Histogram ####################
-   
-    
+
+
    #################### Mode 3: Linear interpolation spectrum ####################
    /gate/source/addSource interpolationSpectrum gps
    /gate/source/interpolationSpectrum/gps/particle e-
    /gate/source/interpolationSpectrum/gps/energytype UserSpectrum
-   /gate/source/interpolationSpectrum/gps/setSpectrumFile ../data/InterpolationSpectrum.txt                                                                                                                          
+   /gate/source/interpolationSpectrum/gps/setSpectrumFile ../data/InterpolationSpectrum.txt
    /gate/source/interpolationSpectrum/setIntensity 10
    #################### Mode 3: Linear interpolation spectrum ####################
 
@@ -208,7 +208,7 @@ The discrete spectrum generates particles with one of the listed energies::
    ###################################################
 
 In histogram mode, the energy specified on each line corresponds to the upper edge of the respective bin. The energies of the generated particles will be between the minimum energy, specified on the first line of the file, and the upper edge of the last bin. Within each bin, the energies are distributed uniformly::
- 
+
    ################## Histogram.txt #####################
    2   2
    2.2   0.2
@@ -250,12 +250,12 @@ Defining the angular distribution of the emission
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An emission angle distribution can be defined with the angular span using::
- 
-   /gate/source/NAME/gps/angtype iso 
-   /gate/source/NAME/gps/mintheta 90. deg 
-   /gate/source/NAME/gps/maxtheta 90. deg 
-   /gate/source/NAME/gps/minphi 0. deg 
-   /gate/source/NAME/gps/maxphi 360. deg 
+
+   /gate/source/NAME/gps/angtype iso
+   /gate/source/NAME/gps/mintheta 90. deg
+   /gate/source/NAME/gps/maxtheta 90. deg
+   /gate/source/NAME/gps/minphi 0. deg
+   /gate/source/NAME/gps/maxphi 360. deg
 
 In this case, all particles have the same polar angle (theta) of 90 degrees. They are all emitted along directions orthogonal to the z-axis. The particles are emitted with an azimuthal angle (phi) between 0 and 360 degrees, along all possible directions.
 
@@ -266,15 +266,15 @@ Defining the shape of the source
 
 The last step is to define its geometry. The following command defines the type of source distribution::
 
-   /gate/source/NAME/gps/type Volume 
+   /gate/source/NAME/gps/type Volume
 
 In the above description, a volumic source distribution has been chosen. Other types of source distribution can be used: *Point*, *Beam*, *Plane*, or *Surface*. The default value is *Point*.
 
 For a *Plane* source, the source shape type can be *Circle*, *Annulus*, *Ellipsoid*, *Square*, or *Rectangle*. For both *Surface* and *Volume* sources, this can be *Sphere*, *Ellipsoid*, *Cylinder*, or *Para*. The default source is a *Point* source and so *Shape* is not set to any of the above types. Each shape has its own parameters::
 
-   /gate/source/NAME/gps/shape Cylinder 
-   /gate/source/NAME/gps/radius 1. cm 
-   /gate/source/NAME/gps/halfz 1. mm 
+   /gate/source/NAME/gps/shape Cylinder
+   /gate/source/NAME/gps/radius 1. cm
+   /gate/source/NAME/gps/halfz 1. mm
 
 In the previous commands, the source is a cylinder with a radius of 1 cm and a length of 2 mm. Very often, the half-length is given rather than the full length.
 
@@ -291,7 +291,7 @@ Define the placement of the source
 
 The position of the source distribution can be defined using::
 
-   /gate/source/NAME/gps/centre 1. 0. 0. cm 
+   /gate/source/NAME/gps/centre 1. 0. 0. cm
 
 In that example, the centre of the source distribution is 1 cm off-centered along the x-axis.
 
@@ -316,7 +316,7 @@ To define sources in movement, the source distribution have to be confined in a 
 
 The command::
 
-    /gate/source/NAME/gps/confine NAME_phys 
+    /gate/source/NAME/gps/confine NAME_phys
 
 specifies that the emission must be confined to a volume of the Geant4 geometry. In this case, the emission distribution is the intersection of the General Particle Source (GPS) and the Geant4 volume. The Geant4 volume must be specified by its physical volume name: GATEname + '_phys'.
 
@@ -324,31 +324,31 @@ One should note that the confinment slows down the simulation, the confinement v
 
 A complete example of a moving source can be found in the SPECT benchmark or in the macro hereafter::
 
-   # Define the shape/dimensions of the moving source 
-   /gate/MovingSource/geometry/setRmax 5. cm 
-   /gate/MovingSource/geometry/setRmin 0. cm 
-   /gate/MovingSource/geometry/setHeight 20. cm 
-   /gate/MovingSource/moves/insert translation 
-   /gate/MovingSource/translation/setSpeed 0 0 0.04 cm/s 
+   # Define the shape/dimensions of the moving source
+   /gate/MovingSource/geometry/setRmax 5. cm
+   /gate/MovingSource/geometry/setRmin 0. cm
+   /gate/MovingSource/geometry/setHeight 20. cm
+   /gate/MovingSource/moves/insert translation
+   /gate/MovingSource/translation/setSpeed 0 0 0.04 cm/s
 
 
-   # Define the shape/dimensions of the large sourcecontainer 
-   # that should contain the full trajectory of the moving source 
-   /gate/source/SourceContainer/gps/type Volume 
-   /gate/source/SourceContainer/gps/shape Cylinder 
-   /gate/source/SourceContainer/gps/radius 4. cm 
-   /gate/source/SourceContainer/gps/halfz 30. cm 
-   # Define the placement of the SourceContainer 
-   /gate/source/SourceContainer/gps/centre 0. 0. 0. cm 
-   # Define the source as a gamma source 
-   /gate/source/SourceContainer/gps/particle gamma 
-   # Define the gamma energy 
-   /gate/source/SourceContainer/gps/energy 140. keV 
-   # Set the activity of the source 
-   /gate/source/SourceContainer/setActivity 5000. Bq 
+   # Define the shape/dimensions of the large sourcecontainer
+   # that should contain the full trajectory of the moving source
+   /gate/source/SourceContainer/gps/type Volume
+   /gate/source/SourceContainer/gps/shape Cylinder
+   /gate/source/SourceContainer/gps/radius 4. cm
+   /gate/source/SourceContainer/gps/halfz 30. cm
+   # Define the placement of the SourceContainer
+   /gate/source/SourceContainer/gps/centre 0. 0. 0. cm
+   # Define the source as a gamma source
+   /gate/source/SourceContainer/gps/particle gamma
+   # Define the gamma energy
+   /gate/source/SourceContainer/gps/energy 140. keV
+   # Set the activity of the source
+   /gate/source/SourceContainer/setActivity 5000. Bq
    # Define a confinement and confine the large container to
-   # the MovingSource at a position defined by the time and 
-   # the translation speed 
+   # the MovingSource at a position defined by the time and
+   # the translation speed
    /gate/source/SourceContainer/gps/confine MovingSource_phys
 
 Example: two gammas
@@ -356,36 +356,36 @@ Example: two gammas
 
 The following example gives a script to insert a point source of back-to-back type::
 
-   # A new source with an arbitrary name #(``twogamma'') is created 
-   /gate/source/addSource twogamma 
-   # The total activity of the source is set 
-   /gate/source/twogamma/setActivity 0.0000001 Ci 
-   # The source emits pairs of particles back-to-back 
-   /gate/source/twogamma/setType backtoback 
-   # The particles emitted by the source are gammas 
-   /gate/source/twogamma/gps/particle gamma 
-   # The gammas have an energy of 511 keV 
-   /gate/source/twogamma/gps/energytype Mono 
-   /gate/source/twogamma/gps/monoenergy 0.511 MeV 
-   # The source is a full sphere with radius 0.1 mm, 
-   # located at the centre of the FOV 
-   /gate/source/twogamma/gps/type Volume 
-   /gate/source/twogamma/gps/shape Sphere 
-   /gate/source/twogamma/gps/radius 0.1 mm 
-   /gate/source/twogamma/gps/centre 0. 0. 0. cm 
-   # The angular distribution of emission angles is isotropic 
-   /gate/source/twogamma/gps/angtype iso 
-   # The parameters below mean that the source emits 
-   # at all angles along the z axis 
-   /gate/source/twogamma/gps/mintheta 0. deg 
-   /gate/source/twogamma/gps/maxtheta 180. deg 
-   # Uncomment the parameters below if you want the source 
-   # to emit in an XY (transverse) plane 
-   /gate/source/twogamma/gps/mintheta 90. deg 
-   /gate/source/twogamma/gps/maxtheta 90. deg 
-   # The parameters below mean that the source emits 
-   # at all angles in the transverse (XY) directions 
-   /gate/source/twogamma/gps/minphi 0. deg 
+   # A new source with an arbitrary name #(``twogamma'') is created
+   /gate/source/addSource twogamma
+   # The total activity of the source is set
+   /gate/source/twogamma/setActivity 0.0000001 Ci
+   # The source emits pairs of particles back-to-back
+   /gate/source/twogamma/setType backtoback
+   # The particles emitted by the source are gammas
+   /gate/source/twogamma/gps/particle gamma
+   # The gammas have an energy of 511 keV
+   /gate/source/twogamma/gps/energytype Mono
+   /gate/source/twogamma/gps/monoenergy 0.511 MeV
+   # The source is a full sphere with radius 0.1 mm,
+   # located at the centre of the FOV
+   /gate/source/twogamma/gps/type Volume
+   /gate/source/twogamma/gps/shape Sphere
+   /gate/source/twogamma/gps/radius 0.1 mm
+   /gate/source/twogamma/gps/centre 0. 0. 0. cm
+   # The angular distribution of emission angles is isotropic
+   /gate/source/twogamma/gps/angtype iso
+   # The parameters below mean that the source emits
+   # at all angles along the z axis
+   /gate/source/twogamma/gps/mintheta 0. deg
+   /gate/source/twogamma/gps/maxtheta 180. deg
+   # Uncomment the parameters below if you want the source
+   # to emit in an XY (transverse) plane
+   /gate/source/twogamma/gps/mintheta 90. deg
+   /gate/source/twogamma/gps/maxtheta 90. deg
+   # The parameters below mean that the source emits
+   # at all angles in the transverse (XY) directions
+   /gate/source/twogamma/gps/minphi 0. deg
    /gate/source/twogamma/gps/maxphi 360. deg
 
 Defining a cold source
@@ -394,34 +394,34 @@ Defining a cold source
 To define a cold (i.e. with no activity) volume in a phantom, a dedicated command is available.
 
 The command::
- 
-   /gate/source/NAME/gps/Forbid Volume_Name 
+
+   /gate/source/NAME/gps/Forbid Volume_Name
 
 The following example explains how to use this option. First you must define a volume that defines the cold region::
- 
-   /gate/world/daughters/name cold_area 
-   /gate/world/daughters/insert cylinder 
-   /gate/cold_area/vis/forceWireframe 
-   /gate/cold_area/vis/setColor green 
-   /gate/cold_area/geometry/setRmax 3.0 cm 
-   /gate/cold_area/geometry/setHeight 1. cm 
+
+   /gate/world/daughters/name cold_area
+   /gate/world/daughters/insert cylinder
+   /gate/cold_area/vis/forceWireframe
+   /gate/cold_area/vis/setColor green
+   /gate/cold_area/geometry/setRmax 3.0 cm
+   /gate/cold_area/geometry/setHeight 1. cm
 
 
 Then you describe your source with the Forbid command::
- 
-   /gate/source/addSource number1 
-   /gate/source/number1/setActivity 100000. becquerel 
-   /gate/source/number1/gps/particle gamma 
-   /gate/source/number1/setType backtoback 
-   /gate/source/number1/gps/type Volume 
-   /gate/source/number1/gps/shape Cylinder 
-   /gate/source/number1/gps/radius 5. cm 
-   /gate/source/number1/gps/halfz 0.5 cm 
-   /gate/source/number1/gps/centre 0. 0. 0. cm 
-   /gate/source/number1/gps/monoenergy 511. keV 
-   /gate/source/number1/gps/angtype iso 
-   /gate/source/number1/gps/Forbid cold_area_phys 
-   /gate/source/number1/dump 1 
+
+   /gate/source/addSource number1
+   /gate/source/number1/setActivity 100000. becquerel
+   /gate/source/number1/gps/particle gamma
+   /gate/source/number1/setType backtoback
+   /gate/source/number1/gps/type Volume
+   /gate/source/number1/gps/shape Cylinder
+   /gate/source/number1/gps/radius 5. cm
+   /gate/source/number1/gps/halfz 0.5 cm
+   /gate/source/number1/gps/centre 0. 0. 0. cm
+   /gate/source/number1/gps/monoenergy 511. keV
+   /gate/source/number1/gps/angtype iso
+   /gate/source/number1/gps/Forbid cold_area_phys
+   /gate/source/number1/dump 1
    /gate/source/list
 
 It is important to remember that the /gate/run/initialize command must have been executed prior to using the Forbid command because phantom geometries are not available until after they are initialized.
@@ -431,11 +431,11 @@ Visualizing a source
 
 To check that sources are at the right location in the geometry, you can use the following command::
 
-   /gate/source/[Source name]/visualize 
- 
+   /gate/source/[Source name]/visualize
+
 along with a real time viewer (e.g. OpenGL). To visualize a source, Gate will randomly pick a certain number of points within the source and display them on the screen, along with the geometry. The full syntax is::
- 
-   /gate/source/[Source name]/visualize count color size 
+
+   /gate/source/[Source name]/visualize count color size
 
 where name is the name of the source, count is the number of random points to pick up (must be > 0 and <= 10000), color is the color to assign to those points (valid colors are: white, gray, grey, black, red, green, blue, cyan, magenta, yellow), and size is the screen size (in pixels) of each point (must be > 0 and <= 20 ).
 
@@ -443,7 +443,7 @@ Depending on the size and shape of the source, more or fewer points may be neces
 
 * Example::
 
-   /gate/source/backgroundSource/visualize 2000 yellow 3 
+   /gate/source/backgroundSource/visualize 2000 yellow 3
    /gate/source/hotRegion/visualize 5000 red 2
 
 Intensity
@@ -555,7 +555,7 @@ This source has been designed in order to allow the simulation of real treatment
 For a more practical understanding of the source, the user is invited to execute the TPS source validation procedure available in the GitHub `GateContrib <https://github.com/OpenGATE/GateContrib>`_ of Gate, in the GATE-RTion branch.
 
 Create the source::
-  
+
    /gate/source/addSource [Source name]  TPSPencilBeam
 
 One can select the type of particle used for the pencil beam (proton, e-, etc.)::
@@ -723,7 +723,7 @@ The fastY90 source
 ------------------
 
 *The fastY90 source will be part of GATE release 8.0, but it is also available in the development versions of GATE 7.2 availiable on GitHub as of June 2016*
- 
+
 The *fastY90* source can be used to simulate PET or SPECT imaging of Y90 sources. Rather than simulating the full electron transport of the emitted beta particle, the *fastY90* source uses a pre-calculated bremsstrahlung kernel to generate the photons directly to speed up the simulation. Note that since the kernel has been calculated using a point source in water, simulations that use this source are only valid for modelling sources inside water or materials of similar density and Zeff. For accurate simulation, the attenuating media must also extend somewhat beyond the range of the source by several mm. Although the size of the pre-calculated kernel has a radius of 12 mm,  more than 95% of all bremsstrahlung is generated within 6 mm of the source, a higher fraction if only the higher energy bremsstrahlung is considered.
 
 The *fastY90* model includes the positron arising from internal pair production (0+/0+ transition), though not the 2.186 MeV gamma (2+/0+ transition).
@@ -758,3 +758,130 @@ The *fastY90* source can be used with a voxelized distribution. The voxelized di
 The data file must be a raw binary containing data in IEEE 32-bit floating point format. The voxelized distribution will be scaled internally to create a 3D probability map of the geometry of the source, but the total activity is set by the setActivity command as for any other source. By default, the location of the voxelized source will be centred at the origin. The position of the voxelized distribution can also be changed using the setVoxelizedPhantomPosition command to specify the position of the first pixel in the data file::
 
    gate/source/mySource/setVoxelizedPhantomPosition -3.5 6.0 -10.0 cm
+
+ExtendedVSource
+---------------
+
+The *ExtendedVSource* is an extension of the basic GATE's VSource class, which provides the model for the positronium decay.
+
+All properties of VSource source are inherited by ExtendedVSource.
+
+Two positronium decays channels are provided: two-photon decay (parapositronium (pPs) decay) and three-photon decay (orthopositronium (oPs) decay). Additionally, it is possible to add de-excitation (prompt) gamma to the decay model.
+
+Creating a source
+~~~~~~~~~~~~~~~~~
+
+To create a source use command::
+
+  /gate/source/addSource NAME Extended
+
+and choose the model::
+
+  /gate/source/NAME/setType MODEL
+
+There are 4 possible models:
+
+* **sg** - single photon emission
+* **pPs** - two-photon emission from pPs decay
+* **oPs** - three-photon emission from oPs decay
+* **Ps** - mixed emission ( mixed photon emission from oPs and pPs decays )
+
+Additionally one can add a prompt gamma emission (gamma emitted during the de-excitation).
+
+To do that use a command::
+
+  /gate/source/NAME/setEnableDeexcitation true
+  /gate/source/NAME/setPromptGammaEnergy ENERGY UNIT
+
+*ENERGY* is a float number, *UNIT* is energy unit (eV, keV, MeV, ...)
+
+Other commands
+~~~~~~~~~~~~~~
+
+For all models following commands are available:
+
+* **setFixedEmissionDirection** - set fixed emission direction of single gamma or prompt gamma::
+
+  /gate/source/NAME/setFixedEmissionDirection X Y Z
+
+* **setEnableFixedEmissionDirection** - set enable/disable fixed emission direction of single gamma or prompt gamma::
+
+  /gate/source/NAME/setEnableFixedEmissionDirection true
+
+For **sg** model there is a dedicated command to set emitted photon energy **setEmissionEnergy**::
+
+  /gate/source/NAME/setEmissionEnergy ENERGY UNIT
+
+The positronium mean lifetime can be set for the following models: **pPs**, **oPs** and **Ps** . The mean lifetime values in the vacuum are used as defaults. The lifetime per event is randomly chosen from the exponential distribution. Each annihilation gamma has time increased by this value.
+To set the mean positronium lifetime use a command **setPostroniumLifetime**::
+
+  /gate/source/NAME/setPostroniumLifetime POSITRONIUM TIMEVALUE TIMEUNIT
+
+where *POSITRONIUM* is a name of positronium type (pPs or oPs), *TIMEVALUE* is  float number, *TIMEUNIT* is time unit (ns, ps, ...).
+
+For the **Ps**  model it is required to define a fraction (normalized to 1) of emitting photons from pPs and oPs decay. User must define a fraction for one type of positronium - the second one  will be calculated automatically.
+To do that use a command **setPositroniumFraction**::
+
+  /gate/source/NAME/setPositroniumFraction POSITRONIUM PROBABILITY
+
+where *POSITRONIUM* is a name of positronium type (pPs or oPs), *PROBABILITY* is a float number in range from 0 to 1.
+
+
+Dedicated branches
+~~~~~~~~~~~~~~~~~~
+
+For this source 3 additional branches in **Hits** tree  are provided :
+
+* **gammaType** - describes the type of the gamma
+
+* **sourceType** - describes the source type
+
+* **decayType** - describes from which decay channel of positronium is emitted gamma
+
+Int is a type of value stored in all three branches . Meaning of values in each branch is described in the tables below
+
+.. table:: Description of values in gammaType branch
+   :widths: auto
+   :name: gammaType_branch_values
+
+   +-------+---------------------------------------------------+
+   | Value | Description                                       |
+   +=======+===================================================+
+   | 0     | photon/particle not emitted by ExtendedVSource    |
+   +-------+---------------------------------------------------+
+   | 1     | single photon (emitted by sg model)               |
+   +-------+---------------------------------------------------+
+   | 2     | annhilation gamma                                 |
+   +-------+---------------------------------------------------+
+   | 3     | prompt gamma                                      |
+   +-------+---------------------------------------------------+
+
+.. table:: Description of values in sourceType branch
+  :widths: auto
+  :name: sourceType_branch_values
+
+  +-------+---------------------------------+
+  | Value | Description                     |
+  +=======+=================================+
+  | 0     | not ExtendedVSource's source    |
+  +-------+---------------------------------+
+  | 1     | single gamma emitter (sg model) |
+  +-------+---------------------------------+
+  | 2     | parapositronium (pPs)           |
+  +-------+---------------------------------+
+  | 3     | orthopositronium (oPs)          |
+  +-------+---------------------------------+
+
+.. table:: Description of values in decayType branch
+  :widths: auto
+  :name: decayType_branch_values
+
+  +-------+---------------------------------------------------------------------------------+
+  | Value | Description                                                                     |
+  +=======+=================================================================================+
+  | 0     | unknown decay                                                                   |
+  +-------+---------------------------------------------------------------------------------+
+  | 1     | standard decay channel (pPs-->2 gamma, oPs-->3 gamma)                           |
+  +-------+---------------------------------------------------------------------------------+
+  | 2     | de-excitation and decay channel (pPs-->2 gamma + prompt, oPs-->3 gamma + prompt)|
+  +-------+---------------------------------------------------------------------------------+
