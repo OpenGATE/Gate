@@ -54,12 +54,17 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       G4ThreeVector DirectionPhoton( sin( dev ) * cos( Phi1 ),
                                      sin( dev ) * sin( Phi1 ), cos( dev ) );
       
+      // Scale vector to unit length before rotation, re-scale to original length after rotation:
+      G4double gammaMom_mag = gammaMom.mag();
+      gammaMom = gammaMom.unit();
       DirectionPhoton.rotateUz(gammaMom);
       
-      particle1->SetMomentum( DirectionPhoton.x(),
-                              DirectionPhoton.y(), DirectionPhoton.z() );
-      particle->SetMomentum( -gammaMom.x(),
-                             -gammaMom.y(), -gammaMom.z() );
+      particle1->SetMomentum( gammaMom_mag*DirectionPhoton.x(),
+                              gammaMom_mag*DirectionPhoton.y(),
+                              gammaMom_mag*DirectionPhoton.z() );
+      particle->SetMomentum( -gammaMom_mag*gammaMom.x(),
+                             -gammaMom_mag*gammaMom.y(),
+                             -gammaMom_mag*gammaMom.z() );
       
       /*G4cout<<"gammaMom.x() = "<<gammaMom.x() << Gateendl;
       G4cout<<"gammaMom.y() = "<<gammaMom.y() << Gateendl;
