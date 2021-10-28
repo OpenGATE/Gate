@@ -44,6 +44,7 @@ See LICENSE.md for further details
 #include "GateCalibration.hh"
 #include "GateSpblurring.hh"
 #include "GatePulseAdder.hh"
+#include "GatePulseAdderLocal.hh"
 #include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
@@ -101,7 +102,7 @@ void GatePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String
 
 const G4String& GatePulseProcessorChainMessenger::DumpMap()
 {
-   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter gridDiscretization  localMultipleRejection";
+   static G4String theList = "readout pileup thresholder energyThresholder localEnergyThresholder DoImodel upholder blurring localBlurring localTimeDelay localEfficiency energyEfficiency noise discretizer buffer transferEfficiency crosstalk lightYield quantumEfficiency intrinsicResolutionBlurring sigmoidalThresholder calibration spblurring sp3Dlocalblurring adder adderLocal adderCompton adderComptPhotIdeal adderComptPhotIdealLocal localClustering  clustering deadtime crystalblurring timeResolution localTimeResolution opticaladder systemFilter gridDiscretization  localMultipleRejection";
   return theList;
 }
 
@@ -164,6 +165,8 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
     newProcessor = new GateCC3DlocalSpblurring(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adder")
     newProcessor = new GatePulseAdder(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="adderLocal")
+    newProcessor = new GatePulseAdderLocal(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderCompton")
     newProcessor = new GatePulseAdderCompton(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="adderComptPhotIdeal")
