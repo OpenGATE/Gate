@@ -399,31 +399,16 @@ If you plan to collect only dose in the phantom, it is suggested that you disabl
    
    A simple voxellized phantom with transparency
 
-**Dose calculations**
+**Dose uncertainty calculations**
 
-The relative uncertainty on dose is calculated on a per voxel basis.  Let :math:`\{d_{i}\} i = 1,...,N` be the sequence of energy deposits in a given voxel, we can calculate the following quantities:
+The relative uncertainty on dose is calculated on a per voxel basis.  Let :math:`\{d_{i}\} i = 1,...,N` be the sequence of energy deposits in voxels :math:`i` , the relative statistical uncertainty in dose is defined as follow according to Chetty IJ et al. Int J Radiat Oncol Biol Phys. 2006 Jul 15;65(4):1249-59. `doi: 10.1016/j.ijrobp.2006.03.039 <https://doi.org/10.1016/j.ijrobp.2006.03.039>`_ . PMID: 16798417.
+ :
 
-Mean energy deposit:
+:math:`s=\frac{\sqrt{\frac{1}{N - 1} \lbrack \frac{\sum d_{i}^{2}}{N}-(\frac{\sum d_{i}}{N})^{2}\rbrack}}{\frac{\sum d_{i}}{N}} `
 
-:math:`\overline{d}=E(d)=\frac{1}{N}\sum_{i=1}^{N} d_{i}`
+or simplified:
 
-Sample variance:
-
-:math:`s^{2}=E(d^{2})-E(d)^{2}`
-
-:math:`s^{2}=\frac{1}{N^{2}}\lbrack N\sum d_{i}^{2}-(\sum d_{i})^{2}\rbrack`
-
-Population variance estimator:
-
-:math:`s^{2}=\frac{N}{N-1}s^{2}`
-
-Standard deviation:
-
-:math:`s=s\sqrt{\frac{N}{N-1}}`
-
-Standard error of the mean:
-
-:math:`\hat{d}=\frac{s}{N}=\frac{s}{\sqrt{N-1}}`
+:math:`s=\frac{1}{\sum d_{i}}\sqrt{\frac{N\sum d_{i}^{2} - (\sum d_{i})^{2}}{N-1}} `
 
 
 
