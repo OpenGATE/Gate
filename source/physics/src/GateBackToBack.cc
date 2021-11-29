@@ -47,8 +47,12 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
     {
         
       G4ThreeVector gammaMom = particle->GetMomentum();
-      
-      G4double dev = CLHEP::RandGauss::shoot( 0.,m_source->GetAccoValue() / GateConstants::fwhm_to_sigma );
+      G4double accoValue = m_source->GetAccoValue();
+      if (accoValue == 0.0){
+        accoValue = 0.5*pi / 180;
+      }
+    
+      G4double dev = CLHEP::RandGauss::shoot( 0.,accoValue / GateConstants::fwhm_to_sigma );
       G4double Phi1 = ( twopi * G4UniformRand() )/2. ;
       
       G4ThreeVector DirectionPhoton( sin( dev ) * cos( Phi1 ),
