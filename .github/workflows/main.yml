@@ -244,7 +244,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        strategy_name: [t1_edep_profiles, t2_edep_vox, t3_range_e+, t4_necr, t5_pet, t6_dpk, t7_garf, t8_LETActor, t9_gaga_phsp, t10_SpectroGamma, t11_EMField, t12_tessellated_volume, t13_phsp]
+        strategy_name: [t1_edep_profiles,
+                        t2_edep_vox,
+                        t3_range_e+,
+                        t4_necr,
+                        t5_pet,
+                        t6_dpk,
+                        t7_garf,
+                        t8_LETActor,
+                        t9_gaga_phsp,
+                        t10_SpectroGamma,
+                        t11_EMField,
+                        t12_tessellated_volume,
+                        t13_phsp,
+                        t14_phsp_pairs,
+                        t15_optical,
+                        t16_decay,
+                        t17_extended_source,
+                        t18_movement_benchmark]
 
     steps:
     - name: Checkout github repo
