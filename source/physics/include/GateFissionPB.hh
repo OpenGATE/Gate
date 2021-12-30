@@ -13,7 +13,7 @@ See LICENSE.md for further details
 
 #include "GateVProcess.hh"
 
-#include "G4HadronFissionProcess.hh"
+#include "G4NeutronFissionProcess.hh"
 
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateFissionPB)
 

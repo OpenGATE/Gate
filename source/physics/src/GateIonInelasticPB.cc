@@ -46,9 +46,9 @@ GateIonInelasticPB::GateIonInelasticPB():GateVProcess("IonInelastic")
 G4VProcess* GateIonInelasticPB::CreateProcess(G4ParticleDefinition * par)
 {
   if(par==G4GenericIon::GenericIon() ) return new G4HadronInelasticProcess(GetG4ProcessName(),par);
-  if(par==G4Triton::Triton() ) return new G4TritonInelasticProcess(GetG4ProcessName());
-  if(par==G4Alpha::Alpha() ) return new G4AlphaInelasticProcess(GetG4ProcessName());
-  if(par==G4Deuteron::Deuteron() ) return new G4DeuteronInelasticProcess(GetG4ProcessName());
+  //if(par==G4Triton::Triton() ) return new G4TritonInelasticProcess(GetG4ProcessName());
+  //if(par==G4Alpha::Alpha() ) return new G4AlphaInelasticProcess(GetG4ProcessName());
+  //if(par==G4Deuteron::Deuteron() ) return new G4DeuteronInelasticProcess(GetG4ProcessName());
   else {
     GateError("Error in GateIonInelasticPB::CreateProcess particle should be GenericIon/Triton/Alpha/Deuteron " 
 	      << "\n while it is " << par->GetParticleName() 

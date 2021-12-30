@@ -45,8 +45,8 @@ G4VProcess* GateScintillationPB::CreateProcess(G4ParticleDefinition *)
 {
   GateScintillation* scintillation = new GateScintillation(GetG4ProcessName());
   scintillation->SetTrackSecondariesFirst(true);
-  scintillation->SetScintillationYieldFactor(1);
-  scintillation->SetScintillationExcitationRatio(0.0);
+  //scintillation->SetScintillationYieldFactor(1);
+  //scintillation->SetScintillationExcitationRatio(0.0);
 
   return scintillation;
 }

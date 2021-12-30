@@ -43,7 +43,7 @@ GateProtonInelasticPB::GateProtonInelasticPB():GateVProcess("ProtonInelastic")
 //-----------------------------------------------------------------------------
 G4VProcess* GateProtonInelasticPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4ProtonInelasticProcess(GetG4ProcessName());
+  return new G4HadronInelasticProcess("protonInelastic", G4Proton::Definition());
   
 }
 //-----------------------------------------------------------------------------

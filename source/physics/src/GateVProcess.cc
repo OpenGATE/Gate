@@ -752,8 +752,8 @@ void GateVProcess::AddDataSet(G4String csection)
   // Elastic --> Default
   if(csection=="G4HadronElasticDataSet")
     {
-      G4HadronElasticDataSet* cs = new G4HadronElasticDataSet();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4HadronElasticDataSet* cs = new G4HadronElasticDataSet();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   /*else if(csection=="G4QElasticCrossSection")
     {
@@ -770,25 +770,25 @@ void GateVProcess::AddDataSet(G4String csection)
   // Inelastic
   if(csection=="G4HadronInelasticDataSet")
     {
-      G4HadronInelasticDataSet * cs = new G4HadronInelasticDataSet();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4HadronInelasticDataSet * cs = new G4HadronInelasticDataSet();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
 
 
   else if(csection=="G4PiNuclearCrossSection")  // improved cross section data set for pi+ and pi- inelastic scattering
     {
-      G4PiNuclearCrossSection * cs = new G4PiNuclearCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4PiNuclearCrossSection * cs = new G4PiNuclearCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4ProtonInelasticCrossSection") // improved cross section data set for proton inelastic scattering
     {
-      G4ProtonInelasticCrossSection * cs = new G4ProtonInelasticCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4ProtonInelasticCrossSection * cs = new G4ProtonInelasticCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4NeutronInelasticCrossSection") // improved cross section data set for neutron inelastic scattering
     {
-      G4NeutronInelasticCrossSection * cs = new G4NeutronInelasticCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4NeutronInelasticCrossSection * cs = new G4NeutronInelasticCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4NeutronHPInelasticData") // Cross section data set for high precision neutron inelastic scattering (user must first download high precision neutron data files from Geant4 web page)
     {
@@ -799,28 +799,28 @@ void GateVProcess::AddDataSet(G4String csection)
   // ion cross sections
   else if(csection=="G4TripathiCrossSection")
     {
-      G4TripathiCrossSection* cs = new G4TripathiCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);//G4HadronicProcess.hh
+      //G4TripathiCrossSection* cs = new G4TripathiCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);//G4HadronicProcess.hh
     }
   else if(csection=="G4IonsKoxCrossSection")
     {
-      G4IonsKoxCrossSection * cs = new G4IonsKoxCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4IonsKoxCrossSection * cs = new G4IonsKoxCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4IonsShenCrossSection")
     {
-      G4IonsShenCrossSection* cs = new G4IonsShenCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4IonsShenCrossSection* cs = new G4IonsShenCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4IonsSihverCrossSection")
     {
-      G4IonsSihverCrossSection * cs = new G4IonsSihverCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4IonsSihverCrossSection * cs = new G4IonsSihverCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
   else if(csection=="G4TripathiLightCrossSection")
     {
-      G4TripathiLightCrossSection * cs = new G4TripathiLightCrossSection();
-      dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
+      //G4TripathiLightCrossSection * cs = new G4TripathiLightCrossSection();
+      //dynamic_cast<G4HadronicProcess*>(pProcess)->AddDataSet(cs);
     }
 
   // G4PhotoNuclearCrossSection not yet added. Is it useful?

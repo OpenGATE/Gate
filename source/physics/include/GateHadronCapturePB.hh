@@ -13,7 +13,7 @@ See LICENSE.md for further details
 
 #include "GateVProcess.hh"
 
-#include "G4HadronCaptureProcess.hh"
+#include "G4NeutronCaptureProcess.hh"
 
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateHadronCapturePB)
 
