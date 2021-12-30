@@ -235,7 +235,7 @@ void GatePhysicsList::ConstructProcess()
       //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
       if(mEmin>0)          emPar->SetMinEnergy(mEmin);
       if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-      emPar->SetSpline(mSplineFlag);
+      // emPar->SetSpline(mSplineFlag);
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << Gateendl);
 
@@ -780,7 +780,7 @@ void GatePhysicsList::SetEmProcessOptions()
   //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-  emPar->SetSpline(mSplineFlag);
+  //emPar->SetSpline(mSplineFlag);
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   emPar->SetUseICRU90Data(mUseICRU90Data);
 #endif
@@ -1402,8 +1402,9 @@ void GatePhysicsList::SetOptEMax(G4double val)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetOptSplineFlag(G4bool val)
 {
-  mSplineFlag=val;
-  emPar->SetSpline(mSplineFlag);
+    GateError("No more Spline Flag available in G4EmParameters from G4 v11.");
+    mSplineFlag=val;
+    //emPar->SetSpline(mSplineFlag);
 }
 //-----------------------------------------------------------------------------
 

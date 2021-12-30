@@ -269,7 +269,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
       msd->SetActor(actor);
       theListOfMultiSensitiveDetector.push_back(msd );
     }
-  else if (volume->GetLogicalVolume()->GetSensitiveDetector()->GetName().contains("MSD") )
+  else if (G4StrUtil::contains(volume->GetLogicalVolume()->GetSensitiveDetector()->GetName(), "MSD") )
     {
       GateDebugMessage("Actor",5,"SetMFD -- MSD already attached to: "<<volume->GetLogicalVolume()->GetName()<< Gateendl);
       dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector())->SetActor(actor);

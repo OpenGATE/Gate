@@ -90,7 +90,6 @@ G4Element* GateCompoundElementCreator::Construct()
 			  << " " << f);
 	for(unsigned int j=0; j<element->GetNumberOfElements(); j++) {
 	  GateError("Element " << j << " "
-				<< element->GetElement(j)->GetName()
 				<< " = " << element->GetRelativeAbundanceVector()[j]);
 	}
 	exit(0);
