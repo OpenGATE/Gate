@@ -46,7 +46,7 @@ void GateProductionActor::Construct()
   GateVImageActor::Construct();
   mImage.Allocate(); // allocate data and reset value to 0
 
-  if (mSaveFilename.empty() || mSaveFilename=="FilnameNotGivenForThisActor") { GateError("GateProductionActor -- please give output filename"); }
+  if (mSaveFilename.empty() || mSaveFilename=="FilenameNotGivenForThisActor") { GateError("GateProductionActor -- please give output filename"); }
   if (!mVolume) { GateError("GateProductionActor -- please attach actor to a volume"); }
 
   GateMessage("Actor",3,"GateProductionActor -- filename=" << mSaveFilename << Gateendl);

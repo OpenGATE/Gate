@@ -67,7 +67,7 @@ G4bool GateKillActor::ProcessHits(G4Step * step , G4TouchableHistory* )
 void GateKillActor::SaveData()
 {
   GateVActor::SaveData();
-  if (mSaveFilename == "FilnameNotGivenForThisActor") return;
+  if (mSaveFilename == "FilenameNotGivenForThisActor") return;
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
   os << "# NumberOfKillTracks = " << mNumberOfTrack << Gateendl;
