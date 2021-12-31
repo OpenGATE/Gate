@@ -99,7 +99,6 @@ public:
   void SetOptLambdaBinning(G4int val);
   void SetOptEMin(G4double val);
   void SetOptEMax(G4double val);
-  void SetOptSplineFlag(G4bool val);
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   void SetUseICRU90DataFlag(G4bool val);
 #endif
@@ -126,7 +125,6 @@ protected:
   int mLambdaBinning;
   double mEmin;
   double mEmax;
-  bool mSplineFlag;
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   bool mUseICRU90Data;
 #endif

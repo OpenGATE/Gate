@@ -87,7 +87,6 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
   mLambdaBinning=-1;
   mEmin=-1;
   mEmax=-1;
-  mSplineFlag=true;
   mUserPhysicListName = "";
   userlimits=0;
 
@@ -235,7 +234,6 @@ void GatePhysicsList::ConstructProcess()
       //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
       if(mEmin>0)          emPar->SetMinEnergy(mEmin);
       if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-      emPar->SetSpline(mSplineFlag);
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << Gateendl);
 
@@ -780,7 +778,6 @@ void GatePhysicsList::SetEmProcessOptions()
   //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-  emPar->SetSpline(mSplineFlag);
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   emPar->SetUseICRU90Data(mUseICRU90Data);
 #endif
@@ -1396,15 +1393,8 @@ void GatePhysicsList::SetOptEMax(G4double val)
   mEmax=val;
   emPar->SetMaxEnergy(mEmax);
 }
-//-----------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
-void GatePhysicsList::SetOptSplineFlag(G4bool val)
-{
-  mSplineFlag=val;
-  emPar->SetSpline(mSplineFlag);
-}
 //-----------------------------------------------------------------------------
 
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
