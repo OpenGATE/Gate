@@ -96,7 +96,7 @@ void GateSourcePencilBeam::SetIonParameter(G4String ParticleParameters){
   mAtomicNumber = StoI(next());
   mAtomicMass = StoI(next());
   G4String sQ = next();
-  if (sQ.isNull())
+  if (sQ.empty())
     {
       mIonCharge = mAtomicNumber;
     }
@@ -104,7 +104,7 @@ void GateSourcePencilBeam::SetIonParameter(G4String ParticleParameters){
     {
       mIonCharge = StoI(sQ);
       sQ = next();
-      if (sQ.isNull())
+      if (sQ.empty())
         {
 	  mIonExciteEnergy = 0.0;
         }

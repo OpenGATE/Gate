@@ -1550,7 +1550,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues)
     fAtomicNumber = StoI( next()) ;
     fAtomicMass = StoI( next()) ;
     G4String sQ = next() ;
-    if( sQ.isNull())
+    if( sQ.empty())
       {
         fIonCharge = fAtomicNumber ;
       }
@@ -1558,7 +1558,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues)
       {
         fIonCharge = StoI( sQ) ;
         sQ = next() ;
-        if( sQ.isNull())
+        if( sQ.empty())
           {
             fIonExciteEnergy = 0.0;
           }

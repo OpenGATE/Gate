@@ -39,7 +39,7 @@ void GateMessageMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   //GateMessage("Manager",5,"GateMessageMessenger::SetNewValue("<<newValue<<")\n");
   if (cmd == pVerboseCmd) {
-    str_size pos = newValue.index (' ');
+    size_t pos = newValue.find(' ');
     if (pos<newValue.length()) {
       G4String code = newValue.substr(0,pos);
       G4String svalue = newValue.substr(pos,newValue.length()-pos);
