@@ -184,10 +184,6 @@
 #ifndef _Matrix_H_
 #define _Matrix_H_
 
-#ifdef GNUPRAGMA
-#pragma interface
-#endif
-
 #include <vector>
 
 #include "CLHEP/Matrix/defs.h"

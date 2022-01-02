@@ -48,6 +48,7 @@
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 #include "CLHEP/RandomObjects/defs.h"
 #include <cmath>	// for log()
+#include <iostream>
 
 namespace CLHEP {
 
@@ -220,7 +221,7 @@ HepVector RandMultiGauss::fire() {
 HepVector RandMultiGauss::fire( const HepVector& mu, const HepSymMatrix& S ) {
 
   HepMatrix U;  
-  HepVector sigmas;
+  HepVector sigmas(mu.num_row());
 
   if (mu.num_row() == S.num_row()) {
     prepareUsigmas ( S, U, sigmas );
@@ -260,7 +261,7 @@ void RandMultiGauss::fireArray( const int size, HepVector* array,
   // on that U and sigmas.
 
   HepMatrix U;  
-  HepVector sigmas;
+  HepVector sigmas(mu.num_row());
   HepVector mu_ (mu);
 
   if (mu.num_row() == S.num_row()) {
