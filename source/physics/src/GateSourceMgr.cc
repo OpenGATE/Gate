@@ -480,9 +480,9 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   //! sending commands to the GateRDM
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
   G4String command;
-  UImanager->ApplyCommand( "/grdm/analogueMC 1" );
-  UImanager->ApplyCommand( "/grdm/verbose 0" );
-  UImanager->ApplyCommand( "/grdm/allVolumes" );
+  UImanager->ApplyCommand( "/process/had/rdm/analogueMC 1" );
+  UImanager->ApplyCommand( "/process/had/rdm/verbose 0" );
+  UImanager->ApplyCommand( "/process/had/rdm/allVolumes" );
 
   // set time limit of the GateRDM decay
   command = G4String( "/gate/decay/setDecayTimeLimit " )
