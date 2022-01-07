@@ -75,6 +75,10 @@ public:
     inline G4double GetEnergy()   const                  	      { return m_energy; }
     inline void SetEnergy(G4double value)           	      { m_energy = value; }
 
+    inline G4double GetMaxEnergy()   const                  	      { return m_max_energy; }
+    inline void SetMaxEnergy(G4double value)           	      { m_max_energy = value; }
+
+
     inline void  SetPDGEncoding(const G4int j)						{ m_PDGEncoding = j; }
     inline G4int GetPDGEncoding() const						{ return m_PDGEncoding; }
 
@@ -201,6 +205,7 @@ private:
     G4ThreeVector m_sourcePosition; //!< position of the source (NOT the positron) that generated the hit
     G4double m_time;            	  //!< start time of the current pulse
     G4double m_energy;          	  //!< energy measured for the current pulse
+    G4double m_max_energy;          	  //!< max energy for the current pulse
     G4ThreeVector m_localPos;   	  //!< position of the current hit
     G4ThreeVector m_globalPos;      //!< position of the current hit
     G4int m_PDGEncoding;        // G4 PDGEncoding
