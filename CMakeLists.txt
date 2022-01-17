@@ -244,7 +244,6 @@ FILE(GLOB headers
 
 #=========================================================
 IF(GATE_USE_TORCH)
-  set(CMAKE_CXX_STANDARD 14)
   FIND_PACKAGE(Torch REQUIRED)
   INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
@@ -302,7 +301,15 @@ IF(GATE_COMPILE_GATEDIGIT)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
 #=========================================================
-
+# Set c++17 as minimal version
+target_compile_features(GateLib PUBLIC cxx_std_17)
+target_compile_features(Gate PUBLIC cxx_std_17)
+IF(GATE_COMPILE_GATEDIGIT)
+    target_compile_features(GateDigit_singles_sorter PUBLIC cxx_std_17)
+    target_compile_features(GateDigit_hits_digitizer PUBLIC cxx_std_17)
+    target_compile_features(GateDigit_coincidence_processor PUBLIC cxx_std_17)
+    target_compile_features(GateDigit_seqCoinc2Cones PUBLIC cxx_std_17)
+ENDIF(GATE_COMPILE_GATEDIGIT)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of

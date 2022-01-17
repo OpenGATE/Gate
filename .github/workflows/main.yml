@@ -20,7 +20,7 @@ jobs:
         options: [none, rtk, torch, optic]
 
     env:
-      ROOT_VERSION: 'v6-19-02'
+      ROOT_VERSION: 'v6-24-06'
       GEANT4_VERSION: 'v10.7.0'
       ITK_VERSION: 'v5.2.0'
       ROOT_DIR: $(HOME)/software/root
@@ -38,8 +38,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build2
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build2
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build5
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build5
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -64,6 +64,8 @@ jobs:
           rm -rf /usr/local/bin/2to3
           brew install --force --verbose --debug qt5 \
                         ccache \
+                        tbb \
+                        xrootd \
                         fftw
           brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
           export PATH=/usr/local/opt/qt/bin:$PATH
@@ -82,7 +84,8 @@ jobs:
           mkdir src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
           cd bin
-          cmake ../src -Dpython=OFF \
+          cmake ../src -DCMAKE_CXX_STANDARD=17 \
+                       -Dpython=OFF \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           make -j4 install
           cd ..
@@ -100,6 +103,7 @@ jobs:
           cmake -DGEANT4_INSTALL_DATA=ON \
                 -DGEANT4_INSTALL_DATADIR=$HOME/software/geant4/data \
                 -DCMAKE_INSTALL_PREFIX=$HOME/software/geant4/install \
+                -DCMAKE_CXX_FLAGS="-std=c++17" \
                 ../src
           make -j4 install
           cd ..
@@ -111,8 +115,8 @@ jobs:
           cd $HOME/option_dependencies
           if [ "${{ matrix.options }}" == 'torch' ]; then
             if [ "${{ matrix.os }}" == 'ubuntu-latest' ]; then
-              wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip
-              unzip libtorch-cxx11-abi-shared-with-deps-1.4.0+cpu.zip
+              wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.10.1%2Bcpu.zip
+              unzip libtorch-cxx11-abi-shared-with-deps-1.10.1+cpu.zip
             elif [ "${{ matrix.os }}" == 'macos-latest' ]; then
               wget https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.4.0.zip
               unzip libtorch-macos-1.4.0.zip
@@ -124,7 +128,7 @@ jobs:
             mkdir src bin
             git clone --branch $ITK_VERSION https://github.com/InsightSoftwareConsortium/ITK.git --depth 1 src
             cd bin
-            cmake -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DITK_MINIMUM_COMPLIANCE_LEVEL=3 -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
+            cmake -DCMAKE_CXX_FLAGS="-std=c++17" -DBUILD_TESTING=OFF -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW:BOOL=ON -DITK_MINIMUM_COMPLIANCE_LEVEL=3 -DModule_RTK=ON -DREMOTE_GIT_TAG_RTK=master ../src
             make -j4
           fi
           cd $HOME/option_dependencies
