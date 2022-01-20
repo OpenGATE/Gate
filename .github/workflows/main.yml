@@ -118,8 +118,8 @@ jobs:
               wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.10.1%2Bcpu.zip
               unzip libtorch-cxx11-abi-shared-with-deps-1.10.1+cpu.zip
             elif [ "${{ matrix.os }}" == 'macos-latest' ]; then
-              wget https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.4.0.zip
-              unzip libtorch-macos-1.4.0.zip
+              wget https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.10.1.zip
+              unzip libtorch-macos-1.10.1.zip
             fi
           fi
           if [ "${{ matrix.options }}" == 'rtk' ]; then
@@ -299,5 +299,5 @@ jobs:
       run: |
         mkdir gate_benchmarks
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
-        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.1 /home/.github/workflows/runTest.sh
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.2 /home/.github/workflows/runTest.sh
 
