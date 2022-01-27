@@ -83,7 +83,7 @@ class GateCrystalSD : public G4VSensitiveDetector
 
   protected:
      GateVSystem* m_system;                           //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach
-     GateSystemList* m_systemList;                    //! System list instead of one system
+     GateSystemList* m_systemList = nullptr;          //! System list instead of one system
   private:
       GateCrystalHitsCollection * crystalCollection;  //! Hit collection
 
