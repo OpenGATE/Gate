@@ -18,6 +18,7 @@ GatePulse::GatePulse(const void* itsMother)
       m_sourceID(-1),
       m_time(0),
       m_energy(0),
+	  m_max_energy(0),
       m_nPhantomCompton(-1),
       m_nPhantomRayleigh(-1),
       #ifdef GATE_USE_OPTICAL
@@ -139,7 +140,8 @@ const GatePulse & GatePulse::MergePositionEnergyWin(const GatePulse* right){
 
 
 
-    if( right->m_energy>m_energy){
+    if( right->m_energy>m_max_energy){
+    	m_max_energy=right->m_energy;
         // Local and global positions: store the controids
         m_localPos  =   right->m_localPos;
         m_globalPos =   right->m_globalPos;

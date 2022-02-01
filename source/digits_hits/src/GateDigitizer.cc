@@ -410,6 +410,9 @@ void GateDigitizer::Digitize()
 
   m_hitConvertor->ProcessHits(CHC);
 
+
+  if (CHC->entries()==0) return; //go to next event if no hits to process
+
   DigitizePulses();
 
 

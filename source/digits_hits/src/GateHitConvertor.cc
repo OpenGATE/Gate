@@ -143,6 +143,7 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
   pulse->SetSourcePosition( hit->GetSourcePosition() );
   pulse->SetTime( hit->GetTime() );
   pulse->SetEnergy( hit->GetEdep() );
+  pulse->SetMaxEnergy( hit->GetEdep() );
   pulse->SetLocalPos( hit->GetLocalPos() );
   pulse->SetGlobalPos( hit->GetGlobalPos() );
   pulse->SetPDGEncoding( hit->GetPDGEncoding() );
