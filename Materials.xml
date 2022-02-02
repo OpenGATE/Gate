@@ -4,9 +4,8 @@
     <propertiestable>
       <property name="SCINTILLATIONYIELD" value="26000" unit="1/MeV"/>
       <property name="RESOLUTIONSCALE" value="4.41"/>
-      <property name="FASTTIMECONSTANT" value="40" unit="ns"/>
-      <property name="YIELDRATIO" value="1"/>
-      <propertyvector name="FASTCOMPONENT" energyunit="eV">
+      <property name="SCINTILLATIONTIMECONSTANT1" value="40" unit="ns"/>
+      <propertyvector name="SCINTILLATIONCOMPONENT1" energyunit="eV">
         <ve energy="2.95167" value="1"/>
       </propertyvector>
       <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">

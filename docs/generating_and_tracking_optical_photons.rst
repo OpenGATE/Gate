@@ -101,7 +101,7 @@ The property tables for the materials used in a simulation are to be stored in a
 Scintillation
 ~~~~~~~~~~~~~
 
-A scintillator is characterized by its photon emission spectrum. The scintillation follows an exponential decay with two time constants, a fast and a slow one. The relative strength of the fast component **FASTCOMPONENT** as a fraction of total scintillation yield is given by the **YIELDRATIO**. The emission spectra of both decays are given by the property vectors **FASTCOMPONENT** and **SLOWCOMPONENT** and the time constants **FASTTIMECONSTANT** and **SLOWTIMECONSTANT**. These vectors specify the probability that a photon with the given energy is emitted. The sum of each of the vectors should therefore be one.
+A scintillator is characterized by its photon emission spectrum. The scintillation follows an exponential decay with up to three time constants. The relative strength of the components as a fraction of the total scintillation yield is given by **SCINTILLATIONYIELD1**, **SCINTILLATIONYIELD2** and **SCINTILLATIONYIELD3**. The emission spectra of the decays are given by the property vectors **SCINTILLATIONCOMPONENT1**, **SCINTILLATIONCOMPONENT2** and **SCINTILLATIONCOMPONENT3** and the time constants **SCINTILLATIONTIMECONSTANT1**, **SCINTILLATIONTIMECONSTANT2** and **SCINTILLATIONTIMECONSTANT3**. These vectors specify the probability that a photon with the given energy is emitted. The sum of each of the vectors should therefore be one.
 
 In order to have scintillation in a material, the first parameter that has to be specified is the **SCINTILLATIONYIELD** (1/Mev, 1/keV), which gives the number of photons that is emitted per amount of energy absorbed, or, more precisely, it gives the *expectation* value of this number, since the real number of emitted photons follows a normal distribution. The variance of this normal distribution is **RESOLUTION-SCALE** times this expectation value. Thus, for example, when a gamma photon deposits :math:`E` amount of energy in the scintillator, :math:`N` optical photons are emitted with an expectation value of
 :math:`\mu_N` = *E* . SCINTILLATIONYIELD
@@ -119,9 +119,9 @@ where :math:`R` is the energy resolution (FWHM - Full width at half maximum ) at
       <propertiestable>
         <property name="SCINTILLATIONYIELD" value="26000" unit="1/MeV"/>
         <property name="RESOLUTIONSCALE" value="4.41"/>
-        <property name="FASTTIMECONSTANT" value="40" unit="ns"/>
-        <property name="YIELDRATIO" value="1"/>
-        <propertyvector name="FASTCOMPONENT" energyunit="eV">
+        <property name="SCINTILLATIONTIMECONSTANT1" value="40" unit="ns"/>
+        <property name="SCINTILLATIONYIELD1" value="1"/>
+        <propertyvector name="SCINTILLATIONCOMPONENT1" energyunit="eV">
           <ve energy="2.95167" value="1"/>
         </propertyvector>
         <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">
