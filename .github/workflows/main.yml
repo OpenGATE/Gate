@@ -163,7 +163,8 @@ jobs:
           if [ "${{ matrix.options }}" == 'optic' ]; then
             export GATE_USE_OPTIC=ON
           fi
-          cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
+          cmake -DCMAKE_CXX_FLAGS="-std=c++17" \
+                -DGATE_USE_TORCH=$GATE_USE_TORCH \
                 -DTorch_DIR=$HOME/option_dependencies/libtorch/share/cmake/Torch \
                 -DGATE_COMPILE_GATEDIGIT=ON \
                 -DGATE_USE_RTK=$GATE_USE_RTK \

@@ -300,16 +300,20 @@ IF(GATE_COMPILE_GATEDIGIT)
     INSTALL(TARGETS GateDigit_seqCoinc2Cones DESTINATION bin)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
+
+
 #=========================================================
-# Set c++17 as minimal version
-target_compile_features(GateLib PUBLIC cxx_std_17)
-target_compile_features(Gate PUBLIC cxx_std_17)
-IF(GATE_COMPILE_GATEDIGIT)
-    target_compile_features(GateDigit_singles_sorter PUBLIC cxx_std_17)
-    target_compile_features(GateDigit_hits_digitizer PUBLIC cxx_std_17)
-    target_compile_features(GateDigit_coincidence_processor PUBLIC cxx_std_17)
-    target_compile_features(GateDigit_seqCoinc2Cones PUBLIC cxx_std_17)
-ENDIF(GATE_COMPILE_GATEDIGIT)
+#set minimal version c++14 if torch
+IF(GATE_USE_TORCH)
+    target_compile_features(GateLib PUBLIC cxx_std_14)
+    target_compile_features(Gate PUBLIC cxx_std_14)
+    IF(GATE_COMPILE_GATEDIGIT)
+        target_compile_features(GateDigit_singles_sorter PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_hits_digitizer PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_coincidence_processor PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_seqCoinc2Cones PUBLIC cxx_std_14)
+    ENDIF(GATE_COMPILE_GATEDIGIT)
+ENDIF(GATE_USE_TORCH)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
