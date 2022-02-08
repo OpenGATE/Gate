@@ -174,7 +174,7 @@ void GateFixedForcedDetectionActor::GetEnergyList(std::vector<double> & energyLi
       {
       GateError("Error: Fresnel imaging only works for monoenergetic sources (yet).");
       }
-    G4PhysicsOrderedFreeVector energyHistogram = mSource->GetEneDist()->GetUserDefinedEnergyHisto();
+    auto energyHistogram = mSource->GetEneDist()->GetUserDefinedEnergyHisto();
     double weightSum = 0.;
     double energy = 0;
     for (unsigned int i = 0; i < energyHistogram.GetVectorLength(); i++)

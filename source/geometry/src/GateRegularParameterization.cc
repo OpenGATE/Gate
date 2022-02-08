@@ -88,7 +88,7 @@ void GateRegularParameterization::BuildRegularParameterization()
   G4int nVoxelX = voxelReader->GetVoxelNx();
   G4int nVoxelY = voxelReader->GetVoxelNy();
   G4int nVoxelZ = voxelReader->GetVoxelNz();
-  SetNoVoxel( nVoxelX, nVoxelY, nVoxelZ );
+  SetNoVoxels( nVoxelX, nVoxelY, nVoxelZ );
 
   //---------------------------------------------------------------------------------------------//
 

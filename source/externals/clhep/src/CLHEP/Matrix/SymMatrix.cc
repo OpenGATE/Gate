@@ -4,10 +4,7 @@
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
 //
 
-#ifdef GNUPRAGMA
-#pragma implementation
-#endif
-
+#include <iostream>
 #include <string.h>
 #include <float.h>        // for DBL_EPSILON
 

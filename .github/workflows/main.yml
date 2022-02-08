@@ -21,7 +21,7 @@ jobs:
 
     env:
       ROOT_VERSION: 'v6-24-06'
-      GEANT4_VERSION: 'v10.7.0'
+      GEANT4_VERSION: 'v11.0.0'
       ITK_VERSION: 'v5.2.0'
       ROOT_DIR: $(HOME)/software/root
       GEANT4_DIR: $(HOME)/software/geant4

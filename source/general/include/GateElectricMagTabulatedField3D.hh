@@ -46,7 +46,7 @@ private:
   bool invertX, invertY, invertZ;
   double lenUnit_E;
   double fieldUnit_E;
-  double lenUnit_B;
+  double lenUnit_B; // not used ?
   double fieldUnit_B;
 };
 

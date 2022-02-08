@@ -10,17 +10,22 @@ GateScintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
 
   if(aMaterialPropertiesTable)
   {
-    G4MaterialPropertyVector* Fast_Intensity =
-        aMaterialPropertiesTable->GetProperty("FASTCOMPONENT");
-    G4MaterialPropertyVector* Slow_Intensity =
-        aMaterialPropertiesTable->GetProperty("SLOWCOMPONENT");
+    G4MaterialPropertyVector* Intensity1 =
+        aMaterialPropertiesTable->GetProperty("SCINTILLATIONCOMPONENT1");
+    G4MaterialPropertyVector* Intensity2 =
+        aMaterialPropertiesTable->GetProperty("SCINTILLATIONCOMPONENT2");
+    G4MaterialPropertyVector* Intensity3 =
+        aMaterialPropertiesTable->GetProperty("SCINTILLATIONCOMPONENT3");
 
     this->SetFiniteRiseTime(false);
 
-    if(Fast_Intensity && aMaterialPropertiesTable->ConstPropertyExists("FASTSCINTILLATIONRISETIME"))
+    if(Intensity1 && aMaterialPropertiesTable->ConstPropertyExists("SCINTILLATIONRISETIME1"))
       this->SetFiniteRiseTime(true);
 
-    if(Slow_Intensity && aMaterialPropertiesTable->ConstPropertyExists("SLOWSCINTILLATIONRISETIME"))
+    if(Intensity2 && aMaterialPropertiesTable->ConstPropertyExists("SCINTILLATIONRISETIME2"))
+      this->SetFiniteRiseTime(true);
+
+    if(Intensity3 && aMaterialPropertiesTable->ConstPropertyExists("SCINTILLATIONRISETIME3"))
       this->SetFiniteRiseTime(true);
 
   }

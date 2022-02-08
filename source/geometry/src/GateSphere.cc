@@ -89,7 +89,7 @@ G4LogicalVolume* GateSphere::ConstructOwnSolidAndLogicalVolume(G4Material* mater
   }
   else {
     // Update mode: refresh the dimensions of the solid
-    m_sphere_solid->SetInsideRadius( m_sphereRmin);
+    m_sphere_solid->SetInnerRadius( m_sphereRmin);
     m_sphere_solid->SetOuterRadius(m_sphereRmax);
     m_sphere_solid->SetStartPhiAngle(m_sphereSPhi);
     m_sphere_solid->SetDeltaPhiAngle(m_sphereDPhi);

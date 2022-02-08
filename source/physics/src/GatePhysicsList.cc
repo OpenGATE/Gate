@@ -87,7 +87,6 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
   mLambdaBinning=-1;
   mEmin=-1;
   mEmax=-1;
-  mSplineFlag=true;
   mUserPhysicListName = "";
   userlimits=0;
 
@@ -231,11 +230,10 @@ void GatePhysicsList::ConstructProcess()
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 //
       //opt->SetVerbose(2);
-      if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-      if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+      //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+      //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
       if(mEmin>0)          emPar->SetMinEnergy(mEmin);
       if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-      emPar->SetSpline(mSplineFlag);
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << Gateendl);
 
@@ -776,11 +774,10 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-  if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+  //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+  //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-  emPar->SetSpline(mSplineFlag);
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   emPar->SetUseICRU90Data(mUseICRU90Data);
 #endif
@@ -1367,7 +1364,7 @@ void GatePhysicsList::GetCuts()
 void GatePhysicsList::SetOptDEDXBinning(G4int val)
 {
   mDEDXBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mDEDXBinning);
 }
 //-----------------------------------------------------------------------------
 
@@ -1375,8 +1372,8 @@ void GatePhysicsList::SetOptDEDXBinning(G4int val)
 void GatePhysicsList::SetOptLambdaBinning(G4int val)
 {
   mLambdaBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
-  emPar->SetNumberOfBins(mLambdaBinning); 
+  //emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mLambdaBinning);
 }
 //-----------------------------------------------------------------------------
 
@@ -1396,15 +1393,8 @@ void GatePhysicsList::SetOptEMax(G4double val)
   mEmax=val;
   emPar->SetMaxEnergy(mEmax);
 }
-//-----------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
-void GatePhysicsList::SetOptSplineFlag(G4bool val)
-{
-  mSplineFlag=val;
-  emPar->SetSpline(mSplineFlag);
-}
 //-----------------------------------------------------------------------------
 
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
@@ -1446,3 +1436,4 @@ GatePhysicsList *GatePhysicsList::singleton = 0;
 
 
 #endif /* end #define GATEPHYSICSLIST_CC */
+

@@ -480,19 +480,9 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   //! sending commands to the GateRDM
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
   G4String command;
-  UImanager->ApplyCommand( "/grdm/analogueMC 1" );
-  UImanager->ApplyCommand( "/grdm/verbose 0" );
-  UImanager->ApplyCommand( "/grdm/allVolumes" );
-
-  // set time limit of the GateRDM decay
-  command = G4String( "/gate/decay/setDecayTimeLimit " )
-    + G4UIcommand::ConvertToString(timeSlice/s) + G4String( " s" );
-  if( mVerboseLevel > 3 )
-    G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << Gateendl;
-  UImanager->ApplyCommand( command.c_str() );
-  // tell to the GateRDM to avoid the generation of the sampled decay time for the ions
-  // (the time is set by the SourceMgr)
-  UImanager->ApplyCommand( "/gate/decay/setPrimaryDecayTimeGeneration 0" );
+  UImanager->ApplyCommand( "/process/had/rdm/analogueMC 1" );
+  UImanager->ApplyCommand( "/process/had/rdm/verbose 0" );
+  UImanager->ApplyCommand( "/process/had/rdm/allVolumes" );
 
   // flag for the initialization of the sources
   m_needSourceInit = true;

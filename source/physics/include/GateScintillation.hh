@@ -22,8 +22,8 @@ See LICENSE.md for further details
  * \class GateScintillation
  *
  * With this class, Gate is able to use FiniteRiseTime for scintillation process.
- * Before call to G4Scintillation::PostStepDoIt, GateScintillation class check existence of FASTSCINTILLATIONRISETIME
- * or SLOWSCINTILLATIONRISETIME in MaterialPropertiesTable for the current G4Material
+ * Before call to G4Scintillation::PostStepDoIt, GateScintillation class check existence of SCINTILLATIONRISETIME1,
+ * SCINTILLATIONRISETIME2 or SCINTILLATIONRISETIME3 in MaterialPropertiesTable for the current G4Material
  * and set the FiniteRiseTime flag of G4Scintillation consequently.
  *
  * 2020/10/21: Implementation of IsApplicable has been changed between geant4 10.05 and geant4 10.06 which
