@@ -119,7 +119,7 @@ protected:
   RandGauss * mGaussianEnergy;
   //Others
   bool mTestFlag;
-  double mparticle_time;
+  double mparticle_time = 0.0;
   int mCurrentParticleNumber;
 };
 
