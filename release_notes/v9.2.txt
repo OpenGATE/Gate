@@ -1,0 +1,86 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.2          #
+#                          #
+#        03/2022           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 11.0 only.
+
+Recommended with:
+- Geant4: v11.0.0 (cxx17 is required)
+- ROOT: v6-24-06 (must be compiled with -DCMAKE_CXX_STANDARD=17)
+- ITK: v5.2.0 (with RTK enabled)
+- libtorch: v1.10.1
+
+-----------------
+Main new features
+-----------------
+
+- additional Benchmarks
+https://github.com/OpenGATE/GateBenchmarks
+
+- Cerenkov photon, optical simulation
+https://github.com/OpenGATE/Gate/pull/440
+https://opengate.readthedocs.io/en/latest/generating_and_tracking_optical_photons.html#cerenkov-photons
+
+- no default cut for Cerenkov
+https://github.com/OpenGATE/Gate/pull/457
+
+- improvement in Compton Camera
+https://github.com/OpenGATE/Gate/pull/456
+https://github.com/OpenGATE/Gate/pull/451
+
+- improvement in GateEnergySpectrumActor
+https://github.com/OpenGATE/Gate/pull/450
+
+----------
+Bugs fixed
+----------
+
+- Use of standard G4_AIR, G4_WATER etc
+https://github.com/OpenGATE/Gate/pull/453
+
+- In phsps, time must be in double not float
+https://github.com/OpenGATE/Gate/pull/464
+
+- Acollinearity in back-to-back source
+https://github.com/OpenGATE/Gate/pull/470
+
+- Fix digitizer bug
+https://github.com/OpenGATE/Gate/pull/479
+
+- Fix uninitialized values
+https://github.com/OpenGATE/Gate/pull/483
+https://github.com/OpenGATE/Gate/pull/484
+
+- Correct 'ignoring return value'
+https://github.com/OpenGATE/Gate/pull/487
+
+- Correct npy phsps
+https://github.com/OpenGATE/Gate/pull/390
+
+----------
+Gate Tools
+----------
+
+- add Hausdorff distance tool
+https://github.com/OpenGATE/GateTools/pull/71
+
+- convert mask (binary image) to Dicom RT Struct
+https://github.com/OpenGATE/GateTools/pull/70
+
+- morphological math tools (erosion, dilatation, etc)
+https://github.com/OpenGATE/GateTools/pull/65
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
+GATE tools:         https://github.com/OpenGATE/GateTools
