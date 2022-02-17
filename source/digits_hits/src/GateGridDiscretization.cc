@@ -484,8 +484,8 @@ int GateGridDiscretization::GetXIndex(G4double posX){
                 else{
                      index_i=INVALID_INDEX;
                     //hit in the right offset of the detector
-                    if(l_sp>(*im).second.deadSpX){
-                        G4cout<<"[GateGridDiscretization::GetXIndex]: Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
+                    if(l_sp>(*im).second.stripOffsetX){
+                        G4cout<<"[GateGridDiscretization::GetXIndex]: Check grid discretization parameters. A hit is registerd outside the defined grid  "<<posX<<G4endl;
                     }
                 }
 
@@ -526,8 +526,9 @@ int GateGridDiscretization::GetYIndex(G4double posY){
                   else{
                        index_j=INVALID_INDEX;
                       //hit in the top offset of the detector
-                      if(l_sp>(*im).second.deadSpY){
+                      if(l_sp>(*im).second.stripOffsetY){
                           G4cout<<"[GateGridDiscretization::GetYIndex]:Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
+
                       }
                   }
 

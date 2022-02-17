@@ -1,4 +1,10 @@
-
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v8.2          #
+#                          #
+#        02/2019           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
 
 
 GATE v8.2 15/02/2019

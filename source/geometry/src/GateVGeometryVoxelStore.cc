@@ -33,7 +33,7 @@ GateVGeometryVoxelStore::GateVGeometryVoxelStore(GateVVolume* creator)
   G4double voxelSize = 1.*mm;
   m_voxelSize = G4ThreeVector(voxelSize,voxelSize,voxelSize);
 
-  SetDefaultMaterial( "Vacuum" );
+  SetDefaultMaterial( "G4_Galactic" );
 }
 
 GateVGeometryVoxelStore::~GateVGeometryVoxelStore()

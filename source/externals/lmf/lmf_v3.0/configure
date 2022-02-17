@@ -1,0 +1,25 @@
+cc -c testForFormat.c
+cc -g -o EXE testForFormat.o
+chmod 755 EXE
+./EXE
+chmod 555 lmf_format.h
+mv -f lmf_format.h includes/
+\rm *.o
+\rm EXE
+echo "Congratulations !!! Configuration over"
+echo "includes/lmf_format.h has been generated and replaced"
+echo "Please check that it looks like:"
+echo ""
+echo "#ifndef __FORMAT__FOR__LMF__"
+echo "#define __FORMAT__FOR__LMF__"
+echo "typedef char i8;"
+echo "typedef unsigned char u8;"
+echo "typedef short i16;"
+echo "typedef unsigned short u16;"
+echo "typedef long i32;"
+echo "typedef unsigned long u32;"
+echo "typedef unsigned long long int u64;"
+echo "typedef long long int          i64;"
+echo "#endif"
+echo ""
+

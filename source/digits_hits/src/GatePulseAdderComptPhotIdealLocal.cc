@@ -96,12 +96,14 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
     if (!inputPulse->IsOptical())
 #endif
     {
+        //All primary pulses sotred in primary Pulses independent to hte volume to be able to recover the ideal energy of each process for primary photons
+        //This is only thought for primary photons
         if(inputPulse->GetParentID()==0)
         {
             if(inputPulse->GetPostStepProcess()=="compt" ||inputPulse->GetPostStepProcess()=="phot" || inputPulse->GetPostStepProcess()=="conv"  ){
                 primaryPulses.push_back(*inputPulse);
                 if(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_name){
-                    indexPrimVInPrim.push_back( primaryPulses.size()-1);
+                    indexPrimVInPrim.push_back( primaryPulses.size()-1);//It seems that it is not used
                     if(primaryPulses.size()==1){
                        EDepmaxPrimV.push_back(inputPulse->GetEnergyIniTrack()-inputPulse->GetEnergyFin());
                     }
@@ -116,7 +118,9 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
 
         }
 
-        // G4cout<<"name que uso "<<m_name<<G4endl;
+
+
+        //Here it starts, inPutpulse set to ouput directly if it is not in the selected volume. Those pulses ae not processed by this module
         if(m_name==((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()){
 
             //G4cout << " Ideal adder "<<outputPulseList.size()<<G4endl;
@@ -141,7 +145,7 @@ void GatePulseAdderComptPhotIdealLocal::ProcessOnePulse(const GatePulse* inputPu
                     //G4cout << inputPulse->GetEventID() << " " << inputPulse->GetVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << G4endl;
                 }
                 else{
-                    //Simplificacion  inicial solo cogemos los procesos de electrones
+                    //Simplificacion  inicial solo cogemos los procesos de electrones. To get an estimation of deposited energy
                     std::vector<GatePulse>::reverse_iterator iter = primaryPulsesVol.rbegin();
                     while (1){
 

@@ -69,7 +69,7 @@ private:
     G4UIcmdWithAString          *SetAcceptancePolicy4CCCmd;  //!< The UI command "MultiplesPolicy"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *SetTriggerOnlyByAbsorberCmd;
-    
+    G4UIcmdWithABool            *SetEventIDCoincCmd;
     
 };
 

@@ -1,9 +1,9 @@
 #  *ooooOOOO0000OOOOoooo*  #
-#                        #
-#       GATE v9.0        #
-#                        #
-#        03/2020         #
-#                        #
+#                          #
+#       GATE v9.0          #
+#                          #
+#        03/2020           #
+#                          #
 #  *ooooOOOO0000OOOOoooo*  #
 
 

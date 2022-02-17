@@ -13,6 +13,9 @@
 #include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/Matrix/SymMatrix.h"
 
+#include <iostream>
+#include <vector>
+
 namespace CLHEP {
 
 static int sign(double x) { return (x>0 ? 1: -1);}

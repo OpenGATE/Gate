@@ -116,7 +116,7 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
                           GetImage()->GetVoxelSize().y()/2.0,
                           GetImage()->GetVoxelSize().z()/2.0);
   G4Material * Vacuum =
-    theMaterialDatabase.GetMaterial("Vacuum");
+    theMaterialDatabase.GetMaterial("G4_Galactic");
   mVoxelLog = new G4LogicalVolume(mVoxelSolid, Vacuum, GetObjectName()+"_voxelLog", 0,0,0);
 
   // Create the main Parametrisation
@@ -124,9 +124,9 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
   param->SetVoxelDimensions(GetImage()->GetVoxelSize().x()/2.0,
                             GetImage()->GetVoxelSize().y()/2.0,
                             GetImage()->GetVoxelSize().z()/2.0);
-  param->SetNoVoxel(GetImage()->GetResolution().x(),
-                    GetImage()->GetResolution().y(),
-                    GetImage()->GetResolution().z());
+  param->SetNoVoxels(GetImage()->GetResolution().x(),
+                     GetImage()->GetResolution().y(),
+                     GetImage()->GetResolution().z());
   BuildLabelToG4MaterialVector(mVectorLabel2Material);
   param->SetMaterials(mVectorLabel2Material);
   // Convert image voxel into size_t type.

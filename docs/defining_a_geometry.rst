@@ -340,13 +340,13 @@ These commands can be found in the directory::
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
    | setXLength: Set the half axis length in the X direction                     | **WEDGE**                                                                                       |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setYLength: Set the half axis length in the Y direction                     | NarrowerXLength: Set the length of the shorter side of the wedge in the X direction             |
+   | setYLength: Set the half axis length in the Y direction                     | setNarrowerXLength: Set the length of the shorter side of the wedge in the X direction          |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZLength: Set the half axis length in the Z direction                     | XLength: Set the length of the wedge in the X direction                                         |
+   | setZLength: Set the half axis length in the Z direction                     | setXLength: Set the length of the wedge in the X direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZBottomCut: To cut the ellipsoide along the Z axis                       | YLength: Set the length of the wedge in the Y direction                                         |
+   | setZBottomCut: To cut the ellipsoide along the Z axis                       | setYLength: Set the length of the wedge in the Y direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-   | setZTopCut: To cut the ellipsoide along the Z axis                          | ZLength: Set the length of the wedge in the Z direction                                         |
+   | setZTopCut: To cut the ellipsoide along the Z axis                          | setZLength: Set the length of the wedge in the Z direction                                      |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
    | **ELLIPTICAL TUBE**                                                         | **TET-MESH BOX**                                                                                |
    +-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
@@ -602,6 +602,8 @@ described in the STL file is used to create a volume in GATE using the
 Geant4 G4TessellatedSolid class. It's important to note that only one
 material is associated to a tessellated volume. You can use either ASCII
 or binary STL files.
+
+/!\\ STL files are imported in GATE with a unit defined as mm.
 
 Here is an example to create a tessellated volume from an STL file in a
 GATE macro::

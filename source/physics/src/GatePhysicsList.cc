@@ -13,7 +13,9 @@
 #include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Hybridino.hh"
+#include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
+
 #include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
@@ -25,19 +27,41 @@
 #include "G4VPhysicsConstructor.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
+#include "G4LogicalVolumeStore.hh"
 #include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
+#include "G4ExceptionHandler.hh"
 #include "G4StateManager.hh"
+
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysicsSS.hh"
+#include "G4EmStandardPhysicsGS.hh"
+#include "G4EmLowEPPhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmDNAPhysics.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
+#include "G4RadioactiveDecayPhysics.hh"
 
+#include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
 #include "GateConfiguration.h"
+#include "GatePhysicsListMessenger.hh"
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
 #include "GateMixedDNAPhysics.hh"
+
+#include "G4OpticalPhoton.hh"
+#include "G4OpticalPhysics.hh"
+
 #include "GateParaPositronium.hh"
 #include "GateOrthoPositronium.hh"
 
@@ -50,16 +74,19 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
 
   ParticleCutType worldCuts;
   worldCuts.gammaCut = -1;
+  worldCuts.gammaCutDisabledByDefault = false;
   worldCuts.electronCut = -1;
+  worldCuts.electronCutDisabledByDefault = false;
   worldCuts.positronCut = -1;
+  worldCuts.positronCutDisabledByDefault = false;
   worldCuts.protonCut = -1;
+  worldCuts.protonCutDisabledByDefault = false;
   mapOfRegionCuts["DefaultRegionForTheWorld"] = worldCuts;
   mLoadState=0;
   mDEDXBinning=-1;
   mLambdaBinning=-1;
   mEmin=-1;
   mEmax=-1;
-  mSplineFlag=true;
   mUserPhysicListName = "";
   userlimits=0;
 
@@ -195,19 +222,18 @@ void GatePhysicsList::ConstructProcess()
     }
   else if(mLoadState==1)
     {
-      if (mUserPhysicListName == "") { // if a user physic list is set, transportation is already set
-        AddTransportation();
+      if (mUserListOfPhysicList.empty()) { // if a user physic list is set, transportation is already set
+          AddTransportation();
       }
 
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
         (*GetTheListOfProcesss())[i]->ConstructProcess();
-
+//
       //opt->SetVerbose(2);
-      if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-      if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+      //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+      //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
       if(mEmin>0)          emPar->SetMinEnergy(mEmin);
       if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-      emPar->SetSpline(mSplineFlag);
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << Gateendl);
 
@@ -276,9 +302,71 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     mListOfPhysicsLists += " " ;
   }
 
-  // Physic list will be setup by GateRunManager
   mUserPhysicListName = name;
-  GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+
+  // First, try to create EM only Physic lists
+  G4VPhysicsConstructor * pl = nullptr;
+  if (mUserPhysicListName == "emstandard") {
+    pl = new G4EmStandardPhysics();
+  }
+  if (mUserPhysicListName == "emstandard_opt1") {
+    pl = new G4EmStandardPhysics_option1();
+  }
+  if (mUserPhysicListName == "emstandard_opt2") {
+    pl = new G4EmStandardPhysics_option2();
+  }
+  if (mUserPhysicListName == "emstandard_opt3") {
+    pl = new G4EmStandardPhysics_option3();
+  }
+  if (mUserPhysicListName == "emstandard_opt4") {
+    pl = new G4EmStandardPhysics_option4();
+  }
+  if (mUserPhysicListName == "emstandard_SS") {
+    pl = new G4EmStandardPhysicsSS();
+  }
+  if (mUserPhysicListName == "emstandard_GS") {
+    pl = new G4EmStandardPhysicsGS();
+  }
+  if (mUserPhysicListName == "emLowEP") {
+    pl = new G4EmLowEPPhysics();
+  }
+  if (mUserPhysicListName == "emlivermore") {
+    pl = new G4EmLivermorePhysics();
+  }
+  if (mUserPhysicListName == "emlivermore_polar") {
+    pl = new G4EmLivermorePolarizedPhysics();
+  }
+  if (mUserPhysicListName == "empenelope") {
+    pl = new G4EmPenelopePhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics") {
+    pl = new G4EmDNAPhysics();
+  }
+
+#ifdef GATE_USE_OPTICAL
+    if (mUserPhysicListName == "optical") {
+    pl = new G4OpticalPhysics();
+  }
+#endif
+
+
+    if(pl != nullptr)  {
+        mUserListOfPhysicList.push_back(pl);
+          pl->ConstructParticle();
+          pl->ConstructProcess();
+    }
+
+  if(mUserListOfPhysicList.size() == 1)  {
+      AddTransportation();
+  }
+
+  if (!mUserListOfPhysicList.empty()) {
+    GateRunManager::GetRunManager()->SetUserPhysicListName("");
+  }
+  else {
+    // Set the phys list name. It will be build in GateRunManager.
+    GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+  }
 
   // Fluorescence processes
   // - default activation of deexcitation process
@@ -511,21 +599,26 @@ std::vector<GateVProcess*> GatePhysicsList::FindProcess(G4String name)
 void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 {
   if ( processname == "UHadronElastic")
-      G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,
-                   "####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
+    G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,"####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
 
-  if ((processname == "Decay") or (processname == "RadioactiveDecay")) {
-        GateRunManager::GetRunManager()->EnableDecay(true);
+    if ((processname == "Decay") or (processname == "RadioactiveDecay")) {
+        G4RadioactiveDecayPhysics p;
+        p.ConstructParticle();
+        p.ConstructProcess();
         return;
-  }
+    }
+
+
 
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
-      for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
-  else {
+    for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
+  else
+    {
       GateWarning("Unknown process: "<<processname );
       return;
-  }
+    }
+
 }
 //-----------------------------------------------------------------------------------------
 
@@ -681,11 +774,10 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
-  if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
+  //if(mDEDXBinning>0)   emPar->SetNumberOfBins(mDEDXBinning);
+  //if(mLambdaBinning>0) emPar->SetNumberOfBins(mLambdaBinning);
   if(mEmin>0)          emPar->SetMinEnergy(mEmin);
   if(mEmax>0)          emPar->SetMaxEnergy(mEmax);
-  emPar->SetSpline(mSplineFlag);
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   emPar->SetUseICRU90Data(mUseICRU90Data);
 #endif
@@ -722,146 +814,225 @@ void GatePhysicsList::SetCuts()
 //-----------------------------------------------------------------------------
 void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 {
-  // GateMessage("Cuts",4,"===================================\n");
-  // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin\n");
+    // GateMessage("Cuts",4,"===================================\n");
+    // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin\n");
 
-  //-----------------------------------------------------------------------------
-  // Set defaults production cut for the world
-  ParticleCutType worldCuts =  mapOfRegionCuts["DefaultRegionForTheWorld"];
+    //-----------------------------------------------------------------------------
+    // Set defaults production cut for the world
+    ParticleCutType worldCuts = mapOfRegionCuts["DefaultRegionForTheWorld"];
 
-  if(worldCuts.gammaCut == -1) worldCuts.gammaCut = defaultCutValue;
-  if(worldCuts.electronCut == -1) worldCuts.electronCut = defaultCutValue;
-  if(worldCuts.positronCut == -1) worldCuts.positronCut = defaultCutValue;
-  if(worldCuts.protonCut == -1) worldCuts.protonCut = defaultCutValue;
-
-  GateMessage("Cuts",3, "Set default production cuts (world) : "
-              << worldCuts.gammaCut << " "
-              << worldCuts.electronCut << " "
-              << worldCuts.positronCut << " "
-              << worldCuts.protonCut   << " mm" << Gateendl);
-
-  phys->SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
-  phys->SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
-  phys->SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
-  phys->SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
-
-  //-----------------------------------------------------------------------------
-  // Set default production cut to other regions
-  G4RegionStore * RegionStore = G4RegionStore::GetInstance();
-  G4RegionStore::const_iterator pi = RegionStore->begin();
-  G4RegionStore::const_iterator pe = RegionStore->end();
-  while (pi != pe) {
-    G4String regionName = (*pi)->GetName();
-
-    if (regionName != "DefaultRegionForTheWorld" && regionName !="world") {
-      RegionCutMapType::iterator current = mapOfRegionCuts.find(regionName);
-      if (current == mapOfRegionCuts.end()) {
-	// GateMessage("Cuts",5, " Cut not set for region " << regionName << " put -1\n");
-	mapOfRegionCuts[regionName].gammaCut = -1;
-	mapOfRegionCuts[regionName].electronCut = -1;
-	mapOfRegionCuts[regionName].positronCut = -1;
-	mapOfRegionCuts[regionName].protonCut = -1;
-      }
+    if (worldCuts.gammaCut == -1) {
+        worldCuts.gammaCut = defaultCutValue;
+        worldCuts.gammaCutDisabledByDefault = gammaCutDisabledByDefault;
     }
-    ++pi;
-  }
-
-  //-----------------------------------------------------------------------------
-  // Loop over regions with a defined cuts
-  RegionCutMapType::iterator it = mapOfRegionCuts.begin();
-  while (it != mapOfRegionCuts.end()) {
-    // do not apply cut for the world region
-    // GateMessage("Cuts", 5, "Region (*it).first : " << (*it).first<< Gateendl);
-    if (((*it).first != "DefaultRegionForTheWorld") && ((*it).first != "world")) {
-      G4Region* region = RegionStore->GetRegion((*it).first);
-      if (!region) {
-	GateError( "The region '" << (*it).first << "' does not exist !");
-      }
-      // set default values
-      ParticleCutType regionCuts =  (*it).second;
-
-      G4Region* parentRegion =  region;
-
-      while(regionCuts.gammaCut == -1)
-        {
-          G4bool unique;
-          parentRegion =  parentRegion->GetParentRegion(unique);
-          if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
-            ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
-            regionCuts.gammaCut = parentRegionCuts.gammaCut;
-          }
-          else
-            regionCuts.gammaCut = worldCuts.gammaCut;
-        }
-
-      parentRegion = region;
-      while(regionCuts.electronCut == -1)
-        {
-          G4bool unique;
-          parentRegion =  parentRegion->GetParentRegion(unique);
-          if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
-            ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
-            regionCuts.electronCut = parentRegionCuts.electronCut;
-          }
-          else
-            regionCuts.electronCut = worldCuts.electronCut;
-        }
-
-      parentRegion = region;
-      while(regionCuts.positronCut == -1)
-        {
-          G4bool unique;
-          parentRegion =  parentRegion->GetParentRegion(unique);
-          if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
-            ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
-            regionCuts.positronCut = parentRegionCuts.positronCut;
-          }
-          else
-            regionCuts.positronCut = worldCuts.positronCut;
-        }
-      parentRegion = region;
-      while(regionCuts.protonCut == -1)
-        {
-          G4bool unique;
-          parentRegion =  parentRegion->GetParentRegion(unique);
-          if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
-            ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
-            regionCuts.protonCut = parentRegionCuts.protonCut;
-          }
-          else
-            regionCuts.protonCut = worldCuts.protonCut;
-        }
-      parentRegion = region;
-
-
-      GateMessage("Cuts",3, "Set production cuts (g, e-, e+, p) for the region '"
-                  << (*it).first << "' : "
-                  << G4BestUnit(regionCuts.gammaCut, "Length") << " "
-                  << G4BestUnit(regionCuts.electronCut, "Length") << " "
-                  << G4BestUnit(regionCuts.positronCut, "Length") << " "
-                  << G4BestUnit(regionCuts.protonCut, "Length")   << Gateendl);
-
-      // apply the cut
-      /* G4ProductionCuts* cuts = region->GetProductionCuts();
-         if (!cuts) cuts = new G4ProductionCuts;
-         cuts->SetProductionCut(regionCuts.gammaCut, "gamma");
-         cuts->SetProductionCut(regionCuts.electronCut, "e-");
-         cuts->SetProductionCut(regionCuts.positronCut, "e+");
-         region->SetProductionCuts(cuts);*/
-
-      if(region->GetProductionCuts()) theListOfCuts.push_back(region->GetProductionCuts());
-      else theListOfCuts.push_back(new G4ProductionCuts);
-      theListOfCuts.back()->SetProductionCut(regionCuts.gammaCut, "gamma");
-      theListOfCuts.back()->SetProductionCut(regionCuts.electronCut, "e-");
-      theListOfCuts.back()->SetProductionCut(regionCuts.positronCut, "e+");
-      theListOfCuts.back()->SetProductionCut(regionCuts.protonCut, "proton");
-      region->SetProductionCuts(theListOfCuts.back());
-
-      //G4ProductionCutsTable::GetProductionCutsTable()->UpdateCoupleTable(region->GetWorldPhysical());
-      //modif Claire 31mars2011
+    if (worldCuts.electronCut == -1) {
+        worldCuts.electronCut = defaultCutValue;
+        worldCuts.electronCutDisabledByDefault = electronCutDisabledByDefault;
     }
-    ++it;
-  } // end loop regions
+    if (worldCuts.positronCut == -1) {
+        worldCuts.positronCut = defaultCutValue;
+        worldCuts.positronCutDisabledByDefault = positronCutDisabledByDefault;
+    }
+    if (worldCuts.protonCut == -1) {
+        worldCuts.protonCut = defaultCutValue;
+        worldCuts.protonCutDisabledByDefault = protonCutDisabledByDefault;
+    }
+
+    GateMessage("Cuts", 3, "Set default production cuts (world) : "
+            << worldCuts.gammaCut << " "
+            << worldCuts.electronCut << " "
+            << worldCuts.positronCut << " "
+            << worldCuts.protonCut << " mm" << Gateendl);
+
+
+    if (!gammaCutDisabledByDefault)
+        phys->SetCutValue(worldCuts.gammaCut, "gamma", "DefaultRegionForTheWorld");
+    else
+        GateMessage("Cuts", 3, "No gamma cut by default " << Gateendl);
+
+    if (!electronCutDisabledByDefault)
+        phys->SetCutValue(worldCuts.electronCut, "e-", "DefaultRegionForTheWorld");
+    else
+        GateMessage("Cuts", 3, "No electron cut by default " << Gateendl);
+
+    if (!positronCutDisabledByDefault)
+        phys->SetCutValue(worldCuts.positronCut, "e+", "DefaultRegionForTheWorld");
+    else
+        GateMessage("Cuts", 3, "No positron cut by default " << Gateendl);
+
+    if (!protonCutDisabledByDefault)
+        phys->SetCutValue(worldCuts.protonCut, "proton", "DefaultRegionForTheWorld");
+    else
+        GateMessage("Cuts", 3, "No proton cut by default " << Gateendl);
+
+
+    //-----------------------------------------------------------------------------
+    // Set default production cut to other regions
+    G4RegionStore *RegionStore = G4RegionStore::GetInstance();
+    G4RegionStore::const_iterator pi = RegionStore->begin();
+    G4RegionStore::const_iterator pe = RegionStore->end();
+    while (pi != pe) {
+        G4String regionName = (*pi)->GetName();
+
+        if (regionName != "DefaultRegionForTheWorld" && regionName != "world") {
+            RegionCutMapType::iterator current = mapOfRegionCuts.find(regionName);
+            if (current == mapOfRegionCuts.end()) {
+                // GateMessage("Cuts",5, " Cut not set for region " << regionName << " put -1\n");
+                mapOfRegionCuts[regionName].gammaCut = -1;
+                mapOfRegionCuts[regionName].gammaCutDisabledByDefault = false;
+                mapOfRegionCuts[regionName].electronCut = -1;
+                mapOfRegionCuts[regionName].electronCutDisabledByDefault = false;
+                mapOfRegionCuts[regionName].positronCut = -1;
+                mapOfRegionCuts[regionName].positronCutDisabledByDefault = false;
+                mapOfRegionCuts[regionName].protonCut = -1;
+                mapOfRegionCuts[regionName].protonCutDisabledByDefault = false;
+            }
+        }
+        ++pi;
+    }
+
+    //-----------------------------------------------------------------------------
+    // Loop over regions with a defined cuts
+    RegionCutMapType::iterator it = mapOfRegionCuts.begin();
+    while (it != mapOfRegionCuts.end()) {
+        // do not apply cut for the world region
+        // GateMessage("Cuts", 5, "Region (*it).first : " << (*it).first<< Gateendl);
+        if (((*it).first != "DefaultRegionForTheWorld") && ((*it).first != "world")) {
+            G4Region *region = RegionStore->GetRegion((*it).first);
+            if (!region) {
+                GateError("The region '" << (*it).first << "' does not exist !");
+            }
+            // set default values
+            ParticleCutType regionCuts = (*it).second;
+
+            G4Region *parentRegion = region;
+
+            while (regionCuts.gammaCut == -1) {
+                G4bool unique;
+                parentRegion = parentRegion->GetParentRegion(unique);
+                if (parentRegion->GetName() != "DefaultRegionForTheWorld") {
+                    ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
+                    regionCuts.gammaCut = parentRegionCuts.gammaCut;
+                    regionCuts.gammaCutDisabledByDefault = parentRegionCuts.gammaCutDisabledByDefault;
+                } else {
+                    regionCuts.gammaCut = worldCuts.gammaCut;
+                    regionCuts.gammaCutDisabledByDefault = worldCuts.gammaCutDisabledByDefault;
+                }
+
+            }
+
+            parentRegion = region;
+            while (regionCuts.electronCut == -1) {
+                G4bool unique;
+                parentRegion = parentRegion->GetParentRegion(unique);
+                if (parentRegion->GetName() != "DefaultRegionForTheWorld") {
+                    ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
+                    regionCuts.electronCut = parentRegionCuts.electronCut;
+                    regionCuts.electronCutDisabledByDefault = parentRegionCuts.electronCutDisabledByDefault;
+                } else {
+                    regionCuts.electronCut = worldCuts.electronCut;
+                    regionCuts.electronCutDisabledByDefault = worldCuts.electronCutDisabledByDefault;
+                }
+
+            }
+
+            parentRegion = region;
+            while (regionCuts.positronCut == -1) {
+                G4bool unique;
+                parentRegion = parentRegion->GetParentRegion(unique);
+                if (parentRegion->GetName() != "DefaultRegionForTheWorld") {
+                    ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
+                    regionCuts.positronCut = parentRegionCuts.positronCut;
+                    regionCuts.positronCutDisabledByDefault = parentRegionCuts.positronCutDisabledByDefault;
+                } else {
+                    regionCuts.positronCut = worldCuts.positronCut;
+                    regionCuts.positronCutDisabledByDefault = worldCuts.positronCutDisabledByDefault;
+                }
+
+            }
+            parentRegion = region;
+            while (regionCuts.protonCut == -1) {
+                G4bool unique;
+                parentRegion = parentRegion->GetParentRegion(unique);
+                if (parentRegion->GetName() != "DefaultRegionForTheWorld") {
+                    ParticleCutType parentRegionCuts = mapOfRegionCuts[parentRegion->GetName()];
+                    regionCuts.protonCut = parentRegionCuts.protonCut;
+                    regionCuts.protonCutDisabledByDefault = parentRegionCuts.protonCutDisabledByDefault;
+                } else {
+                    regionCuts.protonCut = worldCuts.protonCut;
+                    regionCuts.protonCutDisabledByDefault = worldCuts.protonCutDisabledByDefault;
+                }
+
+            }
+            parentRegion = region;
+
+
+//            GateMessage("Cuts", 3, "Set production cuts (g, e-, e+, p) for the region '"
+//                    << (*it).first << "' : "
+//                    << G4BestUnit(regionCuts.gammaCut, "Length") << " "
+//                    << G4BestUnit(regionCuts.electronCut, "Length") << " "
+//                    << G4BestUnit(regionCuts.positronCut, "Length") << " "
+//                    << G4BestUnit(regionCuts.protonCut, "Length") << Gateendl);
+
+            // apply the cut
+            /* G4ProductionCuts* cuts = region->GetProductionCuts();
+               if (!cuts) cuts = new G4ProductionCuts;
+               cuts->SetProductionCut(regionCuts.gammaCut, "gamma");
+               cuts->SetProductionCut(regionCuts.electronCut, "e-");
+               cuts->SetProductionCut(regionCuts.positronCut, "e+");
+               region->SetProductionCuts(cuts);*/
+
+            if (region->GetProductionCuts()) theListOfCuts.push_back(region->GetProductionCuts());
+            else theListOfCuts.push_back(new G4ProductionCuts);
+
+            if (!regionCuts.gammaCutDisabledByDefault) {
+                GateMessage("Cuts", 3, " set cut regionCuts.gammaCut = " << regionCuts.gammaCut << " for region "
+                                                                         << region->GetName() << Gateendl);
+                theListOfCuts.back()->SetProductionCut(regionCuts.gammaCut, "gamma");
+            } else {
+                GateMessage("Cuts", 3,
+                            "DONT set cut regionCuts.gammaCut = " << regionCuts.gammaCut << " for region "
+                                                                     << region->GetName() << Gateendl);
+            }
+
+
+            if (!regionCuts.electronCutDisabledByDefault) {
+                GateMessage("Cuts", 3, " set cut regionCuts.electronCut = " << regionCuts.electronCut << " for region "
+                                                                            << region->GetName() << Gateendl);
+                theListOfCuts.back()->SetProductionCut(regionCuts.electronCut, "e-");
+            } else {
+                GateMessage("Cuts", 3,
+                            "DONT set cut regionCuts.electronCut = " << regionCuts.electronCut << " for region "
+                                                                     << region->GetName() << Gateendl);
+            }
+
+
+            if (!regionCuts.positronCutDisabledByDefault) {
+                GateMessage("Cuts", 3, " set cut regionCuts.positronCut = " << regionCuts.positronCut << " for region "
+                                                                            << region->GetName() << Gateendl);
+                theListOfCuts.back()->SetProductionCut(regionCuts.positronCut, "e+");
+            } else {
+                GateMessage("Cuts", 3,
+                            "DONT set cut regionCuts.positronCut = " << regionCuts.positronCut << " for region "
+                                                                     << region->GetName() << Gateendl);
+            }
+
+
+            if (!regionCuts.protonCutDisabledByDefault) {
+                GateMessage("Cuts", 3, " set cut regionCuts.protonCut = " << regionCuts.protonCut << " for region "
+                                                                          << region->GetName() << Gateendl);
+                theListOfCuts.back()->SetProductionCut(regionCuts.protonCut, "proton");
+            } else {
+                GateMessage("Cuts", 3,
+                            "DONT set cut regionCuts.protonCut = " << regionCuts.protonCut << " for region "
+                                                                     << region->GetName() << Gateendl);
+            }
+
+            region->SetProductionCuts(theListOfCuts.back());
+
+        }
+        ++it;
+    } // end loop regions
 
 
   //-----------------------------------------------------------------------------
@@ -1097,6 +1268,26 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 //-----------------------------------------------------------------------------
 
 
+void GatePhysicsList::DisableAllCuts(G4String particleName)
+{
+    if (particleName == "e-")
+    {
+        this->electronCutDisabledByDefault = true;
+    }
+    if (particleName == "e+")
+    {
+        this->positronCutDisabledByDefault = true;
+    }
+    if (particleName == "gamma")
+    {
+        this->gammaCutDisabledByDefault = true;
+    }
+    if (particleName == "proton")
+    {
+        this->protonCutDisabledByDefault = true;
+    }
+}
+
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue)
 {
@@ -1114,11 +1305,17 @@ void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName,
     // first time this region is concerned
     mapOfRegionCuts[regionName].gammaCut = -1;
     mapOfRegionCuts[regionName].electronCut = -1;
+    mapOfRegionCuts[regionName].electronCutDisabledByDefault = false;
     mapOfRegionCuts[regionName].positronCut = -1;
+    mapOfRegionCuts[regionName].positronCutDisabledByDefault = false;
     mapOfRegionCuts[regionName].protonCut = -1;
   }
   if (particleName == "gamma") mapOfRegionCuts[regionName].gammaCut = cutValue;
-  if (particleName == "e-") mapOfRegionCuts[regionName].electronCut = cutValue;
+  if (particleName == "e-")
+  {
+      mapOfRegionCuts[regionName].electronCut = cutValue;
+      mapOfRegionCuts[regionName].electronCutDisabledByDefault = false;
+  }
   if (particleName == "e+") mapOfRegionCuts[regionName].positronCut = cutValue;
   if (particleName == "proton") mapOfRegionCuts[regionName].protonCut = cutValue;
 
@@ -1167,7 +1364,7 @@ void GatePhysicsList::GetCuts()
 void GatePhysicsList::SetOptDEDXBinning(G4int val)
 {
   mDEDXBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mDEDXBinning);
 }
 //-----------------------------------------------------------------------------
 
@@ -1175,8 +1372,8 @@ void GatePhysicsList::SetOptDEDXBinning(G4int val)
 void GatePhysicsList::SetOptLambdaBinning(G4int val)
 {
   mLambdaBinning=val;
-  emPar->SetNumberOfBins(mDEDXBinning);
-  emPar->SetNumberOfBins(mLambdaBinning); 
+  //emPar->SetNumberOfBins(mDEDXBinning);
+  //emPar->SetNumberOfBins(mLambdaBinning);
 }
 //-----------------------------------------------------------------------------
 
@@ -1196,15 +1393,8 @@ void GatePhysicsList::SetOptEMax(G4double val)
   mEmax=val;
   emPar->SetMaxEnergy(mEmax);
 }
-//-----------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
-void GatePhysicsList::SetOptSplineFlag(G4bool val)
-{
-  mSplineFlag=val;
-  emPar->SetSpline(mSplineFlag);
-}
 //-----------------------------------------------------------------------------
 
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
@@ -1246,3 +1436,4 @@ GatePhysicsList *GatePhysicsList::singleton = 0;
 
 
 #endif /* end #define GATEPHYSICSLIST_CC */
+

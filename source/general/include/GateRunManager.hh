@@ -28,7 +28,6 @@
 #define GateRunManager_h 1
 
 #include "G4RunManager.hh"
-#include "G4VModularPhysicsList.hh"
 #include "GateHounsfieldToMaterialsBuilder.hh"
 
 class GateRunManagerMessenger;
@@ -54,8 +53,6 @@ public:
   //! Initialise only the geometry, to allow the building of the GATE geometry
   void InitGeometryOnly();
 
-  void EnableDecay(bool b) { mEnableDecay = b; }
-
   void InitPhysics();
 
   //! Overload of G4RunManager()::RunInitialisation() that resets the geometry navigator
@@ -67,7 +64,7 @@ public:
 
   bool GetGlobalOutputFlag() { return mGlobalOutputFlag; }
   void EnableGlobalOutput(bool b) { mGlobalOutputFlag = b; }
-  void SetUserPhysicList(G4VModularPhysicsList * m) { mUserPhysicList = m; }
+  void SetUserPhysicList(G4VUserPhysicsList * m) { mUserPhysicList = m; }
   void SetUserPhysicListName(G4String m) { mUserPhysicListName = m; }
 
 private :
@@ -78,9 +75,8 @@ private :
   bool mIsGateInitializationCalled;
   GateHounsfieldToMaterialsBuilder * mHounsfieldToMaterialsBuilder;
   bool mGlobalOutputFlag;
-  G4VModularPhysicsList * mUserPhysicList;
+  G4VUserPhysicsList * mUserPhysicList;
   G4String mUserPhysicListName;
-  bool mEnableDecay;
 };
 //----------------------------------------------------------------------------------------
 

@@ -88,12 +88,6 @@ G4Element* GateCompoundElementCreator::Construct()
 	GateError("Sum of fraction is not 1.0 for element "
 			  << element->GetName()
 			  << " " << f);
-	for(unsigned int j=0; j<element->GetNumberOfElements(); j++) {
-	  GateError("Element " << j << " "
-				<< element->GetElement(j)->GetName()
-				<< " = " << element->GetRelativeAbundanceVector()[j]);
-	}
-	exit(0);
   }
   return element;
 }

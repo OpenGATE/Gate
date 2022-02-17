@@ -5,10 +5,6 @@
 // This software written by Mark Fischler and Steven Haywood
 // 
 
-#ifdef GNUPRAGMA
-#pragma implementation
-#endif
-
 #include <string.h>
 
 #include "CLHEP/Matrix/defs.h"

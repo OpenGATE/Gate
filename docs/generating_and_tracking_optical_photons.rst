@@ -7,12 +7,66 @@ Generating and tracking optical photons
    :depth: 15
    :local:
 
+
+
+
+Important note for Geant4 10.7 and newer
+----------------------------------------
+
+If you compile GATE with Geant4 10.7 or newer, PDG code for optical photon has changed `from 0 (zéro) to -22 <https://geant4.kek.jp/lxr/diff/particles/bosons/src/G4OpticalPhoton.cc?v=10.6.p3;diffval=10.7;diffvar=v>`_
+.
+
+
 Introduction
 ------------
 
-To use the optical photon capabilities of GATE, the **GATE_USE_OPTICAL** variable has to be set to **ON** in the configuration process using ccmake. 
+To use the optical photon capabilities of GATE, the **GATE_USE_OPTICAL** variable has to be set to **ON** in the configuration process using ccmake.
+
+
 
 Before discussing how to use the optical photon tracking, it has to be mentioned that there are a few disadvantages in using optical transport. First, the simulation time will increase dramatically. For example, most scintillators used in PET generate in the order of 10,000 optical photons at 511 keV, which means that approximately 10,000 more particles have to be tracked for each annihilation photon that is detected. Although the tracking of optical photons is relatively fast, a simulation with optical photon tracking can easily be a factor thousand slower than one without. Finally, in order to perform optical simulations, many parameters are needed for the materials and surfaces, some of which may be difficult to determine.
+
+Enabling optical processes in GATE
+----------------------------------
+
+There are two ways to add optical processes in GATE :
+
+Adding manually each processes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The de facto manner to add optical processes on GATE is to manually add each of wanted optical processes, like this::
+
+    /gate/physics/addPhysicsList emlivermore #Standard physics
+    /gate/physics/addProcess OpticalAbsorption
+    /gate/physics/addProcess OpticalRayleigh
+    /gate/physics/addProcess OpticalBoundary
+    /gate/physics/addProcess OpticalMie
+    /gate/physics/addProcess OpticalWLS
+    /gate/physics/addProcess Scintillation
+    /gate/physics/addProcess Cerenkov
+
+This manner is used in the rest of the documentation.
+
+
+The ``G4OpticalPhysics`` physics list from geant4:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Or you can use the `predefined list ``G4OpticalPhysics`` `list <https://gitlab.cern.ch/geant4/geant4/-/blob/e2d2f9810a9c69a246ddee17ae224bf9d5ac3453/source/physics_lists/builders/include/G4OpticalPhysics.hh>`_ of Geant4::
+
+    /gate/physics/addPhysicsList emlivermore
+    /gate/physics/addPhysicsList optical
+
+This will add all optical processes define in G4OpticalPhysics.
+
+Be careful, GATE also redefined some processes to make them more easy to use or to keep. For example the G4Scintillation process is nore more appliable for gamma in Geant4 10.6, so one have to use GateScintillation version, which is of course not used with the G4OpticalPhysics. To circumvent this, the G4Scintillation can be replaced::
+
+    /gate/physics/addPhysicsList emlivermore
+    /gate/physics/addPhysicsList optical
+    /gate/physics/addProcess  Scintillation
+
+
+
+
 
 Optical Photon Generation
 -------------------------
@@ -47,7 +101,7 @@ The property tables for the materials used in a simulation are to be stored in a
 Scintillation
 ~~~~~~~~~~~~~
 
-A scintillator is characterized by its photon emission spectrum. The scintillation follows an exponential decay with two time constants, a fast and a slow one. The relative strength of the fast component **FASTCOMPONENT** as a fraction of total scintillation yield is given by the **YIELDRATIO**. The emission spectra of both decays are given by the property vectors **FASTCOMPONENT** and **SLOWCOMPONENT** and the time constants **FASTTIMECONSTANT** and **SLOWTIMECONSTANT**. These vectors specify the probability that a photon with the given energy is emitted. The sum of each of the vectors should therefore be one.
+A scintillator is characterized by its photon emission spectrum. The scintillation follows an exponential decay with up to three time constants. The relative strength of the components as a fraction of the total scintillation yield is given by **SCINTILLATIONYIELD1**, **SCINTILLATIONYIELD2** and **SCINTILLATIONYIELD3**. The emission spectra of the decays are given by the property vectors **SCINTILLATIONCOMPONENT1**, **SCINTILLATIONCOMPONENT2** and **SCINTILLATIONCOMPONENT3** and the time constants **SCINTILLATIONTIMECONSTANT1**, **SCINTILLATIONTIMECONSTANT2** and **SCINTILLATIONTIMECONSTANT3**. These vectors specify the probability that a photon with the given energy is emitted. The sum of each of the vectors should therefore be one.
 
 In order to have scintillation in a material, the first parameter that has to be specified is the **SCINTILLATIONYIELD** (1/Mev, 1/keV), which gives the number of photons that is emitted per amount of energy absorbed, or, more precisely, it gives the *expectation* value of this number, since the real number of emitted photons follows a normal distribution. The variance of this normal distribution is **RESOLUTION-SCALE** times this expectation value. Thus, for example, when a gamma photon deposits :math:`E` amount of energy in the scintillator, :math:`N` optical photons are emitted with an expectation value of
 :math:`\mu_N` = *E* . SCINTILLATIONYIELD
@@ -65,9 +119,9 @@ where :math:`R` is the energy resolution (FWHM - Full width at half maximum ) at
       <propertiestable>
         <property name="SCINTILLATIONYIELD" value="26000" unit="1/MeV"/>
         <property name="RESOLUTIONSCALE" value="4.41"/>
-        <property name="FASTTIMECONSTANT" value="40" unit="ns"/>
-        <property name="YIELDRATIO" value="1"/>
-        <propertyvector name="FASTCOMPONENT" energyunit="eV">
+        <property name="SCINTILLATIONTIMECONSTANT1" value="40" unit="ns"/>
+        <property name="SCINTILLATIONYIELD1" value="1"/>
+        <propertyvector name="SCINTILLATIONCOMPONENT1" energyunit="eV">
           <ve energy="2.95167" value="1"/>
         </propertyvector>
         <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">
@@ -80,6 +134,20 @@ where :math:`R` is the energy resolution (FWHM - Full width at half maximum ) at
         </propertyvector>
       </propertiestable>
     </material>
+
+Cerenkov photons
+~~~~~~~~~~
+
+The radiation of Cerenkov light occurs when a charged particle moves through a dispersive medium faster than the group velocity of light in that medium. Photons are emitted on the surface of a cone, whose opening angle with respect to the particle’s instantaneous direction decreases as the particle slows down. To generate Cerenkov optical photons in a material, refractive index must be specified using the material property name RINDEX. The user may limit the step size by specifying a maximum (average) number of Cerenkov photons created during the step, using the setMaxPhotons command. The actual number generated will necessarily be different due to the Poissonian nature of the production. In the present implementation, the production density of photons is distributed evenly along the particle’s track segment, even if the particle has slowed significantly during the step. The step can also be limited with the setMaxBetaChange command, where the argument is the allowed change in percent.
+
+ **Warning about Cherenkov process:**
+It has been shown in recent Gate releases that activating the Cherenkov using in the physics list
+/gate/physics/addPhysicsList empenelope (or others)
+/gate/physics/addProcess    Cerenkov
+is not enough to add the Cerenkov process in a Volume 
+one **needs** to define an appropriate physics cut in the volume of interest, for the particule type of interest
+/gate/physics/Electron/SetCutInRegion  Volume  0.1 mm 
+in order to generate Cherenkov photon.
 
 Absorption
 ~~~~~~~~~~

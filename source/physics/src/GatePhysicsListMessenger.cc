@@ -48,7 +48,6 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetLambdaBinning;
   delete pSetEMin;
   delete pSetEMax;
-  delete pSetSplineFlag;
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   delete pSetUseICRU90DataFlag;
 #endif
@@ -138,6 +137,19 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   protonCutCmd = new G4UIcmdWithAString(bb,this);
   protonCutCmd->SetGuidance("Set proton production cut for a given region (two parameters 'regionName' and 'cutValue')");
 
+  bb = base + "/Gamma/RemoveDefaultCut";
+  gammaRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  gammaRemoveDefaultCutCmd->SetGuidance("Remove the default gamma cut for world, and so for any volume");
+  bb = base + "/Electron/RemoveDefaultCut";
+  electronRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  electronRemoveDefaultCutCmd->SetGuidance("Remove the default electron cut for world, and so for any volume");
+  bb = base + "/Positron/RemoveDefaultCut";
+  positronRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  positronRemoveDefaultCutCmd->SetGuidance("Remove the default positron cut for world, and so for any volume");
+  bb = base + "/Proton/RemoveDefaultCut";
+  protonRemoveDefaultCutCmd = new G4UIcmdWithoutParameter(bb, this);
+  protonRemoveDefaultCutCmd->SetGuidance("Remove the default proton cut for world, and so for any volume");
+
   bb = base+"/SetMaxStepSizeInRegion";
   pMaxStepSizeCmd = new G4UIcmdWithAString(bb,this);
   pMaxStepSizeCmd->SetGuidance("Set the maximum step size for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateStepLimiter");
@@ -186,11 +198,6 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pSetEMax = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set EMax for Standard EM Processes";
   pSetEMax->SetGuidance(guidance);
-
-  bb = base+"/setSplineFlag";
-  pSetSplineFlag = new G4UIcmdWithABool(bb,this);
-  guidance = "Set SplineFlag for Standard EM Processes";
-  pSetSplineFlag->SetGuidance(guidance);
 
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   bb = base+"/setUseICRU90DataFlag";
@@ -285,11 +292,18 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     if (command == positronCutCmd) { pPhylist->SetCutInRegion("e+", regionName, cutValue); }
     if (command == protonCutCmd) { pPhylist->SetCutInRegion("proton", regionName, cutValue);}
 
+
+
     if (command == pMaxStepSizeCmd) pPhylist->SetSpecialCutInRegion("MaxStepSize", regionName, cutValue);
     if (command == pMaxToFCmd) pPhylist->SetSpecialCutInRegion("MaxToF", regionName, cutValue);
     if (command == pMinKineticEnergyCmd) pPhylist->SetSpecialCutInRegion("MinKineticEnergy", regionName, cutValue);
     if (command == pMaxTrackLengthCmd) pPhylist->SetSpecialCutInRegion("MaxTrackLength", regionName, cutValue);
     if (command == pMinRemainingRangeCmd) pPhylist->SetSpecialCutInRegion("MinRemainingRange", regionName, cutValue);  }
+
+    if (command == electronRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("e-");}
+    if (command == gammaRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("gamma");}
+    if (command == positronRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("e+");}
+    if (command == protonRemoveDefaultCutCmd) {pPhylist->DisableAllCuts("proton");}
 
   if (command == pActivateStepLimiterCmd) pPhylist->mListOfStepLimiter.push_back(param);
   if (command == pActivateSpecialCutsCmd) pPhylist->mListOfG4UserSpecialCut.push_back(param);
@@ -381,11 +395,6 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     double val = pSetEMax->GetNewDoubleValue(param);
     pPhylist->SetOptEMax(val);
     GateMessage("Physic", 1, "(EM Options) Max Energy set to "<<G4BestUnit(val,"Energy")<<". MaxEnergy defaut Value 100TeV.\n");
-  }
-  if (command == pSetSplineFlag) {
-    G4bool flag = pSetSplineFlag->GetNewBoolValue(param);
-    pPhylist->SetOptSplineFlag(flag);
-    GateMessage("Physic", 1, "(EM Options) Spline Flag set to "<<flag<<". Spline Flag defaut 1.\n");
   }
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   if (command == pSetUseICRU90DataFlag) {

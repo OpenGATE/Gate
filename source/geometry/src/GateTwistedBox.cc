@@ -48,7 +48,7 @@ GateTwistedBox::GateTwistedBox(const G4String& itsName,
   m_Length(1.0*cm, 1.0*cm, 1.0*cm), m_twistAngle(45.0*degree),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateTwistedBoxMessenger(this);
 }
 

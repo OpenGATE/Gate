@@ -5,6 +5,17 @@ GPATH
 GRTAGS
 GTAGS
 .DS_Store
+-/.idea/
+cmake-build-*
+
 /.idea/
-/cmake-build-debug/
+/GateBenchmarks
+/GateTools
+/gaga
+/pet_simulation
+*.save
+*.old
+
+/source/io_old/
+/source/save_bug/
 

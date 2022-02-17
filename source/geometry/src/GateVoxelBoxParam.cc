@@ -17,7 +17,7 @@ See LICENSE.md for further details
 //---------------------------------------------------------------------------------------------------------------------
 // Constructor
 GateVoxelBoxParam::GateVoxelBoxParam(const  G4String& itsName, GateVoxelBoxParameterized* vpi)
-  : GateBox(itsName,"Vacuum",1,1,1,false,false),
+  : GateBox(itsName,"G4_Galactic",1,1,1,false,false),
     itsInserter(vpi), m_parameterization(0), m_pvParameterized(0)
 {
 }

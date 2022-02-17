@@ -342,11 +342,8 @@ void GateMergeManager::StartCleaning(string splitfileName,bool test){
                cout<<"Please remove it manually!"<<endl;
         }
      }
-     const string rmfiles("rm -f "+dir+"/*");
-     system(rmfiles.c_str());
-     const string rmdir="rm -f -r "+dir;
-     const int res2 = system(rmdir.c_str());
-     if(res2) {
+     const string rmdir="rm -rf "+dir;
+     if(system(rmdir.c_str())) {
             cout<<"Could not remove "<<dir<<endl;
             cout<<"Please remove it manually!"<<endl;
      }

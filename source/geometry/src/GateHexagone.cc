@@ -44,7 +44,7 @@ GateHexagone::GateHexagone(const G4String& itsName,
   m_Hexagone_solid(0), m_Hexagone_log(0), m_Messenger(0) 
 {
      // Default material name
-     SetMaterialName("Vacuum");
+     SetMaterialName("G4_Galactic");
      
      m_HexagoneZPlane = new G4double[2];
      m_HexagoneRInner = new G4double[6];

@@ -48,7 +48,7 @@ GateParaboloid::GateParaboloid(const G4String& itsName,
   m_zLength(1.0*cm),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateParaboloidMessenger(this);
 }
 

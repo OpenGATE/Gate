@@ -52,6 +52,11 @@ protected:
   G4UIcmdWithAString * positronCutCmd;
   G4UIcmdWithAString * protonCutCmd;
 
+  G4UIcmdWithoutParameter * electronRemoveDefaultCutCmd;
+  G4UIcmdWithoutParameter * gammaRemoveDefaultCutCmd;
+  G4UIcmdWithoutParameter * protonRemoveDefaultCutCmd;
+  G4UIcmdWithoutParameter * positronRemoveDefaultCutCmd;
+
   G4UIcmdWithAString * pMaxStepSizeCmd;
   G4UIcmdWithAString * pMaxTrackLengthCmd;
   G4UIcmdWithAString * pMaxToFCmd;
@@ -67,7 +72,6 @@ protected:
   G4UIcmdWithAnInteger * pSetLambdaBinning;
   G4UIcmdWithADoubleAndUnit * pSetEMin;
   G4UIcmdWithADoubleAndUnit * pSetEMax;
-  G4UIcmdWithABool * pSetSplineFlag;
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   G4UIcmdWithABool * pSetUseICRU90DataFlag;
 #endif

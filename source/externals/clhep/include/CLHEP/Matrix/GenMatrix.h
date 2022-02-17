@@ -14,10 +14,6 @@
 #ifndef _GENMatrix_H_
 #define _GENMatrix_H_
 
-#ifdef GNUPRAGMA
-#pragma interface
-#endif
-
 #include <vector>
 
 #include <iostream>

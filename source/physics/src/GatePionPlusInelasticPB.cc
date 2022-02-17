@@ -37,7 +37,7 @@ GatePionPlusInelasticPB::GatePionPlusInelasticPB():GateVProcess("PionPlusInelast
 //-----------------------------------------------------------------------------
 G4VProcess* GatePionPlusInelasticPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4PionPlusInelasticProcess(GetG4ProcessName());
+  return new G4HadronInelasticProcess("piInelastic", G4PionPlus::Definition());
 }
 //-----------------------------------------------------------------------------
 

@@ -21,28 +21,23 @@ vGate stands for Virtual Gate. It is a complete virtual machine running an `Ubun
 
 With vGate you can launch your first GATE simulation in just a few steps! No need to install anything, no need to configure anything, and no time spent to understand compilation and related stuff. A full Linux environment is totally set up to be able to use GATE just by launching a simple command: "Gate".
 
-The following software is installed on this machine:
+The following software is installed on this machine (see this `file <https://github.com/OpenGATE/Gate/blob/develop/source/docker/vGate.sh>`_ for more details):
 
-* Ubuntu LTS 18.04 on Virtual Box (40GB virtual HD)
-* GATE 9.0
-* Geant4 10.06.1
+* Ubuntu LTS 20.04 on Virtual Box (40GB virtual HD)
+* GATE 9.1
+* Geant4 10.7.0
 * GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
-* Gate tools
-* Gate exercises
-* Root 6.14.00
-* libtorch cxx11 (cpu) 1.4.0
-* ITK 4.13.1 with Module_RTK=ON (v2.0.0)
+* Root 6.19.02
+* libtorch cxx11 (cpu) 1.7.0
+* ITK with Module_RTK=ON
 * VTK v7.1.0
 * vV 1.4
-* ImageJ (Fiji) 1.52d
-* Visual studio code
-* Jupyter Notebook, Jupyter Lab
-* Python3 libraries: numpy, matplotlib, scipy, pydicom, pandas, SimpleITK, uproot
+* ImageJ (Fiji)
 
 How to get vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
 
-Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu.
+Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu. The direct (google drive) link is `here <https://drive.google.com/file/d/1RQ6TxODe0VYUqdc8qqIMP_fGKl_KMyed/view?usp=sharing>`_.
 
 Be aware that the file you will download a pretty big (about 10 Gbytes), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
 
@@ -63,7 +58,7 @@ That's it!
 
 Login credentials are (qwerty keyboard):
 
-* user: gate
+* user: vgate
 * password: virtual
 * ('gate' is sudo)
 
@@ -82,6 +77,38 @@ Any additional questions can be posted on the gate-users mailing-list.
 
 Miscellaneous
 -------------
+
+How to share a folder?
+~~~~~~~~~~~~~~~~~~~~~~
+
+1. Share a folder on the host OS
+
+• In VirtualBox, click your OS on the left and click on Settings.
+• Click on the Shared Folders tab.
+• Click on the folder with the plus on the right.
+• Browse to a folder of your choice in the folder path.
+• Enter a folder name with no spaces e.g. “Share”.
+• Check Auto-mount and Make Permanent, if available.
+• Click on OK.
+
+2. Mount the folder in the guest OS
+
+• Create a folder in your guest OS that you want to share, like mkdir /media/Share
+• Open up Terminal.
+• Switch to the root user using sudo su and enter your password.
+• Browse to the etc folder using cd /etc.
+• Edit the rc.local file using vi fstab
+• Move your cursor to the last line and press the letter “i” on your keyboard to insert text.
+• Type in the following: Share /media/Share vboxsf  uid=1000,gid=1000 0 0 
+• Share should match the folder name from step 1.
+• username should match your Linux username.
+• /media/Share should be the absolute path of the new folder you created.
+• Now hit “ESC”, type :wq and hit ENTER to save and quit the file editing.
+
+After you restart the guest OS, your shared folder will be automatically mounted.
+
+
+
 
 How to get my keyboard properly working?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

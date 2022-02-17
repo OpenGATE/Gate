@@ -36,7 +36,7 @@ GateHadronCapturePB::GateHadronCapturePB():GateVProcess("NeutronCapture")
 //-----------------------------------------------------------------------------
 G4VProcess* GateHadronCapturePB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4HadronCaptureProcess(GetG4ProcessName()); 
+  return new G4NeutronCaptureProcess(GetG4ProcessName());
 }
 //-----------------------------------------------------------------------------
 

@@ -69,7 +69,7 @@ ENDIF()
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
 IF(Geant4_multithreaded_FOUND)
-    MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    MESSAGE(WARNING "GATE should be compiled with a non-multithreaded installation of Geant4")
 ENDIF()
 #OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
 #IF(Geant4_multithreaded_FOUND)
@@ -97,8 +97,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.7)
-  MESSAGE("Warning! GATE version 9.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.7 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 11.0)
+  MESSAGE("Warning! This GATE version is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 11.0 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -172,26 +172,36 @@ ENDIF()
 #=========================================================
 # Option for LMF use
 IF(GATE_USE_LMF)
-  FIND_PATH(LMF_HOME lmf /usr /usr/local)
-  SET(LMF_INCLUDE_DIR "${LMF_HOME}/includes")
-  SET(LMF_LIBRARIES "${LMF_HOME}/lib")
-  SET(LMF_LIBRARY "-L${LMF_LIBRARIES} -lLMF")
-  INCLUDE_DIRECTORIES(${LMF_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${LMF_LIBRARIES})
-  #MESSAGE("Found Lmf in ${LMF_INCLUDE_DIR} ${LMF_LIBRARIES} ${LMF_LIBRARY}")
+  ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/source/externals/lmf ${PROJECT_BINARY_DIR}/lmf)
+  SET(LMF_LIBRARY "-L${PROJECT_BINARY_DIR}/lmf -lLMF")
+  INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/source/externals/lmf ${PROJECT_SOURCE_DIR}/source/externals/lmf/lmf_v3.0/includes )
 ENDIF(GATE_USE_LMF)
+#IF(GATE_USE_LMF)
+#  FIND_PATH(LMF_HOME lmf /usr /usr/local)
+#  SET(LMF_INCLUDE_DIR "${LMF_HOME}/includes")
+#  SET(LMF_LIBRARIES "${LMF_HOME}/lib")
+#  SET(LMF_LIBRARY "-L${LMF_LIBRARIES} -lLMF")
+#  INCLUDE_DIRECTORIES(${LMF_INCLUDE_DIR})
+#  SET(LINK_DIRECTORIES ${LMF_LIBRARIES})
+#  #MESSAGE("Found Lmf in ${LMF_INCLUDE_DIR} ${LMF_LIBRARIES} ${LMF_LIBRARY}")
+#ENDIF(GATE_USE_LMF)
 
 #=========================================================
 # Option for ECAT7 use
 IF(GATE_USE_ECAT7)
-  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
-  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
-  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
-  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
-  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
-  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
+  ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/source/externals/ecat ${PROJECT_BINARY_DIR}/ecat)
+  SET(ECAT7_LIBRARY "-L${PROJECT_BINARY_DIR}/ecat -lecat")
+  INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/source/externals/ecat/src )
 ENDIF(GATE_USE_ECAT7)
+#IF(GATE_USE_ECAT7)
+#  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
+#  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
+#  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
+#  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
+#  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
+#  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
+#  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
+#ENDIF(GATE_USE_ECAT7)
 
 #=========================================================
 # Create configuration file
@@ -234,7 +244,6 @@ FILE(GLOB headers
 
 #=========================================================
 IF(GATE_USE_TORCH)
-  set(CMAKE_CXX_STANDARD 14)
   FIND_PACKAGE(Torch REQUIRED)
   INCLUDE_DIRECTORIES(${TORCH_INCLUDE_DIRS})
 ENDIF()
@@ -291,8 +300,20 @@ IF(GATE_COMPILE_GATEDIGIT)
     INSTALL(TARGETS GateDigit_seqCoinc2Cones DESTINATION bin)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
-#=========================================================
 
+
+#=========================================================
+#set minimal version c++14 if torch
+IF(GATE_USE_TORCH)
+    target_compile_features(GateLib PUBLIC cxx_std_14)
+    target_compile_features(Gate PUBLIC cxx_std_14)
+    IF(GATE_COMPILE_GATEDIGIT)
+        target_compile_features(GateDigit_singles_sorter PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_hits_digitizer PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_coincidence_processor PUBLIC cxx_std_14)
+        target_compile_features(GateDigit_seqCoinc2Cones PUBLIC cxx_std_14)
+    ENDIF(GATE_COMPILE_GATEDIGIT)
+ENDIF(GATE_USE_TORCH)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of

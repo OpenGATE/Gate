@@ -16,7 +16,7 @@
 
 
 // Constructor
-GateCompressedVoxelParam::GateCompressedVoxelParam(const  G4String& name, GateCompressedVoxelParameterized* vpi):GateBox(name,"Vacuum",1,1,1,false,false)
+GateCompressedVoxelParam::GateCompressedVoxelParam(const  G4String& name, GateCompressedVoxelParameterized* vpi):GateBox(name,"G4_Galactic",1,1,1,false,false)
 ,itsInserter(vpi),m_parameterization(0),m_pvParameterized(0)
 { 
   

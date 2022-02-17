@@ -918,3 +918,14 @@ The coordinates specified in the input file are assumed to be absolute cartesian
 The following command can be used to activate and define the electromagnetic field::
    
    /gate/geometry/setElectMagTabulateField3D PATH_TO_TEXT_FILE
+   
+   
+   **Warning about Cherenkov process:**
+It has been shown in recent Gate releases that activating the Cherenkov using in the physics list
+/gate/physics/addPhysicsList empenelope (or others)
+/gate/physics/addProcess    Cerenkov
+is not enough to add the Cerenkov process in a Volume 
+one **needs** to define an appropriate physics cut in the volume of interest, for the particule type of interest
+/gate/physics/Electron/SetCutInRegion  Volume  0.1 mm 
+in order to generate Cherenkov photon. The reason of the feature is still unclear.
+

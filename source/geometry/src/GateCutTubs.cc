@@ -56,7 +56,7 @@ GateCutTubs::GateCutTubs(const G4String& itsName,
   m_negNorm(0,0,-1), m_posNorm(0,0,1),
   m_Messenger(0)
 {
-  SetMaterialName("Vacuum");
+  SetMaterialName("G4_Galactic");
   m_Messenger = new GateCutTubsMessenger(this);
 }
 

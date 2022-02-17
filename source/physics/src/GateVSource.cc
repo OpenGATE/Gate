@@ -68,7 +68,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 
   m_forcedUnstableFlag  = false;
   m_forcedLifeTime      = -1.*s;
-  m_materialName = "Air";
+  m_materialName = "G4_AIR";
   mRelativePlacementVolumeName = "world";
   mEnableRegularActivity = false;
 
@@ -472,6 +472,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         GateError("Sorry, I don't know the source type '"<< GetType() << "'. Known source types are"
                   << "<backtoback> <fastI124> <gps>");
       }
+
       numVertices++;
 
       if (event) {

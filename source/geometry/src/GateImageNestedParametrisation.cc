@@ -29,8 +29,7 @@ GateImageNestedParametrisation::GateImageNestedParametrisation(GateImageNestedPa
   GateMessage("Volume",5,"Begin GateImageNestedParametrisation()\n");
   pVolume->BuildLabelToG4MaterialVector(mVectorLabel2Material);
 
-  mAirMaterial = 
-    theMaterialDatabase.GetMaterial("Air");
+  mAirMaterial = theMaterialDatabase.GetMaterial("G4_AIR");
 
   // Computation of Z position
   G4double zp;

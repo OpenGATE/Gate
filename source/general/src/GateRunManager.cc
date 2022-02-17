@@ -19,20 +19,17 @@
 #include "G4VUserPhysicsList.hh"
 #include "G4VModularPhysicsList.hh"
 #include "G4RegionStore.hh"
+#include "G4Region.hh"
 #include "G4LossTableManager.hh"
 #include "G4EmStandardPhysics.hh"
+
 #include "G4RadioactiveDecayPhysics.hh"
-#include "G4EmStandardPhysics_option1.hh"
-#include "G4EmStandardPhysics_option2.hh"
-#include "G4EmStandardPhysics_option3.hh"
-#include "G4EmStandardPhysics_option4.hh"
-#include "G4EmStandardPhysicsSS.hh"
-#include "G4EmLowEPPhysics.hh"
-#include "G4EmLivermorePolarizedPhysics.hh"
-#include "G4EmLivermorePhysics.hh"
-#include "G4EmPenelopePhysics.hh"
-#include "G4EmDNAPhysics.hh"
+
+#if (G4VERSION_MAJOR > 9)
+
 #include "G4StepLimiterPhysics.hh"
+
+#endif
 
 //----------------------------------------------------------------------------------------
 GateRunManager::GateRunManager() : G4RunManager() {
@@ -41,7 +38,6 @@ GateRunManager::GateRunManager() : G4RunManager() {
     mIsGateInitializationCalled = false;
     mUserPhysicList = 0;
     mUserPhysicListName = "";
-    mEnableDecay = false;
     EnableGlobalOutput(true);
 }
 //----------------------------------------------------------------------------------------
@@ -84,69 +80,18 @@ void GateRunManager::InitializeAll() {
 
     // Get the build-in physic list if the user ask for it
     // Note the EM-only physic lists has already been build in GatePhysicsList
-
-    // (not very clear why we need to do nothing when name is equal to "")
     if (mUserPhysicListName != "") {
 
+        // Need to be in PreInit state (cheat)
+        G4PhysListFactory *physListFactory = new G4PhysListFactory();
         G4ApplicationState currentState = G4StateManager::GetStateManager()->GetCurrentState();
         G4StateManager::GetStateManager()->SetNewState(G4State_PreInit);
 
-        mUserPhysicList = NULL;
-        if (mUserPhysicListName == "emstandard") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysics());
-        }
-        if (mUserPhysicListName == "emstandard_opt1") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysics_option1());
-        }
-        if (mUserPhysicListName == "emstandard_opt2") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysics_option2());
-        }
-        if (mUserPhysicListName == "emstandard_opt3") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysics_option3());
-        }
-        if (mUserPhysicListName == "emstandard_opt4") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysics_option4());
-        }
-        if (mUserPhysicListName == "emstandard_SS") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmStandardPhysicsSS());
-        }
-        if (mUserPhysicListName == "emLowEP") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmLowEPPhysics());
-        }
-        if (mUserPhysicListName == "emlivermore") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmLivermorePhysics());
-        }
-        if (mUserPhysicListName == "emlivermore_polar") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmLivermorePolarizedPhysics());
-        }
-        if (mUserPhysicListName == "empenelope") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmPenelopePhysics());
-        }
-        if (mUserPhysicListName == "emDNAphysics") {
-            mUserPhysicList = new G4VModularPhysicsList();
-            mUserPhysicList->RegisterPhysics(new G4EmDNAPhysics());
-        }
+        // Get G4 physics list from the name
+        mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName);
 
-        if (mUserPhysicList == NULL) {
-            // Need to be in PreInit state (cheat)
-            G4PhysListFactory *physListFactory = new G4PhysListFactory();
-            // Get G4 physics list from the name
-            mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName);
-        }
+        dynamic_cast<G4VModularPhysicsList*>(mUserPhysicList)->RegisterPhysics(new G4RadioactiveDecayPhysics());
 
-        // decay ?
-        if (mEnableDecay)
-            mUserPhysicList->RegisterPhysics(new G4RadioactiveDecayPhysics());
 
         // Check if it exists
         if (mUserPhysicList == NULL) {
@@ -165,12 +110,13 @@ void GateRunManager::InitializeAll() {
                               << " emlivermore_polar"
                               << " empenelope"
                               << " emDNAphysics"
+                              << " optical (if enabled during compilation)"
                               << GatePhysicsList::GetInstance()->GetListOfPhysicsLists());
         }
 
         // There are two phys list :
         // - GatePhysicsList::GetInstance() is the one of Gate
-        // - mUserPhysicList : the one created by G4 if user choose a buildin PL.
+        // - mUserListOfPhysicList : the one created by G4 if user choose a buildin PL.
         // the Gate one is used to store/retrieve cuts parameters.
 
         // Consider the e- cut as default (in mm)
@@ -190,7 +136,10 @@ void GateRunManager::InitializeAll() {
         GateRunManager::SetUserInitialization(mUserPhysicList);//use inheritance
 
         //To take into account the user cuts (steplimiter and special cuts)
-        mUserPhysicList->RegisterPhysics(new G4StepLimiterPhysics());
+#if (G4VERSION_MAJOR > 9)
+        G4VModularPhysicsList *mUserPhysicListTemp = dynamic_cast<G4VModularPhysicsList *>(mUserPhysicList);
+        mUserPhysicListTemp->RegisterPhysics(new G4StepLimiterPhysics());
+#endif
 
         // Re set the initial state
         G4StateManager::GetStateManager()->SetNewState(currentState);

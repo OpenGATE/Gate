@@ -65,10 +65,6 @@
 #ifndef _SYMMatrix_H_
 #define _SYMMatrix_H_
 
-#ifdef GNUPRAGMA
-#pragma interface
-#endif
-
 #include <vector>
 
 #include "CLHEP/Matrix/defs.h"

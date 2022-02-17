@@ -13,9 +13,9 @@ See LICENSE.md for further details
 #include "GateVProcess.hh"
 
 #include "G4HadronInelasticProcess.hh"
-#include "G4TritonInelasticProcess.hh"
-#include "G4AlphaInelasticProcess.hh"
-#include "G4DeuteronInelasticProcess.hh"
+//#include "G4TritonInelasticProcess.hh"
+//#include "G4AlphaInelasticProcess.hh"
+//#include "G4DeuteronInelasticProcess.hh"
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!! He3? !!!!!!!!!!!!!!!!!!!!!!!!!!
 

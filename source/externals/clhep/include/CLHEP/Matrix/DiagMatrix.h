@@ -15,10 +15,6 @@
 #ifndef _DIAGMatrix_H_
 #define _DIAGMatrix_H_
 
-#ifdef GNUPRAGMA
-#pragma interface
-#endif
-
 #include <vector>
 
 #include "CLHEP/Matrix/defs.h"

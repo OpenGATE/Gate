@@ -16,10 +16,6 @@
 #ifndef _Vector_H_
 #define _Vector_H_
 
-#ifdef GNUPRAGMA
-#pragma interface
-#endif
-
 #include "CLHEP/Matrix/defs.h"
 #include "CLHEP/Matrix/GenMatrix.h"
 

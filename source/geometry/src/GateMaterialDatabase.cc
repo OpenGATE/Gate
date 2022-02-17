@@ -181,7 +181,7 @@ G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(const G4String& materia
   delete Creator;
 
   //------------------------------------------------------------------------------------------------
-  if ((materialName == "Water") && (water_MPT == NULL)) {
+  if ((materialName == "Water" || materialName == "G4_WATER" ) && (water_MPT == NULL)) {
     const G4int num_water=2;
     G4double pp_water[num_water] =
       { 2.034E-9*GeV, 4.136E-9*GeV };

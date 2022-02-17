@@ -36,7 +36,7 @@ GateFissionPB::GateFissionPB():GateVProcess("Fission")
 //-----------------------------------------------------------------------------
 G4VProcess* GateFissionPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4HadronFissionProcess(GetG4ProcessName()); 
+  return new G4NeutronFissionProcess(GetG4ProcessName());
 }
 //-----------------------------------------------------------------------------
 

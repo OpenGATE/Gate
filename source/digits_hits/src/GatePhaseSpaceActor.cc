@@ -34,7 +34,7 @@
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) :
-        GateVActor(name, depth) {
+    GateVActor(name, depth) {
     GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
     pMessenger = new GatePhaseSpaceActorMessenger(this);
@@ -317,12 +317,14 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     // Store the application time of the event
     auto app = GateApplicationMgr::GetInstance();
     fBeginOfEventTime = app->GetCurrentTime();
+    //std::cout << "GatePhaseSpaceActor::BeginOfEventAction fBeginOfEventTime = "
+    //          << G4BestUnit(fBeginOfEventTime, "Time") << std::endl;
 
     // Set SourceID
     if (GetIsSpotIDEnabled()) {
         GateSourceTPSPencilBeam *tpspencilsource =
-                dynamic_cast<GateSourceTPSPencilBeam *>(GateSourceMgr::GetInstance()->GetSourceByName(
-                        bSpotIDFromSource));
+            dynamic_cast<GateSourceTPSPencilBeam *>(GateSourceMgr::GetInstance()->GetSourceByName(
+                bSpotIDFromSource));
         bSpotID = tpspencilsource->GetCurrentSpotID();
     }
 }
@@ -556,6 +558,14 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     // time from the time at event creation (could be different from the globaltime-localtime as globaltime is the
     fTimeFromBeginOfEvent = step->GetTrack()->GetGlobalTime() - fBeginOfEventTime;
+    /*
+    std::cout << "Step " << GetName() << " "
+              << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << " "
+              << "global = " << G4BestUnit(step->GetTrack()->GetGlobalTime(), "Time")
+              << " fbeg = " << G4BestUnit(fBeginOfEventTime, "Time")
+              << " timefrom = " << G4BestUnit(fTimeFromBeginOfEvent, "Time")
+              << std::endl;
+              */
 
     //------------- Option to project position on a sphere
     /* Sometimes it is useful to store the particle position on a different
@@ -616,13 +626,13 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
     GateDebugMessage("Actor", 4, st
-            << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
-            << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time")
-            << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << Gateendl);
+        << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
+        << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time")
+        << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << Gateendl);
     GateDebugMessage("Actor", 4, "trackid="
-            << step->GetTrack()->GetParentID()
-            << " event=" << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
-            << " run=" << GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID() << Gateendl);
+        << step->GetTrack()->GetParentID()
+        << " event=" << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
+        << " run=" << GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID() << Gateendl);
     GateDebugMessage("Actor", 4, "pos = " << x << " " << y << " " << z << Gateendl);
     GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
 
@@ -729,7 +739,7 @@ void GatePhaseSpaceActor::SaveData() {
         pIAEAheader->fheader = open_file(const_cast<char *>(IAEAFileName.c_str()),
                                          const_cast<char *>(IAEAHeaderExt.c_str()), (char *) "wb");
 
-        if (pIAEAheader->write_header() != OK) GateError("Phase space header not writed.");
+        if (pIAEAheader->write_header() != OK) GateError("Phase space header not written.");
 
         fclose(pIAEAheader->fheader);
         fclose(pIAEARecordType->p_file);
