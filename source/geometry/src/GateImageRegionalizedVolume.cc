@@ -773,7 +773,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 
   // Test if outside given label (surface)
   GateDebugMessage("Volume",8,"\t\tLabel = " << GetImage()->GetValue(index) << Gateendl);
-  if (GetImage()->GetValue(index) != label) {
+  if (index == -1 || GetImage()->GetValue(index) != label) {
     GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0\n");
 
     /*
