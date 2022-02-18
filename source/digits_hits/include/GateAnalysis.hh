@@ -67,7 +67,7 @@ private:
   G4String m_noFileName;
   // HDS : septal penetration
   G4String m_septalPhysVolumeName;
-  G4bool m_recordSeptalFlag;
+  G4bool m_recordSeptalFlag = false;
 
 };
 

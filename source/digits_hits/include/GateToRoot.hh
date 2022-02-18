@@ -337,7 +337,7 @@ private:
     G4bool m_rootCoincDigiFlag;
     G4bool m_rootNtupleFlag;
     G4bool m_saveRndmFlag;
-    G4bool m_rootOpticalFlag;
+    G4bool m_rootOpticalFlag = false;
 
     G4String m_fileName;
 
