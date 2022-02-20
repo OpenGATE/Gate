@@ -49,8 +49,12 @@ GateClockDependentMessenger::GateClockDependentMessenger(GateClockDependent* its
     pDisableCmd->SetGuidance(guidance.c_str());
     pDisableCmd->SetParameterName("flag",true);
     pDisableCmd->SetDefaultValue(true);
+  } else {
+    pEnableCmd = nullptr;
+    pDisableCmd = nullptr;
   }
-  ARFcmd = 0;
+  ARFcmd = nullptr;
+  AttachARFSDcmd = nullptr;
 }
 //----------------------------------------------------------------------------------------------------------
 
