@@ -124,7 +124,6 @@ void GateOutputAsciiTreeFile::write_header()
     if( (m_mode & ios_base::out) != ios_base::out )
         throw GateModeFileException("OutputAsciiTreeFile::write_header: file not opened in write mode"); // Should not happen
 
-    m_file << "#";
     uint32_t i = 0;
     for (auto&& d : m_vector_of_pointer_to_data) // access by const reference
     {
