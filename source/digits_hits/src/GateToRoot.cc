@@ -93,7 +93,7 @@ ComptonRayleighData &ComptonRayleighData::operator=(const ComptonRayleighData &a
 
 //--------------------------------------------------------------------------
 GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode)
-        : GateVOutputModule(name, outputMgr, digiMode), m_hfile(0), m_treeHit(0), m_updateROOTmodulo(10),
+        : GateVOutputModule(name, outputMgr, digiMode), m_hfile(0), m_treeHit(0),
           m_rootHitFlag(digiMode == kruntimeMode), m_rootNtupleFlag(true), m_saveRndmFlag(true),
           m_fileName(" ") // All default output file from all output modules are set to " ".
         // They are then checked in GateApplicationMgr::StartDAQ, using
