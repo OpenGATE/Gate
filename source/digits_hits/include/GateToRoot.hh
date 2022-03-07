@@ -296,7 +296,6 @@ private:
     G4double nbPrimaries;
     G4double mTimeStop;
     G4double mTimeStart;
-    G4int m_nb_of_hits;
 
     G4double m_positronKinEnergy;
     G4int m_recordFlag;
@@ -331,10 +330,7 @@ private:
     G4double MomentumDirectionx, MomentumDirectiony, MomentumDirectionz;
 // v. cuplov - optical photons
 
-    G4int m_updateROOTmodulo;
     G4bool m_rootHitFlag;
-    G4bool m_rootSingleDigiFlag;
-    G4bool m_rootCoincDigiFlag;
     G4bool m_rootNtupleFlag;
     G4bool m_saveRndmFlag;
     G4bool m_rootOpticalFlag = false;

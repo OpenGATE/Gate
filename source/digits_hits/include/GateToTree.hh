@@ -124,7 +124,7 @@ private:
   G4bool m_hits_enabled;
   G4String m_uselessFileName; //only for GiveNameOfFile which return a reference..
 
-  G4bool m_opticalData_enabled;
+  G4bool m_opticalData_enabled = false;
 
  private:
 
