@@ -15,11 +15,11 @@ More details : http://www.opengatecollaboration.org
 
 Documentation : https://opengate.readthedocs.io
 
-* The stable version is tag 9.1: https://github.com/OpenGATE/Gate/tree/v9.1 with Geant4 10.7
+* The stable version is tag 9.2: https://github.com/OpenGATE/Gate/tree/v9.2 with Geant4 11
 * The current development version is branch 'develop' (default): http://github.com/OpenGATE/Gate/tree/develop
+* [Benchmarks](https://github.com/OpenGATE/GateBenchmarks)
 * [Examples](https://github.com/OpenGATE/GateContrib)
 * [Exercises](https://davidsarrut.pages.in2p3.fr/gate-exercices-site)
-<!--* Dashboard of daily compilation: http://my.cdash.org/index.php?project=GATE-->
 
 References collaboration papers:
 
