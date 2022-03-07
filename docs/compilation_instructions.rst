@@ -1,6 +1,6 @@
 .. _compilation_instructions-label:
 
-Compiling GATE (V9.1)
+Compiling GATE (V9.2)
 =============================
 
 .. contents:: Table of Contents
@@ -12,9 +12,9 @@ Compiling GATE (V9.1)
 Required dependencies
 ----------------
 
-For compiling GATE V9.1, the required dependencies are ::
+For compiling GATE V9.2, the required dependencies are ::
 
-   Geant4 10.7.0  # including the embedded CLHEP
+   Geant4 11  # including the embedded CLHEP
    ROOT (ROOT 6.xx) # still required, but it may become optional in the future
    
 
@@ -46,11 +46,11 @@ Finally, update your environment variables file with the following command lines
 
 * bash or zsh:
 
-   source /PATH_TO/geant4.10.06-install/bin/geant4.sh
+   source /PATH_TO/geant4.11-install/bin/geant4.sh
 
 * [t]csh:
 
-   source /PATH_TO/geant4.10.06-install/bin/geant4.csh
+   source /PATH_TO/geant4.11-install/bin/geant4.csh
 
 For details, read the official GEANT4 installation procedure.
 
@@ -90,28 +90,28 @@ To download 'libtorch', go to https://pytorch.org at the section QUICK START LOC
 Then, during the installation of Gate (next section) use the following option to set the path to libtorch ::
 
     GATE_USE_TORCH     ON
-    Torch_DIR          /home/YOURNAME/libtorch-1.4.0/share/cmake/Torch
+    Torch_DIR          /home/YOURNAME/libtorch-1.10.1/share/cmake/Torch
     
 In some configuration, the following path should also be set ::
 
     CUDNN_INCLUDE_DIR  /home/YOURNAME/cuda/include
     CUDNN_LIBRARY      /home/YOURNAME/cuda/lib64/libcudnn.so          
 
-We recommend you to use libtorch version 1.4.0 but if you want to use a version greater than 1.7.0, check https://github.com/OpenGATE/Gate/pull/424 . For example, you can download libtorch with the following links: https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.4.0%2Bcpu.zip or https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip for Linux systems according to you version of gcc. You can change "1.4.0" in the link by the version you want.
+We recommend you to use libtorch version 1.10.1 but other version may works. You can download libtorch from (pytorch)[https://pytorch.org/get-started/locally], select "LibTorch" in the matrix. 
 
-GATE V9.1
+GATE V9.2
 ---------
 
-First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.1.zip
+First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.2.zip
 Unzip the downloaded file::
 
-   unzip Gate-9.1.zip
+   unzip Gate-9.2.zip
 
-Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.1* release tag.
+Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.2* release tag.
 
    git clone https://github.com/OpenGATE/Gate.git Gate
    cd Gate
-   git checkout v9.1
+   git checkout v9.2
 
 Create two directories to build and install GATE::
 
@@ -124,7 +124,7 @@ Move into the GATE build directory::
 
 Run ccmake as follows::
 
-   ccmake ../Gate-9.0
+   ccmake ../Gate-9.2
 
 You need to change the *CMAKE_INSTALL_PREFIX*, it should be set to the install directory (defined above). The default given by CMake is */usr/local*; if you have root/sudo permissions on your machine then it's possible to install Gate there, but it's not recommended, especially if you need to work with more than one version of Gate (for instance, if you want to do development on Gate, or if you want to verify that a new release is compatible with the old release that you have been using).
 You should get something like this (the screen shot is taken from the 8.0 release, the only difference is the version number):
@@ -136,14 +136,11 @@ You should get something like this (the screen shot is taken from the 8.0 releas
 Warning Information about following environment variables::
 
    BUILD_TESTING                      OFF: by default, set to ON if you want to perform build testing
-   GATE_DOWNLOAD_BENCHMARKS_DATA      OFF: by default, set to ON if you want to download the benchmark data to run validation tests (with the command *make test*)
    GATE_USE_ECAT7                     OFF: by default, set to ON if you want to use this library
-   GATE_USE_GPU                       OFF: by default, set to ON if you want to use GPU modules
    GATE_USE_ITK                       OFF: by default, set to ON if you want to access DICOM reader and thermal therapy capabilities
    GATE_USE_LMF                       OFF: by default, set to ON if you want to use this library
    GATE_USE_OPTICAL                   OFF: by default, set to ON if you want to perform simulation for optical imaging applications
    GATE_USE_RTK                       OFF: by default, set to ON if you want to use this toolkit
-   GATE_USE_STDC11                    ON : by default, set to OFF if you want to use another standard for the C programming language (advanced users)
    GATE_USE_DAVIS                     OFF: by default, set to ON if you want to use the Davis LUT model
    GEANT4_USE_SYSTEM_CLHEP            OFF: by default, set to ON if you want to use an external CLHEP version
 
@@ -175,7 +172,7 @@ This file should be defined as follows:
 * bash or zsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
+   source /PATH_TO/geant4.11-install/bin/geant4.sh
    export PATH=$PATH:/PATH_TO/gate-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    export PATH=$PATH:/PATH_TO/2.3.4.3/CLHEP/bin
@@ -184,19 +181,19 @@ This file should be defined as follows:
 * csh or tcsh::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.csh
-   source /PATH_TO/geant4.10.07-install/bin/geant4.csh
+   source /PATH_TO/geant4.11-install/bin/geant4.csh
    setenv PATH ${PATH}:$/PATH_TO/gate-install/bin
    # the following lines only if you are using an external CLHEP library (and similar for ITK, if you enabled it):
    setenv PATH ${PATH}:/PATH_TO/2.3.4.3/CLHEP/bin
    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/PATH_TO/2.3.4.3/CLHEP/lib
 
-Save this file in */PATH_TO/gate_v8.2-install/bin*. Finally, before to start a GATE session::
+Save this file in */PATH_TO/gate_v9.2-install/bin*. Finally, before to start a GATE session::
 
    source /PATH_TO/gate-install/bin/gate_env.sh
 
 In order to save typing, you may want to define an alias for that: include the following line in your *$HOME/.bashrc* or *$HOME/.bash_aliases* file::
 
-   alias gate90='source /PATH_TO/gate-install/bin/gate_env.sh'
+   alias gate92='source /PATH_TO/gate-install/bin/gate_env.sh'
 
 (For csh and tcsh the syntax is different but the idea is the same.)
 
@@ -330,14 +327,14 @@ Installation of cluster tools
 jobsplitter
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.1/cluster_tools/jobsplitter::
+Go to /PATH_TO/gate_v9.2/cluster_tools/jobsplitter::
 
-   cd /PATH_TO/gate_v9.1/cluster_tools/jobsplitter
+   cd /PATH_TO/gate_v9.2/cluster_tools/jobsplitter
 
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
+   source /PATH_TO/geant4.11-install/bin/geant4.sh
 
 Compile::
 
@@ -345,16 +342,16 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.1/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.1-install/bin
+   cp /PATH_TO/gate_v9.2/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.1-install/bin
 
 filemerger
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.1/cluster_tools/filemerger
+Go to /PATH_TO/gate_v9.2/cluster_tools/filemerger
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
-   source /PATH_TO/geant4.10.07-install/bin/geant4.sh
+   source /PATH_TO/geant4.11-install/bin/geant4.sh
 
 Compile::
 
@@ -362,6 +359,6 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.1/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.1-install/bin
+   cp /PATH_TO/gate_v9.2/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.1-install/bin
 
 
