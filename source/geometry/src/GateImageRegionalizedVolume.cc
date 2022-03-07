@@ -773,7 +773,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 
   // Test if outside given label (surface)
   GateDebugMessage("Volume",8,"\t\tLabel = " << GetImage()->GetValue(index) << Gateendl);
-  if (GetImage()->GetValue(index) != label) {
+  if (index == -1 || GetImage()->GetValue(index) != label) {
     GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0\n");
 
     /*
@@ -1054,14 +1054,25 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
      GateDebugMessage("Volume",6,"Side = " << side << Gateendl);
   */
 
-  int index = GetImage()->GetIndexFromCoordinates(coord);
+  int index = GetImage()->GetIndexFromPosition(p);
+  // If the index is -1, we detected the position being out of bounds in GetIndexFromPosition.
+  // We need to skip any further processing in order to not have invalid memory access
+  // potentially leading to segmentation faults.
+  // According to comments in Geant4 source code, when outside the volume, return 0.
+  if (index == -1) {
+    GateDebugMessage("Volume", 6, "Index out of bounds; DISTANCETOOUT = " << 0.0 << Gateendl);
+    lPreviousD = 0.0;
+    return 0.0;
+  }
+
   LabelType l = (LabelType)GetImage()->GetValue(index);
   GateDebugMessage("Volume",6,"Index = " << index << " la=" << l << Gateendl);
 
+  index = pDistanceMap->GetIndexFromPosition(p);
   // Not on a side
-  if (l == label) {
-    index = pDistanceMap->GetIndexFromPosition(p);
-    G4double d = pDistanceMap->GetValue(index);
+  if (index != -1 && l == label) {
+    G4double d = 0.0;
+    d = pDistanceMap->GetValue(index);
     if (d!=0) {
       lPreviousD = d;
       return d;
