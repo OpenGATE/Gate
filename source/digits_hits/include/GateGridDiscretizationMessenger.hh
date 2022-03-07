@@ -38,12 +38,19 @@ class GateGridDiscretizationMessenger: public GatePulseProcessorMessenger
    // std::vector<G4UIcmdWithADoubleAndUnit*>    pthresholdCmd;
     std::vector<G4UIcmdWithADoubleAndUnit*>    pStripOffsetX;
     std::vector<G4UIcmdWithADoubleAndUnit*>    pStripOffsetY;
+    std::vector<G4UIcmdWithADoubleAndUnit*>    pStripOffsetZ;
+
     std::vector<G4UIcmdWithADoubleAndUnit*>    pStripWidthX;
     std::vector<G4UIcmdWithADoubleAndUnit*>    pStripWidthY;
+    std::vector<G4UIcmdWithADoubleAndUnit*>    pStripWidthZ;
+
     std::vector<G4UIcmdWithAnInteger*>    pNumberStripsX;
     std::vector<G4UIcmdWithAnInteger*>     pNumberStripsY;
+    std::vector<G4UIcmdWithAnInteger*>     pNumberStripsZ;
+
     std::vector<G4UIcmdWithAnInteger*>    pNumberReadOutBlocksX;
     std::vector<G4UIcmdWithAnInteger*>     pNumberReadOutBlocksY;
+    std::vector<G4UIcmdWithAnInteger*>     pNumberReadOutBlocksZ;
    // std::vector<G4UIcmdWithABool*>     pRejectionMultiplesCmd;
 
     std::vector<G4String> m_name;
