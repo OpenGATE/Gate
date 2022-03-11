@@ -128,14 +128,10 @@ option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader
 # ROOT
 IF(GATE_USE_ROOT)
   FIND_PACKAGE(ROOT REQUIRED)
-  INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
-  #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
-  #IF(ROOT_INCLUDE_DIR)
-    #MESSAGE("Your current Root version is ${ROOT_VERSION}")
-  #ELSE()
-  IF(NOT ROOT_INCLUDE_DIR)
-    MESSAGE("Root not found! Please install Root and make it available in PATH")
+  include(${ROOT_USE_FILE})
+  get_target_property(ROOT_INTERFACE_COMPILE_FEATURES ROOT::Core INTERFACE_COMPILE_FEATURES)
+  IF(NOT "${ROOT_INTERFACE_COMPILE_FEATURES}" STREQUAL cxx_std_${Geant4_CXX_STANDARD})
+    MESSAGE(FATAL_ERROR "ROOT has been compiled with ${ROOT_INTERFACE_COMPILE_FEATURES}, please use cxx_std_${Geant4_CXX_STANDARD} as your Geant4.")
   ENDIF()
 ENDIF()
 
