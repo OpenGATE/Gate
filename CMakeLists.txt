@@ -1,9 +1,9 @@
 #=========================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12.0 FATAL_ERROR)
-CMAKE_POLICY(SET CMP0012 NEW)
-CMAKE_POLICY(SET CMP0025 NEW)
-CMAKE_POLICY(SET CMP0057 NEW)
-CMAKE_POLICY(SET CMP0072 NEW)
+CMAKE_POLICY(SET CMP0012 NEW) # if() recognizes numbers and boolean constants.
+CMAKE_POLICY(SET CMP0025 NEW) # Compiler id for Apple Clang is now AppleClang.
+CMAKE_POLICY(SET CMP0057 NEW) # Support new if() IN_LIST operator.
+CMAKE_POLICY(SET CMP0072 NEW) # FindOpenGL prefers GLVND by default when available.
 
 #=========================================================
 PROJECT(Gate)
