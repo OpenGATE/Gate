@@ -65,6 +65,7 @@ IF(GATE_USE_GEANT4_UIVIS)
 ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
+set(CMAKE_CXX_STANDARD ${Geant4_CXX_STANDARD})
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
