@@ -1,11 +1,9 @@
 .. _gatert-label:
 
 GateRT
-======
+------
 
-.. contents:: Table of Contents
-   :depth: 15
-   :local:
+
 
 Some examples could be found here : https://davidsarrut.pages.in2p3.fr/gate-exercices-site/
 

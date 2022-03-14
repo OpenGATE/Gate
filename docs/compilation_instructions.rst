@@ -1,21 +1,46 @@
 .. _compilation_instructions-label:
 
-Compiling GATE (V9.2)
-=============================
+Compiling GATE V9.2
+=====================
+
 
 .. contents:: Table of Contents
    :depth: 15
    :local:
+   
+  
+This section describes the installation procedure of GATE. This includes three steps:
 
-**IMPORTANT** Before continuing, make sure all required packages are properly installed on your system. See :ref:`package_requirements-label`
+* Install Geant4
+* Install ROOT
+* Install GATE
 
-Required dependencies
-----------------
+This section starts with a brief overview of the recommended configurations, followed by a short introduction to the installation of Geant4, and then explains the installation of GATE itself on Linux.
 
-For compiling GATE V9.2, the required dependencies are ::
+It should be highlighted that features depending on external components (libraries or packages) may only be activated if the corresponding component is installed. It is the user's responsibility to check that these components are installed before activating a feature. Except for Geant4, which is closely related to GATE, the user should refer to the Installation Guide of the external components.
 
-   Geant4 11  # including the embedded CLHEP
-   ROOT (ROOT 6.xx) # still required, but it may become optional in the future
+In addition, you should also install any Geant4 helper you wish to use, especially *OpenGL* if required, before installing Geant4 itself. You can either download the source codes and compile the libraries or download precompiled packages which are available for a number of platform-compiler. If you choose to or have to compile the packages, you will need:
+
+* a C++ compiler (new enough to compile code with the C++11 standard)
+* the GNU version of *make*
+* `CMAKE <https://www.cmake.org>`_ tool (3.3 or newer)
+
+The ROOT data analysis package may also be needed for post-processing or for using the GATE online plotter (enabling the visualization of various simulation parameters and results in real time). ROOT is available for many platforms and a variety of precompiled packages can be found on the `ROOT homepage <http://root.cern.ch/>`_. If your gcc compiler is version 6 or newer, then you should use a recent ROOT 6 release.
+
+The `LMF <http://opengatecollaboration.org/sites/default/files/lmf_v3_0.tar.gz>`_ and `ecat7 <http://www.opengatecollaboration.org/ECAT>`_ packages are also provided on the `GATE <http://www.opengatecollaboration.org>`_ website. They offer the possibility to have different output formats for your simulations. Note that this code is very old and not supported by the Gate collaboration, only provided "as is". With newer compilers you may have to do some minor hacking (for ECAT you may need to add compiler flags to select the C90 standard, for instance).
+      
+      
+
+Direct dependencies of GATE
+---------------------------
+
+
+For compiling GATE V9.2, the required dependencies are
+  
+* Geant4 11 (available in http://geant4.web.cern.ch/geant4/support/download.shtml), but remains backward compatible with 10.7 also. 
+* ROOT (ROOT 6.xx) # still required, but it may become optional in the future
+   
+Geant4 needs to be compiled. ROOT is avalaible as binary on some platform (or has to be compiled)
    
 
 Optional packages ::
@@ -26,7 +51,16 @@ Optional packages ::
    LMF
    libTorch # see section below
    
+   
+Packages required in order to compile dependencies and GATE
+-----------------------------------------------------------
 
+Compiling software usually requires certain system libraries and compilation tools. Furthermore, GATE and Geant4 have various package requirements which have to be met BEFORE installing or compiling. 
+
+Please find instructions here : :ref:`package_requirements-label`. Adapt instructions to your platform.
+   
+
+   
 CLHEP
 -----
 
