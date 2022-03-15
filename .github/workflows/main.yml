@@ -266,7 +266,8 @@ jobs:
                         t16_decay,
                         t17_extended_source,
                         t18_movement_benchmark,
-                        t20_digi_adder]
+                        t20_digi_adder,
+                        t22_merged_actor]
 
     steps:
     - name: Checkout github repo
