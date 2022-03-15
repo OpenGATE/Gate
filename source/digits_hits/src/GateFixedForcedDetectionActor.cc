@@ -1402,8 +1402,8 @@ void GateFixedForcedDetectionActor::SetGeometryFromInputRTKGeometryFile(GateVSou
                 - source->GetAngDist()->GetFocusPointCopy()[2];
     // The following two lines aim at moving the emitting rectangle according
     // to the movement of the detector, i.e., adjust the collimation
-    offset[0] = -px * offset[2]/sdd;
-    offset[1] = -py * offset[2]/sdd;
+    offset[0] = (sx-px)*offset[2]/sdd;
+    offset[1] = (sy-py)*offset[2]/sdd;
 
     source->GetAngDist()->SetFocusPoint(srcTrans);
     source->GetAngDist()->SetFocusPointCopy(srcTrans);
