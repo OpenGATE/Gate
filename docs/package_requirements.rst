@@ -1,15 +1,14 @@
+:orphan:
+
 .. _package_requirements-label:
 
-Package Requirements
-====================
+Installation of required dependendencies on some specific platforms
+===================================================================
 
-.. contents:: Table of Contents
-   :depth: 15
-   :local:
 
 *Note: some of this information may be out of date for the 8.1 release.*
 
-Compiling software usually requires certain system libraries and compilation tools. Furthermore, GATE and Geant4 have various package requirements which have to be met BEFORE installing or compiling. Visit the Package Requirements page for detailed package lists. This list may change frequently, last update: Dec. 31 2015
+ This list may change frequently, last update: Dec. 31 2015
 
 Ubuntu 18.04.2 LTS (for GATE v8.2 w/ Geant4 10.5 p01)
 -----------------------------------------------------
@@ -79,49 +78,7 @@ Note: In the event a package does not exist in the Ubuntu repository, you can se
 
 **GATE benchmark results here** http://www.opengatecollaboration.org/PETBenchmark **appears to be outdated.**
 
-Ubuntu 11.x
------------
 
-Use::
-
-   sudo apt-get update
-   sudo apt-get install <packages here>
-
-to install the packages. Replace <packages here> with the correct packages.
-
-The following packages are required::
-
-  build-essential autoconf automake tcl tk g++ libglu1-mesa-dev libxt-dev libxmu-dev gfortran libxaw7-dev
-  libX11-dev libxft-dev libxpm-dev libxt-dev freeglut3 freeglut3-dev x11proto-print-dev libmudflap0 po-debconf
-  libusb-dev libboost-dev libtool libc6-dev graphviz graphviz-dev libxext-dev libpcre3-dev libglew1.5-dev libfftw3-dev
-  libftgl-dev graphviz-dev libgsl0-dev libkrb5-dev libssl-dev libxml2-dev libldap2-dev libavahi-compat-libdnssd-dev
-  libncurses5-dev libglu1-mesa-dev libcfitsio3-dev libmotif4 libmotif-dev libxml2 libxml2-dev libqt4-opengl
-  libqt4-opengl-dev libgl1-mesa-dev libglw1-mesa-dev libxpm4 libxerces-c3-dev libqt4-core qt4-qmake libqt4-dev
-  libgtkgl2.0-dev libgtkglarea-cil-dev liblablgl-ocaml-dev liblablgl-ocaml libxerces-c-dev libxerces-c3.1
-  libxmltooling-dev happycoders-libsocket-dev happycoders-libsocket libvtk5.6 libvtk5-dev libglui-dev libfftw3-3 libxt-dev
-  libfftw3-dev libfftw3-doc
-
-Ubuntu 10.04
-------------
-
-Use::
-
-   sudo apt-get update
-   sudo apt-get install <packages here>
-
-to install the packages. Replace <packages here> with the correct packages.
-
-The following packages are required::
-
-  build-essential autoconf automake tcl tk g++ libglu1-mesa-dev libxt-dev libxmu-dev gfortran libxaw7-dev
-  libX11-dev libxft-dev libxpm-dev libxt-dev freeglut3 freeglut3-dev libglut3 libglut3-dev  x11proto-print-dev
-  libmudflap0 po-debconf libusb-dev libboost-dev libtool libc6-dev graphviz graphviz-dev libxext-dev libpcre3-dev
-  libglew1.5-dev libfftw3-dev libftgl-dev graphviz-dev libgsl0-dev libkrb5-dev libssl-dev libxml2-dev libldap2-dev
-  libavahi-compat-libdnssd-dev libncurses5-dev libglu1-mesa-dev libcfitsio3-dev libmotif-dev libxml2 libxml2-dev
-  libqt4-opengl libqt4-opengl-dev libgl1-mesa-dev libglw1-mesa-dev libxpm4 libxerces-c3-dev libqt4-core qt4-qmake
-  libqt4-dev libgtkgl2.0-dev libgtkglarea-cil-dev liblablgl-ocaml-dev liblablgl-ocaml libxerces-c-dev libxerces-c3.1
-  libxmltooling-dev libvtk5.2 libvtk5-dev libmotif3 happycoders-libsocket-dev happycoders-libsocket libfftw3-3  libxt-dev
-  libfftw3-dev libfftw3-doc
 
 Fedora
 ------
