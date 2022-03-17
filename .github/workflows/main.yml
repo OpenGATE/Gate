@@ -38,8 +38,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build5
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build5
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -103,7 +103,6 @@ jobs:
           cmake -DGEANT4_INSTALL_DATA=ON \
                 -DGEANT4_INSTALL_DATADIR=$HOME/software/geant4/data \
                 -DCMAKE_INSTALL_PREFIX=$HOME/software/geant4/install \
-                -DCMAKE_CXX_FLAGS="-std=c++17" \
                 ../src
           make -j4 install
           cd ..
@@ -163,8 +162,7 @@ jobs:
           if [ "${{ matrix.options }}" == 'optic' ]; then
             export GATE_USE_OPTIC=ON
           fi
-          cmake -DCMAKE_CXX_FLAGS="-std=c++17" \
-                -DGATE_USE_TORCH=$GATE_USE_TORCH \
+          cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
                 -DTorch_DIR=$HOME/option_dependencies/libtorch/share/cmake/Torch \
                 -DGATE_COMPILE_GATEDIGIT=ON \
                 -DGATE_USE_RTK=$GATE_USE_RTK \

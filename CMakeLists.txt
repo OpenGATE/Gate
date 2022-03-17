@@ -1,9 +1,9 @@
 #=========================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12.0 FATAL_ERROR)
-CMAKE_POLICY(SET CMP0012 NEW)
-CMAKE_POLICY(SET CMP0025 NEW)
-CMAKE_POLICY(SET CMP0057 NEW)
-CMAKE_POLICY(SET CMP0072 NEW)
+CMAKE_POLICY(SET CMP0012 NEW) # if() recognizes numbers and boolean constants.
+CMAKE_POLICY(SET CMP0025 NEW) # Compiler id for Apple Clang is now AppleClang.
+CMAKE_POLICY(SET CMP0057 NEW) # Support new if() IN_LIST operator.
+CMAKE_POLICY(SET CMP0072 NEW) # FindOpenGL prefers GLVND by default when available.
 
 #=========================================================
 PROJECT(Gate)
@@ -65,6 +65,7 @@ IF(GATE_USE_GEANT4_UIVIS)
 ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
+set(CMAKE_CXX_STANDARD ${Geant4_CXX_STANDARD})
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
@@ -127,14 +128,10 @@ option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader
 # ROOT
 IF(GATE_USE_ROOT)
   FIND_PACKAGE(ROOT REQUIRED)
-  INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
-  SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
-  #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
-  #IF(ROOT_INCLUDE_DIR)
-    #MESSAGE("Your current Root version is ${ROOT_VERSION}")
-  #ELSE()
-  IF(NOT ROOT_INCLUDE_DIR)
-    MESSAGE("Root not found! Please install Root and make it available in PATH")
+  include(${ROOT_USE_FILE})
+  get_target_property(ROOT_INTERFACE_COMPILE_FEATURES ROOT::Core INTERFACE_COMPILE_FEATURES)
+  IF(NOT "${ROOT_INTERFACE_COMPILE_FEATURES}" STREQUAL cxx_std_${Geant4_CXX_STANDARD})
+    MESSAGE(FATAL_ERROR "ROOT has been compiled with ${ROOT_INTERFACE_COMPILE_FEATURES}, please use cxx_std_${Geant4_CXX_STANDARD} as your Geant4.")
   ENDIF()
 ENDIF()
 
@@ -299,21 +296,6 @@ IF(GATE_COMPILE_GATEDIGIT)
     INSTALL(TARGETS GateDigit_coincidence_processor DESTINATION bin)
     INSTALL(TARGETS GateDigit_seqCoinc2Cones DESTINATION bin)
 ENDIF(GATE_COMPILE_GATEDIGIT)
-
-
-
-#=========================================================
-#set minimal version c++14 if torch
-IF(GATE_USE_TORCH)
-    target_compile_features(GateLib PUBLIC cxx_std_14)
-    target_compile_features(Gate PUBLIC cxx_std_14)
-    IF(GATE_COMPILE_GATEDIGIT)
-        target_compile_features(GateDigit_singles_sorter PUBLIC cxx_std_14)
-        target_compile_features(GateDigit_hits_digitizer PUBLIC cxx_std_14)
-        target_compile_features(GateDigit_coincidence_processor PUBLIC cxx_std_14)
-        target_compile_features(GateDigit_seqCoinc2Cones PUBLIC cxx_std_14)
-    ENDIF(GATE_COMPILE_GATEDIGIT)
-ENDIF(GATE_USE_TORCH)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
