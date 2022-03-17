@@ -46,10 +46,10 @@ public:
     G4bool protonCutDisabledByDefault;
   };
   typedef std::map<G4String, ParticleCutType> RegionCutMapType;
-  G4bool gammaCutDisabledByDefault; // gamma default cut disabled for all region
-  G4bool electronCutDisabledByDefault; // electron default cut disabled for all region
-  G4bool positronCutDisabledByDefault; // positron default cut disabled for all region
-  G4bool protonCutDisabledByDefault; // positron default cut disabled for all region
+  G4bool gammaCutDisabledByDefault = false; // gamma default cut disabled for all region
+  G4bool electronCutDisabledByDefault = false; // electron default cut disabled for all region
+  G4bool positronCutDisabledByDefault = false; // positron default cut disabled for all region
+  G4bool protonCutDisabledByDefault = false; // positron default cut disabled for all region
   typedef std::map<G4String, GateUserLimits*> VolumeUserLimitsMapType;
 
 
