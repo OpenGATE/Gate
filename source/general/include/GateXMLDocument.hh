@@ -33,6 +33,8 @@ class GateXMLDocument
     GateXMLDocument(const G4String& filename);
     ~GateXMLDocument();
 
+    const G4String &GetFilename() const;
+
     G4bool Ok() const;
     
     G4String GetName();
@@ -59,6 +61,8 @@ class GateXMLDocument
     xmlDocPtr  m_doc;
     xmlNodePtr m_cur;
     G4bool     m_reset;
+    const G4String m_filename;
+
 };
 
 //! Reads a properties table from the xml-file given by doc

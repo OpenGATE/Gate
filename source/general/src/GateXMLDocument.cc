@@ -36,7 +36,7 @@ See LICENSE.md for further details
   * Use the Ok() method to check if the opening went ok.
   * */
 GateXMLDocument::GateXMLDocument(const G4String& filename) :
-  m_ok(false), m_reset(true)
+  m_ok(false), m_reset(true), m_filename(filename)
 
 //
 // SJ COMMENTS## : read the file by using a messenger mechanism
@@ -305,7 +305,28 @@ void GateXMLDocument::SetState(GateXMLDocumentState state)
   m_cur   = state.cur;
   m_reset = state.reset;
 }
-    
+
+// geant4 v11 replaces some properties name by new one
+// We propose suggestion for replacements in error message.
+const G4String suggest_values_for_keys(const G4String& key)
+{
+    if(key == "FASTTIMECONSTANT")
+        return "SCINTILLATIONTIMECONSTANT1";
+    else if( key == "YIELDRATIO")
+        return "SCINTILLATIONYIELD1";
+    else if( key == "FASTCOMPONENT")
+        return "SCINTILLATIONCOMPONENT1";
+    return "?";
+
+}
+
+
+
+const G4String &GateXMLDocument::GetFilename() const
+{
+    return m_filename;
+}
+
 G4MaterialPropertiesTable* ReadMaterialPropertiesTable(GateXMLDocument* doc)
 {
   G4MaterialPropertiesTable* table = 0;
@@ -328,7 +349,21 @@ G4MaterialPropertiesTable* ReadMaterialPropertiesTable(GateXMLDocument* doc)
 	  G4String unitstr = "1 " + doc->GetProperty("unit");
 	  value *= G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(unitstr.c_str());
 	}
-	table->AddConstProperty(property.c_str(), value);
+
+    auto list_of_known_properties_key = &table->GetMaterialConstPropertyNames();
+    if(std::count(list_of_known_properties_key->begin(), list_of_known_properties_key->end(), property))
+    {
+        table->AddConstProperty(property.c_str(), value);
+    }
+    else
+    {
+        G4cout << "Unknown property '" << property << "'  in xml file '" <<   doc->GetFilename()  << "'. Abort simulation." << G4endl;
+        G4cout << "Suggestion: property '"<<  property << "' can be replaced by '" << suggest_values_for_keys(property) << "'" << G4endl;
+        exit(-1);
+
+    }
+
+
       }
       else if (doc->GetName() == "propertyvector")
       {
@@ -358,7 +393,22 @@ G4MaterialPropertiesTable* ReadMaterialPropertiesTable(GateXMLDocument* doc)
 	  G4double value     = G4UIcmdWithADouble::GetNewDoubleValue(valuestr.c_str());
 	  vector->InsertValues(energy*energyunit, value*unit);
 	}
-	table->AddProperty(property.c_str(), vector);
+
+
+  auto list_of_known_properties_key = &table->GetMaterialPropertyNames();
+  if(std::count(list_of_known_properties_key->begin(), list_of_known_properties_key->end(), property))
+  {
+      table->AddProperty(property.c_str(), vector);
+  }
+  else
+  {
+      G4cout << "Unknown propertyvector '" << property << "'  in xml file '" <<   doc->GetFilename()  << "'. Abort simulation." << G4endl;
+      G4cout << "Suggestion: propertyvector '"<<  property << "' can be replaced by '" << suggest_values_for_keys(property) << "'" << G4endl;
+      exit(-1);
+  }
+
+
+
 	doc->Leave();
       }
     }
