@@ -10,7 +10,7 @@ login: `docker login`
 
 [build and use]
 * build: 
-    * `docker build -t opengatecollaboration/geant4:10.6.1 -f DockerFileGeant --build-arg ROOT_Version=v6-19-02 --build-arg Geant4_Version=v10.6.1 .`
+    * `docker build -t opengatecollaboration/geant4:11.0.0 -f DockerFileGeant --build-arg ROOT_Version=v6-24-06 --build-arg Geant4_Version=v11.0.0 .`
 * push: 
     * `docker push opengatecollaboration/geant4:$version`
 * interactive: 
@@ -18,7 +18,7 @@ login: `docker login`
 
 Where: 
 
-* `$version` is `10.6.1` for gate `9.0`
+* `$version` is `11.0.0` for gate `9.2`
 
 # Second image Gate
 ## Docker for gate
@@ -29,7 +29,7 @@ login: `docker login`
 
 [build and use]
 * build: 
-    * `docker build -t opengatecollaboration/gate:9.0 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:10.6.1 --build-arg Gate_Version=v9.0 .`
+    * `docker build -t opengatecollaboration/gate:9.2 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:11.0.0 --build-arg Gate_Version=v9.2 .`
 * push:  
     * `docker push opengatecollaboration/gate:$version`
 * run command:  
@@ -41,4 +41,4 @@ You can just install docker and then create an alias in your configuration
 * ```echo "alias Gate='docker run -i --rm -v $PWD:/APP opengatecollaboration/gate:$version'" >> ~/.bashrc```
 
 Where: 
-* `$version=9.0`
+* `$version=9.2`

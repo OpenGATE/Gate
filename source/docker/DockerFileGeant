@@ -6,7 +6,7 @@
 #push: docker push opengatecollaboration/geant4:10.6.1
 #interactive: docker run -it --rm -v $PWD:/APP opengatecollaboration/geant4:10.6.1 /bin/bash
 
-FROM centos:8
+FROM rockylinux:8
 ARG ROOT_Version=v6-19-02
 ARG CLHEP_Version=2.4.4.1
 ARG Geant4_Version=v10.6.1
@@ -43,7 +43,7 @@ RUN mkdir software/clhep \
  && wget -q $CLHEP_URL \
  && tar -zxf $CLHEP_File -C ./src --strip-components=1 \
  && cd bin \
- && cmake -DCMAKE_INSTALL_PREFIX=/software/clhep/install ../src/CLHEP \
+ && cmake -DCMAKE_CXX_FLAGS=-std=c++17 -DCMAKE_INSTALL_PREFIX=/software/clhep/install ../src/CLHEP \
  && cmake --build . -- -j \
  && cmake --build . --target install \
  && cd .. \
@@ -63,6 +63,7 @@ RUN mkdir software/geant4 \
                   -DGEANT4_USE_OPENGL_X11=ON \
                   -DGEANT4_USE_SYSTEM_CLHEP=ON \
                   -DCLHEP_ROOT_DIR=/software/clhep/install \
+                  -DGEANT4_BUILD_MULTITHREADED=OFF \
  && make -j install \
  && cd .. \
  && rm -rf bin src
@@ -74,7 +75,7 @@ RUN mkdir software/ITK \
  && mkdir src bin \
  && git clone https://github.com/InsightSoftwareConsortium/ITK.git src \
  && cd bin \
- && cmake ../src/ -DCMAKE_CXX_FLAGS:STRING=-std=c++11 \
+ && cmake ../src/ -DCMAKE_CXX_FLAGS:STRING=-std=c++17 \
                   -DBUILD_DOCUMENTATION=OFF \
                   -DBUILD_EXAMPLES=OFF \
                   -DBUILD_TESTING=OFF \
@@ -90,7 +91,13 @@ RUN mkdir software/root-cern \
  && mkdir src bin install \
  && git clone --branch $ROOT_Version https://github.com/root-project/root.git src \
  && cd bin \
- && cmake ../src/ -Dpython=OFF \
+ && cmake ../src/ -DCMAKE_CXX_STANDARD=17 \
+                  -DCXX_STANDARD_STRING=17 \
+                  -Dpython=OFF \
+                  -Dxrootd=OFF \
+                  -Dbuiltin_xrootd=OFF \
+                  -Dbuiltin_openssl=OFF \
+                  -Dssl=OFF \
                   -DCMAKE_INSTALL_PREFIX=/software/root-cern/install \
  && make -j install \
  && cd .. \
