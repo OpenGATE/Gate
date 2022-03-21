@@ -7,6 +7,8 @@ GATE using Docker
    :depth: 15
    :local:
 
+**WARNING : Docker of 9.2 version is in progress ...**
+
 GATE 9.1 on docker
 ------------------
 
