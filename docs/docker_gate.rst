@@ -7,12 +7,10 @@ GATE using Docker
    :depth: 15
    :local:
 
-**WARNING : Docker of 9.2 version is in progress ...**
-
-GATE 9.1 on docker
+GATE 9.2 on docker
 ------------------
 
-A docker image for gate version 9.1 is available here: `Click here to download GATE 9.1 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
+A docker image for gate version 9.2 is available here: `Click here to download GATE 9.2 on docker <https://hub.docker.com/r/opengatecollaboration/gate>`_
 
 Example to run GATE with Docker on your computer (unix-system):
 --------------------------------------------------------------
@@ -43,7 +41,7 @@ Example::
   # log back in
   ssh ec2-user@ec2-"IPv4".eu-west-3.compute.amazonaws.com
   docker info
-  docker run -it opengatecollaboration/gate:9.1
+  docker run -it opengatecollaboration/gate:9.2
   Gate
 
 Example to install GATE with Docker on Amazon Web Services (AWS) (Ubuntu Linux machine):
@@ -61,6 +59,6 @@ Example::
   # to run docker without sudo
   sudo usermod -a -G docker ubuntu # and then log out and back in
   # launch a docker container with GATE
-  docker run -it opengatecollaboration/gate:9.1
+  docker run -it opengatecollaboration/gate:9.2
   Gate
 
