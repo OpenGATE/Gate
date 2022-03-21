@@ -9,9 +9,9 @@
 
 This version is intended to be used with Geant4 11.0 only. 
 Gate cannot be compiled with earlier Geant4 versions. 
-It *may* works with other ROOT, ITK, libtorch version but is it not tested.
+It *may* works with other ROOT, ITK, libtorch version but it is not tested.
 
-Requirements:
+Dependencies:
 - Geant4: v11.0.0 (cxx17 is required)
 - ROOT: v6-24-06 (must be compiled with -DCMAKE_CXX_STANDARD=17)
 - ITK: v5.2.0 (with RTK enabled)
@@ -28,6 +28,8 @@ https://github.com/OpenGATE/GateBenchmarks
 - Cerenkov photon, optical simulation
 https://github.com/OpenGATE/Gate/pull/440
 https://opengate.readthedocs.io/en/latest/generating_and_tracking_optical_photons.html#cerenkov-photons
+WARNING : some attributes names changed
+https://opengate.readthedocs.io/en/latest/generating_and_tracking_optical_photons.html#scintillation
 
 - no default cut for Cerenkov
 https://github.com/OpenGATE/Gate/pull/457
