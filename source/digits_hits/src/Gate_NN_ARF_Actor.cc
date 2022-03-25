@@ -55,7 +55,7 @@ void Gate_NN_ARF_Predict_Data::Print(std::ostream &os) const {
 //-----------------------------------------------------------------------------
 Gate_NN_ARF_Actor::Gate_NN_ARF_Actor(G4String name, G4int depth) :
         GateVActor(name, depth) {
-    GateDebugMessageInc("Actor", 4, "Gate_NN_ARF_Actor() -- begin\n")
+    GateDebugMessageInc("Actor", 4, "Gate_NN_ARF_Actor() -- begin\n");
     pMessenger = new Gate_NN_ARF_ActorMessenger(this);
     mARFMode = "predict";
     mMaxAngle = 0.0; // no max angle

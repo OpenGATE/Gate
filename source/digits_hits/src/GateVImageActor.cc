@@ -20,6 +20,7 @@
 #include <G4TouchableHistory.hh>
 #include <G4VoxelLimits.hh>
 
+
 //-----------------------------------------------------------------------------
 /// Constructor
 GateVImageActor::GateVImageActor(G4String name, G4int depth):
@@ -264,6 +265,30 @@ void GateVImageActor::SetStepHitType(G4String t)
 
   GateError("GateVImageActor -- SetStepHitType: StepHitType is set to '" << t << "' while I only know 'pre', 'post', 'random' or 'middle'.");
 }
+
+G4String GateVImageActor::GetStepHitName(const StepHitType mStepHitType)
+{
+    switch (mStepHitType) {
+        case PreStepHitType:
+            return "pre";
+        case PostStepHitType:
+            return "post";
+        case MiddleStepHitType:
+            return "middle";
+        case RandomStepHitType:
+            return "random";
+        case RandomStepHitTypeCylindricalCS:
+            return "randomCylindricalCS";
+        case PostStepHitTypeCylindricalCS:
+            return "postCylindricalCS";
+        default:
+            return "unknown";
+    }
+
+
+}
+
+
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -415,7 +440,7 @@ int GateVImageActor::GetIndexFromStepPosition2(const GateVVolume * v,
     postPosition -= mPosition;
   }
 
-  GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << mStepHitTypeName << ")\n"
+  GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << GetStepHitName(mStepHitType) << ")\n"
 		   << "\tPreStep     = " << prePosition << Gateendl
 		   << "\tPostStep    = "<< postPosition << Gateendl);
 
