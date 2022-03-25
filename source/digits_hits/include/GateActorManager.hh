@@ -106,6 +106,7 @@ public:
 protected:
   //std::vector<GateMultiSensitiveDetector*> theListOfMultiSensitiveDetector;
   std::vector<GateVActor*> theListOfActors;
+  std::vector<GateVActor*> theListOfOwnedActors;
   std::vector<GateVActor*> theListOfActorsEnabledForBeginOfRun;
   std::vector<GateVActor*> theListOfActorsEnabledForEndOfRun;
   std::vector<GateVActor*> theListOfActorsEnabledForBeginOfEvent;
