@@ -140,7 +140,7 @@ int main(int argc,char** argv)
 		if (size>4 && indicator==0)
 		{
 			G4String ss(argv[nextArg]);
-			if (ss.contains(".mac"))
+			if (G4StrUtil::contains(ss, ".mac"))
 			{
 				indicator=1;
 				macfile=argv[nextArg];
