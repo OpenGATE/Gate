@@ -630,19 +630,14 @@ This actor calculates the dose or track averaged linear energy transfer::
    /gate/actor/MyActor/setResolution      1 1 100
    /gate/actor/MyActor/setType            DoseAveraged
 
-Options: DoseAveraged (default) or TrackAveraged. Both calculation methods use the Geant4 EMCalculator method "GetElectronicStoppingPowerDEDX". 
+Options: DoseAveraged (default) or TrackAveraged. The implementation is equivalent to "Method C" in 'Cortes-Giraldo and Carabe, 2014, A critical study on different Monte Carlo scoring method of dose-average-linear energy transfer maps.' The stopping power is retrieved from the Geant4 EMCalculator method "ComputeElectronicDEDX". 
+Method "A" could be enabled by setting the type to "DoseAveragedEdep", but this method is not recommended as it is not benchmarked and suffers from interplay effects with the geometric boundaries (voxel boundaries), step limiter and production cut values. 
 
-For splitting the simulation into sevaral sub-simulations (e.g. parallel computation) enable::
+Merging several independent LET simulations (e.g. from runs on several CPUs on a cluster) requires special care. Track/Fluence and Dose- averaged LET are calculated from the quotient of a sum of weighted LET values and normalized by the sum of step lenghts or energy deposition. Merging several simulations requires that the numerator and denominator are summed up individually and those sums are divided. Therefore, for splitting the simulation into sevaral sub-simulations (e.g. parallel computation) enable::
 
-   /gate/actor/yActor/doParallelCalculation true
+   /gate/actor/MyActor/doParallelCalculation true
 
 The default value is false. Enabling this option will produce 2 output images for each LET actor and run, a file labeled as '-numerator' and one labeled as '-denominator'. Building the quotient of these two images results in the averaged LET image. Note that the numerator and denominator images have to be summed up before the division. The denominator file equals the dose and fluence if DoseAveraged and TrackAveraged is enabled, respectively, after normalizing by the mass or volume.
-
-By default the unrestricted LET is calculated::
-
-   /gate/actor/MyActor/setRestricted false
-
-If the restricted flag is set to true, the restricted LET is calculated, but also the calculation method changes. Instead of using tabulated stopping powers for the mean kinetic energy of the particle, the stopping power is calculated as the quotient of the deposited energy and the step length (ICRU 85). Be aware of potential artifacts (voxel size, step limiter, e- production cuts etc.) reported in literature for this calculation method. The production cut for electrons defines the energy carried away.
 
 By default, the stopping power of the material at the PreStepPoint is used. Often a conversion to the LET (in particular water) is of interest. To convert the stopping power to another material than present in the volume use::
 
@@ -657,8 +652,9 @@ ID and particle filters can be used::
 
    /gate/actor/MyActor/addFilter                    particleFilter
    /gate/actor/MyActor/particleFilter/addParticle   proton
+   
+Other options in the LET Actor are to calculate the fluence averaged kinetic Energy enabled by changing the setType to "AverageKinEnergy". Radiochromic EBT3 films suffer from a LET dependent response in proton beam radiotherapy. One correction method has been proposed in Resch et al. 2019, the $g_{Q,Q0}$ factors can be calculated setting the type to "gqq0EBT3linear" or "gqq0EBT3fourth", which enables the first or fourth order polynomial correction function, respectively. 
 
-See: 'Cortes-Giraldo and Carabe, 2014, A critical study on different Monte Carlo scoring method of dose-average-linear energy transfer maps.'
 
 Tissue Equivalent Proportional Counter Actor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
