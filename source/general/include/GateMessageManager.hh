@@ -457,13 +457,8 @@ public:
   // the two follwing are overrided from G4UIsession to intercept
   // all G4cout. In the main :
   // G4UImanager::GetUIpointer()->SetCoutDestination(new GateMessageManager);
-  #ifdef Geant496_COMPATIBILITY
-    virtual G4int ReceiveG4cout(const G4String& s);
-    virtual G4int ReceiveG4cerr(const G4String& s);
-  #else
-    virtual G4int ReceiveG4cout(G4String s);
-    virtual G4int ReceiveG4cerr(G4String s);
-  #endif
+  virtual G4int ReceiveG4cout(const G4String& s);
+  virtual G4int ReceiveG4cerr(const G4String& s);
 
   void EnableG4Messages(bool b);
 
