@@ -83,6 +83,8 @@ public :
 
   virtual void ResetData();
 
+  static G4String GetStepHitName(const StepHitType mStepHitType);
+
   static int GetIndexFromStepPosition2(const GateVVolume *,
                                        const G4Step  * step,
                                        const GateImage & image,

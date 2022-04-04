@@ -184,7 +184,7 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	  // compute position in voxels (non-integer)
 	  double y = (r1)/voxelSize.y();
 	  double x = (position.x()+halfSize.x())/voxelSize.x();
-	  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
+	  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << Gateendl);
 	
 	  // Special case for right borders  :
 	  if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
@@ -199,7 +199,7 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	  if (ix >= resolution.x()) return -1;
 	  if (ix < 0) return -1;
 	  if (iy < 0) return -1;
-	  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
+	  GateDebugMessage("Image",9,ix << " " << iy << Gateendl);
 	  return (ix+iy*lineSize);
   }
   
@@ -223,7 +223,7 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	  // compute position in voxels (non-integer)
 	  double x = (r1)/voxelSize.x();
 	  double z = (position.z()+halfSize.z())/voxelSize.z();
-	  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
+	  GateDebugMessage("Image",9," pos in voxel = " << x  << " " << z << Gateendl);
 	
 	  // Special case for right borders  :
 	  if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
@@ -239,7 +239,7 @@ int GateVImage::GetIndexFromPositionCylindricalCS(const G4ThreeVector& position)
 	  if (iz >= resolution.z()) return -1;
 	  if (ix < 0) return -1;
 	  if (iz < 0) return -1;
-	  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
+	  GateDebugMessage("Image",9,ix << " " << iz << Gateendl);
 	  return (ix+iz*planeSize);
 	  
   }
