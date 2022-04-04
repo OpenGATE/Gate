@@ -38,6 +38,22 @@ GateActorManager::~GateActorManager()
   theListOfActorsEnabledForPreUserTrackingAction.clear();
   theListOfActorsEnabledForPostUserTrackingAction.clear();
   theListOfActorsEnabledForUserSteppingAction.clear();
+
+    GateVActor* actor;
+    while(!theListOfOwnedActors.empty())
+    {
+        // get first 'element'
+        actor = theListOfOwnedActors.front();
+
+        // remove it from the list
+        theListOfOwnedActors.erase(theListOfOwnedActors.begin());
+
+        GateMessage("Actor", 4, "~GateActorManager -- delete actor: " << actor->GetObjectName() << Gateendl );
+        // delete the pointer
+        delete actor;
+    }
+
+
   delete pActorManagerMessenger;
 
   GateDebugMessageDec("Actor",4,"~GateActormanager() -- end\n");
@@ -66,7 +82,12 @@ void GateActorManager::AddActor(G4String actorType, G4String actorName, int dept
 {
   GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin\n");
   if (GateActorManager::theListOfActorPrototypes[actorType])
-    theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
+  {
+      auto a = GateActorManager::theListOfActorPrototypes[actorType](actorName,depth);
+      theListOfActors.push_back(a);
+      theListOfOwnedActors.push_back(a);
+  }
+
   else GateWarning("Actor type: "<<actorType<<" does not exist!");
   GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n\n");
 }
@@ -266,7 +287,11 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
       volume->GetLogicalVolume()->SetSensitiveDetector(msd);
       msd->SetMultiFunctionalDetector(detectorName);
 
+      // We give "ownership of actor to msd, when msd is deleted, it will delete 'actor'
       msd->SetActor(actor);
+      // remove the actor from the list of owned actors
+      theListOfOwnedActors.erase(std::remove(theListOfOwnedActors.begin(), theListOfOwnedActors.end(), actor), theListOfOwnedActors.end());
+
       theListOfMultiSensitiveDetector.push_back(msd );
     }
   else if (G4StrUtil::contains(volume->GetLogicalVolume()->GetSensitiveDetector()->GetName(), "MSD") )
