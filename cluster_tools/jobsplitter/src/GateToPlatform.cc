@@ -330,10 +330,10 @@ int GateToPlatform::GenerateCondorSubmitfile()
 	{
 		scriptFile.getline(buffer,256);
 		scriptline=buffer;
-		if (scriptline.contains("#GJS PART => DO NOT REMOVE")!=0) noCopy=1;
+		if (G4StrUtil::contains(scriptline, "#GJS PART => DO NOT REMOVE")!=0) noCopy=1;
 		if (noCopy==0) 
 		{
-			if (scriptline.contains("Executable")!=0 && scriptline.contains("$GC_EXEC")!=0) 
+			if (G4StrUtil::contains(scriptline, "Executable")!=0 && G4StrUtil::contains(scriptline, "$GC_EXEC")!=0)
 				submitFile<<"Executable     = "<<dir+"Gate"<<endl;
 			else submitFile<<scriptline<<endl;
 			
