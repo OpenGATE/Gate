@@ -783,7 +783,7 @@ So when set to false (by default) the method 1 is chosen, and when set to true, 
 
 Finally, the rule to apply in case of multiple coincidences is specified as follows::
 
-   /gate/digitizer/Coincidences/setMultiplePolicy <policyName>
+   /gate/digitizer/Coincidences/MultiplesPolicy <policyName>
 
 The default multiple policy is keepIfAllAreGoods.
 
