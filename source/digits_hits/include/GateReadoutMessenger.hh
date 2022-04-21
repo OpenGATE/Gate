@@ -45,6 +45,11 @@ class GateReadoutMessenger: public GatePulseProcessorMessenger
   private:
     G4UIcmdWithAnInteger*      SetDepthCmd;
     G4UIcmdWithAString*        SetPolicyCmd;
+    G4UIcmdWithAString*        SetVolNameCmd;
+    G4UIcmdWithAString*		   SetResultingXYCmd;
+    G4UIcmdWithAString*        SetResultingZCmd;
+
+
 };
 
 #endif
