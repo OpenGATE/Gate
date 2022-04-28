@@ -858,7 +858,12 @@ The dead time for coincidences works in the same way as that acting on the *sing
 Coincidence buffers
 ~~~~~~~~~~~~~~~~~~~
 
-The buffer module for affecting coincidences uses exactly the same command lines and functionalities as the ones used for single pulse lists, and described in section :ref:`local_efficiency-label`.
+For a coincidence sorter user can chose a presort buffer with a following command: 
+
+   /gate/digitizer/Coincidences/setPresortBufferSize 256 
+
+A presort buffer contains singles that have not yet been checked for coincidence with the already open coincidence windows. The default value is 256, the minimum value is 32. For more details, check https://iopscience.iop.org/article/10.1088/0031-9155/61/18/N522
+
 
 Multiple coincidence removal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
