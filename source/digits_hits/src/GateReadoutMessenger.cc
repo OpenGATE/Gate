@@ -26,6 +26,7 @@ GateReadoutMessenger::GateReadoutMessenger(GateReadout* itsReadout)
     SetDepthCmd->SetGuidance("For instance, the default depth is 1: ");
     SetDepthCmd->SetGuidance("this means that pulses will be considered as taking place in a same block ");
     SetDepthCmd->SetGuidance("if their volume IDs are identical up to a depth of 1, i.e. the first two figures (depth 0 + depth 1)");
+    
     // Command for choosing the policy to create the final pulse (S. Stute)
     // Note: in gate releases until v7.0 included, there was only one policy which was something like "TakeTheWinnerInEnergyForFinalPosition"
     //       we now introduce an option to choose a PMT like readout by using a policy like "TakeTheCentroidInEnergyForFinalPosition".
@@ -37,6 +38,20 @@ GateReadoutMessenger::GateReadoutMessenger(GateReadout* itsReadout)
     SetPolicyCmd->SetGuidance("  --> 'TakeEnergyWinner': the final position will be the one for which the maximum energy was deposited");
     SetPolicyCmd->SetGuidance("  --> 'TakeEnergyCentroid': the energy centroid is computed based on crystal indices, meaning that the 'crystal' component of the system must be used. The depth is thus ignored.");
     SetPolicyCmd->SetGuidance("Note: when using the energyCentroid policy, the mother volume of the crystal level MUST NOT have any other daughter volumes declared BEFORE the crystal. Declaring it after is not a problem though.");
+
+    //OK: Choosing the name of the volume where readout is applied
+    cmdName = GetDirectoryName() + "setReadoutVolume";
+    SetVolNameCmd = new G4UIcmdWithAString(cmdName,this);
+    SetVolNameCmd->SetGuidance("Choose a volume (depth) for readout (e.g. crystal/module)");
+     //to add these options later
+  /*  cmdName = GetDirectoryName() + "setResultingXY";
+    SetResultingXYCmd = new G4UIcmdWithAString(cmdName,this);
+    SetResultingXYCmd->SetGuidance("Choose the resulting policy for the local position: crystalCenter/exactPostion");
+
+    cmdName = GetDirectoryName() + "setResultingZ";
+    SetResultingZCmd = new G4UIcmdWithAString(cmdName,this);
+    SetResultingZCmd->SetGuidance("Choose the resulting policy for the local position: crystalCenter/exactPostion/meanFreePath");
+*/
 }
 
 
@@ -44,14 +59,27 @@ GateReadoutMessenger::~GateReadoutMessenger()
 {
   delete SetDepthCmd;
   delete SetPolicyCmd;
+  delete SetVolNameCmd;
+
+  delete SetResultingXYCmd;
+  delete SetResultingZCmd;
+
 }
 
 void GateReadoutMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
 {
   if( aCommand==SetDepthCmd )
     { GetReadout()->SetDepth(SetDepthCmd->GetNewIntValue(aString)); }
+  else if ( aCommand==SetVolNameCmd )
+    { GetReadout()->SetVolumeName(aString); }
   else if ( aCommand==SetPolicyCmd )
     { GetReadout()->SetPolicy(aString); }
+  /*else if ( aCommand==SetResultingXYCmd )
+     { GetReadout()->SetResultingXY(aString); }
+  else if ( aCommand==SetResultingZCmd )
+     { GetReadout()->SetResultingZ(aString); }
+     */
   else
     GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
+
 }
