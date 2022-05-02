@@ -328,8 +328,7 @@ Example of voxelized source description macro reading in an InterFile image as s
    /gate/source/voxel/gps/mintheta 0. deg 
    /gate/source/voxel/gps/maxtheta 90. deg 
    /gate/source/voxel/gps/minphi 0. deg 
-   /gate/source/voxel/gps/maxphi 360. deg 
-   /gate/source/voxel/gps/confine NULL 
+   /gate/source/voxel/gps/maxphi 360. deg
 
 Using this image file reader any digital phantom or patient data, stored in any image format among ASCII, Interfile, Analyze, MetaImage and DICOM, can be read in as emission distribution. Afterwards, activity levels can be used to determine the number of primary particles for each voxel. 
 
