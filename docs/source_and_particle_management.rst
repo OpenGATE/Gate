@@ -456,6 +456,13 @@ If several sources have been added and no activity is defined, user can use inte
 Pencil Beam source
 ------------------
 
+.. warning::
+   Prior to GATE 9.2, the time column did not produce usable output due to an uninitialized variable in the pencil beam source.
+   
+   This also affects the simulation of neutrons, which may be partially or entirely cut from all events of the run.
+   
+   If you rely on the global event time or the simulation of neutrons, make sure to use GATE 9.2 or newer.
+
 The simulation source can be a pencil beam. This source allows for characterizing a beam of particles having energy and optical properties. This beam can be used for instance in order to characterize a clinical beam interacting in a passive beam line or to characterize a spot from an active scanning beam delivery system.
 
 Create the source::
