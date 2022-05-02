@@ -75,9 +75,14 @@ This keyword is implemented for PET simulations where two annihilation photons a
 
    /gate/source/NAME/setType backtoback
 
-Note that there are no radioactive decays simulated when using the back-to-back type and that you still have to define the particle (gamma), energy type (Mono) and energy-value (0.511 MeV).
+Note that there are no radioactive decays simulated when using the back-to-back type and that you still have to define the particle (gamma), energy type (Mono) and energy-value (0.511 MeV). The back-to-back source does not consider photon accolinearity by default, but it can be enabled with the command "setAccolinearityFlag". If the accolinearity flag is set to True, a default value of 0.5 degrees (FWHM) is used for creating the accolinear angular  distribution. However, the user can specify a custom value for accolinearity. In that case, the command "setAccoValue" expects the FWHM of the distribution::
 
-Note: the 'Accolinearity' flag that once exist in Gate is no more valid. See https://github.com/OpenGATE/Gate/issues/381 for details.
+   /gate/source/NAME/setType backtoback
+   /gate/source/NAME/setAccolinearityFlag True
+   /gate/source/NAME/setAccoValue 0.5 deg
+
+Please note, the default value of 0.5 degrees would override ``/gate/source/NAME/setAccoValue 0.0 deg``. In case accolinearity should not be simulated, please set the "AccolinearityFlag" to False or omit the commands related to accolinearity.
+Note: In the past, there has been an issue with the accolinearity flag, see https://github.com/OpenGATE/Gate/issues/381 for details.
 
 **FastI124**
 
