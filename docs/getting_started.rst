@@ -302,7 +302,7 @@ In order to save the hits (see :ref:`digitizer_and_readout_parameters-label`) in
 to the crystals the appropriate command, in this example, is::
 
   # D E F I N E   A   S E N S I T I V E   D E T E C T O R
-  /gate/box2/attachCrystalSD vglue 1cm
+  /gate/box2/attachCrystalSD
 
 At this level of the macro file, the user can implement detector movement. One
 of the most distinctive features of Gate is the management of time-dependent
