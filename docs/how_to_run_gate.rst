@@ -187,6 +187,8 @@ In order to use Qt you have to write this line in your GATE macro::
 
 IMPORTANT!!!: Qt visualization mode is a visualization after the simulation. In fact you could zoom, translate, etc... only at the end of the simulation.
 
+WARNING!!!!: Be sure to run the initialization with **/gate/run/initialize** before to start the visualization with **/vis/open**
+
 Running parameterized macros
 ----------------------------
 

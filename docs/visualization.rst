@@ -21,6 +21,8 @@ Using DAWN and VRMLVIEW, complicated geometries, like a huge number of crystals 
 
 Using that option, the individual crystals are not rendered but they are shown as a wireframe instead.
 
+Another important point is since geant4 version 11, you need to be sure to initialize the simulation with **/gate/run/initialize** before the creation of the visualization with **/vis/open**
+
 Command Lines
 -------------
 
