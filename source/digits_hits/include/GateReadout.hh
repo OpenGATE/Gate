@@ -66,6 +66,10 @@ class GateReadout : public GateVPulseProcessor
     inline void SetVolumeName(const G4String& aName) { m_volumeName = aName; };
     inline G4String GetVolumeName() const  	      	{ return m_volumeName; }
 
+    //! Set the volume for the readout even for centroid policy
+     inline void ForceDepthCentroid(const G4bool& value) { m_IsForcedDepthCentroid = value; };
+     inline G4bool IsDepthForcedCentroid() const  	      	{ return m_IsForcedDepthCentroid; }
+
     //! Set how the resulting positions should be defined
     inline void SetResultingXY(const G4String& aString) { m_resultingXY= aString;};
     inline G4String GetResultingXY() const  	      	{ return m_resultingXY; };
@@ -108,6 +112,7 @@ class GateReadout : public GateVPulseProcessor
     GateArrayComponent* m_crystalComponent;
 
     G4String m_volumeName;
+    G4bool m_IsForcedDepthCentroid;
 
     G4String m_resultingXY;
     G4String m_resultingZ;

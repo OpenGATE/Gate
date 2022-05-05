@@ -12,6 +12,7 @@ See LICENSE.md for further details
 #include "GateReadout.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithABool.hh"
 
 GateReadoutMessenger::GateReadoutMessenger(GateReadout* itsReadout)
     : GatePulseProcessorMessenger(itsReadout)
@@ -43,8 +44,16 @@ GateReadoutMessenger::GateReadoutMessenger(GateReadout* itsReadout)
     cmdName = GetDirectoryName() + "setReadoutVolume";
     SetVolNameCmd = new G4UIcmdWithAString(cmdName,this);
     SetVolNameCmd->SetGuidance("Choose a volume (depth) for readout (e.g. crystal/module)");
+
+    //OK: Force the name of the volume where readout is applied for EnergyCentroid policy
+    cmdName = GetDirectoryName() + "forceReadoutVolumeForEnergyCentroid";
+    ForceDepthCentroidCmd = new G4UIcmdWithABool(cmdName,this);
+    ForceDepthCentroidCmd->SetGuidance("Force Depth For Energy Centroid:set to true to activate /setReadoutVolume and /setDepth even if the policy is EnergyCentroid."
+    		"(NB:  If the energy centroid policy is used the depth is forced to be at the level just above the crystal level, whatever the system used.)");
+
+
      //to add these options later
-  /*  cmdName = GetDirectoryName() + "setResultingXY";
+    /*cmdName = GetDirectoryName() + "setResultingXY";
     SetResultingXYCmd = new G4UIcmdWithAString(cmdName,this);
     SetResultingXYCmd->SetGuidance("Choose the resulting policy for the local position: crystalCenter/exactPostion");
 
@@ -60,9 +69,10 @@ GateReadoutMessenger::~GateReadoutMessenger()
   delete SetDepthCmd;
   delete SetPolicyCmd;
   delete SetVolNameCmd;
+  delete ForceDepthCentroidCmd;
 
-  delete SetResultingXYCmd;
-  delete SetResultingZCmd;
+ // delete SetResultingXYCmd;
+ // delete SetResultingZCmd;
 
 }
 
@@ -72,13 +82,14 @@ void GateReadoutMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
     { GetReadout()->SetDepth(SetDepthCmd->GetNewIntValue(aString)); }
   else if ( aCommand==SetVolNameCmd )
     { GetReadout()->SetVolumeName(aString); }
+  else if ( aCommand==ForceDepthCentroidCmd )
+     { GetReadout()->ForceDepthCentroid(aString); }
   else if ( aCommand==SetPolicyCmd )
     { GetReadout()->SetPolicy(aString); }
-  /*else if ( aCommand==SetResultingXYCmd )
-     { GetReadout()->SetResultingXY(aString); }
-  else if ( aCommand==SetResultingZCmd )
-     { GetReadout()->SetResultingZ(aString); }
-     */
+  //else if ( aCommand==SetResultingXYCmd )
+   //  { GetReadout()->SetResultingXY(aString); }
+  //else if ( aCommand==SetResultingZCmd )
+  //   { GetReadout()->SetResultingZ(aString); }
   else
     GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
 

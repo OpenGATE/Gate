@@ -71,18 +71,25 @@ GateReadout::~GateReadout()
 
 void GateReadout::SetReadoutParameters()
 {
+
+
 	//checking the if depth or readoutVolumeName are defined and that only one is set.
 	if(!m_volumeName.empty() && m_depth!=0)
-		GateError("***ERROR*** You can choose readout parameter either with /setDepth OR /setReadoutVolume but not both!");
+		GateError("***ERROR*** You can choose readout parameter either with /setDepth OR /setReadoutVolume!");
 
 	 //////////////DEPTH SETTING/////////
 	 //set the previously default value for compatibility of users macros
-	 if(m_volumeName.empty() && m_depth==0)
-		 m_depth=1;
+	if(m_volumeName.empty()  && m_depth==0)
+		m_depth=1; //previously default value
 
 	 //set m_depth according user defined volume name
-	 if(!m_volumeName.empty())
+	 if(!m_volumeName.empty()) //only for EnergyWinner
 	 	 {
+		 if(m_policy =="TakeEnergyCentroid"&& !m_IsForcedDepthCentroid)
+			 GateError("***ERROR*** Please, remove /setDepth or /setReadoutVolume for TakeEnergyCentroid policy as this parameter is set automatically. "
+					 "Use /forceReadoutVolumeForEnergyCentroid flag if you still want to set your depth/volume for readout.\n");
+
+
 
 		 	 GateVSystem* m_system = this->GetChain()->GetSystem();
 		 	 if (m_system==NULL) G4Exception( "GateReadout::SetReadoutParameters", "SetReadoutParameters", FatalException,
@@ -106,7 +113,7 @@ void GateReadout::SetReadoutParameters()
 
 	 //////////////Resulting positioning SETTING/////////
 	 //previously default conditions for compatibility of users macros
-	 if(m_resultingXY.empty() && m_resultingZ.empty() && m_policy =="TakeEnergyCentroid")
+	/* if(m_resultingXY.empty() && m_resultingZ.empty() && m_policy =="TakeEnergyCentroid")
 	 {
 		 m_resultingXY="crystalCenter";
 		 m_resultingZ="crystalCenter";
@@ -116,56 +123,77 @@ void GateReadout::SetReadoutParameters()
 		 m_resultingXY="exactPostion";
 		 m_resultingZ="exactPostion";
 	 }
+	 */
 
 
-	if (m_policy=="TakeEnergyCentroid")
-	{
-		// Find useful stuff for centroid based computation
-		//m_policy = "TakeEnergyCentroid";
-		// Get the system
-		GateVSystem* m_system = this->GetChain()->GetSystem();
-		if (m_system==NULL) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
-				"Failed to get the system corresponding to that processor chain. Abort.\n");
-		// Get the array component corresponding to the crystal level using the name 'crystal'
-		GateArrayComponent* m_crystalComponent = m_system->FindArrayComponent("crystal");
-		if (m_crystalComponent==NULL) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
-                                              "Failed to get the array component corresponding to the crystal. Abort.\n");
-		// Get the number of crystals in each direction
-		m_nbCrystalsZ  = m_crystalComponent->GetRepeatNumber(2);
-		m_nbCrystalsY  = m_crystalComponent->GetRepeatNumber(1);
-		m_nbCrystalsX  = m_crystalComponent->GetRepeatNumber(0);
-		m_nbCrystalsXY = m_nbCrystalsX * m_nbCrystalsY;
-		if (m_nbCrystalsX<1 || m_nbCrystalsY<1 || m_nbCrystalsZ<1)
-			G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
-					"Crystal repeater numbers are wrong !\n");
-		//G4cout << "[" << GetObjectName() << "] -> Found crystal array with associated repeater: ["
-		//       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]\n";
-		// Get tree depth of the system
-		m_systemDepth = m_system->GetTreeDepth();
-		//G4cout << "  Depth of the system: " << m_systemDepth << Gateendl;
-		// Find the crystal depth in the system
-		GateSystemComponent* this_component = m_system->GetBaseComponent();
-		m_crystalDepth = 0;
-		while (this_component!=m_crystalComponent && m_crystalDepth+1<m_systemDepth)
+	if (m_policy=="TakeEnergyCentroid" && (!m_volumeName.empty()||m_depth) &&  !m_IsForcedDepthCentroid)
+	 {
+		GateWarning("WARNING! Commands /setDepth and /setReadoutVolume are ignored as Energy Centroid policy is used: "
+				"the depth is forced to be at the level just above the crystal level, whatever the system used."
+				"To force the depth, please, set the flag /forceReadoutVolumeForEnergyCentroid to true");
+	 }
+
+	if (m_policy=="TakeEnergyWinner" && m_IsForcedDepthCentroid)
+		 {
+		GateError("***ERROR*** Command /forceReadoutVolumeForEnergyCentroid can not be used for Winner policy. Abort.\n");
+		 }
+
+
+	if (m_policy=="TakeEnergyCentroid" )
 		{
-			this_component = this_component->GetChildComponent(0);
-			m_crystalDepth++;
+
+			// Find useful stuff for centroid based computation
+			//m_policy = "TakeEnergyCentroid";
+			// Get the system
+			GateVSystem* m_system = this->GetChain()->GetSystem();
+			if (m_system==NULL) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
+					"Failed to get the system corresponding to that processor chain. Abort.\n");
+			// Get the array component corresponding to the crystal level using the name 'crystal'
+			GateArrayComponent* m_crystalComponent = m_system->FindArrayComponent("crystal");
+			if (m_crystalComponent==NULL) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
+												  "Failed to get the array component corresponding to the crystal. Abort.\n");
+			// Get the number of crystals in each direction
+			m_nbCrystalsZ  = m_crystalComponent->GetRepeatNumber(2);
+			m_nbCrystalsY  = m_crystalComponent->GetRepeatNumber(1);
+			m_nbCrystalsX  = m_crystalComponent->GetRepeatNumber(0);
+			m_nbCrystalsXY = m_nbCrystalsX * m_nbCrystalsY;
+			if (m_nbCrystalsX<1 || m_nbCrystalsY<1 || m_nbCrystalsZ<1)
+				G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
+						"Crystal repeater numbers are wrong !\n");
+			//G4cout << "[" << GetObjectName() << "] -> Found crystal array with associated repeater: ["
+			//       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]\n";
+			// Get tree depth of the system
+			m_systemDepth = m_system->GetTreeDepth();
+			//G4cout << "  Depth of the system: " << m_systemDepth << Gateendl;
+			// Find the crystal depth in the system
+			GateSystemComponent* this_component = m_system->GetBaseComponent();
+			m_crystalDepth = 0;
+			while (this_component!=m_crystalComponent && m_crystalDepth+1<m_systemDepth)
+			{
+				this_component = this_component->GetChildComponent(0);
+				m_crystalDepth++;
+			}
+			if (this_component!=m_crystalComponent) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
+																	"Failed to get the system depth corresponding to the crystal. Abort.\n");
+			// Now force m_depth to be right above the crystal depth
+			//m_depth = m_crystalDepth - 1;
+		if (!m_IsForcedDepthCentroid)
+			{
+			m_depth = m_crystalDepth - 1;
+			}
+
 		}
-		if (this_component!=m_crystalComponent) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
-																"Failed to get the system depth corresponding to the crystal. Abort.\n");
-		//G4cout << "  Crystal depth: " << m_crystalDepth << Gateendl;
-		// Now force m_depth to be right above the crystal depth
-		m_depth = m_crystalDepth - 1;
-	}
+
+
 
 	if (m_policy!="TakeEnergyCentroid" && m_policy!="TakeEnergyWinner")
 		G4Exception( "GateReadout::SetPolicy", "SetPolicy", FatalException, "Unknown provided policy, please see the guidance. Abort.\n");
 
-	/*G4cout<<"Policy = "<< m_policy<< Gateendl;
-	G4cout<<"Depth =  "<< m_depth<<Gateendl;
-	G4cout<<"resultingXY = "<< m_resultingXY<<Gateendl;
-	G4cout<<"reulstingZ = "<< m_resultingZ<<Gateendl;
-*/
+	//G4cout<<"Policy = "<< m_policy<< Gateendl;
+	//G4cout<<"Depth =  "<< m_depth<<Gateendl;
+	//G4cout<<"resultingXY = "<< m_resultingXY<<Gateendl;
+	//G4cout<<"reulstingZ = "<< m_resultingZ<<Gateendl;
+
 }
 
 // S. Stute: This function is virtual (but not pure) in the mother GateVPulseProcessor.
