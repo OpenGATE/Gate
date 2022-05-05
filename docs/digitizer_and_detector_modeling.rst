@@ -212,7 +212,11 @@ The readout module regroups pulses per block (group of *sensitive detectors*). F
    /gate/digitizer/Singles/readout/setReadoutVolume <YourVolumeName>
    
 The parameter *myPolicy* can be *TakeEnergyWinner* for the winner-takes-all policy or *TakeEnergyCentroid* for the energy centroid policy.
-If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used. If the winner-takes-all policy is used, then the user must choose the *depth* or *Volume* at which the readout process takes place. If the *setPolicy* command is not set, then the winner-takes-all policy is chosen by default in order to be back-compatible with previous Gate releases.
+If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used. To set/force your own depth for centroid policy, one can use:
+
+ /gate/digitizer/Singles/readout/forceReadoutVolumeForEnergyCentroid    true 
+ 
+If the winner-takes-all policy is used, then the user must choose the *depth* or *Volume* at which the readout process takes place. If the *setPolicy* command is not set, then the winner-takes-all policy is chosen by default in order to be back-compatible with previous Gate releases.
 
 :numref:`Hittosingle` illustrates the actions of both the *adder* and *readout* modules. The *adder* module transforms the *hits* into a *pulse* in each individual volume and then the *readout* module sums a group of these *pulses* into a single *pulse* at the level of depth as defined by the user for the winner-takes-all policy.
 
