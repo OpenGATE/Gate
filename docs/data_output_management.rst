@@ -200,6 +200,7 @@ processing for the current time slice and if needed it starts a new time slice.
 
 Root output
 -----------
+Please, consider to use :ref:`new_unified_tree_output_general_set-label`.
 
 Example::
 
