@@ -10,6 +10,7 @@
 
 #include "G4PhysicalConstants.hh"
 #include "GateConstants.hh"
+#include "GateSingletonDebugPositronAnnihilation.hh"
 
 //-------------------------------------------------------------------------------------------------
 GateBackToBack::GateBackToBack( GateVSource* source )
@@ -69,7 +70,16 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       particle->SetMomentum( -gammaMom_mag*gammaMom.x(),
                              -gammaMom_mag*gammaMom.y(),
                              -gammaMom_mag*gammaMom.z() );
-      
+      auto debugPositronAnnihilation = GateSingletonDebugPositronAnnihilation::GetInstance();
+      if (debugPositronAnnihilation->GetDebugFlag()){
+        G4double tmp;
+        std::ofstream out;
+        out.open("dataAcoBTB.bin", std::ios::app | std::ios::out | std::ios::binary);
+        tmp = gammaMom.angle(-DirectionPhoton);
+        out.write((char*)&tmp, sizeof(double));
+        out.close();
+      }
+
       /*G4cout<<"gammaMom.x() = "<<gammaMom.x() << Gateendl;
       G4cout<<"gammaMom.y() = "<<gammaMom.y() << Gateendl;
       G4cout<<"gammaMom.z() = "<<gammaMom.z() << Gateendl;
