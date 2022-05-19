@@ -19,10 +19,14 @@ GateSingletonDebugPositronAnnihilation *GateSingletonDebugPositronAnnihilation::
 GateSingletonDebugPositronAnnihilation::GateSingletonDebugPositronAnnihilation() {
     mMessenger = new GateSingletonDebugPositronAnnihilationMessenger();
     mDebugFlag = false;
+    mOutputFile = "output/data.bin";
 }
 
 bool GateSingletonDebugPositronAnnihilation::GetDebugFlag(){
     return mDebugFlag;
 }
 
+std::string GateSingletonDebugPositronAnnihilation::GetOutputFile(){
+    return mOutputFile;
+}
 

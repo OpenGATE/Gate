@@ -18,6 +18,11 @@ GateSingletonDebugPositronAnnihilationMessenger::GateSingletonDebugPositronAnnih
   pActiveDebugFlagCmd = new G4UIcmdWithABool("/gate/source/setDebugPositronAnnihilationFlag",this);
   guidance = "Activation of the debug flag for positron annihilation";
   pActiveDebugFlagCmd->SetGuidance(guidance);
+
+  pOutputFileCmd = new G4UIcmdWithAString("/gate/output/debugPositronAnnihilation/setFileName",this);
+  guidance = "Filepath and filename of the output of the positron annihilation";
+  pOutputFileCmd->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -26,6 +31,7 @@ GateSingletonDebugPositronAnnihilationMessenger::GateSingletonDebugPositronAnnih
 GateSingletonDebugPositronAnnihilationMessenger::~GateSingletonDebugPositronAnnihilationMessenger()
 {
   delete pActiveDebugFlagCmd;
+  delete pOutputFileCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -37,6 +43,10 @@ void GateSingletonDebugPositronAnnihilationMessenger::SetNewValue(G4UIcommand* c
   if(command == pActiveDebugFlagCmd){
     auto sDebugPositronAnnihilation = GateSingletonDebugPositronAnnihilation::GetInstance();
     sDebugPositronAnnihilation->SetDebugFlag(pActiveDebugFlagCmd->GetNewBoolValue(param));
+  }
+  if(command == pOutputFileCmd){
+    auto sDebugPositronAnnihilation = GateSingletonDebugPositronAnnihilation::GetInstance();
+    sDebugPositronAnnihilation->SetOutputFile(param);
   }
 }
 //-----------------------------------------------------------------------------

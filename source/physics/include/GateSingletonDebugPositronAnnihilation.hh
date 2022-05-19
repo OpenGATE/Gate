@@ -20,10 +20,14 @@ public:
   static GateSingletonDebugPositronAnnihilation* GetInstance();
 
   bool GetDebugFlag();
-  void SetDebugFlag(const bool aFlag) { mDebugFlag = aFlag;};
+  void SetDebugFlag(const bool aFlag) { mDebugFlag = aFlag;}
+
+  std::string GetOutputFile();
+  void SetOutputFile(const std::string aFile) { mOutputFile = aFile;}
 
 private:
   bool mDebugFlag;
+  std::string mOutputFile;
   static GateSingletonDebugPositronAnnihilation *fInstance;
   GateSingletonDebugPositronAnnihilationMessenger* mMessenger;
 

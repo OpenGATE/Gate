@@ -68,7 +68,7 @@ G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
    if (debugPositronAnnihilation->GetDebugFlag()){
      G4double tmp;
      std::ofstream out;
-     out.open("dataAcoF18.bin", std::ios::app | std::ios::out | std::ios::binary);
+     out.open(debugPositronAnnihilation->GetOutputFile(), std::ios::app | std::ios::out | std::ios::binary);
      tmp = DirectionPhoton.angle(- Direction);
      out.write((char*)&tmp, sizeof(double));
      out.close();

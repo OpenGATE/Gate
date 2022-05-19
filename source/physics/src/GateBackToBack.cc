@@ -74,7 +74,7 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       if (debugPositronAnnihilation->GetDebugFlag()){
         G4double tmp;
         std::ofstream out;
-        out.open("dataAcoBTB.bin", std::ios::app | std::ios::out | std::ios::binary);
+        out.open(debugPositronAnnihilation->GetOutputFile(), std::ios::app | std::ios::out | std::ios::binary);
         tmp = gammaMom.angle(-DirectionPhoton);
         out.write((char*)&tmp, sizeof(double));
         out.close();

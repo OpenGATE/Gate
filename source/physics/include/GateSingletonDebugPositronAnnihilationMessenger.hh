@@ -12,6 +12,7 @@ See LICENSE.md for further details
 
 
 #include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithAString.hh"
 #include "G4UImessenger.hh"
 
 class GateSingletonDebugPositronAnnihilationMessenger:public G4UImessenger
@@ -24,6 +25,7 @@ public:
 
 protected:
   G4UIcmdWithABool * pActiveDebugFlagCmd;
+  G4UIcmdWithAString * pOutputFileCmd;
 
 };
 
