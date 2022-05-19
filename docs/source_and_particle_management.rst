@@ -84,6 +84,12 @@ Note that there are no radioactive decays simulated when using the back-to-back 
 Please note, the default value of 0.5 degrees would override ``/gate/source/NAME/setAccoValue 0.0 deg``. In case accolinearity should not be simulated, please set the "AccolinearityFlag" to False or omit the commands related to accolinearity.
 Note: In the past, there has been an issue with the accolinearity flag, see https://github.com/OpenGATE/Gate/issues/381 for details.
 
+To debug, you can save the angle of the photons in an output file with that command::
+
+   /gate/source/setDebugPositronAnnihilationFlag True
+   /gate/output/debugPositronAnnihilation/setFileName output/dataAcoBTB.bin
+
+
 **FastI124**
 
 FastI124 is a special source implementing a simplified decay scheme of the non-pure beta emitter iodine-124 in which positrons are emitted but not neutrinos, there is no nuclear recoil, gammas are emitted if their emission probability is > 1%; and no atomic de-excitation occurs (no x-rays, Auger electrons). These simplifications allow for an increase in speed with respect to the ion source while retaining important features of iodine-124, i.e. gammas may be emitted concurrently with positrons to possibly create "dirty" coincidences. Since decay is simulated, branching ratios are respected hence no activity compensation is necessary.
