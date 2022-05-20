@@ -59,6 +59,7 @@ GateReadout::GateReadout(GatePulseProcessorChain* itsChain,
   m_systemDepth  = -1;
   m_system = NULL;
   m_crystalComponent = NULL;
+  m_IsForcedDepthCentroid = false;
 
   //G4cout<<"GateReadout::GateReadout "<< m_policy<<Gateendl;
 
