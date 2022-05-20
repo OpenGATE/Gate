@@ -8,6 +8,7 @@ See LICENSE.md for further details
 
 
 #include "GatePositronAnnihilation.hh"
+#include "GateSingletonDebugPositronAnnihilation.hh"
 #include "G4UnitsTable.hh"
 #include "globals.hh"
 #include "G4PhysicalConstants.hh"
@@ -62,6 +63,16 @@ G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
        
   // G4double cosdev;
   // G4double dev;
+
+   auto debugPositronAnnihilation = GateSingletonDebugPositronAnnihilation::GetInstance();
+   if (debugPositronAnnihilation->GetDebugFlag()){
+     G4double tmp;
+     std::ofstream out;
+     out.open(debugPositronAnnihilation->GetOutputFile(), std::ios::app | std::ios::out | std::ios::binary);
+     tmp = DirectionPhoton.angle(- Direction);
+     out.write((char*)&tmp, sizeof(double));
+     out.close();
+   }
   
    // Kill the incident positron 
    //

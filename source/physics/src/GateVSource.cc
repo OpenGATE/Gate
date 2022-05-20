@@ -24,6 +24,7 @@
 #include "GateActions.hh"
 #include "GateToRoot.hh"
 #include "GateOutputMgr.hh"
+#include "GateSingletonDebugPositronAnnihilation.hh"
 
 #include "GateVisManager.hh"
 #include "G4VVisManager.hh"
@@ -98,6 +99,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   m_SPSMessenger    = new GateSingleParticleSourceMessenger( this );
 
   SetNumberOfParticles(1); // important !
+  GateSingletonDebugPositronAnnihilation::GetInstance();
 
 }
 //-------------------------------------------------------------------------------------------------
