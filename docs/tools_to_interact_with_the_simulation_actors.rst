@@ -94,7 +94,7 @@ EM properties are calculated relative to a specific particle type and energy, as
 Dose measurement (DoseActor)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The DoseActor builds 3D images of the energy deposited (edep), dose deposited and the number of hits in a given volume. It takes into account the weight of particles. It can store multiple information into a 3D grid, each information can be enabled by using::
+The DoseActor builds 3D images of the energy deposited (edep), dose deposited and the number of hits in a given box volume (other types of volumes not supported; for a possible workaround see here `here <http://lists.opengatecollaboration.org/pipermail/gate-users/2022-May/013041.html>`_). It takes into account the weight of particles. It can store multiple information into a 3D grid, each information can be enabled by using::
 
    /gate/actor/[Actor Name]/enableEdep             true
    /gate/actor/[Actor Name]/enableUncertaintyEdep  true
@@ -110,7 +110,7 @@ Informations can be disable by using "false" instead of "true" (by default all s
 
    /gate/actor/[Actor Name]/enableEdep             false
 
-The unit of edep is MeV and the unit of dose is Gy. The dose/edep squared is used to calculate the uncertainty when the output from several files are added. The uncertainty is the relative statistical uncertainty. "SquaredDose" flag allows to store the sum of squared dose (or energy). It is very useful when using GATE on several workstations with numerous jobs. To compute the final uncertainty, you only have to sum the dose map and the squared dose map to estimate the final uncertainty according to the uncertainty equations.
+The unit of edep is MeV and the unit of dose is Gy. The dose/edep squared is used to calculate the uncertainty when the output from several files are added. The uncertainty is the relative statistical uncertainty. The "SquaredDose" flag allows to store the sum of squared dose (or energy). It is very useful when using GATE on several workstations with numerous jobs. To compute the final uncertainty, you only have to sum the dose map and the squared dose map to estimate the final uncertainty according to the uncertainty equations.
 
 It is possible to normalize the maximum dose value to 1::
 
@@ -125,7 +125,7 @@ or::
    /gate/actor/[Actor Name]/normaliseDoseToIntegral   true
 
 
-For the output, the suffixes Edep, Dose, NbOfHits, Edep-Uncertainty, Dose-Uncertainty, Edep-Squared or Dose-Squared are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), Analyze (.hdr/.img) and MetaImage (.mhd/.raw) (mhd is recommended !). The root file works only for 1D and 2D distributions::
+For the output, the suffixes Edep, Dose, NbOfHits, Edep-Uncertainty, Dose-Uncertainty, Edep-Squared or Dose-Squared are added to the output file name given by the user. You can use several files types: ASCII file (.txt), root file (.root), Analyze (.hdr/.img) and MetaImage (.mhd/.raw) (mhd is recommended!). The root file works only for 1D and 2D distributions::
 
    /gate/actor/addActor DoseActor             MyActor
    /gate/actor/MyActor/save                   MyOutputFile.mhd
@@ -139,7 +139,7 @@ For the output, the suffixes Edep, Dose, NbOfHits, Edep-Uncertainty, Dose-Uncert
    /gate/actor/MyActor/enableDose             false
    /gate/actor/MyActor/normaliseDoseToMax     false
 
-Water equivalent doses (or dose to water) can be also calculated, in order to estimate doses calculated using water equivalent path length approximations, such as in Treatment Planning Systems (TPS). Command previously presented for the "dose" also work for the "dose to water" as shown below::
+Water equivalent doses (or dose to water) can be also calculated, in order to estimate doses calculated using water equivalent path length approximations, such as in Treatment Planning Systems (TPS). The commands previously presented for the "dose" also work for the "dose to water" as shown below::
 
    /gate/actor/[Actor Name]/enableDoseToWater                   true
    /gate/actor/[Actor Name]/enableUncertaintyDoseToWater        true
@@ -147,11 +147,11 @@ Water equivalent doses (or dose to water) can be also calculated, in order to es
 
 **New image format : MHD**
 
-Gate now can read and write mhd/raw image file format. This format is similar to the previous hdr/img one but should solve a number of issues. To use it, just specify .mhd as extension instead of .hdr. The principal difference is that mhd store the 'origin' of the image, which is the coordinate of the (0,0,0) pixel expressed in the *physical world* coordinate system (in general in millimetres). Typically, if you get a DICOM image and convert it into mhd (`vv <http://vv.creatis.insa-lyon.fr>`_ can conveniently do this), the mhd will keep the same pixels coordinate system than the DICOM. 
+Gate now can read and write mhd/raw image file format. This format is similar to the previous hdr/img one but should solve a number of issues. To use it, just specify .mhd as extension instead of .hdr. The principal difference is that mhd stores the 'origin' of the image, which is the coordinate of the (0,0,0) pixel expressed in the *physical world* coordinate system (in general in millimetres). Typically, if you get a DICOM image and convert it into mhd (`vv <http://vv.creatis.insa-lyon.fr>`_ can conveniently do this), the mhd will keep the same pixel coordinate system as the DICOM. 
 
 In GATE, if you specify the macro "TranslateTheImageAtThisIsoCenter" with the coordinate of the isocenter that is in a DICOM-RT-plan file, the image will be placed such that this isocenter is at position (0,0,0) of the mother volume (often the world). This is very useful to precisely position the image as indicated in a RT plan. Also, when using a DoseActor attached to a mhd file, the output dose distribution can be stored in mhd format. In this case, the origin of the dose distribution will be set such that it corresponds to the attached image (easy superimposition display).
 
-Additional information can be find here: `here <http://lists.opengatecollaboration.org/pipermail/gate-users/2021-March/012331.html>`
+Additional information can be found here: `here <http://lists.opengatecollaboration.org/pipermail/gate-users/2021-March/012331.html>`
 
 Note however, that the mhd module is still experimental and not complete. It is thus possible that some mhd images cannot be read. Use and enjoy at your own risk, please contact us if you find bugs and be warmly acknowledged if you correct bugs.
 
@@ -180,7 +180,7 @@ An example can be found in the GateContrib GitHub repository under `dosimetry/do
 Dose calculation algorithms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When storing a dose (D=edep/mass) with the DoseActor, mass is computed by using the material density at the step location and using the volume the dosel. If the size of the image voxel is smaller than the size of the dosel of the DoseActor it can lead to undesired results. Two algorithms are available for the DoseActor.
+When storing a dose (D=edep/mass) with the DoseActor, mass is computed by using the material density at the step location and using the volume of the dosel. If the size of the image voxel is smaller than the size of the dosel of the DoseActor it can lead to undesired results. Two algorithms are available for the DoseActor.
 
 Volume weighting algorithm
 ++++++++++++++++++++++++++
@@ -192,7 +192,7 @@ This algorithm is used by default. The absorbed dose of each material is pondera
 Mass weighting algorithm
 ++++++++++++++++++++++++
 
-This algorithm calculates the dose of each dosels by taking the deposited energy and dividing it by its mass:: 
+This algorithm calculates the dose of each dosel by taking the deposited energy and dividing it by its mass:: 
 
   /gate/actor/[Actor Name]/setDoseAlgorithm MassWeighting
 
@@ -200,11 +200,11 @@ This algorithm calculates the dose of each dosels by taking the deposited energy
 
 Mass images (.txt, .root, .mhd) can be imported and exported to be used by the mass weighting algorithm.
 
-* Exportation::
+* Export::
 
    /gate/actor/[Actor Name]/exportMassImage path/to/MassImage
 
-* Importation::
+* Import::
 
    /gate/actor/[Actor Name]/importMassImage path/to/MassImage
 
@@ -212,17 +212,17 @@ Mass images (.txt, .root, .mhd) can be imported and exported to be used by the m
 * When the mass weighting algorithm is used on a unvoxelized volume, depending on the dosel's resolution of the DoseActor the computation can take a very long time. 
 * **Important note :** If no mass image is imported when using the mass weighting algorithm Gate will calculate the mass during the simulation (this can take a lot of time).
 
-The command 'exportMassImage' can be used to generate the mass image of the DoseActor attached volume one time for all and import it with the 'importMassFile' command.
+The command 'exportMassImage' can be used to generate the mass image of the DoseActor's attached volume one time for all and import it with the 'importMassFile' command.
  
 **Limitations :**
 
 * **With voxelized phantom :**
 
-  - MassWeighting algorithm work with phantoms imported with *ImageRegularParametrisedVolume* and *ImageNestedParametrisedVolume*.
+  - The MassWeighting algorithm works with phantoms imported with *ImageRegularParametrisedVolume* and *ImageNestedParametrisedVolume*.
   - For now it's not possible to choose an actor resolution smaller than the phantom's resolution.
-  - It is mandatory to attach directly the phantom to the actor.
+  - It is mandatory to attach the actor directly to the phantom.
 
-* **With unvoxelized geometry :** The dosels resolution must be reasonably low otherwise the time of calculation can be excessively long ! (and can need a lot of memory !)
+* **With unvoxelized geometry :** The dosel's resolution must be reasonably low otherwise the time of calculation can be excessively long! (and can need a lot of memory!)
 
 Tet-Mesh Dose Actor
 ~~~~~~~~~~~~~~~~~~~
