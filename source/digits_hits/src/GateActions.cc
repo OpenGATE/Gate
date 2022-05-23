@@ -143,8 +143,10 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
 
-
-
+  G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
+  GateCrystalHitsCollection * CHC = (GateCrystalHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
+  if (CHC->entries()==0) return; //go to next event if no hits
+  
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the OutputMgr manager
   // Pre-digitalisation outputMgr (hits)
@@ -162,8 +164,8 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
   if ( theMode == TrackingMode::kTracker )
     {
 
-      G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
-      GateCrystalHitsCollection * CHC = (GateCrystalHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
+      // G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
+      //GateCrystalHitsCollection * CHC = (GateCrystalHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
 
       if (CHC != 0)
 	{ if ( CHC->GetSize() > 0 )
