@@ -68,7 +68,6 @@ GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4S
   m_DimensionY1=itsDimensionY1;
   m_DimensionX2=itsDimensionX2;
   m_DimensionY2=itsDimensionY2;
-  
 
   m_messenger = new GateParameterisedPinholeCollimatorMessenger(this);
 }

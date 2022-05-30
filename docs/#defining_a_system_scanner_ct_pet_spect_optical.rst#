@@ -1289,7 +1289,7 @@ In order to use pinhole collimator one should do::
    /gate/SPECThead/daughters/name colli
    /gate/SPECThead/daughters/insert pinhole_collimator
    
-The geometry of pinhole is defined from a G4-pyramid with a subtracted cones in order to have pinholes.
+The geometry of pinhole is defined from a G4-pyramid with a subtracted cones in order to have pinholes. Each pinhole is a superposition of two cones drilled from each side of a collimator with different angles. 
 The pyramid is defied with mac options::
 
    /gate/colli/geometry/setDimensionX1 80 mm
@@ -1314,9 +1314,10 @@ The stricture of the option file, APT2.pin, is the following (an example could b
 
    [NAME OF COLLIMATOR]
    Number of pinholes
-   y z diameter cone_angle focal_point_y focal_point_z 
+   y z diameter cone_angle/alpha focal_point_y focal_point_z
 
-   
+where y and z are the coordinates of a pinhole center, diameter is the size of the pinhole (also at the center position), cone_angle is an angle of opening of the cones, focal point y and z are illustrated in the figure below.
+
 .. figure:: pinhole_for_option_file.png
    :alt: Figure 16: pinhole_for_option_file
    :name: pinhole_for_option_file
@@ -1334,11 +1335,12 @@ Example of .pin file::
   -21.464 11.949  2.5 7.5 -10.0315 0
   -25.19  0       2.5 7.5 -15.0274 0
   -28.898 -11.949 2.5 7.5 -20.0002 0
-
 	  
 In this Table one can find a description of APT2 collimator with 9 holes.
-The diameter of pinholes (at the center) is 2.5 mm, the opening cone angle (alpha later) is 6.3 degree. The y and z coordinates are the centers of the pinholes.
-The focal coordinates are illustrated in Fig. 4.
+The diameter of pinholes (at the center) is 2.5 mm, the opening cone angle (alpha later) is 7.5 degree. The y and z coordinates are the centers of the pinholes.
+The focal coordinates are illustrated in figure above.
+
+The most tricky part is to obtain this .pin file. An exemple of how it could be done can be found here::
 
 
 Septal Penetration
