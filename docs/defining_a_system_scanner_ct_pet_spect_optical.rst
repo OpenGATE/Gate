@@ -1278,11 +1278,15 @@ Example of code for modelling fanbeam collimators::
 
 Modelling a parametrized pinhole collimator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Since Gate9.2 it is possible to define parapetrized pinhole collimator with class GateParameterisedPinholeCollimator. The description of calculations can found here:: 
+Since Gate9.2 it is possible to define parapetrized pinhole collimator with class GateParameterisedPinholeCollimator. The description of calculations can found here: 
+
+https://github.com/kochebina/ParametrisedPinholeCollimator/blob/main/PinholeCollimatorClass/GATE_PinholeCollimatorClass.pdf
 
 .. figure:: nanoSPECT_pinhole.png
    :alt: Figure 14:nanoSPECT_pinhole
    :name: nanoSPECT_pinhole
+   
+Example of nanoSPECT camera with four heads and pinhole collimators.
 
 In order to use pinhole collimator one should do::
 
@@ -1323,6 +1327,7 @@ where y and z are the coordinates of a pinhole center, diameter is the size of t
    :name: pinhole_for_option_file
 
 Example of .pin file::
+
   # y	  z	  dia cone focal point
   [APT2]
   9
@@ -1340,7 +1345,9 @@ In this Table one can find a description of APT2 collimator with 9 holes.
 The diameter of pinholes (at the center) is 2.5 mm, the opening cone angle (alpha later) is 7.5 degree. The y and z coordinates are the centers of the pinholes.
 The focal coordinates are illustrated in figure above.
 
-The most tricky part is to obtain this .pin file. An exemple of how it could be done can be found here::
+The most tricky part is to obtain the .pin file. An exemple of how it could be done can also be found in this document:
+
+https://github.com/kochebina/ParametrisedPinholeCollimator/blob/main/PinholeCollimatorClass/GATE_PinholeCollimatorClass.pdf
 
 
 Septal Penetration
