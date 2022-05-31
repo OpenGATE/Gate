@@ -115,7 +115,7 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	int n_pinholes;
 	float x, y;
 	float dia, cone_angle;
-	float px, py;
+	float x_focal, y_focal;
 	
       // open pinhole description file
 	std::ifstream fin;
@@ -145,7 +145,7 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 
 	
 	float z =  GetCollimatorRotRadius();
-	float apex;
+	float Dz;
 	G4ThreeVector normal;
 	
 	float h = GetCollimatorHeight()/2.;
@@ -153,12 +153,12 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	for(int i=0;i<n_pinholes;i++)
 	{
 	  
-	  fin >> x >> y >> dia  >> cone_angle >> px >> py;
+	  fin >> x >> y >> dia  >> cone_angle >> x_focal >> y_focal;
 	  cone_angle *= 4.0f * atan(1.0f) / 180.0f;
 	  
 	  float alpha=cone_angle;
-	  normal.setX(x-px);
-	  normal.setY(y-py);
+	  normal.setX(x-x_focal);
+	  normal.setY(y-y_focal);
 	  normal.setZ(z);
 	  
 
@@ -167,7 +167,7 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	  normal.setY(normal.getY()/sqrt(t));
 	  normal.setZ(normal.getZ()/sqrt(t));
 	 
-	  float theta = atan((x-px)/z);  
+	  float theta = atan((x-x_focal)/z);  
 	  float beta= fabs(pi/2. - fabs(theta));
 
 	  float a,b,l,k,s,n;
@@ -186,23 +186,23 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	  // G4cout<<i<<" "<< x<<" "<<y <<"; "<< b <<" "<<  (dia-s) * (a+l) /(a*tan(beta))<<G4endl;
 
 
-	  float apex_x = a + l + b;
-	  float apex_y = (y-py) / cos((y-py)/z);
-	  apex = sqrt(apex_x*apex_x + apex_y*apex_y);
+	  float Dz_x = a + l + b;
+	  float Dz_y = (y-y_focal) / cos((y-y_focal)/z);
+	  Dz = sqrt(Dz_x*Dz_x + Dz_y*Dz_y);
 
 
 
-	  G4double rmax=apex*tanf(cone_angle);  
+	  G4double rmax=Dz*tanf(alpha);  
 	
 	  m_cone_up_solid
-	    = new G4Cons(GetSolidName(),0,rmax*mm,0,0,(apex/2.)*mm, 0.*deg, 360.*deg);// toward the detector		    
+	    = new G4Cons(GetSolidName(),0,rmax*mm,0,0,(Dz/2.)*mm, 0.*deg, 360.*deg);// toward the detector		    
 	  
 	  m_cone_down_solid
-	    = new G4Cons(GetSolidName(),0,0,0,rmax*mm, (apex/2.)*mm, 0.*deg, 360.*deg);// toward the source
+	    = new G4Cons(GetSolidName(),0,0,0,rmax*mm, (Dz/2.)*mm, 0.*deg, 360.*deg);// toward the source
 	 
-	  float correction_z=k-(apex/2.)*sin(beta);
-	  float correction_x=correction_z*(x-px)/z;
-	  float correction_y=correction_z*(y-py)/z;
+	  float correction_z=k-(Dz/2.)*sin(beta);
+	  float correction_x=correction_z*(x-x_focal)/z;
+	  float correction_y=correction_z*(y-y_focal)/z;
 
 	  BoxPos_down.setX(x+correction_x);
 	  BoxPos_down.setY(y+correction_y);
@@ -216,7 +216,7 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	  rotMatrix.rotateX(-atan(normal.getY()/normal.getZ())*rad);
 	  
 	  
-	  G4cout<<i<<" "<< x<<" "<<y <<"; "<< b <<" "<< rotMatrix.phi() *180.0f/(4.0f * atan(1.0f))<<" "<< rotMatrix.theta()*180.0f/(4.0f * atan(1.0f))<<" "<<rotMatrix.psi()*180.0f/(4.0f * atan(1.0f))<<G4endl;
+	  //G4cout<<i<<" "<< x<<" "<<y <<"; "<< b <<" "<< rotMatrix.phi() *180.0f/(4.0f * atan(1.0f))<<" "<< rotMatrix.theta()*180.0f/(4.0f * atan(1.0f))<<" "<<rotMatrix.psi()*180.0f/(4.0f * atan(1.0f))<<G4endl;
 	   	
 	  m_sub_up_solid
 	    = new G4SubtractionSolid(GetSolidName(), temp_solid, m_cone_up_solid, &rotMatrix, BoxPos_up);
