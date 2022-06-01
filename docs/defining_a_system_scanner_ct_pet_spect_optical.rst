@@ -1278,9 +1278,13 @@ Example of code for modelling fanbeam collimators::
 
 Modelling a parametrized pinhole collimator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Since Gate9.2 it is possible to define parapetrized pinhole collimator with class GateParameterisedPinholeCollimator. The description of calculations can found here: 
+Since Gate9.2 it is possible to define a parameterized pinhole collimator with the class GateParameterisedPinholeCollimator. The description of calculations and some additional information of the class can be found here: 
 
 https://github.com/kochebina/ParametrisedPinholeCollimator/blob/main/PinholeCollimatorClass/GATE_PinholeCollimatorClass.pdf
+
+Example of GATE macros for a preclinical SPECT scanner with four heads and mutlipihole collimators is also here:
+
+https://github.com/kochebina/ParametrisedPinholeCollimator/tree/main/macros
 
 .. figure:: nanoSPECT_pinhole.png
    :alt: Figure 14:nanoSPECT_pinhole
@@ -1293,8 +1297,8 @@ In order to use pinhole collimator one should do::
    /gate/SPECThead/daughters/name colli
    /gate/SPECThead/daughters/insert pinhole_collimator
    
-The geometry of pinhole is defined from a G4-pyramid with a subtracted cones in order to have pinholes. Each pinhole is a superposition of two cones drilled from each side of a collimator with different angles. 
-The pyramid is defied with mac options::
+The geometry of a pinhole collimator is defined as a G4-pyramid with two subtracted cones to form one pinhole. Each pinhole is a superposition of two cones drilled from each side of a collimator.
+The pyramid is defied with mac options:: 
 
    /gate/colli/geometry/setDimensionX1 80 mm
    /gate/colli/geometry/setDimensionY1 84 mm
@@ -1310,17 +1314,17 @@ The collimator rotation radius, i.e. distance from the center of field of view t
    :alt: Figure 15:pinhole_rot_radius
    :name: pinhole_rot_radius
 
-The the pinhole geometry is defined with an option file::
+The pinholes are defined with an option file::
    
    /gate/colli/geometry/input mac/APT2.pin
    
-The stricture of the option file, APT2.pin, is the following (an example could be found in Table below)::
+The structure of the option file, APT2.pin, is the following (an example could be found in Table below):: 
 
    [NAME OF COLLIMATOR]
    Number of pinholes
-   y z diameter cone_angle/alpha focal_point_y focal_point_z
+   x y diameter cone_angle/alpha x_focal y_focal
 
-where y and z are the coordinates of a pinhole center, diameter is the size of the pinhole (also at the center position), cone_angle is an angle of opening of the cones, focal point y and z are illustrated in the figure below.
+where x and y are the coordinates of a pinhole center, diameter is the size of the pinhole (also at the center position), cone_angle is an opening or apex angle of the cones, focal point x and y are illustrated in the figure below.
 
 .. figure:: pinhole_for_option_file.png
    :alt: Figure 16: pinhole_for_option_file
@@ -1328,7 +1332,7 @@ where y and z are the coordinates of a pinhole center, diameter is the size of t
 
 Example of .pin file::
 
-  # y	  z	  dia cone focal point
+  # x	  y	  dia angle x_focal y_focal
   [APT2]
   9
   28.898  11.949  2.5 7.5 20.0002  0
@@ -1341,11 +1345,11 @@ Example of .pin file::
   -25.19  0       2.5 7.5 -15.0274 0
   -28.898 -11.949 2.5 7.5 -20.0002 0
 	  
-In this Table one can find a description of APT2 collimator with 9 holes.
-The diameter of pinholes (at the center) is 2.5 mm, the opening cone angle (alpha later) is 7.5 degree. The y and z coordinates are the centers of the pinholes.
+In this Table one can find a description of an APT2 collimator with 9 holes.
+The diameter of pinholes (at the center) is 2.5 mm, the opening cone angle is 7.5 degree. The x and y coordinates are the centers of the pinholes.
 The focal coordinates are illustrated in figure above.
 
-The most tricky part is to obtain the .pin file. An exemple of how it could be done can also be found in this document:
+The most tricky part is to obtain the .pin file. An example of how it could be done can also be found in this document: 
 
 https://github.com/kochebina/ParametrisedPinholeCollimator/blob/main/PinholeCollimatorClass/GATE_PinholeCollimatorClass.pdf
 
