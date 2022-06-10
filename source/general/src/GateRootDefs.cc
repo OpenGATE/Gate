@@ -361,6 +361,8 @@ void GateRootSingleBuffer::Clear()
   strcpy (RayleighVolumeName," ");
   // HDS : septal
   septalNb = 0;
+  for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
+      volumeID[d] = -1;
 }
 
 
@@ -393,6 +395,7 @@ void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 
   // HDS : septal penetration
   septalNb = aDigi->GetNSeptal();
+  aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 }
 
 
@@ -443,6 +446,8 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
   if ( GateSingleDigi::GetSingleASCIIMask(20) )
     // HDS : record septal penetration
     if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
+   //Initialized by default.TO DO: Mask option should be included or a flag
+  Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 
 

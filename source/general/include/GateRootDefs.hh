@@ -254,6 +254,7 @@ class GateRootSingleBuffer
     Float_t  globalPosY;
     Float_t  globalPosZ;
     Int_t    outputID[ROOT_OUTPUTIDSIZE];
+    Int_t    volumeID[ROOT_VOLUMEIDSIZE];
     Int_t    comptonPhantom; 
     Int_t    comptonCrystal;    
     Int_t    RayleighPhantom; 
