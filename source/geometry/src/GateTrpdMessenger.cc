@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
@@ -15,7 +15,7 @@ See LICENSE.md for further details
 #include "G4UIcmdWithADoubleAndUnit.hh"
 // #include "G4UIcmdWith3VectorAndUnit.hh"
 // #include "G4UIcmdWithoutParameter.hh"
-
+#include "G4UIcmdWithABool.hh"
 #include "GateTrpd.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -61,12 +61,25 @@ GateTrpdMessenger::GateTrpdMessenger(GateTrpd *itsCreator)
   TrpdZLengthCmd->SetRange("Length>0.");
   TrpdZLengthCmd->SetUnitCategory("Length");
 
+  cmdName  = dir +"disableCavity";
+  TrpdCavityCmd = 0;
+  TrpdCavityCmd = new G4UIcmdWithABool(cmdName.c_str(),this);
+  TrpdCavityCmd->SetGuidance("Enable Cavity inside the trapezoid"); 
+
   cmdName = dir+"setXBoxLength";
   TrpdXBoxLengthCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
   TrpdXBoxLengthCmd->SetGuidance("Set half length along X of the extruded box.");
   TrpdXBoxLengthCmd->SetParameterName("Length",false);
   TrpdXBoxLengthCmd->SetRange("Length>0.");
   TrpdXBoxLengthCmd->SetUnitCategory("Length");
+
+  
+  cmdName = dir+"setYBoxLength";
+  TrpdYBoxLengthCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
+  TrpdYBoxLengthCmd->SetGuidance("Set half length along Y of the extruded box.");
+  TrpdYBoxLengthCmd->SetParameterName("Length",false);
+  TrpdYBoxLengthCmd->SetRange("Length>0.");
+  TrpdYBoxLengthCmd->SetUnitCategory("Length");
 
   cmdName = dir+"setYBoxLength";
   TrpdYBoxLengthCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
@@ -109,7 +122,8 @@ GateTrpdMessenger::~GateTrpdMessenger()
   delete  TrpdY1LengthCmd;    
   delete  TrpdX2LengthCmd;    
   delete  TrpdY2LengthCmd;    
-  delete  TrpdZLengthCmd;     
+  delete  TrpdZLengthCmd;
+  delete  TrpdCavityCmd;
   delete  TrpdXBoxLengthCmd;  
   delete  TrpdYBoxLengthCmd;  
   delete  TrpdZBoxLengthCmd;  
@@ -137,6 +151,10 @@ void GateTrpdMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   else if( command==TrpdZLengthCmd )
     { GetTrpdCreator()->SetTrpdZLength(TrpdZLengthCmd->GetNewDoubleValue(newValue)); /*TellGeometryToRebuild();*/}   
   
+  else if( command==TrpdCavityCmd )
+    { GetTrpdCreator()->SetTrpdCavity(TrpdCavityCmd->GetNewBoolValue(newValue)); /*TellGeometryToRebuild();*/}   
+ 
+
   else if( command==TrpdXBoxLengthCmd )
     { GetTrpdCreator()->SetTrpdTrudXLength(TrpdXBoxLengthCmd->GetNewDoubleValue(newValue)); /*TellGeometryToRebuild();*/}   
   			                   

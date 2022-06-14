@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
@@ -37,6 +37,7 @@ private:
   G4UIcmdWithADoubleAndUnit* TrpdZLengthCmd;     
   //  G4UIcmdWith3VectorAndUnit* TrpdBoxLengthCmd
   //  G4UIcmdWith3VectorAndUnit* TrpdBoxPosCmd
+  G4UIcmdWithABool* TrpdCavityCmd;  
   G4UIcmdWithADoubleAndUnit* TrpdXBoxLengthCmd;  
   G4UIcmdWithADoubleAndUnit* TrpdYBoxLengthCmd;  
   G4UIcmdWithADoubleAndUnit* TrpdZBoxLengthCmd;  

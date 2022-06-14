@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
+  See GATE/LICENSE.txt for further details
   ----------------------*/
 
 #ifndef GateTrpd_h
@@ -65,6 +65,7 @@ public:
            G4double itsXBxLength = 1.,
            G4double itsYBxLength = 1.,
            G4double itsZBxLength = 1.,
+	   G4bool itsCavity=false,
            G4double itsXBxPos = 0.,
            G4double itsYBxPos = 0.,
            G4double itsZBxPos = 0.,
@@ -152,6 +153,10 @@ public:
   void SetTrpdTrudZPos (G4double val)
   {  m_trpdLength[10]= val; /*ComputeParameters();*/ }
 
+  void SetTrpdCavity (G4bool val)
+  {  m_cavity = val; /*ComputeParameters();*/ }
+  
+
   // ! G E T T E R S
 
   //! Get the Trd length along an axis  (X1=0, Y1=1, X2=2, Y2=3, Z=4)
@@ -192,6 +197,7 @@ public:
   inline G4double GetTrpdTrudYHalfLength()    	  {return GetTrpdHalfLength(6);}
   inline G4double GetTrpdTrudZHalfLength()    	  {return GetTrpdHalfLength(7);}
 
+  inline G4bool isTrpdCavity()    	  {return m_cavity;}
   //@}
 
 private:
@@ -202,7 +208,7 @@ private:
   G4SubtractionSolid*  m_trpd_solid;
 
   G4LogicalVolume*     m_trpd_log; 	      	    //!< logical volume pointer for extruded trapezoid
-
+  G4LogicalVolume*     m_trd_log; 
   //@}
 
   //! \name parameters
@@ -210,6 +216,7 @@ private:
   G4double m_trpdLength[11];//!< Trpd lengths 0:dx1 1:dy1 2:dx2 3:dy1 4:dz, 5,6,7:3 box_lengths 8,9,10:3 box_positions
 
   //@}
+  G4bool m_cavity;
 
   //! Messenger
   GateTrpdMessenger* m_Messenger;
