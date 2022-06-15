@@ -11,6 +11,7 @@
 #include <G4CrossSectionHandler.hh>
 #include <G4Poisson.hh>
 #include <G4Gamma.hh>
+#include <G4PhysicsFreeVector.hh>
 
 /* Gate */
 #include "GateEnergyResponseFunctor.hh"
@@ -783,19 +784,59 @@ namespace GateFixedForcedDetectionFunctor
       RayleighValueAccumulation()
         {
         /* G4 data */
-        G4VDataSetAlgorithm* ffInterpolation = new G4LogLogInterpolation;
-        G4String formFactorFile = "rayl/re-ff-";
-        m_FormFactorData = new G4CompositeEMDataSet(ffInterpolation, 1., 1.);
-        m_FormFactorData->LoadData(formFactorFile);
-        m_CrossSectionHandler = new G4CrossSectionHandler;
-        G4String crossSectionFile = "rayl/re-cs-";
-        m_CrossSectionHandler->LoadData(crossSectionFile);
-        }
+        m_dataCS.push_back(nullptr);
+        m_dataFF.push_back(nullptr);
+        for(G4int Z = 0; Z < 100; ++Z)
+          {
+          m_dataCS.push_back(nullptr);
+          ReadData(m_dataCS, Z, "/livermore/rayl/re-cs-");
+          m_dataFF.push_back(nullptr);
+          ReadData(m_dataFF, Z, "/livermore/rayl/re-ff-");
+          }
+	      }
       ~RayleighValueAccumulation()
         {
-        delete m_FormFactorData;
-        delete m_CrossSectionHandler;
         }
+
+      void ReadData(std::vector<G4PhysicsFreeVector*>& data, size_t Z, const char* path)
+        {
+        if(nullptr != data[Z]) { return; }
+
+        const char* datadir = nullptr;
+
+        if(datadir == nullptr)
+        {
+          datadir = std::getenv("G4LEDATA");
+          if(datadir == nullptr)
+          {
+            G4Exception("G4LivermoreRayleighModelModel::ReadData()","em0006",
+		        FatalException,
+		        "Environment variable G4LEDATA not defined");
+            return;
+          }
+        }
+        data[Z] = new G4PhysicsFreeVector();
+
+        std::ostringstream ostCS;
+        ostCS << datadir << path << Z+1 <<".dat";
+
+        std::ifstream finCS(ostCS.str().c_str());
+
+        if( !finCS .is_open() )
+        {
+          G4ExceptionDescription ed;
+          ed << "G4LivermoreRayleighModel data file <" << ostCS.str().c_str()
+             << "> is not opened!" << G4endl;
+          G4Exception("G4LivermoreRayleighModel::ReadData()","em0003",FatalException,
+		      ed,"G4LEDATA version should be G4EMLOW6.27 or later.");
+          return;
+        }
+        else
+        {
+          data[Z]->Retrieve(finCS, true);
+        }
+        }
+
 
       inline void operator()(const rtk::ThreadIdType threadId,
                              const float & itkNotUsed(input),
@@ -822,7 +863,7 @@ namespace GateFixedForcedDetectionFunctor
         double DCSThomsonTerm1 = (1 + cosT * cosT);
         double DCSThomson = m_eRadiusOverCrossSectionTerm * DCSThomsonTerm1;
         double x = std::sqrt(1. - cosT) * m_InvWlPhoton; /* 1-cosT=2*sin(T/2)^2 */
-        double formFactor = m_FormFactorData->FindValue(x, m_Z - 1);
+        G4double formFactor = findValue(m_dataFF, m_Z-1, x);
         double DCSrayleigh = DCSThomson * formFactor * formFactor;
 
         /* Multiply interpolation weights by step norm in MM to convert voxel
@@ -884,6 +925,22 @@ namespace GateFixedForcedDetectionFunctor
         {
         m_Direction = _arg;
         }
+
+      G4double findValue(std::vector<G4PhysicsFreeVector*>& data, const unsigned int & Z, const double & energy)
+        {
+        G4double xs = 1.0;
+
+        G4PhysicsFreeVector* pv = data[Z];
+        G4int n = pv->GetVectorLength() - 1;
+        G4double e = energy/MeV;
+        if(e >= (*pv).Energy(n)) {
+          xs = (*pv)[n];
+        } else if(e >= pv->Energy(0)) {
+          xs = pv->Value(e);
+        }
+        return(xs);
+        }
+
       void SetEnergyZAndWeight(const double & energy, const unsigned int & Z, const double & weight)
         {
         unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
@@ -893,7 +950,9 @@ namespace GateFixedForcedDetectionFunctor
         m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
         m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
-        G4double crossSection = m_CrossSectionHandler->FindValue(Z, energy);
+        G4double crossSection = findValue(m_dataCS, Z-1, energy);
+        G4double eMeV = energy/MeV;
+        crossSection = crossSection/(eMeV*eMeV);
         m_Z = Z;
         m_eRadiusOverCrossSectionTerm = weight * (classic_electr_radius * classic_electr_radius)
                                         / (2. * crossSection);
@@ -909,8 +968,8 @@ namespace GateFixedForcedDetectionFunctor
       double m_eRadiusOverCrossSectionTerm;
 
       /* G4 data */
-      G4VEMDataSet* m_FormFactorData;
-      G4VCrossSectionHandler* m_CrossSectionHandler;
+      std::vector<G4PhysicsFreeVector*> m_dataCS;
+      std::vector<G4PhysicsFreeVector*> m_dataFF;
       };
 
     class FluorescenceValueAccumulation: public VAccumulation
