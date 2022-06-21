@@ -64,6 +64,9 @@ class GateDiffCrossSectionActor : public GateVActor
   void SetMaterial(G4String name);
   void ReadMaterialList(G4String filename);
 
+  G4double findValue(const unsigned int & Z, const double & energy);
+  void ReadData(size_t Z, const char* path);
+
   std::ofstream PointerToFileDataOutSF;
   std::ofstream PointerToFileDataOutFF;
   std::ofstream PointerToFileDataOutDCScompton;
@@ -87,7 +90,7 @@ protected:
   std::vector<G4double > mUserAngleList;
   std::vector<G4String > mUserMaterialList;
   G4VEMDataSet* scatterFunctionData;
-  G4VEMDataSet* formFactorData;
+  std::vector<G4PhysicsFreeVector*> m_dataFF;
 
 };
 

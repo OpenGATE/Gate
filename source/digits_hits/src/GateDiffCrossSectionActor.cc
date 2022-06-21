@@ -25,7 +25,7 @@
 #include <list>
 
 //-----------------------------------------------------------------------------
-GateDiffCrossSectionActor::GateDiffCrossSectionActor( G4String name, G4int depth):GateVActor( name, depth), scatterFunctionData(0), formFactorData(0)
+GateDiffCrossSectionActor::GateDiffCrossSectionActor( G4String name, G4int depth):GateVActor( name, depth), scatterFunctionData(0)
 {
   GateDebugMessageInc( "Actor", 4, "GateDiffCrossSectionActor() -- begin\n");
   //scatterFunctionData = 0;
@@ -53,9 +53,51 @@ GateDiffCrossSectionActor::~GateDiffCrossSectionActor()
 {
   delete pMessenger;
   delete scatterFunctionData;
-  delete formFactorData;
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDiffCrossSectionActor::ReadData(size_t Z, const char* path)
+{
+  if(nullptr != m_dataFF[Z]) { return; }
+
+  const char* datadir = nullptr;
+
+  if(datadir == nullptr)
+  {
+    datadir = std::getenv("G4LEDATA");
+    if(datadir == nullptr)
+    {
+      G4Exception("GateDiffCrossSectionActor::::ReadData()","em0006",
+      FatalException,
+      "Environment variable G4LEDATA not defined");
+      return;
+    }
+  }
+  m_dataFF[Z] = new G4PhysicsFreeVector();
+
+  std::ostringstream ostCS;
+  ostCS << datadir << path << Z <<".dat";
+
+  std::ifstream finCS(ostCS.str().c_str());
+
+  if( !finCS .is_open() )
+  {
+    G4ExceptionDescription ed;
+    ed << "G4LivermoreRayleighModel data file <" << ostCS.str().c_str()
+       << "> is not opened!" << G4endl;
+    G4Exception("GateDiffCrossSectionActor::::ReadData()","em0003",FatalException,
+    ed,"G4LEDATA version should be G4EMLOW6.27 or later.");
+    return;
+  }
+  else
+  {
+    m_dataFF[Z]->Retrieve(finCS, true);
+  }
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist)
@@ -163,12 +205,12 @@ void GateDiffCrossSectionActor::Initialise()
   scatterFunctionData = new G4CompositeEMDataSet( scatterInterpolation, 1/cm, 1.);
   scatterFunctionData->LoadData(scatterFile);
 
-  delete formFactorData;
-  G4VDataSetAlgorithm* ffInterpolation = new G4LogLogInterpolation;
-  G4String formFactorFile = "rayl/re-ff-";
-  formFactorData = new G4CompositeEMDataSet( ffInterpolation, 1/cm, 1.);
-  formFactorData->LoadData(formFactorFile);
-
+  m_dataFF.push_back(nullptr);
+  for(G4int Z = 1; Z <= 100; ++Z)
+  {
+      m_dataFF.push_back(nullptr);
+      ReadData(Z, "/livermore/rayl/re-ff-");
+  }
 }
 
 
@@ -253,7 +295,7 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
                   DCSThomsonTerm1 = (1 + cosT * cosT);
                   DCSThomson = eRadiusTerm * DCSThomsonTerm1;
                   //****Form Factor (FF) calcul . NOTICE in FindValue they use (xi,Z-1) i have to understand why !!
-                  formFactor = formFactorData->FindValue(xi,Z-1);
+                  formFactor = findValue(Z,xi);
                   listAngleFF.push_back( std::make_pair( xi/(1/cm), formFactor));
                   //****Rayleigh differential cross section per solid angle
                   DCSrayleigh = DCSThomson * formFactor * formFactor;
@@ -344,6 +386,24 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
 
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+G4double GateDiffCrossSectionActor::findValue(const unsigned int & Z, const double & energy)
+{
+  G4double xs = 1.0;
+
+  G4PhysicsFreeVector* pv = m_dataFF[Z];
+  G4int n = pv->GetVectorLength() - 1;
+  G4double e = energy/MeV;
+  if(e >= (*pv).Energy(n)) {
+    xs = (*pv)[n]/(e*e);
+  } else if(e >= pv->Energy(0)) {
+    xs = pv->Value(e)/(e*e);
+  }
+  return(xs);
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 ///// Save data
