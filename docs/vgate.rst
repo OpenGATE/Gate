@@ -37,9 +37,11 @@ The following software is installed on this machine (see this `file <https://git
 How to get vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
 
-Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu. The direct (google drive) link is `here <https://drive.google.com/file/d/1RQ6TxODe0VYUqdc8qqIMP_fGKl_KMyed/view?usp=sharing>`_.
+Go to the `OpenGate collaboration website <http://opengatecollaboration.org/>`_. You will then be able to download the virtual machine under the "Download/vGATE" menu. The download link can also be found `here <http://dl.opengatecollaboration.org/vgate>`_.
 
-Be aware that the file you will download a pretty big (about 10 Gbytes), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
+Be aware that the file you will download a pretty big (about 15 GB), so if several users are downloading the file at the same time, your download speed will be limited and you will have to be patient.
+
+Using a download manager with resume capability (like wget).
 
 How to use vGATE now?
 ~~~~~~~~~~~~~~~~~~~~~
