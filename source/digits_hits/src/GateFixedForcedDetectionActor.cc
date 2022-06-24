@@ -1579,7 +1579,7 @@ void GateFixedForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(G
     s = src->GetPosDist()->GetCentreCoords();
     s = m_SourceToCT.TransformPoint(s);
     } /*  point */
-  else // parallel geometry
+  else if (mSourceType == "plane") // parallel geometry
     {
     s = dp;
     G4ThreeVector dw = du.cross(dv);
