@@ -24,13 +24,13 @@ With vGate you can launch your first GATE simulation in just a few steps! No nee
 The following software is installed on this machine (see this `file <https://github.com/OpenGATE/Gate/blob/develop/source/docker/vGate.sh>`_ for more details):
 
 * Ubuntu LTS 20.04 on Virtual Box (40GB virtual HD)
-* GATE 9.1
-* Geant4 10.7.0
+* GATE 9.2
+* Geant4 11.0
 * GateContrib: a user-oriented public repository of Gate (macros, examples and user contributions)
-* Root 6.19.02
+* Root 6.24.06
 * libtorch cxx11 (cpu) 1.7.0
-* ITK with Module_RTK=ON
-* VTK v7.1.0
+* ITK v5.2.1 with Module_RTK=ON
+* VTK v9.0.3
 * vV 1.4
 * ImageJ (Fiji)
 
