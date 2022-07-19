@@ -219,6 +219,7 @@ void GateFluenceActor::ResetData()
 void GateFluenceActor::BeginOfRunAction(const G4Run *)
 {
   GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Run\n");
+  ResetData();
 }
 
 void GateFluenceActor::BeginOfEventAction(const G4Event * e)

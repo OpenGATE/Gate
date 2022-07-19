@@ -158,11 +158,20 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
         }
 
         if (sint1 > 0.0) {      // incident ray oblique
+	  // Compute the reflectance and sample a uniform random to test if reflected or transmitted
+	  G4double diti = (Rindex1*cost1 - Rindex2*cost2) / (Rindex1*cost1 + Rindex2*cost2);
+	  G4double ditj = (Rindex1*cost2 - Rindex2*cost1) / (Rindex1*cost2 + Rindex2*cost1);
+	  G4double reflectance = 0.5 * ( diti*diti + ditj*ditj ) ;
+	  G4double isReflected = CLHEP::RandFlat::shoot() ;
+	  if (isReflected < reflectance) { // if reflectance test passed
+	    DoReflection(); // *** Total reflection ***
+	  } else {
             G4double alpha = cost1 - cost2 * (Rindex2 / Rindex1);
             NewMomentum = OldMomentum + alpha * theGlobalNormal;
+	  }
         } else {                // incident ray perpendicular ==> transmission
-            NewMomentum = OldMomentum;
-            NewPolarization = OldPolarization;
+	  NewMomentum = OldMomentum;
+	  NewPolarization = OldPolarization;
         }
     }
 
