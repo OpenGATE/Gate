@@ -27,10 +27,9 @@ int main(int argc, char *argv[])
    // Usage
    std::ostringstream usage;
    usage << std::endl
-         << "Gate_CC_coincidence_procesor" << std::endl
-         << "Gate for Compton Camera" << std::endl
-         << "Process coincidence  to provide  sequence coincidences" << std::endl
-         << "Usage : " << argv[0] << " <coincidenceInput.root> <sequenceCoincidenceOutput.root> <options.mac>" << std::endl;
+         << "ConvertCCMod2PETCoin" << std::endl
+         << "Read  the Coincidence tree (CCMod actor format)  and generate  a Coincidence tree file with 2-single coincidence following PET systems structure   " << std::endl
+         << "Usage : " << argv[0] << " <CCModCoincidenceInputFile.root>" << "<PETFormatCoincFilename.root> <geom.mac>" << std::endl;
 
 
    // Get user parameters
@@ -111,4 +110,3 @@ int main(int argc, char *argv[])
 
    return 0;
 }
-
