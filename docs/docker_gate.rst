@@ -20,6 +20,11 @@ We consider you already have the macro in your computer, you can do::
   cd folder/containing/macFolder
   docker run -i --rm -v $PWD:/APP opengatecollaboration/gate mac/main.mac
 
+
+If you want to use alias in your macro, you can set the parameters like this::
+
+  docker run -i --rm -v $PWD:/APP opengatecollaboration/gate "-a [nb,1000] mac/main.mac"
+
 You can find more information about the docker image on `github <https://github.com/OpenGATE/Gate/tree/develop/source/docker>`_
 
 Example to install GATE with Docker on Amazon Web Services (AWS) (Amazon Linux machine):
