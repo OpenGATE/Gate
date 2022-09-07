@@ -56,7 +56,7 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
     inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
     inputPulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
     if(PxNew<Xmin) PxNew=Xmin;
-    if(PxNew<Ymin) PyNew=Ymin;
+    if(PyNew<Ymin) PyNew=Ymin;
     if(PzNew<Zmin) PzNew=Zmin;
     if(PxNew>Xmax) PxNew=Xmax;
     if(PyNew>Ymax) PyNew=Ymax;

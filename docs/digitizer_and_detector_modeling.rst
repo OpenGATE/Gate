@@ -491,6 +491,8 @@ For SPECT simulations, the spatial resolution is assumed to follow a Gaussian di
    /gate/digitizer/Singles/spblurring/setSpresolution 2.0 mm 
    /gate/digitizer/Singles/spblurring/verbose 1
 
+BEWARE: The final position of the pulse is located within the original detector volume  (smallest volume). If the position obtained after applying a Gaussian blurring exceeds the limits of the original volume, it is set to the surface of that volume.  In other words, the volumeID of the pulse does not change by the application of this module. 
+
 In PET analysis, coincidence events provide the lines of response (LOR) needed for the image reconstruction. Only the two crystal numbers are transferred by the simulation. The determination of these crystal numbers is based on the crystal in which the highest energy has been deposited. Without additional spatial blurring of the crystal, simulation results will always have a better spatial resolution than experimental measurements. This module is only available for the *ecat* system. The spatial blurring is based on a 2D Gaussian function::
 
    # E C A T 7 
