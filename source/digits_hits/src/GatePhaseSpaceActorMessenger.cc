@@ -8,7 +8,6 @@
 
 #include "GatePhaseSpaceActorMessenger.hh"
 
-
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -17,18 +16,19 @@
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "GatePhaseSpaceActor.hh"
 
-
 //-----------------------------------------------------------------------------
 GatePhaseSpaceActorMessenger::GatePhaseSpaceActorMessenger(GatePhaseSpaceActor *sensor)
-        : GateActorMessenger(sensor), pActor(sensor) {
+    : GateActorMessenger(sensor), pActor(sensor)
+{
     BuildCommands(baseName + sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger() {
+GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
+{
     delete pEnableChargeCmd;
+    delete pEnableAtomicNumberCmd;
     delete pEnableElectronicDEDXCmd;
     delete pEnableTotalDEDXCmd;
     delete pEnableMassCmd;
@@ -69,9 +69,9 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger() {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-void GatePhaseSpaceActorMessenger::BuildCommands(G4String base) {
+void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
+{
     G4String guidance;
     G4String bb;
 
@@ -80,6 +80,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base) {
     guidance = "Save electric charge of particles in the phase space file.";
     pEnableChargeCmd->SetGuidance(guidance);
     pEnableChargeCmd->SetParameterName("State", false);
+
+    bb = base + "/enableAtomicNumber";
+    pEnableAtomicNumberCmd = new G4UIcmdWithABool(bb, this);
+    guidance = "Save atomic number of particles in the phase space file.";
+    pEnableAtomicNumberCmd->SetGuidance(guidance);
+    pEnableAtomicNumberCmd->SetParameterName("State", false);
 
     bb = base + "/enableElectronicDEDX";
     pEnableElectronicDEDXCmd = new G4UIcmdWithABool(bb, this);
@@ -208,7 +214,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base) {
     bb = base + "/setMaxFileSize";
     pMaxSizeCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
     guidance = G4String(
-            "Set maximum size of the phase space file. When the file reaches the maximum size, a new file is automatically created.");
+        "Set maximum size of the phase space file. When the file reaches the maximum size, a new file is automatically created.");
     pMaxSizeCmd->SetGuidance(guidance);
     pMaxSizeCmd->SetParameterName("Size", false);
     pMaxSizeCmd->SetUnitCategory("Memory size");
@@ -302,60 +308,83 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base) {
     guidance = "Kill particle once stored.";
     pEnableKillCmd->SetGuidance(guidance);
     pEnableKillCmd->SetParameterName("State", false);
-
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String param) {
-    if (command == pEnableChargeCmd) pActor->SetIsChargeEnabled(pEnableChargeCmd->GetNewBoolValue(param));
+void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String param)
+{
+    if (command == pEnableChargeCmd)
+        pActor->SetIsChargeEnabled(pEnableChargeCmd->GetNewBoolValue(param));
+    if (command == pEnableAtomicNumberCmd)
+        pActor->SetIsAtomicNumberEnabled(pEnableAtomicNumberCmd->GetNewBoolValue(param));
     if (command == pEnableElectronicDEDXCmd)
         pActor->SetIsElectronicDEDXEnabled(pEnableElectronicDEDXCmd->GetNewBoolValue(param));
-    if (command == pEnableTotalDEDXCmd) pActor->SetIsTotalDEDXEnabled(pEnableTotalDEDXCmd->GetNewBoolValue(param));
-    if (command == pEnableEkineCmd) pActor->SetIsEkineEnabled(pEnableEkineCmd->GetNewBoolValue(param));
-    if (command == pEnablePositionXCmd) pActor->SetIsXPositionEnabled(pEnablePositionXCmd->GetNewBoolValue(param));
-    if (command == pEnableDirectionXCmd) pActor->SetIsXDirectionEnabled(pEnableDirectionXCmd->GetNewBoolValue(param));
-    if (command == pEnablePositionYCmd) pActor->SetIsYPositionEnabled(pEnablePositionYCmd->GetNewBoolValue(param));
-    if (command == pEnableDirectionYCmd) pActor->SetIsYDirectionEnabled(pEnableDirectionYCmd->GetNewBoolValue(param));
-    if (command == pEnablePositionZCmd) pActor->SetIsZPositionEnabled(pEnablePositionZCmd->GetNewBoolValue(param));
-    if (command == pEnableDirectionZCmd) pActor->SetIsZDirectionEnabled(pEnableDirectionZCmd->GetNewBoolValue(param));
+    if (command == pEnableTotalDEDXCmd)
+        pActor->SetIsTotalDEDXEnabled(pEnableTotalDEDXCmd->GetNewBoolValue(param));
+    if (command == pEnableEkineCmd)
+        pActor->SetIsEkineEnabled(pEnableEkineCmd->GetNewBoolValue(param));
+    if (command == pEnablePositionXCmd)
+        pActor->SetIsXPositionEnabled(pEnablePositionXCmd->GetNewBoolValue(param));
+    if (command == pEnableDirectionXCmd)
+        pActor->SetIsXDirectionEnabled(pEnableDirectionXCmd->GetNewBoolValue(param));
+    if (command == pEnablePositionYCmd)
+        pActor->SetIsYPositionEnabled(pEnablePositionYCmd->GetNewBoolValue(param));
+    if (command == pEnableDirectionYCmd)
+        pActor->SetIsYDirectionEnabled(pEnableDirectionYCmd->GetNewBoolValue(param));
+    if (command == pEnablePositionZCmd)
+        pActor->SetIsZPositionEnabled(pEnablePositionZCmd->GetNewBoolValue(param));
+    if (command == pEnableDirectionZCmd)
+        pActor->SetIsZDirectionEnabled(pEnableDirectionZCmd->GetNewBoolValue(param));
     if (command == pEnableProdProcessCmd)
         pActor->SetIsProdProcessEnabled(pEnableProdProcessCmd->GetNewBoolValue(param));
-    if (command == pEnableProdVolumeCmd) pActor->SetIsProdVolumeEnabled(pEnableProdVolumeCmd->GetNewBoolValue(param));
+    if (command == pEnableProdVolumeCmd)
+        pActor->SetIsProdVolumeEnabled(pEnableProdVolumeCmd->GetNewBoolValue(param));
     if (command == pEnableParticleNameCmd)
         pActor->SetIsParticleNameEnabled(pEnableParticleNameCmd->GetNewBoolValue(param));
-    if (command == pEnableWeightCmd) pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
-    if (command == pEnableTimeCmd) pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
+    if (command == pEnableWeightCmd)
+        pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
+    if (command == pEnableTimeCmd)
+        pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
     if (command == pEnableTimeFromBeginOfEventCmd)
         pActor->SetIsTimeFromBeginOfEventEnabled(pEnableTimeFromBeginOfEventCmd->GetNewBoolValue(param));
-    if (command == pEnableTrackLengthCmd) pActor->SetTrackLengthEnabled(pEnableTrackLengthCmd->GetNewBoolValue(param));
-    if (command == pEnableMassCmd) pActor->SetIsMassEnabled(pEnableMassCmd->GetNewBoolValue(param));
+    if (command == pEnableTrackLengthCmd)
+        pActor->SetTrackLengthEnabled(pEnableTrackLengthCmd->GetNewBoolValue(param));
+    if (command == pEnableMassCmd)
+        pActor->SetIsMassEnabled(pEnableMassCmd->GetNewBoolValue(param));
     if (command == pCoordinateInVolumeFrameCmd)
         pActor->SetUseVolumeFrame(pCoordinateInVolumeFrameCmd->GetNewBoolValue(param));
     if (command == pInOrOutGoingParticlesCmd)
         pActor->SetStoreOutgoingParticles(pInOrOutGoingParticlesCmd->GetNewBoolValue(param));
-    if (command == pEnableStoreAllStepCmd) pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
-    if (command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
+    if (command == pEnableStoreAllStepCmd)
+        pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
+    if (command == pEnableSecCmd)
+        pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
     if (command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)
         GateError(
-                "saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
-    if (command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
+            "saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
+    if (command == pMaxSizeCmd)
+        pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
     if (command == bEnablePrimaryEnergyCmd)
         pActor->SetIsPrimaryEnergyEnabled(bEnablePrimaryEnergyCmd->GetNewBoolValue(param));
     if (command == bEnableEmissionPointCmd)
         pActor->SetIsEmissionPointEnabled(bEnableEmissionPointCmd->GetNewBoolValue(param));
-    if (command == bCoordinateFrameCmd) {
+    if (command == bCoordinateFrameCmd)
+    {
         pActor->SetCoordFrame(param);
         pActor->SetEnableCoordFrame();
     };
-    if (command == bEnableLocalTimeCmd) pActor->SetIsLocalTimeEnabled(bEnableLocalTimeCmd->GetNewBoolValue(param));
-    if (command == bSpotIDFromSourceCmd) {
+    if (command == bEnableLocalTimeCmd)
+        pActor->SetIsLocalTimeEnabled(bEnableLocalTimeCmd->GetNewBoolValue(param));
+    if (command == bSpotIDFromSourceCmd)
+    {
         pActor->SetSpotIDFromSource(param);
         pActor->SetIsSpotIDEnabled();
     };
-    if (command == bEnablePDGCodeCmd) pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
-    if (command == bEnableCompactCmd) pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
+    if (command == bEnablePDGCodeCmd)
+        pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
+    if (command == bEnableCompactCmd)
+        pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
     if (command == pEnableNuclearFlagCmd)
         pActor->SetIsNuclearFlagEnabled(pEnableNuclearFlagCmd->GetNewBoolValue(param));
     if (command == bEnableSphereProjection)
@@ -370,13 +399,15 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
     if (command == bSetTranslationAlongDirectionLength)
         pActor->SetTranslationAlongDirectionLength(bSetTranslationAlongDirectionLength->GetNewDoubleValue(param));
 
-    if (command == pEnableTOutCmd) pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
-    if (command == pEnableTProdCmd) pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
-    if (command == pUseMaskCmd) pActor->SetMaskFilename(param);
-    if (command == pEnableKillCmd) pActor->SetKillParticleFlag(pEnableKillCmd->GetNewBoolValue(param));
+    if (command == pEnableTOutCmd)
+        pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
+    if (command == pEnableTProdCmd)
+        pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
+    if (command == pUseMaskCmd)
+        pActor->SetMaskFilename(param);
+    if (command == pEnableKillCmd)
+        pActor->SetKillParticleFlag(pEnableKillCmd->GetNewBoolValue(param));
 
     GateActorMessenger::SetNewValue(command, param);
 }
 //-----------------------------------------------------------------------------
-
-
