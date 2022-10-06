@@ -25,7 +25,8 @@
 
 //----------------------------------------------------------------------------------------
 GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpace *source)
-    : GateVSourceMessenger(source), pSource(source) {
+    : GateVSourceMessenger(source), pSource(source)
+{
     G4String cmdName;
 
     cmdName = GetDirectoryName() + "addPhaseSpaceFile";
@@ -58,6 +59,11 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
     setParticleTypeCmd->SetGuidance("set the particle type (if not given in the PhS)");
     setParticleTypeCmd->SetParameterName("Particle Type", false);
 
+    cmdName = GetDirectoryName() + "setParticlePDGCode";
+    setParticlePDGCodeCmd = new G4UIcmdWithAnInteger(cmdName, this);
+    setParticlePDGCodeCmd->SetGuidance("set the particle type as PDGCode (if not given in the PhS)");
+    setParticlePDGCodeCmd->SetParameterName("Particle PDGCode", false);
+
     cmdName = GetDirectoryName() + "useNbOfParticleAsIntensity";
     setUseNbParticleAsIntensityCmd = new G4UIcmdWithABool(cmdName, this);
     setUseNbParticleAsIntensityCmd->SetGuidance("use the nb of particle in the PhS as source intensity");
@@ -78,18 +84,18 @@ GateSourcePhaseSpaceMessenger::GateSourcePhaseSpaceMessenger(GateSourcePhaseSpac
     setPytorchParamsCmd = new G4UIcmdWithAString(cmdName, this);
     setPytorchParamsCmd->SetGuidance("set the json file associated with the .pt PHSP");
     setPytorchParamsCmd->SetParameterName("Filename", false);
-
 }
 //----------------------------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------------------------
-GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger() {
+GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger()
+{
     delete AddFileCmd;
     delete RelativeVolumeCmd;
     delete RegularSymmetryCmd;
     delete RandomSymmetryCmd;
     delete setParticleTypeCmd;
+    delete setParticlePDGCodeCmd;
     delete setUseNbParticleAsIntensityCmd;
     delete setStartIdCmd;
     delete setPytorchBatchSizeCmd;
@@ -100,25 +106,36 @@ GateSourcePhaseSpaceMessenger::~GateSourcePhaseSpaceMessenger() {
 }
 //----------------------------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------------------------
-void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+void GateSourcePhaseSpaceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
+{
     GateVSourceMessenger::SetNewValue(command, newValue);
-    if (command == AddFileCmd) pSource->AddFile(newValue);
-    if (command == RelativeVolumeCmd) pSource->SetPositionInWorldFrame(true);
-    if (command == RegularSymmetryCmd) pSource->SetUseRegularSymmetry();
-    if (command == RandomSymmetryCmd) pSource->SetUseRandomSymmetry();
-    if (command == setParticleTypeCmd) pSource->SetParticleType(newValue);
-    if (command == RelativeTimeCmd) pSource->SetRelativeTimeFlag(RelativeTimeCmd->GetNewBoolValue(newValue));
-    if (command == IgnoreTimeCmd) pSource->SetIgnoreTimeFlag(IgnoreTimeCmd->GetNewBoolValue(newValue));
+    if (command == AddFileCmd)
+        pSource->AddFile(newValue);
+    if (command == RelativeVolumeCmd)
+        pSource->SetPositionInWorldFrame(true);
+    if (command == RegularSymmetryCmd)
+        pSource->SetUseRegularSymmetry();
+    if (command == RandomSymmetryCmd)
+        pSource->SetUseRandomSymmetry();
+    if (command == setParticleTypeCmd)
+        pSource->SetParticleType(newValue);
+    if (command == setParticlePDGCodeCmd)
+        pSource->SetParticlePDGCode(setParticlePDGCodeCmd->GetNewIntValue(newValue));
+    if (command == RelativeTimeCmd)
+        pSource->SetRelativeTimeFlag(RelativeTimeCmd->GetNewBoolValue(newValue));
+    if (command == IgnoreTimeCmd)
+        pSource->SetIgnoreTimeFlag(IgnoreTimeCmd->GetNewBoolValue(newValue));
     if (command == setUseNbParticleAsIntensityCmd)
         pSource->SetUseNbOfParticleAsIntensity(setUseNbParticleAsIntensityCmd->GetNewBoolValue(newValue));
-    if (command == ignoreWeightCmd) pSource->SetIgnoreWeight(ignoreWeightCmd->GetNewBoolValue(newValue));
-    if (command == setStartIdCmd) pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
+    if (command == ignoreWeightCmd)
+        pSource->SetIgnoreWeight(ignoreWeightCmd->GetNewBoolValue(newValue));
+    if (command == setStartIdCmd)
+        pSource->SetStartingParticleId(setStartIdCmd->GetNewDoubleValue(newValue));
     if (command == setPytorchBatchSizeCmd)
         pSource->SetPytorchBatchSize(setPytorchBatchSizeCmd->GetNewIntValue(newValue));
-    if (command == setPytorchParamsCmd) pSource->SetPytorchParams(newValue);
-
+    if (command == setPytorchParamsCmd)
+        pSource->SetPytorchParams(newValue);
 }
 //----------------------------------------------------------------------------------------
 

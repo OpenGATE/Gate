@@ -40,28 +40,30 @@ class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithoutParameter;
 
 //----------------------------------------------------------------------------------------
-class GateSourcePhaseSpaceMessenger : public GateVSourceMessenger {
+class GateSourcePhaseSpaceMessenger : public GateVSourceMessenger
+{
 public:
-    GateSourcePhaseSpaceMessenger(GateSourcePhaseSpace *source);
+  GateSourcePhaseSpaceMessenger(GateSourcePhaseSpace *source);
 
-    ~GateSourcePhaseSpaceMessenger();
+  ~GateSourcePhaseSpaceMessenger();
 
-    void SetNewValue(G4UIcommand *, G4String);
+  void SetNewValue(G4UIcommand *, G4String);
 
 private:
-    GateSourcePhaseSpace *pSource;
-    G4UIcmdWithAString *AddFileCmd;
-    G4UIcmdWithAString *setParticleTypeCmd;
-    G4UIcmdWithoutParameter *RelativeVolumeCmd;
-    G4UIcmdWithoutParameter *RegularSymmetryCmd;
-    G4UIcmdWithoutParameter *RandomSymmetryCmd;
-    G4UIcmdWithABool *setUseNbParticleAsIntensityCmd;
-    G4UIcmdWithABool *ignoreWeightCmd;
-    G4UIcmdWithABool *RelativeTimeCmd;
-    G4UIcmdWithABool *IgnoreTimeCmd;
-    G4UIcmdWithADouble *setStartIdCmd;
-    G4UIcmdWithAnInteger *setPytorchBatchSizeCmd;
-    G4UIcmdWithAString *setPytorchParamsCmd;
+  GateSourcePhaseSpace *pSource;
+  G4UIcmdWithAString *AddFileCmd;
+  G4UIcmdWithAString *setParticleTypeCmd;
+  G4UIcmdWithoutParameter *RelativeVolumeCmd;
+  G4UIcmdWithoutParameter *RegularSymmetryCmd;
+  G4UIcmdWithoutParameter *RandomSymmetryCmd;
+  G4UIcmdWithABool *setUseNbParticleAsIntensityCmd;
+  G4UIcmdWithABool *ignoreWeightCmd;
+  G4UIcmdWithABool *RelativeTimeCmd;
+  G4UIcmdWithABool *IgnoreTimeCmd;
+  G4UIcmdWithADouble *setStartIdCmd;
+  G4UIcmdWithAnInteger *setPytorchBatchSizeCmd;
+  G4UIcmdWithAnInteger *setParticlePDGCodeCmd;
+  G4UIcmdWithAString *setPytorchParamsCmd;
 };
 //----------------------------------------------------------------------------------------
 

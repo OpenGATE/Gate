@@ -6,7 +6,6 @@
   See LICENSE.md for further details
   ----------------------*/
 
-
 #ifndef GATEPHASESPACESOURCE_HH
 #define GATEPHASESPACESOURCE_HH
 
@@ -30,6 +29,7 @@
 #include "G4ThreeVector.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4IonTable.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4ParticleMomentum.hh"
 #include <iomanip>
@@ -45,7 +45,8 @@
 struct iaea_record_type;
 struct iaea_header_type;
 
-class GateSourcePhaseSpace : public GateVSource {
+class GateSourcePhaseSpace : public GateVSource
+{
 public:
     GateSourcePhaseSpace(G4String name);
 
@@ -100,7 +101,8 @@ public:
 
     void SetPositionInWorldFrame(bool t) { mPositionInWorldFrame = t; }
 
-    void SetUseRegularSymmetry() {
+    void SetUseRegularSymmetry()
+    {
         if (mUseRandomSymmetry)
             GateError("You cannot use random and regular symmetry for phase space source");
         mUseRegularSymmetry = true;
@@ -108,7 +110,8 @@ public:
 
     bool GetUseRegularSymmetry() const { return mUseRegularSymmetry; }
 
-    void SetUseRandomSymmetry() {
+    void SetUseRandomSymmetry()
+    {
         if (mUseRegularSymmetry)
             GateError("You cannot use random and regular symmetry for phase space source");
         mUseRandomSymmetry = true;
@@ -117,6 +120,8 @@ public:
     bool GetUseRandomSymmetry() const { return mUseRandomSymmetry; }
 
     void SetParticleType(G4String &name) { mParticleTypeNameGivenByUser = name; }
+
+    void SetParticlePDGCode(G4int code) { mPDGCodeGivenByUser = code; }
 
     void SetUseNbOfParticleAsIntensity(bool b) { mUseNbOfParticleAsIntensity = b; }
 
@@ -196,6 +201,8 @@ protected:
     float w1;
     float w2;
 
+    G4int mPDGCode;
+    G4int mPDGCodeGivenByUser;
     char particleName[64];
     G4String mParticleTypeNameGivenByUser;
     double mParticleTime;
@@ -285,8 +292,6 @@ protected:
     torch::jit::script::Module mPTmodule;
     torch::Tensor mPTzer;
 #endif
-
 };
 
 #endif
-
