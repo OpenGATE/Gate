@@ -24,7 +24,8 @@ RUN yum install -y  make \
                     wget \
                     mesa-libGLU-devel.x86_64 \
                     python3-devel \
-                    which nano
+                    which nano \
+                    mesa-dri-drivers
 
 #create folder and install cmake
 RUN mkdir software \
