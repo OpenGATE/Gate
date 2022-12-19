@@ -20,9 +20,9 @@ jobs:
         options: [none, rtk, torch, optic]
 
     env:
-      ROOT_VERSION: 'v6-24-06'
+      ROOT_VERSION: 'v6-26-08'
       GEANT4_VERSION: 'v11.0.0'
-      ITK_VERSION: 'v5.2.0'
+      ITK_VERSION: 'v5.3.0'
       ROOT_DIR: $(HOME)/software/root
       GEANT4_DIR: $(HOME)/software/geant4
 
@@ -38,8 +38,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build3
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build3
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -52,9 +52,11 @@ jobs:
                                   libxpm-dev \
                                   libxft-dev \
                                   libxext-dev \
-                                  qt5-default \
+                                  qtbase5-dev \
+                                  qt5-qmake \
                                   git \
                                   cmake \
+                                  libssl-dev \
                                   python3.8-dev \
                                   ccache \
                                   fftw3-dev
@@ -86,6 +88,8 @@ jobs:
           cd bin
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
+                       -Dpyroot=OFF \
+                       -Dclad=OFF \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           make -j4 install
           cd ..
@@ -289,9 +293,11 @@ jobs:
                                 libxpm-dev \
                                 libxft-dev \
                                 libxext-dev \
-                                qt5-default \
+                                qtbase5-dev \
+                                qt5-qmake \
                                 git \
                                 cmake \
+                                libssl-dev \
                                 python3.8-dev \
                                 ccache \
                                 fftw3-dev
@@ -300,6 +306,7 @@ jobs:
     - name: Run the test in docker
       run: |
         mkdir gate_benchmarks
+        export GIT_SSL_NO_VERIFY=1
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
         docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.2 /home/.github/workflows/runTest.sh
 
