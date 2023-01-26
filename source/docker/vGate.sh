@@ -71,7 +71,7 @@ make
 cd
 cd Software/Geant4
 mkdir src bin install data
-git clone -b v11.0.0 https://github.com/Geant4/geant4.git src
+git clone -b v11.1.0 https://github.com/Geant4/geant4.git src
 cd bin
 ccmake ../src -DGEANT4_INSTALL_DATA=ON -DGEANT4_INSTALL_DATADIR=/home/vgate/Software/Geant4/data -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/Geant4/install -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON
 make install
@@ -103,7 +103,7 @@ echo 'source /home/vgate/Software/Geant4/install/bin/geant4.sh' >> /home/vgate/.
 cd
 cd Software/Gate
 mkdir src bin
-git clone -b v9.2 https://github.com/OpenGATE/Gate.git src
+git clone -b v9.3 https://github.com/OpenGATE/Gate.git src
 cd bin
 ccmake ../src -DGATE_USE_RTK=ON -DGATE_USE_TORCH=ON -DTorch_DIR=/home/vgate/Software/libtorch/share/cmake/Torch -DGATE_COMPILE_GATEDIGIT=ON
 make
