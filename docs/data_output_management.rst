@@ -329,7 +329,7 @@ to look at vectors in 3D.
 * processName: The process by which the particle ended its path in the sensitive detector (e.g.: Transportation (“T”), Optical Absorption(“O”), Comptonscatter(”C”), PhotoElectric(“P”), RaleighScattering(“R”)).  You might be interested in distinguishing between particles that are detected at the detector(“T”) and those that were absorbed(“O”). A particle that undergoes Comptonscatter(“C”) is counted as two hits when it splits up. 
 
 
-(for more information http://www-root.fnal.gov/root/GettingStarted/GettingStarted.htm)
+(for more information see https://usermanual.wiki/Document/ROOTmanualforGATEusers.1287112941/view or http://www-root.fnal.gov/root/GettingStarted/GettingStarted.htm)
 
 How to merge Root files?
 ~~~~~~~~~~~~~~~~~~~~~~~~~
