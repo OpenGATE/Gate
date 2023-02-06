@@ -274,7 +274,8 @@ jobs:
                         t19_acollinearity,
                         t20_digi_adder,
                         t22_merged_actor,
-                        t23_digi_readout]
+                        t23_digi_readout,
+                        t26_CoinSorter]
 
     steps:
     - name: Checkout github repo
