@@ -14,7 +14,7 @@
 #include "G4Timer.hh"
 #include "GateConfiguration.h"
 #include "GateVOutputModule.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
@@ -109,7 +109,7 @@ public:
   void CheckFileNameForAllOutput();
 
   //! Return the current crystal-hit collection (if nay)
-  GateCrystalHitsCollection*  	  GetCrystalHitCollection();
+  GateHitsCollection*  	  GetHitCollection();
   //! Return the current phantom-hit collection (if nay)
   GatePhantomHitsCollection*  	  GetPhantomHitCollection();
   //! Return the current single-digi collection (if nay)

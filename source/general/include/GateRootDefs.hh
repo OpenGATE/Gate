@@ -27,7 +27,7 @@ See LICENSE.md for further details
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
-class GateCrystalHit;
+class GateHit;
 class GateSingleDigi;
 class GateCoincidenceDigi;
 
@@ -67,8 +67,8 @@ class GateRootHitBuffer
     inline virtual ~GateRootHitBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    void Fill(GateCrystalHit* aHit);
-    GateCrystalHit* CreateHit();
+    void Fill(GateHit* aHit);
+    GateHit* CreateHit();
 
     //! \name getters and setters for unit-dependent fields
     //@{

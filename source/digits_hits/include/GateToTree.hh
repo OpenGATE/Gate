@@ -80,7 +80,7 @@ private:
   void retrieve(GateCoincidenceDigi* aDigi, G4int side, G4int system_id);
 
   template <typename T>
-  void retrieve(T* p, G4int system_id) //p == GateCrystalHit, GateSingleDigi, or &GatePulses
+  void retrieve(T* p, G4int system_id) //p == GateHit, GateSingleDigi, or &GatePulses
   {
       UNUSED(system_id);
       m_runID = p->GetRunID();

@@ -83,12 +83,12 @@ void GateToSummary::RecordEndOfEvent(const G4Event* )
   m_nb_of_events++;
 
   // store number of hits during this events
-  GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
+  GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
   if (CHC) {
     G4int NbHits = CHC->entries();
     G4int n = 0;
     for (G4int iHit=0; iHit<NbHits; iHit++) {
-      GateCrystalHit* aHit = (*CHC)[iHit];
+      GateHit* aHit = (*CHC)[iHit];
       if (aHit->GoodForAnalysis()) n++;
     }
     m_nb_of_hits += n;

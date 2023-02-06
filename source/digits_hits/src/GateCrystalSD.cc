@@ -7,7 +7,7 @@
   ----------------------*/
 
 #include "GateCrystalSD.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TouchableHistory.hh"
 #include "G4Track.hh"
@@ -79,7 +79,7 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
   static int HCID = -1; // Static variable storing the hit collection ID
 // Not thread safe but moving to local variable doesn't work
   // Creation of a new hit collection
-  crystalCollection = new GateCrystalHitsCollection
+  crystalCollection = new GateHitsCollection
                    (SensitiveDetectorName,theCrystalCollectionName);
 
   // We store the hit collection ID into the static variable HCID
@@ -94,7 +94,7 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 
 //------------------------------------------------------------------------------
 // Implementation of the pure virtual method ProcessHits().
-// This methods generates a GateCrystalHit and stores it into the SD's hit collection
+// This methods generates a GateHit and stores it into the SD's hit collection
 //G4bool GateCrystalSD::ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist)
 G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
@@ -189,7 +189,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // time of the current step
   G4double aTime = newStepPoint->GetGlobalTime();
   // Create a new crystal hit
-  GateCrystalHit* aHit = new GateCrystalHit();
+  GateHit* aHit = new GateHit();
 
   // Store the data already obtained into the hit
   aHit->SetPDGEncoding( PDGEncoding );

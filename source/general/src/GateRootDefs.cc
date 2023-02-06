@@ -11,7 +11,7 @@
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateRootDefs.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
@@ -130,7 +130,7 @@ void GateRootHitBuffer::Clear()
 }
 
 
-void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
+void GateRootHitBuffer::Fill(GateHit* aHit)
 {
   size_t d;
 
@@ -189,7 +189,7 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
 
 }
 
-GateCrystalHit* GateRootHitBuffer::CreateHit()
+GateHit* GateRootHitBuffer::CreateHit()
 {
   // Create a volumeID from the root-hit data
   GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
@@ -201,7 +201,7 @@ GateCrystalHit* GateRootHitBuffer::CreateHit()
     anOutputVolumeID[d] = outputID[d];
 
   // Create a new hit
-  GateCrystalHit* aHit = new GateCrystalHit();
+  GateHit* aHit = new GateHit();
 
   // Initialise the hit data from the root-hit data
   aHit->SetEdep(    	      	GetEdep() );

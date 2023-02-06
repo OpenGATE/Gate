@@ -157,8 +157,8 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 
   if( m_outFileHitsFlag )
     {
-      GateCrystalHitsCollection* CHC = GetOutputMgr()->
-        GetCrystalHitCollection();
+      GateHitsCollection* CHC = GetOutputMgr()->
+        GetHitCollection();
 
       G4int NbHits( 0 );
 
@@ -173,7 +173,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
               if( nVerboseLevel > 2 )
                 {
                   std::cout << "GateToBinary::RecordEndOfEvent : "
-                            << "CrystalHitsCollection: processName : <"
+                            << "HitsCollection: processName : <"
                             << processName << ">    Particles PDG code : " << PDGEncoding
                             << Gateendl;
                 }
@@ -281,7 +281,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
           if( nVerboseLevel > 0 )
             {
               std::cout <<
-                "GateToBinary::RecordHits : GateCrystalHitCollection not found"
+                "GateToBinary::RecordHits : GateHitCollection not found"
                         << Gateendl;
             }
         }

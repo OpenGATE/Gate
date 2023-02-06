@@ -24,7 +24,7 @@
 
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateSourceMgr.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "GateAnalysis.hh"
 #include "GateAnalysisMessenger.hh"
@@ -135,7 +135,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     }
   else
     {
-      GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
+      GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
 
       G4int NbHits = 0;
       G4int NpHits = 0;
@@ -143,7 +143,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
       if (CHC)
         {
           NbHits = CHC->entries();
-          //G4cout << "     " << NbHits << " hits are stored in essaiCrystalHitsCollection.\n";
+          //G4cout << "     " << NbHits << " hits are stored in essaiHitsCollection.\n";
 
           //G4int ionID      = 1; // the primary vertex particle
           //G4int positronID = 0; // no more needed
@@ -393,7 +393,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
               G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
               if (nVerboseLevel > 2)
-                G4cout << "GateAnalysis::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
+                G4cout << "GateAnalysis::RecordEndOfEvent : HitsCollection: processName : <" << processName
                        << ">    Particls PDG code : " << PDGEncoding << Gateendl;
               if ((*CHC)[iHit]->GoodForAnalysis())
                 {

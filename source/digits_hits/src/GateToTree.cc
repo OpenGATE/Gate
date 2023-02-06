@@ -628,10 +628,10 @@ void GateToTree::RecordBeginOfEvent(const G4Event *event) {
 }
 
 void GateToTree::RecordEndOfEvent(const G4Event *event) {
-    auto CHC = this->GetOutputMgr()->GetCrystalHitCollection();
+    auto CHC = this->GetOutputMgr()->GetHitCollection();
     if (!CHC) {
         std::cout <<
-                  "GateToTree::RecordEndOfEvent : GateCrystalHitCollection not found"
+                  "GateToTree::RecordEndOfEvent : GateHitCollection not found"
                   << Gateendl;
         return;
     }
@@ -723,7 +723,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 
         for (auto &&digi: *v) {
             if (m_systemID == -1) {
-                auto mother = static_cast<const GateCrystalHit *>(digi->GetPulse().GetMother());
+                auto mother = static_cast<const GateHit *>(digi->GetPulse().GetMother());
                 if (!mother) {
                     // for example pulse created by GateNoise.cc (l67).
                     m_systemID = 0;
@@ -770,7 +770,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 
         for (auto &&digi: *v) {
             if (m_systemID == -1) {
-                auto mother = static_cast<const GateCrystalHit *>(digi->GetPulse(0).GetMother());
+                auto mother = static_cast<const GateHit *>(digi->GetPulse(0).GetMother());
                 if (!mother) {
                     // for example pulse created by GateNoise.cc (l67).
                     m_systemID = 0;
@@ -993,7 +993,7 @@ void GateToTree::setOpticalDataEnabled(G4bool mOpticalDataEnabled) {
 }
 
 void GateToTree::RecordOpticalData(const G4Event *event) {
-    auto CHC = this->GetOutputMgr()->GetCrystalHitCollection();
+    auto CHC = this->GetOutputMgr()->GetHitCollection();
     auto PHC = this->GetOutputMgr()->GetPhantomHitCollection();
 
     m_nScintillation = 0;

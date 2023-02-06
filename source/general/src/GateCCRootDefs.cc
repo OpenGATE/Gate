@@ -14,7 +14,7 @@
 */
 
 #include "GateCCRootDefs.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateSingleDigi.hh"
 #include "GateCCCoincidenceDigi.hh"
 #include "GateComptonCameraCones.hh"
@@ -62,7 +62,7 @@ void GateCCRootHitBuffer::Clear()
 
 
 //-----------------------------------------------------------------------------
-void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
+void GateCCRootHitBuffer::Fill(GateHit* aHit,std::string layerN)
 {
 
     PDGEncoding     = aHit->GetPDGEncoding();
@@ -96,11 +96,11 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
 
 
 //-----------------------------------------------------------------------------
-GateCrystalHit* GateCCRootHitBuffer::CreateHit()
+GateHit* GateCCRootHitBuffer::CreateHit()
 {
     GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
     // Create a new hit
-    GateCrystalHit* aHit = new GateCrystalHit();
+    GateHit* aHit = new GateHit();
     // Initialise the hit data from the root-hit data
     aHit->SetPDGEncoding(PDGEncoding);\
     aHit->SetTrackID(trackID);

@@ -15,7 +15,7 @@ See LICENSE.md for further details
 #include <vector>
 #include "G4ThreeVector.hh"
 
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePulse.hh"
 #include "GateClockDependent.hh"
 
@@ -31,15 +31,15 @@ class GateHitConvertor : public GateClockDependent
      static GateHitConvertor* GetInstance();
      virtual ~GateHitConvertor();
 
-     virtual GatePulseList* ProcessHits(const GateCrystalHitsCollection* hitCollection);
-     virtual GatePulseList* ProcessHits(std::vector<GateCrystalHit*> vhitCollection);
+     virtual GatePulseList* ProcessHits(const GateHitsCollection* hitCollection);
+     virtual GatePulseList* ProcessHits(std::vector<GateHit*> vhitCollection);
      virtual void DescribeMyself(size_t indent);
 
      static  const G4String& GetOutputAlias()
      {return theOutputAlias;}
 
   private:
-    virtual void ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pulseList);
+    virtual void ProcessOneHit(const GateHit* hit,GatePulseList* pulseList);
 
   private:
     GateHitConvertorMessenger *m_messenger;

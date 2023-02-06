@@ -14,13 +14,13 @@ See LICENSE.md for further details
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"
 
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 
 
-G4Allocator<GateCrystalHit> GateCrystalHitAllocator;
+G4Allocator<GateHit> GateHitAllocator;
 
 //---------------------------------------------------------------------
-GateCrystalHit::GateCrystalHit()
+GateHit::GateHit()
 : m_edep(0),
   m_stepLength(0),
   m_time(0.),
@@ -36,13 +36,13 @@ GateCrystalHit::GateCrystalHit()
 
 
 //---------------------------------------------------------------------
-GateCrystalHit::~GateCrystalHit()
+GateHit::~GateHit()
 {;}
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-void GateCrystalHit::Draw()
+void GateHit::Draw()
 {
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager)
@@ -60,7 +60,7 @@ void GateCrystalHit::Draw()
 
 
 //---------------------------------------------------------------------
-void GateCrystalHit::Print()
+void GateHit::Print()
 {
   G4cout << this;
   G4cout << Gateendl;
@@ -69,7 +69,7 @@ void GateCrystalHit::Print()
 
 
 //---------------------------------------------------------------------
-std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit)
+std::ostream& operator<<(std::ostream& flux, const GateHit& hit)
 {
   flux   << "("
 	 << "E=" << G4BestUnit(hit.m_edep,"Energy") << ", "
@@ -91,7 +91,7 @@ std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit)
 
 
 //---------------------------------------------------------------------
-std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit)
+std::ofstream& operator<<(std::ofstream& flux, GateHit* hit)
 {
   flux   << " " << std::setw(7) << hit->m_runID
 	 << " " << std::setw(7) << hit->m_eventID

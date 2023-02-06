@@ -17,7 +17,7 @@
 #include "GateActorMessenger.hh"
 #include "GateVolumeID.hh"
 #include "G4EventManager.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
 #include "GatePulseAdder.hh"
@@ -208,7 +208,7 @@ protected:
 
 
   //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
-  std::vector<GateCrystalHit*> hitsList;
+  std::vector<GateHit*> hitsList;
 
 
 

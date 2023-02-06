@@ -7,8 +7,8 @@ See LICENSE.md for further details
 ----------------------*/
 
 
-#ifndef GateCrystalHit_h
-#define GateCrystalHit_h 1
+#ifndef GateHit_h
+#define GateHit_h 1
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -23,23 +23,23 @@ See LICENSE.md for further details
 #include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 
-/*! \class  GateCrystalHit
+/*! \class  GateHit
     \brief  Stores hit information for a hit taking place in a volume connected to a system
 
-    - GateCrystalHit - by Giovanni Santin
+    - GateHit - by Giovanni Santin
 
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
-class GateCrystalHit : public G4VHit
+class GateHit : public G4VHit
 {
   public:
 
-      GateCrystalHit();
-      ~GateCrystalHit();
-      //GateCrystalHit(const GateCrystalHit &right);
-      //const GateCrystalHit& operator=(const GateCrystalHit &right);
-      //int operator==(const GateCrystalHit &right) const;
+      GateHit();
+      ~GateHit();
+      //GateHit(const GateHit &right);
+      //const GateHit& operator=(const GateHit &right);
+      //int operator==(const GateHit &right) const;
 
 
       inline void *operator new(size_t);
@@ -48,9 +48,9 @@ class GateCrystalHit : public G4VHit
       void Draw();
       void Print();
 
-      friend std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit);
+      friend std::ostream& operator<<(std::ostream& flux, const GateHit& hit);
 
-      friend std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit);
+      friend std::ofstream& operator<<(std::ofstream& flux, GateHit* hit);
 
 private:
   G4double m_edep;            // energy deposit for the current hit
@@ -255,20 +255,20 @@ private:
       inline G4int GetGammaType() const { return m_gammaType; }
 };
 
-typedef G4THitsCollection<GateCrystalHit> GateCrystalHitsCollection;
+typedef G4THitsCollection<GateHit> GateHitsCollection;
 
-extern G4Allocator<GateCrystalHit> GateCrystalHitAllocator;
+extern G4Allocator<GateHit> GateHitAllocator;
 
-inline void* GateCrystalHit::operator new(size_t)
+inline void* GateHit::operator new(size_t)
 {
   void *aHit;
-  aHit = (void *) GateCrystalHitAllocator.MallocSingle();
+  aHit = (void *) GateHitAllocator.MallocSingle();
   return aHit;
 }
 
-inline void GateCrystalHit::operator delete(void *aHit)
+inline void GateHit::operator delete(void *aHit)
 {
-  GateCrystalHitAllocator.FreeSingle((GateCrystalHit*) aHit);
+  GateHitAllocator.FreeSingle((GateHit*) aHit);
 }
 
 #endif

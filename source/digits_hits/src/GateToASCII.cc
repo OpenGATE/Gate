@@ -12,7 +12,7 @@
 
 #include "GateToASCIIMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateVVolume.hh"
@@ -173,7 +173,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 
   if (m_outFileHitsFlag) {
 
-    GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
+    GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
 
     G4int NbHits = 0;
 
@@ -186,7 +186,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 	G4String processName = (*CHC)[iHit]->GetProcess();
 	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
 	if (nVerboseLevel > 2) G4cout
-                                 << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
+                                 << "GateToASCII::RecordEndOfEvent : HitsCollection: processName : <" << processName
                                  << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 	if ((*CHC)[iHit]->GoodForAnalysis()) {
 	  if (m_outFileHitsFlag) m_outFileHits << (*CHC)[iHit];
@@ -195,7 +195,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 
     }
     else{
-      if (nVerboseLevel>0) G4cout << "GateToASCII::RecordHits : GateCrystalHitCollection not found\n";
+      if (nVerboseLevel>0) G4cout << "GateToASCII::RecordHits : GateHitCollection not found\n";
     }
   }
 

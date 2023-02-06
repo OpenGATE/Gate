@@ -30,7 +30,7 @@ class GateDigitizerMessenger;
 class GateHitConvertor;
 class GateVDigiMakerModule;
 class GateVSystem;
-class GateCrystalHit;
+class GateHit;
 
 class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 {
@@ -107,7 +107,7 @@ public:
   { m_coincidenceSorterList[i]->ProcessSinglePulseList();}
 
   virtual void Digitize();
-  void Digitize(std::vector<GateCrystalHit*> vHitsCollection);
+  void Digitize(std::vector<GateHit*> vHitsCollection);
   void DigitizePulses();
 
 

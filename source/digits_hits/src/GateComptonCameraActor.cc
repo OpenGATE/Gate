@@ -977,9 +977,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
         //if (hitEdep!=0.){
         // Create a new crystal hit (maybe better an object hit
-        GateCrystalHit* aHit=new GateCrystalHit();
-        //GateCrystalHit aHit;
-        //std::shared_ptr<GateCrystalHit> aHit(new GateCrystalHit());
+        GateHit* aHit=new GateHit();
+        //GateHit aHit;
+        //std::shared_ptr<GateHit> aHit(new GateHit());
         aHit->SetEdep(hitEdep);
         aHit->SetEnergyFin(Ef);
         aHit->SetEnergyIniTrack(Ei);

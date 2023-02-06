@@ -38,7 +38,7 @@
 #include "G4GenericIon.hh"
 #include "G4Gamma.hh"
 
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "GateApplicationMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
@@ -696,7 +696,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
     nbPrimaries += 1.;
     latestEventID += 1.;
 
-    GateCrystalHitsCollection *CHC = GetOutputMgr()->GetCrystalHitCollection();
+    GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
 
     if (CHC) {
 
@@ -706,13 +706,13 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 
         for (G4int iHit = 0; iHit < NbHits; iHit++) {
 
-            GateCrystalHit *aHit = (*CHC)[iHit];
+            GateHit *aHit = (*CHC)[iHit];
             G4String processName = aHit->GetProcess();
             G4int PDGEncoding = aHit->GetPDGEncoding();
 
             if (nVerboseLevel > 2)
                 G4cout
-                        << "GateToRoot::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
+                        << "GateToRoot::RecordEndOfEvent : HitsCollection: processName : <" << processName
                         << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 
             if (aHit->GoodForAnalysis()) {
@@ -819,7 +819,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
     G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
     if (trajectoryContainer) m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
 
-    GateCrystalHitsCollection *CHC = GetOutputMgr()->GetCrystalHitCollection();
+    GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
     GatePhantomHitsCollection *PHC = GetOutputMgr()->GetPhantomHitCollection();
 
     // Initialization of variables:
@@ -882,7 +882,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
         strcpy(NameOfProcessInCrystal, "");
 
         for (G4int iHit = 0; iHit < NbHits; iHit++) {
-            GateCrystalHit *aHit = (*CHC)[iHit];
+            GateHit *aHit = (*CHC)[iHit];
             G4String processName = aHit->GetProcess();
 
             //              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only

@@ -24,7 +24,7 @@
 #include <TROOT.h>
 #include <TTree.h>
 
-class GateCrystalHit;
+class GateHit;
 class GateSingleDigi;
 class GateCCCoincidenceDigi;
 class GateComptonCameraCones;
@@ -42,8 +42,8 @@ public:
     inline virtual ~GateCCRootHitBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    void Fill(GateCrystalHit* aHit, std::string layerN);
-    GateCrystalHit* CreateHit();
+    void Fill(GateHit* aHit, std::string layerN);
+    GateHit* CreateHit();
 
     //! Returns the time in G4 units (conversion from seconds)
     inline G4double GetTime() const

@@ -18,7 +18,7 @@
 #include "GateTools.hh"
 #include "GateSystemListManager.hh"
 #include "GateVVolume.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateSystemComponent.hh"
 #include "GateObjectChildList.hh"
 #include "GateLinearRepeater.hh"

@@ -20,7 +20,7 @@ See LICENSE.md for further details
 #include "G4Step.hh"
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
 
@@ -77,7 +77,7 @@ void GateFastAnalysis::RecordBeginOfEvent(const G4Event* )
 
 void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 {
-   GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
+   GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
 
 // Looking at Crystal Hits Collection:
   if (CHC) {
@@ -91,7 +91,7 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
            {
               if ((*CHC)[iHit]->GoodForAnalysis())
                {
-               GateCrystalHit* aHit = (*CHC)[iHit];
+               GateHit* aHit = (*CHC)[iHit];
                G4String processName = aHit->GetProcess();
 
 	(*CHC)[iHit]->SetSourceID(sourceID);

@@ -85,7 +85,7 @@ public:
   void SetVertexMomentumDirection(G4ThreeVector);
 
   /*! Implementation of the pure virtual method ProcessHits(). */
-  /*! This methods generates a GateCrystalHit and stores it into the SD's hit collection */
+  /*! This methods generates a GateHit and stores it into the SD's hit collection */
 
   void CloseARFDataRootFile();
 

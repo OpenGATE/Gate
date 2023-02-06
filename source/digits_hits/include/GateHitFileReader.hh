@@ -20,7 +20,7 @@ See LICENSE.md for further details
 #include "G4Event.hh"
 
 class G4Event;
-class GateCrystalHit;
+class GateHit;
 
 
 #include "TROOT.h"
@@ -111,7 +111,7 @@ protected:
 					      //!< The hit-data are loaded into this buffer by LoadHitData()
 					      //!< They are then transformed into a crystal-hit by PrepareNextEvent()
 
-  std::queue<GateCrystalHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
+  std::queue<GateHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
       	      	      	      	      	      //!< For each event, the queue is filled (from data read out of the hit-file) at
 					      //!< the beginning of each event by PrepareNextEvent(). It is emptied into
 					      //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()

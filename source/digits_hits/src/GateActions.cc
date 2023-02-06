@@ -163,7 +163,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
     {
 
       G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
-      GateCrystalHitsCollection * CHC = (GateCrystalHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
+      GateHitsCollection * CHC = (GateHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
 
       if (CHC != 0)
 	{ if ( CHC->GetSize() > 0 )

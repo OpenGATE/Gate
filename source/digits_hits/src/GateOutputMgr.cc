@@ -328,9 +328,9 @@ void GateOutputMgr::Describe(size_t /*indent*/)
 
 
 //----------------------------------------------------------------------------------
-GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
+GateHitsCollection* GateOutputMgr::GetHitCollection()
 {
-  GateMessage("Output", 5 , " GateOutputMgr::GetCrystalHitCollection \n";);
+  GateMessage("Output", 5 , " GateOutputMgr::GetHitCollection \n";);
 
   static G4int crystalCollID=-1;     	  //!< Collection ID for the crystal hits
 
@@ -338,7 +338,7 @@ GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
   if (crystalCollID==-1)
     crystalCollID = DigiMan->GetHitsCollectionID(GateCrystalSD::GetCrystalCollectionName());
 
-  GateCrystalHitsCollection* CHC = (GateCrystalHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
+  GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
 
   return CHC;
 

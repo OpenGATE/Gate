@@ -390,14 +390,14 @@ void GateDigitizer::Describe(size_t indent)
 
 
 //-----------------------------------------------------------------
-//make void GateDigitizer::Digitize(GateCrystalHitsCollection * optional)
+//make void GateDigitizer::Digitize(GateHitsCollection * optional)
 void GateDigitizer::Digitize()
 {
   if ( !IsEnabled() )
     return;
 
-  GateCrystalHitsCollection* CHC;
-  CHC = GateOutputMgr::GetInstance()->GetCrystalHitCollection();
+  GateHitsCollection* CHC;
+  CHC = GateOutputMgr::GetInstance()->GetHitCollection();
 
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: starting\n";
@@ -428,7 +428,7 @@ void GateDigitizer::Digitize()
 }
 
 
-void GateDigitizer::Digitize(std::vector<GateCrystalHit*> vHitsCollection)
+void GateDigitizer::Digitize(std::vector<GateHit*> vHitsCollection)
 {
   if ( !IsEnabled() )
     return;

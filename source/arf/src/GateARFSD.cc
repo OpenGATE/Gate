@@ -10,7 +10,7 @@
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateARFSD.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TouchableHistory.hh"
 #include "G4Track.hh"
@@ -125,7 +125,7 @@ void GateARFSD::Initialize(G4HCofThisEvent*HCE)
   static int HCID = -1; /* Static variable storing the hit collection ID */
   /* Not thread safe but moving to local variable doesn't work */
   /* Creation of a new hit collection */
-  mArfHitCollection = new GateCrystalHitsCollection(SensitiveDetectorName, mArfHitCollectionName);
+  mArfHitCollection = new GateHitsCollection(SensitiveDetectorName, mArfHitCollectionName);
   /* We store the hit collection ID into the static variable HCID */
   if (HCID < 0)
     {
