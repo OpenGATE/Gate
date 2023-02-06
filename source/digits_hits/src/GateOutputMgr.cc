@@ -28,7 +28,6 @@
 #include "GateActorManager.hh"
 
 #include "GateMessageManager.hh"
-#include "GateToDigi.hh"
 #include "GateToASCII.hh"
 #include "GateToBinary.hh"
 #include "GateToSummary.hh"
@@ -96,8 +95,6 @@ GateOutputMgr::GateOutputMgr(const G4String name)
     AddOutputModule((GateVOutputModule*)gateAnalysis);
   }
 
-  GateToDigi* gateToDigi = new GateToDigi("digi", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToDigi);
 
 #ifdef G4ANALYSIS_USE_FILE
   GateToASCII* gateToASCII = new GateToASCII("ascii", this, m_digiMode);
@@ -330,6 +327,8 @@ void GateOutputMgr::Describe(size_t /*indent*/)
 //----------------------------------------------------------------------------------
 GateHitsCollection* GateOutputMgr::GetHitCollection()
 {
+	//TODO GND remove obsolete function
+	/*
   GateMessage("Output", 5 , " GateOutputMgr::GetHitCollection \n";);
 
   static G4int crystalCollID=-1;     	  //!< Collection ID for the crystal hits
@@ -341,11 +340,65 @@ GateHitsCollection* GateOutputMgr::GetHitCollection()
   GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
 
   return CHC;
-
+*/
 
 }
 //----------------------------------------------------------------------------------
 
+
+//OK GND 2022 : multiple sensitive detectors
+//----------------------------------------------------------------------------------
+std::vector<GateHitsCollection*> GateOutputMgr::GetHitCollections()
+{
+	//G4cout<<"GateOutputMgr::GetHitCollections "<<G4endl;
+	GateMessage("Output", 5 , " GateOutputMgr::GetHitCollections \n";);
+
+	std::vector<GateHitsCollection*> CHC_vector;
+
+	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
+
+	for (long unsigned int i=0; i<m_HCIDs.size(); i++) //
+	{
+		GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCIDs[i]));
+		CHC_vector.push_back(CHC);
+		}
+ //TODO OK GND 2022; if the seg fault is not from here!
+  return CHC_vector;
+}
+//----------------------------------------------------------------------------------
+void GateOutputMgr::SetCrystalHitsCollectionsID()
+{
+	//This function is introduced for speeding up: heavy operations that should not be done at each event
+
+	//G4cout<<"GateOutputMgr::SetHitsCollectionsID "<<G4endl;
+	GateMessage("Output", 5 , " GateOutputMgr::GetHitCollections \n";);
+
+	std::vector<GateHitsCollection*> CHC_vector;
+
+	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
+	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+	  for (G4int i=0; i< SDman->GetCollectionCapacity(); i++)
+		{
+		   G4String HCname = SDman->GetHCtable()->GetHCname(i);
+
+		   if (G4StrUtil::contains(HCname, "phantom"))
+			   continue;
+
+
+		   G4int ID=DigiMan->GetHitsCollectionID(SDman->GetHCtable()->GetHCname(i));
+		  // G4cout<< i << " "<< ID<< " "<< SDman->GetHCtable()->GetHCname(i)<<G4endl;
+		   m_HCIDs.push_back(ID);
+		}
+
+
+
+
+}
+
+
+
+//----------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------
 GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
@@ -384,6 +437,25 @@ GateCoincidenceDigiCollection* GateOutputMgr::GetCoincidenceDigiCollection(const
   return (collectionID>=0) ? (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( collectionID ) ) : 0 ;
 }
 //----------------------------------------------------------------------------------
+
+
+
+//OK GND 2022 for GateToTree adaptation
+//----------------------------------------------------------------------------------
+void GateOutputMgr::RegisterNewHitsCollection(const G4String& aCollectionName,G4bool outputFlag)
+{
+  GateMessage("Output", 5, " GateOutputMgr::RegisterNewHitsCollection\n";);
+  //G4cout<<" GateOutputMgr::RegisterNewHitsCollection "<<aCollectionName<< " "<< outputFlag<<Gateendl;
+  for (size_t iMod=0; iMod<m_outputModules.size(); iMod++)
+  {
+	  //G4cout<<m_outputModules[iMod]->GetName()<<G4endl;
+	  if(m_outputModules[iMod]->GetName() == "tree")
+		  m_outputModules[iMod]->RegisterNewHitsCollection(aCollectionName,outputFlag);
+  }
+}
+//----------------------------------------------------------------------------------
+
+
 
 
 //----------------------------------------------------------------------------------

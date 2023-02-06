@@ -110,12 +110,16 @@ public:
 
   //! Return the current crystal-hit collection (if nay)
   GateHitsCollection*  	  GetHitCollection();
+  std::vector<GateHitsCollection*> GetHitCollections();
+  void SetCrystalHitsCollectionsID();
   //! Return the current phantom-hit collection (if nay)
   GatePhantomHitsCollection*  	  GetPhantomHitCollection();
   //! Return the current single-digi collection (if nay)
   GateSingleDigiCollection*   	  GetSingleDigiCollection(const G4String& collectionName);
   //! Return the current coincidence-digi collection (if nay)
   GateCoincidenceDigiCollection*  GetCoincidenceDigiCollection(const G4String& collectionName);
+
+  void RegisterNewHitsCollection(const G4String& aCollectionName,G4bool outputFlag);
 
   void RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
@@ -144,9 +148,10 @@ protected :
   //! Verbose level
   G4int                      nVerboseLevel;
 
+public: //OK GND 2022 moved to public to have access in GateAnalysis::RecordEndOfEvent to not run Digitizer if there is no output requires Singles
   //! List of the output modules
   std::vector<GateVOutputModule*>   m_outputModules;
-
+protected:
   //! messenger for the Mgr specific commands
   GateOutputMgrMessenger*    m_messenger;
 
@@ -166,6 +171,7 @@ protected :
   G4bool   m_saveVoxelTuple;
 
   G4Timer m_timer;      	  //!< Timer
+  std::vector<G4int> m_HCIDs;
 
 };
 

@@ -308,9 +308,11 @@ int main( int argc, char* argv[] )
 #ifdef G4ANALYSIS_USE_GENERAL
   GateOutputMgr::SetDigiMode( aDigiMode );
   GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-  GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
-  digitizer->StoreNewPulseProcessorChain( singleChain );
+  
+  //OK GND 2022. Moved to GateAction:RunAction constructor
+  //GateDigitizer* digitizer = GateDigitizer::GetInstance();
+  //GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
+  //digitizer->StoreNewPulseProcessorChain( singleChain );
 #endif
 
   if( aDigiMode == kofflineMode )

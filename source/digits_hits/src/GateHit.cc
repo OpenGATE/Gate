@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+#include "GateHit.hh"
 
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"
@@ -14,7 +14,7 @@ See LICENSE.md for further details
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"
 
-#include "GateHit.hh"
+
 
 
 G4Allocator<GateHit> GateHitAllocator;
@@ -37,7 +37,8 @@ GateHit::GateHit()
 
 //---------------------------------------------------------------------
 GateHit::~GateHit()
-{;}
+{
+	;}
 //---------------------------------------------------------------------
 
 

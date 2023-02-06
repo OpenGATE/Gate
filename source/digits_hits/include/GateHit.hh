@@ -6,6 +6,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
 
 #ifndef GateHit_h
 #define GateHit_h 1
@@ -30,6 +31,9 @@ See LICENSE.md for further details
 
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+//    Last modification in 05/2022 by Olga.Kochebina@cea.fr for NewGateDigitizerOld
+
+
 
 class GateHit : public G4VHit
 {
@@ -41,7 +45,6 @@ class GateHit : public G4VHit
       //const GateHit& operator=(const GateHit &right);
       //int operator==(const GateHit &right) const;
 
-
       inline void *operator new(size_t);
       inline void operator delete(void *aHit);
 
@@ -52,7 +55,7 @@ class GateHit : public G4VHit
 
       friend std::ofstream& operator<<(std::ofstream& flux, GateHit* hit);
 
-private:
+public:
   G4double m_edep;            // energy deposit for the current hit
   G4double m_stepLength;      // length of the step for the current hit
   G4double m_trackLength;      // length of the track 
@@ -254,6 +257,7 @@ private:
       inline void SetGammaType(G4int value){ m_gammaType = value; }
       inline G4int GetGammaType() const { return m_gammaType; }
 };
+
 
 typedef G4THitsCollection<GateHit> GateHitsCollection;
 

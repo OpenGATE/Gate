@@ -688,7 +688,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 
     // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin\n";);
 
-
+/*
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
     TrackingMode theMode = myAction->GetMode();
     if (theMode == TrackingMode::kTracker)return;
@@ -809,14 +809,14 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
     // v. cuplov - optical photons
 
     // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end\n";);
-
+*/
 }
 
 //--------------------------------------------------------------------------
 
 // v.cuplov - optical photon: Record OpticalPhoton Data
 void GateToRoot::RecordOpticalData(const G4Event *event) {
-    G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
+   /* G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
     if (trajectoryContainer) m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
 
     GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
@@ -917,7 +917,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
     if (nPhantomOpticalWLS > 0) NumPhantomWLS++;
 
     if (m_rootOpticalFlag && trajectoryContainer) { OpticalTree->Fill(); }
-
+*/
 }
 
 

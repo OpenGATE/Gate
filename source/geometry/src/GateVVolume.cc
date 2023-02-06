@@ -381,8 +381,17 @@ void GateVVolume::AttachCrystalSD() {
       AttachOutputToVolume();
     */
     // Retrieve the crystal-SD pointer from the detector-construction
-    GateCrystalSD *crystalSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetCrystalSD();
+   // GateCrystalSD *crystalSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetCrystalSD();
 
+
+    // OK GND 2022
+    //----
+	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    G4String crystalSDname = GetObjectName();// GateCrystalSD::GetCrystalCollectionName();//check GateCrystalSD class for hardcoded value
+        //
+    GateCrystalSD *crystalSD = new GateCrystalSD(crystalSDname);
+    SDman->AddNewDetector(crystalSD);
+    //----
 
     // Check whether this attachement is allowed or forbidden
     if (crystalSD->PrepareCreatorAttachment(this)) {

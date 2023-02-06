@@ -16,6 +16,8 @@
 #include "G4VProcess.hh"
 #include "G4PrimaryParticle.hh"
 
+#include "G4SDManager.hh"
+#include "G4DigiManager.hh"
 #include "G4TransportationManager.hh"
 
 #include "GateVSystem.hh"
@@ -26,21 +28,36 @@
 #include "GateVVolume.hh"
 #include "GateDigitizer.hh"
 
+//OK GND 2022
+#include "GateDigitizerMgr.hh"
 
 #include "GateObjectStore.hh"
 #include "GateEmittedGammaInformation.hh"
 
-// Name of the hit collection
-const G4String GateCrystalSD::theCrystalCollectionName = "crystalCollection";
-
-
+#include "GateOutputMgr.hh"
 
 //------------------------------------------------------------------------------
 // Constructor
 GateCrystalSD::GateCrystalSD(const G4String& name)
-:G4VSensitiveDetector(name),m_system(0)
+:G4VSensitiveDetector(name),
+ m_system(0)
 {
-  collectionName.insert(theCrystalCollectionName);
+	//OK GND 2022
+	G4String collName=name+"Collection";
+	collectionName.insert(collName);
+
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+	/*GND UNCOMMM
+	 digitizerMgr->AddNewSinglesDigitizer(digitizer);
+	digitizerMgr->AddNewSD(this);
+	 */
+	HCID = G4SDManager::GetSDMpointer()->GetCollectionCapacity() ;
+
+	//OK GND 2022 For GateToTree class adaptation
+
+	GateOutputMgr::GetInstance()->RegisterNewHitsCollection(collName,false);
+
+
 }
 //------------------------------------------------------------------------------
 
@@ -66,7 +83,7 @@ GateCrystalSD *GateCrystalSD::Clone() const {
 
     clone->m_system = m_system;
     clone->m_systemList = m_systemList;
-    clone->crystalCollection = crystalCollection;
+    clone->crystalHitsCollection = crystalHitsCollection;
 
     return clone;
 }
@@ -76,18 +93,9 @@ GateCrystalSD *GateCrystalSD::Clone() const {
 // Method overloading the virtual method Initialize() of G4VSensitiveDetector
 void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 {
-  static int HCID = -1; // Static variable storing the hit collection ID
-// Not thread safe but moving to local variable doesn't work
-  // Creation of a new hit collection
-  crystalCollection = new GateHitsCollection
-                   (SensitiveDetectorName,theCrystalCollectionName);
+	crystalHitsCollection=new GateHitsCollection(GetName(),collectionName[0]);
 
-  // We store the hit collection ID into the static variable HCID
-  if(HCID<0)
-  { HCID = GetCollectionID(0); }
-
-  // Add the hit collection to the G4HCofThisEvent
-  HCE->AddHitsCollection(HCID,crystalCollection);
+	HCE->AddHitsCollection(HCID, crystalHitsCollection);
 }
 //------------------------------------------------------------------------------
 
@@ -221,12 +229,11 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetOutputVolumeID(outputVolumeID);
 
   // Insert the new hit into the hit collection
-  crystalCollection->insert( aHit );
+  crystalHitsCollection->insert( aHit );
 
   return true;
 }
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 //! Next method underwent an important modification to be compatible with the multi-system approach
@@ -258,16 +265,6 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 //------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------
-//mhadi_obso[ //! This method is no longer used.
-// Set the system to which the SD is attached
-void GateCrystalSD::SetSystem(GateVSystem* aSystem)
-{
-  m_system=aSystem;
-//Seb Modif 24/02/2009
-  GateDigitizer::GetInstance()->SetSystem(aSystem);
-}
-//mhadi_obso]
 //------------------------------------------------------------------------------
 // The next three methods were added for the multi-system approach
 
