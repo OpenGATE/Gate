@@ -61,6 +61,8 @@
 #include "TFile.h"
 #include "G4DigiManager.hh"
 
+//OK GND 2022
+
 // v. cuplov - optical photons
 #include "G4OpticalPhoton.hh"
 #include "GateTrajectoryNavigator.hh"
@@ -93,16 +95,18 @@ ComptonRayleighData &ComptonRayleighData::operator=(const ComptonRayleighData &a
 
 //--------------------------------------------------------------------------
 GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode)
-        : GateVOutputModule(name, outputMgr, digiMode), m_hfile(0), m_treeHit(0),
-          m_rootHitFlag(digiMode == kruntimeMode), m_rootNtupleFlag(true), m_saveRndmFlag(true),
-          m_fileName(" ") // All default output file from all output modules are set to " ".
+        : GateVOutputModule(name, outputMgr, digiMode), m_hitBuffers(0) , m_hfile(0), m_treesHit(0),
+		  m_rootHitFlag(digiMode == kruntimeMode), m_rootNtupleFlag(true), m_saveRndmFlag(true),
+         m_fileName(" ") // All default output file from all output modules are set to " ".
         // They are then checked in GateApplicationMgr::StartDAQ, using
         // the VOutputModule pure virtual method GiveNameOfFile()
-        , m_rootMessenger(0) {
+	, m_rootMessenger(0)
+{
     /*
       if (digiMode==kofflineMode)
       m_fileName="digigate";
     */
+
     m_isEnabled = false; // Keep this flag false: all output are disabled by default
     nVerboseLevel = 0;
 
@@ -221,8 +225,26 @@ void GateToRoot::Book() {
     pet_data->Branch("start_time_sec", &mTimeStart);
     pet_data->Branch("stop_time_sec", &mTimeStop);
 
-    m_treeHit = new GateHitTree(GateHitConvertor::GetOutputAlias());
-    m_treeHit->Init(m_hitBuffer);
+	//OK GND 2022 multiSD
+	   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+	   SetSDlistSize(digitizerMgr->m_SDlist.size() );
+
+	   for (G4int i=0; i<GetSDlistSize();i++)
+		{
+			GateRootHitBuffer hitBuffer;
+			m_hitBuffers.push_back(hitBuffer);
+		}
+
+	  for (long unsigned int i=0; i< GetSDlistSize();i++)
+	  {
+   		GateHitTree *treeHit;
+   		if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+   			treeHit = new GateHitTree("Hits");
+   		else
+   			treeHit = new GateHitTree("Hits_"+digitizerMgr->m_SDlist[i]->GetName());
+   		treeHit->Init(m_hitBuffers[i]);
+   		m_treesHit.push_back(treeHit);
+   	}
 
     // v. cuplov - optical photons
     OpticalTree = new TTree(G4String("OpticalData").c_str(), "OpticalData");
@@ -276,6 +298,17 @@ void GateToRoot::RecordBeginOfAcquisition() {
 
     if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordBeginOfAcquisition\n";
+
+	//OK GND 2022 multiSD
+	/*   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+	   SetSDlistSize(digitizerMgr->m_SDlist.size() );
+	   for (G4int i=0; i<GetSDlistSize();i++)
+		{
+			GateRootHitBuffer hitBuffer;
+			m_hitBuffers.push_back(hitBuffer);
+		}
+	 */
+
 
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
     TrackingMode theMode = myAction->GetMode();
@@ -543,7 +576,11 @@ void GateToRoot::RecordEndOfAcquisition() {
         //!    current Root File
         //!  which is not the one we intstantiated if more than one Root File has been written
 
-        m_hfile = m_treeHit->GetCurrentFile();
+       // m_hfile = m_treeHit->GetCurrentFile();
+
+    	// TODO GND 2022 !!! only for the 1st tree ??
+    	m_hfile = m_treesHit[0]->GetCurrentFile();
+
 
         if (nVerboseLevel > 0)
             G4cout << "GateToRoot: ROOT: files writing...\n";
@@ -612,7 +649,14 @@ void GateToRoot::RecordBeginOfEvent(const G4Event *evt) {
     if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordBeginOfEvent\n";
 
-    m_hitBuffer.Clear();
+    //OK GND 2022
+    for (G4int i=0; i< GetSDlistSize() ;i++)
+    {
+    		m_hitBuffers[i].Clear();
+    }
+
+    //m_hitBuffer.Clear();
+
 
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
         m_outputChannelList[i]->Clear();
@@ -688,7 +732,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 
     // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin\n";);
 
-/*
+
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
     TrackingMode theMode = myAction->GetMode();
     if (theMode == TrackingMode::kTracker)return;
@@ -696,113 +740,121 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
     nbPrimaries += 1.;
     latestEventID += 1.;
 
-    GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
+    //OK GND 2022
+    //GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
+    std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
-    if (CHC) {
+    for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+    {
+    	GateHitsCollection* CHC = CHC_vector[i];
 
-        // Hits loop
+		if (CHC) {
 
-        G4int NbHits = CHC->entries();
+			// Hits loop
 
-        for (G4int iHit = 0; iHit < NbHits; iHit++) {
+			G4int NbHits = CHC->entries();
+			//G4cout<<"GateToRoot::RecordEndOfEvent NbHits "<<NbHits<<G4endl;
+			for (G4int iHit = 0; iHit < NbHits; iHit++) {
 
-            GateHit *aHit = (*CHC)[iHit];
-            G4String processName = aHit->GetProcess();
-            G4int PDGEncoding = aHit->GetPDGEncoding();
+				GateHit *aHit = (*CHC)[iHit];
+				G4String processName = aHit->GetProcess();
+				G4int PDGEncoding = aHit->GetPDGEncoding();
 
-            if (nVerboseLevel > 2)
-                G4cout
-                        << "GateToRoot::RecordEndOfEvent : HitsCollection: processName : <" << processName
-                        << ">    Particls PDG code : " << PDGEncoding << Gateendl;
+				if (nVerboseLevel > 2)
+					G4cout
+							<< "GateToRoot::RecordEndOfEvent : HitsCollection: processName : <" << processName
+							<< ">    Particls PDG code : " << PDGEncoding << Gateendl;
 
-            if (aHit->GoodForAnalysis()) {
-                m_hitBuffer.Fill(aHit);
-                if (nVerboseLevel > 1)
-                    G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
-
-
-                if (m_rootHitFlag) m_treeHit->Fill();
-            }
-        }
+				if (aHit->GoodForAnalysis()) {
+					m_hitBuffers[i].Fill(aHit);
+					if (nVerboseLevel > 1)
+						G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
 
 
-        if (m_recordFlag > 0) {
-            G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();
-            TH1F *hist;
-            G4String hist_name;
-            hist_name = "Positron_Kinetic_Energy_MeV";
-            if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
+					if (m_rootHitFlag) m_treesHit[i]->Fill();
 
-                hist->Fill(m_positronKinEnergy / MeV);
-            } else {
-                if (nVerboseLevel > 0)
-                    G4cout
-                            << "GateToRoot: ROOT: Cannot find histo" << hist_name << Gateendl;
-            }
-            hist_name = "Ion_decay_time_s";
-            hist = NULL;
-            if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
-                hist->Fill(eventTime / s);
-            } else {
-                if (nVerboseLevel > 0)
-                    G4cout
-                            << "GateToRoot:  ROOT: Cannot find histo" << hist_name << Gateendl;
-            }
-            G4ThreeVector posAnnihilDist = m_positronAnnihilPos - m_positronGenerationPos;
-            hist_name = "Positron_annihil_distance_mm";
-            hist = NULL;
-            if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
-                hist->Fill(posAnnihilDist.mag() / mm);
-            } else {
-                if (nVerboseLevel > 0)
-                    G4cout
-                            << "GateToRoot:  ROOT: Cannot find histo" << hist_name << Gateendl;
-            }
+				}
+			}
 
-            // Histo of acolinearity angle distribution
 
-            G4double dev = (dxg1 * dxg2 + dyg1 * dyg2 + dzg1 * dzg2) /
-                           ((sqrt(dxg1 * dxg1 + dyg1 * dyg1 + dzg1 * dzg1)) *
-                            (sqrt(dxg2 * dxg2 + dyg2 * dyg2 + dzg2 * dzg2)));
-            if (dzg1 > dzg2) { dev = rad2deg(acos(-dev)); }
-            else { dev = rad2deg(acos(dev)) - 180; }
+			if (m_recordFlag > 0) {
+				G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();
+				TH1F *hist;
+				G4String hist_name;
+				hist_name = "Positron_Kinetic_Energy_MeV";
+				if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
 
-            if (std::isnan(dev)) dev = 0.;
+					hist->Fill(m_positronKinEnergy / MeV);
+				} else {
+					if (nVerboseLevel > 0)
+						G4cout
+								<< "GateToRoot: ROOT: Cannot find histo" << hist_name << Gateendl;
+				}
+				hist_name = "Ion_decay_time_s";
+				hist = NULL;
+				if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
+					hist->Fill(eventTime / s);
+				} else {
+					if (nVerboseLevel > 0)
+						G4cout
+								<< "GateToRoot:  ROOT: Cannot find histo" << hist_name << Gateendl;
+				}
+				G4ThreeVector posAnnihilDist = m_positronAnnihilPos - m_positronGenerationPos;
+				hist_name = "Positron_annihil_distance_mm";
+				hist = NULL;
+				if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
+					hist->Fill(posAnnihilDist.mag() / mm);
+				} else {
+					if (nVerboseLevel > 0)
+						G4cout
+								<< "GateToRoot:  ROOT: Cannot find histo" << hist_name << Gateendl;
+				}
 
-            // G4cout<< " dev = " << dev << Gateendl;
+				// Histo of acolinearity angle distribution
 
-            hist_name = "Acolinea_Angle_Distribution_deg";
-            hist = NULL;
-            if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
-                hist->Fill(dev);
-            } else {
-                //if (nVerboseLevel > 0)
-                G4cout << "GateToRoot:  ROOT: Cannot find histo " << hist_name << Gateendl;
-            }
+				G4double dev = (dxg1 * dxg2 + dyg1 * dyg2 + dzg1 * dzg2) /
+							   ((sqrt(dxg1 * dxg1 + dyg1 * dyg1 + dzg1 * dzg1)) *
+								(sqrt(dxg2 * dxg2 + dyg2 * dyg2 + dzg2 * dzg2)));
+				if (dzg1 > dzg2) { dev = rad2deg(acos(-dev)); }
+				else { dev = rad2deg(acos(dev)) - 180; }
 
-            TNtuple *ntuple;
-            G4String ntuple_name = "Gate";
-            if ((ntuple = (TNtuple *) m_working_root_directory->GetList()->FindObject(ntuple_name)) == NULL) {
-                if (nVerboseLevel > 0)
-                    G4cout
-                            << "GateToRoot: ROOT: Cannot find ntuple " << ntuple_name << Gateendl;
-            } else {
-                //! better than the simple eventID, but still not enough: it's valid only for
-                //! the single run and not for the application
-                G4int iEvent = ((GatePrimaryGeneratorAction *) GateRunManager::GetRunManager()->
-                        GetUserPrimaryGeneratorAction())->GetEventNumber();
-                if (m_rootNtupleFlag)
-                    ntuple->Fill(iEvent,
-                                 eventTime / s,
-                                 m_positronKinEnergy / MeV,
-                                 posAnnihilDist.mag() / mm);
-            }
+				if (std::isnan(dev)) dev = 0.;
 
-        }
+				// G4cout<< " dev = " << dev << Gateendl;
 
+				hist_name = "Acolinea_Angle_Distribution_deg";
+				hist = NULL;
+				if ((hist = (TH1F *) m_working_root_directory->GetList()->FindObject(hist_name)) != NULL) {
+					hist->Fill(dev);
+				} else {
+					//if (nVerboseLevel > 0)
+					G4cout << "GateToRoot:  ROOT: Cannot find histo " << hist_name << Gateendl;
+				}
+
+				TNtuple *ntuple;
+				G4String ntuple_name = "Gate";
+				if ((ntuple = (TNtuple *) m_working_root_directory->GetList()->FindObject(ntuple_name)) == NULL) {
+					if (nVerboseLevel > 0)
+						G4cout
+								<< "GateToRoot: ROOT: Cannot find ntuple " << ntuple_name << Gateendl;
+				} else {
+					//! better than the simple eventID, but still not enough: it's valid only for
+					//! the single run and not for the application
+					G4int iEvent = ((GatePrimaryGeneratorAction *) GateRunManager::GetRunManager()->
+							GetUserPrimaryGeneratorAction())->GetEventNumber();
+					if (m_rootNtupleFlag)
+						ntuple->Fill(iEvent,
+									 eventTime / s,
+									 m_positronKinEnergy / MeV,
+									 posAnnihilDist.mag() / mm);
+				}
+
+			}
+
+		}
     }
 
-    RecordDigitizer(event);
+/*    RecordDigitizer(event);
 
     // v. cuplov - optical photons
     RecordOpticalData(event);

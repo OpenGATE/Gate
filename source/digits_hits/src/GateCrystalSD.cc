@@ -49,8 +49,9 @@ GateCrystalSD::GateCrystalSD(const G4String& name)
 	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
 	/*GND UNCOMMM
 	 digitizerMgr->AddNewSinglesDigitizer(digitizer);
+	*/
 	digitizerMgr->AddNewSD(this);
-	 */
+
 	HCID = G4SDManager::GetSDMpointer()->GetCollectionCapacity() ;
 
 	//OK GND 2022 For GateToTree class adaptation
@@ -106,7 +107,6 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 //G4bool GateCrystalSD::ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist)
 G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
-
   // Get the track information
   G4Track* aTrack       = aStep->GetTrack();
   G4int    trackID      = aTrack->GetTrackID();

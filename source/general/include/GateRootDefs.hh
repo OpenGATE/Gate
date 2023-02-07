@@ -63,7 +63,7 @@ class GateRootHitBuffer
 {
   public:
 
-    inline GateRootHitBuffer() {Clear();}   	      	  //!< Public constructor
+    inline GateRootHitBuffer() { Clear();}   	      	  //!< Public constructor
     inline virtual ~GateRootHitBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure

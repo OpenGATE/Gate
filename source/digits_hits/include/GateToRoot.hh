@@ -48,6 +48,9 @@ See LICENSE.md for further details
 #include "GateRootDefs.hh"
 #include "GateVOutputModule.hh"
 
+//OK GND 2022
+#include "GateDigitizerMgr.hh"
+
 /* PY Descourt 08/09/2009 */
 #include "GateActions.hh"
 #include "GateTrack.hh"
@@ -233,7 +236,8 @@ public:
     //! flag to decide if it writes or not Hits, Singles and Digis to the ROOT file
 
 
-
+    G4int GetSDlistSize() { return m_SDlistSize; };
+    void SetSDlistSize(G4int size) {m_SDlistSize = size; };
 
     G4bool GetRootHitFlag() { return m_rootHitFlag; };
 
@@ -302,12 +306,20 @@ private:
 
     TFile *m_hfile; // the file for histograms, tree ...
 
-    GateHitTree *m_treeHit; // the tree for hit quantities
+    //OK GND 2022
+    //GateHitTree *m_treeHit; // the tree for hit quantities
+    //for multiple SDs
+    std::vector<GateHitTree *> m_treesHit; // the tree for hit quantities
+    //Number of SD is saved in the following variable for not calling at each event for hits GateDigitizerMgr::GetInstance()
+    G4int m_SDlistSize;
+
     TH1D *m_total_nb_primaries_hist; //histogram of total_nb_primaries
     TH1D *m_latest_event_ID_hist;
     TDirectory *m_working_root_directory;
 
-    GateRootHitBuffer m_hitBuffer;
+    // OK GND 2022
+    //GateRootHitBuffer m_hitBuffer;
+    std::vector<GateRootHitBuffer> m_hitBuffers; // the tree for hit quantities
 
 // v. cuplov - optical photons
     GateTrajectoryNavigator *m_trajectoryNavigator;

@@ -469,8 +469,9 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     } // end if (!trajectoryContainer)
   //OK GND 2022
    //RunDigitizers is called here otherwise we don't have all attributes filled for aHit
-   GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
-/* UNCOMM
+  /* UNCOMM
+   *  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
     if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
  	  digitizerMgr->RunDigitizers();
 

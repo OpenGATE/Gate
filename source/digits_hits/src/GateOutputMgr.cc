@@ -204,6 +204,7 @@ void GateOutputMgr::RecordBeginOfRun(const G4Run* run)
     if ( m_outputModules[iMod]->IsEnabled() )
       m_outputModules[iMod]->RecordBeginOfRun(run);
   }
+  SetCrystalHitsCollectionsID();
 }
 //----------------------------------------------------------------------------------
 

@@ -217,30 +217,27 @@ GateVSystem* GateDigitizerMgr::FindSystem(G4String& systemName)
 
 }
 //-----------------------------------------------------------------
-
+*/
 
 
 //-----------------------------------------------------------------
 // Integrates a new pulse-processor chain
 void GateDigitizerMgr::AddNewSD(GateCrystalSD* newSD)
 {
-  //	GateDigitizerInitializationModule * myDM;
-  //	myDM = new GateDigitizerInitializationModule(digitizer);
+
   //Add digitizer to the list
 	m_SDlist.push_back(newSD);
 
-	//	m_digitizerIMList.push_back(myDM);
-	//	G4DigiManager::GetDMpointer()->AddNewModule(myDM);
   //TODO add here multisystem??
-  /* //! Next lines are for the multi-system approach
+   //! Next lines are for the multi-system approach
  /* if(m_systemList && m_systemList->size() == 1)
 	  digitizer->SetSystem((*m_systemList)[0]);
    */
-  /*
+
 }
 //-----------------------------------------------------------------
 
-
+/*
 
 //-----------------------------------------------------------------
 // Integrates a new pulse-processor chain

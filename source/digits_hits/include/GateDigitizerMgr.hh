@@ -111,9 +111,9 @@ public:
     GateClockDependent* FindElement(G4String baseName);
    //	   { return FindElement( MakeElementName(baseName) ) ; }
    //	*/
-/*
-    void AddNewSD(GateCrystalSD*);
 
+    void AddNewSD(GateCrystalSD*);
+/*
    void ShowSummary();
    /// Methods for Singles
    //! Run Singles Digitizers
