@@ -22,7 +22,8 @@ GateSPECTHeadSystem::GateSPECTHeadSystem(const G4String& itsName) :
     GateVSystem(itsName, false), m_gateToProjectionSet(0), m_gateToInterfile(0)
 {
   m_ARFStage = -2;
-  GateDetectorConstruction::GetGateDetectorConstruction()->insertARFSD(GetObjectName(),m_ARFStage);
+  //TODO GND 2022: Do not insert ARF SD by default
+  //GateDetectorConstruction::GetGateDetectorConstruction()->insertARFSD(GetObjectName(),m_ARFStage);
   
   // Setup a messenger
   m_messenger = new GateClockDependentMessenger(this);
