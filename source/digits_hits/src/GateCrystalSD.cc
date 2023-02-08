@@ -47,9 +47,10 @@ GateCrystalSD::GateCrystalSD(const G4String& name)
 	collectionName.insert(collName);
 
 	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
-	/*GND UNCOMMM
-	 digitizerMgr->AddNewSinglesDigitizer(digitizer);
-	*/
+
+	GateSinglesDigitizer* digitizer = new GateSinglesDigitizer(digitizerMgr,"Singles",this);
+	digitizerMgr->AddNewSinglesDigitizer(digitizer);
+
 	digitizerMgr->AddNewSD(this);
 
 	HCID = G4SDManager::GetSDMpointer()->GetCollectionCapacity() ;

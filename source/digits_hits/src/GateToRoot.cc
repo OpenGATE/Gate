@@ -244,7 +244,7 @@ void GateToRoot::Book() {
    			treeHit = new GateHitTree("Hits_"+digitizerMgr->m_SDlist[i]->GetName());
    		treeHit->Init(m_hitBuffers[i]);
    		m_treesHit.push_back(treeHit);
-   	}
+   	    }
 
     // v. cuplov - optical photons
     OpticalTree = new TTree(G4String("OpticalData").c_str(), "OpticalData");
@@ -854,10 +854,10 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 		}
     }
 
-/*    RecordDigitizer(event);
+ RecordDigitizer(event);
 
     // v. cuplov - optical photons
-    RecordOpticalData(event);
+/*    RecordOpticalData(event);
     // v. cuplov - optical photons
 
     // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end\n";);
@@ -981,7 +981,13 @@ void GateToRoot::RecordDigitizer(const G4Event *) {
     // Digitizer information
 
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
-        m_outputChannelList[i]->RecordDigitizer();
+    {
+    	//OK GND 2022
+    	if(m_outputChannelList[i]->m_collectionID<0)
+    		m_outputChannelList[i]->m_collectionID=GetCollectionID(m_outputChannelList[i]->m_collectionName);
+    	m_outputChannelList[i]->RecordDigitizer();
+
+    }
 
 }
 //--------------------------------------------------------------------------

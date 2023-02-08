@@ -32,8 +32,8 @@
 #include "G4DigiManager.hh"
 #include "GateCoincidenceSorter.hh"
 
-//#include "GateDigitizerInitializationModule.hh"
-//#include "GateSinglesDigitizer.hh"
+#include "GateDigitizerInitializationModule.hh"
+#include "GateSinglesDigitizer.hh"
 
 
 class GateDigitizerMgrMessenger;
@@ -90,7 +90,7 @@ protected:
 
 public:
   ~GateDigitizerMgr();
-  /*void Initialize();
+  void Initialize();
 
   void GetDigiCollection();
 
@@ -110,10 +110,10 @@ public:
 
     GateClockDependent* FindElement(G4String baseName);
    //	   { return FindElement( MakeElementName(baseName) ) ; }
-   //	*/
+   //
 
     void AddNewSD(GateCrystalSD*);
-/*
+
    void ShowSummary();
    /// Methods for Singles
    //! Run Singles Digitizers
@@ -127,7 +127,7 @@ public:
 
    /// Methods for Coincidences
 
-   //Sorters
+  /* //Sorters
    //Sorters -> Initialization of Coincidence Digitizers
    //void AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer);
 
@@ -139,24 +139,10 @@ public:
    //void AddNewCoincidenceDigitizer(GateCoincidenceSorter* coincidenceSorter);
    //GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
-
-
-
-  /* //! Get the current value of the insertion name
-   inline const G4String& GetNewInsertionBaseName()
-   { return m_newInsertionBaseName; }
-
-   //! Set the value of the insertion name
-   inline void SetNewInsertionBaseName(const G4String& val)
-   { m_newInsertionBaseName = val; }
-   //! Get the current value of the insertion name
-   inline const G4String& GetNewInsertionBaseType()
-   { return m_newInsertionBaseType; }
-
-   //! Set the value of the insertion name
-   inline void SetNewInsertionBaseType(const G4String& val)
-   { m_newInsertionBaseType = val; }
 */
+
+
+
 private:
 
 
@@ -167,20 +153,16 @@ private:
 protected:
   G4String 					m_elementTypeName;	 //!< Type-name for DigitizerMgr --> used only for cout and help messengers
   GateSystemList*                               m_systemList;            //! List of systems to which the DigitizerOld is attached
-
-  //G4String 					m_newInsertionBaseType;	 //!< Type-name for all DigitizerOld modules
-  //G4String 					m_newInsertionBaseName;	 //!< Type-name for all DigitizerOld modules
-
   G4int m_collectionID;
 
 public:
   G4bool m_isInitialized;
   G4bool m_isTheFirstEvent;
   std::vector<GateCrystalSD*>    	m_SDlist;	 //!< Vector of Sensitive Detectors
-  /*GND UNCOMM std::vector<GateDigitizerInitializationModule*>    	m_digitizerIMList;	 //!< Vector of initialisation modules for different SD
+  std::vector<GateDigitizerInitializationModule*>    	m_digitizerIMList;	 //!< Vector of initialisation modules for different SD
   std::vector<GateSinglesDigitizer*>    	m_SingleDigitizersList;	 //!< Vector of digitizers
   std::vector<GateCoincidenceSorter*>    	m_CoincidenceSortersList;	 //!< Vector of coincidence sorters
-   */
+
   G4bool m_recordSingles;
   G4bool m_recordCoincidences;
 

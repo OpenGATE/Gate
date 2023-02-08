@@ -9,6 +9,7 @@
 /*!
   \class  GateDigitizer
 */
+//GND 2022 Class to Remove
 
 #include "GateDigitizer.hh"
 #include "GateTools.hh"

@@ -11,6 +11,8 @@ See LICENSE.md for further details
 #define GateCrystalSD_h 1
 
 #include "G4VSensitiveDetector.hh"
+#include "G4SDManager.hh"
+
 #include "GateHit.hh"
 class G4Step;
 class G4HCofThisEvent;

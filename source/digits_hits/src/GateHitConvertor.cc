@@ -5,7 +5,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-
+// GND 2022 Class to remove
 #include "GateHitConvertor.hh"
 
 #include "G4UnitsTable.hh"

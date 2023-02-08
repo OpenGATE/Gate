@@ -6,6 +6,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+//GND 2022 Class to Remove
 #include "GateConfiguration.h"
 #include "GatePulse.hh"
 #include "GateVSystem.hh"
