@@ -67,6 +67,9 @@ ELSE()
 ENDIF()
 set(CMAKE_CXX_STANDARD ${Geant4_CXX_STANDARD})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
 IF(Geant4_multithreaded_FOUND)
