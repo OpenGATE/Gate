@@ -975,13 +975,16 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordDigitizer(const G4Event *) {
-    if (nVerboseLevel > 2)
+   if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordDigitizer\n";
-
     // Digitizer information
 
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
     {
+    	//UNCOMM COIN
+    	if (m_outputChannelList[i]->m_collectionName=="Coincidences")
+    		continue;
+    	//UNCOMM COIN
     	//OK GND 2022
     	if(m_outputChannelList[i]->m_collectionID<0)
     		m_outputChannelList[i]->m_collectionID=GetCollectionID(m_outputChannelList[i]->m_collectionName);
@@ -1171,7 +1174,7 @@ void GateToRoot::RegisterNewSingleDigiCollection(const G4String &aCollectionName
             new SingleOutputChannel(aCollectionName, outputFlag);
     m_outputChannelList.push_back(singleOutputChannel);
 
-    //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<outputFlag<< Gateendl;
+    G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<aCollectionName <<outputFlag<< Gateendl;
     m_rootMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
 //--------------------------------------------------------------------------
@@ -1189,12 +1192,21 @@ void GateToRoot::RegisterNewCoincidenceDigiCollection(const G4String &aCollectio
 
 //--------------------------------------------------------------------------
 void GateToRoot::SingleOutputChannel::RecordDigitizer() {
-    G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 
-    if (m_collectionID < 0)
+    // OK GND 20222
+    /*if (m_collectionID < 0)
         m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
     const GateSingleDigiCollection *SDC =
             (GateSingleDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
+     */
+
+	if (!m_outputFlag) return;
+
+    G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+    const GateDigiCollection *SDC =
+                (GateDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
+
+
 
     if (!SDC) {
         //GateMessage("OutputMgr", 5, " There is no SDC collection\n";);
@@ -1224,7 +1236,7 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
 
 //--------------------------------------------------------------------------
 void GateToRoot::CoincidenceOutputChannel::RecordDigitizer() {
-    //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin\n";);
+  /* UNCOMM COIN //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin\n";);
     G4DigiManager *fDM = G4DigiManager::GetDMpointer();
     if (m_collectionID < 0)
         m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
@@ -1254,7 +1266,7 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer() {
             }
         }
     }
-
+*/
     //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end\n";);
 }
 

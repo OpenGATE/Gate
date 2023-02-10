@@ -10,7 +10,9 @@
   \class  GateDigitizerInitializationModule
   This class is a specific digitizer class that are called before running all users
   digitizers and digitizer modules.
-  It creates Digi from Hits of this event and filles/copies all attributes for this Digi
+  It creates Digi from Hits of this event and fills/copies all attributes for this Digi
+
+	05/2022 Olga.Kochebina@cea.fr
 */
 
 

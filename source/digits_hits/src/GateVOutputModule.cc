@@ -11,6 +11,9 @@ See LICENSE.md for further details
 //#include "GateOutputModuleMessenger.hh"
 #include "GateTools.hh"
 
+#include "G4DigiManager.hh"
+#include "GateDigitizerMgr.hh"
+
 GateVOutputModule::GateVOutputModule(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode)
   : m_outputMgr(outputMgr),
     m_name(name),
@@ -39,7 +42,8 @@ void GateVOutputModule::Describe(size_t indent)
 }
 G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 {
-/*	//G4cout<<" GateVOutputModule::GetCollectionID "<< collectionName<<G4endl;
+	//G4cout<<" GateVOutputModule::GetCollectionID "<< collectionName<<G4endl;
+
 	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 	//digitizerMgr->ShowSummary();
@@ -53,8 +57,6 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 
 	GateClockDependent* module = digitizerMgr->FindElement(collectionName);
 
-
-	//GateSinglesDigitizer* digitizer = digitizerMgr->FindDigitizer(collectionName);
 
 	while ((start = collectionName.find_first_not_of(delim, end)) != std::string::npos)
 	{
@@ -91,8 +93,8 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 
 
 
-	//std::cout << collectionName << std::endl;
+	//std::cout << collectionName<<" "<< collectionID << std::endl;
 	return collectionID;
-	*/
+
 
 }

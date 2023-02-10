@@ -6,6 +6,16 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 // OK GND 2022
+/*!
+  \class  GateDigi
+  \brief  New class that regroup the two old classes: GatePulse and GateSingleDigi
+
+    - GateDigi is an object that is used to construct Singles (i.e. digitized Hits)
+    - They are stored in GateDigiCollections manages by G4DigiMan and GateDigitizerMgr
+	- GateDigi is obtained from Hits with GateDigitizerInitializationModule
+	05/2022 Olga.Kochebina@cea.fr
+*/
+
 
 #ifndef GateDigi_h
 #define GateDigi_h 1

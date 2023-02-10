@@ -8,7 +8,7 @@ See LICENSE.md for further details
 
 // OK GND 2022
 /*!
-  \class  GateAdder (prev. GatePulseAdder)
+  \class  GateAdder (prev. GatePulseAdder by Daniel.Strul@iphe.unil.ch)
   \brief   for adding/grouping pulses per volume.
 
     - For each volume where there was one or more input pulse, we get exactly

@@ -52,6 +52,13 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   RootHitCmd->SetGuidance("Set the flag for Hits ROOT output");
   RootHitCmd->SetGuidance("1. true/false");
 
+  // OK GND 2022
+  cmdName = GetDirectoryName()+"setRootSinglesFlag";
+  RootSinglesCmd = new G4UIcmdWithABool(cmdName,this);
+  RootSinglesCmd->SetGuidance("To get error if you use old command");
+  RootSinglesCmd->SetGuidance("1. true/false");
+  //OK GND 2022
+
   cmdName = GetDirectoryName()+"setRootNtupleFlag";
   RootNtupleCmd = new G4UIcmdWithABool(cmdName,this);
   RootNtupleCmd->SetGuidance("Set the flag for Ntuples ROOT output");
@@ -107,6 +114,7 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
 GateToRootMessenger::~GateToRootMessenger()
 {
   delete ResetCmd;
+  delete RootSinglesCmd;
 
   delete RootHitCmd;
   delete RootNtupleCmd;
@@ -224,9 +232,31 @@ G4bool GateToRootMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 //--------------------------------------------------------------------------
 void GateToRootMessenger::ExecuteOutputChannelCmd(G4UIcommand* command, G4String newValue)
 {
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i){
     if ( command == OutputChannelCmdList[i] ) {
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
+      //OK GND 2022 //TODO adapt for other outputs
+
+      GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(m_outputChannelList[i]->m_collectionName);
+      if(digitizer)
+    	  digitizer->m_recordFlag=true;
+
+      //Setting flag in the digitizerMgr
+      if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Singles"))
+      {
+    	  if(OutputChannelCmdList[i]->GetNewBoolValue(newValue))
+    		  digitizerMgr->m_recordSingles=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
+      }
+      if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Coincidences"))
+      {
+    	  if(OutputChannelCmdList[i]->GetNewBoolValue(newValue))
+    		  digitizerMgr->m_recordCoincidences=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
+      }
+
+
       break;
     }
     }

@@ -28,7 +28,8 @@ See LICENSE.md for further details
 #include "G4SystemOfUnits.hh"
 
 class GateHit;
-class GateSingleDigi;
+class GateDigi;
+class GateSingleDigi; //TODO remove
 class GateCoincidenceDigi;
 
 #define ROOT_VOLUMEIDSIZE 10
@@ -237,6 +238,8 @@ class GateRootSingleBuffer
     inline virtual ~GateRootSingleBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
+    void Fill(GateDigi* aDigi);
+    //TODO remove
     void Fill(GateSingleDigi* aDigi);
 
     //! \name Data fields
