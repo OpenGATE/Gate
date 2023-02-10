@@ -1174,7 +1174,7 @@ void GateToRoot::RegisterNewSingleDigiCollection(const G4String &aCollectionName
             new SingleOutputChannel(aCollectionName, outputFlag);
     m_outputChannelList.push_back(singleOutputChannel);
 
-    G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<aCollectionName <<outputFlag<< Gateendl;
+    //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<aCollectionName <<outputFlag<< Gateendl;
     m_rootMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
 //--------------------------------------------------------------------------

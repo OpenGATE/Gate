@@ -46,6 +46,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 
     G4bool IsAnOutputChannelCmd(G4UIcommand* command);
     void ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue);
+    void ExecuteSinglesCmd(G4UIcommand* command, G4String newValue);
 
   protected:
     GateToRoot*             m_gateToRoot;

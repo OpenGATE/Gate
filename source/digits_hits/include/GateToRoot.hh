@@ -193,9 +193,16 @@ public:
 
         inline void Book() {
             m_collectionID = -1;
+            //OK GND 2022 multiSD backward compatibility
+            GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
             if (m_outputFlag) {
-                m_tree = new GateSingleTree(m_collectionName);
-                m_tree->Init(m_buffer);
+            	if( digitizerMgr->m_SDlist.size()==1 )
+            		m_tree = new GateSingleTree("Singles");
+            	else
+            		m_tree = new GateSingleTree(m_collectionName);
+
+            	m_tree->Init(m_buffer);
             }
         }
 

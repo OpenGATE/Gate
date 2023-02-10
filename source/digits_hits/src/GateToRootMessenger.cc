@@ -139,7 +139,32 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     m_gateToRoot->SetFileName(newValue);
   } else if (command == RootHitCmd) {
     m_gateToRoot->SetRootHitFlag(RootHitCmd->GetNewBoolValue(newValue));
-  } else if (command == SaveRndmCmd) {
+  } else if (command == RootSinglesCmd) {
+
+	  //OK GND backward compatibility
+		GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+		for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+		{
+			//G4cout<<digitizerMgr->m_SDlist[j]->GetName()<<G4endl;
+			for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
+			 {
+				 if (m_outputChannelList[i]->m_collectionName == "Singles_"+digitizerMgr->m_SDlist[j]->GetName() )
+				 {
+					 m_outputChannelList[i]->SetOutputFlag( RootSinglesCmd->GetNewBoolValue(newValue));
+					 //G4cout<<"Set flag"<< m_outputChannelList[i]->m_outputFlag<<G4endl;
+				 }
+		    }
+
+			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer("Singles_"+digitizerMgr->m_SDlist[j]->GetName());
+			 if(digitizer)
+				 digitizer->m_recordFlag=true;
+
+			 digitizerMgr->m_recordSingles=RootSinglesCmd->GetNewBoolValue(newValue);
+
+		}
+
+  }	  else if (command == SaveRndmCmd){
     m_gateToRoot->SetSaveRndmFlag(SaveRndmCmd->GetNewBoolValue(newValue));
   } else if (command == RootNtupleCmd) {
     m_gateToRoot->SetRootNtupleFlag(RootNtupleCmd->GetNewBoolValue(newValue));
@@ -260,6 +285,76 @@ void GateToRootMessenger::ExecuteOutputChannelCmd(G4UIcommand* command, G4String
       break;
     }
     }
+}
+//--------------------------------------------------------------------------
+
+
+
+
+//--------------------------------------------------------------------------
+void GateToRootMessenger::ExecuteSinglesCmd(G4UIcommand* command, G4String newValue)
+{
+	//OK GND 2022 multiSD
+/*	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+	G4cout<< digitizerMgr->m_SDlist.size()<<G4endl; ;
+
+	for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+	{
+		G4cout<<digitizerMgr->m_SDlist[j]->GetName()<<G4endl;
+		for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
+		 {
+			 G4cout<<"name "<< m_outputChannelList[i]->m_collectionName<<G4endl;
+			 if (m_outputChannelList[i]->m_collectionName == "Singles_crystal")
+			 {
+				 m_outputChannelList[i]->SetOutputFlag( RootSinglesCmd->GetNewBoolValue(newValue));
+				 G4cout<<"Set flag"<< m_outputChannelList[i]->m_outputFlag<<G4endl;
+			 }
+	    }
+
+		 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer("Singles_crystal");
+		 if(digitizer)
+			 digitizer->m_recordFlag=true;
+
+		 digitizerMgr->m_recordSingles=RootSinglesCmd->GetNewBoolValue(newValue);
+
+	}
+
+*/
+		  	  /* for (G4int i=0; i<GetSDlistSize();i++)
+		  		{
+		  			GateRootHitBuffer hitBuffer;
+		  			m_hitBuffers.push_back(hitBuffer);
+		  		}
+
+		  	  for (long unsigned int i=0; i< GetSDlistSize();i++)
+		  	  {
+		     		GateHitTree *treeHit;
+		     		if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+		     			treeHit = new GateHitTree("Hits");
+		     		else
+		     			treeHit = new GateHitTree("Hits_"+digitizerMgr->m_SDlist[i]->GetName());
+		     		treeHit->Init(m_hitBuffers[i]);
+		     		m_treesHit.push_back(treeHit);
+		     	    }
+		  	   */
+		/*  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
+		  {
+			  G4cout<<"name "<< m_outputChannelList[i]->m_collectionName<<G4endl;
+		      //if ( command == OutputChannelCmdList[i] )
+		      //{
+		    	  if (m_outputChannelList[i]->m_collectionName == "Singles_crystal")
+		    			  {
+		    		  	  	  m_outputChannelList[i]->SetOutputFlag( RootSinglesCmd->GetNewBoolValue(newValue));
+		    		  	  	  G4cout<<"Set flag"<< m_outputChannelList[i]->m_outputFlag<<G4endl;
+		    			  }
+		      //}
+		  }
+
+			GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer("Singles_crystal");
+			      if(digitizer)
+			    	  digitizer->m_recordFlag=true;
+
+		  digitizerMgr->m_recordSingles=RootSinglesCmd->GetNewBoolValue(newValue);*/
 }
 //--------------------------------------------------------------------------
 
