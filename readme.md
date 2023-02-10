@@ -4,7 +4,7 @@
 [![Read the Docs](https://img.shields.io/readthedocs/opengate?logo=read-the-docs&style=plastic)](https://opengate.readthedocs.io/)
 [![CDash](https://img.shields.io/badge/CDash-passing-green?style=plastic)](https://my.cdash.org/index.php?project=GATE)
 [![GitHub issues](https://img.shields.io/github/issues-raw/OpenGATE/Gate?logo=github&style=plastic)](https://github.com/OpenGATE/Gate/issues)
-[![Mailing List](https://img.shields.io/badge/mailing%20list-subscribe-blue?logo=minutemailer&style=plastic)](http://lists.opengatecollaboration.org/mailman/listinfo/gate-users)
+[![Mailing List](https://img.shields.io/badge/mailing%20list-subscribe-blue?logo=minutemailer&style=plastic)](https://listserv.in2p3.fr/cgi-bin/wa?A0=OPENGATE-L)
 [![Docker](https://img.shields.io/docker/automated/opengatecollaboration/gate?style=plastic)](https://hub.docker.com/r/opengatecollaboration/gate)
 [![Website](https://img.shields.io/badge/website-OpenGateCollaboration-blue?style=plastic)](http://www.opengatecollaboration.org/)
 [![GitHub](https://img.shields.io/github/license/OpenGATE/Gate?style=plastic)](https://github.com/OpenGATE/Gate/blob/develop/LICENSE.md)
