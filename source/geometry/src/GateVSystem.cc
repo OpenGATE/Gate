@@ -495,3 +495,11 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
     G4ThreeVector(0,0,0);
 }
 //-----------------------------------------------------------------------------
+
+
+//OK GND 2022
+G4int GateVSystem::GetMainComponentIDGND(const GateDigi& digi)
+   {  return digi.GetComponentID(m_mainComponentDepth) ; }
+
+
+

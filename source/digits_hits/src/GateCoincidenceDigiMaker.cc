@@ -6,6 +6,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+//GND:ClassToRemove
 
 #include "GateCoincidenceDigiMaker.hh"
 
@@ -56,8 +57,8 @@ void GateCoincidenceDigiMaker::Digitize()
       	    G4cout  << "[GateCoincidenceDigiMaker::Digitize]: ignoring multiple coincidence --> no digits created\n";
       } else {
     */
-      	GateCoincidenceDigi* Digi = new GateCoincidenceDigi( **it);
-      	CoincidenceDigiCollection->insert(Digi);
+      	//GateCoincidenceDigi* Digi = new GateCoincidenceDigi( **it);
+      //	CoincidenceDigiCollection->insert(Digi);
 	// }
   }
 

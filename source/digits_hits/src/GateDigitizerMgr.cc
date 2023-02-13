@@ -134,7 +134,7 @@ void GateDigitizerMgr::Initialize()
 	//TODO: check if we have coincidecnes, i.e. that it is PET and not SPECT or the loop will not enter and it is ok
 	//set default input collections for coincidence sorters
 
-	/*if (m_recordCoincidences)
+	if (m_recordCoincidences)
 	{
 		for (long unsigned int i = 0; i<m_CoincidenceSortersList.size(); i++)
 			{
@@ -153,7 +153,7 @@ void GateDigitizerMgr::Initialize()
 				}
 			}
 	}
-	 */
+
 
 
 }
@@ -262,7 +262,7 @@ void GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
 }
 //-----------------------------------------------------------------
 
-/*
+
 //-----------------------------------------------------------------
 // Integrates a new pulse-processor chain
 void GateDigitizerMgr::AddNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter)
@@ -290,18 +290,18 @@ void GateDigitizerMgr::AddNewCoincidenceSorter(GateCoincidenceSorter* coincidenc
 	    }
 	  //mhadi_add]
 
-
+*/
 }
 //-----------------------------------------------------------------
 
-*/
+
 
 GateClockDependent* GateDigitizerMgr::FindElement(G4String mName)
 {
 
 	GateClockDependent* element;
 	element = (GateClockDependent*)FindDigitizer(mName);
-	// UNCOMM FOR COIN if (!element) element = (GateClockDependent*)FindCoincidenceSorter(mName);
+	if (!element) element = (GateClockDependent*)FindCoincidenceSorter(mName);
 
 	return element;
 }
@@ -321,7 +321,7 @@ GateSinglesDigitizer* GateDigitizerMgr::FindDigitizer(G4String mName)
 		}
 	return NULL;
 }
-/*
+
 GateCoincidenceSorter* GateDigitizerMgr::FindCoincidenceSorter(G4String mName)
 {
 	for(G4int i=0;i<int(m_CoincidenceSortersList.size());i++)
@@ -331,7 +331,7 @@ GateCoincidenceSorter* GateDigitizerMgr::FindCoincidenceSorter(G4String mName)
 	}
 return NULL;
 }
-*/
+
 
 
 
@@ -396,7 +396,7 @@ void GateDigitizerMgr::RunDigitizers()
 		}
 
 }
-/*
+
 void GateDigitizerMgr::RunCoincidenceSorters()
 {
 	if ( !IsEnabled() )
@@ -439,7 +439,7 @@ void GateDigitizerMgr::RunCoincidenceDigitizers()
 
 		//RunCoinDigitizers
 }
-*/
+
 void GateDigitizerMgr::ShowSummary()
 {
 	G4cout<<"-----------------------"<<G4endl;

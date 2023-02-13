@@ -475,9 +475,9 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
  	  digitizerMgr->RunDigitizers();
 
-/* UNCOMM FOR COIN   if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
  	  digitizerMgr->RunCoincidenceSorters();
- 	  */
+
 } // end function
 //--------------------------------------------------------------------------------------------------
 

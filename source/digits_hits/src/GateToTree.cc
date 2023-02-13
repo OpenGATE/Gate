@@ -11,7 +11,6 @@ See LICENSE.md for further details
 //
 
 #include "GateToTree.hh"
-#include "GateToTree.hh"
 
 #include <cassert>
 
@@ -697,8 +696,10 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 
     if (!m_singles_to_collectionID.size()) {
         for (auto &&m: m_mmanager_singles) {
-            auto collectionID = fDM->GetDigiCollectionID(m.first);
-            m_singles_to_collectionID.emplace(m.first, collectionID);
+           // auto collectionID = fDM->GetDigiCollectionID(m.first);
+        	// OK GND 2022
+        	auto collectionID = GetCollectionID(m.first);
+        	m_singles_to_collectionID.emplace(m.first, collectionID);
         }
     }
 
@@ -706,8 +707,8 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 //        auto collectionID = fDM->GetDigiCollectionID(m.first);
         auto collectionID = m_singles_to_collectionID.at(m.first);
 //        auto SDC = static_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(collectionID));
-        const GateSingleDigiCollection *SDC =
-                (GateSingleDigiCollection *) (fDM->GetDigiCollection(collectionID));
+        const GateDigiCollection *SDC =
+                        (GateDigiCollection *) (fDM->GetDigiCollection(collectionID));
 
         if (!SDC) {
 //            G4cout << "GateToTree::RecordEndOfEvent no collection = " << m.first << "\n";
@@ -723,7 +724,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 
         for (auto &&digi: *v) {
             if (m_systemID == -1) {
-                auto mother = static_cast<const GateHit *>(digi->GetPulse().GetMother());
+                auto mother = static_cast<const GateHit *>(digi->GetMother());
                 if (!mother) {
                     // for example pulse created by GateNoise.cc (l67).
                     m_systemID = 0;
@@ -768,9 +769,9 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
         m_systemID = -1;
 
 
-        for (auto &&digi: *v) {
+        for (auto &&coin_digi: *v) {
             if (m_systemID == -1) {
-                auto mother = static_cast<const GateHit *>(digi->GetPulse(0).GetMother());
+                auto mother = static_cast<const GateHit *>(coin_digi->GetDigi(0)->GetMother());
                 if (!mother) {
                     // for example pulse created by GateNoise.cc (l67).
                     m_systemID = 0;
@@ -779,14 +780,14 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
                 }
             }
 
-            const auto &pulse = digi->GetPulse(0);
-            retrieve(&pulse, m_systemID);
-            m_comptonVolumeName[0] = pulse.GetComptonVolumeName();
-            m_RayleighVolumeName[0] = pulse.GetRayleighVolumeName();
+            const auto digi = coin_digi->GetDigi(0);
+            retrieve(digi, m_systemID);
+            m_comptonVolumeName[0] = digi->GetComptonVolumeName();
+            m_RayleighVolumeName[0] = digi->GetRayleighVolumeName();
 
 
-            this->retrieve(digi, 0, m_systemID);
-            this->retrieve(digi, 1, m_systemID);
+            this->retrieve(coin_digi, 0, m_systemID);
+            this->retrieve(coin_digi, 1, m_systemID);
 
 
             m_sinogramTheta = atan2(m_posX[0] - m_posX[1], m_posY[0] - m_posY[1]);
@@ -818,35 +819,34 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 }
 
 void GateToTree::retrieve(GateCoincidenceDigi *aDigi, G4int side, G4int system_id) {
-    const auto &pulse = aDigi->GetPulse(side);
-    m_eventID[side] = pulse.GetEventID();
-    m_sourceID[side] = pulse.GetSourceID();
-//    m_sourceID[side] = digi->GetSourceID();
-    m_sourcePosX[side] = pulse.GetSourcePosition().x() / mm;
-    m_sourcePosY[side] = pulse.GetSourcePosition().y() / mm;
-    m_sourcePosZ[side] = pulse.GetSourcePosition().z() / mm;
+	const auto &signleDigi = aDigi->GetDigi(side);
+    m_eventID[side] = signleDigi->GetEventID();
+    m_sourceID[side] = signleDigi->GetSourceID();
+ //    m_sourceID[side] = digi->GetSourceID();
+     m_sourcePosX[side] = signleDigi->GetSourcePosition().x() / mm;
+     m_sourcePosY[side] = signleDigi->GetSourcePosition().y() / mm;
+     m_sourcePosZ[side] = signleDigi->GetSourcePosition().z() / mm;
 
-    m_posX[side] = pulse.GetGlobalPos().x() / mm;
-    m_posY[side] = pulse.GetGlobalPos().y() / mm;
-    m_posZ[side] = pulse.GetGlobalPos().z() / mm;
+     m_posX[side] = signleDigi->GetGlobalPos().x() / mm;
+     m_posY[side] = signleDigi->GetGlobalPos().y() / mm;
+     m_posZ[side] = signleDigi->GetGlobalPos().z() / mm;
 
-    m_time[side] = pulse.GetTime() / s;
-    m_edep[side] = pulse.GetEnergy() / MeV;
+     m_time[side] = signleDigi->GetTime() / s;
+     m_edep[side] = signleDigi->GetEnergy() / MeV;
 
-    m_comptonVolumeName[side] = pulse.GetComptonVolumeName();
-    m_RayleighVolumeName[side] = pulse.GetRayleighVolumeName();
+     m_comptonVolumeName[side] = signleDigi->GetComptonVolumeName();
+     m_RayleighVolumeName[side] = signleDigi->GetRayleighVolumeName();
 
-    m_nPhantomCompton[side] = pulse.GetNPhantomCompton();
-    m_nCrystalCompton[side] = pulse.GetNCrystalCompton();
-    m_nPhantomRayleigh[side] = pulse.GetNPhantomRayleigh();
-    m_nCrystalRayleigh[side] = pulse.GetNCrystalRayleigh();
+     m_nPhantomCompton[side] = signleDigi->GetNPhantomCompton();
+     m_nCrystalCompton[side] = signleDigi->GetNCrystalCompton();
+     m_nPhantomRayleigh[side] = signleDigi->GetNPhantomRayleigh();
+     m_nCrystalRayleigh[side] = signleDigi->GetNCrystalRayleigh();
 
-    if (m_coincidencesParams_to_write.at("componentsIDs").toSave()) {
-        for (auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
-            m_outputID[side][system_id][depth] = pulse.GetComponentID(depth);
-    }
+     if (m_coincidencesParams_to_write.at("componentsIDs").toSave()) {
+         for (auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+             m_outputID[side][system_id][depth] = signleDigi->GetComponentID(depth);
+     }
 }
-
 
 void GateToTree::RecordStepWithVolume(const GateVVolume *v, const G4Step *aStep) {
     UNUSED(v);

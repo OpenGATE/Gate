@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
    G4double coincidenceWindow = 10.* ns;
    bool IsCCSorter=1;
    const G4String thedigitizerSorterName="Coincidences";
-   GateCoincidenceSorter*coincidenceSorter = new GateCoincidenceSorter(digitizer,thedigitizerSorterName,coincidenceWindow,"layers",IsCCSorter);
+   GateCoincidenceSorterOld*coincidenceSorter = new GateCoincidenceSorterOld(digitizer,thedigitizerSorterName,coincidenceWindow,"layers",IsCCSorter);
    digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
    //I  am not sure if it is necesaary or no to do the store  of coincidneces in the digitizer from the tree to process them
    //##########################################################33

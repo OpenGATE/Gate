@@ -22,7 +22,7 @@
 #ifdef GATE_USE_LMF
 #include "GateToLMF.hh"
 #endif
-#include "GateDigitizer.hh"
+#include "GateDigitizerMgr.hh"
 
 // Constructor
 GateOPETSystem::GateOPETSystem(const G4String& itsName)
@@ -49,11 +49,10 @@ GateOPETSystem::GateOPETSystem(const G4String& itsName)
 
  
   // Integrate a coincidence sorter into the digitizer
-  G4double coincidenceWindow = 10.* ns;
-  GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizer,"Coincidences",coincidenceWindow);
-  digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
-  
+    //OK GND 2022
+    GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+    GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr,"Coincidences");
+    digitizerMgr->AddNewCoincidenceSorter(coincidenceSorter);
 #ifdef GATE_USE_LMF
 
   // Insert an LMF output module into the output manager

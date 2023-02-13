@@ -93,7 +93,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     G4double coincidenceWindow = 10.* ns;
     //Flag to identify when the sorte is applied to the CC
     bool IsCCSorter=1;
-    coincidenceSorter = new GateCoincidenceSorter(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
+    coincidenceSorter = new GateCoincidenceSorterOld(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
     m_digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
 
     GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");

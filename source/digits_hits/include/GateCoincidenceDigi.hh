@@ -14,44 +14,69 @@ See LICENSE.md for further details
 #include "G4TDigiCollection.hh"
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
+#include <fstream>
+#include <iterator>
+
+#include "GateDigi.hh"
 
 
-#include "GateCoincidencePulse.hh"
+// define the minimum offset for a delayed coincidence window in sec
+#define  MIN_COINC_OFFSET -1.
 
-
-class GateCoincidenceDigi : public G4VDigi
+class GateCoincidenceDigi : public G4VDigi, public std::vector<GateDigi*>
 {
+public:
+
+	GateCoincidenceDigi(GateDigi *firstDigi,
+						G4double itsCoincidenceWindow,
+						G4double itsOffsetWindow);
+	//GateCoincidenceDigi(GateCoincidencePulse* coincidencePulse);
+	GateCoincidenceDigi(const GateCoincidenceDigi& src);
+	inline ~GateCoincidenceDigi() {};
+
+	inline void* operator new(size_t);
+	inline void  operator delete(void*);
+
+	void Draw();
+	void Print();
+
+	//
+	//printing methods
+	//
+	friend std::ostream& operator<<(std::ostream&, GateCoincidenceDigi&);
+
+	friend std::ofstream& operator<<(std::ofstream&, GateCoincidenceDigi*);
 
 public:
 
-  GateCoincidenceDigi();
-  GateCoincidenceDigi(GateCoincidencePulse* coincidencePulse);
-  GateCoincidenceDigi(const GateCoincidencePulse& coincidencePulse);
-  virtual inline ~GateCoincidenceDigi() {}
 
-  inline void* operator new(size_t);
-  inline void  operator delete(void*);
+    inline G4double GetStartTime() const
+      { return m_startTime; }
 
-  void Draw();
-  void Print();
+    inline G4double GetEndTime() const
+      { return m_endTime; }
+/*
+   inline G4int GetCoincID() const
+      { return m_coincID; }
+   inline void SetCoincID(int coincID) 
+      { m_coincID=coincID; }
 
-  //
-  //printing methods
-  //
-  friend std::ostream& operator<<(std::ostream&, GateCoincidenceDigi&);
+*/
 
-  friend std::ofstream& operator<<(std::ofstream&, GateCoincidenceDigi*);
+   virtual G4bool IsInCoincidence(const GateDigi* newDigi) const;
+   virtual G4bool IsAfterWindow(const GateDigi* newDigi) const;
 
+   inline G4bool IsDelayed() const
+         { return m_delayed;}
+
+
+  private:
+    G4double m_startTime;
+    G4double m_endTime;
+    G4bool m_delayed;
+    G4int m_coincID;
 public:
-
-      inline GatePulse& GetPulse(G4int i)                     { return pulseVector[i]; }
-      inline void SetPulse(G4int i, const GatePulse& value)   { pulseVector[i] = value; }
-
-private:
-
-      GatePulse pulseVector[2];
-
-public:
+   GateDigi* GetDigi(G4int i);
   static void SetCoincidenceASCIIMask(G4bool);
   static void SetCoincidenceASCIIMask(std::vector<G4bool>);
   static std::vector<G4bool> GetCoincidenceASCIIMask();
@@ -60,17 +85,13 @@ public:
 protected:
   static std::vector<G4bool> m_coincidenceASCIIMask;
   static G4bool                m_coincidenceASCIIMaskDefault;
+
+
 };
-
-
-
-
 
 typedef G4TDigiCollection<GateCoincidenceDigi> GateCoincidenceDigiCollection;
 
 extern G4Allocator<GateCoincidenceDigi> GateCoincidenceDigiAllocator;
-
-
 
 
 
@@ -83,11 +104,10 @@ inline void* GateCoincidenceDigi::operator new(size_t)
 
 
 
-
-
 inline void GateCoincidenceDigi::operator delete(void* aDigi)
 {
   GateCoincidenceDigiAllocator.FreeSingle((GateCoincidenceDigi*) aDigi);
 }
+
 
 #endif

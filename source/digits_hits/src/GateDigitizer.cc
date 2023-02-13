@@ -127,7 +127,7 @@ void GateDigitizer::DescribeChains(size_t indent)
 void GateDigitizer::DescribeSorters(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of coinc. units: " << m_coincidenceSorterList.size() << "\n";
-  for (std::vector<GateCoincidenceSorter*>::iterator itr=m_coincidenceSorterList.begin(); itr!=m_coincidenceSorterList.end(); itr++)
+  for (std::vector<GateCoincidenceSorterOld*>::iterator itr=m_coincidenceSorterList.begin(); itr!=m_coincidenceSorterList.end(); itr++)
     G4cout << GateTools::Indent(indent+1) << (*itr)->GetObjectName() << Gateendl;
 }
 //-----------------------------------------------------------------
@@ -353,7 +353,7 @@ void GateDigitizer::StoreNewCoincidenceProcessorChain(GateCoincidencePulseProces
 
 //-----------------------------------------------------------------
 // Integrates a new coincidence sorter
-void GateDigitizer::StoreNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter)
+void GateDigitizer::StoreNewCoincidenceSorter(GateCoincidenceSorterOld* coincidenceSorter)
 {
   G4String outputName = coincidenceSorter->GetOutputName() ;
   if (nVerboseLevel>1)

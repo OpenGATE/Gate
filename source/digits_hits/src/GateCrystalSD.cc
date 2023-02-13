@@ -26,7 +26,6 @@
 #include "GateEccentRotMove.hh"
 #include "GateSystemListManager.hh"
 #include "GateVVolume.hh"
-#include "GateDigitizer.hh"
 
 //OK GND 2022
 #include "GateDigitizerMgr.hh"
@@ -273,7 +272,7 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 void GateCrystalSD::AddSystem(GateVSystem* aSystem)
 {
    m_systemList->push_back(aSystem);
-   GateDigitizer::GetInstance()->AddSystem(aSystem);
+   GateDigitizerMgr::GetInstance()->AddSystem(aSystem);
 }
 //------------------------------------------------------------------------------
 

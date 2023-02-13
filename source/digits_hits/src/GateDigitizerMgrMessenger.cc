@@ -18,7 +18,7 @@
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
-#include "GateCoincidenceSorter.hh"
+#include "GateCoincidenceSorterOld.hh"
 
 // Constructor
 GateDigitizerMgrMessenger::GateDigitizerMgrMessenger(GateDigitizerMgr* itsDigitizerMgr)
@@ -133,13 +133,13 @@ void GateDigitizerMgrMessenger::DoInsertion(const G4String& childTypeName)
 	  GateCrystalSD* SD = (GateCrystalSD*) SDman->FindSensitiveDetector(m_SDname, true);
 	  GetDigitizerMgr()->AddNewSinglesDigitizer( new GateSinglesDigitizer(GetDigitizerMgr(),GetNewCollectionName(),SD) );
 
- /*UNCOMM FOR COIN } else if (childTypeName=="CoincidenceSorter") {
+  } else if (childTypeName=="CoincidenceSorter") {
 	  // One CoinSorter per System! Defined in the constructor of the system ! Only its parameters should be defiend with CS messenger
 	 GetDigitizerMgr()->AddNewCoincidenceSorter( new GateCoincidenceSorter(GetDigitizerMgr(),GetNewCollectionName()) );
   }/* else if (childTypeName=="coincidenceChain") {
     GetDigitizerMgr()->StoreNewCoincidenceProcessorChain( new GateCoincidencePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
   *///
-	  }
+	//  }
 else {
     G4cout << "Digitizer module type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;

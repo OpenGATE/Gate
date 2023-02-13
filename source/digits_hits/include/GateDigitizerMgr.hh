@@ -98,9 +98,9 @@ public:
     // Next methods were added for the multi-system approach
   inline GateSystemList* GetSystemList() const { return m_systemList; }
 
-   // Add a system to the DigitizerOld systems list
+   // Add a system to the DigitizerMgr systems list
    virtual void AddSystem(GateVSystem* aSystem);
-   // To find a system from the DigitizerOld systems list
+   // To find a system from the DigitizerMgr systems list
    GateVSystem* FindSystem(GateSinglesDigitizer* digitizer);
    GateVSystem* FindSystem(G4String& systemName);
 
@@ -127,9 +127,8 @@ public:
 
    /// Methods for Coincidences
 
-  /* //Sorters
+   //Sorters
    //Sorters -> Initialization of Coincidence Digitizers
-   //void AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer);
 
    void RunCoincidenceSorters();
    void AddNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter);
@@ -139,7 +138,7 @@ public:
    //void AddNewCoincidenceDigitizer(GateCoincidenceSorter* coincidenceSorter);
    //GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
-*/
+
 
 
 

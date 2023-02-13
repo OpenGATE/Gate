@@ -7,8 +7,8 @@ See LICENSE.md for further details
 ----------------------*/
 
 
-#ifndef GateCoincidenceSorter_h
-#define GateCoincidenceSorter_h 1
+#ifndef GateCoincidenceSorterOld_h
+#define GateCoincidenceSorterOld_h 1
 
 #include "globals.hh"
 #include <iostream>
@@ -16,60 +16,62 @@ See LICENSE.md for further details
 #include <deque>
 #include "G4ThreeVector.hh"
 
-#include "GateCoincidenceDigi.hh"
-#include "GateVDigitizerModule.hh"
+#include "GateCoincidencePulse.hh"
+#include "GateClockDependent.hh"
 
 
 
-class GateCoincidenceSorterMessenger;
+class GateCoincidenceSorterOldMessenger;
 class GateVSystem;
-class GateDigitizerMgr;
+class GateDigitizer;
 
-/*! \class  GateCoincidenceSorter
+/*! \class  GateCoincidenceSorterOld
     \brief  Coincidence sorter for a  PET scanner
 
-    - GateCoincidenceSorter - by Daniel.Strul@iphe.unil.ch
+    - GateCoincidenceSorterOld - by Daniel.Strul@iphe.unil.ch
 
-    - The sorter processes a series of digis, and stores them into a queue
-      When digis get obsolete, it tries to create coincident digi pairs
+    - The sorter processes a series of pulses, and stores them into a queue
+      When pulses get obsolete, it tries to create coincident pulse pairs
       It does not rejects multiple coincidences. When successful, it returns a
-      coincident digi
+      coincident pulse
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
 //    01/2016 Rewritten completely by Jared.STRYDHORST@cea.fr
 
-typedef enum {kKillAll,
-              kTakeAllGoods,
-              kKillAllIfMultipleGoods,
-              kTakeWinnerOfGoods,
-              kTakeWinnerIfIsGood,
-              kTakeWinnerIfAllAreGoods,
-              kKeepIfAllAreGoods,
-              kKeepIfOnlyOneGood,
-              kKeepIfAnyIsGood,
-              kKeepAll} multiple_policy_t;
+typedef enum {kKillAllOld,
+              kTakeAllGoodsOld,
+              kKillAllIfMultipleGoodsOld,
+              kTakeWinnerOfGoodsOld,
+              kTakeWinnerIfIsGoodOld,
+              kTakeWinnerIfAllAreGoodsOld,
+              kKeepIfAllAreGoodsOld,
+              kKeepIfOnlyOneGoodOld,
+              kKeepIfAnyIsGoodOld,
+              kKeepAllOld} multiple_policy_t_old;
 
 
 
-typedef enum {kKeepAll_CC,
-              kkeepIfMultipleVolumeIDsInvolved_CC,
-              kkeepIfMultipleVolumeNamesInvolved_CC} acceptance_policy_4CC_t;
+typedef enum {kKeepAllOld_CC,
+              kkeepIfMultipleVolumeIDsInvolvedOld_CC,
+              kkeepIfMultipleVolumeNamesInvolvedOld_CC} acceptance_policy_4CC_t_old;
 
-class GateCoincidenceSorter : public GateVDigitizerModule
+class GateCoincidenceSorterOld : public GateClockDependent
 {
 public:
 
-    //! Constructs a new coincidence sorter, attached to a GateDigitizerMgr amd to a system
-    GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
+    //! Constructs a new coincidence sorter, attached to a GateDigitizer amd to a system
+    GateCoincidenceSorterOld(GateDigitizer* itsDigitizer,
                           const G4String& itsName,
-                          const bool &IsCCSorter=false);
+                          G4double itsWindow,
+                          const G4String& itsInputName="Singles", const bool &IsCCSorter=false);
     //! Destructor
-    virtual ~GateCoincidenceSorter() ;
+    virtual ~GateCoincidenceSorterOld() ;
 
     //! Overload of the virtual method declared by the base class GateClockDependent
     //! print-out a description of the sorter
-    void DescribeMyself(size_t ) override;
+    virtual void Describe(size_t indent);
+
     //! \name getters and setters
     //@{
 
@@ -105,10 +107,10 @@ public:
     inline void SetDepth(G4int depth)
     { m_depth = depth; }
 
-    inline G4bool GetAllDigiOpenCoincGate() const
-    { return m_allDigiOpenCoincGate; }
-    inline void SetAllDigiOpenCoincGate(G4bool b)
-    { m_allDigiOpenCoincGate = b; }
+    inline G4bool GetAllPulseOpenCoincGate() const
+    { return m_allPulseOpenCoincGate; }
+    inline void SetAllPulseOpenCoincGate(G4bool b)
+    { m_allPulseOpenCoincGate = b; }
 
 
     inline G4bool GetIfTriggerOnlyByAbsorber() const
@@ -126,7 +128,7 @@ public:
     const G4String& GetInputName() const
     { return m_inputName; }
     void SetInputName(const G4String& anInputName)
-    {   m_inputName = anInputName;}
+    {  m_inputName = anInputName; }
 
     const G4String& GetOutputName() const
     { return m_outputName; }
@@ -146,8 +148,8 @@ public:
     //@{
 
     //! Implementation of the pure virtual method declared by our base class
-    //! Processes a list of digis and tries to compute a coincidence digi
-     void Digitize() override;
+    //! Processes a list of pulses and tries to compute a coincidence pulse
+    virtual void ProcessSinglePulseList(GatePulseList* inp=0);
 
 
     virtual inline GateVSystem* GetSystem() const
@@ -157,18 +159,14 @@ public:
     void SetSystem(G4String& inputName); //This method was added for the multi-system approach
 
     void SetMultiplesPolicy(const G4String& policy);
-    //TODO GND 2022 CC
     void SetAcceptancePolicy4CC(const G4String& policy);
-
-
-
 
 
 protected:
     //! \name Parameters of the sorter
     //@{
 
-    GateDigitizerMgr       *m_digitizerMgr;
+    GateDigitizer       *m_digitizer;
     GateVSystem         *m_system;                      //!< System to which the sorter is attached
     G4String            m_outputName;
     G4String            m_inputName;
@@ -177,13 +175,12 @@ protected:
     G4double            m_offset;                       //!< Offset window
     G4double            m_offsetJitter;                 //!< Offset window jitter
     G4int               m_minSectorDifference;          //!< Minimum sector difference for valid coincidences
-    multiple_policy_t   m_multiplesPolicy;              //!< Do what if multiples?
-    acceptance_policy_4CC_t m_acceptance_policy_4CC;    //! <Which is the criteria to accept coincidences in CC sys
-    G4bool              m_allDigiOpenCoincGate;        //!< can a digi be part of two coincs?
+    multiple_policy_t_old   m_multiplesPolicy;              //!< Do what if multiples?
+    acceptance_policy_4CC_t_old m_acceptance_policy_4CC;    //! <Which is the criteria to accept coincidences in CC sys
+    G4bool              m_allPulseOpenCoincGate;        //!< can a pulse be part of two coincs?
     G4int               m_depth;                        //!< Depth of system-level for coincidences
 
     G4int coincID_CC;
-
 
     //@}
 
@@ -191,40 +188,30 @@ private:
     //! \name Work storage variable
     //@{
 
-    std::list<GateDigi*> m_presortBuffer;      // incoming digis are presorted and buffered
+    std::list<GatePulse*> m_presortBuffer;      // incoming pulses are presorted and buffered
     G4int                 m_presortBufferSize;
     G4bool                m_presortWarning;     // avoid repeat warnings
     bool                m_CCSorter;     // compton camera sorter
-    G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by digis generated in the absorber ?
+    G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by pulses generated in the absorber ?
     G4String      m_absorberSD;// absorber "SD' volume name CC
     G4bool             m_eventIDCoinc; //
 
 
-    std::deque<GateCoincidenceDigi*> m_coincidenceDigis;  // open coincidence windows
+    std::deque<GateCoincidencePulse*> m_coincidencePulses;  // open coincidence windows
 
-    void ProcessCompletedCoincidenceWindow(GateCoincidenceDigi*);
-    //TODO GND 2022 CC
-    void ProcessCompletedCoincidenceWindow4CC(GateCoincidenceDigi *);
+    void ProcessCompletedCoincidenceWindow(GateCoincidencePulse*);
+    void ProcessCompletedCoincidenceWindow4CC(GateCoincidencePulse *);
 
-    G4bool IsForbiddenCoincidence(const GateDigi* digi1,const GateDigi* digi2);
-    //TODO GND 2022 CC
-    G4bool IsCoincidenceGood4CC(GateCoincidenceDigi* coincidence);
-    GateCoincidenceDigi* CreateSubDigi(GateCoincidenceDigi* coincidence, G4int i, G4int j);
-    G4int ComputeSectorID(const GateDigi& digi);
+    G4bool IsForbiddenCoincidence(const GatePulse* pulse1,const GatePulse* pulse2);
+    G4bool IsCoincidenceGood4CC(GateCoincidencePulse* coincidence);
+    GateCoincidencePulse* CreateSubPulse(GateCoincidencePulse* coincidence, G4int i, G4int j);
+    G4int ComputeSectorID(const GatePulse& pulse);
     static G4int          gm_coincSectNum;     // internal use
-
-
-    GateCoincidenceDigiCollection*  m_OutputCoincidenceDigiCollection;
 
     //@}
 
 
-    GateCoincidenceSorterMessenger *m_messenger;      //!< Messenger
-
-public:
-    G4int m_outputDigiCollectionID;
-    G4String            m_coincidenceSorterName;
-
+    GateCoincidenceSorterOldMessenger *m_messenger;      //!< Messenger
 };
 
 

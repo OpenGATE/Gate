@@ -503,21 +503,21 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
                 {
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 0 ) )
                     {
-                      runID = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetRunID();
+                      runID = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetRunID();
                       m_outputFile.write( reinterpret_cast< char* >( &runID ),
                                           sizeof( G4int ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 1 ) )
                     {
-                      eventID = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetEventID();
+                      eventID = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetEventID();
                       m_outputFile.write( reinterpret_cast< char* >( &eventID ),
                                           sizeof( G4int ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 2 ) )
                     {
-                      sourceID = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetSourceID();
+                      sourceID = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetSourceID();
                       m_outputFile.write( reinterpret_cast< char* >( &sourceID ),
                                           sizeof( G4int ) );
                     }
@@ -525,7 +525,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 3 ) )
                     {
                       sourcePosX = ( (*CDC)[ iDigi ]->
-                                     GetPulse( iP ) ).GetSourcePosition().x()/mm;
+                              GetDigi( iP ) )->GetSourcePosition().x()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &sourcePosX ),
                                           sizeof( G4double ) );
                     }
@@ -533,7 +533,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 4 ) )
                     {
                       sourcePosY = ( (*CDC)[ iDigi ]->
-                                     GetPulse( iP ) ).GetSourcePosition().y()/mm;
+                              GetDigi( iP ) )->GetSourcePosition().y()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &sourcePosY ),
                                           sizeof( G4double ) );
                     }
@@ -541,42 +541,42 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 5 ) )
                     {
                       sourcePosZ = ( (*CDC)[ iDigi ]->
-                                     GetPulse( iP ) ).GetSourcePosition().z()/mm;
+                              GetDigi( iP ) )->GetSourcePosition().z()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &sourcePosZ ),
                                           sizeof( G4double ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 6 ) )
                     {
-                      time = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetTime()/s;
+                      time = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetTime()/s;
                       m_outputFile.write( reinterpret_cast< char* >( &time ),
                                           sizeof( G4double ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 7 ) )
                     {
-                      energy = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetEnergy()/MeV;
+                      energy = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetEnergy()/MeV;
                       m_outputFile.write( reinterpret_cast< char* >( &energy ),
                                           sizeof( G4double ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 8 ) )
                     {
-                      posX = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetGlobalPos().x()/mm;
+                      posX = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetGlobalPos().x()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &posX ),
                                           sizeof( G4double ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 9 ) )
                     {
-                      posY = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetGlobalPos().y()/mm;
+                      posY = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetGlobalPos().y()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &posY ),
                                           sizeof( G4double ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 10 ) )
                     {
-                      posZ = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetGlobalPos().z()/mm;
+                      posZ = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetGlobalPos().z()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &posZ ),
                                           sizeof( G4double ) );
                     }
@@ -585,21 +585,21 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
                     {
                       // For each level of volume
                       for( size_t lvl = 0;
-                           lvl < ( ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                              lvl < ( ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                                    GetOutputVolumeID() ).size(); ++lvl )
                         {
                           *( volumeID + lvl ) =
-                            ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                                  ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                             GetOutputVolumeID()[ lvl ];
                         }
                       m_outputFile.write(
                                          reinterpret_cast< char* >( &volumeID[ 0 ] ),
-                                         ( ( (*CDC)[ iDigi ]->GetPulse( iP ) ).GetOutputVolumeID() ).size() * sizeof( G4int ) );
+                                         ( ( (*CDC)[ iDigi ]->GetDigi( iP ) )->GetOutputVolumeID() ).size() * sizeof( G4int ) );
                     }
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 12 ) )
                     {
-                      nPhantCompt = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      nPhantCompt = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetNPhantomCompton();
                       m_outputFile.write( reinterpret_cast< char* >( &nPhantCompt ),
                                           sizeof( G4int ) );
@@ -607,7 +607,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 13 ) )
                     {
-                      nCrysCompt = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      nCrysCompt = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetNCrystalCompton();
                       m_outputFile.write( reinterpret_cast< char* >( &nCrysCompt ),
                                           sizeof( G4int ) );
@@ -615,7 +615,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 14 ) )
                     {
-                      nPhantRay = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      nPhantRay = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetNPhantomRayleigh();
                       m_outputFile.write( reinterpret_cast< char* >( &nPhantRay ),
                                           sizeof( G4int ) );
@@ -623,7 +623,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 15 ) )
                     {
-                      nCrysRay = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      nCrysRay = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetNCrystalRayleigh();
                       m_outputFile.write( reinterpret_cast< char* >( &nCrysRay ),
                                           sizeof( G4int ) );
@@ -631,7 +631,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 16 ) )
                     {
-                      scannerPosZ = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      scannerPosZ = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetScannerPos().z()/mm;
                       m_outputFile.write( reinterpret_cast< char* >( &scannerPosZ ),
                                           sizeof( G4double ) );
@@ -639,7 +639,7 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 
                   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask( 17 ) )
                     {
-                      scannerRotAng = ( (*CDC)[ iDigi ]->GetPulse( iP ) ).
+                      scannerRotAng = ( (*CDC)[ iDigi ]->GetDigi( iP ) )->
                         GetScannerRotAngle()/deg;
                       m_outputFile.write( reinterpret_cast< char* >( &scannerRotAng ),
                                           sizeof( G4double ) );

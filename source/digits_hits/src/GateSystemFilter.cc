@@ -58,7 +58,7 @@ GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPuls
 void GateSystemFilter::SetSystemToItsChain()
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
-   std::vector<GateCoincidenceSorter*> CoincidenceSorterList = digitizer->GetCoinSorterList();
+   std::vector<GateCoincidenceSorterOld*> CoincidenceSorterList = digitizer->GetCoinSorterList();
    GateSystemList* systemList = digitizer->GetSystemList();
 
    GateSystemConstIterator iter;
@@ -69,7 +69,7 @@ void GateSystemFilter::SetSystemToItsChain()
          this->GetChain()->SetSystem(*iter);
 
          if(this->GetChain()->GetOutputName() == "Singles")
-            for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); ++itr)
+            for (std::vector<GateCoincidenceSorterOld*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); ++itr)
          {
             if((*itr)->GetOutputName() == "Coincidences")
             {

@@ -217,7 +217,7 @@ protected:
   static const G4String thedigitizerName;
   GatePulseProcessorChain* chain;
   static const G4String thedigitizerSorterName;
-  GateCoincidenceSorter* coincidenceSorter;
+  GateCoincidenceSorterOld* coincidenceSorter;
 
   void readPulses(GatePulseList* pPulseList);
   void processPulsesIntoSinglesTree();

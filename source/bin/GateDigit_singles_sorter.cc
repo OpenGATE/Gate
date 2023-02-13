@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     //Include a coincidence sorter into the digitizer with a default coincidence window that can be changed with macro commands
     G4double coincidenceWindow = 10.* ns;
     bool IsCCSorter=1;
-    GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizer,"Coincidences",coincidenceWindow,"layers",IsCCSorter);
+    GateCoincidenceSorterOld* coincidenceSorter = new GateCoincidenceSorterOld(digitizer,"Coincidences",coincidenceWindow,"layers",IsCCSorter);
     digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
 
 

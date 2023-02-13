@@ -538,52 +538,52 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 {
   size_t d;
 
-  runID          = (aDigi->GetPulse(0)).GetRunID();
-  axialPos       = (aDigi->GetPulse(0)).GetScannerPos().z()/mm;
-  rotationAngle  = (aDigi->GetPulse(0)).GetScannerRotAngle()/deg;
+  runID          = (aDigi->GetDigi(0))->GetRunID();
+    axialPos       = (aDigi->GetDigi(0))->GetScannerPos().z()/mm;
+    rotationAngle  = (aDigi->GetDigi(0))->GetScannerRotAngle()/deg;
 
-  eventID1       = (aDigi->GetPulse(0)).GetEventID();
-  sourceID1      = (aDigi->GetPulse(0)).GetSourceID();
-  sourcePosX1    = (aDigi->GetPulse(0)).GetSourcePosition().x()/mm;
-  sourcePosY1    = (aDigi->GetPulse(0)).GetSourcePosition().y()/mm;
-  sourcePosZ1    = (aDigi->GetPulse(0)).GetSourcePosition().z()/mm;
-  time1          = (aDigi->GetPulse(0)).GetTime()/s;
-  energy1        = (aDigi->GetPulse(0)).GetEnergy()/MeV;
-  globalPosX1    = (aDigi->GetPulse(0)).GetGlobalPos().x()/mm;
-  globalPosY1    = (aDigi->GetPulse(0)).GetGlobalPos().y()/mm;
-  globalPosZ1    = (aDigi->GetPulse(0)).GetGlobalPos().z()/mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID1[d] = (aDigi->GetPulse(0)).GetComponentID(d);
-  comptonPhantom1       = (aDigi->GetPulse(0)).GetNPhantomCompton();
-  comptonCrystal1       = (aDigi->GetPulse(0)).GetNCrystalCompton();
-  RayleighPhantom1       = (aDigi->GetPulse(0)).GetNPhantomRayleigh();
-  RayleighCrystal1       = (aDigi->GetPulse(0)).GetNCrystalRayleigh();
+    eventID1       = (aDigi->GetDigi(0))->GetEventID();
+    sourceID1      = (aDigi->GetDigi(0))->GetSourceID();
+    sourcePosX1    = (aDigi->GetDigi(0))->GetSourcePosition().x()/mm;
+    sourcePosY1    = (aDigi->GetDigi(0))->GetSourcePosition().y()/mm;
+    sourcePosZ1    = (aDigi->GetDigi(0))->GetSourcePosition().z()/mm;
+    time1          = (aDigi->GetDigi(0))->GetTime()/s;
+    energy1        = (aDigi->GetDigi(0))->GetEnergy()/MeV;
+    globalPosX1    = (aDigi->GetDigi(0))->GetGlobalPos().x()/mm;
+    globalPosY1    = (aDigi->GetDigi(0))->GetGlobalPos().y()/mm;
+    globalPosZ1    = (aDigi->GetDigi(0))->GetGlobalPos().z()/mm;
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID1[d] = (aDigi->GetDigi(0))->GetComponentID(d);
+    comptonPhantom1       = (aDigi->GetDigi(0))->GetNPhantomCompton();
+    comptonCrystal1       = (aDigi->GetDigi(0))->GetNCrystalCompton();
+    RayleighPhantom1       = (aDigi->GetDigi(0))->GetNPhantomRayleigh();
+    RayleighCrystal1       = (aDigi->GetDigi(0))->GetNCrystalRayleigh();
 
-  strcpy (comptonVolumeName1,((aDigi->GetPulse(0)).GetComptonVolumeName()).c_str());
-  strcpy (RayleighVolumeName1,((aDigi->GetPulse(0)).GetRayleighVolumeName()).c_str());
+    strcpy (comptonVolumeName1,((aDigi->GetDigi(0))->GetComptonVolumeName()).c_str());
+    strcpy (RayleighVolumeName1,((aDigi->GetDigi(0))->GetRayleighVolumeName()).c_str());
 
-  eventID2       = (aDigi->GetPulse(1)).GetEventID();
-  sourceID2      = (aDigi->GetPulse(1)).GetSourceID();
-  sourcePosX2    = (aDigi->GetPulse(1)).GetSourcePosition().x()/mm;
-  sourcePosY2    = (aDigi->GetPulse(1)).GetSourcePosition().y()/mm;
-  sourcePosZ2    = (aDigi->GetPulse(1)).GetSourcePosition().z()/mm;
-  time2          = (aDigi->GetPulse(1)).GetTime()/s;
-  energy2        = (aDigi->GetPulse(1)).GetEnergy()/MeV;
-  globalPosX2    = (aDigi->GetPulse(1)).GetGlobalPos().x()/mm;
-  globalPosY2    = (aDigi->GetPulse(1)).GetGlobalPos().y()/mm;
-  globalPosZ2    = (aDigi->GetPulse(1)).GetGlobalPos().z()/mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID2[d] = (aDigi->GetPulse(1)).GetComponentID(d);
-  comptonPhantom2       = (aDigi->GetPulse(1)).GetNPhantomCompton();
-  comptonCrystal2       = (aDigi->GetPulse(1)).GetNCrystalCompton();
-  RayleighPhantom2       = (aDigi->GetPulse(1)).GetNPhantomRayleigh();
-  RayleighCrystal2       = (aDigi->GetPulse(1)).GetNCrystalRayleigh();
+    eventID2       = (aDigi->GetDigi(1))->GetEventID();
+    sourceID2      = (aDigi->GetDigi(1))->GetSourceID();
+    sourcePosX2    = (aDigi->GetDigi(1))->GetSourcePosition().x()/mm;
+    sourcePosY2    = (aDigi->GetDigi(1))->GetSourcePosition().y()/mm;
+    sourcePosZ2    = (aDigi->GetDigi(1))->GetSourcePosition().z()/mm;
+    time2          = (aDigi->GetDigi(1))->GetTime()/s;
+    energy2        = (aDigi->GetDigi(1))->GetEnergy()/MeV;
+    globalPosX2    = (aDigi->GetDigi(1))->GetGlobalPos().x()/mm;
+    globalPosY2    = (aDigi->GetDigi(1))->GetGlobalPos().y()/mm;
+    globalPosZ2    = (aDigi->GetDigi(1))->GetGlobalPos().z()/mm;
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID2[d] = (aDigi->GetDigi(1))->GetComponentID(d);
+    comptonPhantom2       = (aDigi->GetDigi(1))->GetNPhantomCompton();
+    comptonCrystal2       = (aDigi->GetDigi(1))->GetNCrystalCompton();
+    RayleighPhantom2       = (aDigi->GetDigi(1))->GetNPhantomRayleigh();
+    RayleighCrystal2       = (aDigi->GetDigi(1))->GetNCrystalRayleigh();
 
-  strcpy (comptonVolumeName2,((aDigi->GetPulse(1)).GetComptonVolumeName()).c_str());
-  strcpy (RayleighVolumeName2,((aDigi->GetPulse(1)).GetRayleighVolumeName()).c_str());
+    strcpy (comptonVolumeName2,((aDigi->GetDigi(1))->GetComptonVolumeName()).c_str());
+    strcpy (RayleighVolumeName2,((aDigi->GetDigi(1))->GetRayleighVolumeName()).c_str());
 
-  sinogramTheta  = ComputeSinogramTheta();
-  sinogramS      = ComputeSinogramS();
+    sinogramTheta  = ComputeSinogramTheta();
+    sinogramS      = ComputeSinogramS();
 }
 
 

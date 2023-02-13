@@ -20,9 +20,11 @@ See LICENSE.md for further details
 #include "GateCylinderComponent.hh"
 #include "GateWedgeComponent.hh"
 #include "GatePulse.hh"
+#include "GateDigi.hh"
 
 class GateVolumeID;
 class GateVVolume;
+class GateDigi;
 
 /*! \class  GateVSystem
     \brief  A GateVSystem is an integrated interface to a GATE geometry.
@@ -139,8 +141,12 @@ class GateVSystem : public GateClockDependent
     {  return m_mainComponentDepth ? m_BaseComponent->GetChildComponent(0) :  m_BaseComponent ; }
 
     //! Extract the ID of the main-component from a pulse
+    //OK GND 2022 Obsolete TODO remove
     virtual G4int GetMainComponentID(const GatePulse& pulse)
     {  return pulse.GetComponentID(m_mainComponentDepth) ; }
+
+    //GND OK 2022
+    virtual G4int GetMainComponentIDGND(const GateDigi& digi);
 
     //! Returns the number of coincident-sector of the system.
     virtual size_t GetCoincidentSectorNumber()
