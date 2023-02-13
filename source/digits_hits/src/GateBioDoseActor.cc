@@ -17,7 +17,12 @@ GateBioDoseActor::GateBioDoseActor(G4String name, G4int depth):
 	_currentEvent(0),
 	_messenger(this),
 	_alphaRef(-1),
-	_betaRef(-1)
+	_betaRef(-1),
+	_enableDose(false),
+	_enableBioDose(true),
+	_enableAlphaMix(false),
+	_enableBetaMix(false),
+	_enableRBE(false)
 {
 	GateDebugMessageInc("Actor", 4, "GateBioDoseActor() -- begin\n");
 }
@@ -41,12 +46,56 @@ void GateBioDoseActor::Construct() {
 	EnablePostUserTrackingAction(false);
 	EnableUserSteppingAction(true);
 
-	// Output
-	_bioDoseFilename = G4String(removeExtension(mSaveFilename)) + "-BioDose." + G4String(getExtension(mSaveFilename));
-	SetOriginTransformAndFlagToImage(_bioDoseImage);
-	_bioDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-	_bioDoseImage.Allocate();
-	_bioDoseImage.SetFilename(_bioDoseFilename);
+	// Outputs
+	{
+		G4String basename = removeExtension(mSaveFilename);
+		G4String ext = getExtension(mSaveFilename);
+
+		if(_enableDose) {
+			G4String filename = basename + "_dose." + ext;
+
+			SetOriginTransformAndFlagToImage(_doseImage);
+			_doseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+			_doseImage.Allocate();
+			_doseImage.SetFilename(filename);
+		}
+
+		if(_enableBioDose) {
+			G4String filename = basename + "_biodose." + ext;
+
+			SetOriginTransformAndFlagToImage(_bioDoseImage);
+			_bioDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+			_bioDoseImage.Allocate();
+			_bioDoseImage.SetFilename(filename);
+		}
+
+		if(_enableAlphaMix) {
+			G4String filename = basename + "_alphamix." + ext;
+
+			SetOriginTransformAndFlagToImage(_alphaMixImage);
+			_alphaMixImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+			_alphaMixImage.Allocate();
+			_alphaMixImage.SetFilename(filename);
+		}
+
+		if(_enableBetaMix) {
+			G4String filename = basename + "_betamix." + ext;
+
+			SetOriginTransformAndFlagToImage(_betaMixImage);
+			_betaMixImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+			_betaMixImage.Allocate();
+			_betaMixImage.SetFilename(filename);
+		}
+
+		if(_enableRBE) {
+			G4String filename = basename + "_rbe." + ext;
+
+			SetOriginTransformAndFlagToImage(_RBEImage);
+			_RBEImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+			_RBEImage.Allocate();
+			_RBEImage.SetFilename(filename);
+		}
+	}
 
 	//ResetData();
 
@@ -58,7 +107,7 @@ void GateBioDoseActor::Construct() {
 	_massOfVoxel = ((1 * (mVoxelSize.x() / cm * mVoxelSize.y() / cm * mVoxelSize.z() / cm)) * 1E-3); //G4_WATER (density : g.cm-3)
 
 	// SOBP
-	if (_SOBPWeight == 0) { _SOBPWeight = 1; }
+	if(_SOBPWeight == 0) { _SOBPWeight = 1; }
 
 	//Building the cell line information
 	_dataBase = "data/" + _cellLine + "_" + _bioPhysicalModel + ".db";
@@ -135,17 +184,26 @@ void GateBioDoseActor::SaveData() {
 		// Calculate dose, dosebio
 		constexpr double MeVtoJoule = 1.60218e-13;
 		double dose = deposited.energy * MeVtoJoule / _massOfVoxel;
-		double dosebio = 0;
+		double biodose = 0;
 
 		if(dose != 0 && alphamix != 0 && betamix != 0)
-			dosebio = (-_alphaRef + std::sqrt((_alphaRef * _alphaRef) + 4 * _betaRef * (alphamix * dose + betamix * (dose * dose)))) / (2 * _betaRef);
+			biodose = (-_alphaRef + std::sqrt((_alphaRef * _alphaRef) + 4 * _betaRef * (alphamix * dose + betamix * (dose * dose)))) / (2 * _betaRef);
 
-		// Save data
-		_bioDoseImage.AddValue(index, dosebio);
+		// Write data
+		if(_enableDose)     _doseImage.AddValue(index, dose);
+		if(_enableBioDose)  _bioDoseImage.AddValue(index, biodose);
+		if(_enableAlphaMix) _alphaMixImage.AddValue(index, alphamix);
+		if(_enableBetaMix)  _betaMixImage.AddValue(index, betamix);
+		if(_enableRBE)      _RBEImage.AddValue(index, dose > 0? biodose/dose : 0);
 	}
 	//-------------------------------------------------------------
 	GateVActor::SaveData();
-	_bioDoseImage.SaveData(_currentEvent);
+
+	if(_enableDose)     _doseImage.SaveData(_currentEvent);
+	if(_enableBioDose)  _bioDoseImage.SaveData(_currentEvent);
+	if(_enableAlphaMix) _alphaMixImage.SaveData(_currentEvent);
+	if(_enableBetaMix)  _betaMixImage.SaveData(_currentEvent);
+	if(_enableRBE)      _RBEImage.SaveData(_currentEvent);
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -223,6 +281,5 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void GateBioDoseActor::ResetData() {
-	// _bioDoseImage.Reset();
 }
 //-----------------------------------------------------------------------------

@@ -8,6 +8,8 @@ See LICENSE.md for further details
 
 #include "GateBioDoseActorMessenger.hh"
 #include "GateBioDoseActor.hh"
+#include <G4UIcmdWithABool.hh>
+#include <memory>
 
 //-----------------------------------------------------------------------------
 GateBioDoseActorMessenger::GateBioDoseActorMessenger(GateBioDoseActor* sensor):
@@ -29,10 +31,6 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	pBetaRefCmd = std::make_unique<G4UIcmdWithADouble>(n, this);
 	pBetaRefCmd->SetGuidance("See [...] for values from publications");
 
-	n = base + "/setBioDoseImageFilename";
-	pImageFilenameCmd = std::make_unique<G4UIcmdWithAString>(n, this);
-	pImageFilenameCmd->SetGuidance("For an image for the biological dose as output");
-
 	n = base + "/setCellLine";
 	pCellLineCmd = std::make_unique<G4UIcmdWithAString>(n, this);
 	pCellLineCmd->SetGuidance("Pick a cell line to irradiate");
@@ -44,17 +42,42 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	n = base + "/setWeightSOBP";
 	pSOBPWeightCmd = std::make_unique<G4UIcmdWithADouble>(n, this);
 	pSOBPWeightCmd->SetGuidance("If passive SOBP, set bragg peak weight");
+
+	// enable outputs
+	n = base + "/enableDose";
+	pEnableDoseCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableDoseCmd->SetGuidance("Enable dose output");
+
+	n = base + "/enableBioDose";
+	pEnableBioDoseCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableBioDoseCmd->SetGuidance("Enable biodose output (default: true)");
+
+	n = base + "/enableAlphaMix";
+	pEnableAlphaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableAlphaMixCmd->SetGuidance("Enable alpha mix output");
+
+	n = base + "/enableBetaMix";
+	pEnableBetaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableBetaMixCmd->SetGuidance("Enable beta mix output");
+
+	n = base + "/enableRBE";
+	pEnableRBECmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableRBECmd->SetGuidance("Enable RBE output");
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue) {
-	if(cmd == pAlphaRefCmd.get())								pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(newValue));
-	else if(cmd == pBetaRefCmd.get())						pBioDoseActor->SetBetaRef(pBetaRefCmd->GetNewDoubleValue(newValue));
-	else if(cmd == pImageFilenameCmd.get())			pBioDoseActor->SetBioDoseImageFilename(newValue);
-	else if(cmd == pCellLineCmd.get())          pBioDoseActor->SetCellLine(newValue);
-	else if(cmd == pBioPhysicalModelCmd.get())  pBioDoseActor->SetBioPhysicalModel(newValue);
-	else if(cmd == pSOBPWeightCmd.get())        pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(newValue));
+void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
+	if(cmd == pAlphaRefCmd.get())								pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(value));
+	else if(cmd == pBetaRefCmd.get())						pBioDoseActor->SetBetaRef(pBetaRefCmd->GetNewDoubleValue(value));
+	else if(cmd == pCellLineCmd.get())          pBioDoseActor->SetCellLine(value);
+	else if(cmd == pBioPhysicalModelCmd.get())  pBioDoseActor->SetBioPhysicalModel(value);
+	else if(cmd == pSOBPWeightCmd.get())        pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(value));
+	else if(cmd == pEnableDoseCmd.get())        pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableBioDoseCmd.get())     pBioDoseActor->SetEnableBioDose(pEnableBioDoseCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableAlphaMixCmd.get())    pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableBetaMixCmd.get())     pBioDoseActor->SetEnableBetaMix(pEnableBetaMixCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableRBECmd.get())         pBioDoseActor->SetEnableRBE(pEnableRBECmd->GetNewBoolValue(value));
 
-	GateImageActorMessenger::SetNewValue(cmd, newValue);
+	GateImageActorMessenger::SetNewValue(cmd, value);
 }
 //-----------------------------------------------------------------------------

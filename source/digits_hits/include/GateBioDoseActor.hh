@@ -76,10 +76,15 @@ public:
 	// Messenger
 	void SetAlphaRef(G4double alphaRef) { _alphaRef = alphaRef; }
 	void SetBetaRef(G4double betaRef) { _betaRef = betaRef; }
-	void SetBioDoseImageFilename(G4String s) { _bioDoseFilename = s; }
 	void SetCellLine(G4String s) { _cellLine = s; }
 	void SetBioPhysicalModel(G4String s) { _bioPhysicalModel = s; }
 	void SetSOBPWeight(G4double d) { _SOBPWeight = d; }
+
+	void SetEnableDose(bool e) { _enableDose = e; }
+	void SetEnableBioDose(bool e) { _enableBioDose = e; }
+	void SetEnableAlphaMix(bool e) { _enableAlphaMix = e; }
+	void SetEnableBetaMix(bool e) { _enableBetaMix = e; }
+	void SetEnableRBE(bool e) { _enableRBE = e; }
 
 	// Input database
 	void BuildDatabase();
@@ -105,14 +110,25 @@ private:
 	double _alphaRef, _betaRef; //manual implanted
 	double _massOfVoxel; // G4_WATER
 
+	G4double _SOBPWeight;
+
 	// Maps
 	DepositedMap _depositedMap;
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
 	// Images
-	G4double _SOBPWeight;
-	G4String _bioDoseFilename;
 	GateImageWithStatistic _bioDoseImage;
+	GateImageWithStatistic _doseImage;
+	GateImageWithStatistic _alphaMixImage;
+	GateImageWithStatistic _betaMixImage;
+	GateImageWithStatistic _RBEImage;
+
+	// Outputs
+	bool _enableDose;
+	bool _enableBioDose;
+	bool _enableAlphaMix;
+	bool _enableBetaMix;
+	bool _enableRBE;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(BioDoseActor, GateBioDoseActor)

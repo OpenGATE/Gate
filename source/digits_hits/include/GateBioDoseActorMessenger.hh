@@ -33,10 +33,15 @@ protected:
 
 	std::unique_ptr<G4UIcmdWithADouble> pAlphaRefCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pBetaRefCmd;
-	std::unique_ptr<G4UIcmdWithAString> pImageFilenameCmd;
 	std::unique_ptr<G4UIcmdWithAString> pCellLineCmd;
 	std::unique_ptr<G4UIcmdWithAString> pBioPhysicalModelCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pSOBPWeightCmd;
+
+	std::unique_ptr<G4UIcmdWithABool>   pEnableDoseCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableBioDoseCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableAlphaMixCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableBetaMixCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableRBECmd;
 };
 
 #endif
