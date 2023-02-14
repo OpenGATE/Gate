@@ -13,6 +13,7 @@ See LICENSE.md for further details
 
 #include "GateToTreeMessenger.hh"
 #include "GateToTree.hh"
+#include "GateDigitizerMgr.hh"
 
 
 #include "G4UIcmdWithAString.hh"
@@ -41,6 +42,14 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
 
   cmdName = GetDirectoryName() + "addCollection";
   m_addCollectionCmd = new G4UIcmdWithAString(cmdName, this);
+
+  //OK GND 2022
+  cmdName = GetDirectoryName() + "addHitsCollection";
+  m_addHitsCollectionCmd = new G4UIcmdWithAString(cmdName, this);
+
+  cmdName = GetDirectoryName() + "addOpticalCollection";
+  m_addOpticalCollectionCmd = new G4UIcmdWithAString(cmdName, this);
+
 
   for(auto &&m: m_gateToTree->getHitsParamsToWrite())
   {
@@ -83,6 +92,8 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
 GateToTreeMessenger::~GateToTreeMessenger()
 {
   delete m_addFileNameCmd;
+  delete m_addHitsCollectionCmd;
+  delete m_addOpticalCollectionCmd;
   delete m_enableHitsOutput;
   delete m_disableHitsOutput;
 
@@ -106,10 +117,49 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
   if(icommand == m_disableOpticalDataOutput)
     m_gateToTree->setOpticalDataEnabled(false);
 
+  //OK GND 2022
+  if(icommand == m_addHitsCollectionCmd)
+      m_gateToTree->addHitsCollection(string);
 
+  if(icommand == m_addOpticalCollectionCmd)
+       m_gateToTree->addOpticalCollection(string);
 
+  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
   if(icommand == m_addCollectionCmd)
-    m_gateToTree->addCollection(string);
+  	  {
+
+	  if (string=="Singles") //save all collections
+	  {
+		  for(size_t i=0;i<digitizerMgr->m_SingleDigitizersList.size();i++)
+			  {
+			  	  digitizerMgr->m_SingleDigitizersList[i]->m_recordFlag=true;
+			  	  m_gateToTree->addCollection(digitizerMgr->m_SingleDigitizersList[i]->GetOutputName());
+			  }
+
+	  }
+	  else
+	  { //save only one specific collections
+		  m_gateToTree->addCollection(string);
+		  GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(string);
+
+		  if(digitizer)
+			  digitizer->m_recordFlag=true;
+	  }
+	  //Setting flag in the digitizerMgr
+	  if (G4StrUtil::contains(string, "Singles"))
+	  {
+		  digitizerMgr->m_recordSingles=true;
+	  }
+	  if (G4StrUtil::contains(string, "Coincidences"))
+	  {
+
+		  digitizerMgr->m_recordCoincidences=true;
+	  }
+
+  	  }
+
+ // if(icommand == m_addCollectionCmd)
+ //   m_gateToTree->addCollection(string);
 
   auto c = static_cast<G4UIcmdWithoutParameter*>(icommand);
   if(m_maphits_cmdParameter_toTreeParameter.count(c))

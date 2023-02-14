@@ -26,7 +26,7 @@ See LICENSE.md for further details
 #include "GateVSystem.hh"
 #include "GateMiscFunctions.hh"
 #include "G4DigiManager.hh"
-
+#include "GateDigitizerMgr.hh"
 
 char GateToTree::m_outputIDName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM][GateToTree::MAX_OUTPUTIDNAME_SIZE];
 bool GateToTree::m_outputIDHasName[GateToTree::MAX_NB_SYSTEM][GateToTree::MAX_DEPTH_SYSTEM];
@@ -174,7 +174,7 @@ void GateToTree::RecordBeginOfAcquisition() {
     if (!this->IsEnabled())
         return;
 
-    if (m_hits_enabled) {
+   /* if (m_hits_enabled) {
         for (auto &&fileName: m_listOfFileName) {
             auto extension = getExtension(fileName);
             auto name = removeExtension(fileName);
@@ -182,111 +182,117 @@ void GateToTree::RecordBeginOfAcquisition() {
             G4String hits_filename = name + ".hits." + extension;
             m_manager_hits.add_file(hits_filename, extension);
         }
+        */
+        //OK GND 2022
+	for (auto &&m: m_mmanager_hits)
+	{
+
+		auto &mm = m.second;
 
         if (m_hitsParams_to_write.at("PDGEncoding").toSave())
-            m_manager_hits.write_variable("PDGEncoding", &m_PDGEncoding);
+            mm.write_variable("PDGEncoding", &m_PDGEncoding);
 
         if (m_hitsParams_to_write.at("trackID").toSave())
-            m_manager_hits.write_variable("trackID", &m_trackID);
+            mm.write_variable("trackID", &m_trackID);
 
         if (m_hitsParams_to_write.at("parentID").toSave())
-            m_manager_hits.write_variable("parentID", &m_parentID);
+            mm.write_variable("parentID", &m_parentID);
 
         if (m_hitsParams_to_write.at("trackLocalTime").toSave())
-            m_manager_hits.write_variable("trackLocalTime", &m_trackLocalTime);
+            mm.write_variable("trackLocalTime", &m_trackLocalTime);
 
         if (m_hitsParams_to_write.at("time").toSave())
-            m_manager_hits.write_variable("time", &m_time[0]);
+            mm.write_variable("time", &m_time[0]);
 
         if (m_hitsParams_to_write.at("runID").toSave())
-            m_manager_hits.write_variable("runID", &m_runID);
+            mm.write_variable("runID", &m_runID);
 
         if (m_hitsParams_to_write.at("eventID").toSave())
-            m_manager_hits.write_variable("eventID", &m_eventID[0]);
+            mm.write_variable("eventID", &m_eventID[0]);
 
         if (m_hitsParams_to_write.at("sourceID").toSave())
-            m_manager_hits.write_variable("sourceID", &m_sourceID[0]);
+            mm.write_variable("sourceID", &m_sourceID[0]);
 
         if (m_hitsParams_to_write.at("primaryID").toSave())
-            m_manager_hits.write_variable("primaryID", &m_primaryID);
+            mm.write_variable("primaryID", &m_primaryID);
 
         if (m_hitsParams_to_write.at("posX").toSave())
-            m_manager_hits.write_variable("posX", &m_posX[0]);
+            mm.write_variable("posX", &m_posX[0]);
 
         if (m_hitsParams_to_write.at("posY").toSave())
-            m_manager_hits.write_variable("posY", &m_posY[0]);
+            mm.write_variable("posY", &m_posY[0]);
 
         if (m_hitsParams_to_write.at("posZ").toSave())
-            m_manager_hits.write_variable("posZ", &m_posZ[0]);
+            mm.write_variable("posZ", &m_posZ[0]);
 
         if (m_hitsParams_to_write.at("localPosX").toSave())
-            m_manager_hits.write_variable("localPosX", &m_localPosX);
+            mm.write_variable("localPosX", &m_localPosX);
 
         if (m_hitsParams_to_write.at("localPosY").toSave())
-            m_manager_hits.write_variable("localPosY", &m_localPosY);
+            mm.write_variable("localPosY", &m_localPosY);
 
         if (m_hitsParams_to_write.at("localPosZ").toSave())
-            m_manager_hits.write_variable("localPosZ", &m_localPosZ);
+            mm.write_variable("localPosZ", &m_localPosZ);
 
         if (m_hitsParams_to_write.at("momDirX").toSave())
-            m_manager_hits.write_variable("momDirX", &m_momDirX);
+            mm.write_variable("momDirX", &m_momDirX);
 
         if (m_hitsParams_to_write.at("momDirY").toSave())
-            m_manager_hits.write_variable("momDirY", &m_momDirY);
+            mm.write_variable("momDirY", &m_momDirY);
 
         if (m_hitsParams_to_write.at("momDirZ").toSave())
-            m_manager_hits.write_variable("momDirZ", &m_momDirZ);
+            mm.write_variable("momDirZ", &m_momDirZ);
 
         if (m_hitsParams_to_write.at("edep").toSave())
-            m_manager_hits.write_variable("edep", &m_edep[0]);
+            mm.write_variable("edep", &m_edep[0]);
 
         if (m_hitsParams_to_write.at("stepLength").toSave())
-            m_manager_hits.write_variable("stepLength", &m_stepLength);
+            mm.write_variable("stepLength", &m_stepLength);
 
         if (m_hitsParams_to_write.at("trackLength").toSave())
-            m_manager_hits.write_variable("trackLength", &m_trackLength);
+            mm.write_variable("trackLength", &m_trackLength);
 
         if (m_hitsParams_to_write.at("rotationAngle").toSave())
-            m_manager_hits.write_variable("rotationAngle", &m_rotationAngle);
+            mm.write_variable("rotationAngle", &m_rotationAngle);
 
         if (m_hitsParams_to_write.at("axialPos").toSave())
-            m_manager_hits.write_variable("axialPos", &m_axialPos);
+            mm.write_variable("axialPos", &m_axialPos);
 
         if (m_hitsParams_to_write.at("processName").toSave())
-            m_manager_hits.write_variable("processName", &m_processName, MAX_NB_CHARACTER);
+            mm.write_variable("processName", &m_processName, MAX_NB_CHARACTER);
 
         if (m_hitsParams_to_write.at("comptVolName").toSave())
-            m_manager_hits.write_variable("comptVolName", &m_comptonVolumeName[0], MAX_NB_CHARACTER);
+            mm.write_variable("comptVolName", &m_comptonVolumeName[0], MAX_NB_CHARACTER);
 
         if (m_hitsParams_to_write.at("RayleighVolName").toSave())
-            m_manager_hits.write_variable("RayleighVolName", &m_RayleighVolumeName[0], MAX_NB_CHARACTER);
+            mm.write_variable("RayleighVolName", &m_RayleighVolumeName[0], MAX_NB_CHARACTER);
 
         if (m_hitsParams_to_write.at("volumeIDs").toSave()) {
             for (auto i = 0; i < VOLUMEID_SIZE; ++i) {
                 std::stringstream ss;
                 ss << "volumeID[" << i << "]";
-                m_manager_hits.write_variable(ss.str(), &m_volumeID[i]);
+                mm.write_variable(ss.str(), &m_volumeID[i]);
             }
         }
 
         if (m_hitsParams_to_write.at("sourcePosX").toSave())
-            m_manager_hits.write_variable("sourcePosX", &m_sourcePosX[0]);
+            mm.write_variable("sourcePosX", &m_sourcePosX[0]);
         if (m_hitsParams_to_write.at("sourcePosY").toSave())
-            m_manager_hits.write_variable("sourcePosY", &m_sourcePosY[0]);
+            mm.write_variable("sourcePosY", &m_sourcePosY[0]);
         if (m_hitsParams_to_write.at("sourcePosZ").toSave())
-            m_manager_hits.write_variable("sourcePosZ", &m_sourcePosZ[0]);
+            mm.write_variable("sourcePosZ", &m_sourcePosZ[0]);
 
         if (m_hitsParams_to_write.at("nPhantomCompton").toSave())
-            m_manager_hits.write_variable("nPhantomCompton", &m_nPhantomCompton[0]);
+            mm.write_variable("nPhantomCompton", &m_nPhantomCompton[0]);
 
         if (m_hitsParams_to_write.at("nCrystalCompton").toSave())
-            m_manager_hits.write_variable("nCrystalCompton", &m_nCrystalCompton[0]);
+            mm.write_variable("nCrystalCompton", &m_nCrystalCompton[0]);
 
         if (m_hitsParams_to_write.at("nPhantomRayleigh").toSave())
-            m_manager_hits.write_variable("nPhantomRayleigh", &m_nPhantomRayleigh[0]);
+            mm.write_variable("nPhantomRayleigh", &m_nPhantomRayleigh[0]);
 
         if (m_hitsParams_to_write.at("nCrystalRayleigh").toSave())
-            m_manager_hits.write_variable("nCrystalRayleigh", &m_nCrystalRayleigh[0]);
+            mm.write_variable("nCrystalRayleigh", &m_nCrystalRayleigh[0]);
 
 
         if (m_hitsParams_to_write.at("componentsIDs").toSave()) {
@@ -296,7 +302,7 @@ void GateToTree::RecordBeginOfAcquisition() {
                 for (auto depth = 0; depth < m_max_depth_system[k]; ++depth) {
                     std::stringstream ss;
                     ss << m_outputIDName[k][depth];
-                    m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
+                    mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
                 }
             } else {
                 for (unsigned int k = 0; k < GateSystemListManager::GetInstance()->size(); ++k) {
@@ -307,33 +313,33 @@ void GateToTree::RecordBeginOfAcquisition() {
                             continue;
                         std::stringstream ss;
                         ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
-                        m_manager_hits.write_variable(ss.str(), &m_outputID[0][k][depth]);
+                        mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
                     }
                 }
             }
         }
 
         if (m_hitsParams_to_write.at("photonID").toSave())
-            m_manager_hits.write_variable("photonID", &m_photonID);
+            mm.write_variable("photonID", &m_photonID);
 
         if (m_hitsParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
-            m_manager_hits.write_variable("systemID", &m_systemID);
+            mm.write_variable("systemID", &m_systemID);
 
         if (m_hitsParams_to_write.at("sourceType").toSave())
-            m_manager_hits.write_variable("sourceType", &m_sourceType);
+            mm.write_variable("sourceType", &m_sourceType);
 
         if (m_hitsParams_to_write.at("decayType").toSave())
-            m_manager_hits.write_variable("decayType", &m_decayType);
+            mm.write_variable("decayType", &m_decayType);
 
         if (m_hitsParams_to_write.at("gammaType").toSave())
-            m_manager_hits.write_variable("gammaType", &m_gammaType);
+            mm.write_variable("gammaType", &m_gammaType);
 
 
-        m_manager_hits.write_header();
+        mm.write_header();
     }
 
 
-    if (m_opticalData_enabled) {
+   /* if (m_opticalData_enabled) {
         for (auto &&fileName: m_listOfFileName) {
             auto extension = getExtension(fileName);
             auto name = removeExtension(fileName);
@@ -341,53 +347,58 @@ void GateToTree::RecordBeginOfAcquisition() {
             G4String hits_filename = name + ".optical." + extension;
             m_manager_optical.add_file(hits_filename, extension);
         }
+*/
+	//OK GND 2022
+    for (auto &&m: m_mmanager_optical)
+ 	 {
 
+	 auto &mm = m.second;
         if (m_opticalParams_to_write.at("NumScintillation").toSave())
-            m_manager_optical.write_variable("NumScintillation", &m_nScintillation);
+            mm.write_variable("NumScintillation", &m_nScintillation);
 
         if (m_opticalParams_to_write.at("NumCrystalWLS").toSave())
-            m_manager_optical.write_variable("NumCrystalWLS", &m_NumCrystalWLS);
+            mm.write_variable("NumCrystalWLS", &m_NumCrystalWLS);
         if (m_opticalParams_to_write.at("NumPhantomWLS").toSave())
-            m_manager_optical.write_variable("NumPhantomWLS", &m_NumPhantomWLS);
+            mm.write_variable("NumPhantomWLS", &m_NumPhantomWLS);
 
         if (m_opticalParams_to_write.at("CrystalLastHitPos_X").toSave())
-            m_manager_optical.write_variable("CrystalLastHitPos_X", &m_CrystalLastHitPos_X);
+            mm.write_variable("CrystalLastHitPos_X", &m_CrystalLastHitPos_X);
         if (m_opticalParams_to_write.at("CrystalLastHitPos_Y").toSave())
-            m_manager_optical.write_variable("CrystalLastHitPos_Y", &m_CrystalLastHitPos_Y);
+            mm.write_variable("CrystalLastHitPos_Y", &m_CrystalLastHitPos_Y);
         if (m_opticalParams_to_write.at("CrystalLastHitPos_Z").toSave())
-            m_manager_optical.write_variable("CrystalLastHitPos_Z", &m_CrystalLastHitPos_Z);
+            mm.write_variable("CrystalLastHitPos_Z", &m_CrystalLastHitPos_Z);
         if (m_opticalParams_to_write.at("CrystalLastHitEnergy").toSave())
-            m_manager_optical.write_variable("CrystalLastHitEnergy", &m_CrystalLastHitEnergy);
+            mm.write_variable("CrystalLastHitEnergy", &m_CrystalLastHitEnergy);
 
         if (m_opticalParams_to_write.at("PhantomLastHitPos_X").toSave())
-            m_manager_optical.write_variable("PhantomLastHitPos_X", &m_PhantomLastHitPos_X);
+            mm.write_variable("PhantomLastHitPos_X", &m_PhantomLastHitPos_X);
         if (m_opticalParams_to_write.at("PhantomLastHitPos_Y").toSave())
-            m_manager_optical.write_variable("PhantomLastHitPos_Y", &m_PhantomLastHitPos_Y);
+            mm.write_variable("PhantomLastHitPos_Y", &m_PhantomLastHitPos_Y);
         if (m_opticalParams_to_write.at("PhantomLastHitPos_Z").toSave())
-            m_manager_optical.write_variable("PhantomLastHitPos_Z", &m_PhantomLastHitPos_Z);
+            mm.write_variable("PhantomLastHitPos_Z", &m_PhantomLastHitPos_Z);
         if (m_opticalParams_to_write.at("PhantomLastHitEnergy").toSave())
-            m_manager_optical.write_variable("PhantomLastHitEnergy", &m_PhantomLastHitEnergy);
+            mm.write_variable("PhantomLastHitEnergy", &m_PhantomLastHitEnergy);
 
         if (m_opticalParams_to_write.at("PhantomWLSPos_X").toSave())
-            m_manager_optical.write_variable("PhantomWLSPos_X", &m_PhantomWLSPos_X);
+            mm.write_variable("PhantomWLSPos_X", &m_PhantomWLSPos_X);
         if (m_opticalParams_to_write.at("PhantomWLSPos_Y").toSave())
-            m_manager_optical.write_variable("PhantomWLSPos_Y", &m_PhantomWLSPos_Y);
+            mm.write_variable("PhantomWLSPos_Y", &m_PhantomWLSPos_Y);
         if (m_opticalParams_to_write.at("PhantomWLSPos_Z").toSave())
-            m_manager_optical.write_variable("PhantomWLSPos_Z", &m_PhantomWLSPos_Z);
+            mm.write_variable("PhantomWLSPos_Z", &m_PhantomWLSPos_Z);
 
         if (m_opticalParams_to_write.at("PhantomProcessName").toSave())
-            m_manager_optical.write_variable("PhantomProcessName", &m_NameOfProcessInPhantom, MAX_NB_CHARACTER);
+            mm.write_variable("PhantomProcessName", &m_NameOfProcessInPhantom, MAX_NB_CHARACTER);
         if (m_opticalParams_to_write.at("CrystalProcessName").toSave())
-            m_manager_optical.write_variable("CrystalProcessName", &m_NameOfProcessInCrystal, MAX_NB_CHARACTER);
+            mm.write_variable("CrystalProcessName", &m_NameOfProcessInCrystal, MAX_NB_CHARACTER);
 
         if (m_opticalParams_to_write.at("MomentumDirectionx").toSave())
-            m_manager_optical.write_variable("MomentumDirectionx", &m_MomentumDirectionx);
+            mm.write_variable("MomentumDirectionx", &m_MomentumDirectionx);
         if (m_opticalParams_to_write.at("MomentumDirectiony").toSave())
-            m_manager_optical.write_variable("MomentumDirectiony", &m_MomentumDirectiony);
+            mm.write_variable("MomentumDirectiony", &m_MomentumDirectiony);
         if (m_opticalParams_to_write.at("MomentumDirectionz").toSave())
-            m_manager_optical.write_variable("MomentumDirectionz", &m_MomentumDirectionz);
+            mm.write_variable("MomentumDirectionz", &m_MomentumDirectionz);
 
-        m_manager_optical.write_header();
+        mm.write_header();
 
     }
 
@@ -604,9 +615,18 @@ void GateToTree::RecordBeginOfAcquisition() {
 }
 
 void GateToTree::RecordEndOfAcquisition() {
-    m_manager_hits.close();
-    m_manager_optical.close();
-    for (auto &&m: m_mmanager_singles)
+    //m_manager_hits.close();
+    //m_manager_optical.close();
+
+	//OK GND 2022
+
+	for (auto &&m: m_mmanager_hits)
+            	m.second.close();
+
+	for (auto &&m: m_mmanager_optical)
+	            	m.second.close();
+
+	for (auto &&m: m_mmanager_singles)
         m.second.close();
 
     for (auto &&m: m_mmanager_coincidences)
@@ -627,72 +647,101 @@ void GateToTree::RecordBeginOfEvent(const G4Event *event) {
 }
 
 void GateToTree::RecordEndOfEvent(const G4Event *event) {
-    auto CHC = this->GetOutputMgr()->GetHitCollection();
-    if (!CHC) {
-        std::cout <<
-                  "GateToTree::RecordEndOfEvent : GateHitCollection not found"
-                  << Gateendl;
-        return;
-    }
 
-//    auto writeComptonVolumeName = m_hitsParams_to_write.at("comptVolName").toSave();
-//    auto writeRayleighVolName = m_hitsParams_to_write.at("RayleighVolName").toSave();
-//    auto writeVolumeIDs = m_hitsParams_to_write.at("volumeIDs").toSave();
+	//OK GND 2022
+	auto fDM = G4DigiManager::GetDMpointer();
 
-    m_systemID = -1;
-    for (unsigned int iHit = 0; iHit < CHC->entries(); ++iHit) {
-        auto hit = (*CHC)[iHit];
-        if (!hit->GoodForAnalysis())
-            continue;
+	 if (!m_hits_to_collectionID.size()) {
+	        for (auto &&m: m_mmanager_hits) {
+	            auto str = m.first+"Collection";
+	            //str.erase(remove_if(str.begin(), str.end(), '_'), str.end());
+	            auto collectionID = fDM->GetHitsCollectionID(str);
+	            m_hits_to_collectionID.emplace(m.first, collectionID);
+	        }
+	    }
 
-        m_systemID = hit->GetSystemID();
-        retrieve(hit, m_systemID);
 
-        if (m_hitsParams_to_write.at("componentsIDs").toSave()) {
-            for (auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
-                m_outputID[0][m_systemID][depth] = hit->GetComponentID(depth);
-        }
 
-//        if(writeComptonVolumeName)
-        m_comptonVolumeName[0] = hit->GetComptonVolumeName();
+	//auto CHC = this->GetOutputMgr()->GetHitCollection();
 
-//        if(writeRayleighVolName)
-        m_RayleighVolumeName[0] = hit->GetRayleighVolumeName();
+	 for (auto &&m: m_mmanager_hits)
+	 {
+		 auto collectionID = m_hits_to_collectionID.at(m.first);
+		 const GateHitsCollection *CHC =
+				 (GateHitsCollection *) (fDM->GetHitsCollection(collectionID));
 
-        m_primaryID = hit->GetPrimaryID();
+		 if (!CHC) {
+			std::cout <<
+					  "GateToTree::RecordEndOfEvent : GateHitCollection not found"
+					  << Gateendl;
+			continue;
+		}
 
-        m_localPosX = hit->GetLocalPos().x() / mm;
-        m_localPosY = hit->GetLocalPos().y() / mm;
-        m_localPosZ = hit->GetLocalPos().z() / mm;
+		 assert(CHC);
+		 auto v = CHC->GetVector();
+		 assert(v);
 
-        m_momDirX = hit->GetMomentumDir().x();
-        m_momDirY = hit->GetMomentumDir().y();
-        m_momDirZ = hit->GetMomentumDir().z();
+	//    auto writeComptonVolumeName = m_hitsParams_to_write.at("comptVolName").toSave();
+	//    auto writeRayleighVolName = m_hitsParams_to_write.at("RayleighVolName").toSave();
+	//    auto writeVolumeIDs = m_hitsParams_to_write.at("volumeIDs").toSave();
 
-        m_PDGEncoding = hit->GetPDGEncoding();
-        m_trackID = hit->GetTrackID();
-        m_parentID = hit->GetParentID();
+		m_systemID = -1;
+	   // for (unsigned int iHit = 0; iHit < CHC->entries(); ++iHit) {
+		//    auto hit = (*CHC)[iHit];
+		for (auto &&hit: *v)
+		{
+			if (!hit->GoodForAnalysis())
+				continue;
 
-        m_trackLocalTime = hit->GetTrackLocalTime() / second;
-        m_edep[0] = hit->GetEdep() / MeV;
-        m_stepLength = hit->GetStepLength() / mm;
-        m_trackLength = hit->GetTrackLength() / mm;
+			m_systemID = hit->GetSystemID();
+			retrieve(hit, m_systemID);
 
-        m_processName = hit->GetProcess();
+			if (m_hitsParams_to_write.at("componentsIDs").toSave()) {
+				for (auto depth = 0; depth < MAX_DEPTH_SYSTEM; ++depth)
+					m_outputID[0][m_systemID][depth] = hit->GetComponentID(depth);
+			}
 
-        if (m_hitsParams_to_write.at("volumeIDs").toSave())
-            hit->GetVolumeID().StoreDaughterIDs(m_volumeID, VOLUMEID_SIZE);
+	//        if(writeComptonVolumeName)
+			m_comptonVolumeName[0] = hit->GetComptonVolumeName();
 
-        m_photonID = hit->GetPhotonID();
+	//        if(writeRayleighVolName)
+			m_RayleighVolumeName[0] = hit->GetRayleighVolumeName();
 
-        m_sourceType = hit->GetSourceType();
-        m_decayType = hit->GetDecayType();
-        m_gammaType = hit->GetGammaType();
+			m_primaryID = hit->GetPrimaryID();
 
-        m_manager_hits.fill();
-    }
+			m_localPosX = hit->GetLocalPos().x() / mm;
+			m_localPosY = hit->GetLocalPos().y() / mm;
+			m_localPosZ = hit->GetLocalPos().z() / mm;
 
-    auto fDM = G4DigiManager::GetDMpointer();
+			m_momDirX = hit->GetMomentumDir().x();
+			m_momDirY = hit->GetMomentumDir().y();
+			m_momDirZ = hit->GetMomentumDir().z();
+
+			m_PDGEncoding = hit->GetPDGEncoding();
+			m_trackID = hit->GetTrackID();
+			m_parentID = hit->GetParentID();
+
+			m_trackLocalTime = hit->GetTrackLocalTime() / second;
+			m_edep[0] = hit->GetEdep() / MeV;
+			m_stepLength = hit->GetStepLength() / mm;
+			m_trackLength = hit->GetTrackLength() / mm;
+
+			m_processName = hit->GetProcess();
+
+			if (m_hitsParams_to_write.at("volumeIDs").toSave())
+				hit->GetVolumeID().StoreDaughterIDs(m_volumeID, VOLUMEID_SIZE);
+
+			m_photonID = hit->GetPhotonID();
+
+			m_sourceType = hit->GetSourceType();
+			m_decayType = hit->GetDecayType();
+			m_gammaType = hit->GetGammaType();
+
+			 m.second.fill();
+			//m_manager_hits.fill();
+		}
+	 }
+    //auto fDM = G4DigiManager::GetDMpointer();
 
     if (!m_singles_to_collectionID.size()) {
         for (auto &&m: m_mmanager_singles) {
@@ -881,16 +930,25 @@ GateToTree::~GateToTree() {
 }
 
 void GateToTree::RegisterNewCoincidenceDigiCollection(const G4String &string, G4bool aBool) {
-    if (!aBool)
-        return;
+	 //OK GND 2022 TODO ??
+	//if (!aBool)
+     //   return;
 
     m_listOfCoincidencesCollection.push_back(string);
 }
 
 void GateToTree::RegisterNewSingleDigiCollection(const G4String &string, G4bool aBool) {
-    if (!aBool)
-        return;
+	 //OK GND 2022 TODO ??
+	//if (!aBool)
+     //   return;
     m_listOfSinglesCollection.push_back(string);
+}
+
+void GateToTree::RegisterNewHitsCollection(const G4String &string, G4bool aBool) {
+    //OK GND 2022 TODO ??
+	//if (!aBool)
+     //   return;
+    m_listOfHitsCollection.push_back(string);
 }
 
 void GateToTree::SetOutputIDName(G4int id_system, const char *anOutputIDName, size_t depth) {
@@ -920,9 +978,87 @@ G4bool GateToTree::getHitsEnabled() const {
 
 void GateToTree::setHitsEnabled(G4bool mHitsEnabled) {
     m_hits_enabled = mHitsEnabled;
+
+    //OK GND 2022 multiSD
+      GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+    	  for (long unsigned int i=0; i< digitizerMgr->m_SDlist.size();i++)
+    	  {
+    		  addHitsCollection(digitizerMgr->m_SDlist[i]->GetName());
+    	  }
+
+
+
 }
 
+//OK GND 2022
+void GateToTree::addHitsCollection(const std::string &str) {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+    G4String possibleValues = "";
+
+    for (auto &&s: m_listOfHitsCollection) {
+
+        possibleValues += "'" + s + "' (type:hits);";
+
+        auto str_tmp=str+"Collection";
+        if (s == str_tmp) {
+            GateOutputTreeFileManager m;
+            for (auto &&fileName: m_listOfFileName) {
+                auto extension = getExtension(fileName);
+                auto name = removeExtension(fileName);
+                G4String n_fileName;
+                if (digitizerMgr->m_SDlist.size() ==1 )
+                	 n_fileName = name + ".hits." + extension;
+                else
+                	 n_fileName = name + ".hits_" + str + "." + extension;
+                m.add_file(n_fileName, extension);
+
+            }
+            m_mmanager_hits.emplace(str, std::move(m));
+         return;
+
+        }
+    }
+}
+
+
+//OK GND 2022
+void GateToTree::addOpticalCollection(const std::string &str) {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+    G4String possibleValues = "";
+
+    for (auto &&s: m_listOfHitsCollection) {
+
+        possibleValues += "'" + s + "' (type:hits);";
+
+        auto str_tmp=str+"Collection";
+        if (s == str_tmp) {
+            GateOutputTreeFileManager m;
+            for (auto &&fileName: m_listOfFileName) {
+                auto extension = getExtension(fileName);
+                auto name = removeExtension(fileName);
+                G4String n_fileName;
+                if (digitizerMgr->m_SDlist.size() ==1 )
+                	n_fileName = name + ".optical." + extension;
+                else
+                	n_fileName = name + ".optical_" + str + "." + extension;
+                m.add_file(n_fileName, extension);
+
+            }
+            m_mmanager_optical.emplace(str, std::move(m));
+         return;
+
+        }
+    }
+}
+
+
+
+
 void GateToTree::addCollection(const std::string &str) {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
     G4String possibleValues = "";
 
@@ -935,8 +1071,14 @@ void GateToTree::addCollection(const std::string &str) {
             for (auto &&fileName: m_listOfFileName) {
                 auto extension = getExtension(fileName);
                 auto name = removeExtension(fileName);
-
-                G4String n_fileName = name + "." + str + "." + extension;
+                G4String n_fileName;
+                if (digitizerMgr->m_SDlist.size() ==1 )
+                {
+                	std::string tmp_str = str.substr(0, str.find("_"));
+                	n_fileName = name + "."+tmp_str+"." + extension;
+                }
+                else
+                	n_fileName = name + "." + str + "." + extension;
                 m.add_file(n_fileName, extension);
 
             }
@@ -993,8 +1135,11 @@ void GateToTree::setOpticalDataEnabled(G4bool mOpticalDataEnabled) {
 }
 
 void GateToTree::RecordOpticalData(const G4Event *event) {
-    auto CHC = this->GetOutputMgr()->GetHitCollection();
-    auto PHC = this->GetOutputMgr()->GetPhantomHitCollection();
+
+	//OK GND 2022
+	//auto CHC = this->GetOutputMgr()->GetHitCollection();
+	auto fDM = G4DigiManager::GetDMpointer();
+	auto PHC = this->GetOutputMgr()->GetPhantomHitCollection();
 
     m_nScintillation = 0;
     m_nCrystalOpticalWLS = 0;
@@ -1042,42 +1187,55 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
 
 
     // Looking at Crystal Hits Collection:
-    if (CHC) {
+ //OK GND 2022
+    for (auto &&m: m_mmanager_optical)
+    {
+    	auto collectionID = m_hits_to_collectionID.at(m.first);
+    	const GateHitsCollection *CHC =
+    			(GateHitsCollection *) (fDM->GetHitsCollection(collectionID));
 
-        G4int NbHits = CHC->entries();
-        m_NameOfProcessInCrystal = "";
+    	if (!CHC) {
+    		//            G4cout << "GateToTree::RecordEndOfEvent no collection = " << m.first << "\n";
+    		continue;
+        		}
 
-        for (G4int iHit = 0; iHit < NbHits; iHit++) {
-            auto aHit = (*CHC)[iHit];
-            auto processName = aHit->GetProcess();
+		if (CHC) {
 
-            if (aHit->GoodForAnalysis()) {
-                m_NameOfProcessInCrystal = aHit->GetProcess();
+			G4int NbHits = CHC->entries();
+			m_NameOfProcessInCrystal = "";
 
-                if (processName.find("Scintillation") != G4String::npos)
-                    m_nScintillation++;
+			for (G4int iHit = 0; iHit < NbHits; iHit++) {
+				auto aHit = (*CHC)[iHit];
+				auto processName = aHit->GetProcess();
 
-                if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
-                {
-                    if (processName.find("OpticalWLS") != G4String::npos)
-                        m_nCrystalOpticalWLS++;
+				if (aHit->GoodForAnalysis()) {
+					m_NameOfProcessInCrystal = aHit->GetProcess();
+
+					if (processName.find("Scintillation") != G4String::npos)
+						m_nScintillation++;
+
+					if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
+					{
+						if (processName.find("OpticalWLS") != G4String::npos)
+							m_nCrystalOpticalWLS++;
 
 
-                    m_CrystalLastHitPos_X = aHit->GetGlobalPos().x();
-                    m_CrystalLastHitPos_Y = aHit->GetGlobalPos().y();
-                    m_CrystalLastHitPos_Z = aHit->GetGlobalPos().z();
-                    m_CrystalLastHitEnergy = aHit->GetEdep();
-                }
-            } // end GoodForAnalysis()
-        } // end loop over crystal hits
-    } // end if CHC
+						m_CrystalLastHitPos_X = aHit->GetGlobalPos().x();
+						m_CrystalLastHitPos_Y = aHit->GetGlobalPos().y();
+						m_CrystalLastHitPos_Z = aHit->GetGlobalPos().z();
+						m_CrystalLastHitEnergy = aHit->GetEdep();
+					}
+				} // end GoodForAnalysis()
+			} // end loop over crystal hits
+		} // end if CHC
 
     // counting the number of Wave Length Shifting = Fluorescence:
     if (m_nCrystalOpticalWLS > 0) m_NumCrystalWLS++;
     if (m_nPhantomOpticalWLS > 0) m_NumPhantomWLS++;
 
     if (event->GetTrajectoryContainer())
-        m_manager_optical.fill();
-}
+    	m.second.fill();
 
+    }
+}
 

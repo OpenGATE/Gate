@@ -497,7 +497,7 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
 //-----------------------------------------------------------------------------
 
 
-//OK GND 2022
+//OK GND 2022 TODO change name when possible
 G4int GateVSystem::GetMainComponentIDGND(const GateDigi& digi)
    {  return digi.GetComponentID(m_mainComponentDepth) ; }
 
