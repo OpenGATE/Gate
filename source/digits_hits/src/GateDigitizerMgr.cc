@@ -141,15 +141,16 @@ void GateDigitizerMgr::Initialize()
 			if ( m_CoincidenceSortersList[i]->GetInputName().empty() )
 				{
 					if (m_SingleDigitizersList.size()>1)
-						GateError("***ERROR*** The input collection name is ambiguous as you have several SinglesDigitizers! \n Please, use /setInputName for your CoincidenceSorter to choose the correct one.\n");
+						GateError("***ERROR*** The input collection name is ambiguous as you have several Singles Collections/SinglesDigitizers! \n Please, use /setInputCollection for your CoincidenceSorter to choose the correct one.\n");
 
 					if (m_SDlist.size()==1)
 					{
 						//G4cout<<"Setting default Input name"<<  m_SDlist[0]->GetName()<<G4endl;
+						//m_CoincidenceSortersList[i]->SetInputName("Singles_"+m_SDlist[0]->GetName());
 						m_CoincidenceSortersList[i]->SetInputName("Singles_"+m_SDlist[0]->GetName());
 					}
 					else
-						GateError("***ERROR*** The input collection name is ambiguous as you attached several Sensitive Detectors! \n Please, use /setInputName for your CoincidenceSorter to choose the correct one.\n");
+						GateError("***ERROR*** The input collection name is ambiguous as you attached several Sensitive Detectors! \n Please, use /setInputCollection for your CoincidenceSorter to choose the correct one.\n");
 				}
 			}
 	}

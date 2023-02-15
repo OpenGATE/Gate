@@ -126,40 +126,44 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
 
   GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
   if(icommand == m_addCollectionCmd)
-  	  {
+  {
+	  //OK GND 2022
+	  for(size_t i=0;i<digitizerMgr->m_SingleDigitizersList.size();i++)
+	  		  {
+	  		if (string==digitizerMgr->m_SingleDigitizersList[i]->GetName()) //save all collections
+	  				  {
+	  					digitizerMgr->m_SingleDigitizersList[i]->m_recordFlag=true;
+	  					m_gateToTree->addCollection(digitizerMgr->m_SingleDigitizersList[i]->GetOutputName());
+	  				  }
+	  		else if (G4StrUtil::contains(string, "_") )
+	  		 { //save only one specific collections
 
-	  if (string=="Singles") //save all collections
-	  {
-		  for(size_t i=0;i<digitizerMgr->m_SingleDigitizersList.size();i++)
-			  {
-			  	  digitizerMgr->m_SingleDigitizersList[i]->m_recordFlag=true;
-			  	  m_gateToTree->addCollection(digitizerMgr->m_SingleDigitizersList[i]->GetOutputName());
-			  }
+	  			 m_gateToTree->addCollection(string);
+	  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(string);
 
-	  }
-	  else
-	  { //save only one specific collections
-		  m_gateToTree->addCollection(string);
-		  GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(string);
+	  			 if(digitizer)
+	  				 digitizer->m_recordFlag=true;
+	  		 }
+	  		  }
 
-		  if(digitizer)
-			  digitizer->m_recordFlag=true;
-	  }
-	  //Setting flag in the digitizerMgr
-	  if (G4StrUtil::contains(string, "Singles"))
-	  {
-		  digitizerMgr->m_recordSingles=true;
-	  }
-	  if (G4StrUtil::contains(string, "Coincidences"))
-	  {
+	  	if (string=="Coincidences")
+	  		m_gateToTree->addCollection(string);
 
-		  digitizerMgr->m_recordCoincidences=true;
-	  }
+	  	//Setting flag in the digitizerMgr
+	  	if (G4StrUtil::contains(string, "Singles"))
+	  	{
+	  		digitizerMgr->m_recordSingles=true;
+	  	}
+	  	if (G4StrUtil::contains(string, "Coincidences"))
+	  	{
 
-  	  }
+	  		digitizerMgr->m_recordCoincidences=true;
+	  	}
 
- // if(icommand == m_addCollectionCmd)
- //   m_gateToTree->addCollection(string);
+
+  }
+
+
 
   auto c = static_cast<G4UIcmdWithoutParameter*>(icommand);
   if(m_maphits_cmdParameter_toTreeParameter.count(c))
