@@ -16,8 +16,8 @@
 #include "GatePhantomHit.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateVVolume.hh"
-#include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigitizerMgr.hh"
+#include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
@@ -99,7 +99,24 @@ void GateToASCII::RecordBeginOfAcquisition()
   if (m_outFileRunsFlag)
     m_outFileRun.open((m_fileName+"Run.dat").c_str(),std::ios::out);
   if (m_outFileHitsFlag)
-    m_outFileHits.open((m_fileName+"Hits.dat").c_str(),std::ios::out);
+	{
+	  //OK GND 2022
+		GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+		m_nSD=digitizerMgr->m_SDlist.size();
+	  for (long unsigned int i=0; i<m_nSD ;i++)
+		{
+			//GateHitTree *treeHit;
+		  std::ofstream outFileHits;
+
+			if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+				 outFileHits.open((m_fileName+"Hits.dat").c_str(),std::ios::out);
+			else
+				 outFileHits.open((m_fileName+"Hits_"+ digitizerMgr->m_SDlist[i]->GetName()+".dat").c_str(),std::ios::out);
+
+			m_outFilesHits.push_back(std::move(outFileHits));
+		}
+	}
 
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
     m_outputChannelList[i]->Open(m_fileName);
@@ -121,7 +138,12 @@ void GateToASCII::RecordEndOfAcquisition()
   if (m_outFileRunsFlag)
     m_outFileRun.close();
   if (m_outFileHitsFlag)
-    m_outFileHits.close();
+  {  //OK GND 2022
+	  for (long unsigned int i=0; i< m_nSD;i++)
+	  {
+		  m_outFilesHits[i].close();
+	  }
+  }
 
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
     m_outputChannelList[i]->Close();
@@ -173,30 +195,36 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 
   if (m_outFileHitsFlag) {
 
-    GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
+   // GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
+	//OK GND 2022
+	  std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
-    G4int NbHits = 0;
+	  for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+	  {
+		  GateHitsCollection* CHC = CHC_vector[i];
+		  G4int NbHits = 0;
 
-    if (CHC) {
+			if (CHC) {
 
-      // Hits loop
+		   // Hits loop
 
-      NbHits = CHC->entries();
-      for (G4int iHit=0;iHit<NbHits;iHit++) {
-	G4String processName = (*CHC)[iHit]->GetProcess();
-	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
-	if (nVerboseLevel > 2) G4cout
-                                 << "GateToASCII::RecordEndOfEvent : HitsCollection: processName : <" << processName
-                                 << ">    Particls PDG code : " << PDGEncoding << Gateendl;
-	if ((*CHC)[iHit]->GoodForAnalysis()) {
-	  if (m_outFileHitsFlag) m_outFileHits << (*CHC)[iHit];
-	}
-      }
+		    NbHits = CHC->entries();
+		    for (G4int iHit=0;iHit<NbHits;iHit++) {
+			G4String processName = (*CHC)[iHit]->GetProcess();
+			G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
+			if (nVerboseLevel > 2) G4cout
+										 << "GateToASCII::RecordEndOfEvent : HitsCollection: processName : <" << processName
+										 << ">    Particls PDG code : " << PDGEncoding << Gateendl;
+			if ((*CHC)[iHit]->GoodForAnalysis()) {
+			  if (m_outFileHitsFlag) m_outFilesHits[i]  << (*CHC)[iHit];
+			}
+			  }
 
-    }
-    else{
-      if (nVerboseLevel>0) G4cout << "GateToASCII::RecordHits : GateHitCollection not found\n";
-    }
+			}
+			else{
+			  if (nVerboseLevel>0) G4cout << "GateToASCII::RecordHits : GateHitCollection not found\n";
+			}
+		  }
   }
 
 
@@ -211,7 +239,12 @@ void GateToASCII::RecordDigitizer(const G4Event* )
     G4cout << "GateToASCII::RecordDigitizer\n";
 
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    m_outputChannelList[i]->RecordDigitizer();
+  {
+	  //OK GND 2022
+	  if(m_outputChannelList[i]->m_collectionID<0)
+	     m_outputChannelList[i]->m_collectionID=GetCollectionID(m_outputChannelList[i]->m_collectionName);
+	  m_outputChannelList[i]->RecordDigitizer();
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -226,6 +259,8 @@ void GateToASCII::RecordStepWithVolume(const GateVVolume * /*v //WARNING: parame
 
 void GateToASCII::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
 {
+	// TODO !!! OK GND 2020 add (or remove) to GND and documentation
+
   if (nVerboseLevel > 2)
     G4cout << "[GateToASCII::RecordVoxels]\n";
   if (m_recordFlag>0)
@@ -342,6 +377,7 @@ void GateToASCII::VOutputChannel::Open(const G4String& aFileBaseName)
 }
 
 
+
 void GateToASCII::VOutputChannel::Close()
 {
   if (m_outputFlag)
@@ -376,10 +412,11 @@ GateToASCII::SingleOutputChannel::SingleOutputChannel(  const G4String& aCollect
 void GateToASCII::SingleOutputChannel::RecordDigitizer()
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  if (m_collectionID<0)
+  /*if (m_collectionID<0)
     m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
-  const GateSingleDigiCollection * SDC =
-    (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
+  */
+  const GateDigiCollection * SDC =
+    (GateDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!SDC) {
     if (nVerboseLevel>0) G4cout << "[GateToASCII::SingleOutputChannel::RecordDigitizer]: "
@@ -415,8 +452,8 @@ GateToASCII::CoincidenceOutputChannel::CoincidenceOutputChannel(const G4String& 
 void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  if (m_collectionID<0)
-    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+  //if (m_collectionID<0)
+  //  m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
   GateCoincidenceDigiCollection * CDC =
     (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 

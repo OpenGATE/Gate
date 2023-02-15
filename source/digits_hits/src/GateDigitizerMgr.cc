@@ -126,8 +126,7 @@ void GateDigitizerMgr::Initialize()
 						G4cout<<"Please, check if your output options are correct"<<G4endl;
 					}
 				}
-
-				//G4cout<<"coll ID "<< m_collectionID<< " for "<<m_SingleDigitizersList[i_D]->GetName()<< " "<< m_SingleDigitizersList[i_D]->m_outputDigiCollectionID<<G4endl;
+			//G4cout<<"coll ID "<< m_collectionID<< " for "<<m_SingleDigitizersList[i_D]->GetName()<< " "<< m_SingleDigitizersList[i_D]->m_outputDigiCollectionID<<G4endl;
 
 			}
 
@@ -311,7 +310,7 @@ GateClockDependent* GateDigitizerMgr::FindElement(G4String mName)
 GateSinglesDigitizer* GateDigitizerMgr::FindDigitizer(G4String mName)
 {
 
-	//G4cout<<"GateDigitizerMgr::FindDigitizer "<< m_SingleDigitizersList.size() <<G4endl;
+	//G4cout<<"GateDigitizerMgr::FindDigitizer "<<mName  <<G4endl;
 
 	for(G4int i=0;i<int(m_SingleDigitizersList.size());i++)
 		{

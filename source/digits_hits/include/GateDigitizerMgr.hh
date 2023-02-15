@@ -140,8 +140,6 @@ public:
    /// End of methods for Coincidences
 
 
-
-
 private:
 
 

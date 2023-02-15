@@ -198,7 +198,10 @@ public:
 
             if (m_outputFlag) {
             	if( digitizerMgr->m_SDlist.size()==1 )
-            		m_tree = new GateSingleTree("Singles");
+            	{
+            		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
+            		m_tree = new GateSingleTree(tmp_str);
+            	}
             	else
             		m_tree = new GateSingleTree(m_collectionName);
 
