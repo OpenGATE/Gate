@@ -96,7 +96,8 @@ protected:
 
 	G4UIcmdWithAString* m_setFileNameCmd; /*!< Command to set the name of file */
 	G4UIcmdWithABool* m_outFileHitsCmd; /*!< Command for the hit output */
-  G4UIcmdWithABool* m_outFileVoxelCmd; /*!< Command for the voxel output */
+    G4UIcmdWithABool*  m_outFileSinglesCmd;
+	G4UIcmdWithABool* m_outFileVoxelCmd; /*!< Command for the voxel output */
 	G4UIcommand* m_coincidenceMaskCmd; /*!< Command for the coincidence mask */
 	G4UIcommand* m_singleMaskCmd; /*!< Command for the single mask */
 	G4UIcmdWithAnInteger* m_setOutFileSizeLimitCmd; /*!< Limit of the binary output file (in byte) */

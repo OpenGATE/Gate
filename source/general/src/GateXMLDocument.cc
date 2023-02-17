@@ -25,6 +25,9 @@ See LICENSE.md for further details
 #include "G4MaterialPropertiesTable.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "GateVSystem.hh"
+
+#include "GateSystemListManager.hh"
 
 //!@name Constructors and destructors
 //@{
@@ -42,9 +45,14 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
 // SJ COMMENTS## : read the file by using a messenger mechanism
 //
 {
+  GateVSystem* testIfOptical=GateSystemListManager::GetInstance()->FindSystem("OpticalSystem");
+
+  //if(!testIfOptical)
+  //	  break;
+
   m_doc = xmlParseFile(filename.c_str());
 
-  if (m_doc)
+  if (m_doc && testIfOptical!=0)
   {
     m_cur = xmlDocGetRootElement(m_doc);
     if (m_cur==0) xmlFreeDoc(m_doc);

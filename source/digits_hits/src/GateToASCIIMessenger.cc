@@ -183,9 +183,8 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   			 digitizerMgr->m_recordSingles=OutFileSinglesCmd->GetNewBoolValue(newValue);
 
+
   		}
-
-
 
   }	else if ( command == OutFileVoxelCmd ) {
     m_gateToASCII->SetOutFileVoxelFlag(OutFileVoxelCmd->GetNewBoolValue(newValue));
@@ -233,9 +232,15 @@ G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 
 void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue)
 {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     if ( command == OutputChannelCmdList[i] ) {
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
+      if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Coincidences"))
+	  {
+    	  digitizerMgr->m_recordCoincidences=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
+	  }
       break;
     }
 }

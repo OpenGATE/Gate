@@ -92,6 +92,12 @@ const G4String& GateToASCII::GiveNameOfFile()
 
 void GateToASCII::RecordBeginOfAcquisition()
 {
+	//OK GND 2022
+	 for (size_t i = 0; i < m_outputChannelList.size(); ++i)
+	    {
+		 m_outputChannelList[i]->m_collectionID=-1 ;
+	    }
+
   if (nVerboseLevel > 2)
     G4cout << "GateToASCII::RecordBeginOfAcquisition\n";
 

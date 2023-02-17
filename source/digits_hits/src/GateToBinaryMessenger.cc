@@ -10,6 +10,7 @@
 
 #include "GateToBinary.hh"
 #include "GateToBinaryMessenger.hh"
+#include "GateDigitizerMgr.hh"
 
 #ifdef G4ANALYSIS_USE_FILE
 
@@ -34,6 +35,14 @@ GateToBinaryMessenger::GateToBinaryMessenger( GateToBinary* gateToBinary )
   m_outFileHitsCmd = new G4UIcmdWithABool( cmdName, this );
   m_outFileHitsCmd->SetGuidance( "Set the flag for Hits Binary output" );
   m_outFileHitsCmd->SetGuidance( "1. true/false" );
+
+  // OK GND 2022
+   cmdName = GetDirectoryName()+"setOutFileSinglesFlag";
+   m_outFileSinglesCmd = new G4UIcmdWithABool(cmdName,this);
+   m_outFileSinglesCmd->SetGuidance("To get error if you use old command");
+   m_outFileSinglesCmd->SetGuidance("1. true/false");
+   //OK GND 2022
+
 
   cmdName = GetDirectoryName() + "setOutFileVoxelFlag";
   m_outFileVoxelCmd = new G4UIcmdWithABool( cmdName, this );
@@ -80,6 +89,7 @@ GateToBinaryMessenger::~GateToBinaryMessenger()
   delete m_coincidenceMaskCmd;
   delete m_singleMaskCmd;
   delete m_outFileHitsCmd;
+  delete m_outFileSinglesCmd;
   delete m_outFileVoxelCmd;
   delete m_setFileNameCmd;
   // for( size_t i = 0; i < m_outputChannelCmd.size(); ++i )
@@ -123,7 +133,7 @@ void GateToBinaryMessenger::SetNewValue( G4UIcommand* command,
           iss >> mask;
           maskVector.push_back( mask );
         }
-      GateSingleDigi::SetSingleASCIIMask( maskVector );
+      GateDigi::SetSingleASCIIMask( maskVector );
     }
   else if( command == m_setOutFileSizeLimitCmd )
     {
@@ -138,6 +148,34 @@ void GateToBinaryMessenger::SetNewValue( G4UIcommand* command,
     {
       m_gateToBinary->SetOutFileHitsFlag(
                                          m_outFileHitsCmd->GetNewBoolValue( newValue ) );
+    }
+  else if (command == m_outFileSinglesCmd) {
+
+    	  //OK GND backward compatibility
+    		GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+    		for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+    		{
+    			for (size_t i = 0; i<m_outputChannelVector.size() ; ++i)
+    			 {
+    		  		std::string tmp_str = m_outputChannelVector[i]->m_collectionName.substr(0, m_outputChannelVector[i]->m_collectionName.find("_"));
+    		  		//Save only main singles digitizer output and not for all DMs
+    				 if (m_outputChannelVector[i]->m_collectionName == tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName() )
+    				 {
+    					 m_outputChannelVector[i]->SetOutputFlag( m_outFileSinglesCmd->GetNewBoolValue(newValue));
+    					 //G4cout<<"Set flag"<< m_outputChannelList[i]->m_outputFlag<<G4endl;
+    				 }
+
+
+    			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
+    			 if(digitizer)
+    				 digitizer->m_recordFlag=true;
+    			 }
+
+    			 digitizerMgr->m_recordSingles=m_outFileSinglesCmd->GetNewBoolValue(newValue);
+
+    		}
+
     }
   else if ( command == m_outFileVoxelCmd )
     {
@@ -190,12 +228,18 @@ G4bool GateToBinaryMessenger::IsAnOutputChannelCmd( G4UIcommand* command )
 void GateToBinaryMessenger::ExecuteOutputChannelCmd( G4UIcommand* command,
                                                      G4String newValue)
 {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
   for( size_t i = 0; i < m_outputChannelCmd.size() ; ++i)
     {
       if( command == m_outputChannelCmd[ i ] )
         {
           m_outputChannelVector[i]->SetOutputFlag(
                                                   m_outputChannelCmd[ i ]->GetNewBoolValue( newValue ) );
+          if (G4StrUtil::contains(m_outputChannelVector[i]->m_collectionName, "Coincidences"))
+          {
+        	  digitizerMgr->m_recordCoincidences=m_outFileSinglesCmd->GetNewBoolValue(newValue);
+          }
           break;
         }
     }

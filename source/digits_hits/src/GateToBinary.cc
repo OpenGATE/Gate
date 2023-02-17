@@ -20,6 +20,7 @@
 #include "GateOutputMgr.hh"
 #include "GateVGeometryVoxelStore.hh"
 #include "G4DigiManager.hh"
+#include "GateDigitizerMgr.hh"
 
 // 0x79000000 equivalent to 2,030,043,136 bytes
 #define LIMIT_SIZE 0x79000000
@@ -51,6 +52,14 @@ GateToBinary::~GateToBinary()
 
 void GateToBinary::RecordBeginOfAcquisition()
 {
+	//OK GND 2022
+	 for (size_t i = 0; i < m_outputChannelVector.size(); ++i)
+	    {
+		 m_outputChannelVector[i]->m_collectionID=-1 ;
+	    }
+
+
+
   if( nVerboseLevel > 2 )
     {
       std::cout << "GateToBinary::RecordBeginOfAcquisition\n";
@@ -69,8 +78,22 @@ void GateToBinary::RecordBeginOfAcquisition()
 
   if( m_outFileHitsFlag )
     {
-      m_outFileHits.open( ( m_fileName + "Hits.bin" ).c_str(),
-                          std::ios::out | std::ios::binary );
+	  //OK GND 2022
+	  	  GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+	  	  m_nSD=digitizerMgr->m_SDlist.size();
+	  	  for (G4int i=0; i<m_nSD ;i++)
+	  	  {
+	  		  std::ofstream outFileHits;
+
+	  		  if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+	  			  outFileHits.open((m_fileName+"Hits.bin").c_str(), std::ios::out | std::ios::binary);
+	  		  else
+	  			  outFileHits.open((m_fileName+"Hits_"+ digitizerMgr->m_SDlist[i]->GetName()+".bin").c_str(), std::ios::out | std::ios::binary);
+
+	  		  m_outFilesHits.push_back(std::move(outFileHits));
+	  	  }
+
     }
 
   for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
@@ -99,7 +122,11 @@ void GateToBinary::RecordEndOfAcquisition()
 
   if( m_outFileHitsFlag )
     {
-      m_outFileHits.close();
+	  //OK GND 2022
+	  for (G4int i=0; i< m_nSD;i++)
+	  {
+		  m_outFilesHits[i].close();
+	  }
     }
 
   for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
@@ -157,8 +184,14 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 
   if( m_outFileHitsFlag )
     {
-      GateHitsCollection* CHC = GetOutputMgr()->
-        GetHitCollection();
+      //GateHitsCollection* CHC = GetOutputMgr()->
+       // GetHitCollection();
+	  //OK GND 2022
+	  std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
+
+	 for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+		{
+		 GateHitsCollection* CHC = CHC_vector[i];
 
       G4int NbHits( 0 );
 
@@ -215,41 +248,41 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
                       G4String rayVolName = (*CHC)[ iHit ]->GetRayleighVolumeName();
 
                       // Writing data
-                      m_outFileHits.write( reinterpret_cast< char* >( &runID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &runID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &eventID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &eventID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &primaryID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &primaryID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &sourceID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &sourceID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write(
+                      m_outFilesHits[i].write(
                                           reinterpret_cast< char* >( &volumeID[ 0 ] ),
                                           ( (*CHC)[ iHit ]->GetOutputVolumeID() ).size() * sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &timeID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &timeID ),
                                            sizeof( G4double ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &eDepID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &eDepID ),
                                            sizeof( G4double ) );
-                      m_outFileHits.write(
+                      m_outFilesHits[i].write(
                                           reinterpret_cast< char* >( &stepLengthID ),
                                           sizeof( G4double ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &posX ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &posX ),
                                            sizeof( G4double ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &posY ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &posY ),
                                            sizeof( G4double ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &posZ ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &posZ ),
                                            sizeof( G4double ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &PDGEncoding ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &PDGEncoding ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &trackID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &trackID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &parentID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &parentID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &photonID ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &photonID ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &phCompton ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &phCompton ),
                                            sizeof( G4int ) );
-                      m_outFileHits.write( reinterpret_cast< char* >( &phRayleigh ),
+                      m_outFilesHits[i].write( reinterpret_cast< char* >( &phRayleigh ),
                                            sizeof( G4int ) );
 
                       // Previous versions of GATE unintentionally wrote the
@@ -266,16 +299,16 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
                                                                              compVolName, strMaxLen);
                       G4String rayVolNameTrunc = FixedWidthZeroPaddedString(
                                                                             rayVolName, strMaxLen);
-                      m_outFileHits.write( processNameTrunc.c_str(),
+                      m_outFilesHits[i].write( processNameTrunc.c_str(),
                                            strFieldWidth);
-                      m_outFileHits.write( compVolNameTrunc.c_str(),
+                      m_outFilesHits[i].write( compVolNameTrunc.c_str(),
                                            strFieldWidth);
-                      m_outFileHits.write( rayVolNameTrunc.c_str(),
+                      m_outFilesHits[i].write( rayVolNameTrunc.c_str(),
                                            strFieldWidth);
                     }
-                }
-            }
-        }
+                }// good for analysis
+            }//loop over hits
+        }//if HC is OK
       else
         {
           if( nVerboseLevel > 0 )
@@ -285,6 +318,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
                         << Gateendl;
             }
         }
+	  }// loop over HitCollections
     }
   RecordDigitizer( event );
 }
@@ -298,7 +332,11 @@ void GateToBinary::RecordDigitizer( G4Event const* )
 
   for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
     {
-      m_outputChannelVector[ i ]->RecordDigitizer();
+	  //OK GND 2022
+	  if(m_outputChannelVector[i]->m_collectionID<0)
+		  m_outputChannelVector[i]->m_collectionID=GetCollectionID(m_outputChannelVector[i]->m_collectionName);
+
+	  m_outputChannelVector[ i ]->RecordDigitizer();
     }
 }
 
@@ -313,6 +351,8 @@ void GateToBinary::RecordStepWithVolume( GateVVolume const*,
 
 void GateToBinary::RecordVoxels( GateVGeometryVoxelStore* voxelStore )
 {
+	// TODO !!! OK GND 2020 add (or remove) to GND and documentation
+
   if( nVerboseLevel > 2 )
     {
       std::cout << "[GateToBinary::RecordVoxels]\n";
@@ -419,7 +459,7 @@ void GateToBinary::VOutputChannel::OpenFile(
     }
 
   G4String fileName = aFileBaseName + m_collectionName + fileCounterSuffix
-    + ".dat";
+    + ".bin";
   if( m_outputFlag )
     {
       m_outputFile.open( fileName.c_str(), std::ios::out |
@@ -448,14 +488,15 @@ G4bool GateToBinary::VOutputChannel::ExceedsSize()
 void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 {
   G4DigiManager* fDM = G4DigiManager::GetDMpointer();
-  if( m_collectionID < 0 )
+  /*if( m_collectionID < 0 )
     {
       m_collectionID = fDM->GetDigiCollectionID( m_collectionName );
     }
+   */
 
-  GateCoincidenceDigiCollection* CDC =
-    (GateCoincidenceDigiCollection*)
-    ( fDM->GetDigiCollection( m_collectionID ) );
+
+  GateCoincidenceDigiCollection *CDC =
+              (GateCoincidenceDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
 
   if( !CDC )
     {
@@ -653,12 +694,13 @@ void GateToBinary::CoincidenceOutputChannel::RecordDigitizer()
 void GateToBinary::SingleOutputChannel::RecordDigitizer()
 {
   G4DigiManager* fDM = G4DigiManager::GetDMpointer();
-  if( m_collectionID < 0 )
+  /*if( m_collectionID < 0 )
     {
       m_collectionID = fDM->GetDigiCollectionID( m_collectionName );
     }
-  GateSingleDigiCollection const* SDC =
-    (GateSingleDigiCollection*)
+    */
+  GateDigiCollection const* SDC =
+    (GateDigiCollection*)
     ( fDM->GetDigiCollection( m_collectionID ) );
 
   if( !SDC )

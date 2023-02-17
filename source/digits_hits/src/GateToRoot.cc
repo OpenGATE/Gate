@@ -1234,8 +1234,8 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
 void GateToRoot::CoincidenceOutputChannel::RecordDigitizer() {
    //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin\n";);
     G4DigiManager *fDM = G4DigiManager::GetDMpointer();
-    if (m_collectionID < 0)
-        m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+    //if (m_collectionID < 0)
+    //    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
     GateCoincidenceDigiCollection *CDC =
             (GateCoincidenceDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
 
