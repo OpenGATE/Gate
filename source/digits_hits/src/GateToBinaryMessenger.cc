@@ -236,9 +236,19 @@ void GateToBinaryMessenger::ExecuteOutputChannelCmd( G4UIcommand* command,
         {
           m_outputChannelVector[i]->SetOutputFlag(
                                                   m_outputChannelCmd[ i ]->GetNewBoolValue( newValue ) );
+          GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(m_outputChannelVector[i]->m_collectionName);
+          if(digitizer)
+        	  digitizer->m_recordFlag=true;
+
+          //Setting flag in the digitizerMgr
+          if (G4StrUtil::contains(m_outputChannelVector[i]->m_collectionName, "Singles"))
+          {
+        	  m_outputChannelVector[i]->AddSinglesCommand();
+        	  digitizerMgr->m_recordSingles=m_outputChannelCmd[i]->GetNewBoolValue(newValue);
+          }
           if (G4StrUtil::contains(m_outputChannelVector[i]->m_collectionName, "Coincidences"))
           {
-        	  digitizerMgr->m_recordCoincidences=m_outFileSinglesCmd->GetNewBoolValue(newValue);
+        	  digitizerMgr->m_recordCoincidences=m_outputChannelCmd[i]->GetNewBoolValue(newValue);
           }
           break;
         }

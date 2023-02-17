@@ -125,6 +125,8 @@ public:
    /// End of methods for Singles
 
 
+
+
    /// Methods for Coincidences
 
    //Sorters
@@ -138,7 +140,6 @@ public:
    //void AddNewCoincidenceDigitizer(GateCoincidenceSorter* coincidenceSorter);
    //GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
-
 
 private:
 

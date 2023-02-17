@@ -243,7 +243,8 @@ public:
       : nVerboseLevel( 0 ), m_outputFlag( outputFlag ),
         m_fileBaseName( G4String( "" ) ),
         m_collectionName( aCollectionName ), m_fileCounter( 0 ),
-        m_collectionID( -1 )
+        m_collectionID( -1 ),
+		m_signlesCommands(0)
     {}
 
     /*!
@@ -303,6 +304,9 @@ public:
     inline static void SetOutputFileSizeLimit( G4int limit )
     { m_outputFileSizeLimit = limit; };
 
+    inline void AddSinglesCommand() { m_signlesCommands++; };
+
+
   public:
     G4int nVerboseLevel; /*!< Level of verbose */
     G4bool m_outputFlag; /*!< Flag of output */
@@ -312,6 +316,8 @@ public:
     G4int	m_collectionID; /*!< Collection ID */
     std::ofstream m_outputFile; /*!< Output file */
     static G4int m_outputFileSizeLimit; /*!< Output file size limit */
+    G4int m_signlesCommands;
+
   } VOutputChannel;
 
   /*!
@@ -330,10 +336,10 @@ public:
      *	Constructor of the SingleOutputChannel class
      *
      */
-    SingleOutputChannel( G4String const& aCollectionName,
-                         G4bool outputFlag )
-      : GateToBinary::VOutputChannel( aCollectionName, outputFlag )
-    {}
+	  SingleOutputChannel( G4String const& aCollectionName,
+	                          G4bool outputFlag )
+	       : GateToBinary::VOutputChannel( aCollectionName, outputFlag )
+	     {}
 
     /*!
      *	\brief Destructor
@@ -371,9 +377,15 @@ public:
       G4String fileName;
       if( digitizerMgr->m_SDlist.size()==1 )
       {
+    	  if(m_signlesCommands==0)
+    	  {
     	  std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
     	  fileName = aFileBaseName + tmp_str + fileCounterSuffix + ".bin";
-      }
+    	  }
+    	  else
+    		  fileName =  aFileBaseName + m_collectionName + fileCounterSuffix + ".bin";
+
+    }
       else
     	  fileName =  aFileBaseName + m_collectionName + fileCounterSuffix + ".bin";
       if( m_outputFlag )

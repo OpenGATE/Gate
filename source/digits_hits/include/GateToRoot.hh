@@ -159,7 +159,8 @@ public:
                 : nVerboseLevel(0),
                   m_outputFlag(outputFlag),
                   m_collectionName(aCollectionName),
-                  m_collectionID(-1) {}
+                  m_collectionID(-1),
+				  m_signlesCommands(0){}
 
         virtual inline ~VOutputChannel() {}
 
@@ -171,12 +172,15 @@ public:
 
         inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
 
+        inline void AddSinglesCommand() { m_signlesCommands++; };
+
         inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
         G4int nVerboseLevel;
         G4bool m_outputFlag;
         G4String m_collectionName;
         G4int m_collectionID;
+        G4int m_signlesCommands;
     };
 
 
@@ -196,11 +200,18 @@ public:
             //OK GND 2022 multiSD backward compatibility
             GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
+            G4cout<<"SingleOutputChannel "<<m_signlesCommands<<" "<<m_collectionName <<G4endl;
+           ;
             if (m_outputFlag) {
             	if( digitizerMgr->m_SDlist.size()==1 )
             	{
+            		if(m_signlesCommands==0)
+            		{
             		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
             		m_tree = new GateSingleTree(tmp_str);
+            		}
+            		else
+            			m_tree = new GateSingleTree(m_collectionName);
             	}
             	else
             		m_tree = new GateSingleTree(m_collectionName);

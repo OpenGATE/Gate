@@ -62,7 +62,8 @@ public:
   	  m_collectionName(aCollectionName),
 	  m_fileCounter(0),
 	  m_collectionID(-1),
-	  m_outputFile("")
+	  m_outputFile(""),
+      m_signlesCommands(0)
 	 // m_outputFileSizeLimit(2000000000)
 	{}
       virtual inline ~VOutputChannel() {}
@@ -72,6 +73,9 @@ public:
       static void SetOutputFileSizeLimit(G4int limit) {m_outputFileSizeLimit = limit;};
       G4bool ExceedsSize();
       virtual void RecordDigitizer()=0;
+
+      inline void AddSinglesCommand() { m_signlesCommands++; };
+
 
       inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
       inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
@@ -85,6 +89,9 @@ public:
       long              m_outputFileBegin;
       G4int	        m_collectionID;
       std::ofstream   m_outputFile;
+
+      G4int m_signlesCommands;
+
 
       static long       m_outputFileSizeLimit;
   };
@@ -118,8 +125,14 @@ public:
         G4String fileName;
       	if( digitizerMgr->m_SDlist.size()==1 )
       	{
+      		if(m_signlesCommands==0)
+      		{
       		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
       		fileName = aFileBaseName + tmp_str + fileCounterSuffix + ".dat";
+      		}
+      		else
+          		fileName = aFileBaseName + m_collectionName + fileCounterSuffix + ".dat";
+
       	}
       	else
       		fileName = aFileBaseName + m_collectionName + fileCounterSuffix + ".dat";

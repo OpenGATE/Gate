@@ -67,6 +67,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 	G4int m_singleMaskLength;
 
     std::vector<G4UIcmdWithABool*>  		 OutputChannelCmdList;
+  public:
     std::vector<GateToRoot::VOutputChannel*>  m_outputChannelList;
 };
 
