@@ -120,7 +120,7 @@ void GateDummyDigitizerModule::Digitize()
 	 if (nVerboseLevel==1)
 			    {
 			    	G4cout << "[ GateDummyDigitizerModule::Digitize]: returning output digi-list with " << m_OutputDigiCollection->entries() << " entries\n";
-			    	for (long unsigned int k=0; k<m_OutputDigiCollection->entries();k++)
+			    	for (size_t k=0; k<m_OutputDigiCollection->entries();k++)
 			    		G4cout << *(*IDC)[k] << Gateendl;
 			    		G4cout << Gateendl;
 			    }

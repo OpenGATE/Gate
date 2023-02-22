@@ -104,7 +104,7 @@ void GateSinglesDigitizer::DescribeMyself()
 	G4cout<<"Input Name: "<< m_inputName<<G4endl;
 	G4cout<<"Output Name: "<< m_outputName<<G4endl;
 	G4cout<<"Digitizer Modules: "<<G4endl;
-	for (long unsigned int j = 0; j<m_DMlist.size(); j++)
+	for (size_t j = 0; j<m_DMlist.size(); j++)
 			{
 				G4cout<<"    " <<m_DMlist[j]->GetName()<<" "<<G4endl;
 			}

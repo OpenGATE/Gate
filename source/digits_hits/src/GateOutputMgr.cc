@@ -358,7 +358,7 @@ std::vector<GateHitsCollection*> GateOutputMgr::GetHitCollections()
 
 	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
 
-	for (long unsigned int i=0; i<m_HCIDs.size(); i++) //
+	for (size_t i=0; i<m_HCIDs.size(); i++) //
 	{
 		GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCIDs[i]));
 		CHC_vector.push_back(CHC);

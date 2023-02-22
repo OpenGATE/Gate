@@ -8,6 +8,9 @@ See LICENSE.md for further details
 
 //
 // Created by mdupont on 17/05/19.
+//    - 2023/02/22 PDGcode for optical photon is changed from 0 to -22
+//  OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
+//    let a side for the moment (in case if needed uncomment lines 1050, 1052, 1053 in Book() method
 //
 
 #include "GateToTree.hh"
@@ -660,9 +663,16 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 	        }
 	    }
 
+	 if (!m_optical_to_collectionID.size()) {
+	        for (auto &&m:m_mmanager_optical) {
+	            auto str = m.first+"Collection";
+	            //str.erase(remove_if(str.begin(), str.end(), '_'), str.end());
+	            auto collectionID = fDM->GetHitsCollectionID(str);
+	            m_optical_to_collectionID.emplace(m.first, collectionID);
+	        }
+	    }
 
 
-	//auto CHC = this->GetOutputMgr()->GetHitCollection();
 
 	 for (auto &&m: m_mmanager_hits)
 	 {
@@ -982,7 +992,7 @@ void GateToTree::setHitsEnabled(G4bool mHitsEnabled) {
     //OK GND 2022 multiSD
       GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
-    	  for (long unsigned int i=0; i< digitizerMgr->m_SDlist.size();i++)
+    	  for (size_t i=0; i< digitizerMgr->m_SDlist.size();i++)
     	  {
     		  addHitsCollection(digitizerMgr->m_SDlist[i]->GetName());
     	  }
@@ -1040,10 +1050,10 @@ void GateToTree::addOpticalCollection(const std::string &str) {
                 auto extension = getExtension(fileName);
                 auto name = removeExtension(fileName);
                 G4String n_fileName;
-                if (digitizerMgr->m_SDlist.size() ==1 )
+               // if (digitizerMgr->m_SDlist.size() ==1 )
                 	n_fileName = name + ".optical." + extension;
-                else
-                	n_fileName = name + ".optical_" + str + "." + extension;
+                //else
+                //	n_fileName = name + ".optical_" + str + "." + extension;
                 m.add_file(n_fileName, extension);
 
             }
@@ -1132,12 +1142,21 @@ G4bool GateToTree::getOpticalDataEnabled() const {
 
 void GateToTree::setOpticalDataEnabled(G4bool mOpticalDataEnabled) {
     m_opticalData_enabled = mOpticalDataEnabled;
+
+    //OK GND 2022 multiSD
+    GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+    for (size_t i=0; i< digitizerMgr->m_SDlist.size();i++)
+    {
+    	addOpticalCollection(digitizerMgr->m_SDlist[i]->GetName());
+    }
+
+
 }
 
 void GateToTree::RecordOpticalData(const G4Event *event) {
 
 	//OK GND 2022
-	//auto CHC = this->GetOutputMgr()->GetHitCollection();
 	auto fDM = G4DigiManager::GetDMpointer();
 	auto PHC = this->GetOutputMgr()->GetPhantomHitCollection();
 
@@ -1157,7 +1176,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
             auto pHit = (*PHC)[iPHit];
             auto processName = pHit->GetProcess();
 //
-            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == 0)// looking at optical photons only
+            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == -22)// looking at optical photons only
             {
                 m_NameOfProcessInPhantom = pHit->GetProcess();
 //
@@ -1190,7 +1209,8 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
  //OK GND 2022
     for (auto &&m: m_mmanager_optical)
     {
-    	auto collectionID = m_hits_to_collectionID.at(m.first);
+    	auto collectionID = m_optical_to_collectionID.at(m.first);
+    	//G4cout<<"GateToTree collectionID "<< collectionID<<G4endl;
     	const GateHitsCollection *CHC =
     			(GateHitsCollection *) (fDM->GetHitsCollection(collectionID));
 
@@ -1202,6 +1222,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
 		if (CHC) {
 
 			G4int NbHits = CHC->entries();
+		//	G4cout<<"NbHits "<<NbHits<<G4endl;
 			m_NameOfProcessInCrystal = "";
 
 			for (G4int iHit = 0; iHit < NbHits; iHit++) {
@@ -1214,7 +1235,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
 					if (processName.find("Scintillation") != G4String::npos)
 						m_nScintillation++;
 
-					if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
+					if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
 					{
 						if (processName.find("OpticalWLS") != G4String::npos)
 							m_nCrystalOpticalWLS++;

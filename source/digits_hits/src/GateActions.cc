@@ -207,7 +207,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
   GateRunManager* RunMan = GateRunManager::GetRunManager();
   GateRunAction* RunAction = ( (GateRunAction*)(RunMan->GetUserRunAction()) );
 
-    for (long unsigned int i=0; i<RunAction->m_CHCollIDs.size(); i++)
+    for (size_t i=0; i<RunAction->m_CHCollIDs.size(); i++)
      {
   	  // TODO: OK GND 2022, test that in tracking mode it still works
 		  if ( theMode == TrackingMode::kTracker )

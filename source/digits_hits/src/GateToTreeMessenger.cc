@@ -51,6 +51,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   m_addOpticalCollectionCmd = new G4UIcmdWithAString(cmdName, this);
 
 
+
   for(auto &&m: m_gateToTree->getHitsParamsToWrite())
   {
     auto name = m.first;

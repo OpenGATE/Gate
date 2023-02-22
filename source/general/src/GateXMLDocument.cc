@@ -45,14 +45,10 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
 // SJ COMMENTS## : read the file by using a messenger mechanism
 //
 {
-  GateVSystem* testIfOptical=GateSystemListManager::GetInstance()->FindSystem("OpticalSystem");
-
-  //if(!testIfOptical)
-  //	  break;
 
   m_doc = xmlParseFile(filename.c_str());
 
-  if (m_doc && testIfOptical!=0)
+  if (m_doc)
   {
     m_cur = xmlDocGetRootElement(m_doc);
     if (m_cur==0) xmlFreeDoc(m_doc);

@@ -110,7 +110,7 @@ void GateToASCII::RecordBeginOfAcquisition()
 		GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
 		m_nSD=digitizerMgr->m_SDlist.size();
-	  for (long unsigned int i=0; i<m_nSD ;i++)
+	  for (size_t i=0; i<m_nSD ;i++)
 		{
 			//GateHitTree *treeHit;
 		  std::ofstream outFileHits;
@@ -145,7 +145,7 @@ void GateToASCII::RecordEndOfAcquisition()
     m_outFileRun.close();
   if (m_outFileHitsFlag)
   {  //OK GND 2022
-	  for (long unsigned int i=0; i< m_nSD;i++)
+	  for (size_t i=0; i< m_nSD;i++)
 	  {
 		  m_outFilesHits[i].close();
 	  }
@@ -201,11 +201,10 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 
   if (m_outFileHitsFlag) {
 
-   // GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
 	//OK GND 2022
 	  std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
-	  for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+	  for (size_t i=0; i<CHC_vector.size();i++ )//HC_vector.size()
 	  {
 		  GateHitsCollection* CHC = CHC_vector[i];
 		  G4int NbHits = 0;

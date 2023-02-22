@@ -140,7 +140,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 	  //OK GND 2022
       std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
-      for (long unsigned int i=0; i<CHC_vector.size();i++ )
+      for (size_t i=0; i<CHC_vector.size();i++ )
       {
       GateHitsCollection* CHC = CHC_vector[i];
       G4int NbHits = 0;

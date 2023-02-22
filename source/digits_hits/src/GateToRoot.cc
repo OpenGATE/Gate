@@ -18,6 +18,10 @@
     Set the flag for Optical ROOT output.
     - Revision 2012/11/14  - added new leaves: position (x,y,z) of fluorescent (OpticalWLS process) hits
     - Scintillation counter bug-fixed
+    - 2023/02/22 PDGcode for optical photon is changed from 0 to -22
+
+    OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
+    let a side for the moment (in case if needed uncomment lines 257, 259, 260 in Book() method
 */
 
 #include "GateToRoot.hh"
@@ -61,7 +65,6 @@
 #include "TFile.h"
 #include "G4DigiManager.hh"
 
-//OK GND 2022
 
 // v. cuplov - optical photons
 #include "G4OpticalPhoton.hh"
@@ -226,8 +229,8 @@ void GateToRoot::Book() {
     pet_data->Branch("stop_time_sec", &mTimeStop);
 
 	//OK GND 2022 multiSD
-	   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-	   SetSDlistSize(digitizerMgr->m_SDlist.size() );
+    GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+    SetSDlistSize(digitizerMgr->m_SDlist.size() );
 
 	   for (G4int i=0; i<GetSDlistSize();i++)
 		{
@@ -235,7 +238,7 @@ void GateToRoot::Book() {
 			m_hitBuffers.push_back(hitBuffer);
 		}
 
-	  for (long unsigned int i=0; i< GetSDlistSize();i++)
+	  for (size_t i=0; i< GetSDlistSize();i++)
 	  {
    		GateHitTree *treeHit;
    		if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
@@ -247,40 +250,50 @@ void GateToRoot::Book() {
    	    }
 
     // v. cuplov - optical photons
-    OpticalTree = new TTree(G4String("OpticalData").c_str(), "OpticalData");
+	for (size_t i=0; i< digitizerMgr->m_SDlist.size();i++)
+	{
+		TTree* OpticalTree;
+		//OK GND 2022 uncomment here if needed
+		//if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+			OpticalTree = new TTree(G4String("OpticalData").c_str(), "OpticalData");
+		//else
+		//	OpticalTree = new TTree(G4String("OpticalData_"+digitizerMgr->m_SDlist[i]->GetName()).c_str(), G4String("OpticalData_"+digitizerMgr->m_SDlist[i]->GetName()).c_str());
 
-    OpticalTree->Branch(G4String("NumScintillation").c_str(), &nScintillation, "nScintillation/I");
-    OpticalTree->Branch(G4String("NumCrystalWLS").c_str(), &NumCrystalWLS, "NumCrystalWLS/I");
-    OpticalTree->Branch(G4String("NumPhantomWLS").c_str(), &NumPhantomWLS, "NumPhantomWLS/I");
-    OpticalTree->Branch(G4String("CrystalLastHitPos_X").c_str(), &CrystalLastHitPos_X, "CrystalLastHitPos_X/D");
-    OpticalTree->Branch(G4String("CrystalLastHitPos_Y").c_str(), &CrystalLastHitPos_Y, "CrystalLastHitPos_Y/D");
-    OpticalTree->Branch(G4String("CrystalLastHitPos_Z").c_str(), &CrystalLastHitPos_Z, "CrystalLastHitPos_Z/D");
-    OpticalTree->Branch(G4String("CrystalLastHitEnergy").c_str(), &CrystalLastHitEnergy, "CrystalLastHitEnergy/D");
-    OpticalTree->Branch(G4String("PhantomLastHitPos_X").c_str(), &PhantomLastHitPos_X, "PhantomLastHitPos_X/D");
-    OpticalTree->Branch(G4String("PhantomLastHitPos_Y").c_str(), &PhantomLastHitPos_Y, "PhantomLastHitPos_Y/D");
-    OpticalTree->Branch(G4String("PhantomLastHitPos_Z").c_str(), &PhantomLastHitPos_Z, "PhantomLastHitPos_Z/D");
-    OpticalTree->Branch(G4String("PhantomLastHitEnergy").c_str(), &PhantomLastHitEnergy, "PhantomLastHitEnergy/D");
-    //  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_X").c_str(),&CrystalAbsorbedPhotonHitPos_X,"CrystalAbsorbedPhotonHitPos_X/D");
-    //  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_Y").c_str(),&CrystalAbsorbedPhotonHitPos_Y,"CrystalAbsorbedPhotonHitPos_Y/D");
-    //  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_Z").c_str(),&CrystalAbsorbedPhotonHitPos_Z,"CrystalAbsorbedPhotonHitPos_Z/D");
-    //  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_X").c_str(),&PhantomAbsorbedPhotonHitPos_X,"PhantomAbsorbedPhotonHitPos_X/D");
-    //  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Y").c_str(),&PhantomAbsorbedPhotonHitPos_Y,"PhantomAbsorbedPhotonHitPos_Y/D");
-    //  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Z").c_str(),&PhantomAbsorbedPhotonHitPos_Z,"PhantomAbsorbedPhotonHitPos_Z/D");
-    OpticalTree->Branch(G4String("PhantomWLSPos_X").c_str(), &PhantomWLSPos_X, "PhantomWLSPos_X/D");
-    OpticalTree->Branch(G4String("PhantomWLSPos_Y").c_str(), &PhantomWLSPos_Y, "PhantomWLSPos_Y/D");
-    OpticalTree->Branch(G4String("PhantomWLSPos_Z").c_str(), &PhantomWLSPos_Z, "PhantomWLSPos_Z/D");
-    //  OpticalTree->Branch(G4String("NumCrystalOptAbs").c_str(),&nCrystalOpticalAbsorption,"nCrystalOpticalAbsorption/I");
-    //  OpticalTree->Branch(G4String("NumCrystalOptRay").c_str(),&nCrystalOpticalRayleigh,"nCrystalOpticalRayleigh/I");
-    //  OpticalTree->Branch(G4String("NumCrystalOptMie").c_str(),&nCrystalOpticalMie,"nCrystalOpticalMie/I");
-    //  OpticalTree->Branch(G4String("NumPhantomOptAbs").c_str(),&nPhantomOpticalAbsorption,"nPhantomOpticalAbsorption/I");
-    //  OpticalTree->Branch(G4String("NumPhantomOptRay").c_str(),&nPhantomOpticalRayleigh,"nPhantomOpticalRayleigh/I");
-    //  OpticalTree->Branch(G4String("NumPhantomOptMie").c_str(),&nPhantomOpticalMie,"nPhantomOpticalMie/I");
-    OpticalTree->Branch(G4String("PhantomProcessName").c_str(), &NameOfProcessInPhantom, "PhantomProcessName/C");
-    OpticalTree->Branch(G4String("CrystalProcessName").c_str(), &NameOfProcessInCrystal, "CrystalProcessName/C");
-    OpticalTree->Branch(G4String("MomentumDirectionx").c_str(), &MomentumDirectionx, "MomentumDirectionx/D");
-    OpticalTree->Branch(G4String("MomentumDirectiony").c_str(), &MomentumDirectiony, "MomentumDirectiony/D");
-    OpticalTree->Branch(G4String("MomentumDirectionz").c_str(), &MomentumDirectionz, "MomentumDirectionz/D");
-    // v. cuplov - optical photons
+		OpticalTree->Branch(G4String("NumScintillation").c_str(), &nScintillation, "nScintillation/I");
+		OpticalTree->Branch(G4String("NumCrystalWLS").c_str(), &NumCrystalWLS, "NumCrystalWLS/I");
+		OpticalTree->Branch(G4String("NumPhantomWLS").c_str(), &NumPhantomWLS, "NumPhantomWLS/I");
+		OpticalTree->Branch(G4String("CrystalLastHitPos_X").c_str(), &CrystalLastHitPos_X, "CrystalLastHitPos_X/D");
+		OpticalTree->Branch(G4String("CrystalLastHitPos_Y").c_str(), &CrystalLastHitPos_Y, "CrystalLastHitPos_Y/D");
+		OpticalTree->Branch(G4String("CrystalLastHitPos_Z").c_str(), &CrystalLastHitPos_Z, "CrystalLastHitPos_Z/D");
+		OpticalTree->Branch(G4String("CrystalLastHitEnergy").c_str(), &CrystalLastHitEnergy, "CrystalLastHitEnergy/D");
+		OpticalTree->Branch(G4String("PhantomLastHitPos_X").c_str(), &PhantomLastHitPos_X, "PhantomLastHitPos_X/D");
+		OpticalTree->Branch(G4String("PhantomLastHitPos_Y").c_str(), &PhantomLastHitPos_Y, "PhantomLastHitPos_Y/D");
+		OpticalTree->Branch(G4String("PhantomLastHitPos_Z").c_str(), &PhantomLastHitPos_Z, "PhantomLastHitPos_Z/D");
+		OpticalTree->Branch(G4String("PhantomLastHitEnergy").c_str(), &PhantomLastHitEnergy, "PhantomLastHitEnergy/D");
+		//  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_X").c_str(),&CrystalAbsorbedPhotonHitPos_X,"CrystalAbsorbedPhotonHitPos_X/D");
+		//  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_Y").c_str(),&CrystalAbsorbedPhotonHitPos_Y,"CrystalAbsorbedPhotonHitPos_Y/D");
+		//  OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_Z").c_str(),&CrystalAbsorbedPhotonHitPos_Z,"CrystalAbsorbedPhotonHitPos_Z/D");
+		//  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_X").c_str(),&PhantomAbsorbedPhotonHitPos_X,"PhantomAbsorbedPhotonHitPos_X/D");
+		//  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Y").c_str(),&PhantomAbsorbedPhotonHitPos_Y,"PhantomAbsorbedPhotonHitPos_Y/D");
+		//  OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Z").c_str(),&PhantomAbsorbedPhotonHitPos_Z,"PhantomAbsorbedPhotonHitPos_Z/D");
+		OpticalTree->Branch(G4String("PhantomWLSPos_X").c_str(), &PhantomWLSPos_X, "PhantomWLSPos_X/D");
+		OpticalTree->Branch(G4String("PhantomWLSPos_Y").c_str(), &PhantomWLSPos_Y, "PhantomWLSPos_Y/D");
+		OpticalTree->Branch(G4String("PhantomWLSPos_Z").c_str(), &PhantomWLSPos_Z, "PhantomWLSPos_Z/D");
+		//  OpticalTree->Branch(G4String("NumCrystalOptAbs").c_str(),&nCrystalOpticalAbsorption,"nCrystalOpticalAbsorption/I");
+		//  OpticalTree->Branch(G4String("NumCrystalOptRay").c_str(),&nCrystalOpticalRayleigh,"nCrystalOpticalRayleigh/I");
+		//  OpticalTree->Branch(G4String("NumCrystalOptMie").c_str(),&nCrystalOpticalMie,"nCrystalOpticalMie/I");
+		//  OpticalTree->Branch(G4String("NumPhantomOptAbs").c_str(),&nPhantomOpticalAbsorption,"nPhantomOpticalAbsorption/I");
+		//  OpticalTree->Branch(G4String("NumPhantomOptRay").c_str(),&nPhantomOpticalRayleigh,"nPhantomOpticalRayleigh/I");
+		//  OpticalTree->Branch(G4String("NumPhantomOptMie").c_str(),&nPhantomOpticalMie,"nPhantomOpticalMie/I");
+		OpticalTree->Branch(G4String("PhantomProcessName").c_str(), &NameOfProcessInPhantom, "PhantomProcessName/C");
+		OpticalTree->Branch(G4String("CrystalProcessName").c_str(), &NameOfProcessInCrystal, "CrystalProcessName/C");
+		OpticalTree->Branch(G4String("MomentumDirectionx").c_str(), &MomentumDirectionx, "MomentumDirectionx/D");
+		OpticalTree->Branch(G4String("MomentumDirectiony").c_str(), &MomentumDirectiony, "MomentumDirectiony/D");
+		OpticalTree->Branch(G4String("MomentumDirectionz").c_str(), &MomentumDirectionz, "MomentumDirectionz/D");
+		// v. cuplov - optical photons
+
+		m_OpticalTrees.push_back(OpticalTree);
+	  }
 
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
         m_outputChannelList[i]->Book();
@@ -741,10 +754,9 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
     latestEventID += 1.;
 
     //OK GND 2022
-    //GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
     std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
-    for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+    for (size_t i=0; i<CHC_vector.size();i++ )//HC_vector.size()
     {
     	GateHitsCollection* CHC = CHC_vector[i];
 
@@ -857,21 +869,28 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
  RecordDigitizer(event);
 
     // v. cuplov - optical photons
-/*    RecordOpticalData(event);
+   RecordOpticalData(event);
     // v. cuplov - optical photons
 
     // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end\n";);
-*/
+
 }
 
 //--------------------------------------------------------------------------
 
 // v.cuplov - optical photon: Record OpticalPhoton Data
 void GateToRoot::RecordOpticalData(const G4Event *event) {
-   /* G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
+	   if (nVerboseLevel > 2)
+	        G4cout << "GateToRoot::RecordOpticalData\n";
+
+	G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
     if (trajectoryContainer) m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
 
-    GateHitsCollection *CHC = GetOutputMgr()->GetHitCollection();
+
+
+    //OK GND 2022
+    std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
+
     GatePhantomHitsCollection *PHC = GetOutputMgr()->GetPhantomHitCollection();
 
     // Initialization of variables:
@@ -887,7 +906,10 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
     nPhantomOpticalWLS = 0;
     NumCrystalWLS = 0;
     NumPhantomWLS = 0;
+    // Looking at Crystal Hits Collection:
 
+    for (size_t i=0; i<CHC_vector.size();i++ )
+        {
     // Looking at Phantom Hit Collection:
     if (PHC) {
 
@@ -898,7 +920,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
             GatePhantomHit *pHit = (*PHC)[iPHit];
             G4String processName = (*PHC)[iPHit]->GetProcess();
 
-            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == 0)// looking at optical photons only
+            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == -22)// looking at optical photons only
             {
                 strcpy(NameOfProcessInPhantom, pHit->GetProcess().c_str());
 
@@ -927,49 +949,62 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
     } // end if PHC
 
 
-    // Looking at Crystal Hits Collection:
-    if (CHC) {
 
-        G4int NbHits = CHC->entries();
-        strcpy(NameOfProcessInCrystal, "");
+        GateHitsCollection* CHC = CHC_vector[i];
+		if (CHC) {
 
-        for (G4int iHit = 0; iHit < NbHits; iHit++) {
-            GateHit *aHit = (*CHC)[iHit];
-            G4String processName = aHit->GetProcess();
+			G4int NbHits = CHC->entries();
+			//G4cout<<"NbHits "<<NbHits<<" in "<<  CHC->GetSDname()<<" "<<i<< " "<< &m_OpticalTrees[i]<<G4endl;
 
-            //              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
-            if (aHit->GoodForAnalysis()) {
-                strcpy(NameOfProcessInCrystal, aHit->GetProcess().c_str());
+			strcpy(NameOfProcessInCrystal, "");
 
-                if (processName.find("Scintillation") != G4String::npos) nScintillation++;
+			for (G4int iHit = 0; iHit < NbHits; iHit++)
+			{
+				GateHit *aHit = (*CHC)[iHit];
+				G4String processName = aHit->GetProcess();
 
-                if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
-                {
-                    if (processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
-                    //               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
-                    //               		if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
-                    //               		if (processName.find("OpticalAbsorption") != G4String::npos) {
-                    //                              nCrystalOpticalAbsorption++;
-                    //                              CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
-                    //                              CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
-                    //                              CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-                    //                  	}
+				//              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
+				if (aHit->GoodForAnalysis())
+				{
+					strcpy(NameOfProcessInCrystal, aHit->GetProcess().c_str());
 
-                    CrystalLastHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
-                    CrystalLastHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
-                    CrystalLastHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-                    CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();
-                }
-            } // end GoodForAnalysis()
-        } // end loop over crystal hits
-    } // end if CHC
+					if (processName.find("Scintillation") != G4String::npos) nScintillation++;
 
-    // counting the number of Wave Length Shifting = Fluorescence:
-    if (nCrystalOpticalWLS > 0) NumCrystalWLS++;
-    if (nPhantomOpticalWLS > 0) NumPhantomWLS++;
+					if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
+					{
+						if (processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
+						//               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
+						//               		if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
+						//               		if (processName.find("OpticalAbsorption") != G4String::npos) {
+						//                              nCrystalOpticalAbsorption++;
+						//                              CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
+						//                              CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
+						//                              CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+						//                  	}
 
-    if (m_rootOpticalFlag && trajectoryContainer) { OpticalTree->Fill(); }
-*/
+						CrystalLastHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
+						CrystalLastHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
+						CrystalLastHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+						CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();
+
+					}
+				} // end GoodForAnalysis()
+
+			} // end loop over crystal hits
+		} // end if CHC
+
+
+	// counting the number of Wave Length Shifting = Fluorescence:
+		if (nCrystalOpticalWLS > 0) NumCrystalWLS++;
+		if (nPhantomOpticalWLS > 0) NumPhantomWLS++;
+
+		if (m_rootOpticalFlag && trajectoryContainer) {
+			m_OpticalTrees[i]->Fill();
+		}
+
+    }// end for CHC_vector
+
+
 }
 
 

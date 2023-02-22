@@ -115,10 +115,9 @@ void GateToSummary::RecordEndOfEvent(const G4Event* )
   m_nb_of_events++;
 
   // store number of hits during this events
-  //GateHitsCollection* CHC = GetOutputMgr()->GetHitCollection();
   //OK GND 2022
     std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
-    for (long unsigned int i=0; i<CHC_vector.size();i++ )//HC_vector.size()
+    for (size_t i=0; i<CHC_vector.size();i++ )//HC_vector.size()
        {
     	   GateHitsCollection* CHC = CHC_vector[i];
     	if (CHC) {

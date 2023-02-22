@@ -200,8 +200,6 @@ public:
             //OK GND 2022 multiSD backward compatibility
             GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
-            G4cout<<"SingleOutputChannel "<<m_signlesCommands<<" "<<m_collectionName <<G4endl;
-           ;
             if (m_outputFlag) {
             	if( digitizerMgr->m_SDlist.size()==1 )
             	{
@@ -344,7 +342,8 @@ private:
 
 // v. cuplov - optical photons
     GateTrajectoryNavigator *m_trajectoryNavigator;
-    TTree *OpticalTree; // new tree
+    //TTree *OpticalTree; // new tree
+    std::vector<TTree*> m_OpticalTrees; // new tree
     Char_t NameOfProcessInCrystal[40];
     Char_t NameOfProcessInPhantom[40];
 //  G4int nPhantomOpticalRayleigh;

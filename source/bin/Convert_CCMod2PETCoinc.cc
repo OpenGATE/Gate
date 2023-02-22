@@ -80,9 +80,8 @@ int main(int argc, char *argv[])
        if(isgood==1){
            GateCoincidencePulse* m_coincidencePulse=m_coincFileReader->PrepareEndOfEvent();
            if (m_coincidencePulse->size()==2){
-              /*
-               * OK GND TODO adapt that part
-               * GateCoincidenceDigi* aPETCoincDigi= new GateCoincidenceDigi(m_coincidencePulse);
+        	//OK GND 2022 TODO
+        	  /* GateCoincidenceDigiOld* aPETCoincDigi= new GateCoincidenceDigiOld(m_coincidencePulse);
                m_PETcoincBuffer.Fill(aPETCoincDigi);
                m_PETcoincTree->Fill();
                m_PETcoincBuffer.Clear();
@@ -91,7 +90,7 @@ int main(int argc, char *argv[])
                    delete aPETCoincDigi;
                    aPETCoincDigi=0;
                }
-               */
+        	 */
            }
            else{
                 if (m_coincidencePulse->size()<2){
