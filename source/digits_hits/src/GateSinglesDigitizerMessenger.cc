@@ -30,8 +30,8 @@ See LICENSE.md for further details
 #include "GateEnergyResolution.hh"
 #include "GateSpatialResolution.hh"
 #include "GateEfficiency.hh"
-/*UNCOMM#include "GateDeadTime.hh"
-#include "GatePileup.hh"
+#include "GateDeadTime.hh"
+/*UNCOMM#include "GatePileup.hh"
 #include "GateAdderCompton.hh"
 */
 /*
@@ -177,12 +177,12 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
    	  newDM = new GateEfficiency(m_digitizer, DMname);
    	  m_digitizer->AddNewModule(newDM);
      }
-  /*UNCOMM else if (childTypeName=="deadtime")
+   else if (childTypeName=="deadtime")
      {
-   	  newDM = new GateDeadTime(m_digitizer);
+   	  newDM = new GateDeadTime(m_digitizer, DMname);
    	  m_digitizer->AddNewModule(newDM);
      }
-  else if (childTypeName=="pileup")
+  /*UNCOMMelse if (childTypeName=="pileup")
        {
      	  newDM = new GatePileup(m_digitizer);
      	  m_digitizer->AddNewModule(newDM);
