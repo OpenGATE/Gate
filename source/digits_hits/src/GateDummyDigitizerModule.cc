@@ -76,8 +76,8 @@
 
 
 
-GateDummyDigitizerModule::GateDummyDigitizerModule(GateSinglesDigitizer *digitizer)
-  :GateVDigitizerModule("Dummy","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/dummy",digitizer,digitizer->GetSD()),
+GateDummyDigitizerModule::GateDummyDigitizerModule(GateSinglesDigitizer *digitizer, G4String name)
+  :GateVDigitizerModule(name,"digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/"+name,digitizer,digitizer->GetSD()),
    m_parameter("dummy"),
    m_outputDigi(0),
    m_OutputDigiCollection(0),

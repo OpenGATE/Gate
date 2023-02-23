@@ -40,7 +40,7 @@ class GateDummyDigitizerModule : public GateVDigitizerModule
 {
 public:
   
-  GateDummyDigitizerModule(GateSinglesDigitizer *digitizer);
+  GateDummyDigitizerModule(GateSinglesDigitizer *digitizer, G4String name);
   ~GateDummyDigitizerModule();
   
   void Digitize() override;
