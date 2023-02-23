@@ -120,7 +120,7 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
 
   G4String newInsertionName = GetProcessorChain()->MakeElementName(GetNewInsertionBaseName());
 
-  if (childTypeName=="readout")
+ /* if (childTypeName=="readout")
     newProcessor = new GateReadout(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="pileup")
     newProcessor = new GatePileup(GetProcessorChain(),newInsertionName);
@@ -207,7 +207,7 @@ else if (childTypeName=="localMultipleRejection")
     G4cout << "Pulse-processor type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;
   }
-  
+  */
   GetProcessorChain()->InsertProcessor(newProcessor);
   SetNewInsertionBaseName("");
 }

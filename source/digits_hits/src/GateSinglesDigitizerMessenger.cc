@@ -24,8 +24,8 @@ See LICENSE.md for further details
 #include "GateVDigitizerModule.hh"
 #include "GateDigitizerMgr.hh"
 #include "GateAdder.hh"
-/*UNCOMM #include "GateReadout.hh"
-#include "GateEnergyFraming.hh"
+#include "GateReadout.hh"
+/*UNCOMM #include "GateEnergyFraming.hh"
 #include "GateTimeResolution.hh"
 #include "GateEnergyResolution.hh"
 #include "GateSpatialResolution.hh"
@@ -139,20 +139,20 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   GateVDigitizerModule* newDM=0;
 
   G4String newInsertionName = m_digitizer->MakeElementName(GetNewInsertionBaseName());
-  G4String GNDname = m_digitizer->GetDMNameFromInsertionName(newInsertionName);
+  G4String DMname = m_digitizer->GetDMNameFromInsertionName(newInsertionName);
 
 
   if (childTypeName=="adder")
     {
-  	  newDM = new GateAdder(m_digitizer, GNDname);
+  	  newDM = new GateAdder(m_digitizer, DMname);
   	  m_digitizer->AddNewModule(newDM);
     }
-  /*UNCOMM else if (childTypeName=="readout")
+  else if (childTypeName=="readout")
   {
-	  newDM = new GateReadout(m_digitizer);
+	  newDM = new GateReadout(m_digitizer, DMname);
 	  m_digitizer->AddNewModule(newDM);
   }
-  else if (childTypeName=="energyFraming")
+  /*UNCOMM else if (childTypeName=="energyFraming")
   {
 	  newDM = new GateEnergyFraming(m_digitizer);
 	  m_digitizer->AddNewModule(newDM);

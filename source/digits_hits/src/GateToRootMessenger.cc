@@ -114,7 +114,7 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
 GateToRootMessenger::~GateToRootMessenger()
 {
   delete ResetCmd;
-  delete RootSinglesCmd;
+  //delete RootSinglesCmd;
 
   delete RootHitCmd;
   delete RootNtupleCmd;
