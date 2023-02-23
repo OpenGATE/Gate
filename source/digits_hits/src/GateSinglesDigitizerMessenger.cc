@@ -32,8 +32,8 @@ See LICENSE.md for further details
 #include "GateEfficiency.hh"
 #include "GateDeadTime.hh"
 #include "GatePileup.hh"
-/*UNCOMM#include "GateAdderCompton.hh"
-*/
+#include "GateAdderCompton.hh"
+
 /*
 
 #include "GatePileup.hh"
@@ -187,9 +187,9 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  newDM = new GatePileup(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
-  /*UNCOMMeelse if (childTypeName=="adderCompton")
+  else if (childTypeName=="adderCompton")
        {
-     	  newDM = new GateAdderCompton(m_digitizer);
+     	  newDM = new GateAdderCompton(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
    // newDM = new GateReadout(m_digitizer,newInsertionName);
