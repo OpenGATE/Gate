@@ -37,7 +37,7 @@ class GateAdder : public GateVDigitizerModule
 {
 public:
   
-  GateAdder(GateSinglesDigitizer *digitizer);
+  GateAdder(GateSinglesDigitizer *digitizer, G4String name);
   ~GateAdder();
 
   void Digitize() override;

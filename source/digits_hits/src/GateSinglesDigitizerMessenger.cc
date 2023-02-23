@@ -139,12 +139,12 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   GateVDigitizerModule* newDM=0;
 
   G4String newInsertionName = m_digitizer->MakeElementName(GetNewInsertionBaseName());
+  G4String GNDname = m_digitizer->GetDMNameFromInsertionName(newInsertionName);
 
-  G4String collName=m_digitizer->m_digitizerName;
 
   if (childTypeName=="adder")
     {
-  	  newDM = new GateAdder(m_digitizer);
+  	  newDM = new GateAdder(m_digitizer, GNDname);
   	  m_digitizer->AddNewModule(newDM);
     }
   /*UNCOMM else if (childTypeName=="readout")

@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
        if(isgood==1){
            GateCoincidencePulse* m_coincidencePulse=m_coincFileReader->PrepareEndOfEvent();
            if (m_coincidencePulse->size()==2){
-        	//OK GND 2022 TODO
+        	//OK GND CC 2022 TODO
         	  /* GateCoincidenceDigiOld* aPETCoincDigi= new GateCoincidenceDigiOld(m_coincidencePulse);
                m_PETcoincBuffer.Fill(aPETCoincDigi);
                m_PETcoincTree->Fill();

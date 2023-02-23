@@ -83,6 +83,8 @@ class GateSinglesDigitizer : public GateModuleListManager
 
     void DescribeMyself();
 
+    G4String GetDMNameFromInsertionName(G4String name);
+
  protected:
       GateSinglesDigitizerMessenger*    m_messenger;
       GateVSystem *m_system;            //!< System to which the digitizer is attached

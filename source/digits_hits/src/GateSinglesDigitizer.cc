@@ -39,7 +39,6 @@ GateSinglesDigitizer::GateSinglesDigitizer( GateDigitizerMgr* itsDigitizerMgr,
 	m_SD(SD),
 	m_digitizerName(digitizerUsersName)
 {
-	//G4cout<<"GateSinglesDigitizer::GateSinglesDigitizer "<<  itsDigitizerMgr->GetObjectName() + "/"+ SD->GetName() +"/SinglesDigitizer/" + digitizerUsersName <<G4endl;
 	m_messenger = new GateSinglesDigitizerMessenger(this);
 
   //Prepare OutputMng for this digitizer
@@ -50,10 +49,6 @@ GateSinglesDigitizer::GateSinglesDigitizer( GateDigitizerMgr* itsDigitizerMgr,
   		itsDigitizerMgr->AddNewSinglesDigitizer(this);
 
   	}
-    //theListOfNamedObject.push_back(newChildProcessor);
-
-	//G4cout<<"end GateSinglesDigitizer::GateSinglesDigitizer "<<  itsDigitizerMgr->GetObjectName() + "/"+ SD->GetName() +"/SinglesDigitizer/" + "Singles" <<G4endl;
-
 
 }
 
@@ -108,6 +103,21 @@ void GateSinglesDigitizer::DescribeMyself()
 			{
 				G4cout<<"    " <<m_DMlist[j]->GetName()<<" "<<G4endl;
 			}
+
+}
+
+G4String GateSinglesDigitizer::GetDMNameFromInsertionName(G4String name)
+{
+	 size_t pos = 0;
+	 std::string token;
+
+	std::string delimiter = "/";
+	while ((pos = name.find(delimiter)) != std::string::npos) {
+	    token = name.substr(0, pos);
+	   name.erase(0, pos + delimiter.length());
+	}
+
+	return name;
 
 }
 

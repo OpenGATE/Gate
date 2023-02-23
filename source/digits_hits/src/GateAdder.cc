@@ -33,8 +33,8 @@
 #include "G4UnitsTable.hh"
 
 
-GateAdder::GateAdder(GateSinglesDigitizer *digitizer)
-  :GateVDigitizerModule("Adder","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/adder",digitizer, digitizer->GetSD()),
+GateAdder::GateAdder(GateSinglesDigitizer *digitizer, G4String name)
+  :GateVDigitizerModule(name,"digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/"+name,digitizer, digitizer->GetSD()),
    m_positionPolicy(kEnergyCentroid),
    m_outputDigi(0),
    m_OutputDigiCollection(0),
