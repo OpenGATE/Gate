@@ -27,8 +27,8 @@ See LICENSE.md for further details
 #include "GateReadout.hh"
 #include "GateEnergyFraming.hh"
 #include "GateTimeResolution.hh"
-/*UNCOMM#include "GateEnergyResolution.hh"
-#include "GateSpatialResolution.hh"
+#include "GateEnergyResolution.hh"
+/*UNCOMM#include "GateSpatialResolution.hh"
 #include "GateEfficiency.hh"
 #include "GateDeadTime.hh"
 #include "GatePileup.hh"
@@ -162,12 +162,12 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   	  newDM = new GateTimeResolution(m_digitizer, DMname);
   	  m_digitizer->AddNewModule(newDM);
     }
-  /*UNCOMM  else if (childTypeName=="energyResolution")
+   else if (childTypeName=="energyResolution")
     {
-  	  newDM = new GateEnergyResolution(m_digitizer);
+  	  newDM = new GateEnergyResolution(m_digitizer, DMname);
   	  m_digitizer->AddNewModule(newDM);
     }
-  else if (childTypeName=="spatialResolution")
+  /*UNCOMM  else if (childTypeName=="spatialResolution")
     {
   	  newDM = new GateSpatialResolution(m_digitizer);
   	  m_digitizer->AddNewModule(newDM);
