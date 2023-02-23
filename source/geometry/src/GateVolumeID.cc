@@ -21,7 +21,7 @@ See LICENSE.md for further details
 // Constructs a GateVolumeSelector for a physical volume
 GateVolumeSelector::GateVolumeSelector(G4VPhysicalVolume* itsVolume)
 {
-   
+
   m_creator = GateObjectStore::GetInstance()->FindVolumeCreator(itsVolume);
   
   m_copyNo = itsVolume->GetCopyNo();
