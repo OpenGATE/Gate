@@ -50,7 +50,9 @@ GateDigitizerMgr::GateDigitizerMgr()
 	  m_isInitialized(1),
 	  m_isTheFirstEvent(1),
 	  m_recordSingles(0),
-	  m_recordCoincidences(0)
+	  m_recordCoincidences(0),
+	  m_alreadyRun(false)
+
 {
 	//	G4cout<<"GateDigitizerMgr:: constructor "<<  nVerboseLevel<<G4endl;
 	fMessenger = new GateDigitizerMgrMessenger(this);
@@ -93,6 +95,19 @@ void GateDigitizerMgr::Initialize()
 
 	//G4cout<<"GateDigitizerMgr::Initialize() "<< G4endl;
 	//ShowSummary();
+
+	//Checking if analysis or fastanalysis are enabled
+	/*GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
+
+	if(!outputMgr->FindOutputModule("analysis")->IsEnabled()&&!outputMgr->FindOutputModule("fastanalysis")->IsEnabled())
+	{
+		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
+
+
+	}
+*/
+
+
 
 	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 	for (size_t i_D = 0; i_D<m_SingleDigitizersList.size(); i_D++)
@@ -319,6 +334,7 @@ GateSinglesDigitizer* GateDigitizerMgr::FindDigitizer(G4String mName)
 		if(DigitizerName == mName)
 			return m_SingleDigitizersList [i];
 		}
+	//GateError("SinglesDigitizer " <<mName<< " not found");
 	return NULL;
 }
 
@@ -395,6 +411,7 @@ void GateDigitizerMgr::RunDigitizers()
 
 		}
 
+		m_alreadyRun=true;
 }
 
 void GateDigitizerMgr::RunCoincidenceSorters()
@@ -427,6 +444,7 @@ void GateDigitizerMgr::RunCoincidenceSorters()
 
 			//G4cout<<"coll ID"<< m_collectionID<< "for "<<  <<G4endl;
 			//m_SingleDigitizersList[i]->SetLastDMname();
+	m_alreadyRun=true;
 }
 
 

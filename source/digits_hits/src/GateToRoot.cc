@@ -1231,6 +1231,10 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
             (GateSingleDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
      */
 
+//    GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+   // digitizerMgr->ShowSummary();
+
 	if (!m_outputFlag) return;
 
     G4DigiManager *fDM = G4DigiManager::GetDMpointer();
@@ -1247,7 +1251,7 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
     } else {
         // Digi loop
         //GateMessage("OutputMgr", 5, " There is SDC collection. \n";);
-        if (nVerboseLevel > 0)
+       if (nVerboseLevel > 0)
             G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits: "
                    << SDC->entries() << Gateendl;
 

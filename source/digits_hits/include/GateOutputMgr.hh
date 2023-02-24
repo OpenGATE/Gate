@@ -71,6 +71,7 @@ public:
   /*! For the moment it's a simple push_back in a vector of pointers, but it may become more complex
    if the structure of the module list evolves */
   void AddOutputModule(GateVOutputModule* module);
+  GateVOutputModule* FindOutputModule(G4String name);
 
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);

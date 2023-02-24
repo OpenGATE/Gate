@@ -33,6 +33,8 @@ public:
   virtual void Digitize()=0;
   void InputCollectionID();
 
+  GateDigi* CentroidMerge(GateDigi* right, GateDigi* output );
+  GateDigi* MergePositionEnergyWin(GateDigi *right, GateDigi *output);
 
 
 

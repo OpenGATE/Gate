@@ -33,7 +33,7 @@ See LICENSE.md for further details
 #include "GateDeadTime.hh"
 #include "GatePileup.hh"
 #include "GateAdderCompton.hh"
-
+#include "GateOpticalAdder.hh"
 /*
 
 #include "GatePileup.hh"
@@ -121,7 +121,7 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder";
 
    return theList;
 }
@@ -190,6 +190,12 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   else if (childTypeName=="adderCompton")
        {
      	  newDM = new GateAdderCompton(m_digitizer, DMname);
+     	  m_digitizer->AddNewModule(newDM);
+       }
+  else if (childTypeName=="opticaladder")
+       {
+	  G4cout<<"is  opticaladder"<<G4endl;
+     	  newDM = new GateOpticalAdder(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
    // newDM = new GateReadout(m_digitizer,newInsertionName);

@@ -23,6 +23,7 @@ See LICENSE.md for further details
 #include "GateHit.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
+#include "GateDigitizerMgr.hh"
 
 GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMgr, DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
@@ -73,10 +74,16 @@ void GateFastAnalysis::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
     G4cout << "GateFastAnalysis::RecordBeginOfEvent\n";
+
+  //GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+  // digitizerMgr->m_alreadyRun=false;
 }
 
 void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 {
+	 if (nVerboseLevel > 2)
+	    G4cout << "GateFastAnalysis::RecordEndOfEvent\n";
+
 	//OK GND 2022
 	std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 	for (size_t i=0; i<CHC_vector.size();i++ )
@@ -120,10 +127,19 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 	  } // end if CHC
   }//end of loop over hits collections
 
+	//OK GND 2022
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
 
- if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfEvent\n";
+	 if(!digitizerMgr->m_alreadyRun)
+		 {
 
+	    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+	 	  digitizerMgr->RunDigitizers();
+
+	    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+	    	digitizerMgr->RunCoincidenceSorters();
+
+		 }
 }
 
 void GateFastAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step* )

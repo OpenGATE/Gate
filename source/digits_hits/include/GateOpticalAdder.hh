@@ -6,56 +6,65 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-#ifdef GATE_USE_OPTICAL
-
-#ifndef GateOpticalAdder_h
-#define GateOpticalAdder_h 1
-
-#include "globals.hh"
-#include <iostream>
-#include <vector>
-#include "G4ThreeVector.hh"
-
-#include "GateVPulseProcessor.hh"
-
-class GateOpticalAdderMessenger;
+// OK GND 2022
 
 /*! \class  GateOpticalAdder
-    \brief  Pulse-processor for adding/grouping pulses per volume, only pules caused by optical photons are added.
+    \brief  Pulse-processor for adding/grouping pulses per volume, only digits caused by optical photons are added.
 
     - GateOpticalAdder - by d.j.vanderlaan@iri.tudelft.nl
 
     - For each volume where there was one or more input pulse, we get exactly
-      one output pulse, whose energy is the total number of input-pulses (not the total energy like in the
-      GatePulseAdder, but the total number!), and whose position is the centroid of the input-pulse positions.
+      one output pulse, whose energy is the total number of input-digis (not the total energy like in the
+      GateAdder, but the total number!), and whose position is the centroid of the input-digis positions.
+
+	- Added to GND in Feb. 2023 by OK
 */
-class GateOpticalAdder : public GateVPulseProcessor
+
+
+#ifndef GateOpticalAdder_h
+#define GateOpticalAdder_h 1
+
+#include "GateVDigitizerModule.hh"
+#include "GateDigi.hh"
+#include "GateClockDependent.hh"
+#include "GateCrystalSD.hh"
+
+#include "globals.hh"
+
+#include "GateOpticalAdderMessenger.hh"
+#include "GateSinglesDigitizer.hh"
+
+
+class GateOpticalAdder : public GateVDigitizerModule
 {
-  public:
+public:
+  
+  GateOpticalAdder(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateOpticalAdder();
+  
+  void Digitize() override;
 
-    //! Constructs a new optical-adder attached to a GateDigitizer
-    GateOpticalAdder(GatePulseProcessorChain* itsChain,const G4String& itsName);
+  void DescribeMyself(size_t );
 
-    //! Destructor
-    virtual ~GateOpticalAdder();
 
-    //! Implementation of the pure virtual method declared by the base class GateClockDependent
-    //! print-out the attributes specific of the pulse adder
-    virtual void DescribeMyself(size_t indent);
+private:
+  GateDigi* m_outputDigi;
 
-  protected:
-    //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
-    //! This methods processes one input-pulse
-    //! It is is called by ProcessPulseList() for each of the input pulses
-    //! The result of the pulse-processing is incorporated into the output pulse-list
-    void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
+  GateOpticalAdderMessenger *m_Messenger;
 
-  private:
-    GateOpticalAdderMessenger *m_messenger;     //!< Messenger
+  GateDigiCollection*  m_OutputDigiCollection;
+
+  GateSinglesDigitizer *m_digitizer;
+
+
 };
 
-
 #endif
 
-#endif
+
+
+
+
+
+
+

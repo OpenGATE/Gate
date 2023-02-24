@@ -93,6 +93,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   if (m_digiMode==kruntimeMode) {
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
+
   }
 
 
@@ -152,6 +153,27 @@ void GateOutputMgr::AddOutputModule(GateVOutputModule* module)
 
 
 //----------------------------------------------------------------------------------
+GateVOutputModule* GateOutputMgr::FindOutputModule(G4String name)
+{
+  if (nVerboseLevel > 2)
+    G4cout << "GateOutputMgr::FindOutputModule\n";
+
+	for(G4int i=0;i<int(m_outputModules.size());i++)
+		{
+		G4String moduleName = m_outputModules[i]->GetName();
+		//G4cout << moduleName << " "<< name<< G4endl;
+		if(moduleName == name)
+			return m_outputModules[i];
+		}
+	GateError("Output Module " <<name<< " not found");
+	return NULL;
+
+}
+//----------------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------------
 void GateOutputMgr::RecordBeginOfEvent(const G4Event* event)
 {
   GateMessage("Output", 5, "GateOutputMgr::RecordBeginOfEvent\n";);
@@ -179,8 +201,13 @@ void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
     if ( m_outputModules[iMod]->IsEnabled() )
       {
         m_outputModules[iMod]->RecordEndOfEvent(event);
+
       }
   }
+
+
+
+
 }
 //----------------------------------------------------------------------------------
 
@@ -232,6 +259,15 @@ void GateOutputMgr::RecordBeginOfAcquisition()
 
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::RecordBeginOfAcquisition\n";
+  //OK GND
+  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+	if((digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+			&& !this->FindOutputModule("analysis")->IsEnabled()
+			&& !this->FindOutputModule("fastanalysis")->IsEnabled())
+	{
+		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules to write down Singles or Coincidences.\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
+	}
+
 
 #ifdef G4ANALYSIS_USE_ROOT
   if (m_digiMode==kofflineMode)

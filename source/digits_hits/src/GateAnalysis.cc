@@ -109,6 +109,7 @@ void GateAnalysis::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
     G4cout << "GateAnalysis::RecordBeginOfEvent\n";
+
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -116,7 +117,7 @@ void GateAnalysis::RecordBeginOfEvent(const G4Event* )
 //--------------------------------------------------------------------------------------------------
 void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 {
-  if (nVerboseLevel > 2)
+ if (nVerboseLevel > 2)
     G4cout << "GateAnalysis::RecordEndOfEvent "<< Gateendl;
 
   G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
@@ -469,14 +470,18 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     } // end if (!trajectoryContainer)
   //OK GND 2022
    //RunDigitizers is called here otherwise we don't have all attributes filled for aHit
-
   GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
 
-    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
- 	  digitizerMgr->RunDigitizers();
+	 if(!digitizerMgr->m_alreadyRun)
+	 {
 
-    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
- 	  digitizerMgr->RunCoincidenceSorters();
+		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+			 digitizerMgr->RunDigitizers();
+
+		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+			 digitizerMgr->RunCoincidenceSorters();
+  }
+
 
 } // end function
 //--------------------------------------------------------------------------------------------------

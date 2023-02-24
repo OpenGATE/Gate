@@ -6,18 +6,45 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-
-#ifdef GATE_USE_OPTICAL
 
 #include "GateOpticalAdderMessenger.hh"
 #include "GateOpticalAdder.hh"
+#include "GateDigitizerMgr.hh"
 
-GateOpticalAdderMessenger::GateOpticalAdderMessenger(GateOpticalAdder* itsPulseAdder) :
-  GatePulseProcessorMessenger(itsPulseAdder)
-{}
+#include "G4SystemOfUnits.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIdirectory.hh"
 
-void GateOpticalAdderMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ GatePulseProcessorMessenger::SetNewValue(aCommand,aString);}
 
-#endif
+
+GateOpticalAdderMessenger::GateOpticalAdderMessenger (GateOpticalAdder* OpticalAdder)
+:GateClockDependentMessenger(OpticalAdder),
+ 	 m_OpticalAdder(OpticalAdder)
+{
+
+}
+
+
+GateOpticalAdderMessenger::~GateOpticalAdderMessenger()
+{
+}
+
+
+void GateOpticalAdderMessenger::SetNewValue(G4UIcommand * aCommand,G4String newValue)
+{
+	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -99,7 +99,7 @@ void GateDigitizerInitializationModule::Digitize()
     		  Digi->SetScannerPos( (*inHC)[i]->GetScannerPos() );
     		  Digi->SetScannerRotAngle( (*inHC)[i]->GetScannerRotAngle() );
     		  #ifdef GATE_USE_OPTICAL
-    		    Digi->SetOptical( (*inHC)[i]->GetPDGEncoding() == 0 );
+    		    Digi->SetOptical( (*inHC)[i]->GetPDGEncoding() == -22);
     		  #endif
     		  Digi->SetNSeptal( (*inHC)[i]->GetNSeptal() );  // HDS : septal penetration
 

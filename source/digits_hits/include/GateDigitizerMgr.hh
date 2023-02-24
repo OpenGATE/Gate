@@ -164,6 +164,8 @@ public:
   G4bool m_recordSingles;
   G4bool m_recordCoincidences;
 
+  G4bool m_alreadyRun;
+
 
 };
 #endif

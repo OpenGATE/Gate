@@ -159,6 +159,7 @@ GateEventAction::GateEventAction(GateUserActions * cbm)
 inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "Begin Of Event " << anEvent->GetEventID() << "\n");
+ // G4cout<<"Begin Of Event " << anEvent->GetEventID() << G4endl;
 
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if ( theMode != TrackingMode::kTracker )
@@ -175,6 +176,12 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
     }
 
   if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->BeginOfEventAction(anEvent);
+
+  // OK GND 2022
+  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+  digitizerMgr->m_alreadyRun=false;
+ // G4cout<<"m_alreadyRun "<< digitizerMgr->m_alreadyRun<<G4endl;
+
 }
 //-----------------------------------------------------------------------------
 
