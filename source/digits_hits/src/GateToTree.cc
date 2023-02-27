@@ -8,6 +8,8 @@ See LICENSE.md for further details
 
 //
 // Created by mdupont on 17/05/19.
+//    - 2023/02/22 PDG code for optical photon is changed from 0 to -22
+
 //
 
 #include "GateToTree.hh"
@@ -1012,7 +1014,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
             auto pHit = (*PHC)[iPHit];
             auto processName = pHit->GetProcess();
 //
-            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == 0)// looking at optical photons only
+            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == -22)// looking at optical photons only
             {
                 m_NameOfProcessInPhantom = pHit->GetProcess();
 //
@@ -1057,7 +1059,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
                 if (processName.find("Scintillation") != G4String::npos)
                     m_nScintillation++;
 
-                if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
+                if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
                 {
                     if (processName.find("OpticalWLS") != G4String::npos)
                         m_nCrystalOpticalWLS++;

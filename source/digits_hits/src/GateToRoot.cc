@@ -18,6 +18,7 @@
     Set the flag for Optical ROOT output.
     - Revision 2012/11/14  - added new leaves: position (x,y,z) of fluorescent (OpticalWLS process) hits
     - Scintillation counter bug-fixed
+    - 2023/02/22 PDG code for optical photon is changed from 0 to -22
 */
 
 #include "GateToRoot.hh"
@@ -846,7 +847,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
             GatePhantomHit *pHit = (*PHC)[iPHit];
             G4String processName = (*PHC)[iPHit]->GetProcess();
 
-            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == 0)// looking at optical photons only
+            if (pHit->GoodForAnalysis() && pHit->GetPDGEncoding() == -22)// looking at optical photons only
             {
                 strcpy(NameOfProcessInPhantom, pHit->GetProcess().c_str());
 
@@ -891,7 +892,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
 
                 if (processName.find("Scintillation") != G4String::npos) nScintillation++;
 
-                if (aHit->GetPDGEncoding() == 0)  // looking at optical photons only
+                if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
                 {
                     if (processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
                     //               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
