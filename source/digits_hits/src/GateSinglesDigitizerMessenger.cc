@@ -43,13 +43,11 @@ See LICENSE.md for further details
 #include "GateLocalTimeDelay.hh"
 #include "GateNoise.hh"
 #include "GateBuffer.hh"
-#include "GateDiscretizer.hh"
 #include "GateBlurringWithIntrinsicResolution.hh"
 #include "GateLightYield.hh"
 #include "GateTransferEfficiency.hh"
 #include "GateCrosstalk.hh"
 #include "GateQuantumEfficiency.hh"
-#include "GateSigmoidalThresholder.hh"
 #include "GateCalibration.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
@@ -187,11 +185,8 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  newDM = new GateOpticalAdder(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
-   // newDM = new GateReadout(m_digitizer,newInsertionName);
-/*  else if (childTypeName=="pileup")
-    newDM = new GatePileup(m_digitizer,newInsertionName);
-  else if (childTypeName=="discretizer")
-    newDM = new GateDiscretizer(m_digitizer,newInsertionName);
+/*
+
 
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
@@ -200,11 +195,6 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   else if (childTypeName=="DoImodel")
     //newDM = new GateDoIModels(m_digitizer,newInsertionName,G4ThreeVector(0.,0.,1.));
     newDM = new GateDoIModels(m_digitizer,newInsertionName);
-
-  else if (childTypeName=="deadtime")
-    newDM = new GateDeadTime(m_digitizer,newInsertionName);
-  else if (childTypeName=="blurring")
-    newDM = new GateBlurring(m_digitizer,newInsertionName);
 
   else if (childTypeName=="localTimeDelay")
     newDM = new GateLocalTimeDelay(m_digitizer,newInsertionName);
@@ -218,18 +208,9 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = GateQuantumEfficiency::GetInstance(m_digitizer,newInsertionName);
   else if (childTypeName=="intrinsicResolutionBlurring")
     newDM = new GateBlurringWithIntrinsicResolution(m_digitizer,newInsertionName);
-  else if (childTypeName=="sigmoidalThresholder")
-    newDM = new GateSigmoidalThresholder(m_digitizer,newInsertionName,0.,1.,0.5);
+
   else if (childTypeName=="calibration")
     newDM = new GateCalibration(m_digitizer,newInsertionName);
-
-
-  else if (childTypeName=="adder")
-  {
-	  newDM = new GateAdder(m_digitizer);
-	 // m_digitizer->AddNewModule(newDM);
-	 // G4DigiManager::GetDMpointer()->AddNewModule(newDM);
-  }
 
   else if (childTypeName=="adderComptPhotIdeal")
     newDM = new GatePulseAdderComptPhotIdeal(m_digitizer,newInsertionName);
@@ -254,10 +235,7 @@ else if (childTypeName=="gridDiscretization")
      newDM = new GateGridDiscretization(m_digitizer,newInsertionName);
 else if (childTypeName=="localMultipleRejection")
      newDM = new GateLocalMultipleRejection(m_digitizer,newInsertionName);
-#ifdef GATE_USE_OPTICAL
-  else if (childTypeName=="opticaladder")
-    newDM = new GateOpticalAdder(m_digitizer, newInsertionName);
-#endif
+
 */
  else {
     G4cout << "Pulse-processor type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";

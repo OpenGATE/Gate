@@ -30,7 +30,7 @@
 #include <iomanip>
 #include "G4UImanager.hh"
 #include "GatePrimaryGeneratorAction.hh"
-#include "GateHitConvertor.hh"
+//#include "GateHitConvertor.hh"
 
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"

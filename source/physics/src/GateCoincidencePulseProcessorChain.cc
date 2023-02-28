@@ -16,7 +16,7 @@ See LICENSE.md for further details
 #include "GateDigitizer.hh"
 #include "GateVCoincidencePulseProcessor.hh"
 #include "GateTools.hh"
-#include "GateHitConvertor.hh"
+//#include "GateHitConvertor.hh"
 //#include "GateCoincidenceDigiMaker.hh"
 
 

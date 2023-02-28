@@ -47,7 +47,6 @@
 #include "GatePhantomHit.hh"
 #include "GateApplicationMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
-#include "GateHitConvertor.hh"
 #include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateSourceMgr.hh"
