@@ -57,7 +57,6 @@ DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 
   - GateFastAnalysis (fast alternative for GateAnalysis, disabled by default)
   - GateAnalysis
-  - GateToDigi
   - GateToASCII
   - GateToRoot
   - GateToRootPlotter
