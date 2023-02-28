@@ -175,12 +175,13 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  newDM = new GateAdderCompton(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
+#ifdef GATE_USE_OPTICAL
   else if (childTypeName=="opticaladder")
        {
-	  G4cout<<"is  opticaladder"<<G4endl;
      	  newDM = new GateOpticalAdder(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
        }
+#endif
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
