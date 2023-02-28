@@ -4,9 +4,6 @@
 
 #include "GateDualLayerLaw.hh"
 
-#include "GateCC3DlocalSpblurring.hh"
-
-#include "GateCC3DlocalSpblurringMessenger.hh"
 #include "GateTools.hh"
 #include "GateVolumeID.hh"
 

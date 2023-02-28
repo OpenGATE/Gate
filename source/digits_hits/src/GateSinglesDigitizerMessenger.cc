@@ -53,7 +53,6 @@ See LICENSE.md for further details
 #include "GateQuantumEfficiency.hh"
 #include "GateSigmoidalThresholder.hh"
 #include "GateCalibration.hh"
-#include "GateSpblurring.hh"
 #include "GatePulseAdder.hh"
 #include "GatePulseAdderLocal.hh"
 #include "GatePulseAdderCompton.hh"
@@ -64,7 +63,6 @@ See LICENSE.md for further details
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
 #include "GateLocalEnergyThresholder.hh"
-#include "GateCC3DlocalSpblurring.hh"
 #include "GateDoIModels.hh"
 #include "GateGridDiscretization.hh"
 #include "GateLocalMultipleRejection.hh"
@@ -230,10 +228,8 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GateSigmoidalThresholder(m_digitizer,newInsertionName,0.,1.,0.5);
   else if (childTypeName=="calibration")
     newDM = new GateCalibration(m_digitizer,newInsertionName);
-  else if (childTypeName=="spblurring")
-    newDM = new GateSpblurring(m_digitizer,newInsertionName,0.1);
-  else if (childTypeName=="sp3Dlocalblurring")
-    newDM = new GateCC3DlocalSpblurring(m_digitizer,newInsertionName);
+
+
   else if (childTypeName=="adder")
   {
 	  newDM = new GateAdder(m_digitizer);

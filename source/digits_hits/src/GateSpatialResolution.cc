@@ -14,7 +14,7 @@
   Includes functionalities from:
   	  GateSpblurring
 	  GateCC3DlocalSpblurring
-	  GateDoIModels
+	  GateDoIModels (TODO)
 
   Previous authors: Steven.Staelens@rug.ac.be(?), AE
 
