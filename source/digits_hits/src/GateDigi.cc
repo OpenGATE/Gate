@@ -9,7 +9,7 @@
 // OK GND 2022
 /*!
   \class  GateDigi
-  \brief  New class that regroup the two old classes: GatePulse and GateSingleDigi
+  \brief  New class that regroup the two old classes: GatePulse and GateDigi
 
     - GateDigi is an object that is used to construct Singles (i.e. digitized Hits)
     - They are stored in GateDigiCollections manages by G4DigiMan and GateDigitizerMgr

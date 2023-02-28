@@ -31,7 +31,7 @@
 #include "G4Event.hh"
 
 class GateARFDataToRootMessenger;
-class GateSingleDigi;
+class GateDigi;
 class GateSteppingAction;
 
 class GateARFData
@@ -73,7 +73,7 @@ public:
     GateVOutputModule::SetVerboseLevel(val);
 
     }
-  G4int StoreARFData(GateSingleDigi*);
+  G4int StoreARFData(GateDigi*);
   void SetProjectionPlane(G4double aX)
     {
     mXPlane = aX;

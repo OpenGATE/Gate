@@ -147,7 +147,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       maskVector.push_back(tempBool);
       //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
     }
-    GateSingleDigi::SetSingleASCIIMask( maskVector );
+    GateDigi::SetSingleASCIIMask( maskVector );
 
   } else if (command == SetOutFileSizeLimitCmd) {
     GateToASCII::VOutputChannel::SetOutputFileSizeLimit( SetOutFileSizeLimitCmd->GetNewIntValue(newValue));

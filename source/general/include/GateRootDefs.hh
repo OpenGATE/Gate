@@ -29,7 +29,7 @@ See LICENSE.md for further details
 
 class GateHit;
 class GateDigi;
-class GateSingleDigi; //TODO remove
+
 class GateCoincidenceDigi;
 
 #define ROOT_VOLUMEIDSIZE 10
@@ -239,8 +239,6 @@ class GateRootSingleBuffer
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
     void Fill(GateDigi* aDigi);
-    //TODO remove
-    void Fill(GateSingleDigi* aDigi);
 
     //! \name Data fields
     //@{

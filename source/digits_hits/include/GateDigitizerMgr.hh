@@ -14,7 +14,6 @@
 	PulseProcessorChain -> Digitizer
 
 	StoreNewPulseProcessorChain -> AddNewSinglesDigitizer
-	GateSingleDigiMaker	-> GateSinglesDigitizer
 
 	DigitizerName = CollectionName
 

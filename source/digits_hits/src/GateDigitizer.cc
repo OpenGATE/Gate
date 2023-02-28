@@ -14,7 +14,7 @@
 #include "GateDigitizer.hh"
 #include "GateTools.hh"
 #include "GateDigitizerMessenger.hh"
-#include "GateSingleDigiMaker.hh"
+//#include "GateDigiMaker.hh"
 #include "GateHitConvertor.hh"
 #include "GateOutputMgr.hh"
 #include "GateVPulseProcessor.hh"

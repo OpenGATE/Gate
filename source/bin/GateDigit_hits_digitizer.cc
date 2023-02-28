@@ -5,7 +5,7 @@
 #include "G4UImanager.hh"
 #include "GateCCHitFileReader.hh"
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateRandomEngine.hh"
 
 #include "GateDetectorConstruction.hh"
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
                GatePulseConstIterator iterIn;
                 for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
 
-                    GateSingleDigi* aSingleDigi=new GateSingleDigi(*iterIn);
+                    GateDigi* aSingleDigi=new GateDigi(*iterIn);
 
 
                     m_SinglesBuffer.Fill(aSingleDigi);

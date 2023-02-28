@@ -403,7 +403,7 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
 {
   //aEvent = 0;
 
-  const GateSingleDigiCollection* CDS = GetOutputMgr()->
+  const GateDigiCollection* CDS = GetOutputMgr()->
     GetSingleDigiCollection( m_inputDataChannel );
 
   if( !CDS )
@@ -416,7 +416,7 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
   for( G4int i = 0; i != n_digit; ++i )
     {
       //find every volumeID
-      size_t moduleID = ( (*CDS)[ i ]->GetPulse() ).GetComponentID( 1 );
+      size_t moduleID = ( (*CDS)[ i ] )->GetComponentID( 1 );
       size_t newPixelID = 0;
 
       //... if self digitalisation
@@ -433,10 +433,10 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
 
           //Every position > 0
           G4double positionX =
-            ( (*CDS)[ i ]->GetPulse() ).GetLocalPos().x()
+            ( (*CDS)[ i ])->GetLocalPos().x()
             + lenghtOfModuleByAxis[ 0 ] / 2;
           G4double positionY =
-            ( (*CDS)[ i ]->GetPulse() ).GetLocalPos().y()
+            ( (*CDS)[ i ])->GetLocalPos().y()
             + lenghtOfModuleByAxis[ 1 ] / 2;
 
           G4int raw = static_cast<G4int>( positionY / heightPixel );
@@ -454,8 +454,8 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
         }
       else
         {
-          size_t clusterID = ( (*CDS)[ i ]->GetPulse() ).GetComponentID( 2 );
-          size_t pixelID = ( (*CDS)[ i ]->GetPulse() ).GetComponentID( 3 );
+          size_t clusterID = ( (*CDS)[ i ] )->GetComponentID( 2 );
+          size_t pixelID = ( (*CDS)[ i ])->GetComponentID( 3 );
           newPixelID = TransformPixel( moduleID, clusterID, pixelID );
         }
 

@@ -766,7 +766,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
     for (auto &&m: m_mmanager_singles) {
 //        auto collectionID = fDM->GetDigiCollectionID(m.first);
         auto collectionID = m_singles_to_collectionID.at(m.first);
-//        auto SDC = static_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(collectionID));
+//        auto SDC = static_cast<const GateDigiCollection*>(fDM->GetDigiCollection(collectionID));
         const GateDigiCollection *SDC =
                         (GateDigiCollection *) (fDM->GetDigiCollection(collectionID));
 

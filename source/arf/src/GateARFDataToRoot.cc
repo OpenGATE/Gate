@@ -39,7 +39,7 @@
 #include "GateApplicationMgr.hh"
 
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateOutputMgr.hh"
 #include "TROOT.h"
 #include "TTree.h"
@@ -141,7 +141,7 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event*)
   /* Get Digitizer information */
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
-  const GateSingleDigiCollection * SDC = (GateSingleDigiCollection*) (fDM->GetDigiCollection(collectionID));
+  const GateDigiCollection * SDC = (GateDigiCollection*) (fDM->GetDigiCollection(collectionID));
   if (!SDC)
     {
     if (nVerboseLevel > 0)
@@ -208,7 +208,7 @@ void GateARFDataToRoot::CloseARFDataRootFile()
     }
   }
 
-G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
+G4int GateARFDataToRoot::StoreARFData(GateDigi * aDigi)
   {
   G4ThreeVector position = aDigi->GetGlobalPos();
   G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();

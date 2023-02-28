@@ -20,7 +20,7 @@
 #include "GateComptonCameraActorMessenger.hh"
 #include "GateMiscFunctions.hh"
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 
 
 
@@ -1104,7 +1104,7 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
             GatePulseConstIterator iterIn;
             for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
                 //GatePulse* inputPulse = *iterIn;
-                GateSingleDigi* aSingleDigi=new GateSingleDigi( *iterIn);
+                GateDigi* aSingleDigi=new GateDigi( *iterIn);
                 if(mSaveSinglesTreeFlag){
 
                     m_SinglesBuffer.Fill(aSingleDigi);

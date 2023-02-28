@@ -23,8 +23,6 @@
 #include "GateDigitizerMgr.hh"
 #include "G4VDigitizerModule.hh"
 #include "GateTools.hh"
-#include "GateHitConvertor.hh"
-#include "GateSingleDigiMaker.hh"
 
 #include "GateOutputMgr.hh"
 #include "GateDigitizerInitializationModule.hh"

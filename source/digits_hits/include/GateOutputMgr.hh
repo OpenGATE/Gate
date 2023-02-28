@@ -16,7 +16,7 @@
 #include "GateVOutputModule.hh"
 #include "GateHit.hh"
 #include "GatePhantomHit.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
 class G4Run;
@@ -116,7 +116,7 @@ public:
   //! Return the current phantom-hit collection (if nay)
   GatePhantomHitsCollection*  	  GetPhantomHitCollection();
   //! Return the current single-digi collection (if nay)
-  GateSingleDigiCollection*   	  GetSingleDigiCollection(const G4String& collectionName);
+  GateDigiCollection*   	  GetSingleDigiCollection(const G4String& collectionName);
   //! Return the current coincidence-digi collection (if nay)
   GateCoincidenceDigiCollection*  GetCoincidenceDigiCollection(const G4String& collectionName);
 

@@ -64,7 +64,7 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
   m_asciiMessenger = new GateToASCIIMessenger(this);
 
   GateCoincidenceDigi::SetCoincidenceASCIIMask(1);
-  GateSingleDigi::SetSingleASCIIMask(1);
+  GateDigi::SetSingleASCIIMask(1);
 
   m_recordFlag = 0; // Design to embrace obsolete functions (histogram, recordVoxels, ...)
 }

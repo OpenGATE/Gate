@@ -139,8 +139,8 @@ void GateToSummary::RecordEndOfEvent(const G4Event* )
   for(auto n:m_collection_names) {
 	  //OK GND 2022
     auto m_collectionID = GetCollectionID(n); //fDM->GetDigiCollectionID(n);
-    const GateSingleDigiCollection * SDC =
-      (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
+    const GateDigiCollection * SDC =
+      (GateDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
     if (!SDC) continue;
     G4int n_digi =  SDC->entries();
     m_collection_nb[n] += n_digi;

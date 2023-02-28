@@ -8,7 +8,7 @@ See LICENSE.md for further details
 // OK GND 2022
 /*!
   \class  GateDigi
-  \brief  New class that regroup the two old classes: GatePulse and GateSingleDigi
+  \brief  New class that regroup the two old classes: GatePulse and GateDigi
 
     - GateDigi is an object that is used to construct Singles (i.e. digitized Hits)
     - They are stored in GateDigiCollections manages by G4DigiMan and GateDigitizerMgr
@@ -186,6 +186,20 @@ public:
 
        }
        //--------------------------------------------------------------------------------
+
+       //AE: to use offline the idealAdderComptPhot and recover the initial energy of the photon (initial energy of the primary track) and the energy after the interaction (Megalib comparison)
+      /* inline void     SetFinalEnergy(G4double value)      { m_pulse.SetEnergyFin(value); }
+       inline G4double GetFinalEnergy() const                   { return m_pulse.(); }
+
+       inline void     SetIniEnergy(G4double value)      { m_pulse.SetEnergyIniTrack(value); }
+       inline G4double GetIniEnergy() const                   { return m_pulse.GetEnergyIniTrack(); }
+
+       inline void SetEnergyIniTrack(G4double eIni)          { m_energyIniTrack = eIni; }
+          inline G4double GetEnergyIniTrack() const                { return m_energyIniTrack; }
+
+          inline void SetEnergyFin(G4double eFin)          { m_energyFin = eFin; }
+          inline G4double GetEnergyFin() const                { return m_energyFin; }
+*/
 
 	public:
        static void SetSingleASCIIMask(G4bool);

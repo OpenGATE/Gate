@@ -41,7 +41,7 @@ GateToBinary::GateToBinary( G4String const& name, GateOutputMgr* outputMgr,
 
   // Intializing the mask of the singles and the coincidences to 1
   GateCoincidenceDigi::SetCoincidenceASCIIMask( 1 );
-  GateSingleDigi::SetSingleASCIIMask( 1 );
+  GateDigi::SetSingleASCIIMask( 1 );
 }
 
 GateToBinary::~GateToBinary()
@@ -744,49 +744,49 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
               size_t const element = 6;
               G4int volumeID[ element ] = { 0, 0, 0, 0, 0, 0 };
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 0 ) )
+              if ( GateDigi::GetSingleASCIIMask( 0 ) )
                 {
                   runID = (*SDC)[ iDigi ]->GetRunID();
                   m_outputFile.write( reinterpret_cast< char* >( &runID ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 1 ) )
+              if ( GateDigi::GetSingleASCIIMask( 1 ) )
                 {
                   eventID = (*SDC)[ iDigi ]->GetEventID();
                   m_outputFile.write( reinterpret_cast< char* >( &eventID ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 2 ) )
+              if ( GateDigi::GetSingleASCIIMask( 2 ) )
                 {
                   sourceID = (*SDC)[ iDigi ]->GetSourceID();
                   m_outputFile.write( reinterpret_cast< char* >( &sourceID ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 3 ) )
+              if ( GateDigi::GetSingleASCIIMask( 3 ) )
                 {
                   sourcePosX = (*SDC)[ iDigi ]->GetSourcePosition().x()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &sourcePosX ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 4 ) )
+              if ( GateDigi::GetSingleASCIIMask( 4 ) )
                 {
                   sourcePosY = (*SDC)[ iDigi ]->GetSourcePosition().y()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &sourcePosY ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 5 ) )
+              if ( GateDigi::GetSingleASCIIMask( 5 ) )
                 {
                   sourcePosZ = (*SDC)[ iDigi ]->GetSourcePosition().z()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &sourcePosZ ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 6 ) )
+              if ( GateDigi::GetSingleASCIIMask( 6 ) )
                 {
                   // For each level of volume
                   for( size_t lvl = 0;
@@ -801,63 +801,63 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
                                      ( (*SDC)[ iDigi ]->GetOutputVolumeID() ).size() * sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 7 ) )
+              if ( GateDigi::GetSingleASCIIMask( 7 ) )
                 {
                   time = (*SDC)[ iDigi ]->GetTime()/s;
                   m_outputFile.write( reinterpret_cast< char* >( &time ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 8 ) )
+              if ( GateDigi::GetSingleASCIIMask( 8 ) )
                 {
                   energy = (*SDC)[ iDigi ]->GetEnergy()/MeV;
                   m_outputFile.write( reinterpret_cast< char* >( &energy ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 9 ) )
+              if ( GateDigi::GetSingleASCIIMask( 9 ) )
                 {
                   posX = (*SDC)[ iDigi ]->GetGlobalPos().x()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &posX ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 10 ) )
+              if ( GateDigi::GetSingleASCIIMask( 10 ) )
                 {
                   posY = (*SDC)[ iDigi ]->GetGlobalPos().y()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &posY ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 11 ) )
+              if ( GateDigi::GetSingleASCIIMask( 11 ) )
                 {
                   posZ = (*SDC)[ iDigi ]->GetGlobalPos().z()/mm;
                   m_outputFile.write( reinterpret_cast< char* >( &posZ ),
                                       sizeof( G4double ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 12 ) )
+              if ( GateDigi::GetSingleASCIIMask( 12 ) )
                 {
                   nPhantCompt = (*SDC)[ iDigi ]->GetNPhantomCompton();
                   m_outputFile.write( reinterpret_cast< char* >( &nPhantCompt ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 13 ) )
+              if ( GateDigi::GetSingleASCIIMask( 13 ) )
                 {
                   nCrysCompt = (*SDC)[ iDigi ]->GetNCrystalCompton();
                   m_outputFile.write( reinterpret_cast< char* >( &nCrysCompt ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 14 ) )
+              if ( GateDigi::GetSingleASCIIMask( 14 ) )
                 {
                   nPhantRay = (*SDC)[ iDigi ]->GetNPhantomRayleigh();
                   m_outputFile.write( reinterpret_cast< char* >( &nPhantRay ),
                                       sizeof( G4int ) );
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 15 ) )
+              if ( GateDigi::GetSingleASCIIMask( 15 ) )
                 {
                   nCrysRay = (*SDC)[ iDigi ]->GetNCrystalRayleigh();
                   m_outputFile.write( reinterpret_cast< char* >( &nCrysRay ),
@@ -873,7 +873,7 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
               const size_t strFieldWidth = 8;
               const size_t strMaxLen = strFieldWidth - 1;
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 16 ) )
+              if ( GateDigi::GetSingleASCIIMask( 16 ) )
                 {
                   compVolName = (*SDC)[ iDigi ]->GetComptonVolumeName();
                   G4String compVolNameTrunc = FixedWidthZeroPaddedString(
@@ -882,7 +882,7 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
                                       strFieldWidth);
                 }
 
-              if ( GateSingleDigi::GetSingleASCIIMask( 17 ) )
+              if ( GateDigi::GetSingleASCIIMask( 17 ) )
                 {
                   rayVolName = (*SDC)[ iDigi ]->GetRayleighVolumeName();
                   G4String rayVolNameTrunc = FixedWidthZeroPaddedString(

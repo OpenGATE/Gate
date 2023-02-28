@@ -399,85 +399,54 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
 }
 
 
-void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
-{
-  size_t d;
-
-  runID         =  aDigi->GetRunID();
-  eventID       =  aDigi->GetEventID();
-  sourceID      =  aDigi->GetSourceID();
-  sourcePosX    = (aDigi->GetSourcePosition()).x()/mm;
-  sourcePosY    = (aDigi->GetSourcePosition()).y()/mm;
-  sourcePosZ    = (aDigi->GetSourcePosition()).z()/mm;
-  time          =  aDigi->GetTime()/s;
-  energy        =  aDigi->GetEnergy()/MeV;
-  globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
-  globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
-  globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID[d] =  aDigi->GetComponentID(d);
-  comptonPhantom=  aDigi->GetNPhantomCompton();
-  comptonCrystal=  aDigi->GetNCrystalCompton();
-  RayleighPhantom=  aDigi->GetNPhantomRayleigh();
-  RayleighCrystal=  aDigi->GetNCrystalRayleigh();
-  axialPos      = (aDigi->GetScannerPos()).z()/mm;
-  rotationAngle = aDigi->GetScannerRotAngle()/deg;
-  strcpy (comptonVolumeName,(aDigi->GetComptonVolumeName()).c_str());
-  strcpy (RayleighVolumeName,(aDigi->GetRayleighVolumeName()).c_str());
-
-  // HDS : septal penetration
-  septalNb = aDigi->GetNSeptal();
-  aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
-}
-
 
 
 
 void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 {
   SetAutoSave(1000);
-  if ( GateSingleDigi::GetSingleASCIIMask(0) )
+  if ( GateDigi::GetSingleASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(1) )
+  if ( GateDigi::GetSingleASCIIMask(1) )
     Branch("eventID",        &buffer.eventID,"eventID/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(2) )
+  if ( GateDigi::GetSingleASCIIMask(2) )
     Branch("sourceID",       &buffer.sourceID,"sourceID/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(3) )
+  if ( GateDigi::GetSingleASCIIMask(3) )
     Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(4) )
+  if ( GateDigi::GetSingleASCIIMask(4) )
     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(5) )
+  if ( GateDigi::GetSingleASCIIMask(5) )
     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(7) )
+  if ( GateDigi::GetSingleASCIIMask(7) )
     Branch("time",           &buffer.time,"time/D");
-  if ( GateSingleDigi::GetSingleASCIIMask(8) )
+  if ( GateDigi::GetSingleASCIIMask(8) )
     Branch("energy",         &buffer.energy,"energy/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(9) )
+  if ( GateDigi::GetSingleASCIIMask(9) )
     Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(10) )
+  if ( GateDigi::GetSingleASCIIMask(10) )
     Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(11) )
+  if ( GateDigi::GetSingleASCIIMask(11) )
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(6) )
+  if ( GateDigi::GetSingleASCIIMask(6) )
     for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
       Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
-  if ( GateSingleDigi::GetSingleASCIIMask(12) )
+  if ( GateDigi::GetSingleASCIIMask(12) )
     Branch("comptonPhantom", &buffer.comptonPhantom,"comptonPhantom/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(13) )
+  if ( GateDigi::GetSingleASCIIMask(13) )
     Branch("comptonCrystal", &buffer.comptonCrystal,"comptonCrystal/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(14) )
+  if ( GateDigi::GetSingleASCIIMask(14) )
     Branch("RayleighPhantom", &buffer.RayleighPhantom,"RayleighPhantom/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(15) )
+  if ( GateDigi::GetSingleASCIIMask(15) )
     Branch("RayleighCrystal", &buffer.RayleighCrystal,"RayleighCrystal/I");
-  if ( GateSingleDigi::GetSingleASCIIMask(18) )
+  if ( GateDigi::GetSingleASCIIMask(18) )
     Branch("axialPos",       &buffer.axialPos,"axialPos/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(19) )
+  if ( GateDigi::GetSingleASCIIMask(19) )
     Branch("rotationAngle",  &buffer.rotationAngle,"rotationAngle/F");
-  if ( GateSingleDigi::GetSingleASCIIMask(16) )
+  if ( GateDigi::GetSingleASCIIMask(16) )
     Branch("comptVolName",   (void *)buffer.comptonVolumeName,"comptVolName/C");
-  if ( GateSingleDigi::GetSingleASCIIMask(17) )
+  if ( GateDigi::GetSingleASCIIMask(17) )
     Branch("RayleighVolName",   (void *)buffer.RayleighVolumeName,"RayleighVolName/C");
-  if ( GateSingleDigi::GetSingleASCIIMask(20) )
+  if ( GateDigi::GetSingleASCIIMask(20) )
     // HDS : record septal penetration
     if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
    //Initialized by default.TO DO: Mask option should be included or a flag

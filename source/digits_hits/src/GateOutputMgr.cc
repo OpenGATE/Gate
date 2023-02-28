@@ -454,13 +454,13 @@ GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
 
 
 //----------------------------------------------------------------------------------
-GateSingleDigiCollection* GateOutputMgr::GetSingleDigiCollection(const G4String& collectionName)
+GateDigiCollection* GateOutputMgr::GetSingleDigiCollection(const G4String& collectionName)
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   G4int  collectionID
     = fDM->GetDigiCollectionID(collectionName);
 
-  return (collectionID>=0) ? (GateSingleDigiCollection*) (fDM->GetDigiCollection( collectionID )) : 0;
+  return (collectionID>=0) ? (GateDigiCollection*) (fDM->GetDigiCollection( collectionID )) : 0;
 }
 //----------------------------------------------------------------------------------
 

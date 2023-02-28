@@ -48,7 +48,7 @@
 #include "GateApplicationMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateHitConvertor.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
@@ -1223,8 +1223,8 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
     // OK GND 20222
     /*if (m_collectionID < 0)
         m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
-    const GateSingleDigiCollection *SDC =
-            (GateSingleDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
+    const GateDigiCollection *SDC =
+            (GateDigiCollection *) (fDM->GetDigiCollection(m_collectionID));
      */
 
 //    GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();

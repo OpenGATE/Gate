@@ -11,7 +11,7 @@ See LICENSE.md for further details
 
 #include "G4DigiManager.hh"
 
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateTools.hh"
 #include "GateDigitizer.hh"
 

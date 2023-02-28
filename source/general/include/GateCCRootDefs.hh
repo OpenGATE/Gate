@@ -25,7 +25,7 @@
 #include <TTree.h>
 
 class GateHit;
-class GateSingleDigi;
+class GateDigi;
 class GateCCCoincidenceDigi;
 class GateComptonCameraCones;
 
@@ -213,9 +213,9 @@ public:
     inline virtual ~GateCCRootSingleBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    //void Fill(GateSingleDigi* aDigi, int slayerID);
-    void Fill(GateSingleDigi* aDigi);
-    GateSingleDigi* CreateSingle();
+    //void Fill(GateDigi* aDigi, int slayerID);
+    void Fill(GateDigi* aDigi);
+    GateDigi* CreateSingle();
 
     //! Returns the time in G4 units (conversion from seconds)
     inline G4double GetTime() const

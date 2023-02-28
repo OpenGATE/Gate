@@ -27,7 +27,7 @@ See LICENSE.md for further details
 #include <stdio.h>
 #include "GateVOutputModule.hh"
 #include "G4UserEventAction.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "globals.hh"
 #include "lmf_gate.h"
 
@@ -224,16 +224,16 @@ public :
   /*!
     It transforms the digi to be compatible with the LMF C-library.
   \param digi is a single digi
-  \sa GateSingleDigi
+  \sa GateDigi
   \sa GateToDigi
   \sa SetEnergy()
   \sa SetCrystalID()
   \sa SetModuleID()
   \return nothing.
   */
-  void StoreTheDigiInLMF(GateSingleDigi *digi);
+  void StoreTheDigiInLMF(GateDigi *digi);
   //! This function fills the extra infos that can give GATE in the LMF_ccs_gateDigiRecord
-  void StoreMoreDigiInLMF_GDR(GateSingleDigi *digi);
+  void StoreMoreDigiInLMF_GDR(GateDigi *digi);
 
   void StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi);
 
