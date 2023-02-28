@@ -19,7 +19,8 @@ See LICENSE.md for further details
 
 	- Added to GND in Feb. 2023 by OK
 */
-
+#include "GateConfiguration.h"
+#ifdef GATE_USE_OPTICAL
 
 #ifndef GateOpticalAdder_h
 #define GateOpticalAdder_h 1
@@ -61,6 +62,7 @@ private:
 
 #endif
 
+#endif
 
 
 

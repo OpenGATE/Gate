@@ -15,6 +15,9 @@ See LICENSE.md for further details
 
 */
 
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_OPTICAL
 
 #ifndef GateOpticalAdderMessenger_h
 #define GateOpticalAdderMessenger_h 1
@@ -43,7 +46,7 @@ private:
 };
 
 #endif
-
+#endif
 
 
 

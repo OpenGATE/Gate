@@ -11,6 +11,11 @@
   \class  GateOpticalAdder
 
 */
+
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_OPTICAL
+
 #include "GateOpticalAdder.hh"
 #include "GateOpticalAdderMessenger.hh"
 #include "GateDigi.hh"
@@ -121,3 +126,4 @@ void GateOpticalAdder::DescribeMyself(size_t indent )
 {
   ;
 }
+#endif

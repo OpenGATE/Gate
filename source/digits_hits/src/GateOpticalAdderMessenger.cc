@@ -6,9 +6,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 
-#include "GateOpticalAdderMessenger.hh"
+#ifdef GATE_USE_OPTICAL
+
 #include "GateOpticalAdder.hh"
+#include "GateOpticalAdderMessenger.hh"
 #include "GateDigitizerMgr.hh"
 
 #include "G4SystemOfUnits.hh"
@@ -35,8 +38,7 @@ void GateOpticalAdderMessenger::SetNewValue(G4UIcommand * aCommand,G4String newV
 	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
 
 }
-
-
+#endif
 
 
 
