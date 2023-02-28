@@ -135,7 +135,7 @@ void GateEfficiency::Digitize()
 			  continue; // ???
 		    }
 		  */
-		  G4double eff;
+		  G4double eff=1;
 
 		  if (m_uniqueEff>0)
 					   eff=m_uniqueEff;

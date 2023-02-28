@@ -81,7 +81,7 @@
 #include "G4UnitsTable.hh"
 #include "G4Run.hh"
 
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateOutputMgr.hh"
 #include "GateProjectionSet.hh"
 #include "GateToProjectionSetMessenger.hh"
@@ -90,7 +90,7 @@
 #include "GateVSystem.hh"
 #include "GateApplicationMgr.hh"
 #include "G4DigiManager.hh"
-
+#include "GateDigitizerMgr.hh"
 #include "GateToOpticalRaw.hh" // v. cuplov
 
 /*
@@ -129,7 +129,8 @@ GateToProjectionSet::GateToProjectionSet(const G4String& name,
 
   m_isEnabled = false; // Keep this flag false: all output are disabled by default
   m_projectionSet = new GateProjectionSet();
-  m_inputDataChannelList.push_back("Singles");
+  //OK GND 2022
+  //m_inputDataChannelList.push_back("Singles");
   m_messenger = new GateToProjectionSetMessenger(this);
 
   SetVerboseLevel(0);
@@ -323,13 +324,51 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
 
   // Added by HDS : retrieve all the input channel IDs (energy windows)
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  for (std::vector<G4String>::iterator i_inputChannelName = m_inputDataChannelList.begin();
+  GateDigitizerMgr* theDigitizerMgr = GateDigitizerMgr::GetInstance();
+
+  	  if(theDigitizerMgr->m_SDlist.size()>1) //TODO OK GND  adapt for multiSDs
+  		  {
+		  GateError("***ERROR*** Multiple Sensitive detectors approach was not yet implemented for the /projection/ output. Please, contact olga.kochebina [a] cea.fr if your need this functionality to be added. \n");
+
+  		  }
+ for (std::vector<G4String>::iterator i_inputChannelName = m_inputDataChannelList.begin();
        i_inputChannelName != m_inputDataChannelList.end(); ++i_inputChannelName)
     {
-      m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(*i_inputChannelName));
-    }
-  m_energyWindowNb = m_inputDataChannelList.size();
+	  // OK GND 2022
+	  //m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(*i_inputChannelName));
 
+	  if (theDigitizerMgr->m_SingleDigitizersList.size() != 0)
+	  {
+		  GateSinglesDigitizer* aDigitizer;
+		  aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(*i_inputChannelName));
+		  for (long unsigned int i =0; i<aDigitizer->m_DMlist.size(); i++)
+		  {
+			  m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(aDigitizer->m_DMlist[i]->GetName()+"/"+*i_inputChannelName));
+		  }
+	  }
+	  else
+	      m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(*i_inputChannelName));
+
+
+    }
+
+ if(m_inputDataChannelList.size()==0) //no digitizer set by user
+  {
+	  if(theDigitizerMgr->m_SDlist.size()==1) //TODO OK GND  adapt for multiSDs
+		  {
+		  m_inputDataChannelIDList.push_back(0);//fDM->GetDigiCollectionID("DigiInit/Singles_"+theDigitizerMgr->m_SDlist[0]->GetName()));
+		  m_inputDataChannelList.push_back("Singles_"+theDigitizerMgr->m_SDlist[0]->GetName());
+
+		  }
+	  else
+	  {
+		  GateError("***ERROR*** Multiple Sensitive detectors approach was not yet implemented for the /projection/ output. Please, contact olga.kochebina [a] cea.fr if your need this functionality to be added. \n");
+
+	  }
+  }
+
+
+  m_energyWindowNb = m_inputDataChannelList.size();
   // Retrieve the parameters of the experiment
   G4double timeStart = GateApplicationMgr::GetInstance()->GetTimeStart();
   G4double timeStop = GateApplicationMgr::GetInstance()->GetTimeStop();
@@ -405,11 +444,22 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event*)
     G4cout << "entering [GateToProjectionSet::RecordEndOfEvent]\n";
 
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  const GateSingleDigiCollection * SDC;
+  //OK GND added to have entries in optical simulations without digitizer
+  GateDigitizerMgr* theDigitizerMgr = GateDigitizerMgr::GetInstance();
+
+  if(!theDigitizerMgr->m_alreadyRun)
+	  for (size_t i = 0; i<theDigitizerMgr->m_digitizerIMList.size(); i++)
+	  {
+		  if (nVerboseLevel > 2)
+			  G4cout<<"GateToProjectionSet::RecordEndOfEvent: Running digitizer as exception for a simu without digitizer"<<G4endl;
+		  theDigitizerMgr->m_digitizerIMList[i]->Digitize();
+	  }
+  // OK GND 2022
+  const GateDigiCollection * SDC;
 
   for (size_t energyWindowID = 0; energyWindowID < m_energyWindowNb; energyWindowID++)
     {
-      SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(m_inputDataChannelIDList[energyWindowID]));
+      SDC = dynamic_cast<const GateDigiCollection*>(fDM->GetDigiCollection(m_inputDataChannelIDList[energyWindowID]));
 
       if (!SDC)
         {
@@ -422,7 +472,7 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event*)
       G4int n_digi = SDC->entries();
       for (G4int iDigi = 0; iDigi < n_digi; iDigi++)
         {
-          G4int headID = m_system->GetMainComponentID((*SDC)[iDigi]->GetPulse());
+          G4int headID = m_system->GetMainComponentIDGND((*SDC)[iDigi]);
           G4double xProj = (*SDC)[iDigi]->GetLocalPos()[m_coordX];
           G4double yProj = (*SDC)[iDigi]->GetLocalPos()[m_coordY];
           if (nVerboseLevel >= 2)

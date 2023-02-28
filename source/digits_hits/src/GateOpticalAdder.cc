@@ -83,9 +83,9 @@ void GateOpticalAdder::Digitize()
 					  m_outputDigi= CentroidMerge( inputDigi, *iter );
 
 					  if (nVerboseLevel>1)
-						  G4cout << "Merged previous pulse for volume " << inputDigi->GetVolumeID()
-						  << " with new pulse of energy " << G4BestUnit(inputDigi->GetEnergy(),"Energy") <<".\n"
-						  << "Resulting pulse is: \n"
+						  G4cout << "Merged previous digi for volume " << inputDigi->GetVolumeID()
+						  << " with new digi of energy " << G4BestUnit(inputDigi->GetEnergy(),"Energy") <<".\n"
+						  << "Resulting digi is: \n"
 						  << **iter << Gateendl << Gateendl ;
 					  break;
 				  }
@@ -96,8 +96,8 @@ void GateOpticalAdder::Digitize()
 			  {
 				  m_outputDigi = new GateDigi(*inputDigi);
 				  if (nVerboseLevel>1)
-					  G4cout << "Created new pulse for volume " << inputDigi->GetVolumeID() << ".\n"
-					  << "Resulting pulse is: \n"
+					  G4cout << "Created new digi for volume " << inputDigi->GetVolumeID() << ".\n"
+					  << "Resulting digi is: \n"
 					  << *m_outputDigi << Gateendl << Gateendl ;
 				  m_OutputDigiCollection->insert(m_outputDigi);
 			  }

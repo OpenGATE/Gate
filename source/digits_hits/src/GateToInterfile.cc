@@ -58,6 +58,8 @@
   *Wrote the number of energy windows, and for all energy windows, check the bounds and record them
   *Call to GetMaxCounts(size_t energyWindow, size_t head) instead of GetMaxCounts(size_t head) to write the header
 
+	Feb. 2023 adapted to GND by OK.
+	TODO: multiSD is not implemented yet
 
   */
 
@@ -73,14 +75,13 @@
 #include "GateToProjectionSet.hh"
 #include "GateProjectionSet.hh"
 
-#include "GateDigitizer.hh"
-#include "GateThresholder.hh"
-#include "GateUpholder.hh"
+#include "GateDigitizerMgr.hh"
+#include "GateEnergyFraming.hh"
 
 //---------------------------------------------------------------------------------------
 /*
  *  GateToInterfile is used to write as an output file the result of the GateToProjectionSet module.
- *  This 2 classes are strickly working together.
+ *  This 2 classes are strictly working together.
  *  All macro commands (inherited from GateVOutputModule) of the GateToInterfileMessenger are overloaded to
  *  have no action at all. The enable and disable command, verbose and setFileName are now managed by
  *  GateToProjectionSet. The describe command of GateToInterfile will do nothing. The enable and disable
@@ -141,29 +142,32 @@ void GateToInterfile::RecordBeginOfAcquisition()
   // Open the header file
   m_headerFile.open((m_fileName + ".hdr").c_str(), std::ios::out | std::ios::trunc);
   if (!(m_headerFile.is_open()))
-    {
-      G4String msg = "Could not open the header file '" + m_fileName + ".hdr'!";
-      G4Exception("GateToInterfile::RecordBeginOfAcquisition",
-                  "RecordBeginOfAcquisition",
-                  FatalException,
-                  msg);
-    }
-  // Pre-write the header file
-  WriteGeneralInfo();
-  WriteGateScannerInfo();
-  m_headerFile << "!END OF INTERFILE :=" << Gateendl;
+  {
+		  G4String msg = "Could not open the header file '" + m_fileName + ".hdr'!";
+
+		  G4Exception("GateToInterfile::RecordBeginOfAcquisition",
+						  "RecordBeginOfAcquisition",
+						  FatalException,
+						  msg);
+
+  }
+	  // Pre-write the header file
+	  WriteGeneralInfo();
+	  WriteGateScannerInfo();
+	  m_headerFile << "!END OF INTERFILE :=" << Gateendl;
 
   // Open the data file
   m_dataFile.open((m_fileName + ".sin").c_str(),
-                  std::ios::out | std::ios::trunc | std::ios::binary);
+	                    std::ios::out | std::ios::trunc | std::ios::binary);
   if (!(m_dataFile.is_open()))
-    {
-      G4String msg = "Could not open the data file '" + m_fileName + ".sin'!";
-      G4Exception("GateToInterfile::RecordBeginOfAcquisition",
-                  "RecordBeginOfAcquisition",
-                  FatalException,
-                  msg);
-    }
+  {
+	  G4String msg = "Could not open the data file '" + m_fileName + ".sin'!";
+	  G4Exception("GateToInterfile::RecordBeginOfAcquisition",
+	                    "RecordBeginOfAcquisition",
+	                    FatalException,
+	                    msg);
+  }
+
 }
 //---------------------------------------------------------------------------------------
 
@@ -175,22 +179,22 @@ void GateToInterfile::RecordEndOfAcquisition()
     return;
 
   // Close the data file
-  m_dataFile.close();
+	  m_dataFile.close();
 
   // Fully rewrite the header, so as to store the maximum counts
-  m_headerFile.seekp(0, std::ios::beg);
-  if (m_headerFile.bad())
-    G4Exception("GateToInterfile::RecordEndOfAcquisition",
-                "RecordEndOfAcquisition",
-                FatalException,
-                "Could not go to back to the beginning of the header file (file missing?)!\n");
-  WriteGeneralInfo();
-  WriteGateScannerInfo();
-  int nbRun = m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()+1;
-  WriteGateRunInfo(nbRun);
-  WriteGateEmEventsInfo(m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfEmEvents());
-  m_headerFile << "!END OF INTERFILE :=" << Gateendl;
-  m_headerFile.close();
+	  m_headerFile.seekp(0, std::ios::beg);
+	  if (m_headerFile.bad())
+		  G4Exception("GateToInterfile::RecordEndOfAcquisition",
+				  "RecordEndOfAcquisition",
+				  FatalException,
+				  "Could not go to back to the beginning of the header file (file missing?)!\n");
+	  WriteGeneralInfo();
+	  WriteGateScannerInfo();
+	  int nbRun = m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()+1;
+	  WriteGateRunInfo(nbRun);
+	  WriteGateEmEventsInfo(m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfEmEvents());
+	  m_headerFile << "!END OF INTERFILE :=" << Gateendl;
+	  m_headerFile.close();
 
   GateImageT<unsigned short>* image = new GateImageT<unsigned short>;
   G4ThreeVector resolution(m_system->GetProjectionSetMaker()->GetPixelNbX(),
@@ -205,20 +209,22 @@ void GateToInterfile::RecordEndOfAcquisition()
   // SetOffset -> Centre 1er pixel
   GateMHDImage * mhd = new GateMHDImage;
   if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0)  {
-    mhd->WriteHeader(m_fileName + ".",
+		  mhd->WriteHeader(m_fileName + ".",
                      image,
                      false,
                      true,
                      true,
                      m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfARFFFDHeads());
-  }
+	 	 }
   else {
-    mhd->WriteHeader(m_fileName + ".", image, false, true);
-    int i=0;
-    auto proj_set = m_system->GetProjectionSetMaker();
-    auto nbE = m_system->GetProjectionSetMaker()->GetEnergyWindowNb();
-    auto nbHead = m_system->GetProjectionSetMaker()->GetHeadNb();
-    std::ofstream os(m_fileName+".mhd", std::ofstream::out | std::ofstream::app);
+	  mhd->WriteHeader(m_fileName + ".", image, false, true);
+	  int i=0;
+	  auto proj_set = m_system->GetProjectionSetMaker();
+	  auto nbE = m_system->GetProjectionSetMaker()->GetEnergyWindowNb();
+	  auto nbHead = m_system->GetProjectionSetMaker()->GetHeadNb();
+	  std::ofstream os(m_fileName+".mhd", std::ofstream::out | std::ofstream::app);
+
+
     for (size_t energyWindowID = 0; energyWindowID < nbE; energyWindowID++) {
       for (size_t headID = 0; headID < nbHead; headID++) {
         for (auto r=0 ; r<nbRun; ++r) {
@@ -234,6 +240,7 @@ void GateToInterfile::RecordEndOfAcquisition()
     }
     os.close();
   }
+
 }
 //---------------------------------------------------------------------------------------
 
@@ -255,25 +262,26 @@ void GateToInterfile::RecordEndOfRun(const G4Run*)
 
   // Write the projection sets
   if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetData() != 0) {
-    for (size_t energyWindowID = 0;
-         energyWindowID < m_system->GetProjectionSetMaker()->GetEnergyWindowNb();
-         energyWindowID++) {
-      for (size_t headID = 0; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
-        m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOut(m_dataFile,
-                                                                         energyWindowID,
-                                                                         headID);
-      }
-    }
+
+	  for (size_t energyWindowID = 0;
+			  energyWindowID < m_system->GetProjectionSetMaker()->GetEnergyWindowNb();
+			  energyWindowID++) {
+		  for (size_t headID = 0; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
+			  m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOut(m_dataFile,
+					  energyWindowID,
+					  headID);
+		  }
+	  }
   }
 
   else if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0) {
-    for (size_t headID = 0;
-         headID < m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfARFFFDHeads();
-         headID++) {
-      m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOutARFProjection(m_dataFile,
-                                                                                    headID);
-    }
-  }
+		for (size_t headID = 0;
+			 headID < m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfARFFFDHeads();
+			 headID++) {
+		  m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOutARFProjection(m_dataFile,
+																						headID);
+		}
+	  }
   else {
     G4cerr << "[GateToInterfile::RecordEndOfRun]:\n"
            << "No data available to write to projection set.\n";
@@ -339,14 +347,16 @@ void GateToInterfile::WriteGeneralInfo()
 
   // Modified by HDS : multiple energy windows support
   //------------------------------------------------------------------
-  GateDigitizer* theDigitizer = GateDigitizer::GetInstance();
+  //OK GND 2022
+  GateDigitizerMgr* theDigitizerMgr = GateDigitizerMgr::GetInstance();
 
-  GatePulseProcessorChain* aPulseProcessorChain;
+  GateSinglesDigitizer* aDigitizer;
   G4double aThreshold = 0.;
   G4double aUphold = 0.;
   G4String aChainName;
-  GateThresholder* aThresholder;
-  GateUpholder* aUpholder;
+  G4String SDName;
+
+  GateEnergyFraming * anEnergyFraming;
 
   // Loop over the energy windows first and then over detector heads
   for (size_t energyWindowID = 0; energyWindowID < setMaker->GetEnergyWindowNb();
@@ -355,8 +365,8 @@ void GateToInterfile::WriteGeneralInfo()
 
       // Get the pulse processor chain pointer for the current energy window
       aChainName = setMaker->GetInputDataName(energyWindowID);
-      aPulseProcessorChain = dynamic_cast<GatePulseProcessorChain*>(theDigitizer->FindElementByBaseName(aChainName));
-      if (!aPulseProcessorChain)
+      aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(aChainName));
+      if (!aDigitizer)
         {
           G4cerr << Gateendl<< "[GateToInterfile::WriteGeneralInfo]:\n"
                  << "Can't find digitizer chain '" << aChainName << "', aborting\n";
@@ -365,21 +375,30 @@ void GateToInterfile::WriteGeneralInfo()
 
       // Try to find a thresholder and/or a upholder into the pulse processor chain.
       // Update the threshold or uphold value if we find them
-      aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/"
-                                                                                        + aChainName
-                                                                                        + "/thresholder"));
-      if (aThresholder)
-        {
-          aThreshold = aThresholder->GetThreshold();
-        }
 
-      aUpholder = dynamic_cast<GateUpholder*>(aPulseProcessorChain->FindProcessor("digitizer/"
-                                                                                  + aChainName
-                                                                                  + "/upholder"));
-      if (aUpholder)
-        {
-          aUphold = aUpholder->GetUphold();
-        }
+      anEnergyFraming =  dynamic_cast<GateEnergyFraming*>(aDigitizer->FindDigitizerModule("digitizerMgr/"
+    		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  +aDigitizer->GetSD()->GetName()
+																					  +"/SinglesDigitizer/"
+																					  + aDigitizer->GetName()
+																					  + "/energyFraming"));
+
+      if (anEnergyFraming)
+             {
+    	  	  aThreshold = anEnergyFraming->GetMin();
+    	  	  aUphold = anEnergyFraming->GetMax();
+             }
+
+
+      //OK GND 2022
+      if (theDigitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
+      {
+		  std::string tmp_str = aChainName.substr(0, aChainName.find("_"));
+    	  aChainName= tmp_str;
+      }
+
+
+
+
 
       m_headerFile << "energy window ["
                    << energyWindowID + 1

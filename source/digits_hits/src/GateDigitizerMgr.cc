@@ -96,19 +96,6 @@ void GateDigitizerMgr::Initialize()
 	//G4cout<<"GateDigitizerMgr::Initialize() "<< G4endl;
 	//ShowSummary();
 
-	//Checking if analysis or fastanalysis are enabled
-	/*GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-
-	if(!outputMgr->FindOutputModule("analysis")->IsEnabled()&&!outputMgr->FindOutputModule("fastanalysis")->IsEnabled())
-	{
-		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
-
-
-	}
-*/
-
-
-
 	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 	for (size_t i_D = 0; i_D<m_SingleDigitizersList.size(); i_D++)
 			{
@@ -145,7 +132,7 @@ void GateDigitizerMgr::Initialize()
 
 			}
 
-	//TODO: check if we have coincidecnes, i.e. that it is PET and not SPECT or the loop will not enter and it is ok
+	//TODO: check if we have coincidences, i.e. that it is PET and not SPECT or the loop will not enter and it is ok
 	//set default input collections for coincidence sorters
 
 	if (m_recordCoincidences)
@@ -390,7 +377,7 @@ void GateDigitizerMgr::RunDigitizers()
 
 			}
 
-	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+	//G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 	//G4cout<< "m_collectionID = "<< m_collectionID<<G4endl;
 	if (nVerboseLevel>1)
 	   G4cout << "[GateDigitizerMgr::RunDigitizers]: launching SingleDigitizers. N = " << m_SingleDigitizersList.size() << "\n";

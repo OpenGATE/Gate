@@ -1036,7 +1036,7 @@ void GateToTree::addHitsCollection(const std::string &str) {
 
 //OK GND 2022
 void GateToTree::addOpticalCollection(const std::string &str) {
-	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+  //	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
     G4String possibleValues = "";
 

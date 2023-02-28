@@ -22,9 +22,8 @@
 #include "GateToProjectionSet.hh"
 #include "GateProjectionSet.hh"
 
-#include "GateDigitizer.hh"
-#include "GateThresholder.hh"
-#include "GateUpholder.hh"
+#include "GateDigitizerMgr.hh"
+
 
 
 GateToOpticalRaw::GateToOpticalRaw(const G4String& name, GateOutputMgr* outputMgr,GateOpticalSystem* itsSystem,DigiMode digiMode)
@@ -173,7 +172,6 @@ void GateToOpticalRaw::WriteGeneralInfo()
 
   GateToProjectionSet* setMaker = m_system->GetProjectionSetMaker();
 
-
   m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << Gateendl
 		<< "!type of data := "     	      	    << "OPTICAL\n"
  		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << Gateendl
@@ -181,26 +179,24 @@ void GateToOpticalRaw::WriteGeneralInfo()
 
     // Modified by HDS : multiple energy windows support
 	//------------------------------------------------------------------
-	GateDigitizer* theDigitizer = GateDigitizer::GetInstance();
+  	  //OK GND 2022
 
- 	GatePulseProcessorChain* aPulseProcessorChain;
-	//G4double aThreshold = 0.;
-	//G4double aUphold = 0.;
-	G4String aChainName;
-	//GateThresholder* aThresholder;
-	//GateUpholder* aUpholder;
+  GateDigitizerMgr* theDigitizerMgr = GateDigitizerMgr::GetInstance();
+  GateSinglesDigitizer* aDigitizer;
+
+  G4String aChainName;
 
 	// Loop over the energy windows first and then over detector heads
 	for (size_t energyWindowID=0; energyWindowID < setMaker->GetEnergyWindowNb(); energyWindowID++) {
 
 		// Get the pulse processor chain pointer for the current energy window
 		aChainName = setMaker->GetInputDataName(energyWindowID);
-		aPulseProcessorChain = dynamic_cast<GatePulseProcessorChain*>(theDigitizer->FindElementByBaseName( aChainName ));
-		if (!aPulseProcessorChain) {
-			G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:\n"
-					<< "Can't find digitizer chain '" << aChainName << "', aborting\n";
-			G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
-		}
+		aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(aChainName));
+				if (!aDigitizer) {
+					G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:\n"
+							<< "Can't find digitizer chain '" << aChainName << "', aborting\n";
+					G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
+				}
 
 		// Try to find a thresholder and/or a upholder into the pulse processor chain.
 		// Update the threshold or uphold value if we find them

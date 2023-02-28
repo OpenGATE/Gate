@@ -129,10 +129,10 @@ public:
       inline G4int GetComponentID(size_t depth) const    { return (m_outputVolumeID.size()>depth) ? m_outputVolumeID[depth] : -1; }
 
 
-  #ifdef GATE_USE_OPTICAL
+  //#ifdef GATE_USE_OPTICAL
       inline void   SetOptical(G4bool optical = true) { m_optical = optical;}
       inline G4bool IsOptical() const { return m_optical;}
-  #endif
+  //#endif
 
       // HDS : record septal penetration
       inline G4int GetNSeptal() const { return m_nSeptal; }
