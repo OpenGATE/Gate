@@ -949,6 +949,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
         } // end loop over phantom hits
     } // end if PHC
 
+    GateHitsCollection* CHC = CHC_vector[i];
 
     // Looking at Crystal Hits Collection:
     if (CHC) {
@@ -957,7 +958,7 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
         strcpy(NameOfProcessInCrystal, "");
 
         for (G4int iHit = 0; iHit < NbHits; iHit++) {
-            GateCrystalHit *aHit = (*CHC)[iHit];
+            GateHit *aHit = (*CHC)[iHit];
             G4String processName = aHit->GetProcess();
 
             //              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
