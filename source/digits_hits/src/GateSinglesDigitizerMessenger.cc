@@ -34,12 +34,8 @@ See LICENSE.md for further details
 #include "GatePileup.hh"
 #include "GateAdderCompton.hh"
 #include "GateOpticalAdder.hh"
+
 /*
-
-#include "GatePileup.hh"
-
-
-#include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"
 #include "GateNoise.hh"
 #include "GateBuffer.hh"
@@ -74,7 +70,7 @@ GateSinglesDigitizerMessenger::GateSinglesDigitizerMessenger(GateSinglesDigitize
 
   cmdName = GetDirectoryName()+"setInputCollection";
   SetInputNameCmd = new G4UIcmdWithAString(cmdName,this);
-  SetInputNameCmd->SetGuidance("Set the name of the input pulse channel");
+  SetInputNameCmd->SetGuidance("Set the name of the input collection name");
   SetInputNameCmd->SetParameterName("Name",false);
 
 
@@ -186,8 +182,6 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  m_digitizer->AddNewModule(newDM);
        }
 /*
-
-
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
   else if (childTypeName=="localEnergyThresholder")
@@ -238,7 +232,7 @@ else if (childTypeName=="localMultipleRejection")
 
 */
  else {
-    G4cout << "Pulse-processor type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
+    G4cout << "Singles Digitizer type name '" << childTypeName << "' was not recognized --> insertion request must be ignored!\n";
     return;
   }
 
