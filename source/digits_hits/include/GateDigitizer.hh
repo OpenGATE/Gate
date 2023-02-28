@@ -23,12 +23,12 @@
 #include "GateCoincidencePulseProcessorChain.hh"
 #include "GateCoincidencePulse.hh"
 #include "GateCoincidenceSorterOld.hh"
-#include "GateVDigiMakerModule.hh"
+//#include "GateVDigiMakerModule.hh"
 #include "GateCrystalSD.hh"
 
 class GateDigitizerMessenger;
 class GateHitConvertor;
-class GateVDigiMakerModule;
+//class GateVDigiMakerModule;
 class GateVSystem;
 class GateHit;
 
@@ -121,7 +121,7 @@ public:
   inline void StoreCollectionName(const G4String& aCollectionName)
   { collectionName.push_back(aCollectionName.c_str()); }
 
-  virtual void InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModule);
+ // virtual void InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModule);
 
   //mhadi_add[
   // Next methods were added for the multi-system approach
@@ -140,8 +140,8 @@ public:
   inline const std::vector<GateCoincidenceSorterOld*> GetCoinSorterList()
   { return m_coincidenceSorterList;}
 
-  inline const std::vector<GateVDigiMakerModule*>  GetDigiMakerList()
-  { return m_digiMakerList;}
+ // inline const std::vector<GateVDigiMakerModule*>  GetDigiMakerList()
+ // { return m_digiMakerList;}
 
   // To find a system from the digitizer systems list
   GateVSystem* FindSystem(GatePulseProcessorChain* processorChain);
@@ -164,7 +164,7 @@ protected:
   std::vector<GateCoincidencePulseProcessorChain*>   m_coincidenceChainList;	 //!< Vector of pulse-processor chains
   std::vector<GateCoincidenceSorterOld*>  		m_coincidenceSorterList; //!< Vector of coincidence sorters
 
-  std::vector<GateVDigiMakerModule*>  		m_digiMakerList;       	 //!< Vector of digi-maker modules
+ // std::vector<GateVDigiMakerModule*>  		m_digiMakerList;       	 //!< Vector of digi-maker modules
 
   GateDigitizerMessenger*    			m_messenger;
 

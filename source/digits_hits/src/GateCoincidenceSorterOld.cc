@@ -23,7 +23,7 @@ See LICENSE.md for further details
 #include "GateTools.hh"
 #include "GateDigitizer.hh"
 #include "GateVSystem.hh"
-#include "GateCoincidenceDigiMaker.hh"
+//#include "GateCoincidenceDigiMaker.hh"
 
 //#include <map>
 
@@ -60,7 +60,7 @@ GateCoincidenceSorterOld::GateCoincidenceSorterOld(GateDigitizer* itsDigitizer,
   //if(m_CCSorter==true)
 
   coincID_CC=0;
-  itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
+ // itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
 

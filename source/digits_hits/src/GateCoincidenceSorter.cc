@@ -21,7 +21,6 @@ See LICENSE.md for further details
 #include "GateTools.hh"
 #include "GateDigitizerMgr.hh"
 #include "GateVSystem.hh"
-//#include "GateCoincidenceDigiMaker.hh"
 #include "GateOutputMgr.hh"
 
 

@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+// GND ClassToRemove
 
 #include "GateCoincidencePulseProcessorChain.hh"
 #include "GateCoincidencePulseProcessorChainMessenger.hh"
@@ -17,7 +17,7 @@ See LICENSE.md for further details
 #include "GateVCoincidencePulseProcessor.hh"
 #include "GateTools.hh"
 #include "GateHitConvertor.hh"
-#include "GateCoincidenceDigiMaker.hh"
+//#include "GateCoincidenceDigiMaker.hh"
 
 
 //------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ GateCoincidencePulseProcessorChain::GateCoincidencePulseProcessorChain( GateDigi
    //G4cout<<"GateCoincidencePulseProcessor m_outputName="<<m_outputName<<G4endl;
 
   G4cout << " in GateCoincidencePulseProcessorChain call new GateCoincidenceDigiMaker "  << Gateendl;
-  itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
+  //itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
 

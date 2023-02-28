@@ -63,10 +63,10 @@ GateDigitizer::~GateDigitizer()
     delete m_coincidenceSorterList.back();
     m_coincidenceSorterList.erase(m_coincidenceSorterList.end()-1);
   }
-  while ( m_digiMakerList.size() ) {
+  /*while ( m_digiMakerList.size() ) {
     delete m_digiMakerList.back();
     m_digiMakerList.erase(m_digiMakerList.end()-1);
-  }
+  }*/
   delete m_messenger;
   theDigitizer = 0;
 }
@@ -417,12 +417,12 @@ void GateDigitizer::Digitize()
   DigitizePulses();
 
 
- for (size_t i=0; i<m_digiMakerList.size() ; ++i) {
+/* for (size_t i=0; i<m_digiMakerList.size() ; ++i) {
     if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::Digitize]: launching digitizer module '" << m_digiMakerList[i]->GetObjectName() << "'\n";
     m_digiMakerList[i]->Digitize();
   }
-
+*/
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: completed\n";
 
@@ -484,7 +484,7 @@ void GateDigitizer::DigitizePulses()  {
 }
 //-----------------------------------------------------------------
 
-
+/*
 //-----------------------------------------------------------------
 void GateDigitizer::InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModule)
 {
@@ -495,7 +495,7 @@ void GateDigitizer::InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModu
   StoreCollectionName(newDigiMakerModule->GetCollectionName());
 }
 //-----------------------------------------------------------------
-
+*/
 
 //-----------------------------------------------------------------
 //mhadi_obso Obsolete, because we use now the multi-system approach
