@@ -51,9 +51,6 @@ See LICENSE.md for further details
 #include "GateQuantumEfficiency.hh"
 #include "GateSigmoidalThresholder.hh"
 #include "GateCalibration.hh"
-#include "GatePulseAdder.hh"
-#include "GatePulseAdderLocal.hh"
-#include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
 #include "GateLocalClustering.hh"
@@ -233,10 +230,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
 	 // m_digitizer->AddNewModule(newDM);
 	 // G4DigiManager::GetDMpointer()->AddNewModule(newDM);
   }
-    else if (childTypeName=="adderLocal")
-    newDM = new GatePulseAdderLocal(m_digitizer,newInsertionName);
-  else if (childTypeName=="adderCompton")
-    newDM = new GatePulseAdderCompton(m_digitizer,newInsertionName);
+
   else if (childTypeName=="adderComptPhotIdeal")
     newDM = new GatePulseAdderComptPhotIdeal(m_digitizer,newInsertionName);
   else if (childTypeName=="adderComptPhotIdealLocal")
