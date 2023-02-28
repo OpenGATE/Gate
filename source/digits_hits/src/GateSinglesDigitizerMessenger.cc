@@ -58,7 +58,6 @@ See LICENSE.md for further details
 #include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
-#include "GateTemporalResolution.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
 #include "GateEnergyThresholder.hh"
@@ -66,7 +65,7 @@ See LICENSE.md for further details
 #include "GateDoIModels.hh"
 #include "GateGridDiscretization.hh"
 #include "GateLocalMultipleRejection.hh"
-#include "GateLocalTimeResolution.hh"
+
 */
 #ifdef GATE_USE_OPTICAL
 #include "GateOpticalAdder.hh"
@@ -256,10 +255,8 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GateNoise(m_digitizer,newInsertionName);
   else if (childTypeName=="buffer")
     newDM = new GateBuffer(m_digitizer,newInsertionName);
-  else if (childTypeName=="timeResolution")
-    newDM = new GateTemporalResolution(m_digitizer,newInsertionName,0. * ns);
-  else if (childTypeName=="localTimeResolution")
-    newDM = new GateLocalTimeResolution(m_digitizer,newInsertionName);
+
+
   else if (childTypeName=="systemFilter")
      newDM = new GateSystemFilter(m_digitizer,newInsertionName);
  // else if (childTypeName=="stripSpDiscretization")

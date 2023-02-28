@@ -57,9 +57,9 @@ void GateTimeResolution::Digitize()
 {
 
 	if(m_fwhm < 0 ) {
-	    G4cerr << 	Gateendl << "[GateTemporalResolution::Digitize]:\n"
+	    G4cerr << 	Gateendl << "[GateTimeResolution::Digitize]:\n"
 	      	   <<   "Sorry, but the negative resolution (" << GetFWHM() << ") is invalid\n";
-	    G4Exception( "GateTemporalResolution::Digitize", "Digitize", FatalException,
+	    G4Exception( "GateTimeResolution::Digitize", "Digitize", FatalException,
 				"You must choose a temporal resolution >= 0 /gate/digitizer/Singles/Singles/timeResolution/setTimeResolution TIME\n or disable the temporal resolution using:\n\t/gate/digitizer/Singles/Singles/timeResolution/disable\n");
 	  }
 
