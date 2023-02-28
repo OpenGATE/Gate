@@ -8,6 +8,7 @@ See LICENSE.md for further details
 
 //
 // Created by mdupont on 17/05/19.
+
 //    - 2023/02/22 PDGcode for optical photon is changed from 0 to -22
 //  OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
 //    let a side for the moment (in case if needed uncomment lines 1050, 1052, 1053 in Book() method
@@ -1206,6 +1207,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
 
 
     // Looking at Crystal Hits Collection:
+
  //OK GND 2022
     for (auto &&m: m_mmanager_optical)
     {
@@ -1249,6 +1251,7 @@ void GateToTree::RecordOpticalData(const G4Event *event) {
 				} // end GoodForAnalysis()
 			} // end loop over crystal hits
 		} // end if CHC
+
 
     // counting the number of Wave Length Shifting = Fluorescence:
     if (m_nCrystalOpticalWLS > 0) m_NumCrystalWLS++;

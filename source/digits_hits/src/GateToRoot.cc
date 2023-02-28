@@ -22,6 +22,7 @@
 
     OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
     let a side for the moment (in case if needed uncomment lines 257, 259, 260 in Book() method
+
 */
 
 #include "GateToRoot.hh"
@@ -949,49 +950,43 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
     } // end if PHC
 
 
+    // Looking at Crystal Hits Collection:
+    if (CHC) {
 
-        GateHitsCollection* CHC = CHC_vector[i];
-		if (CHC) {
+        G4int NbHits = CHC->entries();
+        strcpy(NameOfProcessInCrystal, "");
 
-			G4int NbHits = CHC->entries();
-			//G4cout<<"NbHits "<<NbHits<<" in "<<  CHC->GetSDname()<<" "<<i<< " "<< &m_OpticalTrees[i]<<G4endl;
+        for (G4int iHit = 0; iHit < NbHits; iHit++) {
+            GateCrystalHit *aHit = (*CHC)[iHit];
+            G4String processName = aHit->GetProcess();
 
-			strcpy(NameOfProcessInCrystal, "");
+            //              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
+            if (aHit->GoodForAnalysis()) {
+                strcpy(NameOfProcessInCrystal, aHit->GetProcess().c_str());
 
-			for (G4int iHit = 0; iHit < NbHits; iHit++)
-			{
-				GateHit *aHit = (*CHC)[iHit];
-				G4String processName = aHit->GetProcess();
+                if (processName.find("Scintillation") != G4String::npos) nScintillation++;
 
-				//              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
-				if (aHit->GoodForAnalysis())
-				{
-					strcpy(NameOfProcessInCrystal, aHit->GetProcess().c_str());
+                if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
+                {
+                    if (processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
+                    //               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
+                    //               		if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
+                    //               		if (processName.find("OpticalAbsorption") != G4String::npos) {
+                    //                              nCrystalOpticalAbsorption++;
+                    //                              CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
+                    //                              CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
+                    //                              CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+                    //                  	}
 
-					if (processName.find("Scintillation") != G4String::npos) nScintillation++;
+                    CrystalLastHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
+                    CrystalLastHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
+                    CrystalLastHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+                    CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();
+                }
+            } // end GoodForAnalysis()
+        } // end loop over crystal hits
+    } // end if CHC
 
-					if (aHit->GetPDGEncoding() == -22)  // looking at optical photons only
-					{
-						if (processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
-						//               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
-						//               		if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
-						//               		if (processName.find("OpticalAbsorption") != G4String::npos) {
-						//                              nCrystalOpticalAbsorption++;
-						//                              CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
-						//                              CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
-						//                              CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-						//                  	}
-
-						CrystalLastHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
-						CrystalLastHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
-						CrystalLastHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-						CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();
-
-					}
-				} // end GoodForAnalysis()
-
-			} // end loop over crystal hits
-		} // end if CHC
 
 
 	// counting the number of Wave Length Shifting = Fluorescence:

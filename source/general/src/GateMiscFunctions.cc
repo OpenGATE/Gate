@@ -637,11 +637,9 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
     i++;
   }
 
-  // Take the closest value in the time list
+  // Return the preceding (last) time update before aTime
   if(i > 0) {
-    if(fabs(mTimeList[i-1]-aTime) <= fabs(mTimeList[i]-aTime)) {
-      i--;
-    }
+    i--;
   }
 
   if ((i < 0) && (aTime < mTimeList[0])) {
