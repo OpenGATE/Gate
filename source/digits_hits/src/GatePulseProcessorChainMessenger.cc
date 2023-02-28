@@ -21,7 +21,7 @@ See LICENSE.md for further details
 
 #include "GateVPulseProcessor.hh"
 #include "GatePulseProcessorChain.hh"
-
+/*
 #include "GateReadout.hh"
 #include "GatePileup.hh"
 #include "GateThresholder.hh"
@@ -48,7 +48,7 @@ See LICENSE.md for further details
 #include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
-#include "GateCrystalBlurring.hh"
+//#include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
@@ -64,7 +64,7 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #endif
 #include "GateSystemFilter.hh"
-
+*/
 GatePulseProcessorChainMessenger::GatePulseProcessorChainMessenger(GatePulseProcessorChain* itsProcessorChain)
 :GateListMessenger(itsProcessorChain)
 { 

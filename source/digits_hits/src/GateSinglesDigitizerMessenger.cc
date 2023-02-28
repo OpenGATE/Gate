@@ -42,7 +42,6 @@ See LICENSE.md for further details
 
 #include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"
-#include "GateLocalBlurring.hh"
 #include "GateLocalEfficiency.hh"
 #include "GateEnergyEfficiency.hh"
 #include "GateNoise.hh"
@@ -61,7 +60,6 @@ See LICENSE.md for further details
 #include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
-#include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
@@ -218,8 +216,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GateDeadTime(m_digitizer,newInsertionName);
   else if (childTypeName=="blurring")
     newDM = new GateBlurring(m_digitizer,newInsertionName);
-  else if (childTypeName=="localBlurring")
-    newDM = new GateLocalBlurring(m_digitizer,newInsertionName);
+
   else if (childTypeName=="localTimeDelay")
     newDM = new GateLocalTimeDelay(m_digitizer,newInsertionName);
   else if (childTypeName=="transferEfficiency")
@@ -258,8 +255,6 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GateLocalClustering(m_digitizer,newInsertionName);
   else if (childTypeName=="clustering")
     newDM = new GateClustering(m_digitizer,newInsertionName);
-  else if (childTypeName=="crystalblurring")
-    newDM = new GateCrystalBlurring(m_digitizer,newInsertionName,-1.,-1.,1.,-1.*keV);
   else if (childTypeName=="localEfficiency")
     newDM = new GateLocalEfficiency(m_digitizer,newInsertionName);
   else if (childTypeName=="energyEfficiency")
