@@ -37,8 +37,7 @@ See LICENSE.md for further details
 /*
 
 #include "GatePileup.hh"
-#include "GateThresholder.hh"
-#include "GateUpholder.hh"
+
 
 #include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"
@@ -201,8 +200,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GatePileup(m_digitizer,newInsertionName);
   else if (childTypeName=="discretizer")
     newDM = new GateDiscretizer(m_digitizer,newInsertionName);
-  else if (childTypeName=="thresholder")
-    newDM = new GateThresholder(m_digitizer,newInsertionName,50.*keV);
+
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
   else if (childTypeName=="localEnergyThresholder")
@@ -210,8 +208,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   else if (childTypeName=="DoImodel")
     //newDM = new GateDoIModels(m_digitizer,newInsertionName,G4ThreeVector(0.,0.,1.));
     newDM = new GateDoIModels(m_digitizer,newInsertionName);
-  else if (childTypeName=="upholder")
-    newDM = new GateUpholder(m_digitizer,newInsertionName,150.*keV);
+
   else if (childTypeName=="deadtime")
     newDM = new GateDeadTime(m_digitizer,newInsertionName);
   else if (childTypeName=="blurring")

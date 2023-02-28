@@ -24,8 +24,6 @@ See LICENSE.md for further details
 /*
 #include "GateReadout.hh"
 #include "GatePileup.hh"
-#include "GateThresholder.hh"
-#include "GateUpholder.hh"
 #include "GateDeadTime.hh"
 #include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"

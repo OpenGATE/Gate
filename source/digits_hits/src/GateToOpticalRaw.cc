@@ -198,20 +198,6 @@ void GateToOpticalRaw::WriteGeneralInfo()
 					G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 				}
 
-		// Try to find a thresholder and/or a upholder into the pulse processor chain.
-		// Update the threshold or uphold value if we find them
-		/*aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/thresholder"));
-		if (aThresholder) {
-			aThreshold = aThresholder->GetThreshold();
-		}*/
-
-		/*aUpholder = dynamic_cast<GateUpholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/upholder"));
-		if (aUpholder) {
-			aUphold = aUpholder->GetUphold();
-		}
-
-		aThreshold = 0.;
-		aUphold = 0.;*/
 
 		m_headerFile  << "!OPTICAL STUDY (general) :="        	    << Gateendl
       	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << Gateendl
