@@ -41,8 +41,6 @@ See LICENSE.md for further details
 
 #include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"
-#include "GateLocalEfficiency.hh"
-#include "GateEnergyEfficiency.hh"
 #include "GateNoise.hh"
 #include "GateBuffer.hh"
 #include "GateDiscretizer.hh"
@@ -247,10 +245,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     newDM = new GateLocalClustering(m_digitizer,newInsertionName);
   else if (childTypeName=="clustering")
     newDM = new GateClustering(m_digitizer,newInsertionName);
-  else if (childTypeName=="localEfficiency")
-    newDM = new GateLocalEfficiency(m_digitizer,newInsertionName);
-  else if (childTypeName=="energyEfficiency")
-    newDM = new GateEnergyEfficiency(m_digitizer,newInsertionName);
+
   else if (childTypeName=="noise")
     newDM = new GateNoise(m_digitizer,newInsertionName);
   else if (childTypeName=="buffer")
