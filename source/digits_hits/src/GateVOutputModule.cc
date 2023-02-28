@@ -70,7 +70,7 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 	    //G4cout<<module->GetObjectName()<<G4endl;
 		if ( G4StrUtil::contains(module->GetObjectName(), "SinglesDigitizer"))
 		{
-			if (out.size()==2)
+			if (out.size()>=2)
 			{
 
 			GateSinglesDigitizer* digitizer = digitizerMgr->FindDigitizer(collectionName);
