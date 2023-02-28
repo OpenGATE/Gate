@@ -20,7 +20,6 @@
 #include "GateHit.hh"
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
-#include "GatePulseAdder.hh"
 #include "GateCCCoincidenceDigi.hh"
 #include "GatePrimTrackInformation.hh"
 
