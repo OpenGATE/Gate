@@ -158,7 +158,7 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
   pulse->SetScannerPos( hit->GetScannerPos() );
   pulse->SetScannerRotAngle( hit->GetScannerRotAngle() );
 #ifdef GATE_USE_OPTICAL
-  pulse->SetOptical( hit->GetPDGEncoding() == 0 );
+  pulse->SetOptical( hit->GetPDGEncoding() == -22 );
 #endif
   pulse->SetNSeptal( hit->GetNSeptal() );  // HDS : septal penetration
 

@@ -50,13 +50,15 @@ void GateCoincidenceDigiMaker::Digitize()
 
   // Create and store the digi
   for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulse.begin();it != coincidencePulse.end() ; ++it){
-      if ((*it)->size()>2){
+    // removed by OK 12/01/23
+    /* if ((*it)->size()>2){
       	if (nVerboseLevel)
       	    G4cout  << "[GateCoincidenceDigiMaker::Digitize]: ignoring multiple coincidence --> no digits created\n";
       } else {
+    */
       	GateCoincidenceDigi* Digi = new GateCoincidenceDigi( **it);
       	CoincidenceDigiCollection->insert(Digi);
-      }
+	// }
   }
 
   if (nVerboseLevel>0) {

@@ -20,12 +20,13 @@
 
 /* Define to the full name and version of this package. */
 #ifndef CLHEP_MATRIX_STRING
-#define CLHEP_MATRIX_STRING "CLHEP Matrix 2.4.5.1"
+#define CLHEP_MATRIX_STRING "CLHEP Matrix 2.4.6.3"
 #endif
 
 /* Define to the version of this package. */
 #ifndef CLHEP_MATRIX_VERSION
-#define CLHEP_MATRIX_VERSION "2.4.5.1"
+#define CLHEP_MATRIX_VERSION "2.4.6.3"
 #endif
 
 #endif  // MATRIX_DEFS_H
+

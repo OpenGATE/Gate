@@ -123,9 +123,9 @@ The GATE mailing list
 
 You are encouraged to participate in the dialog and post your suggestion or even implementation on the
 Gate-users mailing list, the GATE mailing list for users.
-You can subscribe to the Gate-users mailing list, by `signing up to the gate-users mailing list <http://lists.opengatecollaboration.org/mailman/listinfo/gate-users>`_.
+You can subscribe to the Gate-users mailing list, by `signing up to the gate-users mailing list <https://listserv.in2p3.fr/cgi-bin/wa?A0=OPENGATE-L>`_.
 
-If you have a question, it is possible that it has been asked and answered before, and stored in the `archives <http://lists.opengatecollaboration.org/pipermail/gate-users/>`_.
+If you have a question, it is possible that it has been asked and answered before, and stored in the `archives <https://listserv.in2p3.fr/cgi-bin/wa?A0=OPENGATE-L>`_ or `old archives <https://lists.opengatecollaboration.org/pipermail/gate-users/>`_.
 These archives are public and are indexed by the usual search engines. By starting your Google search string with *site:lists.opengatecollaboration.org* you'll get list of all matches of your search on the gate-users mailing list, e.g. `site:lists.opengatecollaboration.org pencilbeam <https://www.google.com/search?q=site%3Alists.opengatecollaboration.org+pencilbeam>`_.
 
 

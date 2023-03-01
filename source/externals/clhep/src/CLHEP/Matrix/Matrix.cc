@@ -434,7 +434,7 @@ std::ostream& operator<<(std::ostream &os, const HepMatrix &q)
 {
   os << "\n";
 /* Fixed format needs 3 extra characters for field, while scientific needs 7 */
-  int width;
+  long width;
   if(os.flags() & std::ios::fixed)
     width = os.precision()+3;
   else

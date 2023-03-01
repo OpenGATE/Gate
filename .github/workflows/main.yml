@@ -63,12 +63,15 @@ jobs:
           gcc -v
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
           brew update
-          rm -rf /usr/local/bin/2to3
-          brew install --force --verbose --debug qt5 \
-                        ccache \
-                        tbb \
-                        xrootd \
-                        fftw
+          brew cleanup
+          brew config
+          rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
+          rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
+          brew install --force --verbose --overwrite --debug qt5 \
+                                                             ccache \
+                                                             tbb \
+                                                             xrootd \
+                                                             fftw
           brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
           export PATH=/usr/local/opt/qt/bin:$PATH
           export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
@@ -271,7 +274,8 @@ jobs:
                         t19_acollinearity,
                         t20_digi_adder,
                         t22_merged_actor,
-                        t23_digi_readout]
+                        t23_digi_readout,
+                        t26_CoinSorter]
 
     steps:
     - name: Checkout github repo
