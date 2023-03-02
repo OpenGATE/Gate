@@ -166,17 +166,28 @@ void GateCoincidenceSorter::Digitize()
   GateCoincidenceDigi* coincidence;
   G4double window, offset;
 
-
   //Input digi collection
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-  GateSinglesDigitizer* inputDigitizer = digitizerMgr->FindDigitizer(m_inputName);//m_collectionName);
+  GateSinglesDigitizer* inputDigitizer;
+  inputDigitizer = digitizerMgr->FindDigitizer(m_inputName);//m_collectionName);
+  if (!inputDigitizer)
+	  if (digitizerMgr->m_SDlist.size()==1)
+  	  {
+		  G4String new_name= m_inputName+"_"+digitizerMgr->m_SDlist[0]->GetName();
+		  //G4cout<<" new_name "<< new_name<<G4endl;
+		  inputDigitizer = digitizerMgr->FindDigitizer(new_name);
+  	  }
+	  else
+		  GateError("ERROR: The name _"+ m_inputName+"_ is unknown for input singles digicollection! \n");
 
   G4int inputCollID=inputDigitizer->m_outputDigiCollectionID;
-
+  //G4cout<<"inputCollID "<<inputCollID<<G4endl;
   G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 
   GateDigiCollection* IDC = 0;
   IDC = (GateDigiCollection*) (fDM->GetDigiCollection(inputCollID));
+  if (!IDC)
+     return ;
 
   std::vector< GateDigi* >* IDCvector = IDC->GetVector ();
   std::vector<GateDigi*>::iterator gpl_iter;
@@ -188,8 +199,7 @@ void GateCoincidenceSorter::Digitize()
   if (!IsEnabled())
      return;
 
-  if (!IDC)
-    return ;
+
 
   if(m_eventIDCoinc){
       bool isCoincCreated=false;

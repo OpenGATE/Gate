@@ -72,10 +72,14 @@ GateEnergyResolution::~GateEnergyResolution()
 
 void GateEnergyResolution::Digitize()
 {
+
 	if( m_resoMin!=0 && m_resoMax!=0 && m_reso!=0)
 	{
+		G4cout<<m_resoMin<<" "<< m_resoMax<<" "<<m_reso<<G4endl;
 		GateError("***ERROR*** Energy Resolution is ambiguous: you can set /fwhm OR range for resolutions with /fwhmMin and /fwhmMax!");
 	}
+
+
 
 	G4String digitizerName = m_digitizer->m_digitizerName;
 	G4String outputCollName = m_digitizer-> GetOutputName();
@@ -91,6 +95,8 @@ void GateEnergyResolution::Digitize()
 
 	GateDigi* inputDigi = new GateDigi();
 
+	G4double reso;
+
   if (IDC)
      {
 	  G4int n_digi = IDC->entries();
@@ -101,7 +107,11 @@ void GateEnergyResolution::Digitize()
 		  inputDigi=(*IDC)[i];
 
 		  if( m_resoMin!=0 && m_resoMax!=0)
-			  m_reso = G4RandFlat::shoot(m_resoMin, m_resoMax);
+			  reso = G4RandFlat::shoot(m_resoMin, m_resoMax);
+		  else if (m_reso!=0)
+			  reso=m_reso;
+
+
 
 		  G4double energy= inputDigi->GetEnergy();
 		  G4double sigma;
@@ -111,12 +121,12 @@ void GateEnergyResolution::Digitize()
 			  //Apply InverseSquareBlurringLaw
 		  {
 			  //G4cout<<"InverseSquareBlurringLaw"<<G4endl;
-			  resolution = m_reso * sqrt(m_eref)/ sqrt(energy);
+			  resolution = reso * sqrt(m_eref)/ sqrt(energy);
 
 		  }
 		  else
 			  //Apply LinearBlurringLaw
-			  resolution = m_slope * (energy - m_eref) + m_reso;
+			  resolution = m_slope * (energy - m_eref) + reso;
 
 	      sigma =(resolution*energy)/GateConstants::fwhm_to_sigma;
 

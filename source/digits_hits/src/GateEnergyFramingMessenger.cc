@@ -40,10 +40,10 @@ GateEnergyFramingMessenger::GateEnergyFramingMessenger (GateEnergyFraming* Energ
 	G4String guidance;
 	G4String cmdName;
 
-	G4cout<< GetDirectoryName()<<G4endl;
+	//G4cout<< GetDirectoryName()<<G4endl;
 
 	cmdName = GetDirectoryName() + "setMin";
-	G4cout<<cmdName<<G4endl;
+	//G4cout<<cmdName<<G4endl;
 	setMinCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
 	setMinCmd->SetGuidance("Set uphold (in keV) for pulse-limitation");
 	setMinCmd->SetUnitCategory("Energy");
