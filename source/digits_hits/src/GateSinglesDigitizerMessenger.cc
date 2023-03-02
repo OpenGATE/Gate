@@ -34,10 +34,10 @@ See LICENSE.md for further details
 #include "GatePileup.hh"
 #include "GateAdderCompton.hh"
 #include "GateOpticalAdder.hh"
+#include "GateNoise.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
-#include "GateNoise.hh"
 #include "GateBuffer.hh"
 #include "GateBlurringWithIntrinsicResolution.hh"
 #include "GateLightYield.hh"
@@ -104,7 +104,7 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise";
 
    return theList;
 }
@@ -182,6 +182,11 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  m_digitizer->AddNewModule(newDM);
        }
 #endif
+  else if (childTypeName=="noise")
+       {
+     	  newDM = new GateNoise(m_digitizer, DMname);
+     	  m_digitizer->AddNewModule(newDM);
+       }
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);

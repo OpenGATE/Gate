@@ -84,6 +84,10 @@ void GateAdder::Digitize()
 	  {
 		  inputDigi=(*IDC)[i];
 		  //This part is from ProcessOnePulse
+#ifdef GATE_USE_OPTICAL
+		  // ignore pulses based on optical photons. These can be added using the opticaladder
+		  if (!inputDigi->IsOptical())
+#endif
 		     for (iter=m_OutputDigiCollectionVector->begin(); iter!= m_OutputDigiCollectionVector->end() ; ++iter)
 		     {
 		    	 if ( (*iter)->GetVolumeID()   == inputDigi->GetVolumeID() )
