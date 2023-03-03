@@ -49,6 +49,9 @@ public:
   inline GateSinglesDigitizer* GetDigitizer()
     { return m_digitizer; }
 
+  inline G4int GetInputCollectionID(){return m_DCID;}
+  inline void SetInputCollectionID(G4int ID){m_DCID=ID;}
+
 private:
 
   GateSinglesDigitizer *m_digitizer;

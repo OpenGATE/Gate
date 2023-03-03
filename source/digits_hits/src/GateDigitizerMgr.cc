@@ -99,11 +99,24 @@ void GateDigitizerMgr::Initialize()
 	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 	for (size_t i_D = 0; i_D<m_SingleDigitizersList.size(); i_D++)
 			{
-
+		//G4cout<< m_SingleDigitizersList[i_D]->GetInputName()<<G4endl;
 			for (size_t i_DM = 0; i_DM<m_SingleDigitizersList[i_D]->m_DMlist.size(); i_DM++)
 				{
-			       m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->InputCollectionID();
+				//calculate input IDs for all DMs
+				//G4cout<< m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->GetName()<<G4endl;
+
+				if (i_DM == 0)
+				{
+					m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->InputCollectionID();//InputCollectionID();
 				}
+				else{
+				   G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetInputName();
+					//G4cout<<name4fDM <<G4endl;
+				   //  G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
+				   m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->SetInputCollectionID( fDM->GetDigiCollectionID(name4fDM ) );//InputCollectionID();
+				   //G4cout<<m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->GetInputCollectionID()<<G4endl;
+				}
+			}
 
 			//Save the ID of the last digitizer module for current digitizer
 			GateSinglesDigitizer *digitizer=m_SingleDigitizersList[i_D];//
@@ -111,10 +124,11 @@ void GateDigitizerMgr::Initialize()
 
 			if(m_SingleDigitizersList[i_D]->m_DMlist.size()>0)
 			{
+				//G4cout<<"Filling lastDM "<<G4endl;
 				GateVDigitizerModule * DM = (GateVDigitizerModule*)m_SingleDigitizersList[i_D]->m_DMlist[m_SingleDigitizersList[i_D]->m_DMlist.size()-1];
 				G4String name=DM->GetName()+"/"+DigitizerName+"_"+digitizer->m_SD->GetName();
 				G4int collectionID  = fDM->GetDigiCollectionID(name);
-
+				//G4cout<<name<<" "<<collectionID<<G4endl;
 				m_SingleDigitizersList[i_D]->m_outputDigiCollectionID=collectionID;
 				m_SingleDigitizersList[i_D]->m_lastDMname=name;
 			}

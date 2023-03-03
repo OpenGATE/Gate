@@ -68,21 +68,23 @@ void GateVDigitizerModule::Describe(size_t indent)
 //////////////////
 void GateVDigitizerModule::InputCollectionID()
 {
-
+	//G4cout<<" GateVDigitizerModule::InputCollectionID "<<G4endl;
 	GateDigitizerMgr* DigiMan = GateDigitizerMgr::GetInstance();
 	G4DigiManager* fDM = G4DigiManager::GetDMpointer();
 
 	G4String DigitizerName=m_digitizer->GetName();
 
-//	DigiMan->ShowSummary();
+	//DigiMan->ShowSummary();
 
 	G4String outputCollNameTMP = GetName() +"/"+DigitizerName+"_"+m_SD->GetName();
 	G4int DCID = -1;
 
+	//G4cout<<"outputCollNameTMP "<<outputCollNameTMP<<G4endl;
 	if(DCID<0)
 	{
 		DCID = fDM->GetDigiCollectionID(outputCollNameTMP);
 	}
+	//G4cout<<"DCID "<<DCID<<G4endl;
 
 	G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
 	G4int InitDMID = fDM->GetDigiCollectionID(InitDMname);
@@ -91,31 +93,46 @@ void GateVDigitizerModule::InputCollectionID()
 	if ( m_digitizer->m_DMlist[0] == this )
 	{
 		//check if the input collection is from InitDM
+		//G4cout<<"** "<< m_digitizer->GetInputName()<< " "<< m_digitizer->GetOutputName()<<G4endl;
 		if (m_digitizer->GetInputName() == m_digitizer->GetOutputName() )
 		{
 			DCID=InitDMID;
 		}
+
 		else
-		{
+			{
+			//G4cout<<"normally here"<<G4endl;
 			G4String inputCollectionName = m_digitizer->GetInputName()+"_"+m_digitizer->m_SD->GetName();
 			GateSinglesDigitizer* inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
 			DCID=inputDigitizer->m_outputDigiCollectionID;
-		}
+			}
+
 	}
-	else
+	/*else
 	{
+
+		/*G4cout<<"normally here"<<G4endl;
+		G4String inputCollectionName = m_digitizer->GetInputName();//+"_"+m_digitizer->m_SD->GetName();
+		G4cout<<"inputCollectionName "<<inputCollectionName<<G4endl;
+
+		GateSinglesDigitizer* inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+		G4cout<<"inputDigitizer "<< inputDigitizer->GetName()<<" for "<<inputDigitizer->GetInputName() <<G4endl;
+
+		DCID=inputDigitizer->m_outputDigiCollectionID;
+
 		//sequential
-		DCID=DCID-1;
+	//	if( )
+	//	DCID=DCID-1;
 	}
 
-
+*/
 
 
 	if(DCID<0)
 	{
       G4Exception( "GateVDigitizerModule::InputCollectionID", "InputCollectionID", FatalException, "Something wrong with collection ID. Please, contact olga[dot]kochebina[at]cea.fr. Abort.\n");
 	}
-// G4cout<<DCID<<G4endl;
+	//G4cout<<DCID<<G4endl;
 
  m_DCID = DCID;
 
