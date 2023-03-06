@@ -611,7 +611,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   energytypeCmd1->SetGuidance("Sets energy distribution type");
   energytypeCmd1->SetParameterName("EnergyDis",true,true);
   energytypeCmd1->SetDefaultValue("Mono");
-  energytypeCmd1->SetCandidates("Mono Lin Pow Exp Gauss Brem Bbody Range Cdg User Arb Epn");
+  energytypeCmd1->SetCandidates("Mono Fluor18 Oxygen15 Carbon11 Lin Pow Exp Gauss Brem Bbody Range Cdg User Arb Epn UserSpectrum");
 
   cmdName = GetDirectoryName() + "ene/min";
   eminCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
