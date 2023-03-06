@@ -7,10 +7,6 @@ See LICENSE.md for further details
 ----------------------*/
 
 // OK GND 2022
-/*This class is not used by GATE !
-  The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateNoise.cc for more detals
-  */
 
 
 /*! \class  GateNoise

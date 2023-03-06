@@ -398,7 +398,6 @@ std::vector<GateHitsCollection*> GateOutputMgr::GetHitCollections()
 		GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCIDs[i]));
 		CHC_vector.push_back(CHC);
 		}
- //TODO OK GND 2022; if the seg fault is not from here!
   return CHC_vector;
 }
 //----------------------------------------------------------------------------------

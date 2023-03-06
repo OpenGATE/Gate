@@ -40,44 +40,6 @@ class GateVSystem;
 
 
 
-/*
- * DigitizerOld -> DigitizerMgr
- * PulseProcessorChain -> Digitizer
- * PulseProcessor, Processor-> DigitizerModule
- * DigitizerName = CollectionName
- * ?? GateVPulseProcessor -> GateSinglesDigitizerModule: public G4VDigitizerModule ?? to put common methods ??
- *
- *
- *
- * TODO :
- *  - Adder -> done
- *  - Readout
- *  - Energy windowing 2j
- *  	- upholder
- *  	- thresholder
- *  	- local energy thresholder
- *  	- Energy thresoler
- *  	- sigmoidal thresholder
- *  - Blurring -> big block 3s
- *  	- Energy Blurring
- *  	- Time Blurring/TemporalResolution
- *  	- SP Blurring
- *  	- local bluring
- *  	- crystal bluring
- *  	- local time resolution
- *  	- intrinistic resolution blurring
- *  - Efficiencies -> big block 3s
- *  	- quantum
- *  	- light yield
- *  	- energy efficiency
- *  - Dead time 2j
- *  - Noise 2j
- *  - Pile up ??
- *  - system filter ??
- *
- *
- *
- */
 
 class GateDigitizerMgr : public GateClockDependent, public G4DigiManager
 {

@@ -127,7 +127,7 @@ void GateDeadTime::Digitize()
 
 		  // FIND THE ELEMENT ID OF DIGI
 
-		  // GND 2022 TODO check if it works as const ??
+
 		  const GateVolumeID* aVolumeID = &inputDigi->GetVolumeID();
 		  G4int m_generalDetId = 0; // a unique number for each detector part
 		                              // that depends of the depth of application

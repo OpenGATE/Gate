@@ -10,7 +10,7 @@ See LICENSE.md for further details
 // Created by mdupont on 17/05/19.
 
 //    - 2023/02/22 PDGcode for optical photon is changed from 0 to -22
-//  OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
+//  OK GND 2022 TODO: adaptation for multiSD for OpticalOutput is not finished. Stop because of question: do we really need it ?
 //    let a side for the moment (in case if needed uncomment lines 1050, 1052, 1053 in Book() method
 //
 
@@ -941,7 +941,7 @@ GateToTree::~GateToTree() {
 }
 
 void GateToTree::RegisterNewCoincidenceDigiCollection(const G4String &string, G4bool aBool) {
-	 //OK GND 2022 TODO ??
+	 //OK GND 2022 TODO uncomment??
 	//if (!aBool)
      //   return;
 
@@ -949,14 +949,14 @@ void GateToTree::RegisterNewCoincidenceDigiCollection(const G4String &string, G4
 }
 
 void GateToTree::RegisterNewSingleDigiCollection(const G4String &string, G4bool aBool) {
-	 //OK GND 2022 TODO ??
+	 //OK GND 2022 TODO uncomment ??
 	//if (!aBool)
      //   return;
     m_listOfSinglesCollection.push_back(string);
 }
 
 void GateToTree::RegisterNewHitsCollection(const G4String &string, G4bool aBool) {
-    //OK GND 2022 TODO ??
+    //OK GND 2022 TODO uncomment ??
 	//if (!aBool)
      //   return;
     m_listOfHitsCollection.push_back(string);

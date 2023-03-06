@@ -20,7 +20,7 @@
     - Scintillation counter bug-fixed
     - 2023/02/22 PDGcode for optical photon is changed from 0 to -22
 
-    OK GND 2022 TODO: adaptation for multiSD is not finished. Stop because of question: do we really need it ?
+    OK GND 2022 TODO: adaptation for multiSD for OpticalOutput is not finished. Stop because of question: do we really need it ?
     let a side for the moment (in case if needed uncomment lines 257, 259, 260 in Book() method
 
 */
@@ -591,7 +591,7 @@ void GateToRoot::RecordEndOfAcquisition() {
 
        // m_hfile = m_treeHit->GetCurrentFile();
 
-    	// TODO GND 2022 !!! only for the 1st tree ??
+    	// Get file only for the 1st tree as it is the same file for all trees
     	m_hfile = m_treesHit[0]->GetCurrentFile();
 
 

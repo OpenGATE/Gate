@@ -526,6 +526,7 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event *e) {
         int i = 0;
         for (auto id:mListOfWindowIds) {
             ++i;
+            // OK GND 2022 TODO : check and adapt correct DigiCollection ID
             auto SDC = dynamic_cast<const GateDigiCollection *>(fDM->GetDigiCollection(id));
             if (!SDC) continue;
             /*

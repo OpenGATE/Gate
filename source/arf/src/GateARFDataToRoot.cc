@@ -140,8 +140,11 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event*)
     }
   /* Get Digitizer information */
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
+  //OK GND 2022
+  G4int collectionID = GetCollectionID(mSingleDigiCollectionName); //fDM->GetDigiCollectionID(mSingleDigiCollectionName);
+  //G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
   const GateDigiCollection * SDC = (GateDigiCollection*) (fDM->GetDigiCollection(collectionID));
+
   if (!SDC)
     {
     if (nVerboseLevel > 0)

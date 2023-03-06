@@ -118,7 +118,6 @@ private:
 
   GateOutputTreeFileManager m_manager_optical;
   std::unordered_map<std::string,GateOutputTreeFileManager> m_mmanager_optical;
-  //OK GND 2022 : TODO check the optical coll IDs!
   std::unordered_map<std::string, G4int> m_optical_to_collectionID;
 
   //  std::vector<GateOutputTreeFileManager> m_vmanager_singles;

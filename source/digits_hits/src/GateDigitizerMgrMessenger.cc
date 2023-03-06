@@ -18,7 +18,6 @@
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
-#include "GateCoincidenceSorterOld.hh"
 
 // Constructor
 GateDigitizerMgrMessenger::GateDigitizerMgrMessenger(GateDigitizerMgr* itsDigitizerMgr)
