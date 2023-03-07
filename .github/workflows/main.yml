@@ -275,7 +275,10 @@ jobs:
                         t20_digi_adder,
                         t22_merged_actor,
                         t23_digi_readout,
-                        t26_CoinSorter]
+                        t26_CoinSorter,
+                        t27_Hits_2SD,
+                        t28_Singles_2SD,
+                        t29_optical_digi]
 
     steps:
     - name: Checkout github repo
