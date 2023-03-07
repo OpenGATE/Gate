@@ -103,9 +103,6 @@ void GateBioDoseActor::Construct() {
 	//Just matrix information
 	G4cout << "Memory space to store physical dose into " << mResolution.x() * mResolution.y() * mResolution.z() << " voxels has been allocated " << G4endl;
 
-	//Calculate the mass of voxel for dose estimation
-	_massOfVoxel = ((1 * (mVoxelSize.x() / cm * mVoxelSize.y() / cm * mVoxelSize.z() / cm)) * 1E-3); //G4_WATER (density : g.cm-3)
-
 	// SOBP
 	if(_SOBPWeight == 0) { _SOBPWeight = 1; }
 
@@ -175,7 +172,6 @@ GateBioDoseActor::Coefficients GateBioDoseActor::Interpol(double x1, double x2, 
 /// Save data
 void GateBioDoseActor::SaveData() {
 	// Calculate Alpha Beta mix
-	// Fiding deposited alpha and beta stored in the maps for the right index i
 	for(auto const& [index, deposited]: _depositedMap) {
 		// Alpha Beta mix (final)
 		double alphamix = (deposited.alpha / deposited.energy);
@@ -183,8 +179,11 @@ void GateBioDoseActor::SaveData() {
 
 		// Calculate dose, dosebio
 		constexpr double MeVtoJoule = 1.60218e-13;
-		double dose = deposited.energy * MeVtoJoule / _massOfVoxel;
+		double dose = 0;
 		double biodose = 0;
+
+		if(deposited.mass != 0)
+			dose = deposited.energy * MeVtoJoule / deposited.mass;
 
 		if(dose != 0 && alphamix != 0 && betamix != 0)
 			biodose = (-_alphaRef + std::sqrt((_alphaRef * _alphaRef) + 4 * _betaRef * (alphamix * dose + betamix * (dose * dose)))) / (2 * _betaRef);
@@ -245,6 +244,10 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 
 		// Accumulate energy inconditionnaly
 		deposited.energy += energyDep;
+
+		auto current_material = step->GetPreStepPoint()->GetMaterial();
+		double density = current_material->GetDensity();
+		deposited.mass = ((1 * (mVoxelSize.x() / cm * mVoxelSize.y() / cm * mVoxelSize.z() / cm)) * density);
 
 		// Accumulation of alpha/beta if ion type if known
 		// -> check if the ion type is known

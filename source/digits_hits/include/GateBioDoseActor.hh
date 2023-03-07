@@ -27,6 +27,8 @@ public:
 		double alpha;
 		double beta;
 		double energy;
+
+		double mass;
 	};
 
 	struct Coefficients {
@@ -108,7 +110,6 @@ private:
 	G4String _cellLine;
 	G4String _bioPhysicalModel;
 	double _alphaRef, _betaRef; //manual implanted
-	double _massOfVoxel; // G4_WATER
 
 	G4double _SOBPWeight;
 
