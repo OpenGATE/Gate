@@ -162,7 +162,7 @@ const G4String &GateToRoot::GiveNameOfFile() {
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-void GateToRoot::Book() {
+void GateToRoot::BookBeginOfAquisition() {
 
     if (nVerboseLevel > 2)
         G4cout << "GateToRoot::Book\n";
@@ -228,7 +228,22 @@ void GateToRoot::Book() {
     pet_data->Branch("start_time_sec", &mTimeStart);
     pet_data->Branch("stop_time_sec", &mTimeStop);
 
-	//OK GND 2022 multiSD
+
+
+
+    m_working_root_directory = TDirectory::CurrentDirectory();
+
+}
+//--------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------
+void GateToRoot::BookBeginOfRun() {
+
+    if (nVerboseLevel > 2)
+        G4cout << "GateToRoot::BookBeginOfRun\n";
+
+    //OK GND 2022 multiSD
     GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
     SetSDlistSize(digitizerMgr->m_SDlist.size() );
 
@@ -298,30 +313,15 @@ void GateToRoot::Book() {
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
         m_outputChannelList[i]->Book();
 
-
-    m_working_root_directory = TDirectory::CurrentDirectory();
-
 }
 //--------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------
 // Method called at the beginning of each acquisition by the application manager: opens the ROOT file and prepare the trees
 void GateToRoot::RecordBeginOfAcquisition() {
 
-    if (nVerboseLevel > 2)
+   if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordBeginOfAcquisition\n";
-
-	//OK GND 2022 multiSD
-	/*   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-	   SetSDlistSize(digitizerMgr->m_SDlist.size() );
-	   for (G4int i=0; i<GetSDlistSize();i++)
-		{
-			GateRootHitBuffer hitBuffer;
-			m_hitBuffers.push_back(hitBuffer);
-		}
-	 */
-
 
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
     TrackingMode theMode = myAction->GetMode();
@@ -403,7 +403,7 @@ void GateToRoot::RecordBeginOfAcquisition() {
             G4Exception("GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, msg);
         }
         //! We book histos and ntuples only once per acquisition
-        Book();
+        BookBeginOfAquisition();
 
 
         return;
@@ -626,9 +626,9 @@ void GateToRoot::RecordBeginOfRun(const G4Run *) {
       }
       }*/
 
-    if (nVerboseLevel > 2)
+   if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordBeginOfRun\n";
-    //  Book();
+       BookBeginOfRun();
 }
 //--------------------------------------------------------------------------
 
@@ -744,6 +744,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event *evt) {
 void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 
     // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin\n";);
+    //G4cout << "GateToRoot::RecordEndOfEvent -- begin\n";
 
 
     GateSteppingAction *myAction = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()));
@@ -752,6 +753,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 
     nbPrimaries += 1.;
     latestEventID += 1.;
+
 
     //OK GND 2022
     std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
@@ -866,7 +868,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 		}
     }
 
- RecordDigitizer(event);
+    RecordDigitizer(event);
 
     // v. cuplov - optical photons
    RecordOpticalData(event);

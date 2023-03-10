@@ -45,6 +45,7 @@ GateDigitizerMgr* GateDigitizerMgr::GetInstance()
 GateDigitizerMgr::GateDigitizerMgr()
 	: GateClockDependent("digitizerMgr"),
 	  m_elementTypeName("DigitizerMgr module"),
+	  //m_system(0),
 	  m_systemList(0),
 	  m_collectionID(0),
 	  m_isInitialized(1),
@@ -107,6 +108,9 @@ void GateDigitizerMgr::Initialize()
 
 				if (i_DM == 0)
 				{
+					//G4cout<<"input collecion "<< m_SingleDigitizersList[i_D]->GetInputName()<<G4endl;
+					//G4cout<<"output collecion "<< m_SingleDigitizersList[i_D]->GetOutputName()<<G4endl;
+
 					m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->InputCollectionID();//InputCollectionID();
 				}
 				else{
@@ -156,7 +160,7 @@ void GateDigitizerMgr::Initialize()
 			if ( m_CoincidenceSortersList[i]->GetInputName().empty() )
 				{
 					if (m_SingleDigitizersList.size()>1)
-						GateError("***ERROR*** The input collection name is ambiguous as you have several Singles Collections/SinglesDigitizers! \n Please, use /setInputCollection for your CoincidenceSorter to choose the correct one.\n");
+						GateError("***ERROR*** CoincidenceSorter *** The input collection name is ambiguous as you have several Singles Collections/SinglesDigitizers! \n Please, use /setInputCollection for your CoincidenceSorter to choose the correct one.\n");
 
 					if (m_SDlist.size()==1)
 					{
@@ -173,6 +177,21 @@ void GateDigitizerMgr::Initialize()
 
 
 }
+
+/*
+//-----------------------------------------------------------------
+void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
+{
+  m_system = aSystem;
+  size_t i;
+  for (i=0; i<m_SingleDigitizersList.size() ; ++i)
+	  m_SingleDigitizersList[i]->SetSystem(aSystem);
+  for (i=0; i<m_CoincidenceSortersList.size() ; ++i)
+	  m_CoincidenceSortersList[i]->SetSystem(aSystem);
+}
+//-----------------------------------------------------------------
+
+*/
 
 
 //-----------------------------------------------------------------
@@ -246,9 +265,9 @@ void GateDigitizerMgr::AddNewSD(GateCrystalSD* newSD)
 
   //TODO add here multisystem??
    //! Next lines are for the multi-system approach
- /* if(m_systemList && m_systemList->size() == 1)
-	  digitizer->SetSystem((*m_systemList)[0]);
-   */
+ // if(m_systemList && m_systemList->size() == 1)
+//	  digitizer->SetSystem((*m_systemList)[0]);
+
 
 }
 //-----------------------------------------------------------------
@@ -273,7 +292,7 @@ void GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
   m_SingleDigitizersList.push_back(digitizer);
 
   //! Next lines are for the multi-system approach
-  if(m_systemList && m_systemList->size() == 1)
+  if(m_systemList && m_systemList->size() == m_SDlist.size())
 	  digitizer->SetSystem((*m_systemList)[0]);
 }
 //-----------------------------------------------------------------
@@ -325,8 +344,6 @@ GateClockDependent* GateDigitizerMgr::FindElement(G4String mName)
 
 GateSinglesDigitizer* GateDigitizerMgr::FindDigitizer(G4String mName)
 {
-
-	//G4cout<<"GateDigitizerMgr::FindDigitizer "<<mName  <<G4endl;
 
 	for(G4int i=0;i<int(m_SingleDigitizersList.size());i++)
 		{

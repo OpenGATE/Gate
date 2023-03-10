@@ -63,6 +63,8 @@ class GateSinglesDigitizer : public GateModuleListManager
      virtual inline void SetSystem(GateVSystem* aSystem)
        { m_system = aSystem; }
 
+
+
      virtual GateVDigitizerModule* GetDigitizerModule(size_t i)
            	  {return (GateVDigitizerModule*) GetElement(i);}
 

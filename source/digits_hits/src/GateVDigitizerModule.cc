@@ -41,9 +41,9 @@ GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path, GateSin
 
 }
 
-GateVDigitizerModule::GateVDigitizerModule(G4String name)
+GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path)
   :G4VDigitizerModule(name),
-   GateClockDependent(name)
+   GateClockDependent(path)
  {
  }
 
@@ -102,7 +102,8 @@ void GateVDigitizerModule::InputCollectionID()
 		else
 			{
 			//G4cout<<"normally here"<<G4endl;
-			G4String inputCollectionName = m_digitizer->GetInputName()+"_"+m_digitizer->m_SD->GetName();
+			G4String inputCollectionName = m_digitizer->GetInputName(); //+"_"+m_digitizer->m_SD->GetName();
+			//	G4cout<<" inputCollectionName "<<inputCollectionName<<G4endl;
 			GateSinglesDigitizer* inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
 			DCID=inputDigitizer->m_outputDigiCollectionID;
 			}

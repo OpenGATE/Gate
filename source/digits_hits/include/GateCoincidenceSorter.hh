@@ -70,6 +70,8 @@ public:
     //! Overload of the virtual method declared by the base class GateClockDependent
     //! print-out a description of the sorter
     void DescribeMyself(size_t ) override;
+    void Describe(size_t) override;
+
     //! \name getters and setters
     //@{
 

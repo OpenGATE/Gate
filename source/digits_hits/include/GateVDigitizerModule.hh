@@ -26,7 +26,7 @@ class GateVDigitizerModule : public G4VDigitizerModule, public GateClockDependen
 public:
   
   GateVDigitizerModule(G4String DMname, G4String path, GateSinglesDigitizer *digitizer, GateCrystalSD* SD);
-  GateVDigitizerModule(G4String DMname);
+  GateVDigitizerModule(G4String DMname, G4String path);
   virtual ~GateVDigitizerModule();
   
 

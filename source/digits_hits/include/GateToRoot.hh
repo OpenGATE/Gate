@@ -111,7 +111,9 @@ public:
 
     void RecordVoxels(const G4Step *);
 
-    void Book();
+    void BookBeginOfAquisition();
+
+    void BookBeginOfRun();
 
     void Store();
 

@@ -26,7 +26,6 @@ GateDigitizerMergerMessenger::GateDigitizerMergerMessenger (GateDigitizerMerger*
 	G4String guidance;
 	G4String cmdName;
 
-G4cout<<GetDirectoryName()<<G4endl;
 	cmdName = GetDirectoryName()+"addInput";
     addCollCmd = new G4UIcmdWithAString(cmdName,this);
     addCollCmd->SetGuidance("How to generate position");

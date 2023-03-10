@@ -181,7 +181,6 @@ G4VPhysicalVolume *GateVVolume::Construct(G4bool flagUpdateOnly) {
 void GateVVolume::ConstructGeometry(G4LogicalVolume *mother_log, G4bool flagUpdateOnly) {
     GateMessage("Geometry", 7,
                 "GateVVolume::ConstructGeometry -- begin ; flagUpdateOnly = " << flagUpdateOnly << Gateendl;);
-
     pMotherLogicalVolume = mother_log;
 
     if (!pOwnMaterial) {

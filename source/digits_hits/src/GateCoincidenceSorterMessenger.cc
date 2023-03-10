@@ -21,74 +21,74 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
 	: GateClockDependentMessenger(itsCoincidenceSorter), m_CoincidenceSorter(itsCoincidenceSorter)
 {
 
-	G4String DirectoryName = "/gate/digitizerMgr/CoincidenceSorter/"+m_CoincidenceSorter->GetOutputName()+"/";
-
   G4String guidance;
   G4String cmdName;
 
-  cmdName = DirectoryName + "setWindow";
+  //G4cout<<  GetDirectoryName()<<G4endl;
+
+  cmdName = GetDirectoryName() + "setWindow";
   windowCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   windowCmd->SetGuidance("Set time-window for coincidence");
   windowCmd->SetUnitCategory("Time");
 
-  cmdName = DirectoryName + "setWindowJitter";
+  cmdName = GetDirectoryName() + "setWindowJitter";
   windowJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   windowJitterCmd->SetGuidance("Set standard deviation of window jitter");
   windowJitterCmd->SetUnitCategory("Time");
 
-  cmdName = DirectoryName + "setOffset";
+  cmdName = GetDirectoryName() + "setOffset";
   offsetCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   offsetCmd->SetGuidance("Set time offset for delay coincidences");
   offsetCmd->SetUnitCategory("Time");
 
-  cmdName = DirectoryName + "setOffsetJitter";
+  cmdName = GetDirectoryName() + "setOffsetJitter";
   offsetJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   offsetJitterCmd->SetGuidance("Set standard deviation of offset jitter");
   offsetJitterCmd->SetUnitCategory("Time");
 
-  cmdName = DirectoryName+"minSectorDifference";
+  cmdName = GetDirectoryName()+"minSectorDifference";
   minSectorDiffCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
   minSectorDiffCmd->SetGuidance("Set the minimum sector difference for valid coincidences.");
   minSectorDiffCmd->SetParameterName("diff",false);
   minSectorDiffCmd->SetRange("diff>=1");
 
-  cmdName = DirectoryName+"setDepth";
+  cmdName = GetDirectoryName()+"setDepth";
   setDepthCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
   setDepthCmd->SetGuidance("Set the depth of system-level for coincidences.");
   setDepthCmd->SetParameterName("depth",false);
   setDepthCmd->SetRange("depth>=1");
 
-  cmdName = DirectoryName+"setPresortBufferSize";
+  cmdName = GetDirectoryName()+"setPresortBufferSize";
   setPresortBufferSizeCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
   setPresortBufferSizeCmd->SetGuidance("Set the size of the presort buffer.");
   setPresortBufferSizeCmd->SetParameterName("size",false);
   setPresortBufferSizeCmd->SetRange("size>=32");
 
-  cmdName = DirectoryName+"setInputCollection";
+  cmdName = GetDirectoryName()+"setInputCollection";
   SetInputNameCmd = new G4UIcmdWithAString(cmdName,this);
   SetInputNameCmd->SetGuidance("Set the name of the input digi channel");
   SetInputNameCmd->SetParameterName("Name",false);
 
-  cmdName = DirectoryName+"MultiplesPolicy";
+  cmdName = GetDirectoryName()+"MultiplesPolicy";
   MultiplePolicyCmd = new G4UIcmdWithAString(cmdName,this);
   MultiplePolicyCmd->SetGuidance("How to treat multiples coincidences");
   MultiplePolicyCmd->SetCandidates("killAll takeAllGoods killAllIfMultipleGoods takeWinnerOfGoods takeWinnerIfIsGood takeWinnerIfAllAreGoods keepAll keepIfAnyIsGood keepIfOnlyOneGood keepIfAllAreGoods");
 
-  cmdName = DirectoryName+"allDigiOpenCoincGate";
+  cmdName = GetDirectoryName()+"allDigiOpenCoincGate";
   AllDigiOpenCoincGateCmd = new G4UIcmdWithABool(cmdName,this);
   AllDigiOpenCoincGateCmd->SetGuidance("Specify if a given digi can be part of two coincs");
 
   //For CC module
-  cmdName = DirectoryName+"setTriggerOnlyByAbsorber";
+  cmdName = GetDirectoryName()+"setTriggerOnlyByAbsorber";
   SetTriggerOnlyByAbsorberCmd = new G4UIcmdWithABool(cmdName,this);
   SetTriggerOnlyByAbsorberCmd->SetGuidance("Specify if only the digis in the absorber can open a coincidencee window");
 
-  cmdName = DirectoryName+"setAcceptancePolicy4CC";
+  cmdName = GetDirectoryName()+"setAcceptancePolicy4CC";
   SetAcceptancePolicy4CCCmd = new G4UIcmdWithAString(cmdName,this);
   SetAcceptancePolicy4CCCmd ->SetGuidance("Coincidence acceptance policy in CC");
   SetAcceptancePolicy4CCCmd ->SetCandidates("keepIfMultipleVolumeIDsInvolved keepIfMultipleVolumeNamesInvolved keepAll");
 
-  cmdName = DirectoryName+"setEventIDCoinc";
+  cmdName = GetDirectoryName()+"setEventIDCoinc";
   SetEventIDCoincCmd = new G4UIcmdWithABool(cmdName,this);
   SetEventIDCoincCmd->SetGuidance("Set to one for event identification coincidencences");
 

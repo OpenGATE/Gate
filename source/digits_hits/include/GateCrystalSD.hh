@@ -68,8 +68,12 @@ class GateCrystalSD : public G4VSensitiveDetector
 
 
       //! Returns the system to which the SD is attached
+      //! Returns the system to which the SD is attached
       inline GateVSystem* GetSystem()
-      	  { return m_system;}
+      { return m_system;}
+      //! Set the system to which the SD is attached
+      void SetSystem(GateVSystem* aSystem);
+
       //! Set the system to which the SD is attached
       //! next methods are for the multi-system approach
       inline GateSystemList* GetSystemList() const { return m_systemList; }

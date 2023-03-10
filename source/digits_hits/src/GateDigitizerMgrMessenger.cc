@@ -114,7 +114,7 @@ const G4String& GateDigitizerMgrMessenger::DumpMap()
 
 void GateDigitizerMgrMessenger::DoInsertion(const G4String& childTypeName)
 {
-	G4cout<<"GateDigitizerMgrMessenger::DoInsertion "<<childTypeName<<G4endl;
+	//G4cout<<"GateDigitizerMgrMessenger::DoInsertion "<<childTypeName<<G4endl;
 
 	if (GetNewCollectionName().empty())
     SetNewCollectionName(childTypeName);

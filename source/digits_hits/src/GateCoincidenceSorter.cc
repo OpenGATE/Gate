@@ -30,7 +30,7 @@ G4int GateCoincidenceSorter::gm_coincSectNum=0;
 GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
                                              const G4String& itsOutputName,
                                              const bool& IsCCSorter)
- 	: GateVDigitizerModule("GateCoincidenceSorter"),
+ 	: GateVDigitizerModule("GateCoincidenceSorter", "digitizerMgr/CoincidenceSorter/"+itsOutputName),
     m_digitizerMgr(itsDigitizerMgr),
     m_system(0),
     m_outputName(itsOutputName),
@@ -62,6 +62,8 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
 
 
   G4DigiManager::GetDMpointer()->AddNewModule(this);
+
+
 
 }
 //------------------------------------------------------------------------------------------------------
@@ -105,6 +107,10 @@ void GateCoincidenceSorter::DescribeMyself(size_t indent)
 }
 //------------------------------------------------------------------------------------------------------
 
+void GateCoincidenceSorter::Describe(size_t indent)
+{
+	DescribeMyself(indent);
+}
 
 //------------------------------------------------------------------------------------------------------
 void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
@@ -155,7 +161,7 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
 void GateCoincidenceSorter::Digitize()
 {
 	//G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
-	//G4cout<< "m_inputName "<< m_inputName<<G4endl;
+	//	G4cout<< "m_inputName "<< m_inputName<<G4endl;
   GateDigi* digi;
   std::list<GateDigi*>::iterator buf_iter;                // presort buffer iterator
 
@@ -734,8 +740,8 @@ void GateCoincidenceSorter::SetSystem(G4String& inputName)
 {
    for (size_t i=0; i<m_digitizerMgr->m_SingleDigitizersList.size() ; ++i)
    {
-      G4String pPCOutputName = m_digitizerMgr->m_SingleDigitizersList[i]->GetOutputName();
 
+      G4String pPCOutputName = m_digitizerMgr->m_SingleDigitizersList[i]->GetOutputName();
       if(pPCOutputName.compare(inputName) == 0)
       {
          this->SetSystem(m_digitizerMgr->m_SingleDigitizersList[i]->GetSystem());

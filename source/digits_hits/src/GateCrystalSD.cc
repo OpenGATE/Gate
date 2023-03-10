@@ -264,6 +264,16 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 }
 //------------------------------------------------------------------------------
 
+/*
+//------------------------------------------------------------------------------
+// Set the system to which the SD is attached
+void GateCrystalSD::SetSystem(GateVSystem* aSystem)
+{
+  m_system=aSystem;
+//Seb Modif 24/02/2009
+  GateDigitizerMgr::GetInstance()->SetSystem(aSystem);
+}
+*/
 
 //------------------------------------------------------------------------------
 // The next three methods were added for the multi-system approach
