@@ -4,7 +4,7 @@
 Repository=opengatecollaboration
 ROOT_Version=v6-24-06
 CLHEP_Version=2.4.5.1
-Geant4_Version=11.1.0
+Geant4_Version=11.1.1
 Gate_Version=9.3
 
 #Variables to preserve
