@@ -24,6 +24,7 @@ RUN mkdir software/gate \
  && cd bin \
  && cmake ../src/ -DGeant4_DIR=/software/geant4/install \
                   -DGEANT4_USE_SYSTEM_CLHEP=ON \
+                  -DGEANT4_BUILD_MULTITHREADED=OFF \
                   -DGATE_USE_ITK=ON \
                   -DITK_DIR=/software/ITK/bin \
                   -DGATE_USE_RTK=$USE_RTK \
