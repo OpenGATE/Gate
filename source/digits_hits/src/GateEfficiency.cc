@@ -67,7 +67,7 @@ GateEfficiency::~GateEfficiency()
 
 void GateEfficiency::Digitize()
 {
-
+	//G4cout<<"GateEfficiency::Digitize "<<G4endl;
 	G4String digitizerName = m_digitizer->m_digitizerName;
 	G4String outputCollName = m_digitizer-> GetOutputName();
 
@@ -123,7 +123,6 @@ void GateEfficiency::Digitize()
   if (IDC)
      {
 	  G4int n_digi = IDC->entries();
-
 	  //loop over input digits
 	  for (G4int i=0;i<n_digi;i++)
 	  {
@@ -136,9 +135,8 @@ void GateEfficiency::Digitize()
 		    }
 		  */
 		  G4double eff=1;
-
 		  if (m_uniqueEff>0)
-					   eff=m_uniqueEff;
+			  eff=m_uniqueEff;
 		  else
 		  {
 			G4String UnitX = m_efficiency_distr->GetUnitX();
@@ -165,13 +163,14 @@ void GateEfficiency::Digitize()
 
 		   if(eff>1)
 			   GateError("[GateEfficiency::Digitize] Efficiency value is > 1.0 !!! \n");
+		  }
 
-		   if (CLHEP::RandFlat::shoot(0.,1.) < eff)
+		  if (CLHEP::RandFlat::shoot(0.,1.) < eff)
 		   {
 			   m_OutputDigiCollection->insert(m_outputDigi);
 		   }
 
-		  }
+
 	  }
   }
   else

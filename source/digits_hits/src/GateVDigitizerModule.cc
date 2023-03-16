@@ -84,9 +84,10 @@ void GateVDigitizerModule::InputCollectionID()
 	{
 		DCID = fDM->GetDigiCollectionID(outputCollNameTMP);
 	}
-	//G4cout<<"DCID "<<DCID<<G4endl;
+//	G4cout<<"DCID "<<DCID<<G4endl;
 
 	G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
+	//G4cout<<"InitDMname "<<InitDMname<<G4endl;
 	G4int InitDMID = fDM->GetDigiCollectionID(InitDMname);
 
 	//check if this module is the first in this digitizer
@@ -101,10 +102,18 @@ void GateVDigitizerModule::InputCollectionID()
 
 		else
 			{
-			//G4cout<<"normally here"<<G4endl;
-			G4String inputCollectionName = m_digitizer->GetInputName(); //+"_"+m_digitizer->m_SD->GetName();
-			//	G4cout<<" inputCollectionName "<<inputCollectionName<<G4endl;
-			GateSinglesDigitizer* inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+			G4String inputCollectionName = m_digitizer->GetInputName();
+			//G4cout<<" inputCollectionName "<<inputCollectionName<<G4endl;
+			GateSinglesDigitizer* inputDigitizer;
+
+			if (DigiMan->FindDigitizer(inputCollectionName))
+				inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+			else
+			{
+				inputCollectionName= m_digitizer->GetInputName()+"_"+m_digitizer->m_SD->GetName();
+				inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+
+			}
 			DCID=inputDigitizer->m_outputDigiCollectionID;
 			}
 
@@ -112,7 +121,7 @@ void GateVDigitizerModule::InputCollectionID()
 	/*else
 	{
 
-		/*G4cout<<"normally here"<<G4endl;
+		G4cout<<"normally here"<<G4endl;
 		G4String inputCollectionName = m_digitizer->GetInputName();//+"_"+m_digitizer->m_SD->GetName();
 		G4cout<<"inputCollectionName "<<inputCollectionName<<G4endl;
 
@@ -125,8 +134,8 @@ void GateVDigitizerModule::InputCollectionID()
 	//	if( )
 	//	DCID=DCID-1;
 	}
-
 */
+
 
 
 	if(DCID<0)

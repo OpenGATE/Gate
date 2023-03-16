@@ -11,6 +11,7 @@ See LICENSE.md for further details
 
 #include "GateCoincidenceSorter.hh"
 //#include "GateSystemListManager.hh"
+#include "GateDigitizerMgr.hh"
 
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
@@ -132,9 +133,27 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { m_CoincidenceSorter->SetPresortBufferSize(setPresortBufferSizeCmd->GetNewIntValue(newValue)); }
   else if (aCommand == SetInputNameCmd)
     {
-     m_CoincidenceSorter->SetInputName(newValue);
-     m_CoincidenceSorter->SetSystem(newValue); //! Attach to the suitable system from the digitizer m_systemList (multi-system approach)
-    }
+	  GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+	  GateSinglesDigitizer* inputDigitizer;
+	    inputDigitizer = digitizerMgr->FindDigitizer(newValue);//m_collectionName);
+	    if (!inputDigitizer)
+	  	  if (digitizerMgr->m_SDlist.size()==1)
+	    	  {
+	  		  G4String new_name= newValue+"_"+digitizerMgr->m_SDlist[0]->GetName();
+	  		  //G4cout<<" new_name "<< new_name<<G4endl;
+	  		  inputDigitizer = digitizerMgr->FindDigitizer(new_name);
+	  		  m_CoincidenceSorter->SetInputName(new_name);
+	  		  m_CoincidenceSorter->SetSystem(new_name); //! A
+	    	  }
+	  	  else
+	  		  GateError("ERROR: The name _"+ newValue+"_ is unknown for input singles digicollection! \n");
+	    else
+	    {
+	    	m_CoincidenceSorter->SetInputName(newValue);
+	    	m_CoincidenceSorter->SetSystem(newValue); //! Attach to the suitable system from the digitizer m_systemList (multi-system approach)
+	    }
+	  }
   else if (aCommand == MultiplePolicyCmd)
     { m_CoincidenceSorter->SetMultiplesPolicy(newValue); }
   else if (aCommand == SetAcceptancePolicy4CCCmd)
