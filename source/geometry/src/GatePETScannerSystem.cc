@@ -20,7 +20,7 @@ GatePETScannerSystem::GatePETScannerSystem(const G4String& itsName)
 : GateScannerSystem( itsName)
 {
 
-  G4cout << " Constructeur GatePETScannerSystem \n";
+  //G4cout << " Constructeur GatePETScannerSystem \n";
   // Integrate a coincidence sorter into the digitizer
   //OK GND 2022
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
