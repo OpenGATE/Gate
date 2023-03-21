@@ -11,7 +11,7 @@ See LICENSE.md for further details
 
 #include "GateTools.hh"
 #include "GatePulseProcessorChain.hh"
-#include "GateSingleDigiMaker.hh"
+//#include "GateDigiMaker.hh"
 #include "GateDigitizer.hh"
 
 // Constructs a new pulse-processor attached to a GateDigitizer
@@ -22,7 +22,7 @@ GateVPulseProcessor::GateVPulseProcessor(GatePulseProcessorChain* itsChain,
 {
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
 
-  digitizer->InsertDigiMakerModule( new GateSingleDigiMaker(digitizer, itsName,false) );
+  //digitizer->InsertDigiMakerModule( new GateDigiMaker(digitizer, itsName,false) );
 }  
 
 

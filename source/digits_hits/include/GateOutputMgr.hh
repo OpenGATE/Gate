@@ -14,9 +14,9 @@
 #include "G4Timer.hh"
 #include "GateConfiguration.h"
 #include "GateVOutputModule.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
 class G4Run;
@@ -71,6 +71,7 @@ public:
   /*! For the moment it's a simple push_back in a vector of pointers, but it may become more complex
    if the structure of the module list evolves */
   void AddOutputModule(GateVOutputModule* module);
+  GateVOutputModule* FindOutputModule(G4String name);
 
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
@@ -109,13 +110,17 @@ public:
   void CheckFileNameForAllOutput();
 
   //! Return the current crystal-hit collection (if nay)
-  GateCrystalHitsCollection*  	  GetCrystalHitCollection();
+  GateHitsCollection*  	  GetHitCollection();
+  std::vector<GateHitsCollection*> GetHitCollections();
+  void SetCrystalHitsCollectionsID();
   //! Return the current phantom-hit collection (if nay)
   GatePhantomHitsCollection*  	  GetPhantomHitCollection();
   //! Return the current single-digi collection (if nay)
-  GateSingleDigiCollection*   	  GetSingleDigiCollection(const G4String& collectionName);
+  GateDigiCollection*   	  GetSingleDigiCollection(const G4String& collectionName);
   //! Return the current coincidence-digi collection (if nay)
   GateCoincidenceDigiCollection*  GetCoincidenceDigiCollection(const G4String& collectionName);
+
+  void RegisterNewHitsCollection(const G4String& aCollectionName,G4bool outputFlag);
 
   void RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
@@ -144,9 +149,10 @@ protected :
   //! Verbose level
   G4int                      nVerboseLevel;
 
+public: //OK GND 2022 moved to public to have access in GateAnalysis::RecordEndOfEvent to not run Digitizer if there is no output requires Singles
   //! List of the output modules
   std::vector<GateVOutputModule*>   m_outputModules;
-
+protected:
   //! messenger for the Mgr specific commands
   GateOutputMgrMessenger*    m_messenger;
 
@@ -166,6 +172,7 @@ protected :
   G4bool   m_saveVoxelTuple;
 
   G4Timer m_timer;      	  //!< Timer
+  std::vector<G4int> m_HCIDs;
 
 };
 

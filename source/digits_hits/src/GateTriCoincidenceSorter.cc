@@ -5,7 +5,7 @@
 
 #include "GateTriCoincidenceSorter.hh"
 #include "GateTriCoincidenceSorterMessenger.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 
 #include "TFile.h"
 
@@ -131,7 +131,7 @@ void GateTriCoincidenceSorter::RegisterTCSingles(GatePulseList& sPulseList)
 
    GatePulseConstIterator itr;
    for (itr = sPulseList.begin() ; itr != sPulseList.end() ; ++itr) {
-      GateSingleDigi* Digi = new GateSingleDigi((*itr));
+      GateDigi* Digi = new GateDigi((*itr));
       m_sBuffer.Fill(Digi);
       m_sTree->Fill();
       delete Digi;

@@ -30,7 +30,7 @@ See LICENSE.md for further details
 #include "GateToLMF.hh"
 #include "GateToLMFMessenger.hh"
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateVSystem.hh"
 #include "GateApplicationMgr.hh"
@@ -302,7 +302,7 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
 
 
-void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
+void GateToLMF::StoreTheDigiInLMF(GateDigi *digi)
 {
   if(pEH->energyBool)
     {
@@ -364,7 +364,7 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
 
 }
 
-void GateToLMF::StoreMoreDigiInLMF_GDR(GateSingleDigi *digi)
+void GateToLMF::StoreMoreDigiInLMF_GDR(GateDigi *digi)
 {
 //   if(digi->GetRunID()) {
 //     printf("digi->GetRunID = %d\n", digi->GetRunID());
@@ -682,12 +682,12 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 
   size_t iDigi, n_digi;
   if(!pEH->coincidenceBool) {
-    const GateSingleDigiCollection * SDC = (GateSingleDigiCollection*) (G4DigiManager::GetDMpointer()->GetDigiCollection( m_inputDataChannelID ));
+    const GateDigiCollection * SDC = (GateDigiCollection*) (G4DigiManager::GetDMpointer()->GetDigiCollection( m_inputDataChannelID ));
 
     if (!SDC)
       {
 	if (nVerboseLevel>0)
-	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found\n";
+	  G4cout << "GateToLMF::RecordEndOfEvent::GateDigiCollection not found\n";
 	return;
       }
     n_digi =  SDC->entries();

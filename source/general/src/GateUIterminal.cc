@@ -47,6 +47,23 @@ G4int GateUIterminal::ReceiveG4cerr(const G4String& cerrString)
 
     if (isMacroError) {
       std::cerr << "[Gate] Sorry, error in a macro command : abort.\n";
+      if (G4StrUtil::contains(cerrString, "digitizer"))
+            {
+          	  std::cerr << "------------------------ [GateSinglesDigitizer Messenger Problem]------------------------ \n";
+          	  std::cerr << "Probably you try to use a command for the old version of the digitizer.\n";
+          	  std::cerr << "Try </gate/digitizerMgr> commands instead, you can find the documentation here: XXXX \n"; //TODO insert the link to the documentation page
+          	  std::cerr << "A tool, gt_digi_mac_converter, to automatically convert your old digitizer macro to a new is also available here: https://github.com/OpenGATE/GateTools \n\n ";
+          	  std::cerr << "To use gt_digi_mac_converter tool, please, do: \n";
+          	  std::cerr << "pip install gatetools\n";
+          	  std::cerr << "git clone --recursive https://github.com/OpenGATE/GateTools.git\n";
+          	  std::cerr << "cd GateTools\n";
+          	  std::cerr << "pip install -e .\n";
+          	  std::cerr << "export PATH=\"<YOUR PATH>/GateTools/bin:$PATH\" \n\n";
+          	  std::cerr << "gt_digi_mac_converter -i digitizer_old.mac -o digitizer_new.mac -sd <SDname> -multi SinglesDigitizer \n";
+          	  std::cerr << "where -i defines input old digitizer macro,\n -o defines output new digitizer macro,\n -sd defines the sensitive detector name (the same as in /gate/<SDname>/attachCrystalSD),\n -multi <mode> is the option if you have several SinglesDigitizers or CoincidenceSorters, where <mode> = SinglesDigitizer or CoincidenceSorter\n";
+          	  std::cerr << "---------------------------------------------------------------------------------- \n";
+            }
+
       exit(-1);
     }
 

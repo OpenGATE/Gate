@@ -458,11 +458,11 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
   if (nVerboseLevel>3) G4cout << " >> Total Digits: " << n_digi << Gateendl;
   for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
     // crystal block ID
-    G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(0) );
-    G4int block2ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(1) );
+    G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetDigi(0) );
+    G4int block2ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetDigi(1) );
     // crystal ID within a crystal block
-    G4int crystal1ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(0) );
-    G4int crystal2ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(1) );
+    G4int crystal1ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetDigi(0) );
+    G4int crystal2ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetDigi(1) );
     // crystal ring ID
     G4int ring1 = (int) (block1ID/blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(2)+m_virtualRingPerBlockNb)+
 		  (int)(crystal1ID/crystalComponent->GetRepeatNumber(1));
@@ -473,13 +473,13 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
 		     (crystal1ID % crystalComponent->GetRepeatNumber(1));
     G4int crystal2 = (block2ID % blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(1)+m_virtualCrystalPerBlockNb)+
 		     (crystal2ID % crystalComponent->GetRepeatNumber(1));
-    G4int eventID1 = ((*CDC)[iDigi]->GetPulse(0)).GetEventID();
-    G4int eventID2 = ((*CDC)[iDigi]->GetPulse(1)).GetEventID();
+    G4int eventID1 = ((*CDC)[iDigi]->GetDigi(0))->GetEventID();
+    G4int eventID2 = ((*CDC)[iDigi]->GetDigi(1))->GetEventID();
 
     // 07.02.2006, C. Comtat, Store randoms and scatters sino
-    G4int ScattID1 = ((*CDC)[iDigi]->GetPulse(0)).GetNPhantomCompton()+((*CDC)[iDigi]->GetPulse(0)).GetNPhantomRayleigh();
-    G4int ScattID2 = ((*CDC)[iDigi]->GetPulse(1)).GetNPhantomCompton()+((*CDC)[iDigi]->GetPulse(1)).GetNPhantomRayleigh();
-    G4double DiffTime = fabs(((*CDC)[iDigi]->GetPulse(0)).GetTime()/s-((*CDC)[iDigi]->GetPulse(1)).GetTime()/s);
+    G4int ScattID1 = ((*CDC)[iDigi]->GetDigi(0))->GetNPhantomCompton()+((*CDC)[iDigi]->GetDigi(0))->GetNPhantomRayleigh();
+    G4int ScattID2 = ((*CDC)[iDigi]->GetDigi(1))->GetNPhantomCompton()+((*CDC)[iDigi]->GetDigi(1))->GetNPhantomRayleigh();
+    G4double DiffTime = fabs(((*CDC)[iDigi]->GetDigi(0))->GetTime()/s-((*CDC)[iDigi]->GetDigi(1))->GetTime()/s);
     if (DiffTime > MIN_COINC_OFFSET/2.) Delayed = 1;  else Delayed = 0;
     if (Delayed && (eventID1 == eventID2)) {
       G4Exception("GateToSinogram::RecordEndOfEvent","RecordEndOfEvent",FatalException, "Delayed coincidence with same event ID !!!\n");
@@ -493,10 +493,10 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
     }
 
     // DEBUG
-    //G4float xpos1 = ((*CDC)[iDigi]->GetPulse(0)).GetGlobalPos().x()/mm;
-    //G4float xpos2 = ((*CDC)[iDigi]->GetPulse(1)).GetGlobalPos().x()/mm;
-    //G4float ypos1 = ((*CDC)[iDigi]->GetPulse(0)).GetGlobalPos().y()/mm;
-    //G4float ypos2 = ((*CDC)[iDigi]->GetPulse(1)).GetGlobalPos().y()/mm;
+    //G4float xpos1 = ((*CDC)[iDigi]->GetDigi(0))->GetGlobalPos().x()/mm;
+    //G4float xpos2 = ((*CDC)[iDigi]->GetDigi(1))->GetGlobalPos().x()/mm;
+    //G4float ypos1 = ((*CDC)[iDigi]->GetDigi(0))->GetGlobalPos().y()/mm;
+    //G4float ypos2 = ((*CDC)[iDigi]->GetDigi(1))->GetGlobalPos().y()/mm;
 
     // offset crystal origin by half-block
     crystal1 -= crystalComponent->GetRepeatNumber(1)/2;

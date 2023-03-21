@@ -31,7 +31,7 @@
 #include "G4Event.hh"
 
 class GateARFDataToRootMessenger;
-class GateSingleDigi;
+class GateDigi;
 class GateSteppingAction;
 
 class GateARFData
@@ -73,7 +73,7 @@ public:
     GateVOutputModule::SetVerboseLevel(val);
 
     }
-  G4int StoreARFData(GateSingleDigi*);
+  G4int StoreARFData(GateDigi*);
   void SetProjectionPlane(G4double aX)
     {
     mXPlane = aX;
@@ -85,7 +85,7 @@ public:
   void SetVertexMomentumDirection(G4ThreeVector);
 
   /*! Implementation of the pure virtual method ProcessHits(). */
-  /*! This methods generates a GateCrystalHit and stores it into the SD's hit collection */
+  /*! This methods generates a GateHit and stores it into the SD's hit collection */
 
   void CloseARFDataRootFile();
 

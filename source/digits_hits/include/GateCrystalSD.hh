@@ -11,7 +11,9 @@ See LICENSE.md for further details
 #define GateCrystalSD_h 1
 
 #include "G4VSensitiveDetector.hh"
-#include "GateCrystalHit.hh"
+#include "G4SDManager.hh"
+
+#include "GateHit.hh"
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -39,10 +41,11 @@ typedef GateSystemList::const_iterator GateSystemConstIterator;
       to a volume that belongs to a given system, it is considered as attached to this system, and
       can be attached only to volumes that belong to the same system.
 
-    - The GateCrystalSD generates hits of the class GateCrystalHit, which are stored in a regular
+    - The GateCrystalSD generates hits of the class GateHit, which are stored in a regular
       hit collection.
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+//    Last modification for GND in Feb 2023 by Olga.Kochebina@cea.fr for NewGateDigitizerOld
 
 class GateCrystalSD : public G4VSensitiveDetector
 {
@@ -60,19 +63,18 @@ class GateCrystalSD : public G4VSensitiveDetector
       void Initialize(G4HCofThisEvent*HCE) override;
 
       //! Implementation of the pure virtual method ProcessHits().
-      //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
+      //! This methods generates a GateHit and stores it into the SD's hit collection
       G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist) override;
 
-      //! Tool method returning the name of the hit-collection where the crystal hits are stored
-      static inline const G4String& GetCrystalCollectionName()
-      	  { return theCrystalCollectionName; }
 
       //! Returns the system to which the SD is attached
+      //! Returns the system to which the SD is attached
       inline GateVSystem* GetSystem()
-      	  { return m_system;}
+      { return m_system;}
       //! Set the system to which the SD is attached
-      void SetSystem(GateVSystem* aSystem); // mhadi_obso, obsolete, because we now use a system list.
+      void SetSystem(GateVSystem* aSystem);
 
+      //! Set the system to which the SD is attached
       //! next methods are for the multi-system approach
       inline GateSystemList* GetSystemList() const { return m_systemList; }
       void AddSystem(GateVSystem* aSystem);
@@ -85,10 +87,11 @@ class GateCrystalSD : public G4VSensitiveDetector
      GateVSystem* m_system;                           //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach
      GateSystemList* m_systemList = nullptr;          //! System list instead of one system
   private:
-      GateCrystalHitsCollection * crystalCollection;  //! Hit collection
+      GateHitsCollection * crystalHitsCollection;  //! Hit collection
+      G4int collectionID;
+      G4int HCID;
 
-      static const G4String theCrystalCollectionName; //! Name of the hit collection
-
+      static GateCrystalSD*  theSD;
 };
 
 

@@ -40,6 +40,7 @@ class GateCoincidenceSorter;
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 //    Modified 01/2016 by Jared.STRYDHORST@cea.fr to add control of the presort buffer size
+// 	  10/2022 Adapted to new digitizer by olga.kochebina@cea.fr
 
 class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
 {
@@ -52,9 +53,6 @@ public:
     //! UI command interpreter
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
     
-    //! Return a pointer to the coincidence-sorter
-    inline GateCoincidenceSorter* GetCoincidenceSorter()
-    { return (GateCoincidenceSorter*) GetClockDependent(); }
     
 private:
     G4UIcmdWithADoubleAndUnit   *windowCmd;          //!< the UI command 'setWindow'
@@ -67,10 +65,11 @@ private:
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
     G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "MultiplesPolicy"
     G4UIcmdWithAString          *SetAcceptancePolicy4CCCmd;  //!< The UI command "MultiplesPolicy"
-    G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
+    G4UIcmdWithABool            *AllDigiOpenCoincGateCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *SetTriggerOnlyByAbsorberCmd;
     G4UIcmdWithABool            *SetEventIDCoincCmd;
-    
+    GateCoincidenceSorter* m_CoincidenceSorter;
+
 };
 
 #endif

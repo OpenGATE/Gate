@@ -245,11 +245,11 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
   if (nVerboseLevel>3) G4cout << " >> Total Digits: " << n_digi << Gateendl;
   for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
     // crystal block ID
-    G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(0) );
-    G4int block2ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(1) );
+    G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetDigi(0) );
+    G4int block2ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetDigi(1) );
     // crystal ID within a crystal block
-    G4int crystal1ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(0) );
-    G4int crystal2ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(1) );
+    G4int crystal1ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetDigi(0) );
+    G4int crystal2ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetDigi(1) );
     // crystal ring ID
     G4int ring1 = (int)(block1ID/blockComponent->GetSphereAzimuthalRepeatNumber()*crystalComponent->GetRepeatNumber(2))+
 		  (int)(crystal1ID/crystalComponent->GetRepeatNumber(0));
@@ -260,8 +260,8 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
 		     (crystal1ID % crystalComponent->GetRepeatNumber(0));
     G4int crystal2 = (block2ID % blockComponent->GetSphereAzimuthalRepeatNumber())*crystalComponent->GetRepeatNumber(0)+
 		     (crystal2ID % crystalComponent->GetRepeatNumber(0));
-    G4int eventID1 = ((*CDC)[iDigi]->GetPulse(0)).GetEventID();
-    G4int eventID2 = ((*CDC)[iDigi]->GetPulse(1)).GetEventID();
+    G4int eventID1 = ((*CDC)[iDigi]->GetDigi(0))->GetEventID();
+    G4int eventID2 = ((*CDC)[iDigi]->GetDigi(1))->GetEventID();
 
     if (m_flagTruesOnly && (eventID1 != eventID2)) {
       if (nVerboseLevel>3) {

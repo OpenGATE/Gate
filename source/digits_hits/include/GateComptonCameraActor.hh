@@ -17,10 +17,9 @@
 #include "GateActorMessenger.hh"
 #include "GateVolumeID.hh"
 #include "G4EventManager.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateHitConvertor.hh"
 #include "GateDigitizer.hh"
-#include "GatePulseAdder.hh"
 #include "GateCCCoincidenceDigi.hh"
 #include "GatePrimTrackInformation.hh"
 
@@ -208,7 +207,7 @@ protected:
 
 
   //Vector fo the hit collection since GateCrystalHistsCollection is not freeing memeory easily
-  std::vector<GateCrystalHit*> hitsList;
+  std::vector<GateHit*> hitsList;
 
 
 
@@ -217,7 +216,7 @@ protected:
   static const G4String thedigitizerName;
   GatePulseProcessorChain* chain;
   static const G4String thedigitizerSorterName;
-  GateCoincidenceSorter* coincidenceSorter;
+  GateCoincidenceSorterOld* coincidenceSorter;
 
   void readPulses(GatePulseList* pPulseList);
   void processPulsesIntoSinglesTree();

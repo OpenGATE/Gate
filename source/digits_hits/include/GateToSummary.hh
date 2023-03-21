@@ -46,7 +46,9 @@ private:
   GateToSummaryMessenger* m_summaryMessenger;
   G4String m_fileName;
 
-  G4int m_nb_of_hits;
+  std::vector<std::string>  m_hits_collection_names;
+  std::map<std::string, G4int> m_hits_nb;
+
   G4int m_nb_of_events;
   G4int m_nb_of_runs;
 

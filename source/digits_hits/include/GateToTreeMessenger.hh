@@ -41,6 +41,8 @@ private:
   G4UIcmdWithoutParameter *m_enableOpticalDataOutput;
   G4UIcmdWithoutParameter *m_disableOpticalDataOutput;
 
+  G4UIcmdWithAString* m_addHitsCollectionCmd;
+  G4UIcmdWithAString* m_addOpticalCollectionCmd;
   G4UIcmdWithAString* m_addCollectionCmd;
   GateToTree *m_gateToTree;
 

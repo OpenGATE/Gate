@@ -25,10 +25,10 @@
 #include <TTree.h>
 #include "GateCCRootDefs.hh"
 #include "GateClockDependent.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 
 class G4Event;
-class GateCrystalHit;
+class GateHit;
 class GateCCHitFileReaderMessenger;
 
 //-----------------------------------------------------------------------------
@@ -71,8 +71,8 @@ public:
     G4int PrepareNextEvent();
     G4bool HasNextEvent();
 
-    //GateCrystalHitsCollection* PrepareEndOfEvent();
-    std::vector<GateCrystalHit*> PrepareEndOfEvent();
+    //GateHitsCollection* PrepareEndOfEvent();
+    std::vector<GateHit*> PrepareEndOfEvent();
 
     void TerminateAfterAcquisition();
 
@@ -109,7 +109,7 @@ protected:
     //!< The hit-data are loaded into this buffer by LoadHitData()
     //!< They are then transformed into a crystal-hit by PrepareNextEvent()
 
-    //std::queue<GateCrystalHit> m_hitQueue;   //!< Queue of waiting hits for the current event
+    //std::queue<GateHit> m_hitQueue;   //!< Queue of waiting hits for the current event
     //!< For each event, the queue is filled (from data read out of the hit-file) at
     //!< the beginning of each event by PrepareNextEvent(). It is emptied into
     //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
@@ -117,7 +117,7 @@ protected:
     GateCCHitFileReaderMessenger *m_messenger;    //!< Messenger;
 
 
-    std::vector<GateCrystalHit*> vHitsCollection; //Hit collection
+    std::vector<GateHit*> vHitsCollection; //Hit collection
 
 
 private:

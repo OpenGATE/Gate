@@ -5,7 +5,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-
+// GND 2022 Class to remove
 #include "GateHitConvertor.hh"
 
 #include "G4UnitsTable.hh"
@@ -44,7 +44,7 @@ GateHitConvertor::~GateHitConvertor()
 
 
 
-GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hitCollection)
+GatePulseList* GateHitConvertor::ProcessHits(const GateHitsCollection* hitCollection)
 {
   if (!hitCollection)
     return 0;
@@ -89,7 +89,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
 }
 
 
- GatePulseList* GateHitConvertor::ProcessHits(std::vector<GateCrystalHit*> vhitCollection){
+ GatePulseList* GateHitConvertor::ProcessHits(std::vector<GateHit*> vhitCollection){
 
     size_t n_hit = vhitCollection.size();
     if (nVerboseLevel==1)
@@ -105,7 +105,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
           if (nVerboseLevel>1)
               G4cout << "[GateHitConvertor::ProcessHits]: processing hit[" << i << "]\n";
           //Here no problem
-         // ProcessOneHit( (std::make_shared<GateCrystalHit>(vhitCollection.at(i))).get(), pulseList);
+         // ProcessOneHit( (std::make_shared<GateHit>(vhitCollection.at(i))).get(), pulseList);
           ProcessOneHit(vhitCollection.at(i), pulseList);
     }
 
@@ -122,7 +122,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
     return pulseList;
 }
 
-void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pulseList)
+void GateHitConvertor::ProcessOneHit(const GateHit* hit,GatePulseList* pulseList)
 {
  /*if (hit->GetEdep()==0) {
     if (nVerboseLevel>1)

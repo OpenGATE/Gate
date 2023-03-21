@@ -26,10 +26,10 @@
 
 #include "GateVOutputModule.hh"
 #include "GateCoincidenceDigi.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateRunManager.hh"
-
+#include "GateDigitizerMgr.hh"
 class GateToBinaryMessenger;
 
 /*!
@@ -243,7 +243,8 @@ public:
       : nVerboseLevel( 0 ), m_outputFlag( outputFlag ),
         m_fileBaseName( G4String( "" ) ),
         m_collectionName( aCollectionName ), m_fileCounter( 0 ),
-        m_collectionID( -1 )
+        m_collectionID( -1 ),
+		m_signlesCommands(0)
     {}
 
     /*!
@@ -303,6 +304,9 @@ public:
     inline static void SetOutputFileSizeLimit( G4int limit )
     { m_outputFileSizeLimit = limit; };
 
+    inline void AddSinglesCommand() { m_signlesCommands++; };
+
+
   public:
     G4int nVerboseLevel; /*!< Level of verbose */
     G4bool m_outputFlag; /*!< Flag of output */
@@ -312,6 +316,8 @@ public:
     G4int	m_collectionID; /*!< Collection ID */
     std::ofstream m_outputFile; /*!< Output file */
     static G4int m_outputFileSizeLimit; /*!< Output file size limit */
+    G4int m_signlesCommands;
+
   } VOutputChannel;
 
   /*!
@@ -330,10 +336,10 @@ public:
      *	Constructor of the SingleOutputChannel class
      *
      */
-    SingleOutputChannel( G4String const& aCollectionName,
-                         G4bool outputFlag )
-      : GateToBinary::VOutputChannel( aCollectionName, outputFlag )
-    {}
+	  SingleOutputChannel( G4String const& aCollectionName,
+	                          G4bool outputFlag )
+	       : GateToBinary::VOutputChannel( aCollectionName, outputFlag )
+	     {}
 
     /*!
      *	\brief Destructor
@@ -348,6 +354,51 @@ public:
      *	\brief Record the digitizer
      */
     virtual void RecordDigitizer();
+
+    void OpenFile(G4String const& aFileBaseName )
+    {
+      // if it's not the first file with the same name, add a suffix like _001
+      //to the file name, before .dat
+      if( ( m_fileCounter > 0 ) && ( m_fileBaseName != aFileBaseName ) )
+        {
+          m_fileCounter = 0;
+        }
+
+      G4String fileCounterSuffix( "" );
+      if( m_fileCounter > 0 )
+        {
+          std::ostringstream oss;
+          oss << std::setfill( '0' ) << std::setw( 3 ) << m_fileCounter;
+          fileCounterSuffix = G4String("_") + oss.str();
+        }
+
+      //OK GND 2022 multiSD backward compatibility
+      GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+      G4String fileName;
+      if( digitizerMgr->m_SDlist.size()==1 )
+      {
+    	  if(m_signlesCommands==0)
+    	  {
+    	  std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
+    	  fileName = aFileBaseName + tmp_str + fileCounterSuffix + ".bin";
+    	  }
+    	  else
+    		  fileName =  aFileBaseName + m_collectionName + fileCounterSuffix + ".bin";
+
+    }
+      else
+    	  fileName =  aFileBaseName + m_collectionName + fileCounterSuffix + ".bin";
+      if( m_outputFlag )
+        {
+          m_outputFile.open( fileName.c_str(), std::ios::out |
+                             std::ios::binary );
+        }
+      m_fileBaseName = aFileBaseName;
+      ++m_fileCounter;
+    }
+
+
+
   } SingleOutputChannel;
 
   /*!
@@ -397,7 +448,11 @@ protected:
   std::vector< VOutputChannel* > m_outputChannelVector; /*!< Vector of output channel */
 
   std::ofstream m_outFileRun; /*!< outfile for run */
-  std::ofstream m_outFileHits; /*!< outfile for hits */
+  //std::ofstream m_outFileHits; /*!< outfile for hits */
+  //OK GND 2022
+  std::vector<std::ofstream> m_outFilesHits; /*!< outfile for hits */
+  G4int   m_nSD; // number of sensitive detectors
+  //OK GND 2002
 
 private:
   static G4String FixedWidthZeroPaddedString(const G4String & full, size_t length);

@@ -14,7 +14,7 @@
 #include "GateOutputVolumeID.hh"
 #include "GateTools.hh"
 #include "GateCCRootDefs.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 
 GateCCSinglesFileReader* GateCCSinglesFileReader::instance = 0;
 
@@ -143,8 +143,9 @@ G4int GateCCSinglesFileReader::PrepareNextEvent( )
   while ( (currentEventID == m_singleBuffer.eventID) && (currentRunID == m_singleBuffer.runID) ) {
       // Create a new Singles and store it into the Singles-queue
 
-        GateSingleDigi* aSingleDigi=m_singleBuffer.CreateSingle();
-          pList->push_back(&aSingleDigi->GetPulse());
+        GateDigi* aSingleDigi=m_singleBuffer.CreateSingle();
+         // OK GND 2022 TODO: uncomment for CC when no pulse list
+        // pList->push_back(&aSingleDigi->GetPulse());
 
       // Load the next set of Singles-data into the root-Singles structure
       LoadSinglesData();

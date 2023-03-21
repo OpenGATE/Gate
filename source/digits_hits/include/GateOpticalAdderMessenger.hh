@@ -6,6 +6,15 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*! \class  GateOpticalAdderMessenger
+    \brief  Messenger for the GateOpticalAdder
+
+    - GateOpticalAdderMessenger - by d.j.vanderlaan@iri.tudelft.nl
+
+    Added to GND in Feb. 2023 by OK
+
+*/
+
 #include "GateConfiguration.h"
 
 #ifdef GATE_USE_OPTICAL
@@ -13,28 +22,35 @@ See LICENSE.md for further details
 #ifndef GateOpticalAdderMessenger_h
 #define GateOpticalAdderMessenger_h 1
 
-#include "GatePulseProcessorMessenger.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
 
-class G4UIdirectory;
+#include "GateClockDependentMessenger.hh"
 class GateOpticalAdder;
+class G4UIcmdWithAString;
 
-/*! \class  GateOpticalAdderMessenger
-    \brief  Messenger for the GateOpticalAdder
-
-    - GateOpticalAdderMessenger - by d.j.vanderlaan@iri.tudelft.nl
-*/
-class GateOpticalAdderMessenger: public GatePulseProcessorMessenger
+class GateOpticalAdderMessenger : public GateClockDependentMessenger
 {
-  public:
-    GateOpticalAdderMessenger(GateOpticalAdder* itsPulseAdder);
-    inline ~GateOpticalAdderMessenger() {}
+public:
+  
+  GateOpticalAdderMessenger(GateOpticalAdder*);
+  ~GateOpticalAdderMessenger();
+  
+  void SetNewValue(G4UIcommand*, G4String);
 
-    void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  
+private:
+  GateOpticalAdder* m_OpticalAdder;
 
-    inline GateOpticalAdder* GetPulseAdder()
-    { return (GateOpticalAdder*) GetPulseProcessor();}
+
 };
 
 #endif
-
 #endif
+
+
+
+
+
+
+

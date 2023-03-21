@@ -28,7 +28,6 @@
 #include "GateActorManager.hh"
 
 #include "GateMessageManager.hh"
-#include "GateToDigi.hh"
 #include "GateToASCII.hh"
 #include "GateToBinary.hh"
 #include "GateToSummary.hh"
@@ -58,7 +57,6 @@ DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 
   - GateFastAnalysis (fast alternative for GateAnalysis, disabled by default)
   - GateAnalysis
-  - GateToDigi
   - GateToASCII
   - GateToRoot
   - GateToRootPlotter
@@ -94,10 +92,9 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   if (m_digiMode==kruntimeMode) {
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
+
   }
 
-  GateToDigi* gateToDigi = new GateToDigi("digi", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToDigi);
 
 #ifdef G4ANALYSIS_USE_FILE
   GateToASCII* gateToASCII = new GateToASCII("ascii", this, m_digiMode);
@@ -155,6 +152,27 @@ void GateOutputMgr::AddOutputModule(GateVOutputModule* module)
 
 
 //----------------------------------------------------------------------------------
+GateVOutputModule* GateOutputMgr::FindOutputModule(G4String name)
+{
+  if (nVerboseLevel > 2)
+    G4cout << "GateOutputMgr::FindOutputModule\n";
+
+	for(G4int i=0;i<int(m_outputModules.size());i++)
+		{
+		G4String moduleName = m_outputModules[i]->GetName();
+		//G4cout << moduleName << " "<< name<< G4endl;
+		if(moduleName == name)
+			return m_outputModules[i];
+		}
+	GateError("Output Module " <<name<< " not found");
+	return NULL;
+
+}
+//----------------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------------
 void GateOutputMgr::RecordBeginOfEvent(const G4Event* event)
 {
   GateMessage("Output", 5, "GateOutputMgr::RecordBeginOfEvent\n";);
@@ -182,8 +200,13 @@ void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
     if ( m_outputModules[iMod]->IsEnabled() )
       {
         m_outputModules[iMod]->RecordEndOfEvent(event);
+
       }
   }
+
+
+
+
 }
 //----------------------------------------------------------------------------------
 
@@ -207,6 +230,7 @@ void GateOutputMgr::RecordBeginOfRun(const G4Run* run)
     if ( m_outputModules[iMod]->IsEnabled() )
       m_outputModules[iMod]->RecordBeginOfRun(run);
   }
+  SetCrystalHitsCollectionsID();
 }
 //----------------------------------------------------------------------------------
 
@@ -234,6 +258,15 @@ void GateOutputMgr::RecordBeginOfAcquisition()
 
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::RecordBeginOfAcquisition\n";
+  //OK GND
+  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+	if((digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+			&& !this->FindOutputModule("analysis")->IsEnabled()
+			&& !this->FindOutputModule("fastanalysis")->IsEnabled())
+	{
+		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules to write down Singles or Coincidences.\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
+	}
+
 
 #ifdef G4ANALYSIS_USE_ROOT
   if (m_digiMode==kofflineMode)
@@ -328,9 +361,11 @@ void GateOutputMgr::Describe(size_t /*indent*/)
 
 
 //----------------------------------------------------------------------------------
-GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
+GateHitsCollection* GateOutputMgr::GetHitCollection()
 {
-  GateMessage("Output", 5 , " GateOutputMgr::GetCrystalHitCollection \n";);
+	//TODO GND remove obsolete function
+	/*
+  GateMessage("Output", 5 , " GateOutputMgr::GetHitCollection \n";);
 
   static G4int crystalCollID=-1;     	  //!< Collection ID for the crystal hits
 
@@ -338,14 +373,67 @@ GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
   if (crystalCollID==-1)
     crystalCollID = DigiMan->GetHitsCollectionID(GateCrystalSD::GetCrystalCollectionName());
 
-  GateCrystalHitsCollection* CHC = (GateCrystalHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
+  GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
 
   return CHC;
-
+*/
 
 }
 //----------------------------------------------------------------------------------
 
+
+//OK GND 2022 : multiple sensitive detectors
+//----------------------------------------------------------------------------------
+std::vector<GateHitsCollection*> GateOutputMgr::GetHitCollections()
+{
+	//G4cout<<"GateOutputMgr::GetHitCollections "<<G4endl;
+	GateMessage("Output", 5 , " GateOutputMgr::GetHitCollections \n";);
+
+	std::vector<GateHitsCollection*> CHC_vector;
+
+	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
+
+	for (size_t i=0; i<m_HCIDs.size(); i++) //
+	{
+		GateHitsCollection* CHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCIDs[i]));
+		CHC_vector.push_back(CHC);
+		}
+  return CHC_vector;
+}
+//----------------------------------------------------------------------------------
+void GateOutputMgr::SetCrystalHitsCollectionsID()
+{
+	//This function is introduced for speeding up: heavy operations that should not be done at each event
+
+	//G4cout<<"GateOutputMgr::SetHitsCollectionsID "<<G4endl;
+	GateMessage("Output", 5 , " GateOutputMgr::GetHitCollections \n";);
+
+	std::vector<GateHitsCollection*> CHC_vector;
+
+	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
+	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+	  for (G4int i=0; i< SDman->GetCollectionCapacity(); i++)
+		{
+		   G4String HCname = SDman->GetHCtable()->GetHCname(i);
+
+		   if (G4StrUtil::contains(HCname, "phantom"))
+			   continue;
+
+
+		   G4int ID=DigiMan->GetHitsCollectionID(SDman->GetHCtable()->GetHCname(i));
+		  // G4cout<< i << " "<< ID<< " "<< SDman->GetHCtable()->GetHCname(i)<<G4endl;
+		   m_HCIDs.push_back(ID);
+		}
+
+
+
+
+}
+
+
+
+//----------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------
 GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
@@ -364,13 +452,13 @@ GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
 
 
 //----------------------------------------------------------------------------------
-GateSingleDigiCollection* GateOutputMgr::GetSingleDigiCollection(const G4String& collectionName)
+GateDigiCollection* GateOutputMgr::GetSingleDigiCollection(const G4String& collectionName)
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   G4int  collectionID
     = fDM->GetDigiCollectionID(collectionName);
 
-  return (collectionID>=0) ? (GateSingleDigiCollection*) (fDM->GetDigiCollection( collectionID )) : 0;
+  return (collectionID>=0) ? (GateDigiCollection*) (fDM->GetDigiCollection( collectionID )) : 0;
 }
 //----------------------------------------------------------------------------------
 
@@ -384,6 +472,25 @@ GateCoincidenceDigiCollection* GateOutputMgr::GetCoincidenceDigiCollection(const
   return (collectionID>=0) ? (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( collectionID ) ) : 0 ;
 }
 //----------------------------------------------------------------------------------
+
+
+
+//OK GND 2022 for GateToTree adaptation
+//----------------------------------------------------------------------------------
+void GateOutputMgr::RegisterNewHitsCollection(const G4String& aCollectionName,G4bool outputFlag)
+{
+  GateMessage("Output", 5, " GateOutputMgr::RegisterNewHitsCollection\n";);
+  //G4cout<<" GateOutputMgr::RegisterNewHitsCollection "<<aCollectionName<< " "<< outputFlag<<Gateendl;
+  for (size_t iMod=0; iMod<m_outputModules.size(); iMod++)
+  {
+	  //G4cout<<m_outputModules[iMod]->GetName()<<G4endl;
+	  if(m_outputModules[iMod]->GetName() == "tree")
+		  m_outputModules[iMod]->RegisterNewHitsCollection(aCollectionName,outputFlag);
+  }
+}
+//----------------------------------------------------------------------------------
+
+
 
 
 //----------------------------------------------------------------------------------

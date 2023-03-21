@@ -1,62 +1,63 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+   Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
-  ----------------------*/
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+
+/*! \class  GateDeadTime
+  \brief  Digitizer Module for a simple dead time discriminator.
+
+  - GateDeadTime - by Luc.Simon@iphe.unil.ch
+
+  - The method ProcessOnePulse of this class models a simple
+  DeadTimeO discriminator. User chooses value of dead time, mode
+  (paralysable or not) and geometric level of application (crystal, module,...)
+
+  \sa GateVDigitizerModule
+  \sa GateVolumeID
+
+
+  - Added to New Digitizer GND by OK: January 2023
+*/
 
 
 #ifndef GateDeadTime_h
 #define GateDeadTime_h 1
 
-#include "globals.hh"
-#include <iostream>
-#include <vector>
-#include "G4ThreeVector.hh"
+#include "GateVDigitizerModule.hh"
+#include "GateDigi.hh"
+#include "GateClockDependent.hh"
+#include "GateCrystalSD.hh"
 
-#include "GateVPulseProcessor.hh"
 #include "GateObjectStore.hh"
 
-class GateDeadTimeMessenger;
+#include "globals.hh"
+
+#include "GateDeadTimeMessenger.hh"
+#include "GateSinglesDigitizer.hh"
 
 
-/*! \class  GateDeadTime
-  \brief  Pulse-processor modelling a simple dead time discriminator.
-
-  - GateDeadTime - by Luc.Simon@iphe.unil.ch
-
-  - The method ProcessOnePulse of this class models a simple
-  deadTime discriminator. User chooses value of dead time, mode
-  (paralysable or not) and geometric level of application (crystal, module,...)
-
-  \sa GateVPulseProcessor
-  \sa GateVolumeID
-  \sa GatePulseProcessorChainMessenger
-*/
-
-class GateDeadTime : public GateVPulseProcessor
+class GateDeadTime : public GateVDigitizerModule
 {
 public:
 
-  //! Destructor
-  virtual ~GateDeadTime() ;
-
+   //! Constructs a new dead time attached to a GateDigitizer
+  GateDeadTime(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateDeadTime();
+  
   //! Check the validity of the volume name where the dead time will be applied
   void CheckVolumeName(G4String val);
 
-  //! Constructs a new dead time attached to a GateDigitizer
-  GateDeadTime(GatePulseProcessorChain* itsChain, const G4String& itsName);
+  //! Returns the DeadTime
+  unsigned long long int GetDeadTime() { return m_DeadTime; }
 
-public:
+  //! Set the DeadTime
+  void SetDeadTime(G4double val) { m_DeadTime = (unsigned long long int)(val/picosecond); }
 
-  //! Returns the deadTime
-  unsigned long long int GetDeadTime() { return m_deadTime; }
-
-  //! Set the deadTime
-  void SetDeadTime(G4double val) { m_deadTime = (unsigned long long int)(val/picosecond); }
-
-  //! Set the deadTime mode ; candidates : paralysable nonparalysable
+  //! Set the DeadTime mode ; candidates : paralysable nonparalysable
   void SetDeadTimeMode(G4String val);
   //! Set the buffer mode ;
   void SetBufferMode(G4int val) { m_bufferMode=val; }
@@ -65,38 +66,52 @@ public:
   //! Set the buffer mode ;
 
   //! Implementation of the pure virtual method declared by the base class GateClockDependent
-  //! print-out the attributes specific of the deadTime
+  //! print-out the attributes specific of the DeadTime
   virtual void DescribeMyself(size_t indent);
 
-protected:
-
-  /*! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
+  /*! Implementation of the pure virtual method declared by the base class GateVDigitizerModule
     This methods processes one input-pulse
-    It is is called by ProcessPulseList() for each of the input pulses
-    The result of the pulse-processing is incorporated into the output pulse-list
+    The result of the digitization is incorporated into the output digi collection
     This method manages the updating of the "rebirth time table", the table of times when
     the detector volume will be alive again.
   */
-  void ProcessOnePulse(const GatePulse* inputPulse, GatePulseList&  outputPulseList);
-
+  void Digitize() override;
+  
   //! To summarize it finds the number of elements of the different scanner levels
   void FindLevelsParams(GateObjectStore* anInserterStore);
 
-private:
+protected:
   G4String m_volumeName;  //!< Name of the volume where Dead time is applied
   G4int m_testVolume;     //!< equal to 1 if the volume name is valid, 0 else
   std::vector<int> numberOfComponentForLevel; //!< Table of number of element for each geometric level
   G4int numberOfHigherLevels ;  //!< number of geometric level higher than the one chosen by the user
-  unsigned long long int m_deadTime; //!< DeadTime value
-  // was :  G4String m_deadTimeMode;   //!< dead time mode : paralysable nonparalysable
+  unsigned long long int m_DeadTime; //!< DeadTime value
+  // was :  G4String m_DeadTimeMode;   //!< dead time mode : paralysable nonparalysable
   G4bool m_isParalysable;   //!< dead time mode : paralysable (true) nonparalysable (false) (modif. by D. Guez on 03/03/04)
-  std::vector<unsigned long long int>  m_deadTimeTable;  //!< contains the "rebirth times". Alocated once at the first call.
+  std::vector<unsigned long long int>  m_DeadTimeTable;  //!< contains the "rebirth times". Alocated once at the first call.
   G4double m_bufferSize;  //!< contains the rebirth time.
   std::vector<double> m_bufferCurrentSize;  //!< contains the buffers sizes
   G4int m_bufferMode; //! 0 : DT during writing, 1 : DT if writing AND buffer full
   G4int m_init_done_run_id;
-  GateDeadTimeMessenger *m_messenger;    //!< Messenger
+
+private:
+  GateDigi* m_outputDigi;
+
+  GateDeadTimeMessenger *m_Messenger;
+
+  GateDigiCollection*  m_OutputDigiCollection;
+
+  GateSinglesDigitizer *m_digitizer;
+
+
 };
 
-
 #endif
+
+
+
+
+
+
+
+

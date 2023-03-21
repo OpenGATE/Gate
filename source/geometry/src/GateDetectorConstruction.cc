@@ -104,13 +104,14 @@ GateDetectorConstruction::GateDetectorConstruction()
   pworld->SetMaterialName("worldDefaultAir");
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
-
+  // OK GND 2022 moved to GateVVolume::AttachCrystalSD()
+  /*
   if(!m_crystalSD) {
     G4String crystalSDname = "/gate/crystal";
     m_crystalSD = new GateCrystalSD(crystalSDname);
     SDman->AddNewDetector(m_crystalSD);
   }
-
+*/
   if(!m_phantomSD) {
     G4String phantomSDname = "/gate/phantom";
     m_phantomSD = new GatePhantomSD(phantomSDname);

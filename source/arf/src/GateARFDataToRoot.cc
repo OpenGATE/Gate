@@ -19,7 +19,7 @@
 #include "G4Run.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "G4VHitsCollection.hh"
 
@@ -30,7 +30,7 @@
 #include <iomanip>
 #include "G4UImanager.hh"
 #include "GatePrimaryGeneratorAction.hh"
-#include "GateHitConvertor.hh"
+//#include "GateHitConvertor.hh"
 
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
@@ -39,7 +39,7 @@
 #include "GateApplicationMgr.hh"
 
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateOutputMgr.hh"
 #include "TROOT.h"
 #include "TTree.h"
@@ -140,8 +140,11 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event*)
     }
   /* Get Digitizer information */
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
-  const GateSingleDigiCollection * SDC = (GateSingleDigiCollection*) (fDM->GetDigiCollection(collectionID));
+  //OK GND 2022
+  G4int collectionID = GetCollectionID(mSingleDigiCollectionName); //fDM->GetDigiCollectionID(mSingleDigiCollectionName);
+  //G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
+  const GateDigiCollection * SDC = (GateDigiCollection*) (fDM->GetDigiCollection(collectionID));
+
   if (!SDC)
     {
     if (nVerboseLevel > 0)
@@ -208,7 +211,7 @@ void GateARFDataToRoot::CloseARFDataRootFile()
     }
   }
 
-G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
+G4int GateARFDataToRoot::StoreARFData(GateDigi * aDigi)
   {
   G4ThreeVector position = aDigi->GetGlobalPos();
   G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();

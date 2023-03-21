@@ -6,55 +6,80 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
+
+
+/*! \class  GateNoise
+    \brief  GateNoise does some dummy things with input digi
+    to create output digi
+
+    - GateNoise - by name.surname@email.com
+
+    \sa GateNoise, GateNoiseMessenger
+*/
 
 #ifndef GateNoise_h
 #define GateNoise_h 1
 
+#include "GateVDigitizerModule.hh"
+#include "GateDigi.hh"
+#include "GateClockDependent.hh"
+#include "GateCrystalSD.hh"
+
 #include "globals.hh"
-#include <iostream>
-#include <vector>
 
-#include "GateVPulseProcessor.hh"
-#include "GatePulse.hh"
+#include "GateNoiseMessenger.hh"
+#include "GateSinglesDigitizer.hh"
 
-class GateNoiseMessenger;
 class GateVDistribution;
-class GateNoise : public GateVPulseProcessor
+
+class GateNoise : public GateVDigitizerModule
 {
-  public:
+public:
+  
+  GateNoise(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateNoise();
+  
+  void Digitize() override;
 
-    GateNoise(GatePulseProcessorChain* itsChain,
-		 const G4String& itsName=theTypeName) ;
+  void SetEnergyDistribution(GateVDistribution* energyDistrib) {m_energyDistrib=energyDistrib;}
+  GateVDistribution* GetEnergyDistribution() const {return m_energyDistrib;}
+  void SetDeltaTDistribution(GateVDistribution* deltaTDistrib) {m_deltaTDistrib=deltaTDistrib;}
+  GateVDistribution* GetDeltaTDistribution() const {return m_deltaTDistrib;}
 
-    //! Destructor
-    virtual ~GateNoise() ;
+  G4double ComputeStartTime(GateDigiCollection* IDC);
+  G4double ComputeFinishTime(GateDigiCollection* IDC);
 
 
-    //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
-    //! print-out the attributes specific of the blurring
-    virtual void DescribeMyself(size_t indent);
-    void SetEnergyDistribution(GateVDistribution* energyDistrib) {m_energyDistrib=energyDistrib;}
-    GateVDistribution* GetEnergyDistribution() const {return m_energyDistrib;}
-    void SetDeltaTDistribution(GateVDistribution* deltaTDistrib) {m_deltaTDistrib=deltaTDistrib;}
-    GateVDistribution* GetDeltaTDistribution() const {return m_deltaTDistrib;}
+  void DescribeMyself(size_t );
 
-  protected:
-    //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
-    //! This methods processes one input-pulse
-    //! It is is called by ProcessPulseList() for each of the input pulses
-    //! The result of the pulse-processing is incorporated into the output pulse-list
+protected:
+  GateVDistribution* m_deltaTDistrib;  //! Delta arrival time distribution
+  GateVDistribution* m_energyDistrib;  //! The energy distribution
+  std::vector<GateDigi*> m_createdDigis;       //! Trans. pulse list
+  GateNoiseMessenger *m_messenger;     //!< Messenger
 
-    virtual GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
-    virtual void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-  private:
-    GateVDistribution* m_deltaTDistrib;  //! Delta arrival time distribution
-    GateVDistribution* m_energyDistrib;  //! The energy distribution
-    GatePulseList m_createdPulses;       //! Trans. pulse list
-    GateNoiseMessenger *m_messenger;     //!< Messenger
+  static const G4String& theTypeName;  //!< Default type-name for all efficiency
+  G4double   	m_oldTime;                   //!< Time of last event
 
-    static const G4String& theTypeName;  //!< Default type-name for all efficiency
-    G4double   	m_oldTime;                   //!< Time of last event
+private:
+  GateDigi* m_outputDigi;
+
+  GateNoiseMessenger *m_Messenger;
+
+  GateDigiCollection*  m_OutputDigiCollection;
+
+  GateSinglesDigitizer *m_digitizer;
+
+
 };
 
-
 #endif
+
+
+
+
+
+
+
+

@@ -53,6 +53,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
     G4UIcmdWithoutParameter* ResetCmd;
 
     G4UIcmdWithABool*        RootHitCmd;
+    G4UIcmdWithABool*        RootSinglesCmd;
     G4UIcmdWithABool*        RootNtupleCmd;
     G4UIcmdWithABool*        RootOpticalCmd;
     G4UIcmdWithABool*        RootRecordCmd;
@@ -66,6 +67,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 	G4int m_singleMaskLength;
 
     std::vector<G4UIcmdWithABool*>  		 OutputChannelCmdList;
+  public:
     std::vector<GateToRoot::VOutputChannel*>  m_outputChannelList;
 };
 

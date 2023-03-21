@@ -14,6 +14,7 @@
 #include <fstream>
 
 #include "GateVOutputModule.hh"
+#include "GateDigitizerMgr.hh"
 
 #ifdef G4ANALYSIS_USE_FILE
 
@@ -60,16 +61,21 @@ public:
 	  m_fileBaseName(G4String("")),
   	  m_collectionName(aCollectionName),
 	  m_fileCounter(0),
-	  m_collectionID(-1)
-	  //	  m_outputFileSizeLimit(2000000000),
+	  m_collectionID(-1),
+	  m_outputFile(""),
+      m_signlesCommands(0)
+	 // m_outputFileSizeLimit(2000000000)
 	{}
       virtual inline ~VOutputChannel() {}
 
-      void Open(const G4String& aFileBaseName);
+      virtual void Open(const G4String& aFileBaseName);
       void Close();
       static void SetOutputFileSizeLimit(G4int limit) {m_outputFileSizeLimit = limit;};
       G4bool ExceedsSize();
       virtual void RecordDigitizer()=0;
+
+      inline void AddSinglesCommand() { m_signlesCommands++; };
+
 
       inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
       inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
@@ -84,6 +90,9 @@ public:
       G4int	        m_collectionID;
       std::ofstream   m_outputFile;
 
+      G4int m_signlesCommands;
+
+
       static long       m_outputFileSizeLimit;
   };
 
@@ -94,6 +103,54 @@ public:
 			       G4bool outputFlag);
       virtual inline ~SingleOutputChannel() {}
       virtual void RecordDigitizer();
+      inline void Open(const G4String& aFileBaseName)
+      {
+        // if it's not the first file with the same name, add a suffix like _01 to the file name, before .dat
+        if ((m_fileCounter > 0) && (m_fileBaseName != aFileBaseName)) {
+          m_fileCounter = 0;
+        }
+
+        G4String fileCounterSuffix;
+        if (m_fileCounter > 0) {
+          G4String fileCounterString;
+          char buffer [10];
+          sprintf(buffer,"%d",m_fileCounter);
+          fileCounterString = buffer;
+          fileCounterSuffix = G4String("_") + fileCounterString;
+        } else {
+          fileCounterSuffix = G4String("");
+        }
+        //OK GND 2022 multiSD backward compatibility
+        GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+        G4String fileName;
+      	if( digitizerMgr->m_SDlist.size()==1 )
+      	{
+      		if(m_signlesCommands==0)
+      		{
+      		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
+      		fileName = aFileBaseName + tmp_str + fileCounterSuffix + ".dat";
+      		}
+      		else
+          		fileName = aFileBaseName + m_collectionName + fileCounterSuffix + ".dat";
+
+      	}
+      	else
+      		fileName = aFileBaseName + m_collectionName + fileCounterSuffix + ".dat";
+
+
+
+        if (m_outputFlag) {
+          m_outputFile.open(fileName,std::ios::out);
+          //LF
+          //m_outputFile.seekp (0, ios::beg);
+          m_outputFile.seekp (0, std::ios::beg);
+          //LF
+          m_outputFileBegin = m_outputFile.tellp();
+        }
+        m_fileBaseName = aFileBaseName;
+        m_fileCounter++;
+      }
+
   };
 
   class CoincidenceOutputChannel : public VOutputChannel
@@ -145,11 +202,14 @@ private:
   G4bool   m_outFileVoxelFlag;
   G4int    m_recordFlag;
 
+  //OK GND 2002
+  G4int  m_nSD; // number of sensitive detectors
 
   GateToASCIIMessenger* m_asciiMessenger;
 
   std::ofstream m_outFileRun;
-  std::ofstream m_outFileHits;
+  //std::ofstream m_outFileHits;
+  std::vector<std::ofstream> m_outFilesHits;
 
   G4String m_fileName;
 

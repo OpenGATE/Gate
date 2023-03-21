@@ -18,7 +18,7 @@ See LICENSE.md for further details
 #include "G4Run.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 #include "G4VHitsCollection.hh"
 #include "G4HCofThisEvent.hh"

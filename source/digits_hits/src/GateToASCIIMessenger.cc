@@ -13,6 +13,7 @@
 
 #include "GateOutputMgr.hh"
 #include "GateCoincidenceDigi.hh"
+#include "GateDigitizerMgr.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
@@ -43,6 +44,14 @@ GateToASCIIMessenger::GateToASCIIMessenger(GateToASCII* gateToASCII)
   OutFileHitsCmd = new G4UIcmdWithABool(cmdName,this);
   OutFileHitsCmd->SetGuidance("Set the flag for Hits ASCII output");
   OutFileHitsCmd->SetGuidance("1. true/false");
+
+  // OK GND 2022
+  cmdName = GetDirectoryName()+"setOutFileSinglesFlag";
+  OutFileSinglesCmd = new G4UIcmdWithABool(cmdName,this);
+  OutFileSinglesCmd->SetGuidance("To get error if you use old command");
+  OutFileSinglesCmd->SetGuidance("1. true/false");
+  //OK GND 2022
+
 
   cmdName = GetDirectoryName()+"setOutFileVoxelFlag";
   OutFileVoxelCmd = new G4UIcmdWithABool(cmdName,this);
@@ -90,6 +99,7 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
   delete SingleMaskCmd;
   delete ResetCmd;
   delete OutFileHitsCmd;
+  delete OutFileSinglesCmd;
   delete OutFileVoxelCmd;
   delete SetFileNameCmd;
   // for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
@@ -137,7 +147,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       maskVector.push_back(tempBool);
       //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
     }
-    GateSingleDigi::SetSingleASCIIMask( maskVector );
+    GateDigi::SetSingleASCIIMask( maskVector );
 
   } else if (command == SetOutFileSizeLimitCmd) {
     GateToASCII::VOutputChannel::SetOutputFileSizeLimit( SetOutFileSizeLimitCmd->GetNewIntValue(newValue));
@@ -147,7 +157,36 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     m_gateToASCII->SetFileName(newValue);
   } else if ( command == OutFileHitsCmd ) {
     m_gateToASCII->SetOutFileHitsFlag(OutFileHitsCmd->GetNewBoolValue(newValue));
-  } else if ( command == OutFileVoxelCmd ) {
+  }
+  else if (command == OutFileSinglesCmd) {
+
+  	  //OK GND backward compatibility
+  		GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+  		for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+  		{
+  			for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
+  			 {
+  		  		std::string tmp_str = m_outputChannelList[i]->m_collectionName.substr(0, m_outputChannelList[i]->m_collectionName.find("_"));
+  		  		//Save only main singles digitizer output and not for all DMs
+  				 if (m_outputChannelList[i]->m_collectionName == tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName() )
+  				 {
+  					 m_outputChannelList[i]->SetOutputFlag( OutFileSinglesCmd->GetNewBoolValue(newValue));
+  					 //G4cout<<"Set flag"<< m_outputChannelList[i]->m_outputFlag<<G4endl;
+  				 }
+
+
+  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
+  			 if(digitizer)
+  				 digitizer->m_recordFlag=true;
+  			 }
+
+  			 digitizerMgr->m_recordSingles=OutFileSinglesCmd->GetNewBoolValue(newValue);
+
+
+  		}
+
+  }	else if ( command == OutFileVoxelCmd ) {
     m_gateToASCII->SetOutFileVoxelFlag(OutFileVoxelCmd->GetNewBoolValue(newValue));
   } else if ( IsAnOutputChannelCmd(command) ) {
     ExecuteOutputChannelCmd(command,newValue);
@@ -193,9 +232,29 @@ G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 
 void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue)
 {
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     if ( command == OutputChannelCmdList[i] ) {
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
+
+
+      GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(m_outputChannelList[i]->m_collectionName);
+      if(digitizer)
+    	  digitizer->m_recordFlag=true;
+
+      //Setting flag in the digitizerMgr
+      if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Singles"))
+      {
+    	  m_outputChannelList[i]->AddSinglesCommand();
+    	  digitizerMgr->m_recordSingles=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
+      }
+
+
+      if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Coincidences"))
+	  {
+    	  digitizerMgr->m_recordCoincidences=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
+	  }
       break;
     }
 }

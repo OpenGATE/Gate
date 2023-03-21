@@ -47,6 +47,7 @@ class GateToASCIIMessenger: public GateOutputModuleMessenger
 
     G4UIcmdWithoutParameter*          		 ResetCmd;
     G4UIcmdWithABool*                 		 OutFileHitsCmd;
+    G4UIcmdWithABool*                 		 OutFileSinglesCmd;
     G4UIcmdWithABool*                 		 OutFileVoxelCmd;
     G4UIcmdWithAString*               		 SetFileNameCmd;
 

@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+//GND 2022 Class to Remove
 #include "GateConfiguration.h"
 #include "GatePulseProcessorChainMessenger.hh"
 
@@ -21,11 +21,9 @@ See LICENSE.md for further details
 
 #include "GateVPulseProcessor.hh"
 #include "GatePulseProcessorChain.hh"
-
+/*
 #include "GateReadout.hh"
 #include "GatePileup.hh"
-#include "GateThresholder.hh"
-#include "GateUpholder.hh"
 #include "GateDeadTime.hh"
 #include "GateBlurring.hh"
 #include "GateLocalTimeDelay.hh"
@@ -43,12 +41,12 @@ See LICENSE.md for further details
 #include "GateSigmoidalThresholder.hh"
 #include "GateCalibration.hh"
 #include "GateSpblurring.hh"
-#include "GatePulseAdder.hh"
-#include "GatePulseAdderLocal.hh"
+//#include "GatePulseAdder.hh"
+//#include "GatePulseAdderLocal.hh"
 #include "GatePulseAdderCompton.hh"
 #include "GatePulseAdderComptPhotIdeal.hh"
 #include "GatePulseAdderComptPhotIdealLocal.hh"
-#include "GateCrystalBlurring.hh"
+//#include "GateCrystalBlurring.hh"
 #include "GateTemporalResolution.hh"
 #include "GateLocalClustering.hh"
 #include "GateClustering.hh"
@@ -64,7 +62,7 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #endif
 #include "GateSystemFilter.hh"
-
+*/
 GatePulseProcessorChainMessenger::GatePulseProcessorChainMessenger(GatePulseProcessorChain* itsProcessorChain)
 :GateListMessenger(itsProcessorChain)
 { 
@@ -120,7 +118,7 @@ void GatePulseProcessorChainMessenger::DoInsertion(const G4String& childTypeName
 
   G4String newInsertionName = GetProcessorChain()->MakeElementName(GetNewInsertionBaseName());
 
-  if (childTypeName=="readout")
+ /* if (childTypeName=="readout")
     newProcessor = new GateReadout(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="pileup")
     newProcessor = new GatePileup(GetProcessorChain(),newInsertionName);
@@ -207,7 +205,7 @@ else if (childTypeName=="localMultipleRejection")
     G4cout << "Pulse-processor type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;
   }
-  
+  */
   GetProcessorChain()->InsertProcessor(newProcessor);
   SetNewInsertionBaseName("");
 }

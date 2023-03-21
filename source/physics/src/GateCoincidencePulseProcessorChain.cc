@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+// GND ClassToRemove
 
 #include "GateCoincidencePulseProcessorChain.hh"
 #include "GateCoincidencePulseProcessorChainMessenger.hh"
@@ -16,8 +16,8 @@ See LICENSE.md for further details
 #include "GateDigitizer.hh"
 #include "GateVCoincidencePulseProcessor.hh"
 #include "GateTools.hh"
-#include "GateHitConvertor.hh"
-#include "GateCoincidenceDigiMaker.hh"
+//#include "GateHitConvertor.hh"
+//#include "GateCoincidenceDigiMaker.hh"
 
 
 //------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ GateCoincidencePulseProcessorChain::GateCoincidencePulseProcessorChain( GateDigi
    //G4cout<<"GateCoincidencePulseProcessor m_outputName="<<m_outputName<<G4endl;
 
   G4cout << " in GateCoincidencePulseProcessorChain call new GateCoincidenceDigiMaker "  << Gateendl;
-  itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
+  //itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
-   std::vector<GateCoincidenceSorter*> CoincidenceSorterList = digitizer->GetCoinSorterList();
+   std::vector<GateCoincidenceSorterOld*> CoincidenceSorterList = digitizer->GetCoinSorterList();
 
    /*G4int index = -1;
 
@@ -182,7 +182,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
    return system;*/
    
    //faster!!
-   for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); itr++)
+   for (std::vector<GateCoincidenceSorterOld*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); itr++)
      if (inputName.compare((*itr)->GetOutputName()) == 0)
        return (*itr)->GetSystem();
    

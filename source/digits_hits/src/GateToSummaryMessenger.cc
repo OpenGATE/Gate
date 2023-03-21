@@ -9,6 +9,7 @@
 #include "GateToSummaryMessenger.hh"
 #include "GateToSummary.hh"
 
+#include "GateDigitizerMgr.hh"
 #ifdef G4ANALYSIS_USE_FILE
 
 #include "GateOutputMgr.hh"
@@ -47,9 +48,49 @@ GateToSummaryMessenger::~GateToSummaryMessenger()
 //--------------------------------------------------------------------------------
 void GateToSummaryMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
+
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
   if (command == SetFileNameCmd) m_gateToSummary->SetFileName(newValue);
-  else if (command == m_addCollectionCmd) m_gateToSummary->addCollection(newValue);
-  else GateOutputModuleMessenger::SetNewValue(command, newValue);
+  else if (command == m_addCollectionCmd)
+  {
+	  //OK GND 2022
+	  for(size_t i=0;i<digitizerMgr->m_SingleDigitizersList.size();i++)
+		  {
+		if (newValue==digitizerMgr->m_SingleDigitizersList[i]->GetName()) //save all collections
+				  {
+					digitizerMgr->m_SingleDigitizersList[i]->m_recordFlag=true;
+					m_gateToSummary->addCollection(digitizerMgr->m_SingleDigitizersList[i]->GetOutputName());
+				  }
+		else if (G4StrUtil::contains(newValue, "_") )
+		 { //save only one specific collections
+
+			 m_gateToSummary->addCollection(newValue);
+			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newValue);
+
+			 if(digitizer)
+				 digitizer->m_recordFlag=true;
+		 }
+		  }
+
+	if (newValue=="Coincidences")
+		m_gateToSummary->addCollection(newValue);
+
+	//Setting flag in the digitizerMgr
+	if (G4StrUtil::contains(newValue, "Singles"))
+	{
+		digitizerMgr->m_recordSingles=true;
+	}
+	if (G4StrUtil::contains(newValue, "Coincidences"))
+	{
+
+		digitizerMgr->m_recordCoincidences=true;
+	}
+
+
+
+  }
+	  else GateOutputModuleMessenger::SetNewValue(command, newValue);
 }
 //--------------------------------------------------------------------------------
 

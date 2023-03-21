@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+//GND 2022 Class to Remove
 
 #include "GateDigitizerMessenger.hh"
 
@@ -20,7 +20,7 @@ See LICENSE.md for further details
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
 #include "GatePulseProcessorChain.hh"
-#include "GateCoincidenceSorter.hh"
+#include "GateCoincidenceSorterOld.hh"
 #include "GateCoincidencePulseProcessorChain.hh"
 
 // Constructor
@@ -114,7 +114,7 @@ void GateDigitizerMessenger::DoInsertion(const G4String& childTypeName)
   if (childTypeName=="singleChain") {
     GetDigitizer()->StoreNewPulseProcessorChain( new GatePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
   } else if (childTypeName=="coincidenceSorter") {
-    GetDigitizer()->StoreNewCoincidenceSorter( new GateCoincidenceSorter(GetDigitizer(),GetNewInsertionBaseName(),10.*ns) );
+    GetDigitizer()->StoreNewCoincidenceSorter( new GateCoincidenceSorterOld(GetDigitizer(),GetNewInsertionBaseName(),10.*ns) );
   } else if (childTypeName=="coincidenceChain") {
     GetDigitizer()->StoreNewCoincidenceProcessorChain( new GateCoincidencePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
   } else {

@@ -11,10 +11,10 @@ See LICENSE.md for further details
 #define GateCoincidencePulse_h 1
 
 #include "GatePulse.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 
 // define the minimum offset for a delayed coincidence window in sec
-#define  MIN_COINC_OFFSET 500.0E-09 // why??? why can't it be any (non-negative) value?
+//#define  MIN_COINC_OFFSET 500.0E-09 // why??? why can't it be any (non-negative) value?
 
 class GateCoincidencePulse : public GatePulseList
 {
