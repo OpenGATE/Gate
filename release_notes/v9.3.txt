@@ -7,7 +7,7 @@
 #  *ooooOOOO0000OOOOoooo*  #
 
 
-This version is intended to be used with Geant4 11.0 only. 
+This version is intended to be used with Geant4 11.1 only. 
 Gate cannot be compiled with earlier Geant4 versions. 
 It *may* works with other ROOT, ITK, libtorch version but it is not tested.
 
@@ -54,14 +54,6 @@ temporal resolution -> Time Resolution
 
 - additional Benchmarks
 https://github.com/OpenGATE/GateBenchmarks
-
-
-----------
-Bugs fixed
-----------
-
-- ??? 
-https://github.com/OpenGATE/Gate/pull/?? 
 
 ----------
 Gate Tools
