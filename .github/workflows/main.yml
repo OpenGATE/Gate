@@ -315,5 +315,5 @@ jobs:
         mkdir gate_benchmarks
         export GIT_SSL_NO_VERIFY=1
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
-        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.2 /home/.github/workflows/runTest.sh
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.3 /home/.github/workflows/runTest.sh
 
