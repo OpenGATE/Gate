@@ -171,6 +171,8 @@ class GateVSystem : public GateClockDependent
 
     //@}
 
+    //! Checks if all levels are defined in the system (need by readout and spatial resolution)
+    G4bool CheckIfAllLevelsAreDefined();
 
     //! Generate the output-volumeID based on the information stored in the volumeID
     virtual GateOutputVolumeID ComputeOutputVolumeID(const GateVolumeID& aVolumeID);

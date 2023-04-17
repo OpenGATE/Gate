@@ -168,6 +168,14 @@ void GateReadout::SetReadoutParameters()
 			GateArrayComponent* m_crystalComponent = m_system->FindArrayComponent("crystal");
 			if (m_crystalComponent==NULL) G4Exception( "GateReadout::Digitize", "Digitize", FatalException,
 												  "Failed to get the array component corresponding to the crystal. Abort.\n");
+
+			if (!m_system->CheckIfAllLevelsAreDefined())
+					{
+						 GateError( " *** ERROR*** GateReadout::Digitize. Not all required geometry levels and sublevels for this system are defined. "
+						       			  			  "(Ex.: for cylindricalPET, the required levels are: rsector, module, submodule, crystal). Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
+					}
+
+
 			// Get the number of crystals in each direction
 			m_nbCrystalsZ  = m_crystalComponent->GetRepeatNumber(2);
 			m_nbCrystalsY  = m_crystalComponent->GetRepeatNumber(1);
