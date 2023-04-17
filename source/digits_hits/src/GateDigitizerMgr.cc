@@ -114,8 +114,10 @@ void GateDigitizerMgr::Initialize()
 					m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->InputCollectionID();//InputCollectionID();
 				}
 				else{
-				   G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetInputName();
-					//G4cout<<name4fDM <<G4endl;
+				   //G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetInputName();
+				   G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetOutputName();
+
+				   //G4cout<<name4fDM <<G4endl;
 				   //  G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
 				   m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->SetInputCollectionID( fDM->GetDigiCollectionID(name4fDM ) );//InputCollectionID();
 				   //G4cout<<m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->GetInputCollectionID()<<G4endl;
