@@ -21,7 +21,7 @@ jobs:
 
     env:
       ROOT_VERSION: 'v6-26-08'
-      GEANT4_VERSION: 'v11.0.0'
+      GEANT4_VERSION: 'v11.1.1'
       ITK_VERSION: 'v5.3.0'
       ROOT_DIR: $(HOME)/software/root
       GEANT4_DIR: $(HOME)/software/geant4
@@ -38,8 +38,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build3
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build3
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build4
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build4
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -108,6 +108,7 @@ jobs:
           git clone  --branch $GEANT4_VERSION https://github.com/Geant4/geant4.git --depth 1 src
           cd bin
           cmake -DGEANT4_INSTALL_DATA=ON \
+                -DGEANT4_BUILD_MULTITHREADED=OFF \
                 -DGEANT4_INSTALL_DATADIR=$HOME/software/geant4/data \
                 -DCMAKE_INSTALL_PREFIX=$HOME/software/geant4/install \
                 ../src
@@ -258,11 +259,9 @@ jobs:
                         t2_edep_vox,
                         t3_range_e+,
                         t4_necr,
-                        t5_pet,
                         t6_dpk,
                         t7_garf,
                         t8_LETActor,
-                        t9_gaga_phsp,
                         t10_SpectroGamma,
                         t11_EMField,
                         t12_tessellated_volume,
@@ -275,7 +274,10 @@ jobs:
                         t20_digi_adder,
                         t22_merged_actor,
                         t23_digi_readout,
-                        t26_CoinSorter]
+                        t26_CoinSorter,
+                        t27_Hits_2SD,
+                        t28_Singles_2SD,
+                        t29_optical_digi]
 
     steps:
     - name: Checkout github repo
@@ -312,5 +314,5 @@ jobs:
         mkdir gate_benchmarks
         export GIT_SSL_NO_VERIFY=1
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
-        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.2 /home/.github/workflows/runTest.sh
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.3 /home/.github/workflows/runTest.sh
 

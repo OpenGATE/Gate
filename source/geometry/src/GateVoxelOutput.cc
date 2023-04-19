@@ -34,7 +34,7 @@ See LICENSE.md for further details
 #include "GateVoxelBoxParameterized.hh"
 #include "GateRegularParameterized.hh"
 #include "GateFictitiousVoxelMapParameterized.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GatePhantomHit.hh"
 
 

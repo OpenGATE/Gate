@@ -1,6 +1,6 @@
 .. _compton_camera_imaging_simulations-label:
 
-Compton camera imaging simulations: CCMod
+Compton camera imaging simulations: CCMod (TO BE ADDED SOON IN GATE 9.3)
 =======================================
 
 .. contents:: Table of Contents

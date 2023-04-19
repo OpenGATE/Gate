@@ -11,7 +11,7 @@ See LICENSE.md for further details
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "TBranch.h"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateOutputMgr.hh"
 #include "GateTools.hh"
@@ -133,7 +133,7 @@ G4int GateHitFileReader::PrepareNextEvent(G4Event* )
   while ( (currentEventID == m_hitBuffer.eventID) && (currentRunID == m_hitBuffer.runID) ) {
 
     // Create a new hit and store it into the hit-queue
-    GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
+    GateHit* aHit =  m_hitBuffer.CreateHit();
     m_hitQueue.push(aHit);
 
     // Load the next set of hit-data into the root-hit structure
@@ -159,7 +159,7 @@ void GateHitFileReader::PrepareEndOfEvent()
   // We loop until the hit-queue is empty
   // Each hit is inserted into the crystalSD hit-collection, then removed from the queue
   while (m_hitQueue.size()) {
-    GateOutputMgr::GetInstance()->GetCrystalHitCollection()->insert(m_hitQueue.front());
+    GateOutputMgr::GetInstance()->GetHitCollection()->insert(m_hitQueue.front());
     m_hitQueue.pop();
   }
 }

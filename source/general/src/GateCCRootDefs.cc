@@ -14,8 +14,8 @@
 */
 
 #include "GateCCRootDefs.hh"
-#include "GateCrystalHit.hh"
-#include "GateSingleDigi.hh"
+#include "GateHit.hh"
+#include "GateDigi.hh"
 #include "GateCCCoincidenceDigi.hh"
 #include "GateComptonCameraCones.hh"
 
@@ -62,7 +62,7 @@ void GateCCRootHitBuffer::Clear()
 
 
 //-----------------------------------------------------------------------------
-void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
+void GateCCRootHitBuffer::Fill(GateHit* aHit,std::string layerN)
 {
 
     PDGEncoding     = aHit->GetPDGEncoding();
@@ -96,11 +96,11 @@ void GateCCRootHitBuffer::Fill(GateCrystalHit* aHit,std::string layerN)
 
 
 //-----------------------------------------------------------------------------
-GateCrystalHit* GateCCRootHitBuffer::CreateHit()
+GateHit* GateCCRootHitBuffer::CreateHit()
 {
     GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
     // Create a new hit
-    GateCrystalHit* aHit = new GateCrystalHit();
+    GateHit* aHit = new GateHit();
     // Initialise the hit data from the root-hit data
     aHit->SetPDGEncoding(PDGEncoding);\
     aHit->SetTrackID(trackID);
@@ -247,14 +247,14 @@ void GateCCRootSingleBuffer::Clear()
 
 
 //-----------------------------------------------------------------------------
-void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
+void GateCCRootSingleBuffer::Fill(GateDigi* aDigi)
 {
     runID         =  aDigi->GetRunID();
     eventID       =  aDigi->GetEventID();
     time          =  aDigi->GetTime()/s;
     energy        =  aDigi->GetEnergy()/MeV;
-    energyIni     =  aDigi->GetIniEnergy()/MeV;
-    energyFin     =  aDigi->GetFinalEnergy()/MeV;
+    energyIni     =  aDigi->GetEnergyIniTrack()/MeV;
+    energyFin     =  aDigi->GetEnergyFin()/MeV;
     localPosX    = (aDigi->GetLocalPos()).x()/mm;
     localPosY    = (aDigi->GetLocalPos()).y()/mm;
     localPosZ    = (aDigi->GetLocalPos()).z()/mm;
@@ -270,16 +270,16 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
     nCrystalRayl    =aDigi->GetNCrystalRayleigh();
     nCrystalCompt =aDigi->GetNCrystalCompton();
     // layerID=slayerID;//it was as a second argument of the function.
-    aDigi->GetPulse().GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
+    aDigi->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
 
 
-    int copyN=aDigi->GetPulse().GetVolumeID().GetBottomVolume()->GetCopyNo();
+    int copyN=aDigi->GetVolumeID().GetBottomVolume()->GetCopyNo();
     if(copyN==0){
-        strcpy (layerName, aDigi->GetPulse().GetVolumeID().GetBottomVolume()->GetName());
+        strcpy (layerName, aDigi->GetVolumeID().GetBottomVolume()->GetName());
     }
     else{
-        const G4String name=aDigi->GetPulse().GetVolumeID().GetBottomVolume()->GetName()+std::to_string(copyN);
+        const G4String name=aDigi->GetVolumeID().GetBottomVolume()->GetName()+std::to_string(copyN);
         strcpy (layerName,name);
     }
     //layerName  is not necessary  with  the geom and volID you can recover he layerbame
@@ -292,19 +292,19 @@ void GateCCRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 void GateCCSingleTree::Init(GateCCRootSingleBuffer& buffer)
 {
     SetAutoSave(2000);
-    if ( GateSingleDigi::GetSingleASCIIMask(0) )
+    if ( GateDigi::GetSingleASCIIMask(0) )
         Branch("runID",          &buffer.runID,"runID/I");
-    if ( GateSingleDigi::GetSingleASCIIMask(1) )
+    if ( GateDigi::GetSingleASCIIMask(1) )
         Branch("eventID",        &buffer.eventID,"eventID/I");
-    if ( GateSingleDigi::GetSingleASCIIMask(7) )
+    if ( GateDigi::GetSingleASCIIMask(7) )
         Branch("time",           &buffer.time,"time/D");
-    if ( GateSingleDigi::GetSingleASCIIMask(8) )
+    if ( GateDigi::GetSingleASCIIMask(8) )
         Branch("energy",         &buffer.energy,"energy/F");
-    if ( GateSingleDigi::GetSingleASCIIMask(9) )
+    if ( GateDigi::GetSingleASCIIMask(9) )
         Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
-    if ( GateSingleDigi::GetSingleASCIIMask(10) )
+    if ( GateDigi::GetSingleASCIIMask(10) )
         Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
-    if ( GateSingleDigi::GetSingleASCIIMask(11) )
+    if ( GateDigi::GetSingleASCIIMask(11) )
         Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
 
     Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
@@ -363,13 +363,13 @@ void GateCCSingleTree::SetBranchAddresses(TTree* singlesTree,GateCCRootSingleBuf
 
 
 
-GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
+GateDigi* GateCCRootSingleBuffer::CreateSingle()
 {
 
 
     GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
     // G4cout<<"CreateSingle::tras create aVolume"<<G4endl;
-    GateSingleDigi* aSingle = new GateSingleDigi();
+    GateDigi* aSingle = new GateDigi();
     // Initialise the hit data from the root-hit data
     aSingle->SetRunID(runID);
     aSingle->SetEventID(eventID);
@@ -399,8 +399,8 @@ GateSingleDigi* GateCCRootSingleBuffer::CreateSingle()
     aSingle->SetNCrystalCompton(nCrystalCompt);
     aSingle->SetNCrystalRayleigh(nCrystalRayl);
     aSingle->SetEnergy(energy);
-    aSingle->SetIniEnergy(energyIni);
-    aSingle->SetFinalEnergy(energyFin);
+    aSingle->SetEnergyIniTrack(energyIni);
+    aSingle->SetEnergyFin(energyFin);
     aSingle->SetVolumeID(aVolumeID);
 
 

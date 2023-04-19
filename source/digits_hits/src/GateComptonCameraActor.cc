@@ -20,7 +20,7 @@
 #include "GateComptonCameraActorMessenger.hh"
 #include "GateMiscFunctions.hh"
 #include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 
 
 
@@ -93,7 +93,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
     G4double coincidenceWindow = 10.* ns;
     //Flag to identify when the sorte is applied to the CC
     bool IsCCSorter=1;
-    coincidenceSorter = new GateCoincidenceSorter(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
+    coincidenceSorter = new GateCoincidenceSorterOld(m_digitizer,thedigitizerSorterName,coincidenceWindow,thedigitizerName,IsCCSorter);
     m_digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
 
     GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
@@ -977,9 +977,9 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
 
         //if (hitEdep!=0.){
         // Create a new crystal hit (maybe better an object hit
-        GateCrystalHit* aHit=new GateCrystalHit();
-        //GateCrystalHit aHit;
-        //std::shared_ptr<GateCrystalHit> aHit(new GateCrystalHit());
+        GateHit* aHit=new GateHit();
+        //GateHit aHit;
+        //std::shared_ptr<GateHit> aHit(new GateHit());
         aHit->SetEdep(hitEdep);
         aHit->SetEnergyFin(Ef);
         aHit->SetEnergyIniTrack(Ei);
@@ -1104,7 +1104,7 @@ void GateComptonCameraActor::processPulsesIntoSinglesTree()
             GatePulseConstIterator iterIn;
             for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
                 //GatePulse* inputPulse = *iterIn;
-                GateSingleDigi* aSingleDigi=new GateSingleDigi( *iterIn);
+                GateDigi* aSingleDigi=new GateDigi( *iterIn);
                 if(mSaveSinglesTreeFlag){
 
                     m_SinglesBuffer.Fill(aSingleDigi);

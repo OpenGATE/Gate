@@ -18,7 +18,7 @@
 #include "GateTools.hh"
 #include "GateSystemListManager.hh"
 #include "GateVVolume.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateSystemComponent.hh"
 #include "GateObjectChildList.hh"
 #include "GateLinearRepeater.hh"
@@ -333,6 +333,27 @@ G4bool GateVSystem::CheckConnectionToCreator(GateVVolume* anCreator) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+
+G4bool GateVSystem::CheckIfAllLevelsAreDefined()
+{
+
+    G4int systemDepth=this->GetTreeDepth();
+
+    for (G4int i=1;i<systemDepth-1;i++)
+    {
+    	GateSystemComponent* comp0= (this->MakeComponentListAtLevel(i))[0][0];
+    	//G4cout<< comp0->GetObjectName()<<G4endl;
+
+    	if (!comp0->GetCreator())
+    			return false;
+    }
+
+  return true;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) const
 {
   compList_t* currentList = new compList_t;
@@ -495,3 +516,11 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
     G4ThreeVector(0,0,0);
 }
 //-----------------------------------------------------------------------------
+
+
+//OK GND 2022 TODO change name when possible
+G4int GateVSystem::GetMainComponentIDGND(const GateDigi& digi)
+   {  return digi.GetComponentID(m_mainComponentDepth) ; }
+
+
+

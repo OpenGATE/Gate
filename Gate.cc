@@ -158,7 +158,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "*******************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version 9.2 (2022)" << G4endl);
+  GateMessage("Core", 0, " GATE version 9.3 (2023)" << G4endl);
   GateMessage("Core", 0, " Copyright : OpenGATE Collaboration" << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 49(19) 4543-4561     2004 " << G4endl);
   GateMessage("Core", 0, " Reference : Phys. Med. Biol. 56(4)  881-901       2011 " << G4endl);
@@ -308,9 +308,11 @@ int main( int argc, char* argv[] )
 #ifdef G4ANALYSIS_USE_GENERAL
   GateOutputMgr::SetDigiMode( aDigiMode );
   GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-  GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
-  digitizer->StoreNewPulseProcessorChain( singleChain );
+  
+  //OK GND 2022. Moved to GateAction:RunAction constructor
+  //GateDigitizer* digitizer = GateDigitizer::GetInstance();
+  //GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
+  //digitizer->StoreNewPulseProcessorChain( singleChain );
 #endif
 
   if( aDigiMode == kofflineMode )

@@ -51,13 +51,25 @@
 #include "GateSteppingActionMessenger.hh"
 #include "GateCrystalSD.hh"
 
+#include "GateDigitizerMgr.hh"
+
 GateRunAction* GateRunAction::prunAction=0;
 GateEventAction* GateEventAction::peventAction=0;
 
 //-----------------------------------------------------------------------------
 GateRunAction::GateRunAction(GateUserActions * cbm)
   : pCallbackMan(cbm), flagBasicOutput(false)
-{ SetRunAction(this); runIDcounter = 0; }
+{
+	SetRunAction(this); runIDcounter = 0;
+
+	//OK GND 2022. moved from Gate.cc
+	//Very first initialization of GateDigitizerMgr
+#ifdef G4ANALYSIS_USE_GENERAL
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+	//digitizerMgr->Enable(false);
+#endif
+
+}
 //-----------------------------------------------------------------------------
 
 
@@ -82,6 +94,35 @@ void GateRunAction::BeginOfRunAction(const G4Run* aRun)
 #endif
 
   pCallbackMan->BeginOfRunAction(aRun);
+
+  // OK GND 2022
+  // Filling CHCollID for
+  //In order to get unique CHCollID each time when we create a new SD
+  	// one can take GetCollectionCapacity of G4SDManager
+  	// by default there is always phantomSD attached
+  	// thus: 1st CHCollID = 1
+  	// This is done in order to replace a block from Intialize()
+  	/*
+  	 static G4int CHCollID=-1;
+  	 if(CHCollID<0 ) // call only in the first event
+  	 			{
+  				CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GetName()+"Collection");
+
+  			}
+  	 */
+
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+  for (int i=0; i< SDman->GetCollectionCapacity(); i++)
+  {
+	   G4String HCname = SDman->GetHCtable()->GetHCname(i);
+	  // G4cout<<SDman->GetHCtable()->GetSDname(i)<<" "<<SDman->GetHCtable()->GetHCname(i)  <<G4endl;
+	  G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(SDman->GetHCtable()->GetHCname(i));
+	  //G4cout<<CHCollID<<" "<< SDman->GetHCtable()->GetHCname(i)<<G4endl;
+	  m_CHCollIDs.push_back(CHCollID);
+
+  }
+
 }
 //-----------------------------------------------------------------------------
 
@@ -118,6 +159,7 @@ GateEventAction::GateEventAction(GateUserActions * cbm)
 inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "Begin Of Event " << anEvent->GetEventID() << "\n");
+ // G4cout<<"Begin Of Event " << anEvent->GetEventID() << G4endl;
 
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if ( theMode != TrackingMode::kTracker )
@@ -134,6 +176,12 @@ inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
     }
 
   if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->BeginOfEventAction(anEvent);
+
+  // OK GND 2022
+  GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+  digitizerMgr->m_alreadyRun=false;
+ // G4cout<<"m_alreadyRun "<< digitizerMgr->m_alreadyRun<<G4endl;
+
 }
 //-----------------------------------------------------------------------------
 
@@ -143,7 +191,10 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
 
-
+  //OK GND 2022 TODO
+   //I would like to RunDigitizers here but some aHit attributes are filled in OutputMng/GateAnalysis->RecordEndOfEvent
+   //GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+   // 	  digitizerMgr->RunDigitizers();
 
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the OutputMgr manager
@@ -159,35 +210,45 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
 
-  if ( theMode == TrackingMode::kTracker )
-    {
+  //OK GND 2022
+  GateRunManager* RunMan = GateRunManager::GetRunManager();
+  GateRunAction* RunAction = ( (GateRunAction*)(RunMan->GetUserRunAction()) );
 
-      G4int CHCollID = G4SDManager::GetSDMpointer()->GetCollectionID(GateCrystalSD::GetCrystalCollectionName() ); //"crystalCollection");
-      GateCrystalHitsCollection * CHC = (GateCrystalHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
+    for (size_t i=0; i<RunAction->m_CHCollIDs.size(); i++)
+     {
+  	  // TODO: OK GND 2022, test that in tracking mode it still works
+		  if ( theMode == TrackingMode::kTracker )
+			{
 
-      if (CHC != 0)
-	{ if ( CHC->GetSize() > 0 )
-	    {                          G4int i = anEvent->GetEventID();
-	      std::stringstream event_id; // convert event_id into string
-	      event_id << i ;
-	      std::stringstream size; // convert size into string
-	      i = CHC->GetSize();
-	      size << i ;
-	      G4String message = " GateEventAction::EndOfEventAction : ERROR  Event "+ event_id.str() + " processed " + size.str() + " Crystal Hits.\n"+"Your Stepping policies may not be appropriately set. For instance You specified to stop after Phantom Boundaries and the distance between the phantom and the detectors is not sufficient so some particles reached the detectors.\n";
-	      G4Exception( "GateEventAction::EndOfEventAction", "EndOfEventAction", FatalException, message );
-	    }
-	}
-      if (  anEvent->GetNumberOfPrimaryVertex() > 0 )
-	{
-	  GateOutputMgr::GetInstance()->RecordTracks(myAction);
-	  //   RECORD THE PHANTOM HITS COLLECTION OF THE CURRENT EVENT
-	  GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
-	  // STORE TO A ROOT FILE  THE DATA COLLECTED IN THE RECORDSTEP METHOD DURING STEPPING
-	  gateToRoot->RecordRecStepData( anEvent );
-	}
-      // se charge de remplir les histos      : steppingAction contient la colllection de tracks
-    }//tracker mode
+			  //OK GND 2022
+			  G4int CHCollID = RunAction->m_CHCollIDs[i];
+			  GateHitsCollection * CHC = (GateHitsCollection *) ( anEvent->GetHCofThisEvent()->GetHC( CHCollID ) );
 
+
+
+			  if (CHC != 0)
+			{ if ( CHC->GetSize() > 0 )
+				{                          G4int i = anEvent->GetEventID();
+				  std::stringstream event_id; // convert event_id into string
+				  event_id << i ;
+				  std::stringstream size; // convert size into string
+				  i = CHC->GetSize();
+				  size << i ;
+				  G4String message = " GateEventAction::EndOfEventAction : ERROR  Event "+ event_id.str() + " processed " + size.str() + " Crystal Hits.\n"+"Your Stepping policies may not be appropriately set. For instance You specified to stop after Phantom Boundaries and the distance between the phantom and the detectors is not sufficient so some particles reached the detectors.\n";
+				  G4Exception( "GateEventAction::EndOfEventAction", "EndOfEventAction", FatalException, message );
+				}
+			}
+			  if (  anEvent->GetNumberOfPrimaryVertex() > 0 )
+			{
+			  GateOutputMgr::GetInstance()->RecordTracks(myAction);
+			  //   RECORD THE PHANTOM HITS COLLECTION OF THE CURRENT EVENT
+			  GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
+			  // STORE TO A ROOT FILE  THE DATA COLLECTED IN THE RECORDSTEP METHOD DURING STEPPING
+			  gateToRoot->RecordRecStepData( anEvent );
+			}
+			  // se charge de remplir les histos      : steppingAction contient la colllection de tracks
+		}//tracker mode
+     }
 
   if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->EndOfEventAction(anEvent);
 }

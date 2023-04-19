@@ -14,7 +14,7 @@
 #define GateARFSD_h 1
 
 #include "G4VSensitiveDetector.hh"
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -46,7 +46,7 @@ class GateARFSDMessenger;
  to a volume that belongs to a given system, it is considered as attached to this system, and
  can be attached only to volumes that belong to the same system.
 
- - The GateGeomColliSD generates hits of the class GateCrystalHit, which are stored in a regular
+ - The GateGeomColliSD generates hits of the class GateHit, which are stored in a regular
  hit collection.
  */
 class GateVVolume;
@@ -76,7 +76,7 @@ public:
   void Initialize(G4HCofThisEvent*HCE) override;
 
   //! Implementation of the pure virtual method ProcessHits().
-  //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
+  //! This methods generates a GateHit and stores it into the SD's hit collection
   G4bool ProcessHits(G4Step*aStep, G4TouchableHistory*ROhist) override;
 
   //! Tool method returning the name of the hit-collection where the crystal hits are stored
@@ -174,7 +174,7 @@ protected:
   GateVSystem* mSystem;                       //! System to which the SD is attached
 
 private:
-  GateCrystalHitsCollection * mArfHitCollection;  //! Hit collection
+  GateHitsCollection * mArfHitCollection;  //! Hit collection
   static const G4String mArfHitCollectionName; //! Name of the hit collection
   GateARFSDMessenger* mMessenger;
   G4String mName;

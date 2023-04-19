@@ -25,6 +25,9 @@ See LICENSE.md for further details
 #include "G4MaterialPropertiesTable.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "GateVSystem.hh"
+
+#include "GateSystemListManager.hh"
 
 //!@name Constructors and destructors
 //@{
@@ -42,6 +45,7 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
 // SJ COMMENTS## : read the file by using a messenger mechanism
 //
 {
+
   m_doc = xmlParseFile(filename.c_str());
 
   if (m_doc)

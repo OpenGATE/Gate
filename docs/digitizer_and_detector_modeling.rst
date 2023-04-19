@@ -12,6 +12,13 @@ General Purpose
 
 The purpose of the digitizer module is to simulate the behaviour of the scanner detectors and signal processing chain.
 
+New version of Digitizer was proposed since Gate 9.3.
+
+General architerure and main commends were changed.
+
+**Please, do not hesitate to use a helping script to convert your old digitizer macros to new ones:**:ref:`_digi_mac-convertor-label`.  
+
+
 From particle detection to coincidences in GATE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -20,10 +27,10 @@ GATE uses Geant4 to generate particles and transport them through the materials.
 The typical data-flow for an event is as follows:
 
 * A particle is generated, with its parameters, such as initial type, time, momentum, and energy. 
-* An elementary trajectory step is applied. A step corresponds to the trajectory of a particle between discrete interactions (i.e. photoelectric, Compton, pair production, etc). During a step, the changes to particle's energy and momentum are calculated. The length of a step depends upon the nature of the interaction, the type of particle and material, etc. The calculation of the step length is complex and is mentioned here only briefly. For more details, please refer to the Geant4 documentation.
+* An elementary trajectory step is applied. A step corresponds to the trajectory of a particle between discrete interactions (i.e. photoelectric, Compton, pair production, etc). During a step, the changes to a particle's energy and momentum are calculated. The length of a step depends upon the nature of the interaction, the type of particle and material, etc. The calculation of the step length is complex and is mentioned here only briefly. For more details, please refer to the Geant4 documentation.
 * If a step occurs within a volume corresponding to a *sensitive* detector, the interaction information between the particle and the material is stored. For example, this information may include the deposited energy, the momentum before and after the interaction, the name of the volume where the interaction occurred, etc. This set of information is referred to as a *Hit*.
 * Steps 2 and 3 are repeated until the energy of the particle becomes lower than a predefined value, or the particle position goes outside the predefined limits. The entire series of steps form a simulated trajectory of a particle, that is called a *Track* in Geant4.
-* The amount of energy deposited in a crystal is filtered by the digitizer module. The output from the digitizer corresponds to the signal after it has been processed by the Front End Electronics (FEE). Generally, the FEE is made of several processing units, working in a serial and/or in parallel. This process of transforming the energy of a *Hit* into the final digital value is called *Digitization* and is performed by the GATE digitizer. Each processing unit in the FEE is represented in GATE by a corresponding digitizer module. The final value obtained after filtering by a set of these modules is called a *Single*. *Singles* can be saved as output. Each transient value, between two modules, is called a *Pulse*.
+* The amount of energy deposited in a crystal is filtered by the digitizer module. The output from the digitizer corresponds to the signal after it has been processed by the Front End Electronics (FEE). Generally, the FEE is made of several processing units, working in a serial and/or in parallel. This process of transforming the energy of a *Hit* into the final digital value is called *Digitization* and is performed by the GATE digitizer. Each processing unit in the FEE is represented in GATE by a corresponding digitizer module. The final value obtained after filtering by a set of these modules is called a *Single*. *Singles* can be saved as output. Each transient value, between two modules, is called a *Digi*.
 
 This process is repeated for each event in the simulation in order to produce one or more sets of Singles. These *Singles* can be stored into an output file (as a ROOT tree, for example).
 
@@ -42,51 +49,164 @@ A hit is a snapshot of the physical interaction of a track within a sensitive re
 *  Interaction type of the hit 
 *  Volume name containing the hit
 
-As a result, the history of a particle is saved as a series of *hits* generated along the particles trajectory. In addition to the physical hits, Geant4 saves a special *hit*. This *hit* takes place when a particle moves from one volume to another (this type of *hit* deposits zero energy). The *hit* data represents the basic information that a user has with which to construct the physically observable behaviour of a scanner. To see the information stored in a *hit*, see the file *GateCrystalHit.hh*.
+As a result, the history of a particle is saved as a series of *hits* generated along the particles trajectory. In addition to the physical hits, Geant4 saves a special *hit*. This *hit* takes place when a particle moves from one volume to another (this type of *hit* deposits zero energy). The *hit* data represents the basic information that a user has with which to construct the physically observable behaviour of a scanner. To see the information stored in a *hit*, see the file *GateHit.hh*.
 
-Role of the digitizer
-~~~~~~~~~~~~~~~~~~~~~
+A *Hits Collection* is automatically stored by Geant4 for each event. Hits must be stored in a collection of hits, *GateHitsCollection* (instantiated from G4THitsCollection template class). The name of hits collection is declared in SensitiveDetector constructor.
+A SD can declare more than one hits collection per event. 
 
-As mentioned above, the information contained in the *hit* does not correspond to what is provided by a real detector. To simulate the digital values (*pulses*) that result from the output of the Front End Electronics, the sampling methods of the signal must be specified. To do this, a number of digitizer modules are available and are described below. 
 
-The role of *the digitizer* is to build, from the *hit* information, the physical observables, which include energy, position, and time of detection for each particle. In addition, the digitizer must implement the required logic to simulate coincidences during PET simulations. Typical usage of digitizer module includes the following actions: 
+Definition of a digi in Geant4
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* simulate detector response 
-* simulate readout scheme 
-* simulate trigger logic
+*Digis* in Geant4 are intended to be used to simulate the process of reading-out of the signal: for example “true” energy could be transformed into
+collected charge and electronic noise can be applied. In the case of Gate, it mainly applies distortion due to instrumental effects (detection, readout of electronics, signal processing chain, the response of the photodetection components etc.). 
 
-These actions are accomplished by inserting *digitizer* modules into GATE, as explained in the next sections.
+*Digis* are described by class *GateDigi* inherited from G4VDigi. Digis are stored in a container, an instance of *GateDigiCollection* (from G4TDigiCollection) class which is very similar to hits mechanism. 
+
+
+Digitizer Manager
+---------------
+
+The general operation of conversion of *Hits* into *Digis*, that are saved as *Singles*, is managed by Digitizer Manager, *GateDigitizerMgr*, inherited from G4DigiManager.
+It manages several functionalities needed for imaging applications (see Figure below):
+
+*  Construction of *Singles* made by **Singles Digitizers** that in their turn manage sequences of *Digitizer Modules* set by the user.  
+*  Construction of *Coincidences* made by **Coincidence Sorters**
+*  (to be added) Combination of *Coincidences* from different Coincidence Sorters made by **Coincidence Digitizers**
+*  (to be added) Generation of waveforms corresponding to electronic pulse 
+
+.. figure:: DigitizerMgr.jpg
+   :alt: Figure 0: Digitizer Manager
+   :name: DigitizerMgr 
+
+It also manages *GateDigiCollections* created in a simulation, output flags for writing down for Singles and Coincidences, different collections of Singles Digitizers, Coincidence Sorters, Coincidence Digitizers (to be added) and Waveform generators (to be added). 
+
+It also runs all Singles Digitizers, Coincidence Sorters, Coincidence Digitizers and Waveform generators.
+
+Commands for Gate New Digitizer (since Gate 9.3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One of the changes for Gate New Digitizer was making more explicit the macro command lines.
+
+Instead of::
+
+/gate/digitizer/Singles/
+
+where *Singles* is the name of Singles collection to which user would like to attach a Digitizer Module (name "Singles" is default value)
+
+Now the command like looks like::
+
+/gate/digitizerMgr/<sensitive_detector_name>/SinglesDigitizer/<singles_digitizer_name>/setInputCollection Singles
+
+where *<sensitive_detector_name>* is a name of a sensitive detector from which user would like to analyse Hits with a digitizer (it is the same name that is set in command /gate/<sensitive_detector_name>/attachCrystalSD), *SinglesDigitizer* is a type of functionalities available in the Digitizer Manager (ex, "SinglesDigitizer", "CoincidenceSorter", "CoincidencesDigitizer", "WaveformGenerator"), *<singles_digitizer_name>* is a name of chosen, for example, SinglesDigitizer, it is the same name as the output singles collection (name "Singles" is default value). 
+
+Separate digitizers for multiple sensitive detectors (since Gate 9.3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since Gate 9.3 it is possible to apply different Singles Digitizers to different sensitive detectors' hits. 
+In case if your have only one sensitive detector attached with a command:: 
+
+/gate/<sensitive_detector_name>/attachCrystalSD
+
+in the digitizer the commands will look like:: 
+
+/gate/digitizerMgr/<sensitive_detector_name>/SinglesDigitizer/<singles_digitizer_name>/....
+
+and in output file you will have the output as before (ex., Root output):: 
+
+   Hits
+   Singles
+
+In case if your have only several sensitive detector attached with a command:: 
+
+/gate/<sensitive_detector_name1>/attachCrystalSD
+/gate/<sensitive_detector_name2>/attachCrystalSD
+
+in the digitizer the commands will look like:: 
+
+/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/....
+/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/....
+
+and in output file you will have the output as before (ex., Root output)::
+
+   Hits_<sensitive_detector_name1>
+   Hits_<sensitive_detector_name2>
+   Singles_<sensitive_detector_name1>
+   Singles_<sensitive_detector_name2>
+
+In case if you want to merge at some point the Singles in Detector1 and in Detector2 you can use merger :ref:`_merger-label`.
+
+It also means that in case of multiple sensitive detectors one should pay attention which one should be used as input for CoincidenceSorter (if used)::
+
+ /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_<sensitive_detector_name1>
+ or
+ /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_<sensitive_detector_name2>
+
 
 Disabling the digitizer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to disable the digitizer process and all output (that are already disabled by default), you can use the following commands::
 
-   /gate/output/analysis/disable
-   /gate/output/digi/disable
+  /gate/digitizerMgr/disable
 
-.. _digitizer_modules-label:
 
-Digitizer modules
------------------
+Note for developers (if you want to develop something in digitizer) 
+------------------------------------
 
-The digitization consists of a series of signal processors. The output at each step along the series is defined as a *pulse*. At the end of the chain, the output *pulses* are named *singles*. These *Singles* realistically simulate the physical observables of a detector response to a particle interacting with it. An example is shown in :numref:`Digitizer`.
+If you want to develop something in digitizer, here is some important information that would help:
 
-.. figure:: Digitizer.jpg
-   :alt: Figure 1: Digitizer
-   :name: Digitizer
+**Singles Digitizers** 
 
-   The digitizer is organized as a chain of modules that begins with the hit and ends with the single which represents the physical observable seen from the detector.
+Singles Digitizers(*GateSinglesDigitizer* class) manage Digitizer Modules. However, it is important to note that DigitizerMgr starts all digitization with *GateDigitizerInitializationModule* that converts *GateHit* into *GateDigi* and *GateHitsCollecion* into *GateDigiCollection*. It also removes hits with zero energy. 
 
-To specify a new signal-processing module (i.e. add a new processing unit in the readout scheme) the following command template should be used::
+A *GateSinglesDigitizer* uses several names:
 
-   /gate/digitizer/insert MODULE 
+* m_digitizerName = users' defined name for a SinglesDigitizer (the default one is "Sinlges", or it is set by /gate/digitizerMgr/name <singles_digitizer_name>) 
+* m_outputName =  <singles_digitizer_name>_<sensitive_detector_name>
+* m_inputName = <input_singles_digitizer_name>_<sensitive_detector_name>, where <input_singles_digitizer_name>=<singles_digitizer_name> by default or can be changed by user with /gate/digitizerMgr/<sensitive_detector_name>/SinglesDigitizer/<singles_digitizer_name>/setInputCollection <input_singles_digitizer_name>.
 
-where **MODULE** is the name of the digitizer module. The order of the module declaration should make sense. The data flow follows the same order as the module declaration in the macro. In a typical scanner, the following sequence works well, athough it is not mandatory (the module names will be explained in the rest of the section):
 
-* insert adder before readout 
-* insert readout before thresholder/upholder 
-* insert blurring before thresholder/upholder 
+**Digitizer Modules**
+
+If you would like to create a new Digitizer Module, you can use example classes: *GateDummyDigitizerModule* and *GateDummyDigitizerModuleMessenger*. Some development advices also could be found there. 
+Your Digitizer Module should be inherited from *GateVDigitizerModule*.
+In the method *Digitize()* put the action of your Digitizer Module.
+
+It is also important to add your Digitizer Module in *GateSinglesDigitizerMessenger*, method *DoInsertion(const G4String&)*.
+ 
+
+**Coincidence Sorter**
+
+If you would like to create a new Coincidence Sorter, as a Digitizer Module, it should be inherited from *GateVDigitizerModule*. In the method *Digitize()* put the action of your Coincidence Sorter.
+It will operate with *GateCoincidenceDigi* and *GateCoincidenceDigiCollection*.
+
+
+
+Tools
+---------------
+
+.. _digi_mac-convertor-label:
+
+Digitizer Macro converter (9.2 and before to 9.3 and after)
+~~~~~~~~~~~~~
+Since version 9.3 Gate digitizer had a big upgrade, thus, some of macro commands had changed. 
+However, the collaboration provide a tool to convert your old macros to new macros which work quite direct in case of a simulation with pone sensitive detector. In case of multiple sensitive detectors the converter also can be used but special care should be taken in order to obtain correct result (Digitizer Module :ref:`_merger-label` could also be useful for you). 
+
+To use the macro convert, the following commands to be done:: 
+
+   pip install gatetools
+   git clone --recursive https://github.com/OpenGATE/GateTools.git
+   cd GateTools
+   pip install -e .
+ 
+Example of usage::
+
+   gt_digi_mac_converter -i digitizer_old.mac -o digitizer_new.mac -sd <SDname> -multi SinglesDigitizer
+
+where *-i* defines input old digitizer macro, *-o* defines output new digitizer macro, *-sd* defines the sensitive detector name (the same as in     /gate/<SDname>/attachCrystalSD), *-multi  <mode>* is the option if you have several SinglesDigitizers or CoincidenceSorters, where <mode> = *SinglesDigitizer* or *CoincidenceSorter*.
+
+
 
 .. _Distributions-label:
 
@@ -175,46 +295,113 @@ The possible type name available corresponds to the five distributions described
    +----------------+--------------------------------------------------------------------------------+
 
 
+Singles Digitizers
+-------------------
+As mentioned above, the information contained in the *hit* does not correspond to what is provided by a real detector. To simulate the digital values (*digis*) that result from the output of the Front End Electronics, the sampling methods of the signal must be specified. To do this, a number of digitizer modules are available and are described below. 
+
+The role of *singles digitizer* is to build, from the *hit* information, the physical observables, which include energy, position, and time of detection for each particle. In addition, the digitizer must implement the required logic to simulate coincidences during PET simulations. Typical usage of digitizer module includes the following actions: 
+
+* simulate detector response 
+* simulate readout scheme 
+* simulate trigger logic
+
+The Singles Digitizer is organized as a chain of digitizer modules that begins with the hit and ends with the single which represents the physical observable seen from the detector.
+   
+As the user creates a GATE simulation with enabled option to save *Singles* and at least one digitizer module, a default *Single Digitizer* named *Singles_<SDname>* is created automatically. 
+
+If one more, new Singles Digitizer is needed, the following command template should be used::
+
+   /gate/digitizerMgr/name <singles_digitizer_name>
+   /gate/digitizerMgr/chooseSD <sensitive_detector_name>
+   /gate/digitizerMgr/insert SinglesDigitizer 
+   
+It is also possible to define input Singles Collection if needed::
+   /gate/digitizerMgr/<sensitive_detector_name>/SinglesDigitizer/<singles_digitizer_name>/setInputCollection Singles
+
+The digitization consists of a series of signal processors, *digitizer modules* in GATE. The output at each step along the series is defined as a *digi* and can be saved at each step (see Output section !!!). These *digis* or*Singles* realistically simulate the physical observables of a detector response to a particle interacting with it. An example is shown in :numref:`Digitizer`.
+
+.. figure:: Digitizer.jpg
+   :alt: Figure 1: Digitizer
+   :name: Digitizer 
+   
+   It is important to notice that the order of the digitizer module declaration should make sense. The data flow follows the same order as the module declaration in the macro. In a typical scanner, the following sequence works well, although it is not mandatory (the module names will be explained in the rest of the section):
+
+* insert adder before readout 
+* insert readout before energy framing
+* insert resolution before energy framing
+
+
+
+.. _digitizer_modules-label:
+
+Digitizer modules
+~~~~~~~~~~~~~~~~~
+
+The *Digitizer module* (electronic read-out simulator) can be used to transform *Hits* to *Digis*.  
+
+The output from a digitizer module corresponds to the signal after it has been processed by the Front End Electronics (FEE).
+
+In order to reproduce in a simulation all distortion effects, generaly, one should use a sequence of Digitizer Modules. Each of them represents a corresponding analytical model. 
+
+
 Adder
-~~~~~
+^^^^^
 
 One particle often creates multiple interactions, and consequently multiple *hits*, within a crystal. The first step of the digitizer is to sum all the *hits* that occur within the same crystal (i.e. the same volume). This is due to the fact that the electronics always measure an integrated signal, and do not have the time or energy resolution necessary to distinguish between the individual interactions of the particle within a crystal. This digitizer action is completed by a module called the adder. The adder should be the first module of a digitizer chain. It acts on the lowest level in the system hierarchy, as explained in :ref:`defining_a_system-label`:
 
 * A system must be used to describe the geometry (also the mother volume name must corresponds to a system name)
 * The lowest level of this system must be attached to the detector volume and must be declared as a *sensitive detector*
 
-The adder regroups *hits* per volume into a *pulse*. If one particle that enters a detector makes multiple *hits* within two different crystal volumes before being stopped, the output of the adder module will consists of two *pulses*. Each *pulse* is computed as follows : the energy is taken to be the total of energies in each volume, the position is obtained with an energy-weighted centroid of the different *hit* positions. The time is equal to the time at which the first *hit* occured.
+If one particle that enters a detector makes multiple *hits* within two different crystal volumes before being stopped, the output of the adder module will consist of two *Singles*. Each *Single* is computed as follows : the energy is taken to be the total of energies in each volume, the position is obtained with an energy-weighted centroid of the different *hit* positions. The time is equal to the time at which the first *hit* occured.
 
 The command to use the adder module is::
 
-   /gate/digitizer/Singles/insert adder
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert    adder
+
+Default energy policy is EnergyCentroid. The following commands can be used to select users energy policy::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/adder/positionPolicy energyWeightedCentroid
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/adder/positionPolicy takeEnergyWinner
+
+**Example**::
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert    adder 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/adder/positionPolicy energyWeightedCentroid
+
 
 Adder Compton
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The adderCompton module has a different behavior than the classic adder, which performs an energy-weighted centroid addition of all electronic and photonic hits.
 Instead, for each electronic energy deposition, the energy is added to the previous photonic hit in the same volume ID (or discarded if none), but the localization remains that of the photonic interaction. That way, the Compton kinematics becomes exact for photonic interations, enabling further studies. The user must use the classic adder afterwards, to handle multiple photonic interactions in the same crystal. The commands to use the adder module are::
 
-   /gate/digitizer/Singles/insert adderCompton
-   /gate/digitizer/Singles/insert adder
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert adderCompton
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert adder
+   
+  
+**Example**::
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert    adderCompton 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert    adder 
+
 
 Readout
-~~~~~~~
+^^^^^^^
 
-With the exception of a detector system where each crystal is read by an individual photo-detector, the readout segmentation is often different from the basic geometrical structures of the detector. The readout geometry is an artificial geometry that is usually associated with a group of sensitive detectors. There are two ways of modelling this readout process : either a winner-takes-all approach that will somewhat model APD-like readout, or a energy-centroid approach that will be closer to the block-PMT readout. Using the winner-takes-all policy, the grouping has to be determined by the user through a variable named *depth* corresponding to the component in the volume hierarchy at which pulses are summed together. Using this variable, the *pulses* are summed if their volume ID's are identical to this level of depth. Using the energy-centroid policy, the depth of the grouping is forced to occur at the 'crystal' level whatever the system used, so the depth variable is ignored. This means that the pulses in a same level just above the crystal level are summed together.
+With the exception of a detector system where each crystal is read by an individual photo-detector, the readout segmentation is often different from the basic geometrical structures of the detector. The readout geometry is an artificial geometry that is usually associated with a group of sensitive detectors. There are two ways of modelling this readout process : either a winner-takes-all approach that will somewhat model APD-like readout, or an energy-centroid approach that will be closer to the block-PMT readout. Using the winner-takes-all policy, the grouping has to be determined by the user through a variable named *depth* corresponding to the component in the volume hierarchy at which pulses are summed together. There is also the *setReadoutVolume* option to choose the level of readout by the name of your system element. Using this variable, the *digis* are summed if their volume ID's are identical to this level of depth. Using the energy-centroid policy, the depth of the grouping is forced to occur at the 'crystal' level whatever the system used, so the depth variable is ignored. This means that the pulses in the same level just above the crystal level are summed together.
 
-The readout module regroups pulses per block (group of *sensitive detectors*). For both policy, the resulting pulse in the block has the total energy of all pulses summed together. For the winner-takes-all policy, the position of the pulse is the one with the maximum energy. For the energy-centroid policy, the position is determined by weighting the crystal indices of each pulse by the deposited energy in order to get the energy centroid position. In this case, only the crystal index is determined, and the actual cartesian coordinates of the resulting pulse are reset to the center of this crystal. If a sub-level of the crystal is used (different layers), then the final sub-level is determined by the one having the maximum energy deposited (so a winner-takes-all approach for these sub-levels of the crystal is used)::
+The readout module regroups pulses per block (group of *sensitive detectors*). For both policy, the resulting pulse in the block has the total energy of all pulses summed together. For the winner-takes-all policy, the position of the pulse is the one with the maximum energy. For the energy-centroid policy, the position is determined by weighting the crystal indices of each pulse by the deposited energy in order to get the energy centroid position. In this case, only the crystal index is determined, and the actual cartesian coordinates of the resulting pulse are reset to the center of this crystal. If a sub-level of the crystal is used (different layers), then the final sub-level is determined by the one having the maximum energy deposited (so a winner-takes-all approach for these sublevels of the crystal is used)::
 
-   /gate/digitizer/Singles/insert readout
-   /gate/digitizer/Singles/readout/setPolicy myPolicy
-   /gate/digitizer/Singles/readout/setDepth X
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert readout
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/readout/setPolicy myPolicy
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/readout/setDepth X
    or equivalent to setDepth command
-   /gate/digitizer/Singles/readout/setReadoutVolume <YourVolumeName>
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/setReadoutVolume <YourVolumeName>
    
 The parameter *myPolicy* can be *TakeEnergyWinner* for the winner-takes-all policy or *TakeEnergyCentroid* for the energy centroid policy.
-If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used. To set/force your own depth for centroid policy, one can use:
+If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used. To set/force your own depth for centroid policy, one can use::
 
- /gate/digitizer/Singles/readout/forceReadoutVolumeForEnergyCentroid    true 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/readout/forceReadoutVolumeForEnergyCentroid true 
  
 If the winner-takes-all policy is used, then the user must choose the *depth* or *Volume* at which the readout process takes place. If the *setPolicy* command is not set, then the winner-takes-all policy is chosen by default in order to be back-compatible with previous Gate releases.
 
@@ -231,11 +418,11 @@ The importance of the *setDepth* command line when using the winner-takes-all po
 
 If one PMT reads the four modules in the axial direction, the *depth* should be set with the command::
 
-   /gate/digitizer/Singles/readout/setDepth 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 1 
 
 The energy of this *single* event is the sum of the energy of the pulses inside the white rectangle (*rsector*) of :numref:`Depth-p4`. However, if individual PMTs read each module (group of crystals), the *depth* should be set with the command::
 
-   /gate/digitizer/Singles/readout/setDepth 2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 2 
 
 In this case, the energy of the *single* event is the sum of the energies of the pulses inside the red box (*module*) of :numref:`Depth-p4`.
 
@@ -247,60 +434,382 @@ In this case, the energy of the *single* event is the sum of the energies of the
 
 The next task is to transform this output *pulse* from the readout module into a *single* which is the physical observable of the experiment. This transformation is the result of the detector response and should mimic the behaviors of the photo-detector, electronics, and acquisition system.
 
-Blurring : Energy blurring
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Energy resolution 
+^^^^^^^^^^^^^^^^^
+*(Previously blurring, crystal blurring, local energy blurring, Crystal Blurring(partially))*
 
-The *blurring* pulse-processor module simulates Gaussian blurring of the energy spectrum of a pulse after the *readout* module. This is accomplished by introducing a resolution, :math:`R_0` (FWHM), at a given energy, :math:`E_0`. According to the camera, the energy resolution may follow different laws, such as an inverse square law or a linear law. 
+The *energy resolution* digitizer module simulates Gaussian blurring of the energy spectrum of a pulse after the *readout* module. This is accomplished by introducing a resolution, :math:`R_0` (FWHM), at a given energy, :math:`E_0`. To enable module::
+ 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert   energyResolution
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhm 0.15
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyOfReference 511. keV
+   
+In the case of a scanner where all the detectors are made of the same type of crystal, it is often useful to assign a different energy resolution for each crystal in the detector block, between a minimum and a maximum value. To model the efficiency of the system, a coefficient (between 0 and 1) can also be set. As an example, a random blurring of all the crystals between 15% and 35% at a reference energy of 511 keV, and with a quantum efficiency of 90% can be modelled using the following commands::
 
-For inverse square law (:math:`R=R_0\frac{\sqrt{E_0}}{\sqrt{E}}`), one must specify the inverse square law and fix the attributes like the energy of reference and the resolution (example of a 15% resolution @ 511 KeV)::
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert   energyResolution
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhmMin 0.15
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhmMin 0.35
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/energyOfReference 511. keV
+    
+According to the camera, the energy resolution may follow different laws, such as an inverse square law or a linear law. 
 
-   /gate/digitizer/Singles/blurring
-   /gate/digitizer/Singles/blurring/setLaw inverseSquare
-   /gate/digitizer/Singles/blurring/inverseSquare/setResolution 0.15
-   /gate/digitizer/Singles/blurring/inverseSquare/setEnergyOfReference 511. keV
+The inverse square law (:math:`R=R_0\frac{\sqrt{E_0}}{\sqrt{E}}`), is used by default.
 
 For linear law, one must specify the linear law and fix the attributes like the energy of reference, the resolution and the slope::
 
-   /gate/digitizer/Singles/blurring
-   /gate/digitizer/Singles/blurring/setLaw linear
-   /gate/digitizer/Singles/blurring/linear/setResolution 0.15
-   /gate/digitizer/Singles/blurring/linear/setEnergyOfReference 511. keV
-   /gate/digitizer/Singles/blurring/linear/setSlope -0.055 1/MeV
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/slope -0.055 1/MeV
 
-Blurring : crystal blurring
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Example**::
+ 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert   energyResolution
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/fwhm 0.15
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/energyOfReference 511. keV
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/slope -0.055 1/MeV
+ 
 
-This type of blurring is used for the scanners where all the detectors are made of the same type of crystal. In this case, it is often useful to assign a different energy resolution for each crystal in the detector block, between a minimum and a maximum value. To model the efficiency of the system, a coefficient (between 0 and 1) can also be set.
+Time resolution
+^^^^^^^^^^^^^^^
+The *time resolution* module introduces a Gaussian blurring in the detection time. It works in the same manner as the *energy resolution* module, but with time instead of energy. To set a Gaussian temporal resolution (FWHM) of 1.4 ns, use the following commands::
 
-As an example, a random blurring of all the crystals between 15% and 35% at a reference energy of 511 keV, and with a quantum efficiency of 90% can be modelled using the following commands::
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert timeResolution 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/fwhm 1.4 ns
 
-   /gate/digitizer/Singles/insert crystalblurring 
-   /gate/digitizer/Singles/crystalblurring/setCrystalResolutionMin 0.15 
-   /gate/digitizer/Singles/crystalblurring/setCrystalResolutionMax 0.35 
-   /gate/digitizer/Singles/crystalblurring/setCrystalQE 0.9 
-   /gate/digitizer/Singles/crystalblurring/setCrystalEnergyOfReference 511.keV 
+**Example**::
+ 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert   timeResolution
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/fwhm 1.4 ns
 
-In this example, for each interaction the program randomly chooses a crystal resolution between 0.15 and 0.35. The crystals are not assigned a constant resolution. The crystal quantum efficiency is set using **setCrystalQE** and represents the probability for the event to be detected by the photo-detector. This parameter represents the effect of the transfer efficiency of the crystal and of the quantum efficiency of the photo-detector.
+Spatial resolution
+^^^^^^^^^^^^^^^^^^
+*(Previously spatial blurring)*
 
-Blurring : Local energy blurring for different crystals
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The spatial resolution is assumed to follow a Gaussian distribution defined by its width::
 
-The LocalBlurring module is very similar to the energy *blurring* module, but different energy resolutions are applied to different volumes. This type of blurring is useful for detectors with several layers of different scintillation crystals (e.g. depth of interaction measurement with a phoswich module in a CylindricalPET system).
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert spatialResolution 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhm 2.0 mm 
 
-If a detector has a resolution of 15.3% @ 511 KeV for a crystal called crystal1 and has a resolution of 24.7% @ 511 KeV for another crystal (crystal2) in a phoswich configuration, the following commands should be used::
+or if resolution is varying for X, Y and Z:: 
 
-   /gate/digitizer/Singles/insert localBlurring  
-   /gate/digitizer/Singles/localBlurring/chooseNewVolume crystal1 
-   /gate/digitizer/Singles/localBlurring/crystal1/setResolution 0.153 
-   /gate/digitizer/Singles/localBlurring/crystal1/setEnergyOfReference 511 keV 
-   /gate/digitizer/Singles/localBlurring/chooseNewVolume crystal2 
-   /gate/digitizer/Singles/localBlurring/crystal2/setResolution 0.247 
-   /gate/digitizer/Singles/localBlurring/crystal2/setEnergyOfReference 511 keV 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhmX 2.0 mm  
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhmY 3.0 mm 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhmZ 1.0 mm 
 
-BEWARE: crystal1 and crystal2 must be valid *Sensitive Detector* volume names !!
+In case if the position obtained after applying a Gaussian blurring exceeds the limits of the original volume, it is set to the surface of that volume (ex, crystal) or surface of a group of volumes (ex, block of crystals). For example, in SPECT the final position should be located within the original detector volume (smallest volume), in this case one should apply the following commande::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/confineInsideOfSmallestElement true
+
+BEWARE: This relocation procedure is validated only for the first group level of crystals.
+
+**Example**::
+ 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert   spatialResolution
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/fwhm 1.0 mm
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/confineInsideOfSmallestElement true 
+   
+Energy Framing
+^^^^^^^^^^^^^^
+*Previously Thresholder and Upholder*
+   
+The *Energy Framing* module allows the user to select an energy window to discard low and high energy events. The low energy cut, supplied by the user, represents a threshold response, below which the detector remains inactive. The user-supplied high energy cut is the maximum energy the detector will register. In both PET and SPECT analysis, the proper setting of these windows is crucial to mimic the behavior of real scanners, in terms of scatter fractions and count rate performances for instance. The energy selection for the photo-peak is performed using the following commands::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert    energyFraming
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMin 400. keV
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMax 600. keV
+
+**Example**: 
+
+In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated with each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and energy frames::
+
+   /gate/digitizerMgr/name Window1
+   /gate/digitizerMgr/chooseSD crystal
+   /gate/digitizerMgr/insert SinglesDigitizer
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window1/setInputCollection Singles
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window1/insert energyFraming
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window1/energyFraming/setMin 315 keV
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window1/energyFraming/setMax 328 keV
+   
+   /gate/digitizerMgr/name Window2
+   /gate/digitizerMgr/chooseSD crystal
+   /gate/digitizerMgr/insert SinglesDigitizer
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window2/setInputCollection Singles
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window2/insert energyFraming
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window2/energyFraming/setMin 328 keV
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window2/energyFraming/setMax 400 keV
+   
+   /gate/digitizerMgr/name Window3
+   /gate/digitizerMgr/chooseSD crystal
+   /gate/digitizerMgr/insert SinglesDigitizer
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window3/setInputCollection Singles
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window3/insert energyFraming
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window3/energyFraming/setMin 328 keV
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Window3/energyFraming/setMax 400 keV 
+
+   
+ When specifying the interfile output (see :ref:`interfile_output_of_projection_set-label`), the different window names must be added with the following commands::
+
+   /gate/output/projection/setInputDataName Window1
+   /gate/output/projection/addInputDataName Window2
+   /gate/output/projection/addInputDataName Window3
+   
+   
+Efficiency
+^^^^^^^^^^
+*(Previously Energy Efficiency, Local efficiency, Crystal Blurring(partially))*
+The efficiency of an imaging system is an important parameter, as it defines its sensitivity: photoelectron conversion probability, transport efficiency inside of a crystal and on its border on the way toward photocathode, quantum efficiency of the photocathode and other types of efficiencies. 
+
+GATE proposes an efficiency digitizer module to take into account such kind of effects::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert    efficiency
+   
+Simplest way is to define efficiency independently of energy and same for all crystals::
+
+    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/efficiency/setUniqueEfficiency <value between 0 and 1>
+ 
+
+Energy mode
+"""""""""""
+To assign efficiency as a function of energy with a help of GATE Distribution :ref:`Distributions-label`, use::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/efficiency/setMode energy
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/efficiency/setEfficiency <User_Distribution>
+
+
+**Example**:: 
+/gate/distributions/name energy_eff_distrib
+/gate/distributions/insert Exponential
+/gate/distributions/energy_eff_distrib/setLambda 1 keV
+/gate/distributions/energy_eff_distrib/setAmplitude 100 keV
+
+and after::
+
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/setMode energy
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/setEfficiency energy_eff_distrib
+
+
+Or read efficiencies from a file:
+
+**Example**:: 
+
+/gate/distributions/name energy_eff_distrib
+/gate/distributions/insert File
+/gate/distributions/energy_eff_distrib_file/autoX false
+/gate/distributions/energy_eff_distrib_file/setUnitX keV
+/gate/distributions/energy_eff_distrib_file/setColumnX 0
+/gate/distributions/energy_eff_distrib_file/setColumnY 1
+/gate/distributions/energy_eff_distrib_file/setFileName energy_efficiency.dat
+/gate/distributions/energy_eff_distrib_file/read
+
+where *energy_efficiency.dat* has structure <energy in keV or MeV specified with ``/setUnitX`` above> and <efficiency> (do not forget to end the last line with a return) :: 
+
+   100 0.01
+   200 0.12
+   511 0.43
+
+
+Crystal mode
+""""""""""""
+
+The different crystals, or groups of crystals, composing a PET/SPECT system can be characterized by their own efficiency. GATE offers a method to describe such efficiency per crystal or volume. To define the efficiency distribution in the scanner, one can specify which level of the volume hierarchy of the system are differentiated (see the examples in :ref:`command_line-label`). Then the distribution of efficiency, for each differentiated volume, is specified via a generic distribution, as described in :ref:`Distributions-label`::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/efficiency/setMode crystal
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/efficiency/setEfficiency <User_Distribution>
+
+
+**Example**
+
+In the following examples, one assumes that the system is composed of 8 blocks (level1) of 64 crystals (level2). The first example shows how to specify one efficiency per block, defined in a file named **eff_per_block.dat**, containing 8 values (one per block, one per line in the file, do not forget to end the last line with a return)::
+
+   /gate/distributions/name block_eff_distrib 
+   /gate/distributions/insert File 
+   /gate/distributions/block_eff_distrib/autoX true 
+   /gate/distributions/block_eff_distrib/setFileName eff_per_block.dat 
+   /gate/distributions/block_eff_distrib/read
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert efficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/enableLevel 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/disableLevel 2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/setEfficiency block_eff_distrib 
+
+In the second example, one specifies a different efficiency for each crystal inside a block, but the scheme is repeated from one block to another. So a pattern of 64 efficiency values is defined in the file **eff_within_block.dat**::
+
+   /gate/distributions/name within_block_eff_distrib 
+   /gate/distributions/insert File 
+   /gate/distributions/within_block_eff_distrib/autoX true 
+   /gate/distributions/within_block_eff_distrib/setFileName eff_within_block.dat 
+   /gate/distributions/within_block_eff_distrib/read
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert efficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/disableLevel 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/enableLevel 2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/setEfficiency within_block_eff_distrib 
+
+Finally, in the next example, each crystal has its own efficiency, described in the file **eff_per_crystal.dat** containing 8 x 64 elements::
+
+   /gate/distributions/name crystal_eff_distrib 
+   /gate/distributions/insert File 
+   /gate/distributions/crystal_eff_distrib/autoX true 
+   /gate/distributions/crystal_eff_distrib/setFileName eff_per_crystal.dat 
+   /gate/distributions/crystal_eff_distrib/read
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert efficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/enableLevel 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/enableLevel 2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/efficiency/setEfficiency crystal_eff_distrib
+
+.. _pile-up-label:
+
+Pile-up
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An important characteristic of a detector is its response time, which is the time that the detector takes to form the signal after the arrival of the radiation. The duration of the signal is also important. During this period, if a second event can be accepted, this second signal will *pile up* on the first. The resulting digi is a combinaison in terms of time and energy, of the two signals. If N pulses enter in the time window of the same sensitive volume (set by the depth of the system level), the output digi of the pile-up module will be a digi with an output energy defined by the sum of the energies :math:`( E_{out}= \sum_{i=0}^{N} E_{i} )` and a time set to the last time of the last digi participating to the pile-up :math:`t_{out}=t_{N}`. Since multiple events are grouped into a unique event with the pile-up effect, one can consider this as a loss of events occuring during a given time length, which can be seen as a dead time effect. Moreover, since the pile-up end time is always updated with the last single occuring, the effect is more or less represented by a paralysable dead-time. To insert a pile-up corresponding to a signal formation time of 100 ns in a module corresponding to the crystal group as described by the 4th level of the system or by its volume_name (which has to be previously attached to a level of the system), one should use::
+
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert pileup 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/pileup/setDepth 4 # to set depth 
+   or
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/pileup/setPileupVolume your_volume_name # to set volume name
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/pileup/setPileup 100 ns
+
+Dead time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Due to the shaping time of signals or for any other reason, each detection of a single event can hide the subsequent single detected on the same electronic module. This loss lasts a certain amount of time, depending on the characteristics of the detectors used as well as of the readout electronics. The dead time can be modelled in GATE as shown below. Two models of the dead-time have been implemented in the digitizer: *paralysable* and *nonparalysable* response. These models can be implemented *event by event* during a simulation. The detailed method underlying these models can be found in Knoll 1979 (Radiation detection and measurement, John Wiley & Sons, New York). The fundamental assumptions made by these two models are illustrated in :numref:`Like_knoll`.
+
+
+.. figure:: Like_knoll.jpg
+   :alt: Figure 4: Like_knoll
+   :name: Like_knoll
+
+   For 7 incoming particles and a fixed dead-time :math:`\tau`, the *nonparalysable* electronic readout will accept 3 particles, and the *paralysable* will accept only 1 particle (the dashed arrows represents the removed events, while the solid arrows are the accepted singles)
+
+The dead time module is applied to a specific volume within the Sensitive Detector system hierarchy. All events taking place within this volume level will trigger a dead-time detector response. This action of the digitizer simulates the time during which this detector, busy at processing a particle, will not be able to process the next one. Moreover, one can simulate the case where data are accumulated into a buffer, which is written to a mass storage having a time access, during which no other data can be processed. In such a case, the dead time is not started after the first data, but once the buffer is full. This case can also be simulated in GATE.
+
+To apply a dead-time to the volume_name (which has to be previously attached to a level of the system), the following commands can be used::
+
+   # ATTACHEMENT TO THE SYSTEM 
+   /gate/systems/system_name/system_level_name/attach volume_name 
+   ..
+   ..
+   # DEADTIME 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert deadtime 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setDeadTime 100000. ns 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setMode paralysable 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/chooseDTVolume volume_name 
+
+The name *system_name* and its corresponding *system_level_name* do not exist and have to be chosen in the tables given in :ref:`defining_a_system-label`.
+
+In the second example, a dead time corresponding to a disk access of 1 µs for a memory buffer of 1 Mbyte is given. The *setMode* command specifies the behavior of the dead time during the disk access. If this mode is set to 0, the memory buffer is assumed to be a shared resource for the computer, and thus is not available during the disk writing. So, no data can fill the buffer during the disk access. On the other hand, in case of model 1, the buffer is immediately freed after being sent to the disk controller. Data are thus not rejected, unless the buffer is filled up again, before the disk access is finished. In such a case, the dead time module will be totally transparent (ie. will not reject any data), unless the counting rate is high enough to fill the buffer in a time lower than the disk access dead time::
+
+   # ATTACHEMENT TO THE SYSTEM 
+   /gate/systems/system_name/system_level_name/attach volume_name
+   ..
+   ..
+   # DEADTIME 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert deadtime 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/deadtime/setDeadTime 1 mus 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/deadtime/setMode nonparalysable 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/deadtime/chooseDTVolume volume_name 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/deadtime/setBufferSize 1 MB 
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/deadtime/setBufferMode 0
+   
+   
+   or in case of sensitive detector with a name "crystal":
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert deadtime 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setDeadTime 1 mus 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setMode nonparalysable 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/chooseDTVolume volume_name 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setBufferSize 1 MB 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/deadtime/setBufferMode 0
+
+
+Noise
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Different sources of background noise exist in a PET/SPECT architecture. For example, the electronics can introduce its own noise, or some crystals used for the detection, such as LSO, contains radioactive nucleus, which can contribute to the background detection count rate. Within GATE, the *noise* module adds such background events, in a totally generic way, so that any kind of source of noise can be simulated. To do so, the energy and the inter-event time interval are chosen randomly, for each event, into user defined distributions, by using the mechanism described in :ref:`Distributions-label`.
+
+In the following example, a noise source is introduced, whose energy is distributed according to a Gaussian law, and whose time distribution follows a Poisson process. To do this, one first defines the two necessary distributions. Since the noise description uses the distribution of the time interval between consecutive events, one has to define an exponential distribution. Indeed, if the probability of detecting k events in a time interval of t is distributed along a Poisson law :math:`P_1(k,t) = e^{-\lambda t }\frac{(\lambda t)^k}{k!}`, then the probability density of having a time interval in the range :math:`[t;t+dt]` between two consecutive events is given by :math:`dP_2(t) = \lambda e^{-\lambda t}dt`::
+
+   /gate/distributions/name energy_distrib 
+   /gate/distributions/insert Gaussian 
+   /gate/distributions/energy_distrib/setMean 450 keV 
+   /gate/distributions/energy_distrib/setSigma 1 keV
+   
+   /gate/distributions/name dt_distrib 
+   /gate/distributions/insert Exponential 
+   /gate/distributions/dt_distrib/setLambda 7.57 mus
+   
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert noise
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/noise/setDeltaTDistribution dt_distrib 
+   /gate/digitizer/Mgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/noise/setEnergyDistribution energy_distrib
+   
+   or in case of sensitive detector with a name "crystal":
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert noise 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/noise/setDeltaTDistribution dt_distrib 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/noise/setEnergyDistribution energy_distrib
+
+The special event ID, **event_ID=-2**, is assigned to these noise events.
+
+
+.. _merger-label:
+
+Merger (for multiple sensitive detectors)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In case of multiple sensitive detectors::
+
+   /gate/<detector1>/attachCrystalSD
+   /gate/<detector2>/attachCrystalSD
+
+it is possible at some point of your simulation to merge Singles from these different sensitive detectora by doing :: 
+  
+  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/insert merger
+  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/addInput <FullNameOfInputSinglesCollectionForDetector1>
+
+where <FullNameOfInputSinglesCollection> is **composed specific name**: <lastDigitizerModuleUsedForDetector2>/<singles_digitizer_name>_<detector1>
+
+It is easy to see the correct use of the module on the exemple:: 
+   
+   # ATTACH SD
+   /gate/crystal1/attachCrystalSD
+   /gate/crystal2/attachCrystalSD
+   ...
+   # DIGITIZER
+   /gate/digitizerMgr/crystal1/SinglesDigitizer/Singles/insert adder
+   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert adder
+   
+   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert       merger
+   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/addInput     adder/Singles_crystal1
+   
+**Important note:** merger must be inserted for the last attached sensitive detector otherwise it will not work.
+
+In the following of merger digitizer module, apply other modules only on the senstivie detector to which the merger was inserted. 
+
+Example:: 
+
+   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert                        readout
+
+In the output you will have Singles collections stored for both sensitive detectors, however only for the last attached you will have the result corresponding to merged output(ex., in Root):: 
+
+   Singles_crystal1 #(contains the outpout of last digitizer module used for crystal1. adder in this ex.) 
+   Singles_crystal2 #(contains the outpout of last digitizer module used for crystal2. adder+merger+readout in this ex.) 
+
+Thus, the output of *Singles_crystal2* should be used in the following analysis or be inserted for CoincideneSorter::
+
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal2
+
+
+
+    
+
+
+
+
+Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Blurring: Intrinsic resolution blurring with crystals of different compositions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 
 This blurring pulse-processor simulates a local Gaussian blurring of the energy spectrum (different for different crystals) based on the following model:
 
@@ -388,7 +897,7 @@ After the introduction of the lightYield  (LY), transferEfficiency :math:`(\bar{
 In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in :ref:`thresholder_upholder-label`. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
 
 Calibration
-~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Calibration module of the pulse-processor models a calibration between :math:`N_{phe}` and :math:`Energy`. This is useful when using the class(es) GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency. In addition, a user specified calibration factor can be used. To set a calibration factor on the energy, use the following commands::
 
@@ -398,7 +907,7 @@ The Calibration module of the pulse-processor models a calibration between :math
 If the calibration digitizer is used without any value, it will correct the energy as a function of values used in GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency.
 
 Crosstalk
-~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The crosstalk module simulates the optical and/or electronic crosstalk of the scintillation light between neighboring crystals. Thus, if the input pulse arrives in a crystal array, this module creates pulses around it (in the edge and corner neighbor crystals). The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module that distributes 10% of input pulse energy to the adjacent crystals and 5% to the corner crystals, the following commands can be used::
 
@@ -411,87 +920,9 @@ In this example, a pulse is created in each neighbor of the crystal that receive
 
 **BEWARE:** this module works only for a chosen volume that is an array repeater!!!
 
-.. _thresholder_upholder-label:
 
-Thresholder & Upholder
-~~~~~~~~~~~~~~~~~~~~~~
-
-The *Thresholder/Upholder* modules allow the user to apply an energy window to discard low and high energy photons. The low energy cut, supplied by the user, represents a threshold response, below which the detector remains inactive. The user-supplied high energy cut is the maximum energy the detector will register. In both PET and SPECT analysis, the proper setting of these windows is crucial to mimic the behavior of real scanners, in terms of scatter fractions and count rate performances for instance. In a typical PET scanner, the energy selection for the photo-peak is performed using the following commands. A low threshold of 0 keV allows the user to see all the events, and is often useful for debugging a simulation::
-
-   /gate/digitizer/Singles/insert thresholder 
-   /gate/digitizer/Singles/thresholder/setThreshold 250. keV 
-   /gate/digitizer/Singles/insert upholder 
-   /gate/digitizer/Singles/upholder/setUphold 750. keV
-
-Energy windows
-~~~~~~~~~~~~~~
-
-In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated to each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and thresholds (see :ref:`thresholder_upholder-label`)::
-
-   /gate/digitizer/name Window1
-   /gate/digitizer/insert singleChain
-   /gate/digitizer/Window1/setInputName Singles
-   /gate/digitizer/Window1/insert thresholder
-   /gate/digitizer/Window1/thresholder/setThreshold 315 keV
-   /gate/digitizer/Window1/insert upholder
-   /gate/digitizer/Window1/upholder/setUphold 328 keV
-   
-   /gate/digitizer/name Window2
-   /gate/digitizer/insert singleChain
-   /gate/digitizer/Window2/setInputName Singles
-   /gate/digitizer/Window2/insert thresholder
-   /gate/digitizer/Window2/thresholder/setThreshold 328 keV
-   /gate/digitizer/Window2/insert upholder
-   /gate/digitizer/Window2/upholder/setUphold 400 keV
-   
-   /gate/digitizer/name Window3
-   /gate/digitizer/insert singleChain
-   /gate/digitizer/Window3/setInputName Singles
-   /gate/digitizer/Window3/insert thresholder
-   /gate/digitizer/Window3/thresholder/setThreshold 400 keV
-   /gate/digitizer/Window3/insert upholder
-   /gate/digitizer/Window3/upholder/setUphold 416 keV 
-
-When specifying the interfile output (see :ref:`interfile_output_of_projection_set-label`), the different window names must be added with the following commands::
-
-   /gate/output/projection/setInputDataName Window1
-   /gate/output/projection/addInputDataName Window2
-   /gate/output/projection/addInputDataName Window3
-
-Sigmoidal thresholder
-~~~~~~~~~~~~~~~~~~~~~
-
-The *Sigmoidal thresholder* models a threshold discriminator based on a sigmoidal function. A sigmoidal function is an S-shaped function of the form, :math:`\sigma(x)=\frac{1}{1+c\exp(-a x)}`, which acts as an exponential ramp from 0 to 1:
-
-:math:`\sigma(E)=\frac{1}{1+\exp\big(\alpha\;\frac{E-E_0}{E_0}\big)}`
-
-where the parameter :math:`\alpha` is proportional to the slope at symmetrical point :math:`E_0 ( \sigma(E_0)=1/2 )`.  
-
-For this type of threshold discriminator, the user chooses the threshold **setThreshold**, the percentage of acceptance for this threshold **setThresholdPerCent**, and the :math:`\alpha` parameter **setThresholdAlpha**. With these parameters and the input *pulse* energy, the function is calculated. If the result is bigger than a random number generated between 0 and 1, the *pulse* is accepted and copied into the output pulse-list. On the other hand, if this criteria is not met, the input *pulse* is discarded::
-
-   /gate/digitizer/Singles/insert sigmoidalThresholder 
-   /gate/digitizer/Singles/sigmoidalThresholder/setThreshold 250 keV 
-   /gate/digitizer/Singles/sigmoidalThresholder/setThresholdAlpha 60. 
-   /gate/digitizer/Singles/sigmoidalThresholder/setThresholdPerCent 0.95
-
-Time resolution
-~~~~~~~~~~~~~~~
-
-The *temporal resolution* module introduces a Gaussian blurring in the time domain. It works in the same manner as the *blurring* module, but with time instead of energy. To set a Gaussian temporal resolution (FWHM) of 1.4 ns, use the following commands::
-
-   /gate/digitizer/Singles/insert timeResolution 
-   /gate/digitizer/Singles/timeResolution/setTimeResolution 1.4 ns
-
-Spatial blurring
-~~~~~~~~~~~~~~~~
-
-For SPECT simulations, the spatial resolution is assumed to follow a Gaussian distribution defined by its width :math:`\sigma`::
-
-   /gate/digitizer/Singles/insert spblurring 
-   /gate/digitizer/Singles/spblurring/setSpresolution 2.0 mm 
-   /gate/digitizer/Singles/spblurring/verbose 1
-
-BEWARE: The final position of the pulse is located within the original detector volume  (smallest volume). If the position obtained after applying a Gaussian blurring exceeds the limits of the original volume, it is set to the surface of that volume.  In other words, the volumeID of the pulse does not change by the application of this module. 
+Spatial blurring in sinogrmas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In PET analysis, coincidence events provide the lines of response (LOR) needed for the image reconstruction. Only the two crystal numbers are transferred by the simulation. The determination of these crystal numbers is based on the crystal in which the highest energy has been deposited. Without additional spatial blurring of the crystal, simulation results will always have a better spatial resolution than experimental measurements. This module is only available for the *ecat* system. The spatial blurring is based on a 2D Gaussian function::
 
@@ -501,76 +932,11 @@ In PET analysis, coincidence events provide the lines of response (LOR) needed f
    /gate/output/sinogram/setTangCrystalBlurring Your_Value_1 mm 
    /gate/output/sinogram/setAxialCrystalBlurring Your_Value_2 mm
 
-Noise
-~~~~~
 
-Different sources of background noise exist in a PET/SPECT architecture. For example, the electronics can introduce its own noise, or some crystals used for the detection, such as LSO, contains radioactive nucleus, which can contribute to the background detection count rate. Within GATE, the *noise* module adds such background events, in a totally generic way, so that any kind of source of noise can be simulated. To do so, the energy and the inter-event time interval are chosen randomly, for each event, into user defined distributions, by using the mechanism described in :ref:`Distributions-label`.
 
-In the following example, a noise source is introduced, whose energy is distributed according to a Gaussian law, and whose time distribution follows a Poisson process. To do this, one first defines the two necessary distributions. Since the noise description uses the distribution of the time interval between consecutive events, one has to define an exponential distribution. Indeed, if the probability of detecting k events in a time interval of t is distributed along a Poisson law :math:`P_1(k,t) = e^{-\lambda t }\frac{(\lambda t)^k}{k!}`, then the probability density of having a time interval in the range :math:`[t;t+dt]` between two consecutive events is given by :math:`dP_2(t) = \lambda e^{-\lambda t}dt`::
-
-   /gate/distributions/name energy_distrib 
-   /gate/distributions/insert Gaussian 
-   /gate/distributions/energy_distrib/setMean 450 keV 
-   /gate/distributions/energy_distrib/setSigma 1 keV
-   
-   /gate/distributions/name dt_distrib 
-   /gate/distributions/insert Exponential 
-   /gate/distributions/dt_distrib/setLambda 7.57 mus
-   
-   /gate/digitizer/Singles/insert noise 
-   /gate/digitizer/Singles/noise/setDeltaTDistribution dt_distrib 
-   /gate/digitizer/Singles/noise/setEnergyDistribution energy_distrib
-
-The special event ID, **event_ID=-2**, is assigned to these noise events.
-
-.. _local_efficiency-label:
-
-Local efficiency
-~~~~~~~~~~~~~~~~
-
-The different crystals, or groups of crystals, composing a PET/SPECT system can be characterized by their own efficiency. GATE offers a method to describe such efficiency per crystal or volume. To define the efficiency distribution in the scanner, one can specify which level of the volume hierarchy of the system are differentiated (see the examples in :ref:`command_line-label`). Then the distribution of efficiency, for each differentiated volume, is specified via a generic distribution, as described in :ref:`Distributions-label`.
-
-In the following examples, one assumes that the system is composed of 8 blocks (level1) of 64 crystals (level2). The first example shows how to specify one efficiency per block, defined in a file named **eff_per_block.dat**, containing 8 values (one per block)::
-
-   /gate/distributions/name block_eff_distrib 
-   /gate/distributions/insert File 
-   /gate/distributions/block_eff_distrib/autoX true 
-   /gate/distributions/block_eff_distrib/setFileName eff_per_block.dat 
-   /gate/distributions/block_eff_distrib/read
-   
-   /gate/digitizer/Singles/insert localEfficiency 
-   /gate/digitizer/Singles/localEfficiency/enableLevel 1 
-   /gate/digitizer/Singles/localEfficiency/disableLevel 2 
-   /gate/digitizer/Singles/localEfficiency/setEfficiency block_eff_distrib 
-
-In the second example, one specifies a different efficiency for each crystal inside a block, but the scheme is repeated from one block to another. So a pattern of 64 efficiency values is defined in the file **eff_within_block.dat**::
-
-   /gate/distributions/name within_block_eff_distrib 
-   /gate/distributions/insert File 
-   /gate/distributions/within_block_eff_distrib/autoX true 
-   /gate/distributions/within_block_eff_distrib/setFileName eff_within_block.dat 
-   /gate/distributions/within_block_eff_distrib/read
-   
-   /gate/digitizer/Singles/insert localEfficiency 
-   /gate/digitizer/Singles/localEfficiency/disableLevel 1 
-   /gate/digitizer/Singles/localEfficiency/enableLevel 2 
-   /gate/digitizer/Singles/localEfficiency/setEfficiency within_block_eff_distrib 
-
-Finally, in the next example, each crystal has its own efficiency, described in the file **eff_per_crystal.dat** containing 8 x 64 elements::
-
-   /gate/distributions/name crystal_eff_distrib 
-   /gate/distributions/insert File 
-   /gate/distributions/crystal_eff_distrib/autoX true 
-   /gate/distributions/crystal_eff_distrib/setFileName eff_per_crystal.dat 
-   /gate/distributions/crystal_eff_distrib/read
-   
-   /gate/digitizer/Singles/insert localEfficiency 
-   /gate/digitizer/Singles/localEfficiency/enableLevel 1 
-   /gate/digitizer/Singles/localEfficiency/enableLevel 2 
-   /gate/digitizer/Singles/localEfficiency/setEfficiency crystal_eff_distrib
 
 Memory buffers and bandwidth
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To mimic the effect of limited transfer rate, a module models the data loss due to an overflow of a memory buffer, read periodically, following a given reading frequency. This module uses two parameters, the reading frequency :math:`\nu ` and the memory depth :math:`D` . Moreover, two reading methods can be modelled, that is, in an event per event basis (an event is read at each reading clock tick), or in a full buffer reading basic (at each reading clock tick, the whole buffer is emptied out). In the first reading method, the data rate is then limited to :math:`\nu` , while in the second method, the data rate is limited to :math:`D\cdot\nu`. When the size limit is reached, any new pulse is rejected, until the next reading clock tick arrival which frees a part of the buffer. In such a case, a non null buffer depth allows to manage a local rise of the input data flow. To specify a buffer, read at 10 MHz, with a buffer depth of 64 events, in a mode where the whole buffer is read in one clock tick, one can use::
 
@@ -581,66 +947,15 @@ To mimic the effect of limited transfer rate, a module models the data loss due 
 
 The chain *Your_Single_chain* can be the default chain *Singles* or any of single chain that the user has defined. The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
 
-.. _pile-up-label:
 
-Pile-up
-~~~~~~~
-
-An important characteristic of a detector is its response time, which is the time that the detector takes to form the signal after the arrival of the radiation. The duration of the signal is also important. During this period, if a second event can be accepted, this second signal will *pile up* on the first. The resulting pulse is a combinaison in terms of time and energy, of the two signals. If N pulses enter in the time window of the same sensitive volume (set by the depth of the system level), the output pulse of the pile-up module will be a pulse with an output energy defined by the sum of the energies :math:`( E_{out}= \sum_{i=0}^{N} E_{i} )` and a time set to the last time of the last pulse participating to the pile-up :math:`t_{out}=t_{N}`. Since multiple events are grouped into a unique event with the pile-up effect, one can consider this as a loss of events occuring during a given time length, which can be seen as a dead time effect. Moreover, since the pile-up end time is always updated with the last single occuring, the effect is more or less represented by a paralysable dead-time. To insert a pile-up corresponding to a signal formation time of 100 ns in a module corresponding to the crystal group as described by the 4th level of the system, one should use::
-
-   /gate/digitizer/Singles/insert pileup 
-   /gate/digitizer/Singles/pileup/setDepth 4 
-   /gate/digitizer/Singles/pileup/setPileup 100 ns
-
-Dead time
-~~~~~~~~~
-
-Due to the shaping time of signals or for any other reason, each detection of a single event can hide the subsequent single detected on the same electronic module. This loss lasts a certain amount of time, depending on the characteristics of the detectors used as well as of the readout electronics. The dead time can be modelled in GATE as shown below. Two models of the dead-time have been implemented in the digitizer: *paralysable* and *nonparalysable* response. These models can be implemented *event by event* during a simulation. The detailed method underlying these models can be found in Knoll 1979 (Radiation detection and measurement, John Wiley & Sons, New York). The fundamental assumptions made by these two models are illustrated in :numref:`Like_knoll`.
-
-
-.. figure:: Like_knoll.jpg
-   :alt: Figure 4: Like_knoll
-   :name: Like_knoll
-
-   For 7 incoming particles and a fixed dead-time :math:`\tau`, the *nonparalysable* electronic readout will accept 3 particles, and the *paralysable* will accept only 1 particle (the dashed arrows represents the removed events, while the solid arrows are the accepted singles)
-
-The dead time module is applied to a specific volume within the Sensitive Detector system hierarchy. All events taking place within this volume level will trigger a dead-time detector response. This action of the digitizer simulates the time during which this detector, busy at processing a particle, will not be able to process the next one. Moreover, one can simulate the case where data are accumulated into a buffer, which is written to a mass storage having a time access, during which no other data can be processed. In such a case, the dead time is not started after the first data, but once the buffer is full. This case can also be simulated in GATE.
-
-To apply a dead-time to the volume_name (which has to be previously attached to a level of the system), the following commands can be used::
-
-   # ATTACHEMENT TO THE SYSTEM 
-   /gate/systems/system_name/system_level_name/attach volume_name 
-   ..
-   ..
-   # DEADTIME 
-   /gate/digitizer/Singles/insert deadtime 
-   /gate/digitizer/Singles/deadtime/setDeadTime 100000. ns 
-   /gate/digitizer/Singles/deadtime/setMode paralysable 
-   /gate/digitizer/Singles/deadtime/chooseDTVolume volume_name 
-
-The name *system_name* and its corresponding *system_level_name* do not exist and have to be chosen in the tables given in :ref:`defining_a_system-label`.
-
-In the second example, a dead time corresponding to a disk access of 1 µs for a memory buffer of 1 Mbyte is given. The *setMode* command specifies the behavior of the dead time during the disk access. If this mode is set to 0, the memory buffer is assumed to be a shared resource for the computer, and thus is not available during the disk writing. So, no data can fill the buffer during the disk access. On the other hand, in case of model 1, the buffer is immediately freed after being sent to the disk controller. Data are thus not rejected, unless the buffer is filled up again, before the disk access is finished. In such a case, the dead time module will be totally transparent (ie. will not reject any data), unless the counting rate is high enough to fill the buffer in a time lower than the disk access dead time::
-
-   # ATTACHEMENT TO THE SYSTEM 
-   /gate/systems/system_name/system_level_name/attach volume_name
-   ..
-   ..
-   # DEADTIME 
-   /gate/digitizer/Singles/insert deadtime 
-   /gate/digitizer/Singles/deadtime/setDeadTime 1 mus 
-   /gate/digitizer/Singles/deadtime/setMode nonparalysable 
-   /gate/digitizer/Singles/deadtime/chooseDTVolume volume_name 
-   /gate/digitizer/Singles/deadtime/setBufferSize 1 MB 
-   /gate/digitizer/Singles/deadtime/setBufferMode 0
 
 
 .. _digitizer_multiple_processor_chains-label:
 
-Multiple processor chains
--------------------------
+Examples of multiple Single Digitizers 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The use of multiple processor chains makes the design of the digitizer and data output system extremely flexible. The manager for the pulse-processors is called the *GatePulseProcessorChain*, and has a messenger called the *GatePulseProcessorChainMessenger*. By default, all the digitizer components are stored in one processor-chain called *digitizer/Singles*. New processor chains can be created that specify the source of their data. For instance, the following sequence of commands will generate three outputs: 
+The following sequence of commands will generate three outputs: 
 
 * *Singles* with no energy cut 
 * *LESingles* with a low-energy window
@@ -648,35 +963,35 @@ The use of multiple processor chains makes the design of the digitizer and data 
 
 For a standard PET (with BGO crystals), the components of the standard processor chain will consist in the following commands::
 
-   /gate/digitizer/Singles/insert adder 
-   /gate/digitizer/Singles/insert readout 
-   /gate/digitizer/Singles/readout/setDepth 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert adder 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert readout 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 1 
 
-To add the blurring filter to the "Single" branch::
+To add the energy resolution to the "Single" branch::
 
-   /gate/digitizer/Singles/insert blurring 
-   /gate/digitizer/Singles/blurring/setResolution 0.26 
-   /gate/digitizer/Singles/blurring/setEnergyOfReference 511. keV 
+  /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyResolution 
+  /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/fwhm 0.26 
+  /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/energyOfReference 511. keV 
 
 The following commands create a low-energy chain branching from the output of "Singles" chain::
 
-   /gate/digitizer/name LESingles 
-   /gate/digitizer/insert singleChain 
-   /gate/digitizer/LESingles/setInputName Singles 
-   /gate/digitizer/LESingles/insert thresholder 
-   /gate/digitizer/LESingles/thresholder/setThreshold 50. keV 
-   /gate/digitizer/LESingles/insert upholder 
-   /gate/digitizer/LESingles/upholder/setUphold 350. keV 
+   /gate/digitizerMgr/name LESingles 
+   /gate/digitizerMgr/chooseSD crystal 
+   /gate/digitizerMgr/insert SinglesDigitizer 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/LESingles/setInputCollection Singles 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/LESingles/insert energyFraming 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/LESingles/energyFraming/setMin 50. keV 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/LESingles/energyFraming/setMax 350. keV 
 
 These next commands create a high-energy chain branching from the output of the "Singles" chain::
 
-   /gate/digitizer/name HESingles 
-   /gate/digitizer/insert singleChain 
-   /gate/digitizer/HESingles/setInputName Singles 
-   /gate/digitizer/HESingles/insert thresholder 
-   /gate/digitizer/HESingles/thresholder/setThreshold 350. keV 
-   /gate/digitizer/HESingles/insert upholder 
-   /gate/digitizer/HESingles/upholder/setUphold 650. keV
+   /gate/digitizerMgr/name HESingles 
+   /gate/digitizerMgr/chooseSD crystal 
+   /gate/digitizerMgr/insert SinglesDigitizer 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/HESingles/setInputCollection Singles 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/HESingles/insert energyFraming 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/HESingles/energyFraming/setMin 350. keV 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/HESingles/energyFraming/setMax 650. keV
 
 Coincidence sorter
 ------------------
@@ -768,58 +1083,63 @@ Command line
 
 To set up a coincidence window of 10 ns, the user should specify::
 
-   /gate/digitizer/Coincidences/setWindow 10. ns 
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setWindow 10. ns 
 
 To change the default value of the minimum sector difference for valid coincidences (the default value is 2), the command line should be used::
 
-   /gate/digitizer/Coincidences/minSectorDifference <number> 
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/minSectorDifference <number> 
 
 By default, the offset value is equal to 0, which corresponds to a prompt coincidence sorter. If a delayed coincidence sorter is to be simulated, with a 100 ns time shift for instance, the offset value should be set using the command::
 
-   /gate/digitizer/Coincidences/setOffset 100. ns 
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setOffset 100. ns 
+
+To change the size of Presort Buffer (min 32, default 256), the following command should be used::
+
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setPresortBufferSize 512
+
 
 To specify the depth of the system hierarchy for which the coincidences have to be sorted, the following command should be used::
 
-   /gate/digitizer/Coincidences/setDepth <system's depth (1 by default)> 
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setDepth <system's depth (1 by default)> 
 
 As explained in :numref:`Comp_allOpen_or_not`, there are two methods for building coincidences. The default one is the method 1. To switch to method 2, one should use::
 
-   /gate/digitizer/Coincidences/allPulseOpenCoincGate true
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/allDigiOpenCoincGate true
 
 So when set to false (by default) the method 1 is chosen, and when set to true, this is the method 2.
 **Be aware that the method 2 is experimental and not validated at all, so potentially containing non-reported bugs.**
 
 Finally, the rule to apply in case of multiple coincidences is specified as follows::
 
-   /gate/digitizer/Coincidences/MultiplesPolicy <policyName>
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/MultiplesPolicy <policyName>
 
 The default multiple policy is keepIfAllAreGoods.
 
 Multiple coincidence sorters
-----------------------------
+~~~~~~~~~~~~
 
 Multiple coincidence sorters can be used in GATE. To create a coincidence sorter, the sorter must be named and a location specified for the input data. In the example below, three new coincidence sorters are created: 
 
 * One with a very long coincidence window::
 
-   /gate/digitizer/name LongCoincidences 
-   /gate/digitizer/insert coincidenceSorter 
-   /gate/digitizer/LongCoincidences/setInputName Singles 
-   /gate/digitizer/LongCoincidences/setWindow 1000. ns 
+   /gate/digitizerMgr/name LongCoincidences 
+   /gate/digitizerMgr/insert CoincidenceSorter 
+   /gate/digitizerMgr/CoincidenceSorter/LongCoincidences/setInputName Singles 
+   /gate/digitizerMgr/CoincidenceSorter/LongCoincidences/setWindow 1000. ns 
 
 * One for low-energy singles::
 
-   /gate/digitizer/name LECoincidences 
-   /gate/digitizer/insert coincidenceSorter 
-   /gate/digitizer/LECoincidences/setWindow 10. ns 
-   /gate/digitizer/LECoincidences/setInputName LESingles 
+   /gate/digitizerMgr/name LECoincidences 
+   /gate/digitizerMgr/insert CoincidenceSorter 
+   /gate/digitizerMgr/CoincidenceSorter/LECoincidences/setWindow 10. ns 
+   /gate/digitizerMgr/CoincidenceSorter/LECoincidences/setInputName LESingles 
 
 * One for high-energy-singles::
 
-   /gate/digitizer/name HECoincidences 
-   /gate/digitizer/insert coincidenceSorter 
-   /gate/digitizer/HECoincidences/setWindow 10. ns 
-   /gate/digitizer/HECoincidences/setInputName HESingles 
+   /gate/digitizerMgr/name HECoincidences 
+   /gate/digitizerMgr/insert coincidenceSorter 
+   /gate/digitizerMgr/CoincidenceSorter/HECoincidences/setWindow 10. ns 
+   /gate/digitizerMgr/CoincidenceSorter/HECoincidences/setInputName HESingles 
 
 A schematic view corresponding to this example is shown in :numref:`Readout_scheme1`.
 
@@ -829,10 +1149,27 @@ A schematic view corresponding to this example is shown in :numref:`Readout_sche
 
    Readout scheme produced by the listing from the sections
 
+
+Coincidence sorters in case of multiple sensitive detectors
+~~~~~~~~~~~~
+In case of multiple sensitive detectors one should pay attention which one should be used as input for CoincidenceSorter (if used)::
+
+   # ATTACH SD
+   /gate/crystal1/attachCrystalSD
+   /gate/crystal2/attachCrystalSD
+   ...
+   #CHOOSE INPUT FOR COINCIDENCE SORTER
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_<sensitive_detector_name1>
+   or
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_<sensitive_detector_name2>
+
+
+
+
 Coincidence processing and filtering
 ------------------------------------
 
-Coincidence pulse processors
+Coincidence pulse processors (NOT YET IN GATE NEW DIGITIZER)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once the coincidences are identified, further processing can be applied to mimic count losses that may occur because of the acquisition limitations, such as dead time. Count loss may also be due to the limited bandwidth of wires or buffer capacities of the I/O interface. The modelling of such effects within GATE is explained below. Moreover, for PET scanners using a delayed coincidence line, data coming from the two types of coincidences (ie. prompts and delayed) can be processed by a unique coincidence sorter. If so, the rate of a coincidence type can affect the rate of the other. For instance, a prompt coincidence can produce dead time which will hide a delayed coincidence. The prompt coincidence events can also saturate the bandwidth, so that the random events are partially hidden.
@@ -894,24 +1231,24 @@ Here, the digitizer section of a GATE macro file is analyzed line by line. The r
 Example::
 
    1 # A D D E R  
-   2 /gate/digitizer/Singles/insert adder 
+   2 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert adder 
    3 
    4 # R E A D O U T  
-   5 /gate/digitizer/Singles/insert readout  
-   6 /gate/digitizer/Singles/readout/setDepth 
+   5 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert readout  
+   6 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 
    7
    8 # E N E R G Y B L U R R I N G  
-   9 /gate/digitizer/Singles/insert blurring  
-   10 /gate/digitizer/Singles/blurring/setResolution 0.26  
-   11 /gate/digitizer/Singles/blurring/setEnergyOfReference 511. keV 
+   9 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert blurring  
+   10 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setResolution 0.26  
+   11 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setEnergyOfReference 511. keV 
    12 
    13 # L O W E N E R G Y C U T
-   14 /gate/digitizer/Singles/insert thresholder
-   15 /gate/digitizer/Singles/thresholder/setThreshold 50. keV
+   14 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert thresholder
+   15 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/thresholder/setThreshold 50. keV
    16
-   17 /gate/digitizer/name cutLowSingles
-   18 /gate/digitizer/insert singleChain
-   19 /gate/digitizer/cutLowSingles/setInputName Singles
+   17 /gate/digitizerMgr/name cutLowSingles
+   18 /gate/digitizerMgr/insert SinglesDigitizer
+   19 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/setInputName Singles
    20 
    21 # N O I S E
    22 
@@ -923,53 +1260,53 @@ Example::
    28 /gate/distributions/name dt_distrib  
    29 /gate/distributions/insert Exponential  
    30 /gate/distributions/dt_distrib/setLambda 7.57 mus  
-   31
-   32 /gate/digitizer/cutLowSingles/insert noise  
-   33 /gate/digitizer/cutLowSingles/noise setDeltaTDistributions dt_distrib  
-   34 /gate/digitizer/cutLowSingles/noise setEnergyDistributions energy_distrib
+   31 
+   32 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert noise (NOT YET IMPLEMENTED)
+   33 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setDeltaTDistributions dt_distrib  
+   34 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setEnergyDistributions energy_distrib
    35
    36  # D E A D T I M E  
-   37 /gate/digitizer/cutLowSingles/insert deadtime  
-   38 /gate/digitizer/cutLowSingles/deadtime/setDeadTime 2.2 mus  
-   39 /gate/digitizer/cutLowSingles/deadtime/setMode paralysable  
-   40 /gate/digitizer/cutLowSingles/deadtime/chooseDTVolume module 
+   37 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert deadtime  
+   38 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/deadtime/setDeadTime 2.2 mus  
+   39 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/deadtime/setMode paralysable  
+   40 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/deadtime/chooseDTVolume module 
    41
    42 # H I G H E N E R G Y C U T  
-   43 /gate/digitizer/name cutSingles  
-   44 /gate/digitizer/insert singleChain  
-   45 /gate/digitizer/cutSingles/setInputName cutLowSingles  
-   46 /gate/digitizer/cutSingles/name highThresh  
-   47 /gate/digitizer/cutSingles/insert thresholder  
-   48 /gate/digitizer/cutSingles/highThresh/setThreshold 350. keV  
-   49 /gate/digitizer/cutSingles/insert upholder  
-   50 /gate/digitizer/cutSingles/upholder/setUphold 700. keV 
+   43 /gate/digitizerMgr/name cutSingles  
+   44 /gate/digitizerMgr/insert SinglesDigitizer  
+   45 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/setInputName cutLowSingles  
+   46
+   47 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/insert energyFraming  
+   48 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/energyFraming/setMin 350. keV  
+   49 
+   50 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/energyFraming/setMax 700. keV 
    51 
-   52 /gate/digitizer/cutSingles/name deadtime_cassette 
-   53 /gate/digitizer/cutSingles/insert deadtime 
-   54 /gate/digitizer/cutSingles/deadtime_cassette/setDeadTime 0.55 mus  
-   55 /gate/digitizer/cutSingles/deadtime_cassette/setMode nonparalysable  
-   56 /gate/digitizer/cutSingles/deadtime_cassette/chooseDTVolume cassette  
-   57 /gate/digitizer/cutSingles/name deadtime_group  
-   58 /gate/digitizer/cutSingles/insert deadtime 
-   59 /gate/digitizer/cutSingles/deadtime_group/setDeadTime 0.250 mus  
-   60 /gate/digitizer/cutSingles/deadtime_group/setMode nonparalysable  
-   61 /gate/digitizer/cutSingles/deadtime_group/chooseDTVolume group
+   52 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/name deadtime_cassette 
+   53 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/insert deadtime 
+   54 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_cassette/setDeadTime 0.55 mus  
+   55 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_cassette/setMode nonparalysable  
+   56 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_cassette/chooseDTVolume cassette  
+   57 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/name deadtime_group  
+   58 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/insert deadtime 
+   59 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_group/setDeadTime 0.250 mus  
+   60 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_group/setMode nonparalysable  
+   61 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/deadtime_group/chooseDTVolume group
    62
    63 
    64 # C O I N C I S O R T E R 65 
-   65 /gate/digitizer/Coincidences/setInputName cutSingles 
-   66 /gate/digitizer/Coincidences/setOffset 0. ns 
-   67 /gate/digitizer/Coincidences/setWindow 24. ns 
-   68 /gate/digitizer/Coincidences/minSectorDifference 3  
+   65 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputName cutSingles 
+   66 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setOffset 0. ns 
+   67 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setWindow 24. ns 
+   68 /gate/digitizerMgr/CoincidenceSorter/Coincidences/minSectorDifference 3  
    69 
-   70 /gate/digitizer/name delayedCoincidences  
-   71 /gate/digitizer/insert coincidenceSorter  
-   72 /gate/digitizer/delayedCoincidences/setInputName cutSingles  
-   73 /gate/digitizer/delayedCoincidences/setOffset 100. ns  
-   74 /gate/digitizer/delayedCoincidences/setWindow 24. ns  
-   75 /gate/digitizer/delayedCoincidences/minSectorDifference 3  
+   70 /gate/digitizerMgr/name delayedCoincidences  
+   71 /gate/digitizerMgr/insert coincidenceSorter  
+   72 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setInputName cutSingles  
+   73 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setOffset 100. ns  
+   74 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setWindow 24. ns  
+   75 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/minSectorDifference 3  
    76 
-   77 /gate/digitizer/name finalCoinc  
+   77 /gate/digitizer/name finalCoinc  (NOT YET ADDED IN 9.3)  
    78 /gate/digitizer/insert coincidenceChain 
    79 /gate/digitizer/finalCoinc/addInputName delay 
    80 /gate/digitizer/finalCoinc/addInputName Coincidences  
@@ -1103,7 +1440,7 @@ Multi-system approaches: how to use more than one system in one simuation set-up
 
 Singles arriving from different systems request different treatment in the digitizer. So we have to use multiple digitizer chains and to separate between theses singles according to their systems.
 
-SystemFilter
+SystemFilter  (NOT YET IMPLEMENTED)
 ~~~~~~~~~~~~
 The systemFilter module separates between the singles coming from systems. This module have one parameter which is the name of the system::
 

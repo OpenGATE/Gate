@@ -8,7 +8,7 @@
 
 #include "json.hpp"
 #include "Gate_NN_ARF_Actor.hh"
-#include "GateSingleDigi.hh"
+#include "GateDigi.hh"
 #include "GateTreeFileManager.hh"
 #include "G4DigiManager.hh"
 #include "TTree.h"
@@ -526,7 +526,8 @@ void Gate_NN_ARF_Actor::EndOfEventAction(const G4Event *e) {
         int i = 0;
         for (auto id:mListOfWindowIds) {
             ++i;
-            auto SDC = dynamic_cast<const GateSingleDigiCollection *>(fDM->GetDigiCollection(id));
+            // OK GND 2022 TODO : check and adapt correct DigiCollection ID
+            auto SDC = dynamic_cast<const GateDigiCollection *>(fDM->GetDigiCollection(id));
             if (!SDC) continue;
             /*
             // ==> No need for u,v coordinates. Keep this comments for future ref.

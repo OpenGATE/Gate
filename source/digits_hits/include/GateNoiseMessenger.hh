@@ -6,29 +6,51 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
+
+/*! \class  GateNoiseMessenger
+    \brief  Messenger for the GateNoise
+
+    - GateNoise - by name.surname@email.com
+
+    \sa GateNoise, GateNoiseMessenger
+*/
+
 
 #ifndef GateNoiseMessenger_h
 #define GateNoiseMessenger_h 1
 
-#include "GatePulseProcessorMessenger.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
 
-class G4UIdirectory;
-class G4UIcmdWithADoubleAndUnit;
+#include "GateClockDependentMessenger.hh"
+class GateNoise;
 class G4UIcmdWithAString;
 
-class GateNoise;
-
-class GateNoiseMessenger: public GatePulseProcessorMessenger
+class GateNoiseMessenger : public GateClockDependentMessenger
 {
-  public:
-    GateNoiseMessenger(GateNoise* itsPulseProcessor);
-    virtual ~GateNoiseMessenger();
+public:
+  
+  GateNoiseMessenger(GateNoise*);
+  ~GateNoiseMessenger();
+  
+  void SetNewValue(G4UIcommand*, G4String);
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  
+private:
+  GateNoise* m_Noise;
+  G4UIcmdWithAString        *m_deltaTDistribCmd;
+  G4UIcmdWithAString        *m_energyDistribCmd;
 
-  private:
-    G4UIcmdWithAString        *m_deltaTDistribCmd;
-    G4UIcmdWithAString        *m_energyDistribCmd;
+
 };
 
 #endif
+
+
+
+
+
+
+
+

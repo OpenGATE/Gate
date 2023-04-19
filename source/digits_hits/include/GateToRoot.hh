@@ -48,6 +48,9 @@ See LICENSE.md for further details
 #include "GateRootDefs.hh"
 #include "GateVOutputModule.hh"
 
+//OK GND 2022
+#include "GateDigitizerMgr.hh"
+
 /* PY Descourt 08/09/2009 */
 #include "GateActions.hh"
 #include "GateTrack.hh"
@@ -108,7 +111,9 @@ public:
 
     void RecordVoxels(const G4Step *);
 
-    void Book();
+    void BookBeginOfAquisition();
+
+    void BookBeginOfRun();
 
     void Store();
 
@@ -156,7 +161,8 @@ public:
                 : nVerboseLevel(0),
                   m_outputFlag(outputFlag),
                   m_collectionName(aCollectionName),
-                  m_collectionID(-1) {}
+                  m_collectionID(-1),
+				  m_signlesCommands(0){}
 
         virtual inline ~VOutputChannel() {}
 
@@ -168,12 +174,15 @@ public:
 
         inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
 
+        inline void AddSinglesCommand() { m_signlesCommands++; };
+
         inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
         G4int nVerboseLevel;
         G4bool m_outputFlag;
         G4String m_collectionName;
         G4int m_collectionID;
+        G4int m_signlesCommands;
     };
 
 
@@ -190,9 +199,24 @@ public:
 
         inline void Book() {
             m_collectionID = -1;
+            //OK GND 2022 multiSD backward compatibility
+            GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
             if (m_outputFlag) {
-                m_tree = new GateSingleTree(m_collectionName);
-                m_tree->Init(m_buffer);
+            	if( digitizerMgr->m_SDlist.size()==1 )
+            	{
+            		if(m_signlesCommands==0)
+            		{
+            		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
+            		m_tree = new GateSingleTree(tmp_str);
+            		}
+            		else
+            			m_tree = new GateSingleTree(m_collectionName);
+            	}
+            	else
+            		m_tree = new GateSingleTree(m_collectionName);
+
+            	m_tree->Init(m_buffer);
             }
         }
 
@@ -233,7 +257,8 @@ public:
     //! flag to decide if it writes or not Hits, Singles and Digis to the ROOT file
 
 
-
+    G4int GetSDlistSize() { return m_SDlistSize; };
+    void SetSDlistSize(G4int size) {m_SDlistSize = size; };
 
     G4bool GetRootHitFlag() { return m_rootHitFlag; };
 
@@ -302,16 +327,25 @@ private:
 
     TFile *m_hfile; // the file for histograms, tree ...
 
-    GateHitTree *m_treeHit; // the tree for hit quantities
+    //OK GND 2022
+    //GateHitTree *m_treeHit; // the tree for hit quantities
+    //for multiple SDs
+    std::vector<GateHitTree *> m_treesHit; // the tree for hit quantities
+    //Number of SD is saved in the following variable for not calling at each event for hits GateDigitizerMgr::GetInstance()
+    G4int m_SDlistSize;
+
     TH1D *m_total_nb_primaries_hist; //histogram of total_nb_primaries
     TH1D *m_latest_event_ID_hist;
     TDirectory *m_working_root_directory;
 
-    GateRootHitBuffer m_hitBuffer;
+    // OK GND 2022
+    //GateRootHitBuffer m_hitBuffer;
+    std::vector<GateRootHitBuffer> m_hitBuffers; // the tree for hit quantities
 
 // v. cuplov - optical photons
     GateTrajectoryNavigator *m_trajectoryNavigator;
-    TTree *OpticalTree; // new tree
+    //TTree *OpticalTree; // new tree
+    std::vector<TTree*> m_OpticalTrees; // new tree
     Char_t NameOfProcessInCrystal[40];
     Char_t NameOfProcessInPhantom[40];
 //  G4int nPhantomOpticalRayleigh;

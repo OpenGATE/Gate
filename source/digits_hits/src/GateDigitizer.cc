@@ -9,11 +9,12 @@
 /*!
   \class  GateDigitizer
 */
+//GND 2022 Class to Remove
 
 #include "GateDigitizer.hh"
 #include "GateTools.hh"
 #include "GateDigitizerMessenger.hh"
-#include "GateSingleDigiMaker.hh"
+//#include "GateDigiMaker.hh"
 #include "GateHitConvertor.hh"
 #include "GateOutputMgr.hh"
 #include "GateVPulseProcessor.hh"
@@ -62,10 +63,10 @@ GateDigitizer::~GateDigitizer()
     delete m_coincidenceSorterList.back();
     m_coincidenceSorterList.erase(m_coincidenceSorterList.end()-1);
   }
-  while ( m_digiMakerList.size() ) {
+  /*while ( m_digiMakerList.size() ) {
     delete m_digiMakerList.back();
     m_digiMakerList.erase(m_digiMakerList.end()-1);
-  }
+  }*/
   delete m_messenger;
   theDigitizer = 0;
 }
@@ -126,7 +127,7 @@ void GateDigitizer::DescribeChains(size_t indent)
 void GateDigitizer::DescribeSorters(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of coinc. units: " << m_coincidenceSorterList.size() << "\n";
-  for (std::vector<GateCoincidenceSorter*>::iterator itr=m_coincidenceSorterList.begin(); itr!=m_coincidenceSorterList.end(); itr++)
+  for (std::vector<GateCoincidenceSorterOld*>::iterator itr=m_coincidenceSorterList.begin(); itr!=m_coincidenceSorterList.end(); itr++)
     G4cout << GateTools::Indent(indent+1) << (*itr)->GetObjectName() << Gateendl;
 }
 //-----------------------------------------------------------------
@@ -352,7 +353,7 @@ void GateDigitizer::StoreNewCoincidenceProcessorChain(GateCoincidencePulseProces
 
 //-----------------------------------------------------------------
 // Integrates a new coincidence sorter
-void GateDigitizer::StoreNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter)
+void GateDigitizer::StoreNewCoincidenceSorter(GateCoincidenceSorterOld* coincidenceSorter)
 {
   G4String outputName = coincidenceSorter->GetOutputName() ;
   if (nVerboseLevel>1)
@@ -390,14 +391,14 @@ void GateDigitizer::Describe(size_t indent)
 
 
 //-----------------------------------------------------------------
-//make void GateDigitizer::Digitize(GateCrystalHitsCollection * optional)
+//make void GateDigitizer::Digitize(GateHitsCollection * optional)
 void GateDigitizer::Digitize()
 {
   if ( !IsEnabled() )
     return;
 
-  GateCrystalHitsCollection* CHC;
-  CHC = GateOutputMgr::GetInstance()->GetCrystalHitCollection();
+  GateHitsCollection* CHC;
+  CHC = GateOutputMgr::GetInstance()->GetHitCollection();
 
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: starting\n";
@@ -416,19 +417,19 @@ void GateDigitizer::Digitize()
   DigitizePulses();
 
 
- for (size_t i=0; i<m_digiMakerList.size() ; ++i) {
+/* for (size_t i=0; i<m_digiMakerList.size() ; ++i) {
     if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::Digitize]: launching digitizer module '" << m_digiMakerList[i]->GetObjectName() << "'\n";
     m_digiMakerList[i]->Digitize();
   }
-
+*/
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizer::Digitize]: completed\n";
 
 }
 
 
-void GateDigitizer::Digitize(std::vector<GateCrystalHit*> vHitsCollection)
+void GateDigitizer::Digitize(std::vector<GateHit*> vHitsCollection)
 {
   if ( !IsEnabled() )
     return;
@@ -483,7 +484,7 @@ void GateDigitizer::DigitizePulses()  {
 }
 //-----------------------------------------------------------------
 
-
+/*
 //-----------------------------------------------------------------
 void GateDigitizer::InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModule)
 {
@@ -494,7 +495,7 @@ void GateDigitizer::InsertDigiMakerModule(GateVDigiMakerModule* newDigiMakerModu
   StoreCollectionName(newDigiMakerModule->GetCollectionName());
 }
 //-----------------------------------------------------------------
-
+*/
 
 //-----------------------------------------------------------------
 //mhadi_obso Obsolete, because we use now the multi-system approach

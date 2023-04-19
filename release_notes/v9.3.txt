@@ -1,0 +1,73 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.3          #
+#                          #
+#        02/2023           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 11.1 only. 
+Gate cannot be compiled with earlier Geant4 versions. 
+It *may* works with other ROOT, ITK, libtorch version but it is not tested.
+
+Dependencies:
+- Geant4: v11.1.0 (cxx17 is required)
+- ROOT: v6-24-06 (must be compiled with -DCMAKE_CXX_STANDARD=17)
+- ITK: v5.2.0 (with RTK enabled)
+- libtorch: v1.10.1
+
+
+-----------------
+Main new features
+-----------------
+
+- Possible changes in results (bug corrections):
+1) Adder. Minor correction, negligible impact (present in 9.2 since patch in March 2022)
+2) Readout with option TakeEnergyCentroid for the energy centroid policy. If the energy centroid policy is used, the depth is forced to be at the level just above the crystal level, whatever the system used.
+Before: it was not applied correctly and in some cases readout was peeking the indicated depth. Now: the depth is forced to be at the level just above the crystal level in case of TakeEnergyCentroid. It is possible to force your depth even for this policy with option /forceReadoutVolumeForEnergyCentroid true
+(present in 9.2 since patch in May 2022)
+3) Coincidence Sorter with options:
+keepIfOnlyOneGood
+keepIfAnyIsGoof
+keepIfAllAreGoods
+killAll
+(present in 9.2 since patch in January 2023)
+4) No calling digitizer if Singles or Coincidences are not written down -> speed up by ~40% for Hits writing
+5) Optical Singles are written down now (due to change of PDG code for optical photons was not the case)
+6) Changes in digitizer:
+           - no "Pulse" objects  (GatePulse, GatePulseList, GatePulseConvertor - removed, GateDigitizer-> -> (the closest) GateDigitizerMgr, GatePulseProcessorChain -> (the closest) GateSingleDigitizer, GateVPulseProcessor -> (the closest) GateVDigitizerModule)
+           - GateDummyDigitizerModule class (not used in execution) as a template for new digitizer modules
+7) Possibility to save separately Hits and Singles from multiple sensitive detectors. Impact only if user has more than one sensitive detector
+8) Some of functionalities are temporarily disabled:
+          - Digitizer Modules: GateBuffer and GateNoise
+          - Compton Camera functionalities 
+          - Coincidence digitizers
+          - Outputs: Sino, LMF, Ecat7
+9) Digitizer Classes (Modules/PulseProcessors) removed: GateSigmoidalThresholder, GateDiscretizer
+11) Changes in Digitizer Modules:
+Thresholder and Upholder -> Energy Framing
+Energy Efficiency, Local efficiency, CrystalBlurring (partially) -> Efficiency
+blurring, crystal blurring (partially), local energy blurring -> Energy Resolution
+spatial blurring-> Spatial Resolution
+temporal resolution -> Time Resolution
+
+- additional Benchmarks
+https://github.com/OpenGATE/GateBenchmarks
+
+----------
+Gate Tools
+----------
+
+- add Digitizer macro convertion tool
+https://github.com/OpenGATE/GateTools/pull/??
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
+GATE tools:         https://github.com/OpenGATE/GateTools

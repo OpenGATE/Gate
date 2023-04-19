@@ -27,8 +27,9 @@ See LICENSE.md for further details
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
-class GateCrystalHit;
-class GateSingleDigi;
+class GateHit;
+class GateDigi;
+
 class GateCoincidenceDigi;
 
 #define ROOT_VOLUMEIDSIZE 10
@@ -63,12 +64,12 @@ class GateRootHitBuffer
 {
   public:
 
-    inline GateRootHitBuffer() {Clear();}   	      	  //!< Public constructor
+    inline GateRootHitBuffer() { Clear();}   	      	  //!< Public constructor
     inline virtual ~GateRootHitBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    void Fill(GateCrystalHit* aHit);
-    GateCrystalHit* CreateHit();
+    void Fill(GateHit* aHit);
+    GateHit* CreateHit();
 
     //! \name getters and setters for unit-dependent fields
     //@{
@@ -237,7 +238,7 @@ class GateRootSingleBuffer
     inline virtual ~GateRootSingleBuffer() {} 	      	  //!< Public destructor
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    void Fill(GateSingleDigi* aDigi);
+    void Fill(GateDigi* aDigi);
 
     //! \name Data fields
     //@{

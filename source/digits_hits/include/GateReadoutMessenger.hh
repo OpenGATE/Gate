@@ -6,12 +6,22 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
+
+/*! \class  GateReadoutMessenger
+    \brief  Messenger for the GateReadout
+
+    \sa GateReadout, GateReadoutMessenger
+*/
+
 
 #ifndef GateReadoutMessenger_h
 #define GateReadoutMessenger_h 1
 
-#include "GatePulseProcessorMessenger.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
 
+#include "GateClockDependentMessenger.hh"
 class G4UIdirectory;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithAString;
@@ -24,33 +34,36 @@ class G4UIcmdWith3VectorAndUnit;
 
 class GateReadout;
 
-/*! \class  GateReadoutMessenger
-    \brief  Messenger for the GateReadout
-
-    - GateReadoutMessenger - by Daniel.Strul@iphe.unil.ch
-
-    \sa GateReadout, GatePulseProcessorMessenger
-*/
-class GateReadoutMessenger: public GatePulseProcessorMessenger
+class GateReadoutMessenger : public GateClockDependentMessenger
 {
-  public:
-    GateReadoutMessenger(GateReadout* itsReadout);
-    ~GateReadoutMessenger();
+public:
+  
+  GateReadoutMessenger(GateReadout*);
+  ~GateReadoutMessenger();
+  
+  inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-
-    inline GateReadout* GetReadout()
-      { return (GateReadout*) GetPulseProcessor(); }
-
-  private:
-    G4UIcmdWithAnInteger*      SetDepthCmd;
-    G4UIcmdWithAString*        SetPolicyCmd;
-    G4UIcmdWithAString*        SetVolNameCmd;
-    G4UIcmdWithABool*          ForceDepthCentroidCmd;
-    //G4UIcmdWithAString*		   SetResultingXYCmd;
-    //G4UIcmdWithAString*        SetResultingZCmd;
+     inline GateReadout* GetReadout()
+       { return m_Readout;}//(GateReadout*) GetDigitizerModule(); }
+  
+private:
+  GateReadout* m_Readout;
+  G4UIcmdWithAnInteger*      SetDepthCmd;
+  G4UIcmdWithAString*        SetPolicyCmd;
+  G4UIcmdWithAString*        SetVolNameCmd;
+  G4UIcmdWithABool*          ForceDepthCentroidCmd;
+  //G4UIcmdWithAString*		   SetResultingXYCmd;
+  //G4UIcmdWithAString*        SetResultingZCmd;
 
 
 };
 
 #endif
+
+
+
+
+
+
+
+

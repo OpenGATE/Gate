@@ -11,7 +11,7 @@
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include <TBranch.h>
-#include "GateCrystalHit.hh"
+#include "GateHit.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateOutputMgr.hh"
 #include "GateTools.hh"
@@ -142,8 +142,8 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
   while ( (currentEventID == m_hitBuffer.eventID) && (currentRunID == m_hitBuffer.runID) ) {
 
       // Create a new hit and store it into the hit-queue
-      GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
-      //GateCrystalHit aHit = *m_hitBuffer.CreateHit();
+      GateHit* aHit =  m_hitBuffer.CreateHit();
+      //GateHit aHit = *m_hitBuffer.CreateHit();
 
      // m_hitQueue.push(aHit);
       vHitsCollection.push_back(aHit);
@@ -163,7 +163,7 @@ G4int GateCCHitFileReader::PrepareNextEvent( )
 }
 
 
-std::vector<GateCrystalHit*> GateCCHitFileReader::PrepareEndOfEvent()
+std::vector<GateHit*> GateCCHitFileReader::PrepareEndOfEvent()
 {
 //  while (m_hitQueue.size()) {
 

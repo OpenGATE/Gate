@@ -1,30 +1,45 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+   Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See LICENSE.md for further details
-  ----------------------*/
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+/*! \class  GateDeadTimeMessenger
+    \brief  Messenger for the GateDeadTime
+
+    - GateDeadTime - by Luc.Simon@iphe.unil.ch
+
+    \sa GateDeadTime, GateDeadTimeMessenger
+*/
+
 
 
 #include "GateDeadTimeMessenger.hh"
 #include "GateDeadTime.hh"
+#include "GateDigitizerMgr.hh"
 
+#include "G4SystemOfUnits.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIdirectory.hh"
 
-GateDeadTimeMessenger::GateDeadTimeMessenger(GateDeadTime* itsDeadTime)
-  : GatePulseProcessorMessenger(itsDeadTime)
+
+
+GateDeadTimeMessenger::GateDeadTimeMessenger (GateDeadTime* DeadTime)
+:GateClockDependentMessenger(DeadTime),
+ 	 m_DeadTime(DeadTime)
 {
-  G4String guidance;
-  G4String cmdName;
+	G4String guidance;
+	G4String cmdName;
 
   cmdName = GetDirectoryName() + "setDeadTime";
-  deadTimeCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  deadTimeCmd->SetGuidance("Set Dead time (in ps) for pulse-discrimination");
-  deadTimeCmd->SetUnitCategory("Time");
+  DeadTimeCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  DeadTimeCmd->SetGuidance("Set Dead time (in ps) for pulse-discrimination");
+  DeadTimeCmd->SetUnitCategory("Time");
 
   cmdName = GetDirectoryName() + "chooseDTVolume";
   newVolCmd = new G4UIcmdWithAString(cmdName,this);
@@ -45,31 +60,47 @@ GateDeadTimeMessenger::GateDeadTimeMessenger(GateDeadTime* itsDeadTime)
   bufferSizeCmd->SetGuidance("set the buffer size");
   bufferSizeCmd->SetUnitCategory("Memory size");
 
+
 }
 
 
 GateDeadTimeMessenger::~GateDeadTimeMessenger()
 {
-  delete deadTimeCmd;
-  delete newVolCmd;
-  delete modeCmd;
-  delete bufferSizeCmd;
-  delete bufferModeCmd;
+	  delete DeadTimeCmd;
+	  delete newVolCmd;
+	  delete modeCmd;
+	  delete bufferSizeCmd;
+	  delete bufferModeCmd;
 }
 
 
-void GateDeadTimeMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void GateDeadTimeMessenger::SetNewValue(G4UIcommand * aCommand,G4String newValue)
 {
-  if (command== deadTimeCmd)
-    { GetDeadTime()->SetDeadTime(deadTimeCmd->GetNewDoubleValue(newValue)); }
-  else if (command==newVolCmd )
-    GetDeadTime()->CheckVolumeName(newValue);
-  else if (command == modeCmd)
-    GetDeadTime()->SetDeadTimeMode(newValue);
-  else if (command == bufferModeCmd)
-    GetDeadTime()->SetBufferMode(bufferModeCmd->GetNewIntValue(newValue));
-  else if (command == bufferSizeCmd)
-    GetDeadTime()->SetBufferSize(bufferSizeCmd->GetNewDoubleValue(newValue));
-  else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue);
+	if (aCommand== DeadTimeCmd)
+	    { m_DeadTime->SetDeadTime(DeadTimeCmd->GetNewDoubleValue(newValue)); }
+	  else if (aCommand==newVolCmd )
+	    m_DeadTime->CheckVolumeName(newValue);
+	  else if (aCommand == modeCmd)
+	    m_DeadTime->SetDeadTimeMode(newValue);
+	  else if (aCommand == bufferModeCmd)
+	    m_DeadTime->SetBufferMode(bufferModeCmd->GetNewIntValue(newValue));
+	  else if (aCommand == bufferSizeCmd)
+	    m_DeadTime->SetBufferSize(bufferSizeCmd->GetNewDoubleValue(newValue));
+	  else
+	  {
+	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
+	    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

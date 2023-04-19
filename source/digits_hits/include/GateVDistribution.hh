@@ -45,7 +45,14 @@ class GateVDistribution : public GateNamedObject
     // should be optimised according to each distrbution type
     virtual G4double ShootRandom() const=0;
 
+    void SetUnitX(const G4String& unitX) {m_unitX=unitX;}
+    G4String GetUnitX() {return m_unitX;}
+    void SetUnitY(const G4String& unitY) {m_unitY=unitY;}
+    G4String GetUnitY() {return m_unitY;}
+
   private:
+    G4String m_unitX;
+    G4String m_unitY;
 };
 
 

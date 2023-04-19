@@ -57,6 +57,7 @@ public:
   void RecordVoxels(GateVGeometryVoxelStore *store) override;
   void RegisterNewCoincidenceDigiCollection(const G4String &string, G4bool aBool) override;
   void RegisterNewSingleDigiCollection(const G4String &string, G4bool aBool) override;
+  void RegisterNewHitsCollection(const G4String &string, G4bool aBool) override;
 
   const G4String &GiveNameOfFile() override;
   void addFileName(const G4String &s);
@@ -65,7 +66,9 @@ public:
   G4bool getHitsEnabled() const;
   void setHitsEnabled(G4bool mHitsEnabled);
   void addCollection(const std::string &str); //called by messenger
-
+  //OK GND 2022
+  void addHitsCollection(const std::string &str);
+  void addOpticalCollection(const std::string &str);
 
   G4bool getOpticalDataEnabled() const;
   void setOpticalDataEnabled(G4bool mOpticalDataEnabled);
@@ -80,7 +83,7 @@ private:
   void retrieve(GateCoincidenceDigi* aDigi, G4int side, G4int system_id);
 
   template <typename T>
-  void retrieve(T* p, G4int system_id) //p == GateCrystalHit, GateSingleDigi, or &GatePulses
+  void retrieve(T* p, G4int system_id) //p == GateHit, GateDigi, or &GatePulses
   {
       UNUSED(system_id);
       m_runID = p->GetRunID();
@@ -110,8 +113,14 @@ private:
 
   GateToTreeMessenger *m_messenger;
   GateOutputTreeFileManager m_manager_hits;
+  std::unordered_map<std::string,GateOutputTreeFileManager> m_mmanager_hits;
+  std::unordered_map<std::string, G4int> m_hits_to_collectionID;
+
   GateOutputTreeFileManager m_manager_optical;
-//  std::vector<GateOutputTreeFileManager> m_vmanager_singles;
+  std::unordered_map<std::string,GateOutputTreeFileManager> m_mmanager_optical;
+  std::unordered_map<std::string, G4int> m_optical_to_collectionID;
+
+  //  std::vector<GateOutputTreeFileManager> m_vmanager_singles;
   std::unordered_map<std::string, GateOutputTreeFileManager> m_mmanager_singles;
   std::unordered_map<std::string, G4int> m_singles_to_collectionID;
 
@@ -119,6 +128,7 @@ private:
   std::unordered_map<std::string, G4int> m_coincidences_to_collectionID;
 
   std::vector<std::string> m_listOfFileName;
+  std::vector<std::string> m_listOfHitsCollection;
   std::vector<std::string> m_listOfSinglesCollection;
   std::vector<std::string> m_listOfCoincidencesCollection;
   G4bool m_hits_enabled;

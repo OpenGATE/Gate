@@ -9,6 +9,7 @@
 #include "GateToProjectionSetMessenger.hh"
 #include "GateToProjectionSet.hh"
 #include "GateOutputMgr.hh"
+#include "GateDigitizerMgr.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
@@ -118,10 +119,52 @@ void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String new
     { m_gateToProjectionSet->SetPixelNbY(PixelNumberYCmd->GetNewIntValue(newValue)); }
 
   else if (command == SetInputDataCmd)
-    { m_gateToProjectionSet->SetInputDataName(newValue); }
+    {
+	  G4String newName;
+    	//OK GND 2022
+        GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+        for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+        {
+        	if(G4StrUtil::contains(newValue,digitizerMgr->m_SDlist[j]->GetName()))
+        		newName=newValue;
+        	else
+        		newName=newValue+"_"+digitizerMgr->m_SDlist[j]->GetName();
+
+
+        		GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newName);
+        		if(digitizer)
+        			digitizer->m_recordFlag=true;
+
+
+        }
+    	digitizerMgr->m_recordSingles=true;
+
+
+  	  m_gateToProjectionSet->SetInputDataName(newName);
+
+    }
 
   else if (command == AddInputDataCmd)
-    { m_gateToProjectionSet->AddInputDataName(newValue); }
+    { 	  G4String newName;
+	//OK GND 2022
+    GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+    for(size_t j=0; j<digitizerMgr->m_SDlist.size();j++)
+    {
+    	if(G4StrUtil::contains(newValue,digitizerMgr->m_SDlist[j]->GetName()) )
+    		newName=newValue;
+    	else
+    		newName=newValue+"_"+digitizerMgr->m_SDlist[j]->GetName();
+
+
+    		GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newName);
+    		if(digitizer)
+    			digitizer->m_recordFlag=true;
+    	}
+
+
+	  m_gateToProjectionSet->AddInputDataName(newName); }
 
   /*
    * Commands of the mother overloaded to have impact on the GateToInterfile class too
@@ -142,3 +185,5 @@ void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String new
   else
     { GateOutputModuleMessenger::SetNewValue(command,newValue); }
 }
+
+

@@ -5,7 +5,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
-
+ //GND 2022 Class to Remove
 
 #include "GatePulseProcessorChain.hh"
 #include "GatePulseProcessorChainMessenger.hh"
@@ -16,7 +16,7 @@ See LICENSE.md for further details
 #include "GateVPulseProcessor.hh"
 #include "GateTools.hh"
 #include "GateHitConvertor.hh"
-#include "GateSingleDigiMaker.hh"
+//#include "GateDigiMaker.hh"
 
 
 
@@ -30,8 +30,8 @@ GatePulseProcessorChain::GatePulseProcessorChain( GateDigitizer* itsDigitizer,
 //  G4cout << " DEBUT Constructor GatePulseProcessorChain \n";
   m_messenger = new GatePulseProcessorChainMessenger(this);
 
-//  G4cout << " in GatePulseProcessorChain call GateSingleDigiMaker\n";
-  itsDigitizer->InsertDigiMakerModule( new GateSingleDigiMaker(itsDigitizer, itsOutputName,true) );
+//  G4cout << " in GatePulseProcessorChain call GateDigiMaker\n";
+  //itsDigitizer->InsertDigiMakerModule( new GateDigiMaker(itsDigitizer, itsOutputName,true) );
   
 //  G4cout << " FIN Constructor GatePulseProcessorChain \n";
 }

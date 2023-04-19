@@ -5,13 +5,14 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
+// GND ClassToRemove
 
 
 #include "GateVCoincidencePulseProcessor.hh"
 
 #include "GateTools.hh"
 #include "GateCoincidencePulseProcessorChain.hh"
-#include "GateCoincidenceDigiMaker.hh"
+//#include "GateCoincidenceDigiMaker.hh"
 #include "GateDigitizer.hh"
 //------------------------------------------------------------------------------------------------------
 // Constructs a new pulse-processor attached to a GateDigitizer
@@ -24,7 +25,7 @@ GateVCoincidencePulseProcessor::GateVCoincidencePulseProcessor(GateCoincidencePu
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
 
   G4cout << " in GateVCoincidencePulseProcessor call new GateCoincidenceDigiMaker\n";
-  digitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(digitizer, itsName,false) );
+ // digitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(digitizer, itsName,false) );
 }
 //------------------------------------------------------------------------------------------------------
 
