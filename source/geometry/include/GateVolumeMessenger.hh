@@ -32,6 +32,7 @@ class GateVolumeMessenger: public GateClockDependentMessenger
 
     G4UIcmdWithAString*             pSetMaterCmd;
     G4UIcmdWithoutParameter*        pAttachCrystalSDCmd;
+    G4UIcmdWithoutParameter*        pAttachCrystalSDnoSystemCmd;
     G4UIcmdWithoutParameter*        pAttachPhantomSDCmd;
 
     G4UIcmdWith3VectorAndUnit*      pDumpVoxelizedVolumeCmd;

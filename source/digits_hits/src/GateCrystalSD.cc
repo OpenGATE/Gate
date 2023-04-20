@@ -27,6 +27,8 @@
 #include "GateSystemListManager.hh"
 #include "GateVVolume.hh"
 
+#include "GatePrimTrackInformation.hh"
+
 //OK GND 2022
 #include "GateDigitizerMgr.hh"
 
@@ -94,6 +96,7 @@ GateCrystalSD *GateCrystalSD::Clone() const {
 // Method overloading the virtual method Initialize() of G4VSensitiveDetector
 void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 {
+	//G4cout<<" GateCrystalSD::Initialize"<<G4endl;
 	crystalHitsCollection=new GateHitsCollection(GetName(),collectionName[0]);
 
 	HCE->AddHitsCollection(HCID, crystalHitsCollection);
@@ -107,6 +110,8 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 //G4bool GateCrystalSD::ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist)
 G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
+
+	//G4cout<<"GateCrystalSD::ProcessHits "<<G4endl;
   // Get the track information
   G4Track* aTrack       = aStep->GetTrack();
   G4int    trackID      = aTrack->GetTrackID();
@@ -170,9 +175,12 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // (It will be in the reference frame of the PreStepPoint volume for a transportation hit)
   G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(position);
 
-
+  GateHit* aHit = new GateHit();
   // Get the scanner position and rotation angle
 /*  GateSystemComponent* baseComponent = GetSystem()->GetBaseComponent();*/
+
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+  {
   GateVSystem* system = FindSystem(volumeID);
   GateSystemComponent* baseComponent = system->GetBaseComponent();
   G4ThreeVector scannerPos = baseComponent->GetCurrentTranslation();
@@ -187,6 +195,14 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
 
 
+  aHit->SetScannerPos( scannerPos );
+  aHit->SetScannerRotAngle( scannerRotAngle );
+  aHit->SetSystemID(system->GetItsNumber());
+  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
+  aHit->SetOutputVolumeID(outputVolumeID);
+
+  }
+
   // deposit energy in the current step
   G4double edep = aStep->GetTotalEnergyDeposit();
 
@@ -197,7 +213,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // time of the current step
   G4double aTime = newStepPoint->GetGlobalTime();
   // Create a new crystal hit
-  GateHit* aHit = new GateHit();
+
 
   // Store the data already obtained into the hit
   aHit->SetPDGEncoding( PDGEncoding );
@@ -214,19 +230,16 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetMomentumDir( momentumDirection );
   aHit->SetParentID( parentID );
   aHit->SetVolumeID( volumeID );
-  aHit->SetScannerPos( scannerPos );
-  aHit->SetScannerRotAngle( scannerRotAngle );
-  aHit->SetSystemID(system->GetItsNumber());
+
   aHit->SetSourceType( source_type );
   aHit->SetDecayType( decay_type );
   aHit->SetGammaType( gamma_type );
+
 
   // Ask the system to compute the output volume ID and store it into the hit
 
 //Seb Modif 24/02/2009
 /*  GateOutputVolumeID outputVolumeID = GetSystem()->ComputeOutputVolumeID(aHit->GetVolumeID());*/
-  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
-  aHit->SetOutputVolumeID(outputVolumeID);
 
   // Insert the new hit into the hit collection
   crystalHitsCollection->insert( aHit );
@@ -318,3 +331,8 @@ GateVSystem* GateCrystalSD::FindSystem(G4String& systemName)
 
    return m_systemList->at(-1);
 }
+
+
+
+
+

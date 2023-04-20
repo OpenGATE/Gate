@@ -92,6 +92,7 @@ class GateCrystalSD : public G4VSensitiveDetector
       G4int HCID;
 
       static GateCrystalSD*  theSD;
+
 };
 
 

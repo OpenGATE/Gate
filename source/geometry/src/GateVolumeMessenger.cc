@@ -46,6 +46,10 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
   pAttachCrystalSDCmd = new G4UIcmdWithoutParameter(cmdName,this);
   pAttachCrystalSDCmd->SetGuidance("Attach the crystal-SD to the object.");
 
+  cmdName = GetDirectoryName()+"attachCrystalSDnoSystem";
+  pAttachCrystalSDnoSystemCmd = new G4UIcmdWithoutParameter(cmdName,this);
+  pAttachCrystalSDnoSystemCmd->SetGuidance("Attach the crystal-SD to the object.");
+
   cmdName = GetDirectoryName()+"attachPhantomSD";
   pAttachPhantomSDCmd = new G4UIcmdWithoutParameter(cmdName,this);
   pAttachPhantomSDCmd->SetGuidance("Attach the phantom-SD to the object.");
@@ -68,6 +72,8 @@ GateVolumeMessenger::~GateVolumeMessenger()
    delete pVisAttributesMessenger;
    delete pSetMaterCmd;
    delete pAttachCrystalSDCmd;
+   delete pAttachCrystalSDnoSystemCmd;
+
    delete pAttachPhantomSDCmd;
    delete pDumpVoxelizedVolumeCmd;
    delete pSetDumpPathCmd;
@@ -79,6 +85,8 @@ void GateVolumeMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if( command == pSetMaterCmd )
     GetVolumeCreator()->SetMaterialName(newValue);
+  else if( command == pAttachCrystalSDnoSystemCmd )
+    GetVolumeCreator()->AttachCrystalSDnoSystem();
   else if( command == pAttachCrystalSDCmd )
     GetVolumeCreator()->AttachCrystalSD();
   else if( command == pAttachPhantomSDCmd )
