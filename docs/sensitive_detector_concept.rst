@@ -39,6 +39,11 @@ The first command is used to attach the scintillation crystal to the detection l
 Then, the second command attaches the crystalSD to the volume representing the scintillation crystal in the geometry::
  
    /gate/crystal/attachCrystalSD
+   
+Sinse Gate9.3 it is possible to attach a Sensitive Detector without system defined::
+
+   /gate/box2/attachCrystalSDnoSystem
+   
 
 The phantomSD
 ~~~~~~~~~~~~~
