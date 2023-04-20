@@ -303,6 +303,11 @@ to the crystals the appropriate command, in this example, is::
 
   # D E F I N E   A   S E N S I T I V E   D E T E C T O R
   /gate/box2/attachCrystalSD
+  
+Sinse Gate9.3 it is possible to attach a Sensitive Detector without system defined:: 
+
+  # D E F I N E   A   S E N S I T I V E   D E T E C T O R   W I T H O U T   A   S Y S T E M   D E F I N E D
+  /gate/box2/attachCrystalSDnoSystem
 
 At this level of the macro file, the user can implement detector movement. One
 of the most distinctive features of Gate is the management of time-dependent
