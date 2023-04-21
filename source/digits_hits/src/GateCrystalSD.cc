@@ -175,16 +175,17 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // (It will be in the reference frame of the PreStepPoint volume for a transportation hit)
   G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(position);
 
-  GateHit* aHit = new GateHit();
   // Get the scanner position and rotation angle
 /*  GateSystemComponent* baseComponent = GetSystem()->GetBaseComponent();*/
-
+  G4ThreeVector scannerPos;
+  G4double scannerRotAngle;
+  GateVSystem* system;
   if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
   {
-  GateVSystem* system = FindSystem(volumeID);
+  system = FindSystem(volumeID);
   GateSystemComponent* baseComponent = system->GetBaseComponent();
-  G4ThreeVector scannerPos = baseComponent->GetCurrentTranslation();
-  G4double scannerRotAngle = 0;
+  scannerPos = baseComponent->GetCurrentTranslation();
+  scannerRotAngle = 0;
 
 
   if ( baseComponent->FindRotationMove() )
@@ -193,13 +194,6 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     scannerRotAngle = baseComponent->FindOrbitingMove()->GetCurrentAngle();
   else if ( baseComponent->FindEccentRotMove() )
     scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
-
-
-  aHit->SetScannerPos( scannerPos );
-  aHit->SetScannerRotAngle( scannerRotAngle );
-  aHit->SetSystemID(system->GetItsNumber());
-  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
-  aHit->SetOutputVolumeID(outputVolumeID);
 
   }
 
@@ -214,6 +208,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4double aTime = newStepPoint->GetGlobalTime();
   // Create a new crystal hit
 
+  GateHit* aHit = new GateHit();
 
   // Store the data already obtained into the hit
   aHit->SetPDGEncoding( PDGEncoding );
@@ -234,8 +229,16 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetSourceType( source_type );
   aHit->SetDecayType( decay_type );
   aHit->SetGammaType( gamma_type );
-
-
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    {
+      aHit->SetScannerPos( scannerPos );
+      aHit->SetScannerRotAngle( scannerRotAngle );
+      aHit->SetSystemID(system->GetItsNumber());
+      
+      GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
+      aHit->SetOutputVolumeID(outputVolumeID);
+    }
+  
   // Ask the system to compute the output volume ID and store it into the hit
 
 //Seb Modif 24/02/2009
