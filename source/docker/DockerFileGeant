@@ -65,7 +65,7 @@ RUN mkdir software/geant4 \
                   -DGEANT4_USE_SYSTEM_CLHEP=ON \
                   -DCLHEP_ROOT_DIR=/software/clhep/install \
                   -DGEANT4_BUILD_MULTITHREADED=OFF \
- && make -j install \
+ && make -j4 install \
  && cd .. \
  && rm -rf bin src
 
@@ -83,7 +83,7 @@ RUN mkdir software/ITK \
                   -DModule_RTK=ON \
                   -DRTK_USE_CUDA=OFF \
                   -DRTK_BUILD_APPLICATIONS=OFF \
- && make -j 
+ && make -j4
 
 #Build root
 RUN mkdir software/root-cern \
@@ -100,6 +100,6 @@ RUN mkdir software/root-cern \
                   -Dbuiltin_openssl=OFF \
                   -Dssl=OFF \
                   -DCMAKE_INSTALL_PREFIX=/software/root-cern/install \
- && make -j install \
+ && make -j4 install \
  && cd .. \
  && rm -rf bin src
