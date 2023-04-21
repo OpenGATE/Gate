@@ -18,6 +18,8 @@
 #include "GateOutputMgr.hh"
 #include "GateAnalysis.hh"
 
+#include "GateSystemListManager.hh"
+
 static char *theDefaultOutputIDName[ROOT_OUTPUTIDSIZE] =
   {(char *)"baseID",
    (char *)"unused1ID",
@@ -37,6 +39,7 @@ static char outputIDLeafList2[ROOT_OUTPUTIDSIZE][24];
 
 void GateRootDefs::SetDefaultOutputIDNames()
 {
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
   for (size_t depth=0; depth<ROOT_OUTPUTIDSIZE ; ++depth )
     SetOutputIDName(theDefaultOutputIDName[depth],depth);
 }
@@ -120,8 +123,10 @@ void GateRootHitBuffer::Clear()
   strcpy (RayleighVolumeName," ");
 
   size_t d;
-  for ( d = 0 ; d < ROOT_OUTPUTIDSIZE ; ++d )
-    outputID[d] = -1;
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for ( d = 0 ; d < ROOT_OUTPUTIDSIZE ; ++d )
+	outputID[d] = -1;
+  
   for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
     volumeID[d] = -1;
 
@@ -145,8 +150,9 @@ void GateRootHitBuffer::Fill(GateHit* aHit)
   SetPos(           aHit->GetGlobalPos() );
   SetLocalPos(      aHit->GetLocalPos() );
   parentID        = aHit->GetParentID();
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID[d]   = aHit->GetComponentID(d);
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID[d]   = aHit->GetComponentID(d);
   photonID        = aHit->GetPhotonID();
   nPhantomCompton = aHit->GetNPhantomCompton();
   nCrystalCompton = aHit->GetNCrystalCompton();
@@ -197,8 +203,9 @@ GateHit* GateRootHitBuffer::CreateHit()
   // Create an output-volumeID from the root-hit data
   GateOutputVolumeID anOutputVolumeID;
   size_t d;
-  for ( d=0 ; d<ROOT_OUTPUTIDSIZE ; ++d)
-    anOutputVolumeID[d] = outputID[d];
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for ( d=0 ; d<ROOT_OUTPUTIDSIZE ; ++d)
+      anOutputVolumeID[d] = outputID[d];
 
   // Create a new hit
   GateHit* aHit = new GateHit();
@@ -261,9 +268,9 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
   Branch("momDirX",      &buffer.momDirX,"momDirX/F");
   Branch("momDirY",      &buffer.momDirY,"momDirY/F");
   Branch("momDirZ",      &buffer.momDirZ,"momDirZ/F");
-
-  for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
   Branch("photonID",       &buffer.photonID,"photonID/I");
   Branch("nPhantomCompton",&buffer.nPhantomCompton,"nPhantomCompton/I");
   Branch("nCrystalCompton",&buffer.nCrystalCompton,"nCrystalCompton/I");
@@ -308,8 +315,9 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("momDirX",&buffer.momDirX);
   hitTree->SetBranchAddress("momDirY",&buffer.momDirY);
   hitTree->SetBranchAddress("momDirZ",&buffer.momDirZ);
-  for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    hitTree->SetBranchAddress(outputIDName[d],(void *)(buffer.outputID+d));
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      hitTree->SetBranchAddress(outputIDName[d],(void *)(buffer.outputID+d));
   hitTree->SetBranchAddress("photonID",&buffer.photonID);
   hitTree->SetBranchAddress("nPhantomCompton",&buffer.nPhantomCompton);
   hitTree->SetBranchAddress("nCrystalCompton",&buffer.nCrystalCompton);
@@ -349,8 +357,9 @@ void GateRootSingleBuffer::Clear()
   globalPosX       = 0./mm;
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID[d]      = -1;
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID[d]      = -1;
   axialPos         = 0.;
   rotationAngle    = 0.;
   comptonPhantom   = -1;
@@ -381,7 +390,8 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
   globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
   globalPosY    = (aDigi->GetGlobalPos()).y()/mm;
   globalPosZ    = (aDigi->GetGlobalPos()).z()/mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
 	  outputID[d] =  aDigi->GetComponentID(d);
   comptonPhantom=  aDigi->GetNPhantomCompton();
   comptonCrystal=  aDigi->GetNCrystalCompton();
@@ -428,8 +438,9 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
   if ( GateDigi::GetSingleASCIIMask(11) )
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
   if ( GateDigi::GetSingleASCIIMask(6) )
-    for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
+    if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+	Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
   if ( GateDigi::GetSingleASCIIMask(12) )
     Branch("comptonPhantom", &buffer.comptonPhantom,"comptonPhantom/I");
   if ( GateDigi::GetSingleASCIIMask(13) )
@@ -472,8 +483,9 @@ void GateRootCoincBuffer::Clear()
   globalPosX1     = 0./mm;
   globalPosY1     = 0./mm;
   globalPosZ1     = 0./mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID1[d]  = -1;
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID1[d]  = -1;
   comptonPhantom1 = -1;
   comptonCrystal1 = -1;
   RayleighPhantom1 = -1;
@@ -491,8 +503,9 @@ void GateRootCoincBuffer::Clear()
   globalPosX2     = 0./mm;
   globalPosY2     = 0./mm;
   globalPosZ2     = 0./mm;
-  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID2[d]  = -1;
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+      outputID2[d]  = -1;
   comptonPhantom2 = -1;
   comptonCrystal2 = -1;
   RayleighPhantom2 = -1;
@@ -521,8 +534,10 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
     globalPosX1    = (aDigi->GetDigi(0))->GetGlobalPos().x()/mm;
     globalPosY1    = (aDigi->GetDigi(0))->GetGlobalPos().y()/mm;
     globalPosZ1    = (aDigi->GetDigi(0))->GetGlobalPos().z()/mm;
-    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      outputID1[d] = (aDigi->GetDigi(0))->GetComponentID(d);
+    
+    if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+	outputID1[d] = (aDigi->GetDigi(0))->GetComponentID(d);
     comptonPhantom1       = (aDigi->GetDigi(0))->GetNPhantomCompton();
     comptonCrystal1       = (aDigi->GetDigi(0))->GetNCrystalCompton();
     RayleighPhantom1       = (aDigi->GetDigi(0))->GetNPhantomRayleigh();
@@ -541,8 +556,9 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
     globalPosX2    = (aDigi->GetDigi(1))->GetGlobalPos().x()/mm;
     globalPosY2    = (aDigi->GetDigi(1))->GetGlobalPos().y()/mm;
     globalPosZ2    = (aDigi->GetDigi(1))->GetGlobalPos().z()/mm;
-    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      outputID2[d] = (aDigi->GetDigi(1))->GetComponentID(d);
+    if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+	outputID2[d] = (aDigi->GetDigi(1))->GetComponentID(d);
     comptonPhantom2       = (aDigi->GetDigi(1))->GetNPhantomCompton();
     comptonCrystal2       = (aDigi->GetDigi(1))->GetNCrystalCompton();
     RayleighPhantom2       = (aDigi->GetDigi(1))->GetNPhantomRayleigh();
@@ -629,8 +645,9 @@ void GateCoincTree::Init(GateRootCoincBuffer& buffer)
     Branch("globalPosZ1",    &buffer.globalPosZ1,"globalPosZ1/F");
   size_t d;
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(11) )
-    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      Branch(outputIDName1[d],(void*)( buffer.outputID1 +d ),outputIDLeafList1[d]);
+    if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+	Branch(outputIDName1[d],(void*)( buffer.outputID1 +d ),outputIDLeafList1[d]);
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(12) )
     Branch("comptonPhantom1",&buffer.comptonPhantom1,"comptonPhantom1/I");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(13) )
@@ -661,8 +678,9 @@ void GateCoincTree::Init(GateRootCoincBuffer& buffer)
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(10) )
     Branch("globalPosZ2",    &buffer.globalPosZ2,"globalPosZ2/F");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(11) )
-    for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      Branch(outputIDName2[d],(void*)( buffer.outputID2 + d),outputIDLeafList2[d]);
+    if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+      for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
+	Branch(outputIDName2[d],(void*)( buffer.outputID2 + d),outputIDLeafList2[d]);
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(12) )
     Branch("comptonPhantom2",&buffer.comptonPhantom2,"comptonPhantom2/I");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(13) )

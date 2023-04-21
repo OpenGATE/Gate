@@ -257,9 +257,9 @@ GateDigi* GateVDigitizerModule::MergePositionEnergyWin(GateDigi *right, GateDigi
     	output->m_globalPos =   right->m_globalPos;
 
     }
-    G4cout<<output->m_energy <<" + "<< right->m_energy<<G4endl;
+    //G4cout<<output->m_energy <<" + "<< right->m_energy<<G4endl;
     output->m_energy = output->m_energy + right->m_energy;
-    G4cout<<output->m_energy <<G4endl;
+    //G4cout<<output->m_energy <<G4endl;
 
     // # of compton process: store the max nb
     if ( right->m_nPhantomCompton > output->m_nPhantomCompton )

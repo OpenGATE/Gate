@@ -44,9 +44,7 @@ public:
 
 
   void SetPositionPolicy(const G4String& policy);
-  
-  //GateDigi* MergePositionEnergyWin(GateDigi*, GateDigi*);
-  //GateDigi* CentroidMerge(GateDigi*, GateDigi*);
+ 
 
   void DescribeMyself(size_t );
 

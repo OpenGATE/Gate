@@ -123,6 +123,9 @@ class GateSystemListManager : public GateListManager
     // Get the list of inserted systems names
     inline std::vector<G4String>* GetInsertedSystemsNames() const {return theInsertedSystemsNames;}
 
+    inline G4bool GetIsAnySystemDefined(){return m_isAnySystemDefined;}
+    inline void SetIsAnySystemDefined(G4bool val){m_isAnySystemDefined=val;}
+
   protected:
     GateSystemListMessenger* m_messenger;    //!< Pointer to the store's messenger
 
@@ -133,6 +136,10 @@ class GateSystemListManager : public GateListManager
     static GateSystemListManager* theGateSystemListManager;
 
     static const G4String     	theSystemNameList[];  //!< the list of predefined-system names
+    //OK GND 2023
+    G4bool m_isAnySystemDefined;
+
+
 };
 
 

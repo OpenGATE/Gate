@@ -39,6 +39,9 @@
 #include "GateMessageManager.hh"
 #include "GateImage.hh"
 
+#include "GateSystemListManager.hh"
+
+
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"
 #endif
@@ -405,6 +408,31 @@ void GateVVolume::AttachCrystalSD() {
 }
 //----------------------------------------------------------------------------------------
 
+
+//----------------------------------------------------------------------------------------
+// Tell the creator that the logical volume should be attached to the crystal-SD
+void GateVVolume::AttachCrystalSDnoSystem() {
+
+	G4cout<<"GateVVolume::AttachCrystalSDnoSystem( "<<G4endl;
+    // OK GND 2022
+    //----
+	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+	G4String crystalSDname = GetObjectName();// GateCrystalSD::GetCrystalCollectionName();//check GateCrystalSD class for hardcoded value
+        //
+    GateCrystalSD *crystalSD = new GateCrystalSD(crystalSDname);
+    SDman->AddNewDetector(crystalSD);
+    //----
+    // If the attachement is allowed, store the crystal-SD pointer
+    m_sensitiveDetector = crystalSD;
+
+
+    GateSystemListManager* sysList=GateSystemListManager::GetInstance();
+    sysList->SetIsAnySystemDefined(false);
+  //  pOwnLog->SetSensitiveDetector(m_sensitiveDetector);
+
+
+}
+//----------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------
 // Tell the creator that the logical volume should be attached to the phantom-SD
