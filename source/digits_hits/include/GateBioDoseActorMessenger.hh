@@ -37,6 +37,7 @@ protected:
 	std::unique_ptr<G4UIcmdWithAString> pBioPhysicalModelCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pSOBPWeightCmd;
 
+	std::unique_ptr<G4UIcmdWithABool>   pEnableEdepCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableBioDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableAlphaMixCmd;

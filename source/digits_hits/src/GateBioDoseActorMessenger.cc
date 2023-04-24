@@ -44,6 +44,10 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	pSOBPWeightCmd->SetGuidance("If passive SOBP, set bragg peak weight");
 
 	// enable outputs
+	n = base + "/enableEdep";
+	pEnableEdepCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableEdepCmd->SetGuidance("Enable deposited energy output");
+
 	n = base + "/enableDose";
 	pEnableDoseCmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableDoseCmd->SetGuidance("Enable dose output");
@@ -72,6 +76,7 @@ void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
 	else if(cmd == pCellLineCmd.get())          pBioDoseActor->SetCellLine(value);
 	else if(cmd == pBioPhysicalModelCmd.get())  pBioDoseActor->SetBioPhysicalModel(value);
 	else if(cmd == pSOBPWeightCmd.get())        pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(value));
+	else if(cmd == pEnableEdepCmd.get())        pBioDoseActor->SetEnableEdep(pEnableEdepCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableDoseCmd.get())        pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableBioDoseCmd.get())     pBioDoseActor->SetEnableBioDose(pEnableBioDoseCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableAlphaMixCmd.get())    pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
