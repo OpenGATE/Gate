@@ -196,6 +196,8 @@ public :
   //! Tell the creator that the logical volume should be attached to the crystal-SD
   virtual void AttachCrystalSD() ;
 
+  virtual void AttachCrystalSDnoSystem();
+
   //! Tell the creator that the logical volume should be attached to the phantom-SD
   virtual void AttachPhantomSD() ;
 

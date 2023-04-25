@@ -1,4 +1,4 @@
-#Ubuntu 20.04
+#Ubuntu 22.04
 #user: vgate
 #psswd: virtual
 
@@ -17,6 +17,7 @@ sudo apt-get install -y git \
                         libxmu-dev \
                         git-lfs \
                         libssl-dev \
+                        libxml2-dev \
                         fftw3-dev
                      
 cd
@@ -45,7 +46,7 @@ rm -rf bin src
 cd
 cd Software/RTK
 mkdir src bin
-git clone -b v5.2.1 https://github.com/InsightSoftwareConsortium/ITK.git src
+git clone -b v5.3.0 https://github.com/InsightSoftwareConsortium/ITK.git src
 cd bin
 ccmake ../src -DBUILD_TESTING=OFF -DModule_RTK=ON -DITK_USE_FFTWD=ON -DITK_USE_FFTWF=ON -DITK_USE_SYSTEM_FFTW=ON
 make
@@ -63,7 +64,7 @@ rm -rf src bin
 cd
 cd Software/root
 mkdir src bin
-git clone -b v6-24-06 https://github.com/root-project/root.git src
+git clone -b v6-26-08 https://github.com/root-project/root.git src
 cd bin
 ccmake ../src -Dpython=OFF
 make

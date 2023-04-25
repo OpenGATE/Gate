@@ -71,7 +71,8 @@ GateSystemListManager* GateSystemListManager::GetInstance()
 // Private constructor
 GateSystemListManager::GateSystemListManager()
   : GateListManager( "systems", "system", false, false )
-{    
+{
+	m_isAnySystemDefined=true;
   m_messenger = new GateSystemListMessenger(this);
   theInsertedSystemsNames = new std::vector<G4String>;
 }
