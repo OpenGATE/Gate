@@ -171,6 +171,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
     pEnableTimeCmd->SetGuidance(guidance);
     pEnableTimeCmd->SetParameterName("State", false);
 
+    bb = base+"/enableIonTime";
+    pEnableIonTimeCmd = new G4UIcmdWithABool(bb,this);
+    guidance = "Save the time of primary particles in the phase space file.";
+    pEnableIonTimeCmd->SetGuidance(guidance);
+    pEnableIonTimeCmd->SetParameterName("State",false);
+    
     bb = base + "/enableTimeFromBeginOfEvent";
     pEnableTimeFromBeginOfEventCmd = new G4UIcmdWithABool(bb, this);
     guidance = "Save the time of particles since the begin of event time.";
@@ -292,6 +298,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
     pEnableTOutCmd->SetGuidance(guidance);
     pEnableTOutCmd->SetParameterName("State", false);
 
+    bb = base+"/enablept";
+    pEnableptCmd = new G4UIcmdWithABool(bb,this);
+    guidance = "Save the time of arrival of the primary particle (defined as a IonTime) in the phase space file. Usefull only for the outgoing mode";
+    pEnableptCmd->SetGuidance(guidance);
+    pEnableptCmd->SetParameterName("State",false);
+    
     bb = base + "/enableTProd";
     pEnableTProdCmd = new G4UIcmdWithABool(bb, this);
     guidance = "Save the production time of the particle wrt to the primary production (defined as a GlobalTime - LocalTime)";
@@ -346,6 +358,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
         pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
     if (command == pEnableTimeCmd)
         pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
+    if (command == pEnableIonTimeCmd)
+        pActor->SetIsIonTimeEnabled(pEnableIonTimeCmd->GetNewBoolValue(param));
     if (command == pEnableTimeFromBeginOfEventCmd)
         pActor->SetIsTimeFromBeginOfEventEnabled(pEnableTimeFromBeginOfEventCmd->GetNewBoolValue(param));
     if (command == pEnableTrackLengthCmd)
@@ -401,6 +415,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
 
     if (command == pEnableTOutCmd)
         pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
+    if(command == pEnableTProdCmd)
+        pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
     if (command == pEnableTProdCmd)
         pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
     if (command == pUseMaskCmd)

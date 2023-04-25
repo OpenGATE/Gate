@@ -66,6 +66,7 @@ void GatePromptGammaTLEActor::Construct()
 
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
+  SetTofIoH(mImagetof, pTime);
   if (mIsDebugOutputEnabled){
     //set up and allocate lasthiteventimage
     SetOriginTransformAndFlagToImage(mLastHitEventImage);
@@ -116,6 +117,10 @@ void GatePromptGammaTLEActor::SaveData()
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
   mImageGamma->Write(mSaveFilename);
 
+  //delete mImageGamma; //JML
+  mImagetof->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
+  mImagetof->Write(G4String(removeExtension(mSaveFilename))+"-tof."+G4String(getExtension(mSaveFilename)));
+  
   if (mIsDebugOutputEnabled) {
     BuildVarianceOutput();
     tle->Write(G4String(removeExtension(mSaveFilename))+"-debugtle."+G4String(getExtension(mSaveFilename)));
@@ -135,7 +140,9 @@ void GatePromptGammaTLEActor::BeginOfEventAction(const G4Event *e) {
   //std::cout << "Event Begin. Press any key to continue." << std::endl;
   //std::cin.get();
   GateVActor::BeginOfEventAction(e);
+  mCurrentIndex = -1;
   mCurrentEvent++;
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: " << mCurrentEvent << G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -165,8 +172,11 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Get information
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
+  //const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
-
+  randomNumberTime = G4UniformRand();
+  randomNumberEnergy = G4UniformRand();
+  
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
 
@@ -211,7 +221,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 
   // Get value from histogram. We do not check the material index, and
   // assume everything exist (has been computed by InitializeMaterial)
-  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
+  //particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
+  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy); //JML
 
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
@@ -219,6 +230,38 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Do not scale h directly because it will be reused
   mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
+
+  //----------------------------------------------------------------------------------------------------------
+  /** Modif Oreste **/
+  const G4double &inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+  const G4double &outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+  tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
+  pTime->Fill(tof);
+  mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
+  // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
+  //if (index != mCurrentIndex) {
+    //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
+    //if (mCurrentIndex != -1) {
+      //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
+      //outputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+      //tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
+      //pTime->Fill(tof);
+      //mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+    //}
+    //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
+    //inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+    //mCurrentIndex = index;
+  //}
+  //Recording of the time for the last index (index = mCurrentIndex) of the event
+  //if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
+    //outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+    //tof = inputtof + (outputtof-inputtof)*randomNumberTime;
+    //pTime->Fill(tof);
+    //mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+  //}
+
+  pTime->Reset();
+  //------------------------------------------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------
 
@@ -348,6 +391,19 @@ void GatePromptGammaTLEActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
   ioh->SetOrigin(mOrigin);
   ioh->SetTransformMatrix(mImage.GetTransformMatrix());
   ioh->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
+  ioh->Allocate();
+  ioh->PrintInfo();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/** Modif Oreste **/
+void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
   ioh->Allocate();
   ioh->PrintInfo();
 }

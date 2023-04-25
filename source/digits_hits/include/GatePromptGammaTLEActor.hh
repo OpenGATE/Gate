@@ -61,6 +61,7 @@ protected:
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
+  void SetTofIoH(GateImageOfHistograms*&, TH1D*);
   GateVImageVolume* GetPhantom();
   void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar per voxel. Not used.
   //void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv. Not used.
@@ -73,6 +74,7 @@ protected:
   GateImageOfHistograms * tracklsq;     //L_i^2. also intermediate output: track squared length per voxel per E_proton
 
   //output, calculated at end of simu
+  GateImageOfHistograms * mImagetof;
   GateImageOfHistograms * mImageGamma;  //oldstyle main output,
   GateImageOfHistograms * tle;          //main output (yield)
   GateImageOfHistograms * tlesysvar;    //systematic variance per voxel, per E_gamma. Not used.
@@ -80,6 +82,14 @@ protected:
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
+  int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
+  double tof;
+  double startEvtTime;
+  double particle_energy_rand;
+  G4double randomNumberTime;
+  G4double randomNumberEnergy;
+
+  TH1D * pTime = new TH1D("","",1000,0,5);
 };
 //-----------------------------------------------------------------------------
 

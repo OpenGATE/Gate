@@ -14,6 +14,11 @@
 #include "GateApplicationMgr.hh"
 #include "GateSourceMgr.hh"
 
+#include "GateSourceOfPromptGammaData.hh"
+#include "GateSourceOfPromptGammaDataTof.hh"
+#include "GateImageOfHistograms.hh"
+#include <iostream>
+#include <fstream>
 #include "G4ParticleTable.hh"
 #include "G4Event.hh"
 #include "G4Gamma.hh"
@@ -25,6 +30,7 @@ GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   pMessenger = new GateSourceOfPromptGammaMessenger(this);
   // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
+  mDataToF = new GateSourceOfPromptGammaDataTof;   /** Modif Oreste **/
   mIsInitializedFlag = false;
   mIsInitializedNumberOfPrimariesFlag = false;
   mFilename = "no filename given";
@@ -68,6 +74,10 @@ void GateSourceOfPromptGamma::Initialize()
   // into number of gamma primaries. See GateApplicationMgrMessenger.cc
   // WILL NOT WORK WITH SEVERAL SOURCES !
   SetSourceWeight(mData->ComputeSum());
+  /** Modif Oreste **/
+  // Get and load file containing the pTime data
+  mDataToF->LoadDataToF(mFilename);
+  mDataToF->InitializeToF();
 
   // It is initialized
   mIsInitializedFlag = true;
@@ -129,6 +139,9 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   // Energy
   mData->SampleRandomEnergy(mEnergy);
 
+  // Time /** Modif Oreste **/
+  mDataToF->SampleRandomTime(mTime, mData->returnCurrentIndex_i(), mData->returnCurrentIndex_j(), mData->returnCurrentIndex_k());
+
   // Direction
   G4ParticleMomentum particle_direction;
   mData->SampleRandomDirection(particle_direction);
@@ -148,9 +161,11 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
-  vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
+  //vertex = new G4PrimaryVertex(particle_position, GetParticleTime()); //JML
+  vertex = new G4PrimaryVertex(particle_position, mTime); //JML
   vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
+  vertex->SetT0(mTime); /** Modif Oreste **/
   aEvent->AddPrimaryVertex(vertex);
 }
 //------------------------------------------------------------------------

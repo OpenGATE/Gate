@@ -13,6 +13,9 @@
 #include "Randomize.hh" // needed for G4UniformRand
 #include "G4Gamma.hh"
 #include "GateRandomEngine.hh"
+#include <random>
+#include <iostream>
+#include <fstream>
 
 //------------------------------------------------------------------------
 GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()

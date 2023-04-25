@@ -13,6 +13,13 @@
 #include "GateImage.hh"
 #include "GateTreeFileManager.hh"
 
+#include "TROOT.h"
+#include "TFile.h"
+#include "TNtuple.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TString.h"
+
 struct iaea_header_type;
 struct iaea_record_type;
 
@@ -80,6 +87,8 @@ public:
 
   void SetIsTimeEnabled(bool b) { EnableTime = b; }
 
+  void SetIsIonTimeEnabled(bool b){EnableIonTime = b;}
+  
   void SetIsLocalTimeEnabled(bool b) { EnableLocalTime = b; }
 
   void SetIsTimeFromBeginOfEventEnabled(bool b) { EnableTimeFromBeginOfEvent = b; }
@@ -162,6 +171,9 @@ protected:
   G4String mFileType;
   G4int mNevent;
 
+  TFile * pFile;
+  TTree * pListeVar;
+
   GateOutputTreeFileManager *mFile;
 
   bool EnableCharge;
@@ -180,6 +192,7 @@ protected:
   bool EnableProdProcess;
   bool EnableWeight;
   bool EnableTime;
+  bool EnableIonTime;
   bool EnableLocalTime;
   bool EnableMass;
   bool EnableSec;
@@ -211,7 +224,7 @@ protected:
   int bSpotID;
   bool bEnableCompact;
   bool bEnablePDGCode;
-  int bPDGCode;
+  long int bPDGCode;
   double trackLength;
 
   bool mMaskIsEnabled;
@@ -220,6 +233,7 @@ protected:
   bool mKillParticleFlag;
 
   bool bEnableTOut;
+  bool bEnablept;
   bool bEnableTProd;
 
   double mFileSize;
@@ -250,6 +264,7 @@ protected:
   float tOut;
   float tProd;
   double t; // t is either time or local time.
+  double pt; // Used for proton arrival time recovering from mTime in SourceOfPromptGamma
   double fTimeFromBeginOfEvent;
   double fBeginOfEventTime;
 

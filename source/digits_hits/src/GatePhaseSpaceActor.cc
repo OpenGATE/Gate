@@ -19,8 +19,9 @@
 #include <G4EmCalculator.hh>
 #include <G4VProcess.hh>
 #include <G4Run.hh>
+#include <G4ParticleTable.hh>
+#include "GateRunManager.hh"
 #include "GateMiscFunctions.hh"
-
 #include "GateSourceMgr.hh"
 #include "GateVImageActor.hh"
 #include "GateProtonNuclearInformationActor.hh"
@@ -50,7 +51,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     EnableProdVol = true;
     EnableProdProcess = true;
     EnableWeight = true;
-    EnableTime = false;
+    EnableTime = true; //JML false
+    EnableIonTime = true;
     EnableLocalTime = false;
     EnableTimeFromBeginOfEvent = false;
     EnableMass = true;
@@ -60,8 +62,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     mUseVolFrame = false;
     mStoreOutPart = false;
     SetIsAllStep(false);
-    EnableTOut = false;
-    EnableTProd = false;
+    EnableTOut = true; //JML false
+    EnableTProd = true; //JML false
     EnableTrackLengthFlag = false;
 
     mSphereProjectionFlag = false;
@@ -72,12 +74,13 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     mTranslationLength = 0.0;
 
     bEnableCoordFrame = false;
-    bEnablePrimaryEnergy = false;
+    bEnablePrimaryEnergy = true; //JML false
     bEnableSpotID = false;
     bEnableCompact = false;
-    bEnableEmissionPoint = false;
+    bEnableEmissionPoint = true ; //JML false
     bEnablePDGCode = false;
     bEnableTOut = true;
+    bEnablept = true;
     bEnableTProd = true;
 
     bSpotID = 0;
@@ -121,13 +124,13 @@ void GatePhaseSpaceActor::Construct()
 {
     GateVActor::Construct();
     // Enable callbacks
-    EnableBeginOfRunAction(true);
-    EnableBeginOfEventAction(true);
+    EnableBeginOfRunAction(false); //JML true
+    EnableBeginOfEventAction(false); //JML true
     EnableRecordEndOfAcquisition(true);
     EnablePreUserTrackingAction(true);
     EnablePostUserTrackingAction(true);
     EnableUserSteppingAction(true);
-
+    
     G4String extension = getExtension(mSaveFilename);
 
     // If mask, load the image
@@ -170,7 +173,7 @@ void GatePhaseSpaceActor::Construct()
             pIAEARecordType->iw = 1;
         if (EnableWeight)
             pIAEARecordType->iweight = 1;
-        if (EnableTime || EnableLocalTime)
+        if (EnableTime || EnableLocalTime || EnableIonTime)
         {
             GateWarning("'Time' is not available in IAEA phase space.");
         }
@@ -239,6 +242,8 @@ void GatePhaseSpaceActor::InitTree()
         mFile->write_variable("Weight", &w);
     if (EnableTime || EnableLocalTime)
         mFile->write_variable("Time", &t);
+    if (EnableIonTime)
+        mFile->write_variable("IonTime", &pt);
     if (EnableMass)
         mFile->write_variable("Mass", &m); // in MeV/c2
     if (EnableXPosition)
@@ -377,6 +382,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 {
     // Set Primary Energy
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); // GetInitialEnergy oid.
+    pt = e->GetPrimaryVertex()->GetT0();
 
     // Store the application time of the event
     auto app = GateApplicationMgr::GetInstance();
@@ -815,7 +821,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         pIAEARecordType->write_particle();
 
         pIAEAheader->update_counters(pIAEARecordType);
-    }
+    } 
     else
     {
         mFile->fill();
@@ -853,7 +859,7 @@ void GatePhaseSpaceActor::SaveData()
         fclose(pIAEAheader->fheader);
         fclose(pIAEARecordType->p_file);
     }
-    else
+    else 
     {
         if (!this->mOverWriteFilesFlag)
         {

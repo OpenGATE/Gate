@@ -27,6 +27,9 @@
 #include "G4SPSEneDistribution.hh"
 #include "GateConfiguration.h"
 #include "GateImageOfHistograms.hh"
+#include <random>
+#include <iostream>
+#include <fstream>
 
 //------------------------------------------------------------------------
 class GateSourceOfPromptGammaData
@@ -38,7 +41,11 @@ public:
   void SampleRandomPosition(G4ThreeVector & position);
   void SampleRandomEnergy(double & energy);
   void SampleRandomDirection(G4ParticleMomentum & direction);
+  int returnCurrentIndex_i()  { return mCurrentIndex_i; }
+  int returnCurrentIndex_j()  { return mCurrentIndex_j; }
+  int returnCurrentIndex_k()  { return mCurrentIndex_k; }
 
+  
   void LoadData(std::string mFilename);
   void Initialize();
   double computesum;

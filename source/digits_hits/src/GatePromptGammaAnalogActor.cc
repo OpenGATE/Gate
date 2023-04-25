@@ -27,6 +27,7 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   pMessenger = new GatePromptGammaAnalogActorMessenger(this);
   //SetStepHitType("random");
   mImageGamma = new GateImageOfHistograms("int");
+  mImagetof = new GateImageOfHistograms("double");
   mSetOutputCount = false;
   alreadyHere = false;
 }
@@ -56,7 +57,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
-  EnableBeginOfEventAction(false);
+  EnableBeginOfEventAction(true); //JML false
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
@@ -72,6 +73,13 @@ void GatePromptGammaAnalogActor::Construct()
   mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
   mImageGamma->Allocate();
   mImageGamma->PrintInfo();
+
+  mImagetof->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mImagetof->SetOrigin(mOrigin);
+  mImagetof->SetTransformMatrix(mImage.GetTransformMatrix());
+  mImagetof->SetHistoInfo(pTime->GetNbinsX(), pTime->GetXaxis()->GetFirst()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()), pTime->GetXaxis()->GetLast()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()));
+  mImagetof->Allocate();
+  mImagetof->PrintInfo();
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -89,6 +97,7 @@ void GatePromptGammaAnalogActor::Construct()
 void GatePromptGammaAnalogActor::ResetData()
 {
   mImageGamma->Reset();
+  mImagetof->Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -108,9 +117,19 @@ void GatePromptGammaAnalogActor::SaveData()
   }
   //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
+
+  //delete mImageGamma; //JML
+  mImagetof->Write(G4String(removeExtension(mSaveFilename))+"-tof."+G4String(getExtension(mSaveFilename)));
+
   alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
+
+void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *e)
+{  // JML
+  GateVActor::BeginOfEventAction(e);
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
+}
 
 
 //-----------------------------------------------------------------------------
@@ -140,7 +159,8 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-
+  const G4double &tof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+  
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
 
@@ -151,7 +171,10 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   if (particle_energy > data.GetProtonEMax()) {
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
-
+  
+  // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
+  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
+  
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
@@ -172,6 +195,11 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
 
+      pTime->Fill(tof);
+      mImagetof->AddValueDouble(index, pTime, 1);
+      pTime->Reset();
+
+      
       /*Some debug stuff for lowE gammas.
       GateMessage("Actor",4,"PGAn "<<"PG added."<<std::endl);
       //GateMessage("Actor",4,"PGAn "<<"EventID: "<< step->GetEvent()->GetEventID()<<std::endl);
