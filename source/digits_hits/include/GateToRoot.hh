@@ -157,9 +157,10 @@ public:
     //--------------------------------------------------------------------------
     class VOutputChannel {
     public:
-        inline VOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
+        inline VOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
                 : nVerboseLevel(0),
                   m_outputFlag(outputFlag),
+				  m_CCFlag(CCFlag),
                   m_collectionName(aCollectionName),
                   m_collectionID(-1),
 				  m_signlesCommands(0){}
@@ -180,6 +181,8 @@ public:
 
         G4int nVerboseLevel;
         G4bool m_outputFlag;
+        G4bool m_CCFlag;
+
         G4String m_collectionName;
         G4int m_collectionID;
         G4int m_signlesCommands;
@@ -189,8 +192,8 @@ public:
     //--------------------------------------------------------------------------
     class SingleOutputChannel : public VOutputChannel {
     public:
-        inline SingleOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
-                : VOutputChannel(aCollectionName, outputFlag),
+        inline SingleOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
+                : VOutputChannel(aCollectionName, outputFlag, CCFlag),
                   m_tree(0) { m_buffer.Clear(); }
 
         virtual inline ~SingleOutputChannel() {}
@@ -230,8 +233,8 @@ public:
     //--------------------------------------------------------------------------
     class CoincidenceOutputChannel : public VOutputChannel {
     public:
-        inline CoincidenceOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
-                : VOutputChannel(aCollectionName, outputFlag),
+        inline CoincidenceOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
+                : VOutputChannel(aCollectionName, outputFlag, CCFlag),
                   m_tree(0) { m_buffer.Clear(); }
 
         virtual inline ~CoincidenceOutputChannel() {}
@@ -263,6 +266,13 @@ public:
     G4bool GetRootHitFlag() { return m_rootHitFlag; };
 
     void SetRootHitFlag(G4bool flag) { m_rootHitFlag = flag; };
+
+    void SetRootCCFlag(G4bool flag) { m_rootCCFlag = flag; };
+    G4bool GetRootCCFlag() {return  m_rootCCFlag; };
+
+    void SetRootCCSourceParentIDSpecificationFlag(G4bool flag) { m_rootCCSourceParentIDSpecificationFlag = flag; };
+    G4bool GetRootCCSourceParentIDSpecificationFlag() {return  m_rootCCSourceParentIDSpecificationFlag; };
+
 
     G4bool GetRootNtupleFlag() { return m_rootNtupleFlag; };
 
@@ -365,6 +375,8 @@ private:
 // v. cuplov - optical photons
 
     G4bool m_rootHitFlag;
+    G4bool m_rootCCFlag;
+    G4bool m_rootCCSourceParentIDSpecificationFlag;
     G4bool m_rootNtupleFlag;
     G4bool m_saveRndmFlag;
     G4bool m_rootOpticalFlag = false;

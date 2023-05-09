@@ -31,7 +31,9 @@
 
 //OK GND 2022
 #include "GateDigitizerMgr.hh"
+#include "GateToRoot.hh"
 
+#include "GateRunManager.hh"
 #include "GateObjectStore.hh"
 #include "GateEmittedGammaInformation.hh"
 
@@ -59,6 +61,10 @@ GateCrystalSD::GateCrystalSD(const G4String& name)
 	//OK GND 2022 For GateToTree class adaptation
 
 	GateOutputMgr::GetInstance()->RegisterNewHitsCollection(collName,false);
+
+	//TODO chech if works for another output module
+	GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
+	mParentIDSpecificationFlag=gateToRoot->GetRootCCSourceParentIDSpecificationFlag();
 
 
 }
@@ -94,12 +100,22 @@ GateCrystalSD *GateCrystalSD::Clone() const {
 
 //------------------------------------------------------------------------------
 // Method overloading the virtual method Initialize() of G4VSensitiveDetector
+// Called at the beginning of each event
 void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 {
 	//G4cout<<" GateCrystalSD::Initialize"<<G4endl;
 	crystalHitsCollection=new GateHitsCollection(GetName(),collectionName[0]);
 
 	HCE->AddHitsCollection(HCID, crystalHitsCollection);
+
+
+	m_IsNewEvent=true;
+	m_Ef_oldPrimary=0;
+	m_sourceEnergy=-1;
+	m_sourcePDG=-1;
+
+
+
 }
 //------------------------------------------------------------------------------
 
@@ -114,6 +130,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 	//G4cout<<"GateCrystalSD::ProcessHits "<<G4endl;
   // Get the track information
   G4Track* aTrack       = aStep->GetTrack();
+
   G4int    trackID      = aTrack->GetTrackID();
   G4int    parentID     = aTrack->GetParentID();
   // Seb Modif 5/4/2016
@@ -147,6 +164,18 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   //  Get the process name
   const G4VProcess* process = newStepPoint->GetProcessDefinedStep();
   G4String processName = ( (process != NULL) ? process->GetProcessName() : G4String() ) ;
+  //========================track (step) =========================================
+  G4String processPostStep;
+  const G4VProcess* processTrack = aTrack->GetCreatorProcess();
+  if(aStep->GetPostStepPoint()->GetProcessDefinedStep()!=0){
+      processPostStep=aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  }
+  else{
+      processPostStep="NULL";
+  }
+  //=================================================
+
+
 
   //  For all processes except transportation, we select the PostStepPoint volume
   //  For the transportation, we select the PreStepPoint volume
@@ -175,17 +204,61 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // (It will be in the reference frame of the PreStepPoint volume for a transportation hit)
   G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(position);
 
+  G4double Ef=aStep->GetPostStepPoint()->GetKineticEnergy();
+
+  G4double Ei;
+  if(m_IsNewEvent){
+      //G4cout<<"new track Ei="<<aStep->GetPreStepPoint()->GetKineticEnergy()<<G4endl;
+      Ei=aStep->GetPreStepPoint()->GetKineticEnergy();
+
+
+  	const G4Event* event=GateRunManager::GetRunManager()->GetCurrentEvent();
+
+  	// Get the source particle's PDG code from the corresponding G4Track object
+  	G4PrimaryParticle* primaryParticle = event->GetPrimaryVertex(0)->GetPrimary(0);
+  	m_sourcePDG = primaryParticle->GetPDGcode();
+  	m_sourceEnergy = primaryParticle->GetKineticEnergy();
+  	m_IsNewEvent=false;
+  }
+
+  if(mParentIDSpecificationFlag){
+       //itPrtID = find ( specfParentID.begin(),  specfParentID.end(), t->GetParentID());//Specific photon set to primary for ion sources
+       //This info (Ei, Ef) is only for the ideal adder that for the moment does not work for ion sources. It only works for photon sources
+   }
+   else if (parentID==0){
+          //Like that The initial energy of the primaries it is their initial energy and not the initial energy of the track Useful for AdderComptPhotIdeal
+          if(m_Ef_oldPrimary>0)Ei=m_Ef_oldPrimary;
+          m_Ef_oldPrimary=Ef;
+
+
+  }
+  //Here nCompt, nRayl, nConv only for  for primaries (07/02/2021). UPDATE doc?
+      int nCurrentHitCompton=0;
+      int nCurrentHitConv=0;
+      int nCurrentHitRayl=0;
+
+
+      //OK GND: CC variable form GateComptonCameraActor
+      //TODO one functionality was not transfered from GateComptonCameraActor: mParentIDSpecificationFlag and specfParentID ->
+      // to be adapted  from the old GateComtponCameraActor class line 918
+      nCurrentHitCompton=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNCompton();
+      nCurrentHitConv=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNConv();
+      nCurrentHitRayl=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNRayl();
+
+
+
+
+
+  GateHit* aHit = new GateHit();
   // Get the scanner position and rotation angle
 /*  GateSystemComponent* baseComponent = GetSystem()->GetBaseComponent();*/
-  G4ThreeVector scannerPos;
-  G4double scannerRotAngle;
-  GateVSystem* system;
+
   if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
   {
-  system = FindSystem(volumeID);
+  GateVSystem* system = FindSystem(volumeID);
   GateSystemComponent* baseComponent = system->GetBaseComponent();
-  scannerPos = baseComponent->GetCurrentTranslation();
-  scannerRotAngle = 0;
+  G4ThreeVector scannerPos = baseComponent->GetCurrentTranslation();
+  G4double scannerRotAngle = 0;
 
 
   if ( baseComponent->FindRotationMove() )
@@ -194,6 +267,13 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     scannerRotAngle = baseComponent->FindOrbitingMove()->GetCurrentAngle();
   else if ( baseComponent->FindEccentRotMove() )
     scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
+
+
+  aHit->SetScannerPos( scannerPos );
+  aHit->SetScannerRotAngle( scannerRotAngle );
+  aHit->SetSystemID(system->GetItsNumber());
+  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
+  aHit->SetOutputVolumeID(outputVolumeID);
 
   }
 
@@ -208,7 +288,6 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4double aTime = newStepPoint->GetGlobalTime();
   // Create a new crystal hit
 
-  GateHit* aHit = new GateHit();
 
   // Store the data already obtained into the hit
   aHit->SetPDGEncoding( PDGEncoding );
@@ -229,16 +308,22 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetSourceType( source_type );
   aHit->SetDecayType( decay_type );
   aHit->SetGammaType( gamma_type );
-  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
-    {
-      aHit->SetScannerPos( scannerPos );
-      aHit->SetScannerRotAngle( scannerRotAngle );
-      aHit->SetSystemID(system->GetItsNumber());
-      
-      GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
-      aHit->SetOutputVolumeID(outputVolumeID);
-    }
-  
+
+
+  // OK GND 2023 for CC
+  aHit->SetEnergyFin(Ef);
+  aHit->SetEnergyIniTrack(Ei);
+
+  aHit->SetNCrystalConv(nCurrentHitConv);
+  aHit->SetNCrystalCompton(nCurrentHitCompton);
+  aHit->SetNCrystalRayleigh(nCurrentHitRayl);
+
+  aHit->SetPostStepProcess( processPostStep);
+
+  aHit->SetSourceEnergy(m_sourceEnergy);
+  aHit->SetSourcePDG(m_sourcePDG);
+
+
   // Ask the system to compute the output volume ID and store it into the hit
 
 //Seb Modif 24/02/2009
@@ -250,6 +335,10 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   return true;
 }
 //------------------------------------------------------------------------------
+
+
+//virtual void 	EndOfEvent (G4HCofThisEvent *)
+
 
 //------------------------------------------------------------------------------
 //! Next method underwent an important modification to be compatible with the multi-system approach
@@ -334,6 +423,8 @@ GateVSystem* GateCrystalSD::FindSystem(G4String& systemName)
 
    return m_systemList->at(-1);
 }
+
+
 
 
 

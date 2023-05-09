@@ -105,11 +105,13 @@ GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
         // the VOutputModule pure virtual method GiveNameOfFile()
 	, m_rootMessenger(0)
 {
+
+	//G4cout<<"GateToRoot::GateToRoot "<<G4endl;
     /*
       if (digiMode==kofflineMode)
       m_fileName="digigate";
     */
-
+	m_rootCCFlag=false;
     m_isEnabled = false; // Keep this flag false: all output are disabled by default
     nVerboseLevel = 0;
 
@@ -250,6 +252,7 @@ void GateToRoot::BookBeginOfRun() {
 	   for (G4int i=0; i<GetSDlistSize();i++)
 		{
 			GateRootHitBuffer hitBuffer;
+			hitBuffer.SetCCFlag(GetRootCCFlag());
 			m_hitBuffers.push_back(hitBuffer);
 		}
 
@@ -1199,7 +1202,7 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore *voxelStore) {
 //--------------------------------------------------------------------------
 void GateToRoot::RegisterNewSingleDigiCollection(const G4String &aCollectionName, G4bool outputFlag) {
     SingleOutputChannel *singleOutputChannel =
-            new SingleOutputChannel(aCollectionName, outputFlag);
+            new SingleOutputChannel(aCollectionName, outputFlag, m_rootCCFlag);
     m_outputChannelList.push_back(singleOutputChannel);
 
     //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<aCollectionName <<outputFlag<< Gateendl;
@@ -1211,7 +1214,7 @@ void GateToRoot::RegisterNewSingleDigiCollection(const G4String &aCollectionName
 //--------------------------------------------------------------------------
 void GateToRoot::RegisterNewCoincidenceDigiCollection(const G4String &aCollectionName, G4bool outputFlag) {
     CoincidenceOutputChannel *coincidenceOutputChannel =
-            new CoincidenceOutputChannel(aCollectionName, outputFlag);
+            new CoincidenceOutputChannel(aCollectionName, outputFlag, m_rootCCFlag);
     m_outputChannelList.push_back(coincidenceOutputChannel);
     m_rootMessenger->CreateNewOutputChannelCommand(coincidenceOutputChannel);
 }
@@ -1258,6 +1261,8 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer() {
             G4int n_digi = SDC->entries();
             //GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << Gateendl;);
             for (G4int iDigi = 0; iDigi < n_digi; iDigi++) {
+    			m_buffer.SetCCFlag(m_CCFlag);
+
                 m_buffer.Fill((*SDC)[iDigi]);
                 m_tree->Fill();
             }
@@ -1293,6 +1298,8 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer() {
         if (m_outputFlag) {
             G4int n_digi = CDC->entries();
             for (G4int iDigi = 0; iDigi < n_digi; iDigi++) {
+    			m_buffer.SetCCFlag(m_CCFlag);
+
                 m_buffer.Fill((*CDC)[iDigi]);
                 m_tree->Fill();
             }

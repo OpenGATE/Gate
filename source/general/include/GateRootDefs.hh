@@ -73,6 +73,9 @@ class GateRootHitBuffer
 
     //! \name getters and setters for unit-dependent fields
     //@{
+    inline void SetCCFlag (G4bool val) {m_CCflag=val;}
+    inline G4bool GetCCFlag () {return m_CCflag;}
+
 
     //! Returns the time in G4 units (conversion from seconds)
     inline G4double GetTime() const
@@ -159,8 +162,48 @@ class GateRootHitBuffer
     inline void SetRotationAngle(G4double anAngle)
       { rotationAngle = anAngle / degree;}
 
-    //@}
+    //OK GND for CC
+    inline G4double GetSourceEnergy() const
+    { return sourceEnergy* MeV;}
+    inline void SetSourceEnergy(G4double sEnergy)
+    { sourceEnergy = sEnergy / MeV;}
 
+    inline G4int GetSourcePDG() const
+    { return sourcePDG;}
+    inline void SetSourcePDG(G4int sPDG)
+    { sourcePDG = sPDG;}
+
+    inline G4int GetNCrystalConv() const
+    { return nCrystalConv;}
+    inline void SetNCrystalConv(G4int nConv)
+    { nCrystalConv = nConv;}
+
+    inline G4int GetNCrystalCompton() const
+    { return nCrystalCompt;}
+    inline void SetNCrystalCompton(G4int nCompt)
+    { nCrystalCompt = nCompt;}
+
+    inline G4int GetNCrystalRayleigh() const
+    { return nCrystalRayl;}
+    inline void SetNCrystalRayleigh(G4int nRayl)
+    { nCrystalRayl = nRayl;}
+
+    //! Returns the energy deposition in G4 units (conversion from MeVs)
+    inline G4double GetEnergyIniT() const
+    { return energyIniT * MeV;}
+    //! Set the energy deposition from a value given in G4 units (conversion into MeVs)
+    inline void SetEnergyIniT(G4double aEini)
+    { energyIniT = aEini / MeV;}
+
+    //! Returns the energy deposition in G4 units (conversion from MeVs)
+    inline G4double GetEnergyFin() const
+    { return energyFin * MeV;}
+    //! Set the energy deposition from a value given in G4 units (conversion into MeVs)
+    inline void SetEnergyFin(G4double aEnergy)
+    { energyFin = aEnergy / MeV;}
+
+
+    //@}
     //! \name Data fields
     //@{
     Int_t    PDGEncoding;     	      	      	//!< PDG encoding of the particle
@@ -195,7 +238,20 @@ class GateRootHitBuffer
     Int_t sourceType = 0; //Type of gamma source (check ExtendedVSource)
     Int_t decayType = 0; //Type of positronium decay (check ExtendedVSource)
     Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check ExtendedVSource)
+
+    //OK GND for CC
+    G4bool m_CCflag;
+    Float_t sourceEnergy;
+    Int_t   sourcePDG;
+    Int_t   nCrystalConv;
+    Int_t   nCrystalCompt;
+    Int_t   nCrystalRayl;
+    Float_t  energyFin;
+    Float_t  energyIniT;
+    Char_t   postStepProcess[40];
     //@}
+
+
 
 };
 
@@ -219,6 +275,7 @@ class GateHitTree : public  TTree
 
     void Init(GateRootHitBuffer& buffer);
     static void SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer);
+
 };
 
 
@@ -239,6 +296,12 @@ class GateRootSingleBuffer
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
     void Fill(GateDigi* aDigi);
+
+
+
+    inline void SetCCFlag (G4bool val) {m_CCflag=val;}
+    inline G4bool GetCCFlag () {return m_CCflag;}
+    G4bool m_CCflag;
 
     //! \name Data fields
     //@{
@@ -286,6 +349,8 @@ class GateSingleTree : public  TTree
     virtual inline ~GateSingleTree() {}
 
     void Init(GateRootSingleBuffer& buffer);
+
+
 };
 
 
@@ -309,6 +374,12 @@ class GateRootCoincBuffer
 
     G4double ComputeSinogramTheta();
     G4double ComputeSinogramS();
+
+
+
+    inline void SetCCFlag (G4bool val) {m_CCflag=val;}
+    inline G4bool GetCCFlag() {return m_CCflag;}
+    G4bool m_CCflag;
 
     //! \name Data fields
     //@{
