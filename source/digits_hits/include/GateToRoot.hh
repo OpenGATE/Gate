@@ -175,6 +175,10 @@ public:
 
         inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
 
+        inline void SetCCFlag(G4bool val){m_CCFlag=val;};
+        inline G4bool GetCCFlag(){return m_CCFlag;};
+
+
         inline void AddSinglesCommand() { m_signlesCommands++; };
 
         inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
@@ -192,9 +196,10 @@ public:
     //--------------------------------------------------------------------------
     class SingleOutputChannel : public VOutputChannel {
     public:
-        inline SingleOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
-                : VOutputChannel(aCollectionName, outputFlag, CCFlag),
-                  m_tree(0) { m_buffer.Clear(); }
+        inline SingleOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
+                : VOutputChannel(aCollectionName, outputFlag, false),
+                  m_tree(0)
+        		{ m_buffer.Clear();     			}
 
         virtual inline ~SingleOutputChannel() {}
 
@@ -219,6 +224,7 @@ public:
             	else
             		m_tree = new GateSingleTree(m_collectionName);
 
+            	m_buffer.SetCCFlag(GetCCFlag());
             	m_tree->Init(m_buffer);
             }
         }
@@ -233,8 +239,8 @@ public:
     //--------------------------------------------------------------------------
     class CoincidenceOutputChannel : public VOutputChannel {
     public:
-        inline CoincidenceOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
-                : VOutputChannel(aCollectionName, outputFlag, CCFlag),
+        inline CoincidenceOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
+                : VOutputChannel(aCollectionName, outputFlag, false),
                   m_tree(0) { m_buffer.Clear(); }
 
         virtual inline ~CoincidenceOutputChannel() {}

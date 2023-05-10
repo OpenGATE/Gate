@@ -126,7 +126,6 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 //G4bool GateCrystalSD::ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist)
 G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
-
 	//G4cout<<"GateCrystalSD::ProcessHits "<<G4endl;
   // Get the track information
   G4Track* aTrack       = aStep->GetTrack();

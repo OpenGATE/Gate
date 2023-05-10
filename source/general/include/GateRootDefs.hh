@@ -327,6 +327,16 @@ class GateRootSingleBuffer
     Float_t  rotationAngle;    
     Char_t   comptonVolumeName[40];
     Char_t   RayleighVolumeName[40];
+
+    Float_t  localPosX, localPosY, localPosZ;
+    Float_t  sourceEnergy;
+    Int_t    sourcePDG;
+    Int_t    nCrystalConv;
+    Int_t   nCrystalCompt;
+    Int_t   nCrystalRayl;
+    Float_t  energyFin;
+    Float_t  energyIni;
+
     Int_t    septalNb;							//!< HDS : septal penetration
     //@}
 };

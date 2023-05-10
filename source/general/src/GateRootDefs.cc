@@ -459,18 +459,42 @@ void GateRootSingleBuffer::Clear()
   if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
 	  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
 		  outputID[d]      = -1;
-  axialPos         = 0.;
-  rotationAngle    = 0.;
-  comptonPhantom   = -1;
-  comptonCrystal   = -1;
-  RayleighPhantom  = -1;
-  RayleighCrystal  = -1;
-  strcpy (comptonVolumeName," ");
-  strcpy (RayleighVolumeName," ");
+
   // HDS : septal
   septalNb = 0;
   for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
       volumeID[d] = -1;
+
+
+  if (!GetCCFlag())
+   	  {
+	  comptonPhantom   = -1;
+	  comptonCrystal   = -1;
+	  RayleighPhantom  = -1;
+	  RayleighCrystal  = -1;
+	  strcpy (comptonVolumeName," ");
+	  strcpy (RayleighVolumeName," ");
+	  axialPos         = 0.;
+	  rotationAngle    = 0.;
+   	  }
+  else
+  {
+	  localPosX       = 0./mm;
+	  localPosY       = 0./mm;
+	  localPosZ       = 0./mm;
+	  energyFin           = 0./MeV;
+	  energyIni            = 0./MeV;
+	  sourceEnergy      = 0./MeV;
+	  sourcePDG      = 0;
+	  nCrystalConv=0;
+	  nCrystalCompt=0;
+	  nCrystalRayl=0;
+
+  }
+
+
+
+
 
 }
 
@@ -493,17 +517,40 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
   if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
 	  for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
 		  outputID[d] =  aDigi->GetComponentID(d);
-  comptonPhantom=  aDigi->GetNPhantomCompton();
-  comptonCrystal=  aDigi->GetNCrystalCompton();
-  RayleighPhantom=  aDigi->GetNPhantomRayleigh();
-  RayleighCrystal=  aDigi->GetNCrystalRayleigh();
-  axialPos      = (aDigi->GetScannerPos()).z()/mm;
-  rotationAngle = aDigi->GetScannerRotAngle()/deg;
-  strcpy (comptonVolumeName,(aDigi->GetComptonVolumeName()).c_str());
-  strcpy (RayleighVolumeName,(aDigi->GetRayleighVolumeName()).c_str());
+
 
   // HDS : septal penetration
   septalNb = aDigi->GetNSeptal();
+
+
+  if (!GetCCFlag())
+   {
+	  comptonPhantom=  aDigi->GetNPhantomCompton();
+	  comptonCrystal=  aDigi->GetNCrystalCompton();
+	  RayleighPhantom=  aDigi->GetNPhantomRayleigh();
+	  RayleighCrystal=  aDigi->GetNCrystalRayleigh();
+	  axialPos      = (aDigi->GetScannerPos()).z()/mm;
+	  rotationAngle = aDigi->GetScannerRotAngle()/deg;
+	  strcpy (comptonVolumeName,(aDigi->GetComptonVolumeName()).c_str());
+	  strcpy (RayleighVolumeName,(aDigi->GetRayleighVolumeName()).c_str());
+   }
+  else
+  {
+	  localPosX    = (aDigi->GetLocalPos()).x()/mm;
+	  localPosY    = (aDigi->GetLocalPos()).y()/mm;
+	  localPosZ    = (aDigi->GetLocalPos()).z()/mm;
+
+	  energyIni     =  aDigi->GetEnergyIniTrack()/MeV;
+	  energyFin     =  aDigi->GetEnergyFin()/MeV;
+
+	  sourceEnergy    =aDigi->GetSourceEnergy()/MeV;
+	  sourcePDG    =aDigi->GetSourcePDG();
+	  nCrystalConv    =aDigi->GetNCrystalConv();
+	  nCrystalRayl    =aDigi->GetNCrystalRayleigh();
+	  nCrystalCompt =aDigi->GetNCrystalCompton();
+
+  }
+
 
   aDigi->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 }
@@ -514,6 +561,7 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
 
 void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 {
+
   SetAutoSave(1000);
   if ( GateDigi::GetSingleASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
@@ -541,27 +589,49 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 	  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
 		  for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
 			  Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
-  if ( GateDigi::GetSingleASCIIMask(12) )
-    Branch("comptonPhantom", &buffer.comptonPhantom,"comptonPhantom/I");
-  if ( GateDigi::GetSingleASCIIMask(13) )
-    Branch("comptonCrystal", &buffer.comptonCrystal,"comptonCrystal/I");
-  if ( GateDigi::GetSingleASCIIMask(14) )
-    Branch("RayleighPhantom", &buffer.RayleighPhantom,"RayleighPhantom/I");
-  if ( GateDigi::GetSingleASCIIMask(15) )
-    Branch("RayleighCrystal", &buffer.RayleighCrystal,"RayleighCrystal/I");
-  if ( GateDigi::GetSingleASCIIMask(18) )
-    Branch("axialPos",       &buffer.axialPos,"axialPos/F");
-  if ( GateDigi::GetSingleASCIIMask(19) )
-    Branch("rotationAngle",  &buffer.rotationAngle,"rotationAngle/F");
-  if ( GateDigi::GetSingleASCIIMask(16) )
-    Branch("comptVolName",   (void *)buffer.comptonVolumeName,"comptVolName/C");
-  if ( GateDigi::GetSingleASCIIMask(17) )
-    Branch("RayleighVolName",   (void *)buffer.RayleighVolumeName,"RayleighVolName/C");
+
+
   if ( GateDigi::GetSingleASCIIMask(20) )
-    // HDS : record septal penetration
-    if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
-   //Initialized by default.TO DO: Mask option should be included or a flag
-  Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+	  // HDS : record septal penetration
+	  if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
+
+  if (!buffer.GetCCFlag())
+   {
+	  if ( GateDigi::GetSingleASCIIMask(12) )
+	      Branch("comptonPhantom", &buffer.comptonPhantom,"comptonPhantom/I");
+	    if ( GateDigi::GetSingleASCIIMask(13) )
+	      Branch("comptonCrystal", &buffer.comptonCrystal,"comptonCrystal/I");
+	    if ( GateDigi::GetSingleASCIIMask(14) )
+	      Branch("RayleighPhantom", &buffer.RayleighPhantom,"RayleighPhantom/I");
+	    if ( GateDigi::GetSingleASCIIMask(15) )
+	      Branch("RayleighCrystal", &buffer.RayleighCrystal,"RayleighCrystal/I");
+	    if ( GateDigi::GetSingleASCIIMask(18) )
+	      Branch("axialPos",       &buffer.axialPos,"axialPos/F");
+	    if ( GateDigi::GetSingleASCIIMask(19) )
+	      Branch("rotationAngle",  &buffer.rotationAngle,"rotationAngle/F");
+	    if ( GateDigi::GetSingleASCIIMask(16) )
+	      Branch("comptVolName",   (void *)buffer.comptonVolumeName,"comptVolName/C");
+	    if ( GateDigi::GetSingleASCIIMask(17) )
+	      Branch("RayleighVolName",   (void *)buffer.RayleighVolumeName,"RayleighVolName/C");
+   }
+  else
+  {
+	  Branch("sourceEnergy",     &buffer.sourceEnergy,"sourceEnergy/F");
+	  Branch("sourcePDG",     &buffer.sourcePDG,"sourcePDG/I");
+	  Branch("nCrystalConv",     &buffer.nCrystalConv,"nCrystalConv/I");
+	  Branch("nCrystalCompt",     &buffer.nCrystalCompt,"nCrystalCompt/I");
+	  Branch("nCrystalRayl",     &buffer.nCrystalRayl,"nCrystalRayl/I");
+	  Branch("localPosX",      &buffer.localPosX,"localPosX/F");
+	  Branch("localPosY",      &buffer.localPosY,"localPosY/F");
+	  Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+
+	  Branch("energyFinal",         &buffer.energyFin,"energyFinal/F");
+	  Branch("energyIni",         &buffer.energyIni,"energyIni/F");
+
+  }
+
+	  //Initialized by default.TO DO: Mask option should be included or a flag
+	  Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 
 
