@@ -217,13 +217,16 @@ The DoI exponential uncertainty is modeled as a negative exponential function in
 
 
 Time delay
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
-This local module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
+This module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
 
-	/gate/digitizer/layers/insert localTimeDelay
-	/gate/digitizer/layers/localTimeDelay/chooseNewVolume [volName]
-	/gate/digitizer/layers/localTimeDelay/[volName]/setTimeDelay [time value]
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/timeDelay/setTimeDelay [time value]
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY [time value]
+
 
 
 Local time resolution
