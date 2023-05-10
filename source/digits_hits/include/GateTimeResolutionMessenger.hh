@@ -40,6 +40,8 @@ public:
 private:
   GateTimeResolution* m_TimeResolution;
   G4UIcmdWithADoubleAndUnit   *fwhmCmd;
+  G4UIcmdWithADoubleAndUnit   *ctrCmd;
+  G4UIcmdWithADoubleAndUnit   *doiCmd;
 
 
 };

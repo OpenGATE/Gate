@@ -47,11 +47,27 @@ public:
   //! Set the time resolution
   void SetFWHM(G4double val)   { m_fwhm = val;  }
 
+  //! Returns the time resolution CTR
+  G4double GetCTR()   	      { return m_ctr; }
+
+  //! Set the time resolution CTR
+  void SetCTR(G4double val)   { m_ctr = val;  }
+
+  //! Returns the DOI direction
+   G4double GetDOI()   	      { return m_doi; }
+
+   //! Set the DOI direction
+   void SetDOI(G4double val)   { m_doi = val;  }
+
+   void SetParameters();
+
 
   void DescribeMyself(size_t );
 
 protected:
   G4double m_fwhm;
+  G4double m_ctr;
+  G4double m_doi;
 
 private:
   GateDigi* m_outputDigi;
