@@ -257,29 +257,6 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // Get the scanner position and rotation angle
 /*  GateSystemComponent* baseComponent = GetSystem()->GetBaseComponent();*/
 
-  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
-  {
-  GateVSystem* system = FindSystem(volumeID);
-  GateSystemComponent* baseComponent = system->GetBaseComponent();
-  G4ThreeVector scannerPos = baseComponent->GetCurrentTranslation();
-  G4double scannerRotAngle = 0;
-
-
-  if ( baseComponent->FindRotationMove() )
-    scannerRotAngle = baseComponent->FindRotationMove()->GetCurrentAngle();
-  else if ( baseComponent->FindOrbitingMove() )
-    scannerRotAngle = baseComponent->FindOrbitingMove()->GetCurrentAngle();
-  else if ( baseComponent->FindEccentRotMove() )
-    scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
-
-
-  aHit->SetScannerPos( scannerPos );
-  aHit->SetScannerRotAngle( scannerRotAngle );
-  aHit->SetSystemID(system->GetItsNumber());
-  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
-  aHit->SetOutputVolumeID(outputVolumeID);
-
-  }
 
   // deposit energy in the current step
   G4double edep = aStep->GetTotalEnergyDeposit();
@@ -332,6 +309,32 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
 //Seb Modif 24/02/2009
 /*  GateOutputVolumeID outputVolumeID = GetSystem()->ComputeOutputVolumeID(aHit->GetVolumeID());*/
+
+
+  if(GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+  {
+  GateVSystem* system = FindSystem(volumeID);
+  GateSystemComponent* baseComponent = system->GetBaseComponent();
+  G4ThreeVector scannerPos = baseComponent->GetCurrentTranslation();
+  G4double scannerRotAngle = 0;
+
+
+  if ( baseComponent->FindRotationMove() )
+    scannerRotAngle = baseComponent->FindRotationMove()->GetCurrentAngle();
+  else if ( baseComponent->FindOrbitingMove() )
+    scannerRotAngle = baseComponent->FindOrbitingMove()->GetCurrentAngle();
+  else if ( baseComponent->FindEccentRotMove() )
+    scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
+
+
+  aHit->SetScannerPos( scannerPos );
+  aHit->SetScannerRotAngle( scannerRotAngle );
+  aHit->SetSystemID(system->GetItsNumber());
+  GateOutputVolumeID outputVolumeID = system->ComputeOutputVolumeID(aHit->GetVolumeID());
+  aHit->SetOutputVolumeID(outputVolumeID);
+
+  }
+
 
   // Insert the new hit into the hit collection
   crystalHitsCollection->insert( aHit );
