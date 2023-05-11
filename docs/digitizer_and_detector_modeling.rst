@@ -473,11 +473,23 @@ The *time resolution* module introduces a Gaussian blurring in the detection tim
 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert timeResolution 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/fwhm 1.4 ns
+   
+It is possible to set Coincidecne Time Resolution (CTR) directly if you work with a PET system. To calculate the equivalent of *fwhm* the used formula is:  :math:`CTR=\sqrt{2*STR^2+S^2}`, where STR = single time resolution or *fwhm*, S = time spread due to geometry dimensions of the detector/DOI (in this approximation), i. e. :math:`S=\frac{DOIdimention}{c_{light}}`. This is why it is important to set correct value for the geometry dimensions of the detector:: 
+       
+  /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/CTR 300 ps
+  /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/DOIdimention4CTR 25 mm
+
 
 **Example**::
  
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert   timeResolution
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/fwhm 1.4 ns
+
+or::
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/CTR 300 ps
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/DOIdimention4CTR 25 mm
+
 
 Spatial resolution
 ^^^^^^^^^^^^^^^^^^

@@ -184,7 +184,7 @@ void GateDigitizerMgr::Initialize()
 //-----------------------------------------------------------------
 void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 {
-  m_system = aSystem;
+  //m_system = aSystem;
   size_t i;
   for (i=0; i<m_SingleDigitizersList.size() ; ++i)
 	  m_SingleDigitizersList[i]->SetSystem(aSystem);
@@ -192,7 +192,6 @@ void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 	  m_CoincidenceSortersList[i]->SetSystem(aSystem);
 }
 //-----------------------------------------------------------------
-
 */
 
 
@@ -200,6 +199,7 @@ void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 // The next three methods were added for the multi-system approach
 void GateDigitizerMgr::AddSystem(GateVSystem* aSystem)
 {
+
   if(!m_systemList)
     m_systemList = new GateSystemList;
 
@@ -210,13 +210,11 @@ void GateDigitizerMgr::AddSystem(GateVSystem* aSystem)
   size_t i;
   for (i=0; i<m_SingleDigitizersList.size() ; ++i)
     {
-      if(!(m_SingleDigitizersList[i]->GetSystem()))
-    	  m_SingleDigitizersList[i]->SetSystem((*m_systemList)[0]);
+   	  m_SingleDigitizersList[i]->SetSystem((*m_systemList)[0]);
     }
 
   for (i=0; i<m_CoincidenceSortersList.size() ; ++i)
     {
-      if(!((m_CoincidenceSortersList[i])->GetSystem()))
         m_CoincidenceSortersList[i]->SetSystem((*m_systemList)[0]);
     }
 
