@@ -36,6 +36,8 @@
 GateTimeResolution::GateTimeResolution(GateSinglesDigitizer *digitizer, G4String name)
   :GateVDigitizerModule(name,"digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/"+name,digitizer,digitizer->GetSD()),
    m_fwhm(0),
+   m_ctr(0),
+   m_doi(0),
    m_outputDigi(0),
    m_OutputDigiCollection(0),
    m_digitizer(digitizer)
@@ -55,13 +57,9 @@ GateTimeResolution::~GateTimeResolution()
 
 void GateTimeResolution::Digitize()
 {
+	if (G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID() == 0)
+		SetParameters();
 
-	if(m_fwhm < 0 ) {
-	    G4cerr << 	Gateendl << "[GateTimeResolution::Digitize]:\n"
-	      	   <<   "Sorry, but the negative resolution (" << GetFWHM() << ") is invalid\n";
-	    G4Exception( "GateTimeResolution::Digitize", "Digitize", FatalException,
-				"You must choose a temporal resolution >= 0 /gate/digitizer/Singles/Singles/timeResolution/setTimeResolution TIME\n or disable the temporal resolution using:\n\t/gate/digitizer/Singles/Singles/timeResolution/disable\n");
-	  }
 
 	G4String digitizerName = m_digitizer->m_digitizerName;
 	G4String outputCollName = m_digitizer-> GetOutputName();
@@ -118,6 +116,58 @@ void GateTimeResolution::Digitize()
 
 }
 
+void GateTimeResolution::SetParameters()
+{
+	if(m_fwhm < 0 ) {
+		G4cerr << 	Gateendl << "[GateTimeResolution::SetParameters]:\n"
+      	   <<   "Sorry, but the negative resolution (" << GetFWHM() << ") is invalid\n";
+    G4Exception( "GateTimeResolution::SetParameters", "SetParameters", FatalException,
+			"You must choose a temporal resolution >= 0 .../timeResolution/fwhm TIME\n or disable the temporal resolution \n");
+  }
+
+	if(m_ctr < 0 ) {
+		G4cerr << 	Gateendl << "[GateTimeResolution::SetParameters]:\n"
+      	   <<   "Sorry, but the negative CTR resolution (" << GetFWHM() << ") is invalid\n";
+    G4Exception( "GateTimeResolution::SetParameters", "SetParameters", FatalException,
+			"You must choose a temporal resolution >= 0  .../timeResolution/ctr TIME\n or disable the temporal resolution\n");
+  }
+	if(m_fwhm != 0 && m_ctr != 0 ) {
+		G4cerr << 	Gateendl << "[GateTimeResolution::SetParameters]:\n"
+      	   <<   "Sorry, but you have to choose either FWHM or CTR for your time resolution \n";
+    G4Exception( "GateTimeResolution::SetParameters", "SetParameters", FatalException,
+			"Sorry, but you have to choose either FWHM or CTR for your time resolution\n");
+  }
+
+	if (m_ctr !=0 )
+	{
+		//from formula: CTR=sqrt (2*STR*STR+S*S),
+		// CTR = coincidence time resolution
+		// STR = single time resolution = m_fwhm
+		// S = time spread due to geometry dimensions of the detector/DOI in this approximation
+		// S = speed of light / DOI
+
+		if (m_doi <= 0)
+		{
+			G4cerr << 	Gateendl << "[GateTimeResolution::SetParameters]:\n"
+		      	   <<   "Sorry, but DOI either not set or not a positive non-null number \n";
+		    G4Exception( "GateTimeResolution::SetParameters", "SetParameters", FatalException,
+					"Sorry, but DOI either not set or not a positive non-null number\n");
+		  }
+		G4double S = m_doi*mm/c_light; // c_light is in mm/ns
+		//G4cout<<"c_light= "<<c_light<<G4endl;
+		//G4cout<<"S= "<<S*ns<<G4endl;
+		//G4cout<<"m_ctr= "<<m_ctr*ns<<G4endl;
+		m_fwhm = sqrt ( ((m_ctr*ns)*(m_ctr*ns) - S*S)/2);
+		if (nVerboseLevel>1)
+		{
+
+			G4cout<<"[GateTimeResolution::SetParameters] The chosen Coincidence Time Resolution (CTR) is "<< m_ctr << " ns for a volume with a DOI size "<<m_doi<<" mm"<<G4endl;
+			G4cout<<"[GateTimeResolution::SetParameters] The corresponding Single Time Resolution (STR) corresponding also to /fwhm is "<< m_fwhm <<" ns"<<G4endl;
+
+		}
+	}
+
+}
 
 void GateTimeResolution::DescribeMyself(size_t indent)
 {
