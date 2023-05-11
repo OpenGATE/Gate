@@ -226,6 +226,14 @@ This module delays the time value of the detected pulses in a specified *Sensiti
 
 	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
 	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY [time value]
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/timeDelay/setTimeDelay 12 ns
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY  14 ns
 
 
 
