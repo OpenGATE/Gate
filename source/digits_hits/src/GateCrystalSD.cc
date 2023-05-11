@@ -32,6 +32,7 @@
 //OK GND 2022
 #include "GateDigitizerMgr.hh"
 #include "GateToRoot.hh"
+#include "GateToTree.hh"
 
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
@@ -232,18 +233,22 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
   }
   //Here nCompt, nRayl, nConv only for  for primaries (07/02/2021). UPDATE doc?
-      int nCurrentHitCompton=0;
-      int nCurrentHitConv=0;
-      int nCurrentHitRayl=0;
+  int nCurrentHitCompton=0;
+  int nCurrentHitConv=0;
+  int nCurrentHitRayl=0;
 
 
-      //OK GND: CC variable form GateComptonCameraActor
-      //TODO one functionality was not transfered from GateComptonCameraActor: mParentIDSpecificationFlag and specfParentID ->
-      // to be adapted  from the old GateComtponCameraActor class line 918
-      nCurrentHitCompton=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNCompton();
-      nCurrentHitConv=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNConv();
-      nCurrentHitRayl=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNRayl();
+  //OK GND: CC variable form GateComptonCameraActor
+  //TODO one functionality was not transfered from GateComptonCameraActor: mParentIDSpecificationFlag and specfParentID ->
+  // to be adapted  from the old GateComtponCameraActor class line 918
 
+  if (((GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root")))->GetRootCCFlag()
+		  || ((GateToTree*) (GateOutputMgr::GetInstance()->GetModule("tree")))->getCCenabled() )
+   {
+	  nCurrentHitCompton=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNCompton();
+	  nCurrentHitConv=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNConv();
+	  nCurrentHitRayl=((GatePrimTrackInformation*)(aTrack->GetUserInformation()))->GetNRayl();
+    }
 
 
 
@@ -313,15 +318,15 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetEnergyFin(Ef);
   aHit->SetEnergyIniTrack(Ei);
 
-  aHit->SetNCrystalConv(nCurrentHitConv);
-  aHit->SetNCrystalCompton(nCurrentHitCompton);
-  aHit->SetNCrystalRayleigh(nCurrentHitRayl);
+  aHit->SetNCrystalConv(0);//nCurrentHitConv);
+  aHit->SetNCrystalCompton(0);//nCurrentHitCompton);
+  aHit->SetNCrystalRayleigh(0);//nCurrentHitRayl);
 
-  aHit->SetPostStepProcess( processPostStep);
+/*  aHit->SetPostStepProcess( processPostStep);
 
   aHit->SetSourceEnergy(m_sourceEnergy);
   aHit->SetSourcePDG(m_sourcePDG);
-
+*/
 
   // Ask the system to compute the output volume ID and store it into the hit
 
