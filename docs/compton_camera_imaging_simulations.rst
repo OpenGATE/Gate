@@ -221,12 +221,12 @@ Time delay
 
 This module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
 
-	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
-	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/timeDelay/setTimeDelay [time value]
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
 
-	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
-	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY [time value]
-	
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
+
 Example::
 
 	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
