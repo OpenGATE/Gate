@@ -67,6 +67,9 @@ public:
   void setHitsEnabled(G4bool mHitsEnabled);
   void addCollection(const std::string &str); //called by messenger
   //OK GND 2022
+  void setCCenabled(G4bool mCCenabled){m_cc_enabled=mCCenabled;};
+  G4bool getCCenabled() const {return m_cc_enabled;}
+
   void addHitsCollection(const std::string &str);
   void addOpticalCollection(const std::string &str);
 
@@ -135,6 +138,7 @@ private:
   G4String m_uselessFileName; //only for GiveNameOfFile which return a reference..
 
   G4bool m_opticalData_enabled = false;
+  G4bool m_cc_enabled=false;
 
  private:
 
@@ -193,7 +197,15 @@ private:
   G4int m_decayType = 0;
   G4int m_gammaType = 0;
 
-
+  G4float m_sourceEnergy;
+  G4int m_sourcePDG;
+  G4int m_nCrystalConv;
+  G4int m_nCrystalCompt;
+  G4int m_nCrystalRayl;
+  G4float m_energyFin;
+  G4float m_energyIniT;
+  G4float m_energyIni;
+  std::string  m_postStepProcess;
 
   static const auto VOLUMEID_SIZE = 10;
 //  static const auto OUTPUTID_SIZE = 6;

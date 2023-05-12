@@ -412,7 +412,7 @@ void GateVVolume::AttachCrystalSD() {
 // Tell the creator that the logical volume should be attached to the crystal-SD
 void GateVVolume::AttachCrystalSDnoSystem() {
 
-  //G4cout<<"GateVVolume::AttachCrystalSDnoSystem( "<<G4endl;
+
     // OK GND 2022
     //----
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();

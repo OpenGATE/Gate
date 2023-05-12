@@ -22,6 +22,9 @@ See LICENSE.md for further details
 #include "G4SteppingManager.hh"
 #include "G4SliceTimer.hh"
 
+#include "GateOutputMgr.hh"
+#include "GateToRoot.hh"
+#include "GatePrimTrackInformation.hh"
 //class GateRecorderBase;
 GateUserActions* GateUserActions::pUserActions=0;
 
@@ -162,6 +165,31 @@ void GateUserActions::PreUserTrackingAction(const G4Track* track)
   //  theListOfTrackIDInfo[track->GetTrackID()] = new GateTrackIDInfo(track->GetDefinition()->GetParticleName(),track->GetTrackID(),track->GetParentID() );
 
   GateActorManager::GetInstance()->PreUserTrackingAction(track);
+
+  //OK GND 2023
+
+  //Set some tracking info if CC
+  GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
+  GateToRoot* gateToRoot=(GateToRoot*)(outputMgr->FindOutputModule("root"));
+  if (gateToRoot->GetRootCCFlag())
+   {
+	 // G4cout<<"yes"<<G4endl;
+
+	 // newTrack = true;
+
+	     //PrimarySetInfo to secondaires.
+	     if(track->GetUserInformation()==0){
+	         //real primary not UserInfoSet.  This is equivalent to do it for tracks with parentID=0
+	         GatePrimTrackInformation* trackInfo1 = new  GatePrimTrackInformation(track);
+	         // G4cout<<"setInfo from this track"<<G4endl;
+	         trackInfo1->SetEPrimTrackInformation(track);
+	         track->SetUserInformation(trackInfo1);
+	     }
+//	     edepTrack = 0.;
+
+	 	}
+
+
 }
 //-----------------------------------------------------------------------------
 

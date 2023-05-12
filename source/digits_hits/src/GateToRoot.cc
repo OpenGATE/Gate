@@ -105,11 +105,13 @@ GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
         // the VOutputModule pure virtual method GiveNameOfFile()
 	, m_rootMessenger(0)
 {
+
+	//G4cout<<"GateToRoot::GateToRoot "<<G4endl;
     /*
       if (digiMode==kofflineMode)
       m_fileName="digigate";
     */
-
+	m_rootCCFlag=false;
     m_isEnabled = false; // Keep this flag false: all output are disabled by default
     nVerboseLevel = 0;
 
@@ -250,6 +252,7 @@ void GateToRoot::BookBeginOfRun() {
 	   for (G4int i=0; i<GetSDlistSize();i++)
 		{
 			GateRootHitBuffer hitBuffer;
+			hitBuffer.SetCCFlag(GetRootCCFlag());
 			m_hitBuffers.push_back(hitBuffer);
 		}
 
@@ -311,7 +314,11 @@ void GateToRoot::BookBeginOfRun() {
 	  }
 
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
+    {
+    	 m_outputChannelList[i]->SetCCFlag(GetRootCCFlag());
         m_outputChannelList[i]->Book();
+
+    }
 
 }
 //--------------------------------------------------------------------------
@@ -1198,7 +1205,8 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore *voxelStore) {
 
 //--------------------------------------------------------------------------
 void GateToRoot::RegisterNewSingleDigiCollection(const G4String &aCollectionName, G4bool outputFlag) {
-    SingleOutputChannel *singleOutputChannel =
+
+	SingleOutputChannel *singleOutputChannel =
             new SingleOutputChannel(aCollectionName, outputFlag);
     m_outputChannelList.push_back(singleOutputChannel);
 

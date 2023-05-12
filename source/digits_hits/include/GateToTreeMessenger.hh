@@ -35,6 +35,9 @@ public:
 private:
 
   G4UIcmdWithAString* m_addFileNameCmd;
+  G4UIcmdWithoutParameter* m_enableCCoutputCmd;
+  G4UIcmdWithoutParameter* m_disableCCoutputCmd;
+
   G4UIcmdWithoutParameter *m_enableHitsOutput;
   G4UIcmdWithoutParameter *m_disableHitsOutput;
 
