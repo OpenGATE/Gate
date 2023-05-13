@@ -77,6 +77,7 @@ void GateDigitizerInitializationModule::Digitize()
     	 if((*inHC)[i]->GetEdep() !=0 )
     	  {
     		  GateDigi* Digi = new GateDigi();
+    		  Digi->SetMother( (*inHC)[i] );
     		  Digi->SetRunID( (*inHC)[i]->GetRunID() );
     		  Digi->SetEventID( (*inHC)[i]->GetEventID() );
     		  Digi->SetTrackID( (*inHC)[i]->GetTrackID() );
