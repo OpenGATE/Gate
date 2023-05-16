@@ -479,6 +479,7 @@ It is possible to set Coincidecne Time Resolution (CTR) directly if you work wit
   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/CTR 300 ps
   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/DOIdimention4CTR 25 mm
 
+**Important note**: This is an approximation for inorganic scintillators of typical length. However, one needs to be careful with other scintillators or short crystals, because in this approximation of the DOI contribution to CTR. It is assumed that the exponential attenuation is sufficiently truncated, whereas in fact it is not normally distributed          (10.1186/s40658-020-00309-8). 
 
 **Example**::
  
