@@ -1195,8 +1195,8 @@ To implement a coincidence pulse processor merging two coincidence lines into on
 
    /gate/digitizer/name myCoincChain 
    /gate/digitizer/insert coincidenceChain 
-   /gate/digitizer/myCoincChain/addSource prompts 
-   /gate/digitizer/myCoincChain/addSource delayed 
+   /gate/digitizer/myCoincChain/addInputName prompts 
+   /gate/digitizer/myCoincChain/addInputName delayed 
    /gate/digitizer/myCoincChain/insert XXX
    # set parameter of XXX.... 
    /gate/digitizer/myCoincChain/insert YYY
