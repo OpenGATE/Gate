@@ -69,7 +69,7 @@ void GateAdder::Digitize()
 
 	GateDigi* inputDigi = new GateDigi();
 
-	std::vector< GateDigi* >* m_OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
+	std::vector< GateDigi* >* outputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
 	std::vector<GateDigi*>::iterator iter;
 
 
@@ -88,7 +88,7 @@ void GateAdder::Digitize()
 		  // ignore pulses based on optical photons. These can be added using the opticaladder
 		  if (!inputDigi->IsOptical())
 #endif
-		     for (iter=m_OutputDigiCollectionVector->begin(); iter!= m_OutputDigiCollectionVector->end() ; ++iter)
+		     for (iter=outputDigiCollectionVector->begin(); iter!= outputDigiCollectionVector->end() ; ++iter)
 		     {
 		    	 if ( (*iter)->GetVolumeID()   == inputDigi->GetVolumeID() )
 		    	 {
@@ -111,7 +111,7 @@ void GateAdder::Digitize()
 
 		     }//loop over iter
 
-		     if ( iter == m_OutputDigiCollectionVector->end() )
+		     if ( iter == outputDigiCollectionVector->end() )
 		     {
 		    	 m_outputDigi = new GateDigi(*inputDigi);
 		    	 m_outputDigi->SetEnergyIniTrack(-1);
@@ -125,8 +125,8 @@ void GateAdder::Digitize()
 
 		//This part is from ProcessPulseList
 		     if (nVerboseLevel==1) {
-		    	 G4cout << "[GateAdder::Digitizer]: returning output digi collection with " << m_OutputDigiCollectionVector->size() << " entries\n";
-		    	 for (iter=m_OutputDigiCollectionVector->begin(); iter!= m_OutputDigiCollectionVector->end() ; ++iter)
+		    	 G4cout << "[GateAdder::Digitizer]: returning output digi collection with " << outputDigiCollectionVector->size() << " entries\n";
+		    	 for (iter=outputDigiCollectionVector->begin(); iter!= outputDigiCollectionVector->end() ; ++iter)
 		    		 G4cout << **iter << Gateendl;
 		    	 G4cout << Gateendl;
 		     }

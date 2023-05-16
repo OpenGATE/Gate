@@ -89,8 +89,15 @@ GateVDigitizerModule* GateSinglesDigitizer::FindDigitizerModule(const G4String& 
 		return NULL;
 }
 
+void GateSinglesDigitizer::Describe(size_t indent)
+{
+	GateModuleListManager::Describe(indent);
+	DescribeMyself(indent);
+}
 
-void GateSinglesDigitizer::DescribeMyself()
+
+
+void GateSinglesDigitizer::DescribeMyself(size_t indent)
 {
 	G4cout<<"Digitizer Describe"<<G4endl;
 	G4cout<<"Digitizer Name: "<< m_digitizerName<<G4endl;

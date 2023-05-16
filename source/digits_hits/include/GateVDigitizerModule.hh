@@ -44,7 +44,7 @@ public:
   virtual void Describe(size_t indent=0);
 
   //! Pure virtual method DecribeMyself()
-  virtual void DescribeMyself(size_t indent=0) =0 ;
+  virtual void DescribeMyself(size_t indent=0);
 
   inline GateSinglesDigitizer* GetDigitizer()
     { return m_digitizer; }
