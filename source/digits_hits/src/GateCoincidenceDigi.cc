@@ -18,6 +18,13 @@ G4bool              GateCoincidenceDigi::m_coincidenceASCIIMaskDefault;
 
 G4Allocator<GateCoincidenceDigi> GateCoincidenceDigiAllocator;
 
+
+
+GateCoincidenceDigi::GateCoincidenceDigi(const void* itsMother)
+{
+}
+
+
 GateCoincidenceDigi::GateCoincidenceDigi(GateDigi *firstDigi,
         								G4double itsCoincidenceWindow,
 										G4double itsOffsetWindow):

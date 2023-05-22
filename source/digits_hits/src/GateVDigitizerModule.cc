@@ -59,11 +59,18 @@ GateVDigitizerModule::~GateVDigitizerModule()
 
 void GateVDigitizerModule::Describe(size_t indent)
 {
+	G4cout<<"GateVDigitizerModule::Describe"<<G4endl;
   GateClockDependent::Describe(indent);
   G4cout << GateTools::Indent(indent) << "Attached to:        '" << m_digitizer->GetObjectName() << "'\n";
   G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'\n";
   DescribeMyself(indent);
 }
+
+void GateVDigitizerModule::DescribeMyself(size_t indent)
+{
+;
+}
+
 
 //////////////////
 void GateVDigitizerModule::InputCollectionID()

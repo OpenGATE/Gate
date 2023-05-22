@@ -57,7 +57,6 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 
 	GateClockDependent* module = digitizerMgr->FindElement(collectionName);
 
-
 	while ((start = collectionName.find_first_not_of(delim, end)) != std::string::npos)
 	{
 		end = str.find(delim, start);
@@ -93,7 +92,7 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 
 
 
-	//std::cout << collectionName<<" "<< collectionID << std::endl;
+	//std::cout <<" **** "<< collectionName<<" "<< collectionID << std::endl;
 	return collectionID;
 
 

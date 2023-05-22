@@ -34,6 +34,9 @@
 #include "GateDigitizerInitializationModule.hh"
 #include "GateSinglesDigitizer.hh"
 
+#include "GateCoinDigitizerInitializationModule.hh"
+#include "GateCoincidenceDigitizer.hh"
+
 
 class GateDigitizerMgrMessenger;
 class GateVSystem;
@@ -98,8 +101,8 @@ public:
    GateCoincidenceSorter* FindCoincidenceSorter(G4String mName);
    //Coincidence digitizers
    void RunCoincidenceDigitizers();
-   //void AddNewCoincidenceDigitizer(GateCoincidenceSorter* coincidenceSorter);
-   //GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
+   void AddNewCoincidenceDigitizer(GateCoincidenceDigitizer* coincidenceDigitizer);
+   GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
 
 private:
@@ -121,6 +124,10 @@ public:
   std::vector<GateDigitizerInitializationModule*>    	m_digitizerIMList;	 //!< Vector of initialisation modules for different SD
   std::vector<GateSinglesDigitizer*>    	m_SingleDigitizersList;	 //!< Vector of digitizers
   std::vector<GateCoincidenceSorter*>    	m_CoincidenceSortersList;	 //!< Vector of coincidence sorters
+
+
+  std::vector<GateCoincidenceDigitizer*>    	m_CoincidenceDigitizersList;	 //!< Vector of coincidence digitizers
+  std::vector<GateCoinDigitizerInitializationModule*> m_coinDigitizerIMList;
 
   G4bool m_recordSingles;
   G4bool m_recordCoincidences;

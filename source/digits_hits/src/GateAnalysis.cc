@@ -476,11 +476,13 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 	 {
 
 		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
-			 digitizerMgr->RunDigitizers();
+			 {
 
-		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
-			 digitizerMgr->RunCoincidenceSorters();
-  }
+			 	 digitizerMgr->RunDigitizers();
+			 	 digitizerMgr->RunCoincidenceSorters();
+			 	 digitizerMgr->RunCoincidenceDigitizers();
+			 }
+	 }
 
 
 } // end function
