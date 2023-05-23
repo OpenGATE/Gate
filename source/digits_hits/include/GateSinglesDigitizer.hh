@@ -76,10 +76,6 @@ class GateSinglesDigitizer : public GateModuleListManager
      G4String GetName()
            {  return m_digitizerName; }
 
-    const G4String& GetLastDMname() const
-    { return m_lastDMname; }
-    void SetLastDMname(const G4String& anInputName)
-      {  m_lastDMname = anInputName; }
 
     void AddNewModule(GateVDigitizerModule* DM);
 
@@ -87,6 +83,14 @@ class GateSinglesDigitizer : public GateModuleListManager
     void DescribeMyself(size_t indent=0);
 
     G4String GetDMNameFromInsertionName(G4String name);
+
+    //To set input collectionIDs for all DMs of this digitizer (m_DMlist)
+    void SetDMCollectionIDs();
+    //To set output collection ID for this digitizer, m_outputDigiCollectionID,
+    //corresponding to the last DM output ID. Used by output modules to find what to write down
+    void SetOutputCollectionID();
+
+
 
  protected:
       GateSinglesDigitizerMessenger*    m_messenger;
@@ -100,8 +104,8 @@ public:
       std::vector<GateVDigitizerModule*>    	m_DMlist;	 //!< List of DigitizerModules for this digitizer
       GateCrystalSD*                m_SD;
       G4String                 m_digitizerName;
+
       G4int      m_outputDigiCollectionID;
-      G4String                 m_lastDMname;
 };
 
 #endif

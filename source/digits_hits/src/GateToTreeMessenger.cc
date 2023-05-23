@@ -152,7 +152,7 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
 	  		 { //save only one specific collections
 
 	  			 m_gateToTree->addCollection(string);
-	  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(string);
+	  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(string);
 
 	  			 if(digitizer)
 	  				 digitizer->m_recordFlag=true;

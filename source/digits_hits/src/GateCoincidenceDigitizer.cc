@@ -36,6 +36,12 @@ GateCoincidenceDigitizer::GateCoincidenceDigitizer( GateDigitizerMgr* itsDigitiz
 	m_digitizerName(digitizerUsersName)
 {
 	m_messenger = new GateCoincidenceDigitizerMessenger(this);
+	/* Example of naming
+ 	 * m_digitizerName = finalCoin
+	 * m_inputName = Coincidences, Delay
+	 * m_outputName = finalCoin
+	 */
+
 
   //Prepare OutputMng for this digitizer
   	GateOutputMgr::GetInstance()->RegisterNewCoincidenceDigiCollection(m_outputName,true);
@@ -117,3 +123,51 @@ G4String GateCoincidenceDigitizer::GetDMNameFromInsertionName(G4String name)
 
 }
 
+
+
+void GateCoincidenceDigitizer::SetCDMCollectionIDs()
+{
+	//Calculate input IDs for all DMs
+	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+	//fDM->List();
+
+	G4String name4fDM;
+
+	for (size_t i_DM = 0; i_DM<m_CDMlist.size(); i_DM++)
+	{
+		if (i_DM == 0) // first DM: could be the Initialization module or some other set but user
+		{
+			name4fDM = "CoinDigiInit/"+this->GetName();
+		}
+		else
+		{
+			name4fDM = m_CDMlist[i_DM-1]->GetName()+"/"+GetOutputName();
+		}
+		m_CDMlist[i_DM]->SetCollectionID( fDM->GetDigiCollectionID(name4fDM ) );
+	}
+
+
+
+}
+void GateCoincidenceDigitizer::SetOutputCollectionID()
+{
+
+	//Save the ID of the last digitizer module for current digitizer
+	//G4cout<<"GateSinglesDigitizer::SetOuptputCollectionID"<<G4endl;
+
+	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+
+	G4String name;
+	if(m_CDMlist.size()>0)
+	{
+		GateVDigitizerModule *DM = (GateVDigitizerModule*)m_CDMlist[m_CDMlist.size()-1];
+		name=DM->GetName()+"/"+m_digitizerName;
+	}
+	else
+		name="CoinDigiInit/"+m_digitizerName;
+
+	m_outputDigiCollectionID  = fDM->GetDigiCollectionID(name);
+	//G4cout<<"output collecionID "<<m_digitizerName<<" "<<m_outputDigiCollectionID<<G4endl;
+
+
+}

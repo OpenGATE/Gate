@@ -69,10 +69,6 @@ class GateCoincidenceDigitizer : public GateModuleListManager
      G4String GetName()
            {  return m_digitizerName; }
 
-    const G4String& GetLastDMname() const
-    { return m_lastDMname; }
-    void SetLastDMname(const G4String& anInputName)
-      {  m_lastDMname = anInputName; }
 
     void AddNewModule(GateVDigitizerModule* DM);
 
@@ -85,6 +81,8 @@ class GateCoincidenceDigitizer : public GateModuleListManager
    // void SetNoPriority(G4bool b){m_noPriority = b;}
    // G4bool GetNoPriority(){return m_noPriority;}
 
+    void SetCDMCollectionIDs();
+    void SetOutputCollectionID();
 
  protected:
       GateCoincidenceDigitizerMessenger*    m_messenger;
@@ -103,7 +101,7 @@ public:
 
       G4String                 m_digitizerName;
       G4int      m_outputDigiCollectionID;
-      G4String                 m_lastDMname;
+
 };
 
 #endif

@@ -85,7 +85,7 @@ public:
    //! Integrates a new digitizer/singlesCollection
    void AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer);
    //! Find Digitizer by its name
-  GateSinglesDigitizer* FindDigitizer(G4String mName);
+  GateSinglesDigitizer* FindSinglesDigitizer(G4String mName);
    /// End of methods for Singles
 
 

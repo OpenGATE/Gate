@@ -55,6 +55,8 @@ class GateToRootMessenger: public GateOutputModuleMessenger
     G4UIcmdWithABool*        RootCCSourceParentIDSpecificationCmd;
     G4UIcmdWithABool*        RootHitCmd;
     G4UIcmdWithABool*        RootSinglesCmd;
+    G4UIcmdWithABool*        RootCoincidencesCmd;
+
     G4UIcmdWithABool*        RootNtupleCmd;
     G4UIcmdWithABool*        RootOpticalCmd;
     G4UIcmdWithABool*        RootRecordCmd;
