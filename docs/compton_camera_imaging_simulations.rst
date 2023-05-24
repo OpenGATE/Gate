@@ -200,11 +200,11 @@ Example::
 
 The different considered DoI models can be applied to two readout geometries (Schaart et al. 2009): front surface (entrance surface) readout, in which the photodetector is placed on the crystal surface facing the radiation source, and conventional back-surface (exit surface) readout. To this end, the  growth-direction of the DoI must be specified using the command.::
 
-	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/setAxis    	[0 0 1]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/setAxis    	0 0 1
 	
 Example::
 
-	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/setAxis    	0 0 1	
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/setAxis     0 0 1	
 
 In the above example the growth-direction of the DoI is set to  the growth direction of the Z-axis.
 The criterion for the DoI growth is set towards the readout surface and thereby the DoI value in that surface corresponds to the thickness of the crystal. The opposite surface of the readout surface is referred to as exterior surface. Therefore, the  different uncertainty models implemented can be applied to the different readout configurations.
