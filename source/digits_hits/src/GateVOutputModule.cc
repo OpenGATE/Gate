@@ -43,50 +43,63 @@ void GateVOutputModule::Describe(size_t indent)
 G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 {
 	//G4cout<<" GateVOutputModule::GetCollectionID "<< collectionName<<G4endl;
+	//GetCollectionID from collection Name:
+	// construct name that corresponds to G4DigiManager
+	// GetID from G4DigiManager or as a last collection in Singles or Coincidence Digitizer
+	G4int collectionID=-1;
 
-	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
-	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-	//digitizerMgr->ShowSummary();
-
+	//****
 	std::string const &str = collectionName;
-	std::vector<std::string> out;
+	std::vector<std::string> collectionNamePart;
 	const char delim ='_';
 
 	size_t start;
 	size_t end = 0;
 
-	GateClockDependent* module = digitizerMgr->FindElement(collectionName);
 
 	while ((start = collectionName.find_first_not_of(delim, end)) != std::string::npos)
 	{
 		end = str.find(delim, start);
-		out.push_back(str.substr(start, end - start));
+		collectionNamePart.push_back(str.substr(start, end - start));
 	}
-	G4int collectionID=-1;
+	//****
 
-	if(module)
+	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+
+
+	GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+	//digitizerMgr->ShowSummary();
+	GateClockDependent* module = digitizerMgr->FindElement(collectionName);
+
+	if(module) //Getting IDs for SinglesDigitizers and CoincidenceDigitizers
 	{
-	    //G4cout<<module->GetObjectName()<<G4endl;
 		if ( G4StrUtil::contains(module->GetObjectName(), "SinglesDigitizer"))
 		{
-			if (out.size()>=2)
+			if (collectionNamePart.size()>=2)
 			{
 
-			GateSinglesDigitizer* digitizer = digitizerMgr->FindDigitizer(collectionName);
-			G4int lastDCID=digitizer->m_outputDigiCollectionID;
-			collectionID = lastDCID;
-
+			GateSinglesDigitizer* digitizer = digitizerMgr->FindSinglesDigitizer(collectionName);
+			collectionID = digitizer->m_outputDigiCollectionID;
 			}
 		}
-		else
+		else //case for CoinSorters and CoinDigitizers
 		{
 			collectionID = fDM->GetDigiCollectionID(collectionName);
 
 		}
 	}
-	else
+	else //Getting IDs for "intermediate" digitizer modules and coin digitizer modules
 	{
-		G4String modifiedCollectionName=out[2]+"/"+out[0]+"_"+out[1];
+		G4String modifiedCollectionName;
+		if(collectionNamePart.size()>2) //case for SinglesDigitizers
+		{
+			// modified name : adder/Singles_crystal to be found by G4DigiMan
+			modifiedCollectionName=collectionNamePart[2]+"/"+collectionNamePart[0]+"_"+collectionNamePart[1];
+		}
+		else //case for CoincidenceDigitizers
+		{
+			modifiedCollectionName=collectionNamePart[1]+"/"+collectionNamePart[0];
+		}
 		collectionID = fDM->GetDigiCollectionID(modifiedCollectionName);
 	}
 

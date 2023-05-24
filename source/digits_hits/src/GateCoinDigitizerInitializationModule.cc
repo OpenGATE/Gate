@@ -8,9 +8,9 @@
 
 /*!
   \class  GateCoinDigitizerInitializationModule
-  This class is a specific coincidence coinDigitizer class that are called before running all users
-  coin coinDigitizers and coin coinDigitizer modules.
-  It takes as input two coin digi collections and create a new coin digi collection
+  This class is a specific Coincidence Digitizers class that are called before running all users
+  Coincidence Digitizers and Coincidence Digitizers modules.
+  It takes as input two Coincidence Digitizers collections and create a new coin digi collection
   Names for this input and output coin digi collections are defined with CoincidenceDigitizerMessenger
   Digitize() of this class is called by default by DigitizerMng at the beginning of RunCoincidenceDigitizers()
 
@@ -52,7 +52,7 @@ GateCoinDigitizerInitializationModule::GateCoinDigitizerInitializationModule(Gat
 	G4String colName = coinDigitizer->GetOutputName();
 	collectionName.push_back(colName);
 
-	GateOutputMgr::GetInstance()->RegisterNewCoincidenceDigiCollection(coinDigitizer->GetOutputName(),true);
+	GateOutputMgr::GetInstance()->RegisterNewCoincidenceDigiCollection(coinDigitizer->GetOutputName()+"_CoinDigiInit",false);
 
 }
 

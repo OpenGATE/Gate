@@ -167,7 +167,7 @@ void GateToBinaryMessenger::SetNewValue( G4UIcommand* command,
     				 }
 
 
-    			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
+    			 GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
     			 if(digitizer)
     				 digitizer->m_recordFlag=true;
     			 }
@@ -236,7 +236,7 @@ void GateToBinaryMessenger::ExecuteOutputChannelCmd( G4UIcommand* command,
         {
           m_outputChannelVector[i]->SetOutputFlag(
                                                   m_outputChannelCmd[ i ]->GetNewBoolValue( newValue ) );
-          GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(m_outputChannelVector[i]->m_collectionName);
+          GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(m_outputChannelVector[i]->m_collectionName);
           if(digitizer)
         	  digitizer->m_recordFlag=true;
 

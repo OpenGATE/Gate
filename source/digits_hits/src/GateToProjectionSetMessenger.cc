@@ -132,7 +132,7 @@ void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String new
         		newName=newValue+"_"+digitizerMgr->m_SDlist[j]->GetName();
 
 
-        		GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newName);
+        		GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(newName);
         		if(digitizer)
         			digitizer->m_recordFlag=true;
 
@@ -158,7 +158,7 @@ void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String new
     		newName=newValue+"_"+digitizerMgr->m_SDlist[j]->GetName();
 
 
-    		GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newName);
+    		GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(newName);
     		if(digitizer)
     			digitizer->m_recordFlag=true;
     	}

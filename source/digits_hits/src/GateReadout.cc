@@ -107,7 +107,7 @@ void GateReadout::SetReadoutParameters()
 					 "Use /forceReadoutVolumeForEnergyCentroid flag if you still want to set your depth/volume for Readout.\n");
 
 
-		 	 GateVSystem* m_system = this->GetDigitizer()->GetSystem();
+		 	 GateVSystem* m_system = ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 		 	 if (m_system==NULL) G4Exception( "GateReadout::SetReadoutParameters", "SetReadoutParameters", FatalException,
 	  	  	                                   "Failed to get the system corresponding to that digitizer. Abort.\n");
 
@@ -161,7 +161,7 @@ void GateReadout::SetReadoutParameters()
 			// Find useful stuff for centroid based computation
 			//m_policy = "TakeEnergyCentroid";
 			// Get the system
-			GateVSystem* m_system = this->GetDigitizer()->GetSystem();
+			GateVSystem* m_system = ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 			if (m_system==NULL) G4Exception( "GateReadout::Digitize", "Digitize", FatalException,
 					"Failed to get the system corresponding to that processor chain. Abort.\n");
 			// Get the array component corresponding to the crystal level using the name 'crystal'

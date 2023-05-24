@@ -161,7 +161,7 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
 void GateCoincidenceSorter::Digitize()
 {
 	//G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
-	//	G4cout<< "m_inputName "<< m_inputName<<G4endl;
+		//G4cout<< "m_inputName "<< m_inputName<<G4endl;
   GateDigi* digi;
   std::list<GateDigi*>::iterator buf_iter;                // presort buffer iterator
 
@@ -175,13 +175,13 @@ void GateCoincidenceSorter::Digitize()
   //Input digi collection
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
   GateSinglesDigitizer* inputDigitizer;
-  inputDigitizer = digitizerMgr->FindDigitizer(m_inputName);//m_collectionName);
+  inputDigitizer = digitizerMgr->FindSinglesDigitizer(m_inputName);//m_collectionName);
   if (!inputDigitizer)
 	  if (digitizerMgr->m_SDlist.size()==1)
   	  {
 		  G4String new_name= m_inputName+"_"+digitizerMgr->m_SDlist[0]->GetName();
 		  //G4cout<<" new_name "<< new_name<<G4endl;
-		  inputDigitizer = digitizerMgr->FindDigitizer(new_name);
+		  inputDigitizer = digitizerMgr->FindSinglesDigitizer(new_name);
   	  }
 	  else
 		  GateError("ERROR: The name _"+ m_inputName+"_ is unknown for input singles digicollection! \n");

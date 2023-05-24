@@ -1023,6 +1023,8 @@ void GateToRoot::RecordDigitizer(const G4Event *) {
     	//OK GND 2022
     	if(m_outputChannelList[i]->m_collectionID<0)
     		m_outputChannelList[i]->m_collectionID=GetCollectionID(m_outputChannelList[i]->m_collectionName);
+
+    	//G4cout<<m_outputChannelList[i]->m_collectionName<<" "<< m_outputChannelList[i]->m_collectionID<<" "<< m_outputChannelList[i]->m_outputFlag<<G4endl;
     	m_outputChannelList[i]->RecordDigitizer();
 
     }

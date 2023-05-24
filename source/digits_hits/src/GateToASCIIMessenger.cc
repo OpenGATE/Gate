@@ -176,7 +176,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   				 }
 
 
-  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
+  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(tmp_str+"_"+digitizerMgr->m_SDlist[j]->GetName());
   			 if(digitizer)
   				 digitizer->m_recordFlag=true;
   			 }
@@ -239,7 +239,7 @@ void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
 
 
-      GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(m_outputChannelList[i]->m_collectionName);
+      GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(m_outputChannelList[i]->m_collectionName);
       if(digitizer)
     	  digitizer->m_recordFlag=true;
 

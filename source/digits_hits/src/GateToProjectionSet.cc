@@ -340,7 +340,7 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
 	  if (theDigitizerMgr->m_SingleDigitizersList.size() != 0)
 	  {
 		  GateSinglesDigitizer* aDigitizer;
-		  aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(*i_inputChannelName));
+		  aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindSinglesDigitizer(*i_inputChannelName));
 		  for (long unsigned int i =0; i<aDigitizer->m_DMlist.size(); i++)
 		  {
 			  m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(aDigitizer->m_DMlist[i]->GetName()+"/"+*i_inputChannelName));

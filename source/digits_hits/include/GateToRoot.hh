@@ -181,6 +181,7 @@ public:
 
         inline void AddSinglesCommand() { m_signlesCommands++; };
 
+
         inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
         G4int nVerboseLevel;
@@ -190,6 +191,7 @@ public:
         G4String m_collectionName;
         G4int m_collectionID;
         G4int m_signlesCommands;
+
     };
 
 
@@ -248,7 +250,7 @@ public:
         inline void Clear() { m_buffer.Clear(); }
 
         inline void Book() {
-            m_collectionID = -1;
+        	 m_collectionID = -1;
             if (m_outputFlag) {
                 m_tree = new GateCoincTree(m_collectionName);
                 m_tree->Init(m_buffer);
