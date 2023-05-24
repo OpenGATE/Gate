@@ -1,68 +1,97 @@
+/*----------------------
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+// OK GND 2022
+/*This class is not used by GATE !
+  The purpose of this class is to help to create new users digitizer module(DM).
+  Please, check GateDoIModels.cc for more detals
+  */
+
+/*! \class  GateDoIModels
+    \brief  GateDoIModels does some dummy things with input digi
+    to create output digi
 
 
+    \sa GateDoIModels, GateDoIModelsMessenger
+
+    Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+
+*/
 
 #ifndef GateDoIModels_h
 #define GateDoIModels_h 1
 
-#include "globals.hh"
+#include "GateVDigitizerModule.hh"
+#include "GateDigi.hh"
+#include "GateClockDependent.hh"
+#include "GateCrystalSD.hh"
+
 #include <iostream>
 #include <vector>
-#include "G4ThreeVector.hh"
+#include "globals.hh"
 
-#include "GateVPulseProcessor.hh"
-
+#include "GateDoIModelsMessenger.hh"
+#include "GateSinglesDigitizer.hh"
 #include "GateVDoILaw.hh"
 
-class GateDoIModelsMessenger;
 
-
-class GateDoIModels : public GateVPulseProcessor
+class GateDoIModels : public GateVDigitizerModule
 {
-  public:
+public:
 
-    //! Constructs a new EnergyThresholder attached to a GateDigitizer
-    //! //I SEE HOW IT WORKS BUT I DO NOT UNDERSTAND : ASK
-    /// it loads correcty messenger values
-     GateDoIModels(GatePulseProcessorChain* itsChain,  const G4String& itsName);
-      ///Like that it   load correcty messenger values but after constuctor
-    //GateDoIModels(GatePulseProcessorChain* itsChain,  const G4String& itsName, const G4ThreeVector& itsDoIAxis=G4ThreeVector(0.,0.,1.)) ;
-    ///The setfunction call by the messegner load the value inserted in the constructor not the one in the mac
-    //GateDoIModels(GatePulseProcessorChain* itsChain,  const G4String& itsName, const G4ThreeVector itsDoIAxis=G4ThreeVector(0.,0.,1.)) ;
-    //! Destructor
-    virtual ~GateDoIModels() ;
+  GateDoIModels(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateDoIModels();
 
-    //!!Only works for selecting one of hte three ortogonal directions (x, y or Z) not other bases
-    //! Returns the threshold
-       inline const G4ThreeVector& GetDoIAxis() {return m_DoIaxis;}
+  void Digitize() override;
 
-        //! Set the threshold
-      void SetDoIAxis( G4ThreeVector val);
+  // *******implement your methods here
+  //void setDoIModel(const G4String& );
 
-    //! This function returns the effective energy law in use.
-        inline GateVDoILaw* GetDoILaw()           { return m_DoILaw; }
+  //void DummyMethod1(GateDigi *);
+  //void DummyMethod2(GateDigi *);
 
-        inline void SetDoILaw(GateVDoILaw* law)   { m_DoILaw = law; }
+  //void DescribeMyself(size_t );
+  virtual void DescribeMyself(size_t indent);
 
-    //! Implementation of the pure virtual method declared by the base class GateClockDependent
-    //! print-out the attributes specific of the EnergyThresholder
-    virtual void DescribeMyself(size_t indent);
+  //! Set the threshold
+  void SetDoIAxis( G4ThreeVector val);
 
-  protected:
-    //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
-    //! This methods processes one input-pulse
-    //! It is is called by ProcessPulseList() for each of the input pulses
-    //! The result of the pulse-processing is incorporated into the output pulse-list
-    void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&  outputPulseList);
+  inline void SetDoILaw(GateVDoILaw* law)   { m_DoILaw = law; }
 
-  private:
+protected:
+  // *******implement your parameters here
+ // G4String   m_DoIModels;
+
+private:
+  GateDigi* m_outputDigi;
 
 
-    GateVDoILaw* m_DoILaw;
-    G4ThreeVector m_DoIaxis;
-    GateDoIModelsMessenger *m_messenger;    //!< Messenger
-    bool flgCorrectAxis;
+  GateDoIModelsMessenger *m_Messenger;
+
+  GateDigiCollection*  m_OutputDigiCollection;
+
+  GateSinglesDigitizer *m_digitizer;
+
+  GateVDoILaw* m_DoILaw;
+
+  G4ThreeVector m_DoIaxis;
+
+  bool flgCorrectAxis;
+
 
 };
 
-
 #endif
+
+
+
+
+
+
+
+

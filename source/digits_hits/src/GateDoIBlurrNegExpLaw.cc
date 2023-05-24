@@ -1,3 +1,19 @@
+/*----------------------
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+/*!
+  \class  GateDoIBlurrNegExpLaw
+
+  The user can choose the direction in which he wants to applied the DoI model.
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
+
 #include "G4VoxelLimits.hh"
 #include "G4Transform3D.hh"
 #include "G4VSolid.hh"
@@ -30,26 +46,26 @@ GateDoIBlurrNegExpLaw::GateDoIBlurrNegExpLaw(const G4String& itsName) :
 
 
 
-void GateDoIBlurrNegExpLaw::ComputeDoI(GatePulse* pulse, G4ThreeVector axis)  {
+void GateDoIBlurrNegExpLaw::ComputeDoI( GateDigi* DoImodels, G4ThreeVector axis)  { //GateDoImodels* DoImodels
 
     //It is not efficient. Maybe create a map with the names of the volumes and  the limits in each direction ?? For local easy.
-    //for global  how do I get the volume names. From senssitive detecotr. That information in the actor shoulf be provided here ?
+    //for global  how do I get the volume names. From sensitive detector. That information in the actor should be provided here ?
 
     G4ThreeVector newLocalPos;
-    newLocalPos=pulse->GetLocalPos();
+    newLocalPos=DoImodels->GetLocalPos();
 
     G4double doICrysEntSys=0;
     G4double newDoI;
     if(axis.isParallel(xAxis)){
          // G4cout<<"[GateDoIBlurrNegExpLaw]:  DoI model applied in X direction."<<G4endl;
-        pulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, DoImin, DoImax);
+        DoImodels->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, DoImin, DoImax);
 
         if(axis.getX()>0){
-              doICrysEntSys=(DoImax-DoImin)/2-pulse->GetLocalPos().getX();
+              doICrysEntSys=(DoImax-DoImin)/2-DoImodels->GetLocalPos().getX();
 
         }
         else{
-              doICrysEntSys=(DoImax-DoImin)/2-pulse->GetLocalPos().getX();
+              doICrysEntSys=(DoImax-DoImin)/2-DoImodels->GetLocalPos().getX();
         }
         newDoI=G4RandGauss::shoot(newLocalPos.getX(),(GetEntranceFWHM()/GateConstants::fwhm_to_sigma)*exp(doICrysEntSys/GetExpInvDecayConst()));
         if(newDoI<DoImin) newDoI=DoImin;
@@ -61,12 +77,12 @@ void GateDoIBlurrNegExpLaw::ComputeDoI(GatePulse* pulse, G4ThreeVector axis)  {
     }
     else if(axis.isParallel(yAxis)){
         // G4cout<<"[GateDoIBlurrNegExpLaw]:  DoI model applied in Y direction."<<G4endl;
-        pulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, DoImin, DoImax);
+        DoImodels->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, DoImin, DoImax);
         if(axis.getY()>0){
-            doICrysEntSys=pulse->GetLocalPos().getY()+(DoImax-DoImin)/2;
+            doICrysEntSys=DoImodels->GetLocalPos().getY()+(DoImax-DoImin)/2;
         }
         else{
-            doICrysEntSys=(DoImax-DoImin)/2-pulse->GetLocalPos().getY();
+            doICrysEntSys=(DoImax-DoImin)/2-DoImodels->GetLocalPos().getY();
         }
         newDoI=G4RandGauss::shoot(newLocalPos.getY(),(GetEntranceFWHM()/GateConstants::fwhm_to_sigma)*exp(doICrysEntSys/GetExpInvDecayConst()));
         if(newDoI<DoImin) newDoI=DoImin;
@@ -77,8 +93,8 @@ void GateDoIBlurrNegExpLaw::ComputeDoI(GatePulse* pulse, G4ThreeVector axis)  {
     else{
         // G4cout<<"[GateDoIBlurrNegExpLaw]:  DoI model applied in Z direction."<<G4endl;
         //Limits in local system. DoI min and masx equals differnet signe
-        pulse->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, DoImin, DoImax);
-        //G4cout<<pulse.GetVolumeID().GetBottomCreator()->GetSolidName()<<"Xmin="<<DoImin<<"  Xmax"<<DoImax<<G4endl;
+        DoImodels->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, DoImin, DoImax);
+        //G4cout<<DoImodels.GetVolumeID().GetBottomCreator()->GetSolidName()<<"Xmin="<<DoImin<<"  Xmax"<<DoImax<<G4endl;
 
         if(axis.getZ()>0){
             doICrysEntSys=newLocalPos.getZ()+(DoImax-DoImin)/2;
@@ -94,8 +110,8 @@ void GateDoIBlurrNegExpLaw::ComputeDoI(GatePulse* pulse, G4ThreeVector axis)  {
     }
 
 
-    pulse->SetLocalPos(newLocalPos);
-    pulse->SetGlobalPos(pulse->GetVolumeID().MoveToAncestorVolumeFrame(pulse->GetLocalPos()));
+    DoImodels->SetLocalPos(newLocalPos);
+    DoImodels->SetGlobalPos(DoImodels->GetVolumeID().MoveToAncestorVolumeFrame(DoImodels->GetLocalPos()));
 
 
 

@@ -6,6 +6,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*!
+  \class  GateSinglesDigitizerMessenger
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+  */
+
 #include "GateSinglesDigitizer.hh"
 #include "GateSinglesDigitizerMessenger.hh"
 
@@ -36,6 +42,8 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #include "GateNoise.hh"
 #include "GateDigitizerMerger.hh"
+
+#include "GateDoIModels.hh"
 /*
 #include "GateLocalTimeDelay.hh"
 #include "GateBuffer.hh"
@@ -104,7 +112,7 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels";
 
    return theList;
 }
@@ -192,6 +200,11 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
          }
+  else if (childTypeName=="doIModels")
+        {
+          newDM = new GateDoIModels(m_digitizer, DMname);
+       	  m_digitizer->AddNewModule(newDM);
+        }
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
