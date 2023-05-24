@@ -125,10 +125,6 @@ void GateDoIModels::Digitize()
 			   {
 				   GateError("The user did not set the effective energy law for the pulse");
 			   }
-			   G4cout << m_DoILaw <<G4endl;
-			   G4cout << m_outputDigi << G4endl;
-			   G4cout << m_DoIaxis << G4endl;
-
 			   m_DoILaw->ComputeDoI(m_outputDigi, m_DoIaxis);
 		   }
 

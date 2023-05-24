@@ -29,6 +29,6 @@ See LICENSE.md for further details
 void  GateVDoILaw::Describe (size_t ident) {
 	GateNamedObject::Describe(ident);
 
-    G4cout << "Law giving the effective energy for a pulse.\n";
-	DescribeMyself(ident);
+    G4cout << "Law giving the effective energy for a digi.\n";
+    DescribeMyself(ident);
 }

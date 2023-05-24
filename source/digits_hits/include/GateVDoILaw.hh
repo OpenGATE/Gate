@@ -30,7 +30,7 @@ class GateVDoILaw : public GateNamedObject {
          GateVDoILaw(const G4String& itsName);
 
         virtual ~ GateVDoILaw() {}
-        virtual void ComputeDoI(GateDigi* DoImodels, G4ThreeVector axis) = 0;
+        virtual void ComputeDoI(GateDigi* digi, G4ThreeVector axis) = 0;
 
   		// Implementation of the virtual method in GateNamedObject class
   		void Describe (size_t ident=0);

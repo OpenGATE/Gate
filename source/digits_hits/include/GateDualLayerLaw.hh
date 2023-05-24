@@ -27,7 +27,7 @@ public :
     GateDualLayerLaw(const G4String& itsName);
     virtual ~GateDualLayerLaw() {delete m_messenger;}
 
-     virtual void ComputeDoI(GateDigi* DoImodels, G4ThreeVector axis);
+     virtual void ComputeDoI(GateDigi* digi, G4ThreeVector axis);
 
     virtual void DescribeMyself (size_t ident=0) const;
 

@@ -7,15 +7,11 @@ See LICENSE.md for further details
 ----------------------*/
 
 // OK GND 2022
-/*This class is not used by GATE !
-  The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateDoIModels.cc for more detals
-  */
 
 /*! \class  GateDoIModels
-    \brief  GateDoIModels does some dummy things with input digi
-    to create output digi
 
+    A Digitizer module for simulating a DoI model
+    The user can choose the axes for each tracked volume.
 
     \sa GateDoIModels, GateDoIModelsMessenger
 
@@ -49,13 +45,6 @@ public:
 
   void Digitize() override;
 
-  // *******implement your methods here
-  //void setDoIModel(const G4String& );
-
-  //void DummyMethod1(GateDigi *);
-  //void DummyMethod2(GateDigi *);
-
-  //void DescribeMyself(size_t );
   virtual void DescribeMyself(size_t indent);
 
   //! Set the threshold

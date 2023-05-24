@@ -6,12 +6,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-/*This class is not used by GATE !
-  The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateDoIModels.cc for more detals
-  */
-
-
 /*! \class  GateDoIModelsMessenger
     \brief  Messenger for the GateDoIModels
 

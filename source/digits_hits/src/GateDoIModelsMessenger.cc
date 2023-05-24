@@ -42,11 +42,6 @@ GateDoIModelsMessenger::GateDoIModelsMessenger (GateDoIModels* DoIModels)
 	lawCmd = new G4UIcmdWithAString(cmdName2,this);
 	lawCmd->SetGuidance("Set the DoI model ");
 
-    cmdName = GetDirectoryName()+"positionPolicy";
-    DoICmd = new G4UIcmdWithAString(cmdName,this);
-    DoICmd->SetGuidance("How to generate position");
-    DoICmd->SetCandidates("energyWeightedCentroid takeEnergyWinner");
-
 }
 
 
@@ -88,11 +83,6 @@ void GateDoIModelsMessenger::SetNewValue(G4UIcommand * aCommand,G4String newValu
 	      m_DoIModels->SetDoILaw(a_DoILaw);
 	   }
 	}
-
-	/*if (aCommand ==DoICmd)
-	{
-		m_DoIModels->setDoIModel(newValue);
-	}*/
 	else
 	{
 	    GateClockDependentMessenger::SetNewValue(aCommand,newValue);
