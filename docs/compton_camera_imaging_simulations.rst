@@ -189,15 +189,22 @@ DoI modeling
 
 The DoI modeling digitizer is applied using the following command.::
 
-	/gate/digitizer/layers/insert DoImodel
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert    doIModels
+
 ..
 	 It is a global module. The local counterpart can be useful::
 
+Example::
 
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert    doIModels
 
 The different considered DoI models can be applied to two readout geometries (Schaart et al. 2009): front surface (entrance surface) readout, in which the photodetector is placed on the crystal surface facing the radiation source, and conventional back-surface (exit surface) readout. To this end, the  growth-direction of the DoI must be specified using the command.::
 
-	/gate/digitizer/layers/DoImodel/setAxis [0 0 1]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/setAxis    	[0 0 1]
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/setAxis    	0 0 1	
 
 In the above example the growth-direction of the DoI is set to  the growth direction of the Z-axis.
 The criterion for the DoI growth is set towards the readout surface and thereby the DoI value in that surface corresponds to the thickness of the crystal. The opposite surface of the readout surface is referred to as exterior surface. Therefore, the  different uncertainty models implemented can be applied to the different readout configurations.
@@ -205,15 +212,23 @@ The criterion for the DoI growth is set towards the readout surface and thereby 
 Two options are available for the DoI modelling: dual layer structure and exponential function for the DoI uncertainty. The dual layer model discretizes the ground-truth DoI into  two positions in the crystal. If the position of the pulse is recorded in the half of the crystal closer to the readout surface, the DoI is set to the central section, otherwise it is set to the exterior surface.
 This model can be selected using the following command::
 
-	/gate/digitizer/layers/DoImodel/setDoIModel dualLayer
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/setDoIModel		dualLayer
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/setDoIModel	    dualLayer	
 
 The DoI exponential uncertainty is modeled as a negative exponential function in the DoI growth-direction. FWHM value at the exterior surface (maximum uncertainty) and the exponential decay constant must be set as input parameters. This uncertainty model and the necessary parameters can be  loaded using the following commands.::
 
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/DoIBlurrNegExp/setExpInvDecayConst 		[length]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModels/DoIBlurrNegExp/setCrysEntranceFWHM 		[length]
+	
+Example::
 
-	/gate/digitizer/layers/DoImodel/setDoIModel DoIBlurrNegExp
-	/gate/digitizer/layers/DoImodel/DoIBlurrNegExp/setExpInvDecayConst [length]
-	/gate/digitizer/layers/DoImodel/DoIBlurrNegExp/setCrysEntranceFWHM [length]
-
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/DoIBlurrNegExp/setExpInvDecayConst 	1.4 nm
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModels/DoIBlurrNegExp/setCrysEntranceFWHM 	1.4 nm
 
 
 Time delay
