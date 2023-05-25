@@ -47,6 +47,14 @@
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmDNAPhysics.hh"
+#include "G4EmDNAPhysics_option1.hh"
+#include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option3.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option5.hh"
+#include "G4EmDNAPhysics_option6.hh"
+#include "G4EmDNAPhysics_option7.hh"
+#include "G4EmDNAPhysics_option8.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4RadioactiveDecayPhysics.hh"
@@ -341,6 +349,30 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   }
   if (mUserPhysicListName == "emDNAphysics") {
     pl = new G4EmDNAPhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics_option1") {
+    pl = new G4EmDNAPhysics_option1;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option2") {
+    pl = new G4EmDNAPhysics_option2;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option3") {
+    pl = new G4EmDNAPhysics_option3;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option4") {
+    pl = new G4EmDNAPhysics_option4;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option5") {
+    pl = new G4EmDNAPhysics_option5;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option6") {
+    pl = new G4EmDNAPhysics_option6;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option7") {
+    pl = new G4EmDNAPhysics_option7;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option8") {
+    pl = new G4EmDNAPhysics_option8;
   }
 
 #ifdef GATE_USE_OPTICAL
