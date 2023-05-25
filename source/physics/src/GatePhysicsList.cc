@@ -55,6 +55,7 @@
 #include "G4EmDNAPhysics_option6.hh"
 #include "G4EmDNAPhysics_option7.hh"
 #include "G4EmDNAPhysics_option8.hh"
+#include "G4EmDNAPhysicsActivator.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4RadioactiveDecayPhysics.hh"
@@ -111,6 +112,10 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   mUseICRU90Data = false;
 #endif
+
+	// used to conditionally activate DNA physics list in specific regions
+	// while using other em physics list elsewhere
+	emDNAActivator = new G4EmDNAPhysicsActivator;
 }
 //-----------------------------------------------------------------------------------------
 
@@ -185,6 +190,8 @@ GatePhysicsList::~GatePhysicsList()
     if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<< Gateendl;
     }
     }*/
+
+	delete emDNAActivator;
 }
 //-----------------------------------------------------------------------------------------
 
@@ -284,6 +291,9 @@ void GatePhysicsList::ConstructProcess()
      }
      }
   */
+
+	// Construct G4 DNA activator process
+	emDNAActivator->ConstructProcess();
 
   mLoadState++;
 }
@@ -467,10 +477,7 @@ void GatePhysicsList::ConstructParticle()
   //  Construct hybridino
   G4Hybridino::HybridinoDefinition();
 
-
-
   //Construct G4DNA particles
-
 
   G4DNAGenericIonsManager* dnagenericIonsManager;
   dnagenericIonsManager=G4DNAGenericIonsManager::Instance();
@@ -482,6 +489,9 @@ void GatePhysicsList::ConstructParticle()
   dnagenericIonsManager->GetIon("nitrogen");
   dnagenericIonsManager->GetIon("iron");
   dnagenericIonsManager->GetIon("oxygen");
+
+	// Construct G4 DNA activator particles
+	emDNAActivator->ConstructParticle();
 
  //Construct positroniums
  GateParaPositronium::ParaPositroniumDefinition();
