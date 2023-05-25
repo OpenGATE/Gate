@@ -1,4 +1,9 @@
+/*!
+  \class  GateDoILawMessenger
 
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 
 #ifndef GateVDoILawMessenger_h

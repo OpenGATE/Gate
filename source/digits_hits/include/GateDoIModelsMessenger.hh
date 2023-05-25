@@ -6,40 +6,58 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*! \class  GateDoIModelsMessenger
+    \brief  Messenger for the GateDoIModels
+
+    \sa GateDoIModels, GateDoIModelsMessenger
+
+    Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+
+*/
+
 
 #ifndef GateDoIModelsMessenger_h
 #define GateDoIModelsMessenger_h 1
 
-#include "GatePulseProcessorMessenger.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
+
+#include "GateClockDependentMessenger.hh"
 #include "GateVDoILaw.hh"
 
-class G4UIdirectory;
-class G4UIcmdWithoutParameter;
+class GateDoIModels;
 class G4UIcmdWithAString;
-class G4UIcmdWithABool;
-class G4UIcmdWithAnInteger;
-class G4UIcmdWithADouble;
-class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWith3Vector;
 class G4UIcmdWith3VectorAndUnit;
+class G4UIdirectory;
+class G4UIcmdWithoutParameter;
 
-class GateDoIModels;
-
-class GateDoIModelsMessenger: public GatePulseProcessorMessenger
+class GateDoIModelsMessenger : public GateClockDependentMessenger
 {
 public:
-    GateDoIModelsMessenger(GateDoIModels* itsDoIModel);
-    virtual ~GateDoIModelsMessenger();
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  GateDoIModelsMessenger(GateDoIModels*);
+  ~GateDoIModelsMessenger();
 
-    inline GateDoIModels* GetDoIModel()
-    { return (GateDoIModels*) GetPulseProcessor(); }
+  void SetNewValue(G4UIcommand*, G4String);
 
 private:
-    G4UIcmdWith3Vector *axisCmd;
-    GateVDoILaw* CreateDoILaw(const G4String& law);
-    G4UIcmdWithAString *lawCmd;
+  G4UIcmdWith3Vector *axisCmd;
+  GateVDoILaw* CreateDoILaw(const G4String& law);
+  G4UIcmdWithAString *lawCmd;
+  GateDoIModels* m_DoIModels;
+  G4UIcmdWithAString          *DoICmd;
+
+
 };
 
 #endif
+
+
+
+
+
+
+
+
+

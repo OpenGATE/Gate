@@ -6,7 +6,13 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*!
+  \class  GateDoIBlurrNegExpLawMessenger
 
+  The user can choose the value of ExpInvDecayConst and FWHM needed for the crystal entrance.
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 #ifndef GateDoIBlurrNegExpLawMessenger_h
 #define GateDoIBlurrNegExpLawMessenger_h
