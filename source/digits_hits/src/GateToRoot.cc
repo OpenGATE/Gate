@@ -1014,7 +1014,8 @@ void GateToRoot::RecordOpticalData(const G4Event *event) {
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordDigitizer(const G4Event *) {
-   if (nVerboseLevel > 2)
+
+	if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordDigitizer\n";
     // Digitizer information
 
