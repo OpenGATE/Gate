@@ -86,9 +86,11 @@ void GateCoincidencePulseProcessorChainMessenger::DoInsertion(const G4String& ch
 
   G4String newInsertionName = GetProcessorChain()->MakeElementName(GetNewInsertionBaseName());
 
-  if (childTypeName=="deadtime")
+ /* if (childTypeName=="deadtime")
     newProcessor = new GateCoincidenceDeadTime(GetProcessorChain(),newInsertionName);
-  else if (childTypeName=="sequenceRecon")
+  else
+  */
+  if (childTypeName=="sequenceRecon")
     newProcessor = new GateCCCoincidenceSequenceRecon(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="timeDiffSelector")
     newProcessor = new GateCoincidenceTimeDiffSelector(GetProcessorChain(),newInsertionName);

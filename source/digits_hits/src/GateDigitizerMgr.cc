@@ -498,6 +498,26 @@ void GateDigitizerMgr::RunCoincidenceDigitizers()
 		m_coinDigitizerIMList[i]->Digitize();
 
 		}
+
+	if (nVerboseLevel>1)
+		   G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: launching CoincidenceDigitizers. N = " << m_CoincidenceDigitizersList.size() << "\n";
+		   //loops over all digitizers/collections
+		   	//collID get from G4DigiManager
+			for (size_t i_D = 0; i_D<m_CoincidenceDigitizersList.size(); i_D++)
+			{
+				if (nVerboseLevel>1)
+					G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: Running CoincidenceDigitizer " << m_CoincidenceDigitizersList[i_D]->m_digitizerName <<" with "<< m_CoincidenceDigitizersList[i_D]->m_CDMlist.size() << " Digitizer Modules\n";
+				//loop over all DMs of the current digitizer
+				for (size_t i_DM = 0; i_DM<m_CoincidenceDigitizersList[i_D]->m_CDMlist.size(); i_DM++)
+				{
+					if (nVerboseLevel>2)
+					G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: Running DigitizerModule " << m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetName()<<" "<<	m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetNumberOfCollections ()<<" "<<m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetCollectionName (0)<< "\n";
+
+					m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->Digitize();
+				}
+
+			}
+
 	//m_alreadyRun=true;
 }
 

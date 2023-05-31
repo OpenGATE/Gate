@@ -24,6 +24,9 @@ See LICENSE.md for further details
 
 #include "GateVDigitizerModule.hh"
 #include "GateDigitizerMgr.hh"
+
+#include "GateCoincidenceDeadTime.hh"
+
 /*#include "GateAdder.hh"
 #include "GateReadout.hh"
 #include "GateEnergyFraming.hh"
@@ -119,7 +122,7 @@ void GateCoincidenceDigitizerMessenger::SetNewValue(G4UIcommand* command,G4Strin
 
 const G4String& GateCoincidenceDigitizerMessenger::DumpMap()
 {
-   static G4String theList = " ";//readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger";
+   static G4String theList = "deadtime";//readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger";
 
    return theList;
 }
@@ -136,17 +139,16 @@ void GateCoincidenceDigitizerMessenger::DoInsertion(const G4String& childTypeNam
 
   GateVDigitizerModule* newDM=0;
 
-  //OK GND TODO: UNCOMM
- // G4String newInsertionName = m_digitizer->MakeElementName(GetNewInsertionBaseName());
- // G4String DMname = m_digitizer->GetDMNameFromInsertionName(newInsertionName);
+  G4String newInsertionName = m_CoinDigitizer->MakeElementName(GetNewInsertionBaseName());
+  G4String DMname = m_CoinDigitizer->GetDMNameFromInsertionName(newInsertionName);
 
 
-  /*if (childTypeName=="adder")
+  if (childTypeName=="deadtime")
     {
-  	  newDM = new GateAdder(m_digitizer, DMname);
-  	  m_digitizer->AddNewModule(newDM);
+  	  newDM = new GateCoincidenceDeadTime(m_CoinDigitizer, DMname);
+  	  m_CoinDigitizer->AddNewModule(newDM);
     }
-  else if (childTypeName=="readout")
+  /*else if (childTypeName=="readout")
   {
 	  newDM = new GateReadout(m_digitizer, DMname);
 	  m_digitizer->AddNewModule(newDM);

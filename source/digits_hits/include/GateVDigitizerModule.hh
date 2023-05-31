@@ -18,8 +18,10 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 #include "GateSinglesDigitizer.hh"
+#include "GateCoincidenceDigitizer.hh"
 
 class GateSinglesDigitizer;
+class GateCoincidenceDigitizer;
 
 class GateVDigitizerModule : public G4VDigitizerModule, public GateClockDependent
 {
@@ -27,6 +29,8 @@ public:
   
   GateVDigitizerModule(G4String DMname, G4String path, GateSinglesDigitizer *digitizer, GateCrystalSD* SD);
   GateVDigitizerModule(G4String DMname, G4String path);
+  GateVDigitizerModule(G4String DMname, G4String path, GateCoincidenceDigitizer *digitizer);
+
   virtual ~GateVDigitizerModule();
   
 

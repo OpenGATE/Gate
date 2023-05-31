@@ -84,7 +84,17 @@ G4int GateVOutputModule::GetCollectionID(G4String collectionName)
 		}
 		else //case for CoinSorters and CoinDigitizers
 		{
-			collectionID = fDM->GetDigiCollectionID(collectionName);
+			if ( G4StrUtil::contains(module->GetObjectName(), "CoincidenceDigitizer"))
+			{
+				if (collectionNamePart.size()>=1)
+				{
+
+					GateCoincidenceDigitizer* digitizer = digitizerMgr->FindCoincidenceDigitizer(collectionName);
+					collectionID = digitizer->m_outputDigiCollectionID;
+				}
+			}
+			else
+				collectionID = fDM->GetDigiCollectionID(collectionName);
 
 		}
 	}
