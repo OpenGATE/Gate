@@ -47,7 +47,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   } // end thePdef !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   // Test the particle Z, keep the particle if Z is in the list
   acceptTemp.push_back(true);
@@ -61,7 +61,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   } // end thePdefZ !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   //// Test the particle A
   acceptTemp.push_back(true);
@@ -75,7 +75,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   } // end thePdefA !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   // Test the particle PDG
   acceptTemp.push_back(true);
@@ -89,7 +89,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   } // end thePdefPFG !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   // Test the parent
   acceptTemp.push_back(true);
@@ -110,7 +110,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(id);
     }
   } // end theParentPdef !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   // Test the directParent
   acceptTemp.push_back(true);
@@ -128,10 +128,10 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   } // end theDirectParentPdef !empty
-  if (!acceptTemp.back()) return false;
+  if (!acceptTemp.back()) _FILTER_RETURN_WITH_INVERSION false;
 
   // Keep the track !
-  return true;
+  _FILTER_RETURN_WITH_INVERSION true;
 }
 //---------------------------------------------------------------------------
 

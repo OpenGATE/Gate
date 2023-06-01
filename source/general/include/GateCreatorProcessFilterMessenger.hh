@@ -19,6 +19,7 @@
 #include "G4UImessenger.hh"
 
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 class GateCreatorProcessFilter;
 
@@ -36,6 +37,7 @@ class GateCreatorProcessFilterMessenger :
     GateCreatorProcessFilter *pFilter;
 
     G4UIcmdWithAString* pAddCreatorProcessCmd;
+    G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif

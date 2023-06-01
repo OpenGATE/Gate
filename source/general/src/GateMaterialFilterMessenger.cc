@@ -32,6 +32,7 @@ GateMaterialFilterMessenger::GateMaterialFilterMessenger(GateMaterialFilter* mat
 GateMaterialFilterMessenger::~GateMaterialFilterMessenger()
 {
   delete pAddMaterialCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -47,6 +48,11 @@ void GateMaterialFilterMessenger::BuildCommands(G4String base)
   pAddMaterialCmd->SetGuidance(guidance);
   pAddMaterialCmd->SetParameterName("Material name",false);
 
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -55,6 +61,8 @@ void GateMaterialFilterMessenger::SetNewValue(G4UIcommand* command, G4String par
 {
   if(command==pAddMaterialCmd)
       pMaterialFilter->Add(param);
+  if(command==pInvertCmd)
+      pMaterialFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

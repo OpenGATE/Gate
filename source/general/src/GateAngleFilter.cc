@@ -27,9 +27,9 @@ G4bool GateAngleFilter::Accept(const G4Track* aTrack)
   G4ThreeVector stepdirection = aTrack->GetMomentumDirection();
   if(stepdirection.x()*mDirection.x()
      + stepdirection.y()*mDirection.y()
-     + stepdirection.z()*mDirection.z() < std::cos(mAngle) ) return false;
+     + stepdirection.z()*mDirection.z() < std::cos(mAngle) ) _FILTER_RETURN_WITH_INVERSION false;
 
-  return true;
+  _FILTER_RETURN_WITH_INVERSION true;
 }
 //---------------------------------------------------------------------------
 

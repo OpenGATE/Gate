@@ -40,10 +40,10 @@ G4bool GateMaterialFilter::Accept(const G4Step* aStep)
     for ( size_t i = 0; i < theMdef.size(); i++){
       if ( theMdef[i] == aStep->GetPreStepPoint()->GetMaterial()->GetName() ) {
         nFilteredParticles++;
-        return true;
+        _FILTER_RETURN_WITH_INVERSION true;
       } 
     }
-  return false;
+  _FILTER_RETURN_WITH_INVERSION false;
 }
 //---------------------------------------------------------------------------
 
@@ -53,10 +53,10 @@ G4bool GateMaterialFilter::Accept(const G4Track* aTrack)
     for ( size_t i = 0; i < theMdef.size(); i++){ 	
       if ( theMdef[i] == aTrack->GetMaterial()->GetName() ) {
         nFilteredParticles++;
-        return true;
+        _FILTER_RETURN_WITH_INVERSION true;
       } 
     }
-  return false;
+  _FILTER_RETURN_WITH_INVERSION false;
 }
 //---------------------------------------------------------------------------
 

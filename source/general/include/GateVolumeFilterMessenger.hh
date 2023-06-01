@@ -21,6 +21,7 @@ See LICENSE.md for further details
 #include "G4UImessenger.hh"
 
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 
 class GateVolumeFilter;
@@ -38,6 +39,7 @@ protected:
   GateVolumeFilter * pVolumeFilter;
 
   G4UIcmdWithAString* pAddVolumeCmd;
+  G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif /* end #define GATEVOLUMEFILTERMESSENGER_HH */

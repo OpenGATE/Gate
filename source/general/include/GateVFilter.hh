@@ -27,6 +27,8 @@ See LICENSE.md for further details
 #include "G4Step.hh"
 #include "G4Track.hh"
 
+#define _FILTER_RETURN_WITH_INVERSION return IsInverted !=
+
 class GateVFilter : 
   public GateNamedObject
 {
@@ -40,9 +42,13 @@ public:
  
   virtual void show();
 
+  void setInvert(){IsInverted = true;}
  
 
 private:
+
+protected:
+  bool IsInverted = false;
 
 };
 

@@ -933,6 +933,10 @@ Filters
 
 Filters are used to add selectrion criteria on actors. They are also used with reduction variance techniques. They are filters on particle type, particle ID, energy, direction....
 
+All filters listed below can be inverted and generate exact opposite selection::
+
+   /gate/actor/[Actor Name]/[Filter Name]/invert
+
 Filter on particle type
 ~~~~~~~~~~~~~~~~~~~~~~~
 

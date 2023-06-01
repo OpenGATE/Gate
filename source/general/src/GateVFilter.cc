@@ -24,9 +24,9 @@ G4bool GateVFilter::Accept(const G4Step* aStep)
 
   G4Track* aTrack = aStep->GetTrack();
 
-  if(!Accept(aTrack) ) return false;
+  if(!Accept(aTrack) ) _FILTER_RETURN_WITH_INVERSION false;
 
-  return true;
+  _FILTER_RETURN_WITH_INVERSION true;
 
 }
 //-------------------------------------------------------------
@@ -34,7 +34,7 @@ G4bool GateVFilter::Accept(const G4Step* aStep)
 //-------------------------------------------------------------
 G4bool GateVFilter::Accept(const G4Track* /*aTrack*/) 
 {
-  return true;
+  _FILTER_RETURN_WITH_INVERSION true;
 }
 //-------------------------------------------------------------
 
