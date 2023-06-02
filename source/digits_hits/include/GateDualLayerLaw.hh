@@ -1,4 +1,10 @@
+/*!
+  \class  GateDualLayerLaw
 
+  The user can choose the direction in which he wants to applied the DoI model.
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+  */
 
 
 #ifndef GateDualLayerLaw_h
@@ -21,7 +27,7 @@ public :
     GateDualLayerLaw(const G4String& itsName);
     virtual ~GateDualLayerLaw() {delete m_messenger;}
 
-     virtual void ComputeDoI(GatePulse *plse, G4ThreeVector axis);
+     virtual void ComputeDoI(GateDigi* digi, G4ThreeVector axis);
 
     virtual void DescribeMyself (size_t ident=0) const;
 

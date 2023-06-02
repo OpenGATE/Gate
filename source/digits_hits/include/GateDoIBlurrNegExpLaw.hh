@@ -1,4 +1,19 @@
+/*----------------------
+   Copyright (C): OpenGATE Collaboration
 
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+
+/*!
+  \class  GateDoIBlurrNegExpLaw
+
+  The user can choose the direction in which he wants to applied the DoI model.
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 
 #ifndef GateDoIBlurrNegExpLaw_h
@@ -21,7 +36,7 @@ public :
     GateDoIBlurrNegExpLaw(const G4String& itsName);
     virtual ~GateDoIBlurrNegExpLaw() {delete m_messenger;}
 
-     virtual void ComputeDoI(GatePulse *plse, G4ThreeVector axis);
+     virtual void ComputeDoI(GateDigi* digi, G4ThreeVector axis);
 
     virtual void DescribeMyself (size_t ident=0) const;
 
