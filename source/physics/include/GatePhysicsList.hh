@@ -26,6 +26,8 @@
 #include "GateVProcess.hh"
 #include "GateUserLimits.hh"
 
+class G4EmDNAPhysicsActivator;
+
 //class GateVProcess;
 class GatePhysicsListMessenger;
 class GatePhysicsList: public G4VModularPhysicsList
@@ -140,6 +142,8 @@ protected:
   G4double mLowEnergyRangeLimit;
 
   G4EmParameters *emPar;
+
+	G4EmDNAPhysicsActivator* emDNAActivator;
 };
 
 
