@@ -858,6 +858,24 @@ Fluorescence is the result of a three-stage process that occurs in certain molec
 
    /gate/physics/addProcess OpticalWLS
 
+DNA physics processes
+~~~~~~~~~~~~~~~~~~~~~
+
+Thé Geant4 DNA processes can be setup using the following command lines::
+
+   /gate/physics/addPhysicsList emDNAphysics_option4
+
+Available DNA physics lists: emDNAphysics, emDNAphysics_option1, emDNAphysics_option2, emDNAphysics_option3, emDNAphysics_option4, emDNAphysics_option5, emDNAphysics_option6, emDNAphysics_option7, emDNAphysics_option8.
+
+Users can also setup the DNA physics lists only for specific regions while keeping the available physics list in other regions using the following command lines::
+
+   /gate/physics/addPhysicsList emstandard_opt4
+   /process/em/AddDNARegion Region1 DNA_Opt4
+   /process/em/AddDNARegion Region3 DNA_Opt4
+
+Note that the DNA physics lists names to use are: DNA_Opt0, DNA_Opt2, DNA_Opt4, DNA_Opt4a, DNA_Opt6, DNA_Opt6a, DNA_Opt7.
+In this example, Region1 and Region3 have to be created as specific geometries in the macro file.
+
 X-ray at boundary
 ~~~~~~~~~~~~~~~~~
 
