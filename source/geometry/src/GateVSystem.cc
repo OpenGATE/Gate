@@ -358,18 +358,19 @@ G4bool GateVSystem::CheckIfEnoughLevelsAreDefined()
     G4bool has_undefined_high_level = false;
     for (G4int i=1;i<systemDepth-1;i++)
     {
-    	GateSystemComponent* comp0= (this->MakeComponentListAtLevel(i))[0][0];
+      auto compList = this->MakeComponentListAtLevel(i);
+    	GateSystemComponent* comp0= compList[0][0];
     	if (!comp0->GetCreator())
       {
         if (!has_undefined_high_level)
           has_undefined_high_level = true;
-        delete comp0;
       }
       else if (has_undefined_high_level)
       {
-        delete comp0;
+        delete compList;
         return false;
       }
+      delete compList;
     }
 
   return true;
