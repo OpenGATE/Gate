@@ -516,6 +516,7 @@ The *Energy Framing* module allows the user to select an energy window to discar
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMin 400. keV
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMax 600. keV
 
+
 **Example**: 
 
 In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated with each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and energy frames::
@@ -550,7 +551,24 @@ In SPECT analysis, subtractive scatter correction methods such as the dual-energ
    /gate/output/projection/setInputDataName Window1
    /gate/output/projection/addInputDataName Window2
    /gate/output/projection/addInputDataName Window3
-   
+ 
+For the solid angle weighted energy policy, the effective energy for each pulse is calculated multiplying the deposited energy by a factor that represents the fraction of the solid angle from the pulse position subtended by a virtual pixel centered in the X-Y pulse position at the detector layer readout surface. To this end, the size of the pixel and detector readout surface must be specified. Those characteristics are included using the following commands::
+ 
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setLaw/ solidAngleWeighted
+   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthX [szX]
+   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthY [szY]
+   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setZSense4Readout   [1/-1]
+
+**Example**::
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setLaw solidAngleWeighted
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setMin 250 keV
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthX 2 mm  
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthY 6 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setZSense4Readout 1 mm
+
    
 Efficiency
 ^^^^^^^^^^
