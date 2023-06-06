@@ -563,7 +563,7 @@ For the solid angle weighted energy policy, the effective energy for each pulse 
 **Example**::
 
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
-   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setLaw solidAngleWeighted 
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setLaw solidAngleWeighted
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setMin 250 keV
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthX 2 mm  
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthY 6 mm
