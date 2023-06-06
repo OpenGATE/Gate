@@ -6,6 +6,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*!
+  \class SolidAngleWeightEnergyLawMessenger
+  This is a messenger for EnergyFraming digitizer module
+  Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 #include "GateSolidAngleWeightedEnergyLawMessenger.hh"
 #include "GateSolidAngleWeightedEnergyLaw.hh"
