@@ -100,10 +100,11 @@ void GateSpatialResolution::Digitize()
 	if (m_system==NULL) G4Exception( "GateSpatialResolution::Digitize", "Digitize", FatalException,
 				 "Failed to get the system corresponding to that digitizer. Abort.\n");
 
-	if (!m_system->CheckIfAllLevelsAreDefined())
+	if (!m_system->CheckIfEnoughLevelsAreDefined())
 	{
-		 GateError( " *** ERROR*** GateSpatialResolution::Digitize. Not all required geometry levels and sublevels for this system are defined. "
-				 "(Ex.: for cylindricalPET, the required levels are: rsector, module, submodule, crystal). Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
+		 GateError( " *** ERROR*** GateSpatialResolution::Digitize. Not all defined geometry levels has their mother levels defined."
+				 "(Ex.: for cylindricalPET, the levels are: rsector, module, submodule, crystal). If you have defined submodule, you have to have resector and module defined as well."
+				 "Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
 	}
 
 	m_systemDepth = m_system->GetTreeDepth();
