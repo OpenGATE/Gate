@@ -47,6 +47,18 @@ GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path)
  {
  }
 
+GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path, GateCoincidenceDigitizer *digitizer)
+  :G4VDigitizerModule(name),
+   GateClockDependent(path),
+   m_digitizer(digitizer)
+{
+
+	//TODO GateOutputMgr::GetInstance()->RegisterNewCoincidenceDigiCollection(digitizer->GetName()+"_"+name, false);
+
+}
+
+
+
 
 
 
@@ -59,42 +71,98 @@ GateVDigitizerModule::~GateVDigitizerModule()
 
 void GateVDigitizerModule::Describe(size_t indent)
 {
+	G4cout<<"GateVDigitizerModule::Describe"<<G4endl;
   GateClockDependent::Describe(indent);
   G4cout << GateTools::Indent(indent) << "Attached to:        '" << m_digitizer->GetObjectName() << "'\n";
   G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'\n";
   DescribeMyself(indent);
 }
 
+void GateVDigitizerModule::DescribeMyself(size_t indent)
+{
+;
+}
+
+
 //////////////////
 void GateVDigitizerModule::InputCollectionID()
 {
-	//G4cout<<" GateVDigitizerModule::InputCollectionID "<<G4endl;
+	G4cout<<" GateVDigitizerModule::InputCollectionID "<<G4endl;
 	GateDigitizerMgr* DigiMan = GateDigitizerMgr::GetInstance();
 	G4DigiManager* fDM = G4DigiManager::GetDMpointer();
 
-	G4String DigitizerName=m_digitizer->GetName();
+
+	G4String type;
+
+	//digitizerMgr/crystal/SinglesDigitizer/Singles
+	if (G4StrUtil::contains(m_digitizer->GetObjectName(), "SinglesDigitizer"))
+		type="SinglesDigitizer";
+
+	else if (G4StrUtil::contains(m_digitizer->GetObjectName(), "CoincidenceSorter"))
+		type="CoincidenceSorter";
+
+	else
+		type="CoincidenceDiditizer";
+
+	G4cout<<"digitizer_type "<< type<<G4endl;
+
+	G4String DigitizerName;
+	G4String outputCollNameTMP;
+
+	if(type!="SinglesDigitizer")
+	{
+		DigitizerName=((GateCoincidenceDigitizer*)m_digitizer)->GetName();
+		outputCollNameTMP = GetName() +"/"+DigitizerName+"_"+m_SD->GetName();
+	}
+	else
+	{
+		DigitizerName=((GateSinglesDigitizer*)m_digitizer)->GetName();
+		outputCollNameTMP = GetName() +"/"+DigitizerName;
+	}
+
 
 	//DigiMan->ShowSummary();
 
-	G4String outputCollNameTMP = GetName() +"/"+DigitizerName+"_"+m_SD->GetName();
+
 	G4int DCID = -1;
 
-	//G4cout<<"outputCollNameTMP "<<outputCollNameTMP<<G4endl;
-	if(DCID<0)
+	G4cout<<"outputCollNameTMP "<<outputCollNameTMP<<G4endl;
+	/*if(DCID<0)
 	{
 		DCID = fDM->GetDigiCollectionID(outputCollNameTMP);
 	}
-//	G4cout<<"DCID "<<DCID<<G4endl;
-
-	G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
+	G4cout<<"DCID "<<DCID<<G4endl;
+*/
+	/*G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
 	//G4cout<<"InitDMname "<<InitDMname<<G4endl;
 	G4int InitDMID = fDM->GetDigiCollectionID(InitDMname);
+	 */
+	/*G4String DigitizerName;
+	G4String outputCollNameTMP;
+	G4String InitDMname;
+
+	G4cout<<m_digitizer->GetObjectName()<<G4endl;
+
+	/*if (!m_coinDigitizer)//digitizerType!="Singles")
+		{
+			DigitizerName=m_digitizer->GetName();
+			outputCollNameTMP = GetName() +"/"+DigitizerName+"_"+m_SD->GetName();
+			InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
+		}
+	else //if (digitizerType=="Coincidences")
+		{
+			DigitizerName=m_coinDigitizer->GetName();
+			outputCollNameTMP = GetName() +"/"+DigitizerName;
+			InitDMname="CoinDigiInit/"+DigitizerName;
+		}
+
+
 
 	//check if this module is the first in this digitizer
 	if ( m_digitizer->m_DMlist[0] == this )
 	{
 		//check if the input collection is from InitDM
-		//G4cout<<"** "<< m_digitizer->GetInputName()<< " "<< m_digitizer->GetOutputName()<<G4endl;
+		G4cout<<"** "<< m_digitizer->GetInputName()<< " "<< m_digitizer->GetOutputName()<<G4endl;
 		if (m_digitizer->GetInputName() == m_digitizer->GetOutputName() )
 		{
 			DCID=InitDMID;
@@ -103,15 +171,15 @@ void GateVDigitizerModule::InputCollectionID()
 		else
 			{
 			G4String inputCollectionName = m_digitizer->GetInputName();
-			//G4cout<<" inputCollectionName "<<inputCollectionName<<G4endl;
+			G4cout<<" inputCollectionName "<<inputCollectionName<<G4endl;
 			GateSinglesDigitizer* inputDigitizer;
 
-			if (DigiMan->FindDigitizer(inputCollectionName))
-				inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+			if (DigiMan->FindSinglesDigitizer(inputCollectionName))
+				inputDigitizer = DigiMan->FindSinglesDigitizer(inputCollectionName);
 			else
 			{
 				inputCollectionName= m_digitizer->GetInputName()+"_"+m_digitizer->m_SD->GetName();
-				inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+				inputDigitizer = DigiMan->FindSinglesDigitizer(inputCollectionName);
 
 			}
 			DCID=inputDigitizer->m_outputDigiCollectionID;
@@ -125,7 +193,7 @@ void GateVDigitizerModule::InputCollectionID()
 		G4String inputCollectionName = m_digitizer->GetInputName();//+"_"+m_digitizer->m_SD->GetName();
 		G4cout<<"inputCollectionName "<<inputCollectionName<<G4endl;
 
-		GateSinglesDigitizer* inputDigitizer = DigiMan->FindDigitizer(inputCollectionName);
+		GateSinglesDigitizer* inputDigitizer = DigiMan->FindSinglesDigitizer(inputCollectionName);
 		G4cout<<"inputDigitizer "<< inputDigitizer->GetName()<<" for "<<inputDigitizer->GetInputName() <<G4endl;
 
 		DCID=inputDigitizer->m_outputDigiCollectionID;
@@ -137,12 +205,14 @@ void GateVDigitizerModule::InputCollectionID()
 */
 
 
-
+	DCID=1;
 	if(DCID<0)
 	{
       G4Exception( "GateVDigitizerModule::InputCollectionID", "InputCollectionID", FatalException, "Something wrong with collection ID. Please, contact olga[dot]kochebina[at]cea.fr. Abort.\n");
 	}
 	//G4cout<<DCID<<G4endl;
+
+	G4cout<<"Input collection ID "<< DCID<<G4endl;
 
  m_DCID = DCID;
 

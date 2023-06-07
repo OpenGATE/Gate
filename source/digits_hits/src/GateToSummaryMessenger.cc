@@ -66,7 +66,7 @@ void GateToSummaryMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		 { //save only one specific collections
 
 			 m_gateToSummary->addCollection(newValue);
-			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(newValue);
+			 GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(newValue);
 
 			 if(digitizer)
 				 digitizer->m_recordFlag=true;

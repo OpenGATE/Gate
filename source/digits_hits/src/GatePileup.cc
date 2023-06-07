@@ -82,7 +82,7 @@ void GatePileup::Digitize()
 		//set m_depth according user defined volume name
 		if(!m_volumeName.empty()) //only for EnergyWinner
 		{
-			GateVSystem* m_system = this->GetDigitizer()->GetSystem();
+			GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 			if (m_system==NULL) G4Exception( "GatePileup::Digitize", "Digitize", FatalException,
 													   "Failed to get the system corresponding to that digitizer. Abort.\n");
 
@@ -115,7 +115,7 @@ void GatePileup::Digitize()
 	GateDigiCollection* IDC = 0;
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
-	GateDigi* inputDigi = new GateDigi();
+	GateDigi* inputDigi;
 
 
 	std::vector<GateDigi*>::iterator iter;

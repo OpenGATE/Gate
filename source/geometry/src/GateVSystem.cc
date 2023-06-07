@@ -352,6 +352,29 @@ G4bool GateVSystem::CheckIfAllLevelsAreDefined()
 }
 //-----------------------------------------------------------------------------
 
+G4bool GateVSystem::CheckIfEnoughLevelsAreDefined()
+{
+    G4int systemDepth=this->GetTreeDepth();
+    G4bool has_undefined_high_level = false;
+    for (G4int i=1;i<systemDepth-1;i++)
+    {
+      auto compList = this->MakeComponentListAtLevel(i);
+    	GateSystemComponent* comp0= compList[0][0];
+    	if (!comp0->GetCreator())
+      {
+        if (!has_undefined_high_level)
+          has_undefined_high_level = true;
+      }
+      else if (has_undefined_high_level)
+      {
+        delete compList;
+        return false;
+      }
+      delete compList;
+    }
+
+  return true;
+}
 
 //-----------------------------------------------------------------------------
 GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) const

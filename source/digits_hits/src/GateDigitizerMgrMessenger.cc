@@ -105,7 +105,7 @@ void GateDigitizerMgrMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 
 const G4String& GateDigitizerMgrMessenger::DumpMap()
 {
-  static G4String theList = "SinglesDigitizer CoincidenceSorter coincidenceChain";
+  static G4String theList = "SinglesDigitizer CoincidenceSorter CoincidenceDigitizer";
   return theList;
 }
 
@@ -135,10 +135,9 @@ void GateDigitizerMgrMessenger::DoInsertion(const G4String& childTypeName)
   } else if (childTypeName=="CoincidenceSorter") {
 	  // One CoinSorter per System! Defined in the constructor of the system ! Only its parameters should be defiend with CS messenger
 	 GetDigitizerMgr()->AddNewCoincidenceSorter( new GateCoincidenceSorter(GetDigitizerMgr(),GetNewCollectionName()) );
-  }/* else if (childTypeName=="coincidenceChain") {
-    GetDigitizerMgr()->StoreNewCoincidenceProcessorChain( new GateCoincidencePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
-  *///
-	//  }
+  }  else if (childTypeName=="CoincidenceDigitizer") {
+    GetDigitizerMgr()->AddNewCoincidenceDigitizer( new GateCoincidenceDigitizer(GetDigitizerMgr(),GetNewCollectionName()) );
+  }
 else {
     G4cout << "Digitizer module type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;

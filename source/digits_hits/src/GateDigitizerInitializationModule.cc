@@ -30,7 +30,7 @@
 #include "G4ios.hh"
 
 GateDigitizerInitializationModule::GateDigitizerInitializationModule(GateSinglesDigitizer *digitizer)
-  :GateVDigitizerModule("DigiInit","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/adder",digitizer, digitizer->GetSD()),
+  :GateVDigitizerModule("DigiInit","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/digiInit",digitizer, digitizer->GetSD()),
    m_FirstEvent(true),
    m_HCID(-1),
    m_outputDigiCollection(0),
@@ -77,6 +77,7 @@ void GateDigitizerInitializationModule::Digitize()
     	 if((*inHC)[i]->GetEdep() !=0 )
     	  {
     		  GateDigi* Digi = new GateDigi();
+    		  Digi->SetMother( (*inHC)[i] );
     		  Digi->SetRunID( (*inHC)[i]->GetRunID() );
     		  Digi->SetEventID( (*inHC)[i]->GetEventID() );
     		  Digi->SetTrackID( (*inHC)[i]->GetTrackID() );

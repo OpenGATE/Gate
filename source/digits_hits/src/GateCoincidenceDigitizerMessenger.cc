@@ -6,14 +6,9 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-/*!
-  \class  GateSinglesDigitizerMessenger
+#include "GateCoincidenceDigitizerMessenger.hh"
+#include "GateCoincidenceDigitizer.hh"
 
-  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
-  */
-
-#include "GateSinglesDigitizer.hh"
-#include "GateSinglesDigitizerMessenger.hh"
 
 #include "GateConfiguration.h"
 
@@ -29,7 +24,10 @@ See LICENSE.md for further details
 
 #include "GateVDigitizerModule.hh"
 #include "GateDigitizerMgr.hh"
-#include "GateAdder.hh"
+
+#include "GateCoincidenceDeadTime.hh"
+
+/*#include "GateAdder.hh"
 #include "GateReadout.hh"
 #include "GateEnergyFraming.hh"
 #include "GateTimeResolution.hh"
@@ -42,8 +40,6 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #include "GateNoise.hh"
 #include "GateDigitizerMerger.hh"
-
-#include "GateDoIModels.hh"
 /*
 #include "GateLocalTimeDelay.hh"
 #include "GateBuffer.hh"
@@ -69,18 +65,23 @@ See LICENSE.md for further details
 #endif
 #include "GateSystemFilter.hh"
 
-GateSinglesDigitizerMessenger::GateSinglesDigitizerMessenger(GateSinglesDigitizer* itsDigitizer)
-:GateListMessenger(itsDigitizer),m_digitizer(itsDigitizer)
+GateCoincidenceDigitizerMessenger::GateCoincidenceDigitizerMessenger(GateCoincidenceDigitizer* itsDigitizer)
+:GateListMessenger(itsDigitizer),m_CoinDigitizer(itsDigitizer)
 {
   pInsertCmd->SetCandidates(DumpMap());
 
   G4String cmdName;
 
-  cmdName = GetDirectoryName()+"setInputCollection";
-  SetInputNameCmd = new G4UIcmdWithAString(cmdName,this);
-  SetInputNameCmd->SetGuidance("Set the name of the input collection name");
-  SetInputNameCmd->SetParameterName("Name",false);
+  cmdName = GetDirectoryName()+"addInputCollection";
+  AddInputNameCmd = new G4UIcmdWithAString(cmdName,this);
+  AddInputNameCmd->SetGuidance("Add a name for the input pulse channel");
+  AddInputNameCmd->SetParameterName("Name",false);
 
+
+  cmdName = GetDirectoryName()+"usePriority";
+  usePriorityCmd = new G4UIcmdWithABool(cmdName,this);
+  usePriorityCmd->SetGuidance("Does it use insertion order in case of different coinc arrived at the same time ?");
+  usePriorityCmd->SetParameterName("Use",false);
 
 
 
@@ -89,37 +90,46 @@ GateSinglesDigitizerMessenger::GateSinglesDigitizerMessenger(GateSinglesDigitize
 
 
 
-GateSinglesDigitizerMessenger::~GateSinglesDigitizerMessenger()
+GateCoincidenceDigitizerMessenger::~GateCoincidenceDigitizerMessenger()
 {
-  delete SetInputNameCmd;
+	  delete AddInputNameCmd;
+	  delete usePriorityCmd;;
 
 }
 
 
 
 
-void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void GateCoincidenceDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
 
-  if (command == SetInputNameCmd)
-    { m_digitizer->SetInputName(newValue); }
-  else
-    GateListMessenger::SetNewValue(command,newValue);
+	 if (command == AddInputNameCmd)
+	  { m_CoinDigitizer->AddInputName(newValue);
+	  	//m_CoinDigitizer->SetSystem(newValue); } //mhadi
+	  }
+	 //
+	  else if (command == usePriorityCmd)
+	    {
+		  G4cout << " <!> *** WARNING *** <!> CoincidenceDigitizer: obsolete parameter /usePriority in set. It will be ignored "<<G4endl ;
+	    }
+		 // m_CoinDigitizer->SetNoPriority(!usePriorityCmd->GetNewBoolValue(newValue)); }
+	  else
+	    GateListMessenger::SetNewValue(command,newValue);
 }
 
 
 
 
-const G4String& GateSinglesDigitizerMessenger::DumpMap()
+const G4String& GateCoincidenceDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels";
+   static G4String theList = "deadtime";//readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger";
 
    return theList;
 }
 
 
 
-void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
+void GateCoincidenceDigitizerMessenger::DoInsertion(const G4String& childTypeName)
 {
 
   if (GetNewInsertionBaseName().empty())
@@ -129,16 +139,16 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
 
   GateVDigitizerModule* newDM=0;
 
-  G4String newInsertionName = m_digitizer->MakeElementName(GetNewInsertionBaseName());
-  G4String DMname = m_digitizer->GetDMNameFromInsertionName(newInsertionName);
+  G4String newInsertionName = m_CoinDigitizer->MakeElementName(GetNewInsertionBaseName());
+  G4String DMname = m_CoinDigitizer->GetDMNameFromInsertionName(newInsertionName);
 
 
-  if (childTypeName=="adder")
+  if (childTypeName=="deadtime")
     {
-  	  newDM = new GateAdder(m_digitizer, DMname);
-  	  m_digitizer->AddNewModule(newDM);
+  	  newDM = new GateCoincidenceDeadTime(m_CoinDigitizer, DMname);
+  	  m_CoinDigitizer->AddNewModule(newDM);
     }
-  else if (childTypeName=="readout")
+  /*else if (childTypeName=="readout")
   {
 	  newDM = new GateReadout(m_digitizer, DMname);
 	  m_digitizer->AddNewModule(newDM);
@@ -200,11 +210,6 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
          }
-  else if (childTypeName=="doIModels")
-        {
-          newDM = new GateDoIModels(m_digitizer, DMname);
-       	  m_digitizer->AddNewModule(newDM);
-        }
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
@@ -255,17 +260,17 @@ else if (childTypeName=="localMultipleRejection")
      newDM = new GateLocalMultipleRejection(m_digitizer,newInsertionName);
 
 */
- else {
+ /*else {
     G4cout << "Singles Digitizer type name '" << childTypeName << "' was not recognized --> insertion request must be ignored!\n";
     return;
   }
 
-
+*/
   SetNewInsertionBaseName("");
 }
 
 
-G4bool GateSinglesDigitizerMessenger::CheckNameConflict(const G4String& name)
+G4bool GateCoincidenceDigitizerMessenger::CheckNameConflict(const G4String& name)
 {
   // Check whether an object with the same name already exists in the list
   return ( GetListManager()->FindElement( GetListManager()->GetObjectName() + "/" + name ) != 0 ) ;

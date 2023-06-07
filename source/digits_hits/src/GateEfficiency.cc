@@ -80,7 +80,7 @@ void GateEfficiency::Digitize()
 	GateDigiCollection* IDC = 0;
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
-	GateDigi* inputDigi = new GateDigi();
+	GateDigi* inputDigi;
 
 
 /*

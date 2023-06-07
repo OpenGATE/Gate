@@ -24,6 +24,7 @@
 #include "GateToRoot.hh"
 
 
+
 #include "G4SystemOfUnits.hh"
 #include "G4DigiManager.hh"
 #include "G4RunManager.hh"
@@ -62,30 +63,6 @@ GateDigitizerMgr::GateDigitizerMgr()
 
 GateDigitizerMgr::~GateDigitizerMgr()
 {
- G4cout<<"GateDigitizerMgr::~GateDigitizerMgr "<<G4endl;
-
-/*
- 	 if ( !m_SDlist.empty() )
- 	    { for ( size_t i = 0; i < m_SDlist.size();i++)
- 	        delete m_SDlist[i];
- 	    m_SDlist.clear();
- 	    }
-	 if ( !m_digitizerIMList.empty() )
- 	    { for ( size_t i = 0; i < m_digitizerIMList.size();i++)
- 	        delete m_digitizerIMList[i];
- 	   m_digitizerIMList.clear();
- 	    }
-	 if ( !m_SingleDigitizersList.empty() )
- 	    { for ( size_t i = 0; i < m_SingleDigitizersList.size();i++)
- 	        delete m_SingleDigitizersList[i];
- 	   m_SingleDigitizersList.clear();
- 	    }
-	 if ( !m_CoincidenceSortersList.empty() )
- 	    { for ( size_t i = 0; i < m_CoincidenceSortersList.size();i++)
- 	        delete m_CoincidenceSortersList[i];
- 	   m_CoincidenceSortersList.clear();
- 	    }
-*/
 
  delete fMessenger;
 }
@@ -98,46 +75,17 @@ void GateDigitizerMgr::Initialize()
 	//ShowSummary();
 
 	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+
+
+	//For SinglesDigitizers:
+	//  - Setting collectionID for all DMs
+	//  - Setting output collection ID to written down by output module
 	for (size_t i_D = 0; i_D<m_SingleDigitizersList.size(); i_D++)
 			{
-		//G4cout<< m_SingleDigitizersList[i_D]->GetInputName()<<G4endl;
-			for (size_t i_DM = 0; i_DM<m_SingleDigitizersList[i_D]->m_DMlist.size(); i_DM++)
-				{
-				//calculate input IDs for all DMs
-				//G4cout<< m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->GetName()<<G4endl;
+		//G4cout<<m_SingleDigitizersList[i_D]->GetName() << G4endl;
 
-				if (i_DM == 0)
-				{
-					//G4cout<<"input collecion "<< m_SingleDigitizersList[i_D]->GetInputName()<<G4endl;
-					//G4cout<<"output collecion "<< m_SingleDigitizersList[i_D]->GetOutputName()<<G4endl;
-
-					m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->InputCollectionID();//InputCollectionID();
-				}
-				else{
-				   //G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetInputName();
-				   G4String name4fDM = m_SingleDigitizersList[i_D]->m_DMlist[i_DM-1]->GetName()+"/"+m_SingleDigitizersList[i_D]->GetOutputName();
-
-				   //G4cout<<name4fDM <<G4endl;
-				   //  G4String InitDMname="DigiInit/"+DigitizerName+"_"+m_SD->GetName();
-				   m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->SetInputCollectionID( fDM->GetDigiCollectionID(name4fDM ) );//InputCollectionID();
-				   //G4cout<<m_SingleDigitizersList[i_D]->m_DMlist[i_DM]->GetInputCollectionID()<<G4endl;
-				}
-			}
-
-			//Save the ID of the last digitizer module for current digitizer
-			GateSinglesDigitizer *digitizer=m_SingleDigitizersList[i_D];//
-			G4String DigitizerName=digitizer->GetName();
-
-			if(m_SingleDigitizersList[i_D]->m_DMlist.size()>0)
-			{
-				//G4cout<<"Filling lastDM "<<G4endl;
-				GateVDigitizerModule * DM = (GateVDigitizerModule*)m_SingleDigitizersList[i_D]->m_DMlist[m_SingleDigitizersList[i_D]->m_DMlist.size()-1];
-				G4String name=DM->GetName()+"/"+DigitizerName+"_"+digitizer->m_SD->GetName();
-				G4int collectionID  = fDM->GetDigiCollectionID(name);
-				//G4cout<<name<<" "<<collectionID<<G4endl;
-				m_SingleDigitizersList[i_D]->m_outputDigiCollectionID=collectionID;
-				m_SingleDigitizersList[i_D]->m_lastDMname=name;
-			}
+		m_SingleDigitizersList[i_D]->SetDMCollectionIDs();
+		m_SingleDigitizersList[i_D]->SetOutputCollectionID();
 
 			if (m_recordSingles)
 				{
@@ -153,12 +101,15 @@ void GateDigitizerMgr::Initialize()
 			}
 
 	//TODO: check if we have coincidences, i.e. that it is PET and not SPECT or the loop will not enter and it is ok
-	//set default input collections for coincidence sorters
 
+	//For CoincidenceSorters:
+	// - Setting default input collections
 	if (m_recordCoincidences)
 	{
 		for (size_t i = 0; i<m_CoincidenceSortersList.size(); i++)
 			{
+			//G4cout<<m_CoincidenceSortersList[i]->GetName() << G4endl;
+
 			if ( m_CoincidenceSortersList[i]->GetInputName().empty() )
 				{
 					if (m_SingleDigitizersList.size()>1)
@@ -176,7 +127,27 @@ void GateDigitizerMgr::Initialize()
 			}
 	}
 
+	//For CoincidenceDigitizers:
+	//  - Setting collectionID for all Coincidence DMs
+	//  - Setting output collection ID to written down by output module
+	for (size_t i_D = 0; i_D<m_CoincidenceDigitizersList.size(); i_D++)
+	{
+		m_CoincidenceDigitizersList[i_D]->SetCDMCollectionIDs();
+		m_CoincidenceDigitizersList[i_D]->SetOutputCollectionID();
 
+		//G4cout<<m_CoincidenceDigitizersList[i_D]->GetName() << G4endl;
+		if (m_recordCoincidences)
+		{
+			if(!m_CoincidenceDigitizersList[i_D]->m_recordFlag)
+			{
+				G4cout << " <!> *** WARNING *** <!> CoincidenceDigitizer "<< m_CoincidenceDigitizersList[i_D]->GetName() <<" is set. "
+						"However the output flag is not set to 1 for it, so it will not be written down" <<G4endl ;
+				G4cout<<"Please, check if your output options are correct"<<G4endl;
+			}
+		}
+		//G4cout<<"coll ID "<< m_collectionID<< " for "<<m_SingleDigitizersList[i_D]->GetName()<< " "<< m_SingleDigitizersList[i_D]->m_outputDigiCollectionID<<G4endl;
+
+	}
 
 }
 
@@ -184,7 +155,7 @@ void GateDigitizerMgr::Initialize()
 //-----------------------------------------------------------------
 void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 {
-  m_system = aSystem;
+  //m_system = aSystem;
   size_t i;
   for (i=0; i<m_SingleDigitizersList.size() ; ++i)
 	  m_SingleDigitizersList[i]->SetSystem(aSystem);
@@ -192,7 +163,6 @@ void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 	  m_CoincidenceSortersList[i]->SetSystem(aSystem);
 }
 //-----------------------------------------------------------------
-
 */
 
 
@@ -200,6 +170,7 @@ void GateDigitizerMgr::SetSystem(GateVSystem* aSystem)
 // The next three methods were added for the multi-system approach
 void GateDigitizerMgr::AddSystem(GateVSystem* aSystem)
 {
+
   if(!m_systemList)
     m_systemList = new GateSystemList;
 
@@ -210,13 +181,11 @@ void GateDigitizerMgr::AddSystem(GateVSystem* aSystem)
   size_t i;
   for (i=0; i<m_SingleDigitizersList.size() ; ++i)
     {
-      if(!(m_SingleDigitizersList[i]->GetSystem()))
-    	  m_SingleDigitizersList[i]->SetSystem((*m_systemList)[0]);
+   	  m_SingleDigitizersList[i]->SetSystem((*m_systemList)[0]);
     }
 
   for (i=0; i<m_CoincidenceSortersList.size() ; ++i)
     {
-      if(!((m_CoincidenceSortersList[i])->GetSystem()))
         m_CoincidenceSortersList[i]->SetSystem((*m_systemList)[0]);
     }
 
@@ -277,7 +246,7 @@ void GateDigitizerMgr::AddNewSD(GateCrystalSD* newSD)
 
 
 //-----------------------------------------------------------------
-// Integrates a new pulse-processor chain
+// Integrates a new Singles Digitizer
 void GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
 {
   GateDigitizerInitializationModule * myDM = new GateDigitizerInitializationModule(digitizer);
@@ -301,7 +270,7 @@ void GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
 
 
 //-----------------------------------------------------------------
-// Integrates a new pulse-processor chain
+// Integrates a new Coincidence Sorter
 void GateDigitizerMgr::AddNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter)
 {
 	G4String outputName = coincidenceSorter->GetOutputName() ;
@@ -332,29 +301,73 @@ void GateDigitizerMgr::AddNewCoincidenceSorter(GateCoincidenceSorter* coincidenc
 //-----------------------------------------------------------------
 
 
+//-----------------------------------------------------------------
+// Integrates a new Coincidence Digitizer
+void GateDigitizerMgr::AddNewCoincidenceDigitizer(GateCoincidenceDigitizer* CoinDigitizer)
+{
+	  G4String outputName = CoinDigitizer->GetOutputName() ;
+	  if (nVerboseLevel)
+	    G4cout << "[GateDigitizer::StoreNewPulseProcessorChain]: Storing new processor chain '" << CoinDigitizer->GetObjectName() << "'"
+	           << " with output pulse-list name '" << outputName << "'\n";
+
+	  m_CoincidenceDigitizersList.push_back( CoinDigitizer );
+
+	  //OK GND: TODO GateCoincidenceDigitizerInitializationModule
+	  GateCoinDigitizerInitializationModule * myDM = new GateCoinDigitizerInitializationModule(CoinDigitizer);
+
+	  m_coinDigitizerIMList.push_back(myDM);
+	  G4DigiManager::GetDMpointer()->AddNewModule(myDM);
+
+
+
+
+
+	  //OK GND TODO: systems!
+	 /* //! Next lines are for the multi-system approach
+	  if(CoinDigitizer->GetInputNames().size() == 0)
+	    {
+	      G4int index = -1;
+	      for(size_t i=0; i<GetCoinSorterList().size(); i++)
+	        {
+	          G4String coincSorterChainName = GetCoinSorterList()[i]->GetOutputName();
+	          if(coincSorterChainName.compare("Coincidences") == 0)
+	            {
+	              index = i;
+	              break;
+	            }
+	        }
+	      CoinDigitizer->SetSystem(m_coincidenceSorterList[index]->GetSystem());
+	    }
+	}
+	  */
+
+
+}
+//-----------------------------------------------------------------
+
 
 GateClockDependent* GateDigitizerMgr::FindElement(G4String mName)
 {
 
+
 	GateClockDependent* element;
-	element = (GateClockDependent*)FindDigitizer(mName);
+	element = (GateClockDependent*)FindSinglesDigitizer(mName);
 	if (!element) element = (GateClockDependent*)FindCoincidenceSorter(mName);
+	if (!element) element = (GateClockDependent*)FindCoincidenceDigitizer(mName);
 
 	return element;
 }
 
 
-GateSinglesDigitizer* GateDigitizerMgr::FindDigitizer(G4String mName)
+GateSinglesDigitizer* GateDigitizerMgr::FindSinglesDigitizer(G4String mName)
 {
 
 	for(G4int i=0;i<int(m_SingleDigitizersList.size());i++)
 		{
 		G4String DigitizerName = m_SingleDigitizersList[i]->m_digitizerName+"_" +m_SingleDigitizersList[i]->m_SD->GetName();
-		//G4cout << DigitizerName << " "<< mName<< G4endl;
 		if(DigitizerName == mName)
 			return m_SingleDigitizersList [i];
 		}
-	//GateError("SinglesDigitizer " <<mName<< " not found");
 	return NULL;
 }
 
@@ -368,6 +381,17 @@ GateCoincidenceSorter* GateDigitizerMgr::FindCoincidenceSorter(G4String mName)
 return NULL;
 }
 
+GateCoincidenceDigitizer* GateDigitizerMgr::FindCoincidenceDigitizer(G4String mName)
+{
+
+	for(G4int i=0;i<int(m_CoincidenceDigitizersList.size());i++)
+		{
+		G4String CoinDigitizerName = m_CoincidenceDigitizersList[i]->GetName();
+		if(CoinDigitizerName == mName)
+			return m_CoincidenceDigitizersList [i];
+		}
+	return NULL;
+}
 
 
 
@@ -408,10 +432,8 @@ void GateDigitizerMgr::RunDigitizers()
 
 			m_digitizerIMList[i]->Digitize();
 
-			}
+		}
 
-	//G4DigiManager *fDM = G4DigiManager::GetDMpointer();
-	//G4cout<< "m_collectionID = "<< m_collectionID<<G4endl;
 	if (nVerboseLevel>1)
 	   G4cout << "[GateDigitizerMgr::RunDigitizers]: launching SingleDigitizers. N = " << m_SingleDigitizersList.size() << "\n";
 	   //loops over all digitizers/collections
@@ -436,6 +458,8 @@ void GateDigitizerMgr::RunDigitizers()
 
 void GateDigitizerMgr::RunCoincidenceSorters()
 {
+
+	//G4cout<<"GateDigitizerMgr::RunCoincidenceSorters"<<G4endl;
 	if ( !IsEnabled() )
 		return;
 
@@ -456,26 +480,45 @@ void GateDigitizerMgr::RunCoincidenceSorters()
 				G4cout << "[GateDigitizerMgr::RunCoincidenceSorters]: Running CoincidenceSorter "<< m_CoincidenceSortersList[i]->m_coincidenceSorterName << "\n";
 
 			m_CoincidenceSortersList[i]->Digitize();
-
-			//m_collectionID++;
-			//m_CoincidenceSortersList[i]->m_outputDigiCollectionID=m_collectionID;
 		}
-			//Save the name of the last digitizer module for current digitizer
 
-			//G4cout<<"coll ID"<< m_collectionID<< "for "<<  <<G4endl;
-			//m_SingleDigitizersList[i]->SetLastDMname();
 	m_alreadyRun=true;
 }
 
 
 void GateDigitizerMgr::RunCoincidenceDigitizers()
 {
+	//G4cout<<"GateDigitizerMgr::RunCoincidenceDigitizers()"<<G4endl;
 
+	for (size_t i = 0; i<m_coinDigitizerIMList.size(); i++)
+		{
+		if (nVerboseLevel>1)
+				G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: Running GateCoinDigitizerInitializationModule " << m_CoincidenceDigitizersList[i]->m_digitizerName <<" with "<< m_CoincidenceDigitizersList[i]->m_CDMlist.size() << " Digitizer Modules\n";
 
-	//m_coincidenceSorter->ProcessSingles(); //Digitizer() ??
+		m_coinDigitizerIMList[i]->Digitize();
 
+		}
 
-		//RunCoinDigitizers
+	if (nVerboseLevel>1)
+		   G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: launching CoincidenceDigitizers. N = " << m_CoincidenceDigitizersList.size() << "\n";
+		   //loops over all digitizers/collections
+		   	//collID get from G4DigiManager
+			for (size_t i_D = 0; i_D<m_CoincidenceDigitizersList.size(); i_D++)
+			{
+				if (nVerboseLevel>1)
+					G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: Running CoincidenceDigitizer " << m_CoincidenceDigitizersList[i_D]->m_digitizerName <<" with "<< m_CoincidenceDigitizersList[i_D]->m_CDMlist.size() << " Digitizer Modules\n";
+				//loop over all DMs of the current digitizer
+				for (size_t i_DM = 0; i_DM<m_CoincidenceDigitizersList[i_D]->m_CDMlist.size(); i_DM++)
+				{
+					if (nVerboseLevel>2)
+					G4cout << "[GateDigitizerMgr::RunCoincidenceDigitizers]: Running DigitizerModule " << m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetName()<<" "<<	m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetNumberOfCollections ()<<" "<<m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->GetCollectionName (0)<< "\n";
+
+					m_CoincidenceDigitizersList[i_D]->m_CDMlist[i_DM]->Digitize();
+				}
+
+			}
+
+	//m_alreadyRun=true;
 }
 
 void GateDigitizerMgr::ShowSummary()

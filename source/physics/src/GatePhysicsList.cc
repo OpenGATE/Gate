@@ -47,6 +47,15 @@
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmDNAPhysics.hh"
+#include "G4EmDNAPhysics_option1.hh"
+#include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option3.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option5.hh"
+#include "G4EmDNAPhysics_option6.hh"
+#include "G4EmDNAPhysics_option7.hh"
+#include "G4EmDNAPhysics_option8.hh"
+#include "G4EmDNAPhysicsActivator.hh"
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4RadioactiveDecayPhysics.hh"
@@ -103,6 +112,10 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
 #if G4VERSION_MAJOR >= 10 && G4VERSION_MINOR >= 5
   mUseICRU90Data = false;
 #endif
+
+	// used to conditionally activate DNA physics list in specific regions
+	// while using other em physics list elsewhere
+	emDNAActivator = new G4EmDNAPhysicsActivator;
 }
 //-----------------------------------------------------------------------------------------
 
@@ -177,6 +190,8 @@ GatePhysicsList::~GatePhysicsList()
     if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<< Gateendl;
     }
     }*/
+
+	delete emDNAActivator;
 }
 //-----------------------------------------------------------------------------------------
 
@@ -277,6 +292,9 @@ void GatePhysicsList::ConstructProcess()
      }
   */
 
+	// Construct G4 DNA activator process
+	emDNAActivator->ConstructProcess();
+
   mLoadState++;
 }
 //-----------------------------------------------------------------------------------------
@@ -341,6 +359,30 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   }
   if (mUserPhysicListName == "emDNAphysics") {
     pl = new G4EmDNAPhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics_option1") {
+    pl = new G4EmDNAPhysics_option1;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option2") {
+    pl = new G4EmDNAPhysics_option2;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option3") {
+    pl = new G4EmDNAPhysics_option3;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option4") {
+    pl = new G4EmDNAPhysics_option4;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option5") {
+    pl = new G4EmDNAPhysics_option5;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option6") {
+    pl = new G4EmDNAPhysics_option6;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option7") {
+    pl = new G4EmDNAPhysics_option7;
+  }
+  if (mUserPhysicListName == "emDNAphysics_option8") {
+    pl = new G4EmDNAPhysics_option8;
   }
 
 #ifdef GATE_USE_OPTICAL
@@ -435,10 +477,7 @@ void GatePhysicsList::ConstructParticle()
   //  Construct hybridino
   G4Hybridino::HybridinoDefinition();
 
-
-
   //Construct G4DNA particles
-
 
   G4DNAGenericIonsManager* dnagenericIonsManager;
   dnagenericIonsManager=G4DNAGenericIonsManager::Instance();
@@ -450,6 +489,9 @@ void GatePhysicsList::ConstructParticle()
   dnagenericIonsManager->GetIon("nitrogen");
   dnagenericIonsManager->GetIon("iron");
   dnagenericIonsManager->GetIon("oxygen");
+
+	// Construct G4 DNA activator particles
+	emDNAActivator->ConstructParticle();
 
  //Construct positroniums
  GateParaPositronium::ParaPositroniumDefinition();

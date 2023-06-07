@@ -27,6 +27,8 @@ class GateCoincidenceDigi : public G4VDigi, public std::vector<GateDigi*>
 {
 public:
 
+	GateCoincidenceDigi(const void* itsMother=0);
+
 	GateCoincidenceDigi(GateDigi *firstDigi,
 						G4double itsCoincidenceWindow,
 						G4double itsOffsetWindow);

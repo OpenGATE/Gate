@@ -191,7 +191,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 
 		// Get the pulse processor chain pointer for the current energy window
 		aChainName = setMaker->GetInputDataName(energyWindowID);
-		aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(aChainName));
+		aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindSinglesDigitizer(aChainName));
 				if (!aDigitizer) {
 					G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:\n"
 							<< "Can't find digitizer chain '" << aChainName << "', aborting\n";

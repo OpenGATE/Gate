@@ -133,12 +133,13 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 	 if(!digitizerMgr->m_alreadyRun)
 		 {
 
-	    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
-	 	  digitizerMgr->RunDigitizers();
+		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+				 {
 
-	    if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
-	    	digitizerMgr->RunCoincidenceSorters();
-
+				 	 digitizerMgr->RunDigitizers();
+				 	 digitizerMgr->RunCoincidenceSorters();
+				 	 digitizerMgr->RunCoincidenceDigitizers();
+				 }
 		 }
 }
 

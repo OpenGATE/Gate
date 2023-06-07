@@ -28,14 +28,14 @@ jobs:
 
     steps:
     - name: Checkout github repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
           lfs: true
     - name: Checkout LFS objects
       run: git lfs checkout
     - name: Cache
       id: cache_gate_dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/software
         key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build4
@@ -277,11 +277,12 @@ jobs:
                         t26_CoinSorter,
                         t27_Hits_2SD,
                         t28_Singles_2SD,
-                        t29_optical_digi]
+                        t29_optical_digi,
+                        t30_dna]
 
     steps:
     - name: Checkout github repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
           lfs: true
     - name: Checkout LFS objects

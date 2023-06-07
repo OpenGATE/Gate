@@ -365,7 +365,7 @@ void GateToInterfile::WriteGeneralInfo()
 
       // Get the pulse processor chain pointer for the current energy window
       aChainName = setMaker->GetInputDataName(energyWindowID);
-      aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindDigitizer(aChainName));
+      aDigitizer = dynamic_cast<GateSinglesDigitizer*>(theDigitizerMgr->FindSinglesDigitizer(aChainName));
       if (!aDigitizer)
         {
           G4cerr << Gateendl<< "[GateToInterfile::WriteGeneralInfo]:\n"

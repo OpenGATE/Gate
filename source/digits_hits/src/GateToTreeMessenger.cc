@@ -50,7 +50,11 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
   cmdName = GetDirectoryName() + "addOpticalCollection";
   m_addOpticalCollectionCmd = new G4UIcmdWithAString(cmdName, this);
 
+  cmdName = GetDirectoryName() + "enableCCoutput";
+  m_enableCCoutputCmd = new G4UIcmdWithoutParameter(cmdName, this);
 
+  cmdName = GetDirectoryName() + "disableCCoutput";
+  m_disableCCoutputCmd = new G4UIcmdWithoutParameter(cmdName, this);
 
   for(auto &&m: m_gateToTree->getHitsParamsToWrite())
   {
@@ -93,6 +97,8 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
 GateToTreeMessenger::~GateToTreeMessenger()
 {
   delete m_addFileNameCmd;
+  delete m_enableCCoutputCmd;
+  delete m_disableCCoutputCmd;
   delete m_addHitsCollectionCmd;
   delete m_addOpticalCollectionCmd;
   delete m_enableHitsOutput;
@@ -122,6 +128,12 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
   if(icommand == m_addHitsCollectionCmd)
       m_gateToTree->addHitsCollection(string);
 
+  if(icommand == m_enableCCoutputCmd)
+      m_gateToTree->setCCenabled(true);
+  if(icommand == m_disableCCoutputCmd)
+      m_gateToTree->setCCenabled(false);
+
+
   if(icommand == m_addOpticalCollectionCmd)
        m_gateToTree->addOpticalCollection(string);
 
@@ -140,7 +152,7 @@ void GateToTreeMessenger::SetNewValue(G4UIcommand *icommand, G4String string)
 	  		 { //save only one specific collections
 
 	  			 m_gateToTree->addCollection(string);
-	  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindDigitizer(string);
+	  			 GateSinglesDigitizer* digitizer=digitizerMgr->FindSinglesDigitizer(string);
 
 	  			 if(digitizer)
 	  				 digitizer->m_recordFlag=true;

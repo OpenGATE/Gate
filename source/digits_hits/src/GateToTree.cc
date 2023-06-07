@@ -103,6 +103,16 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("sourceType", SaveDataParam());
     m_hitsParams_to_write.emplace("decayType", SaveDataParam());
     m_hitsParams_to_write.emplace("gammaType", SaveDataParam());
+    //CC
+    m_hitsParams_to_write.emplace("sourceEnergy",SaveDataParam());
+    m_hitsParams_to_write.emplace("sourcePDG",SaveDataParam());
+    m_hitsParams_to_write.emplace("nCrystalConv",SaveDataParam());
+    m_hitsParams_to_write.emplace("nCrystalCompt",SaveDataParam());
+    m_hitsParams_to_write.emplace("nCrystalRayl",SaveDataParam());
+    m_hitsParams_to_write.emplace("energyFinal",SaveDataParam());
+    m_hitsParams_to_write.emplace("energyIniT",SaveDataParam());
+    m_hitsParams_to_write.emplace("postStepProcess",SaveDataParam());
+
 
     m_opticalParams_to_write.emplace("NumScintillation", SaveDataParam());
     m_opticalParams_to_write.emplace("NumCrystalWLS", SaveDataParam());
@@ -145,6 +155,17 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_singlesParams_to_write.emplace("axialPos", SaveDataParam());
     m_singlesParams_to_write.emplace("componentsIDs", SaveDataParam());
     m_singlesParams_to_write.emplace("systemID", SaveDataParam());
+    //CC
+    m_singlesParams_to_write.emplace("sourceEnergy",SaveDataParam());
+    m_singlesParams_to_write.emplace("sourcePDG",SaveDataParam());
+    m_singlesParams_to_write.emplace("nCrystalConv",SaveDataParam());
+    m_singlesParams_to_write.emplace("nCrystalCompt",SaveDataParam());
+    m_singlesParams_to_write.emplace("nCrystalRayl",SaveDataParam());
+    m_singlesParams_to_write.emplace("energyFinal",SaveDataParam());
+    m_singlesParams_to_write.emplace("energyIni",SaveDataParam());
+    m_singlesParams_to_write.emplace("localPosX", SaveDataParam());
+    m_singlesParams_to_write.emplace("localPosY", SaveDataParam());
+    m_singlesParams_to_write.emplace("localPosZ", SaveDataParam());
 
     m_coincidencesParams_to_write.emplace("runID", SaveDataParam());
     m_coincidencesParams_to_write.emplace("eventID", SaveDataParam());
@@ -338,6 +359,27 @@ void GateToTree::RecordBeginOfAcquisition() {
         if (m_hitsParams_to_write.at("gammaType").toSave())
             mm.write_variable("gammaType", &m_gammaType);
 
+        if(m_cc_enabled)
+        {
+		   if (m_hitsParams_to_write.at("sourceEnergy").toSave())
+			   mm.write_variable("sourceEnergy", &m_sourceEnergy );
+		   if (m_hitsParams_to_write.at("sourcePDG").toSave())
+			   mm.write_variable("sourcePDG", &m_sourcePDG);
+		   if (m_hitsParams_to_write.at("nCrystalConv").toSave())
+			   mm.write_variable("nCrystalConv", &m_nCrystalConv);
+		   if (m_hitsParams_to_write.at("nCrystalCompt").toSave())
+			   mm.write_variable("nCrystalCompt", &m_nCrystalCompt);
+		   if (m_hitsParams_to_write.at("nCrystalRayl").toSave())
+			   mm.write_variable("nCrystalRayl", &m_nCrystalRayl);
+
+		   if (m_hitsParams_to_write.at("energyFinal").toSave())
+			   mm.write_variable("energyFin", &m_energyFin);
+		   if (m_hitsParams_to_write.at("energyIniT").toSave())
+			   mm.write_variable("energyIniT", &m_energyIniT);
+		   if (m_hitsParams_to_write.at("postStepProcess").toSave())
+			   mm.write_variable("postStepProcess", &m_postStepProcess, MAX_NB_CHARACTER);
+        }
+
 
         mm.write_header();
     }
@@ -483,6 +525,32 @@ void GateToTree::RecordBeginOfAcquisition() {
         if (m_singlesParams_to_write.at("systemID").toSave() && GateSystemListManager::GetInstance()->size() > 1)
             mm.write_variable("systemID", &m_systemID);
 
+        if(m_cc_enabled)
+           {
+        	if (m_singlesParams_to_write.at("sourceEnergy").toSave())
+			   mm.write_variable("sourceEnergy", &m_sourceEnergy );
+        	if (m_singlesParams_to_write.at("sourcePDG").toSave())
+			   mm.write_variable("sourcePDG", &m_sourcePDG);
+        	if (m_singlesParams_to_write.at("nCrystalConv").toSave())
+			   mm.write_variable("nCrystalConv", &m_nCrystalConv);
+        	if (m_singlesParams_to_write.at("nCrystalCompt").toSave())
+			   mm.write_variable("nCrystalCompt", &m_nCrystalCompt);
+        	if (m_singlesParams_to_write.at("nCrystalRayl").toSave())
+			   mm.write_variable("nCrystalRayl", &m_nCrystalRayl);
+
+        	if (m_singlesParams_to_write.at("energyFinal").toSave())
+			   mm.write_variable("energyFin", &m_energyFin);
+        	if (m_singlesParams_to_write.at("energyIni").toSave())
+			   mm.write_variable("energyIni", &m_energyIni);
+
+        	if (m_singlesParams_to_write.at("localPosX").toSave())
+        		mm.write_variable("localPosX", &m_localPosX);
+        	if (m_singlesParams_to_write.at("localPosY").toSave())
+        		mm.write_variable("localPosY", &m_localPosY);
+        	if (m_singlesParams_to_write.at("localPosZ").toSave())
+        		mm.write_variable("localPosZ", &m_localPosZ);
+
+           }
 
         mm.write_header();
     }
@@ -747,6 +815,19 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 			m_sourceType = hit->GetSourceType();
 			m_decayType = hit->GetDecayType();
 			m_gammaType = hit->GetGammaType();
+
+			if(m_cc_enabled)
+			{
+				m_sourceEnergy=hit->GetSourceEnergy();
+				m_sourcePDG=hit->GetSourcePDG();
+				m_nCrystalConv=hit->GetNCrystalConv();
+				m_nCrystalCompt=hit->GetNCrystalCompton();
+				m_nCrystalRayl=hit->GetNCrystalRayleigh();
+
+				m_postStepProcess=hit->GetPostStepProcess();
+				m_energyFin=hit->GetEnergyFin();
+				m_energyIniT=hit->GetEnergyIniTrack();
+			}
 
 			 m.second.fill();
 			//m_manager_hits.fill();

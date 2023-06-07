@@ -442,13 +442,13 @@ The *energy resolution* digitizer module simulates Gaussian blurring of the ener
  
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert   energyResolution
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhm 0.15
-   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyOfReference 511. keV
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/energyOfReference 511. keV
    
 In the case of a scanner where all the detectors are made of the same type of crystal, it is often useful to assign a different energy resolution for each crystal in the detector block, between a minimum and a maximum value. To model the efficiency of the system, a coefficient (between 0 and 1) can also be set. As an example, a random blurring of all the crystals between 15% and 35% at a reference energy of 511 keV, and with a quantum efficiency of 90% can be modelled using the following commands::
 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert   energyResolution
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhmMin 0.15
-   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhmMin 0.35
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/fwhmMax 0.35
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyResolution/energyOfReference 511. keV
     
 According to the camera, the energy resolution may follow different laws, such as an inverse square law or a linear law. 
@@ -473,11 +473,24 @@ The *time resolution* module introduces a Gaussian blurring in the detection tim
 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert timeResolution 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/fwhm 1.4 ns
+   
+It is possible to set Coincidecne Time Resolution (CTR) directly if you work with a PET system. To calculate the equivalent of *fwhm* the used formula is:  :math:`CTR=\sqrt{2*STR^2+S^2}`, where STR = single time resolution or *fwhm*, S = time spread due to geometry dimensions of the detector/DOI (in this approximation), i. e. :math:`S=\frac{DOIdimention}{c_{light}}`. This is why it is important to set correct value for the geometry dimensions of the detector:: 
+       
+  /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/CTR 300 ps
+  /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/timeResolution/DOIdimention4CTR 25 mm
+
+**Important note**: This is an approximation for inorganic scintillators of typical length. However, one needs to be careful with other scintillators or short crystals, because in this approximation of the DOI contribution to CTR. It is assumed that the exponential attenuation is sufficiently truncated, whereas in fact it is not normally distributed          (10.1186/s40658-020-00309-8). 
 
 **Example**::
  
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert   timeResolution
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/fwhm 1.4 ns
+
+or::
+   
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/CTR 300 ps
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/timeResolution/DOIdimention4CTR 25 mm
+
 
 Spatial resolution
 ^^^^^^^^^^^^^^^^^^
@@ -1182,8 +1195,8 @@ To implement a coincidence pulse processor merging two coincidence lines into on
 
    /gate/digitizer/name myCoincChain 
    /gate/digitizer/insert coincidenceChain 
-   /gate/digitizer/myCoincChain/addSource prompts 
-   /gate/digitizer/myCoincChain/addSource delayed 
+   /gate/digitizer/myCoincChain/addInputName prompts 
+   /gate/digitizer/myCoincChain/addInputName delayed 
    /gate/digitizer/myCoincChain/insert XXX
    # set parameter of XXX.... 
    /gate/digitizer/myCoincChain/insert YYY

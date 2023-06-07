@@ -161,7 +161,7 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
 void GateCoincidenceSorter::Digitize()
 {
 	//G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
-	//	G4cout<< "m_inputName "<< m_inputName<<G4endl;
+		//G4cout<< "m_inputName "<< m_inputName<<G4endl;
   GateDigi* digi;
   std::list<GateDigi*>::iterator buf_iter;                // presort buffer iterator
 
@@ -175,13 +175,13 @@ void GateCoincidenceSorter::Digitize()
   //Input digi collection
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
   GateSinglesDigitizer* inputDigitizer;
-  inputDigitizer = digitizerMgr->FindDigitizer(m_inputName);//m_collectionName);
+  inputDigitizer = digitizerMgr->FindSinglesDigitizer(m_inputName);//m_collectionName);
   if (!inputDigitizer)
 	  if (digitizerMgr->m_SDlist.size()==1)
   	  {
 		  G4String new_name= m_inputName+"_"+digitizerMgr->m_SDlist[0]->GetName();
 		  //G4cout<<" new_name "<< new_name<<G4endl;
-		  inputDigitizer = digitizerMgr->FindDigitizer(new_name);
+		  inputDigitizer = digitizerMgr->FindSinglesDigitizer(new_name);
   	  }
 	  else
 		  GateError("ERROR: The name _"+ m_inputName+"_ is unknown for input singles digicollection! \n");
@@ -664,8 +664,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GateDigi& digi)
 // Check whether a coincidence is invalid: ring difference or sector difference too small...
 G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, const GateDigi* digi2)
 {
-
-	G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
+		G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
         blockID2 = m_system->GetMainComponentIDGND(digi2);
 
    // Modif by D. Lazaro, February 25th, 2004
@@ -740,11 +739,10 @@ void GateCoincidenceSorter::SetSystem(G4String& inputName)
 {
    for (size_t i=0; i<m_digitizerMgr->m_SingleDigitizersList.size() ; ++i)
    {
-
       G4String pPCOutputName = m_digitizerMgr->m_SingleDigitizersList[i]->GetOutputName();
       if(pPCOutputName.compare(inputName) == 0)
       {
-         this->SetSystem(m_digitizerMgr->m_SingleDigitizersList[i]->GetSystem());
+    	  m_system=m_digitizerMgr->m_SingleDigitizersList[i]->GetSystem();
          break;
       }
    }

@@ -18,8 +18,10 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 #include "GateSinglesDigitizer.hh"
+#include "GateCoincidenceDigitizer.hh"
 
 class GateSinglesDigitizer;
+class GateCoincidenceDigitizer;
 
 class GateVDigitizerModule : public G4VDigitizerModule, public GateClockDependent
 {
@@ -27,6 +29,8 @@ public:
   
   GateVDigitizerModule(G4String DMname, G4String path, GateSinglesDigitizer *digitizer, GateCrystalSD* SD);
   GateVDigitizerModule(G4String DMname, G4String path);
+  GateVDigitizerModule(G4String DMname, G4String path, GateCoincidenceDigitizer *digitizer);
+
   virtual ~GateVDigitizerModule();
   
 
@@ -44,25 +48,24 @@ public:
   virtual void Describe(size_t indent=0);
 
   //! Pure virtual method DecribeMyself()
-  virtual void DescribeMyself(size_t indent=0) =0 ;
+  virtual void DescribeMyself(size_t indent=0);
 
-  inline GateSinglesDigitizer* GetDigitizer()
+  inline GateModuleListManager* GetDigitizer()
     { return m_digitizer; }
 
-  inline G4int GetInputCollectionID(){return m_DCID;}
-  inline void SetInputCollectionID(G4int ID){m_DCID=ID;}
+  inline G4int GetCollectionID(){return m_DCID;}
+  inline void SetCollectionID(G4int ID){m_DCID=ID;}
 
 private:
 
-  GateSinglesDigitizer *m_digitizer;
-
+  GateModuleListManager *m_digitizer;
+  //GateCoincidenceDigitizer *m_coinDigitizer;
 
 protected:
   GateCrystalSD *m_SD;
   G4int m_outputDCID;
   G4int	m_InitDMID;
 
-  GateDigiCollection* m_IDC;
   G4int m_DCID;
 };
 

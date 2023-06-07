@@ -41,7 +41,6 @@
 
 #include "GateSystemListManager.hh"
 
-
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"
 #endif
@@ -413,7 +412,7 @@ void GateVVolume::AttachCrystalSD() {
 // Tell the creator that the logical volume should be attached to the crystal-SD
 void GateVVolume::AttachCrystalSDnoSystem() {
 
-	G4cout<<"GateVVolume::AttachCrystalSDnoSystem( "<<G4endl;
+
     // OK GND 2022
     //----
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
@@ -429,6 +428,13 @@ void GateVVolume::AttachCrystalSDnoSystem() {
     GateSystemListManager* sysList=GateSystemListManager::GetInstance();
     sysList->SetIsAnySystemDefined(false);
   //  pOwnLog->SetSensitiveDetector(m_sensitiveDetector);
+
+  
+    GateWarning("You use /attachCrystalSDnoSystem option! This means that some of Digitizer Modules will not work!\n" 
+                "Here is the list:\n" 
+                "+ Readout \n"
+		"+ DeadTime \n"
+                "+ PileUp \n");
 
 
 }

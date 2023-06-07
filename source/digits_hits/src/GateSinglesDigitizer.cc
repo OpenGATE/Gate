@@ -39,6 +39,12 @@ GateSinglesDigitizer::GateSinglesDigitizer( GateDigitizerMgr* itsDigitizerMgr,
 {
 	m_messenger = new GateSinglesDigitizerMessenger(this);
 
+	/* Example of naming
+ 	 * m_digitizerName = Singles, HESingles
+	 * m_inputName = Singles_crystal
+	 * m_outputName = Singles_crystal, HESingles_crystal
+	 */
+
   //Prepare OutputMng for this digitizer
   	GateOutputMgr::GetInstance()->RegisterNewSingleDigiCollection(m_digitizerName+"_"+SD->GetName(),false);
   	if(!itsDigitizerMgr->m_isInitialized)
@@ -89,8 +95,15 @@ GateVDigitizerModule* GateSinglesDigitizer::FindDigitizerModule(const G4String& 
 		return NULL;
 }
 
+void GateSinglesDigitizer::Describe(size_t indent)
+{
+	GateModuleListManager::Describe(indent);
+	DescribeMyself(indent);
+}
 
-void GateSinglesDigitizer::DescribeMyself()
+
+
+void GateSinglesDigitizer::DescribeMyself(size_t indent)
 {
 	G4cout<<"Digitizer Describe"<<G4endl;
 	G4cout<<"Digitizer Name: "<< m_digitizerName<<G4endl;
@@ -116,6 +129,55 @@ G4String GateSinglesDigitizer::GetDMNameFromInsertionName(G4String name)
 	}
 
 	return name;
+
+}
+
+void GateSinglesDigitizer::SetDMCollectionIDs()
+{
+	//G4cout<<"GateSinglesDigitizer::SetInputDMCollectionID"<<G4endl;
+	//Calculate input IDs for all DMs
+	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+	//fDM->List();
+
+	G4String name4fDM;
+
+	for (size_t i_DM = 0; i_DM<m_DMlist.size(); i_DM++)
+	{
+		if (i_DM == 0) // first DM: could be the Initialization module or some other set but user
+		{
+			name4fDM = "DigiInit/"+this->GetName()+"_"+this->GetSD()->GetName();
+		}
+		else
+		{
+			name4fDM = m_DMlist[i_DM-1]->GetName()+"/"+GetOutputName();
+		}
+		m_DMlist[i_DM]->SetCollectionID( fDM->GetDigiCollectionID(name4fDM ) );
+	}
+
+
+
+}
+void GateSinglesDigitizer::SetOutputCollectionID()
+{
+
+	//Save the ID of the last digitizer module for current digitizer
+	//G4cout<<"GateSinglesDigitizer::SetOuptputCollectionID"<<G4endl;
+
+	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+
+	G4String name;
+	if(m_DMlist.size()>0)
+	{
+		GateVDigitizerModule *DM = (GateVDigitizerModule*)m_DMlist[m_DMlist.size()-1];
+		name=DM->GetName()+"/"+m_digitizerName+"_"+m_SD->GetName();
+	}
+	else
+		name="DigiInit/"+m_digitizerName+"_"+m_SD->GetName();
+
+	m_outputDigiCollectionID  = fDM->GetDigiCollectionID(name);
+
+	//G4cout<<"output collecionID "<<m_digitizerName<<" "<<m_outputDigiCollectionID<<G4endl;
+
 
 }
 
