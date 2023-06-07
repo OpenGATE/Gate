@@ -67,7 +67,7 @@ void GateAdder::Digitize()
 	GateDigiCollection* IDC = 0;
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
-	GateDigi* inputDigi = new GateDigi();
+	GateDigi* inputDigi;
 
 	std::vector< GateDigi* >* outputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
 	std::vector<GateDigi*>::iterator iter;

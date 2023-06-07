@@ -87,7 +87,7 @@ void GateDigitizerMerger::Digitize()
 	GateDigiCollection* IDC = 0;
 	IDC = (GateDigiCollection*) (fDM->GetDigiCollection(m_DCID));
 	std::vector< GateDigi* >* IDCVector = IDC->GetVector ();
-	GateDigi* inputDigi = new GateDigi();
+	GateDigi* inputDigi;
 
 	if (IDC)
 	 {
@@ -106,7 +106,7 @@ void GateDigitizerMerger::Digitize()
 
 	for(G4int i=0; i<m_inputCollectionIDs.size();i++)
 		{
-			GateDigi* inputDigi_tmp = new GateDigi();
+			GateDigi* inputDigi_tmp;
 			GateDigiCollection* IDCtmp = 0;
 			IDCtmp = (GateDigiCollection*) (fDM->GetDigiCollection(m_inputCollectionIDs[i]));
 			if (m_inputCollectionIDs[i]==m_DCID)
