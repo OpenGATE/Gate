@@ -93,6 +93,8 @@ private:
 
   GateSinglesDigitizer *m_digitizer;
 
+  G4Bool m_IsFirstEntrance;
+
   G4VoxelLimits limits;
   G4double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
   G4AffineTransform at;

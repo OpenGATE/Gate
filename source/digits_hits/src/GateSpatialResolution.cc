@@ -55,7 +55,8 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_systemDepth(-1),
    m_outputDigi(0),
    m_OutputDigiCollection(0),
-   m_digitizer(digitizer)
+   m_digitizer(digitizer),
+   m_IsFirstEntrance(true)
  {
 	G4String colName = digitizer->GetOutputName() ;
 	collectionName.push_back(colName);
@@ -99,12 +100,16 @@ void GateSpatialResolution::Digitize()
 
 	if (m_system==NULL) G4Exception( "GateSpatialResolution::Digitize", "Digitize", FatalException,
 				 "Failed to get the system corresponding to that digitizer. Abort.\n");
-
-	if (!m_system->CheckIfEnoughLevelsAreDefined())
+				 
+	if (m_IsFirstEntrance)
 	{
-		 GateError( " *** ERROR*** GateSpatialResolution::Digitize. Not all defined geometry levels has their mother levels defined."
-				 "(Ex.: for cylindricalPET, the levels are: rsector, module, submodule, crystal). If you have defined submodule, you have to have resector and module defined as well."
-				 "Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
+		m_IsFirstEntrance=false;
+		if (!m_system->CheckIfEnoughLevelsAreDefined())
+		{
+			GateError( " *** ERROR*** GateSpatialResolution::Digitize. Not all defined geometry levels has their mother levels defined."
+					"(Ex.: for cylindricalPET, the levels are: rsector, module, submodule, crystal). If you have defined submodule, you have to have resector and module defined as well."
+					"Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
+		}
 	}
 
 	m_systemDepth = m_system->GetTreeDepth();
