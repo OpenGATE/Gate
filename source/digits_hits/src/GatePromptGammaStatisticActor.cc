@@ -131,22 +131,27 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
 
+  //JML G4cout << "Step = " << step->GetStepLength() / mm << " mm" << G4endl;
+  
   // Incident Proton Energy spectrum
   data.GetHEp()->Fill(particle_energy/MeV);
 
   // Process type, store cross_section for ProtonInelastic process
-  if (process != protonInelastic) return;
+  if ((process != protonInelastic)) return;
+  if ((step->GetPostStepPoint()->GetKineticEnergy() > 0.)) return; //JML
+
   G4double cross_section = store->GetCrossSectionPerVolume(particle, particle_energy, process, material);//(\kappa_{inel})
 
   data.GetHEpInelastic()->Fill(particle_energy/MeV);//N_{inel}
 
+  //JML if (step->GetPostStepPoint()->GetKineticEnergy() > 0.)
+  //JML   G4cout << "Ep pre = " << step->GetPreStepPoint()->GetKineticEnergy() / MeV << " & post = " << step->GetPostStepPoint()->GetKineticEnergy() / MeV << " MeV" << G4endl;
+  
   // Only once : cross section of ProtonInelastic in that material
   if (!sigma_filled) {
     for (int bin = 1; bin < data.GetHEpSigmaInelastic()->GetNbinsX()+1; bin++) {
       G4double local_energy = data.GetHEpSigmaInelastic()->GetBinCenter(bin)*MeV;  //bincenter is convert to
-
       //DD(local_energy); // Check this
-
       const G4double cross_section_local = store->GetCrossSectionPerVolume(particle, local_energy, process, material);
       data.GetHEpSigmaInelastic()->SetBinContent(bin,cross_section_local);
     }
@@ -168,7 +173,7 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
         // So we think it's warrented to just filter them out, because then we reach consistency with the PhaseSpace and TLE actors.
         // These particles show up with vpgTLE too (in the db, mostly in heavier elements), so we choose a limit of 40keV so that we kill exactly the lowest bin.
         continue;
-      }
+      }	      
       data.GetHEpEpg()->Fill(particle_energy/MeV, e);
       data.GetNgamma()->Fill(particle_energy/MeV, e);//N_{\gamma}
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);
