@@ -144,6 +144,9 @@ GateToRootMessenger::~GateToRootMessenger()
   delete CoincidenceMaskCmd;
   delete SingleMaskCmd;
   delete SaveRndmCmd;
+
+
+
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     delete OutputChannelCmdList[i];
 }

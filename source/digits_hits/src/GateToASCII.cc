@@ -73,8 +73,8 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
 
 GateToASCII::~GateToASCII()
 {
-  // for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-  //   delete m_outputChannelList[i];
+   //for (size_t i=0; i<m_outputChannelList.size() ; ++i )
+	//   delete m_outputChannelList[i];
 
   delete m_asciiMessenger;
 
@@ -335,6 +335,8 @@ void GateToASCII::RegisterNewSingleDigiCollection(const G4String& aCollectionNam
 
   //  G4cout << " GateToASCII::RegisterNewSingleDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
+
+  delete singleOutputChannel;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -347,6 +349,9 @@ void GateToASCII::RegisterNewCoincidenceDigiCollection(const G4String& aCollecti
 
   //  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(coincOutputChannel);
+  delete coincOutputChannel;
+
+
 }
 
 long GateToASCII::VOutputChannel::m_outputFileSizeLimit = 2000000000;

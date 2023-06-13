@@ -62,6 +62,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     G4String s = "/gate/output/tree/hits/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_maphits_cmdParameter_toTreeParameter.emplace(c, name);
+    delete c;
   }
 
   for(auto &&m: m_gateToTree->getOpticalParamsToWrite())
@@ -70,6 +71,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     G4String s = "/gate/output/tree/optical/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_mapoptical_cmdParameter_toTreeParameter.emplace(c, name);
+    delete c;
   }
 
 
@@ -79,6 +81,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     G4String s = "/gate/output/tree/Singles/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_mapsingles_cmdParameter_toTreeParameter.emplace(c, name);
+    delete c;
   }
 
   for(auto &&m: m_gateToTree->getCoincidencesParamsToWrite())
@@ -87,6 +90,7 @@ GateToTreeMessenger::GateToTreeMessenger(GateToTree *m) :
     G4String s = "/gate/output/tree/Coincidences/branches/" + name + "/disable";
     auto c = new G4UIcmdWithoutParameter(s, this);
     m_mapscoincidences_cmdParameter_toTreeParameter.emplace(c, name);
+    delete c;
   }
 
 
@@ -103,6 +107,11 @@ GateToTreeMessenger::~GateToTreeMessenger()
   delete m_addOpticalCollectionCmd;
   delete m_enableHitsOutput;
   delete m_disableHitsOutput;
+
+  delete m_enableOpticalDataOutput;
+  delete m_disableOpticalDataOutput;
+  delete m_addCollectionCmd;
+
 
 }
 
