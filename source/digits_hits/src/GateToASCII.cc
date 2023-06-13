@@ -336,7 +336,7 @@ void GateToASCII::RegisterNewSingleDigiCollection(const G4String& aCollectionNam
   //  G4cout << " GateToASCII::RegisterNewSingleDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 
-  delete singleOutputChannel;
+  //delete singleOutputChannel;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -349,7 +349,7 @@ void GateToASCII::RegisterNewCoincidenceDigiCollection(const G4String& aCollecti
 
   //  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection \n";
   m_asciiMessenger->CreateNewOutputChannelCommand(coincOutputChannel);
-  delete coincOutputChannel;
+ // delete coincOutputChannel;
 
 
 }

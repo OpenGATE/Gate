@@ -212,7 +212,7 @@ void GateToBinaryMessenger::CreateNewOutputChannelCommand(
   // Add the new command
   m_outputChannelCmd.push_back( newCmd );
 
-  delete newCmd;
+  //delete newCmd;
 }
 
 G4bool GateToBinaryMessenger::IsAnOutputChannelCmd( G4UIcommand* command )
