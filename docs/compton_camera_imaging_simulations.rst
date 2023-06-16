@@ -66,21 +66,24 @@ Here, there is a list of the additional developed modules.
 
 
 
-Grid discretization  module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Grid discretization module
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD::
 
-	/gate/digitizer/layers/insert gridDiscretization
-	/gate/digitizer/layers/gridDiscretization/chooseNewVolume [volName]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert discretization
 
 The number of the strips/pixels must be specified in X and Y directions. In addition, the width of the strips/pixel and an offset can be specified to take into account the insensitive material in the detector layer::
 
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsX [Nx]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberStripsY [Ny]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetX   [offSet_x]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripOffsetY [offSet_y]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthX [size_x]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setStripWidthY [size_y]
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setNumberStripsX [Nx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setNumberStripsY [Ny]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripOffsetX  [offSet_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripOffsetY  [offSet_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripOffsetZ  [offSet_z]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripWidthX   [size_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripWidthY   [size_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setStripWidthZ   [size_z]
+
 
 The *hits* detected in the strips/pixels are merged at the center of the strip/pixel in each spatial direction. When strips are defined in both spatial directions, only the hits in the volume defined by the intersection of two strips are stored; thus, generating pixels.
 
@@ -88,10 +91,28 @@ When the grid discretization module is employed to reproduce the response of str
 
 On the other hand, when pixelated crystals are simulated, it can be of interest to  apply the readout at the level of blocks composed of several pixels. The number of readout blocks can be set individually in each direction using the following commands::
 
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksX  [NBx]
-	/gate/digitizer/layers/gridDiscretization/[volName]/setNumberReadOutBlocksY  [NBy]
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setNumberReadOutBlocksX [NBx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/discretization/setNumberReadOutBlocksY [NBy]
+	
 
 The energy in the block corresponds to the sum of the deposited energy and the position to the  energy weighted centroid position in the pixels that composed the block.
+
+Example::
+
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert discretization
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setNumberStripsX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setNumberStripsY 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripOffsetX 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripOffsetY 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripOffsetZ 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripWidthX 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripWidthY 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setStripWidthZ 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setNumberReadOutBlocksX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/discretization/setNumberReadOutBlocksY 1
+	
 
 Clustering module
 ~~~~~~~~~~~~~~~~~
