@@ -25,23 +25,21 @@ mkdir Software
 cd Software
 mkdir VTK ITK RTK vv root Geant4 Gate
 cd VTK
-mkdir src bin install
+mkdir src bin
 git clone -b v9.0.3 https://github.com/Kitware/VTK.git src
 cd bin
-cmake ../src -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/VTK/install -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES -DVTK_MODULE_ENABLE_VTK_ViewsQt=YES
-make install
+cmake ../src -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES -DVTK_MODULE_ENABLE_VTK_ViewsQt=YES
+make
 cd ..
-rm -rf bin src
 
 cd
 cd Software/ITK
-mkdir src bin install
+mkdir src bin
 git clone -b v5.2.1 https://github.com/InsightSoftwareConsortium/ITK.git src
 cd bin
-ccmake ../src -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/ITK/install -DModule_ITKVtkGlue=ON -DVTK_DIR=/home/vgate/Software/VTK/install/lib/cmake/vtk-9.0/
-make install
+ccmake ../src -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DModule_ITKVtkGlue=ON #+path to VTK
+make
 cd ..
-rm -rf bin src
 
 cd
 cd Software/RTK
@@ -56,10 +54,9 @@ cd Software/vv
 mkdir src bin install
 git clone https://github.com/open-vv/vv.git src
 cd bin
-ccmake ../src -DITK_DIR=/home/vgate/Software/ITK/install/lib/cmake/ITK-5.2/ -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/vv/install
-make install
+ccmake ../src #+path itk
+make
 cd ..
-rm -rf src bin
 
 cd
 cd Software/root
