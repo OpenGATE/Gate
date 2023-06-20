@@ -61,13 +61,11 @@ GateEnergyFraming::GateEnergyFraming(GateSinglesDigitizer *digitizer, G4String n
 }
 
 
-
-
 GateEnergyFraming::~GateEnergyFraming()
 {
   delete m_Messenger;
-
 }
+
 
 
 void GateEnergyFraming::Digitize()
@@ -81,62 +79,66 @@ void GateEnergyFraming::Digitize()
 	m_OutputDigiCollection = new GateDigiCollection(GetName(),outputCollName); // to create the Digi Collection
 
 	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
-
+	
 
 	GateDigiCollection* IDC = 0;
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
-	GateDigi* inputDigi = new GateDigi();
+	GateDigi* inputDigi;
+	
 
 	if (IDC)
-     {
+        {
 	  G4int n_digi = IDC->entries();
 	  //loop over input digits
 	  for (G4int i=0;i<n_digi;i++)
 		  {
-		  	  G4double energy = 0;
-			  inputDigi=(*IDC)[i];
-			  GateDigi* outputDigi = new GateDigi(*inputDigi);
-
+	  	      G4double energy = 0;
+		      inputDigi=(*IDC)[i];
+		      GateDigi* m_outputDigi = new GateDigi(*inputDigi);
+		       	
 		      if( m_EnergyFramingLaw != 0 ){
 
-		    	  energy = m_EnergyFramingLaw->ComputeEffectiveEnergy(*outputDigi);
+		    	  energy = m_EnergyFramingLaw->ComputeEffectiveEnergy(*m_outputDigi);
+		    	  
 		      }
 		      else
 		      {
 		    	  energy = inputDigi->GetEnergy();
+		    	  
 		      }
-			  if ( energy >= m_min &&  energy <= m_max)
-			    {
-				  m_outputDigi = new GateDigi(*inputDigi);
+		      if ( energy >= m_min && energy <= m_max)
+		      {
+			  m_OutputDigiCollection->insert(m_outputDigi);
 
-				  m_OutputDigiCollection->insert(m_outputDigi);
-
-			       if (nVerboseLevel>1)
-			             	G4cout << "[GateEnergyFraming::Digitize] Copied digi to output:\n"
-			             	       << *m_outputDigi << Gateendl << Gateendl ;
-			    }
+		          if (nVerboseLevel>1)
+		             	   G4cout << "[GateEnergyFraming::Digitize] Copied digi to output:\n"
+		             	          << *m_outputDigi << Gateendl << Gateendl ;
+		           	       
+		      }
+		      else
+		      {
+		  	  if (nVerboseLevel>1)
+				  G4cout << "[GateEnergyFraming::Digitize]Ignored digi with energy above uphold:\n"
+				  << *inputDigi << Gateendl << Gateendl ;
+				  
 			  else
-			  {
-				  if (nVerboseLevel>1)
-					  G4cout << "[GateEnergyFraming::Digitize]Ignored digi with energy above uphold:\n"
-					  << *inputDigi << Gateendl << Gateendl ;
-			  }
+			  	delete m_outputDigi;	  
+		      }
 
-			  G4cout << inputDigi->GetEnergy() << G4endl;
-
+		  G4cout << inputDigi->GetEnergy() << G4endl; 
 		  }
-    }
-  else
-    {
-  	  if (nVerboseLevel>1)
-  	  	G4cout << "[GateEnergyFraming::Digitize]: input digi collection is null -> nothing to do\n\n";
-  	    return;
-    }
-
+        
+                  if (nVerboseLevel==1)
+	          {
+		    G4cout << "[GateDoIModels::Digitize]: returning output digi-list with " << m_OutputDigiCollection->entries() << " entries\n";
+		    for (size_t k=0; k<m_OutputDigiCollection->entries();k++)
+			    G4cout << *(*IDC)[k] << Gateendl;
+   		    G4cout << Gateendl;
+	  }
+	}
   StoreDigiCollection(m_OutputDigiCollection);
 }
-
 
 
 void GateEnergyFraming::DescribeMyself(size_t indent)
