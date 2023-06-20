@@ -85,7 +85,6 @@ void GateEnergyFraming::Digitize()
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
 	GateDigi* inputDigi;
-	
 
 	if (IDC)
         {

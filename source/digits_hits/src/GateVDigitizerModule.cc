@@ -47,6 +47,18 @@ GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path)
  {
  }
 
+GateVDigitizerModule::GateVDigitizerModule(G4String name, G4String path, GateCoincidenceDigitizer *digitizer)
+  :G4VDigitizerModule(name),
+   GateClockDependent(path),
+   m_digitizer(digitizer)
+{
+
+	//TODO GateOutputMgr::GetInstance()->RegisterNewCoincidenceDigiCollection(digitizer->GetName()+"_"+name, false);
+
+}
+
+
+
 
 
 

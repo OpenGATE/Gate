@@ -6,6 +6,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*!
+  \class  GateDoILawMessenger
+
+
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 #include "GateDoILawMessenger.hh"
 

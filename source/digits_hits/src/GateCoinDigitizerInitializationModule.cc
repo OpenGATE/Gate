@@ -65,7 +65,6 @@ GateCoinDigitizerInitializationModule::~GateCoinDigitizerInitializationModule()
 
 void GateCoinDigitizerInitializationModule::Digitize()
 {
-	//G4cout<<"GateCoinDigitizerInitializationModule::Digitize()"<<G4endl;
 
 	m_outputDigiCollection = new GateCoincidenceDigiCollection (GetName(),  m_coinDigitizer->GetOutputName() ); // to create the Digi Collection
 	m_inputDigiCollections.clear();
@@ -113,12 +112,43 @@ void GateCoinDigitizerInitializationModule::Digitize()
 				 for (G4int i=0;i< n_coinDigi;i++)
 				 {
 					 inputDigi=(*inCDC)[i];
+					 if (inputDigi->empty()) continue;
 
 					 m_outputDigi = new GateCoincidenceDigi(*inputDigi);
-					 m_outputDigiCollection->insert(m_outputDigi);
+
+					 G4double time = m_outputDigi->GetEndTime();
+					 bool last=true;
+					 //ordering by time m_outputDigiCollection
+					 for (std::vector<GateCoincidenceDigi*>::iterator iter = outputDigiCollectionVector->begin() ; iter != outputDigiCollectionVector->end() ; ++iter)
+					 {
+						 if ( (*iter)->GetEndTime()>time)
+						 {
+							 outputDigiCollectionVector->insert(iter,m_outputDigi) ;
+							 last=false;
+							 break;
+						 }
+						 /*if ( m_noPriority && ((*it2)->GetTime()==time)) {
+							  	  G4cout<<"!!!!!! SAME TIME "<<G4endl;
+							//S.Jan 15/02/2006
+						    	//G4do	uble p = RandFlat::shoot();
+						    	G4double p = G4UniformRand();
+						    	if (p<0.5) {ans.insert(it2,pulse) ; last=false; break;}
+						  	  	  }
+						  	  	  */
+					 }
+
+					 if (last) outputDigiCollectionVector->push_back(m_outputDigi);
+
+					 if ( iter == outputDigiCollectionVector->end() )
+						 m_outputDigiCollection->insert(m_outputDigi);
+
+
 				 }
 		    }
 	}
+
+
+
 
 
   StoreDigiCollection(m_outputDigiCollection);
