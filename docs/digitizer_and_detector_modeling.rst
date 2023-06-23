@@ -556,9 +556,9 @@ For the solid angle weighted energy policy, the effective energy for each pulse 
  
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setLaw/ solidAngleWeighted
-   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthX [szX]
-   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthY [szY]
-   /gate/digitizer/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setZSense4Readout   [1/-1]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthX [szX]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthY [szY]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setZSense4Readout   [1/-1]
 
 **Example**::
 
@@ -568,6 +568,27 @@ For the solid angle weighted energy policy, the effective energy for each pulse 
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthX 2 mm  
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthY 6 mm
    /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setZSense4Readout 1 mm
+
+Clustering
+^^^^^^^^^^
+This module has been designed with monolithic crystals read-out by segmented photodetectors in mind. The global module has been developed as follow::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert clustering
+
+If a detected hit is closer than a specified accepted distance to one of the clusters, it is added to the closest one; otherwise, it generates a new cluster. The hits are added summing their deposited energies and computing the energy-weighted centroid position. If two clusters are closer than the accepted distance they are merged following the same criteria. If requested, events with multiple clusters in the same volume can be rejected::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setAcceptedDistance [distance plus units]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setRejectionMultipleClusters [0/1]
+
+**Example**::
+
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setAcceptedDistance	5 mm
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	1
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setAcceptedDistance	10 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	0
 
    
 Efficiency
