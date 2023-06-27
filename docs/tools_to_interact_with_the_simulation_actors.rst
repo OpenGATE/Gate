@@ -622,7 +622,7 @@ To understand the background, physics and mathematics of this example, refer to 
 LET Actor
 ~~~~~~~~~
 
-This actor calculates the dose or track averaged linear energy transfer::
+This actor calculates the dose or track averaged linear energy transfer in units of keV/um::
 
    /gate/actor/addActor    LETActor       MyActor
    /gate/actor/MyActor/save               output/myLETactor.mhd
