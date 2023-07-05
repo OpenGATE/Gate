@@ -144,22 +144,20 @@ The adderCompton module was designed with the same aim.  However, it does not wo
 
 In order to develop an adder that  allows us to recover the exact Compton kinematics also when several primary photonic hits occur in the same volume, extra information such as post-step process, creator process, initial energy of the track, final energy, trackID and parentID was  added to the pulses. This module creates a *single* from each primary photon *hit* that undergoes a Compton, Photoelectric or Pair Creation interaction. Additional information, such as the energy of the photon that generates the pulse before (*energyIni*) and after (*energyFinal*) the primary interaction is included to be able to recover the ideal Compton kinematics, hence its name. These attributes have invalid values (-1) when this module is not applied. The deposited energy value (*energy*) of each pulse should correspond to the sum of the deposited energy of the primary hit and all the secondary hits produced by it. The deposited energy was validated using livermore physics list. Note that the method applied to obtained  the deposited energy (*energy attribute) is not robust and may lead to incorrect values for other physics list.
  
-Both versions the global module and its local counterpart have been developed.  They can be employed using the following command::
+It can be employed using the following command::
 
-	/gate/digitizer/layers/insert adderComptPhotIdeal
-
-or::
-
-	/gate/digitizer/layers/insert adderComptPhotIdealLocal
-	/gate/digitizer/layers/adderComptPhotIdealLocal/chooseNewVolume [volName]
-
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert 	adderComptPhotIdeal
  
-The option to reject those events in which the primary photon undergoes at least one interaction different from Compton or Photoelectric  is included  in the global module using the following command:::
+The option to reject those events in which the primary photon undergoes at least one interaction different from Compton or Photoelectric is included in the global module using the following command:::
 
-	/gate/digitizer/layers/insert/rejectEvtOtherProcesses [1/0]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/adderComptPhotIdeal/rejectEvtOtherProcesses [1/0]
 
 In order to get one *single* per volume, the user can apply another module afterwards such as the standard adder to handle multiple interactions.
 
+Example::
+
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	adderComptPhotIdeal
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/adderComptPhotIdeal/rejectEvtOtherProcesses 0
 
 Energy thresholder module
 ~~~~~~~~~~~~~~~~~~~~~~~~~
