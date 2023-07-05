@@ -56,7 +56,6 @@ GateEnergyFraming::GateEnergyFraming(GateSinglesDigitizer *digitizer, G4String n
 	G4String colName = digitizer->GetOutputName();
 	collectionName.push_back(colName);
 	m_Messenger = new GateEnergyFramingMessenger(this);
-	std::vector<GateVolumeID> vID;
 
 }
 
@@ -125,7 +124,6 @@ void GateEnergyFraming::Digitize()
 			  	delete m_outputDigi;	  
 		      }
 
-		  G4cout << inputDigi->GetEnergy() << G4endl; 
 		  }
         
                   if (nVerboseLevel==1)

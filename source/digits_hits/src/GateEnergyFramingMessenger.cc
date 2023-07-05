@@ -23,11 +23,7 @@ See LICENSE.md for further details
 #include "G4UIcmdWithAString.hh"
 #include "G4UIdirectory.hh"
 #include "GateSolidAngleWeightedEnergyLaw.hh"
-#include "GateDepositedEnergyLaw.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
-
-#include "GateEnergyThresholder.hh"
-#include "GateEnergyThresholderMessenger.hh"
 
 
 GateEnergyFramingMessenger::GateEnergyFramingMessenger (GateEnergyFraming* EnergyFraming)
@@ -75,10 +71,6 @@ GateVEffectiveEnergyLaw* GateEnergyFramingMessenger::SetEnergyFLaw(const G4Strin
 	else if ( law == "depositedEnergy" )
 	{
 	    ;
-	}
-	else
-	{
-	    GateError("\n No match for '" << law << "' EnergyFraming law.\n Candidates are: solidAngleWeighted, depositedEnergy, ..");
 	}
 	return NULL;
 }
