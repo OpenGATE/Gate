@@ -185,6 +185,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
 
+  if (step->GetTrack()->GetParentID() != 0) return; /** Modif JML suite Oreste **/
+
   // Post computation TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
   if (mIsDebugOutputEnabled) {
     // compute sameEvent
