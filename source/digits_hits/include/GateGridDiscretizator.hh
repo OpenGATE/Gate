@@ -13,15 +13,15 @@ See LICENSE.md for further details
   \sa GateDiscretization, GateDiscretizationMessenger
   // OK GND 2022
   
-  \class  GateDiscretization
+  \class  GridDiscretizator
   
   Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
 
 
 
-#ifndef GateDiscretization_h
-#define GateDiscretization_h 1
+#ifndef GateGridDiscretizator_h
+#define GateGridDiscretizator_h 1
 
 #include <iostream>
 #include <vector>
@@ -34,31 +34,29 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 
-#include "GateDiscretizationMessenger.hh"
+#include "GateGridDiscretizatorMessenger.hh"
 #include "GateSinglesDigitizer.hh"
 
 #include "GateVVolume.hh"
 #include "G4VoxelLimits.hh"
 
-#include "GateVPulseProcessor.hh"
-
 #include "GateMaps.hh"
 #include <set>
 
-class GateDiscretizationMessenger;
+class GateGridDiscretizatorMessenger;
 
-class GateDiscretization : public GateVDigitizerModule
+class GateGridDiscretizator : public GateVDigitizerModule
 {
 public:
   
-  GateDiscretization(GateSinglesDigitizer *digitizer, G4String name);
-  ~GateDiscretization();
+  GateGridDiscretizator(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateGridDiscretizator();
   
   G4int ChooseVolume(G4String val);
 
   void Digitize() override;
 
-  void SetDiscretization(G4double val)   { m_GateDiscretization = val; };
+  void SetDiscretization(G4double val)   { m_GateGridDiscretizator = val; };
 
 
   void SetStripOffsetX(G4String name, G4double val)   {  m_param.stripOffsetX = val;  };
@@ -107,7 +105,6 @@ public:
   std::map<std::tuple<int,int,int>, std::vector<int>> blockIndex;
 
   void SetVolumeName(G4String name) {
-	  G4cout<<"seting m_name Volume "<<name<<G4endl;
 	  m_name=name;};
 
   void DescribeMyself(size_t );
@@ -120,12 +117,12 @@ public:
   int GetZIndex(G4double posZ);
 
 protected:
-  G4double   m_GateDiscretization;
+  G4double   m_GateGridDiscretizator;
 
 private:
   GateDigi* m_outputDigi;
 
-  GateDiscretizationMessenger *m_Messenger;
+  GateGridDiscretizatorMessenger *m_Messenger;
 
   GateDigiCollection*  m_OutputDigiCollection;
 

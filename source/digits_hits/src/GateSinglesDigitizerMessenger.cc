@@ -44,7 +44,7 @@ See LICENSE.md for further details
 #include "GateDigitizerMerger.hh"
 
 #include "GateDoIModels.hh"
-#include "GateDiscretization.hh"
+#include "GateGridDiscretizator.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
@@ -114,7 +114,7 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels discretization";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels gridDiscretizator";
 
    return theList;
 }
@@ -207,9 +207,9 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
         }
-  else if (childTypeName=="discretization")
+  else if (childTypeName=="gridDiscretizator")
           {
-            newDM = new GateDiscretization(m_digitizer, DMname);
+            newDM = new GateGridDiscretizator(m_digitizer, DMname);
          	  m_digitizer->AddNewModule(newDM);
           }
 /*
