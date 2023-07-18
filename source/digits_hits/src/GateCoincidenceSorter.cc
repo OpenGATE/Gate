@@ -39,6 +39,7 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
     m_offset(0.),
     m_offsetJitter(0.),
     m_minSectorDifference(2),
+    m_forceMinSecDifferenceToZero(false),	  
     m_multiplesPolicy(kKeepIfAllAreGoods),
     m_allDigiOpenCoincGate(false),
     m_depth(1),
@@ -693,9 +694,10 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
     if (sectorDiff2<0)
       sectorDiff2 += sectorNumber;
     G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
-
+    //G4cout<<sectorDifference<<G4endl;
+    
     //Compare the sector difference with the minimum differences for valid coincidences
-    if (sectorDifference<m_minSectorDifference) {
+    if (sectorDifference<m_minSectorDifference && !m_forceMinSecDifferenceToZero) {
       if (nVerboseLevel>1)
         G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbor blocks --> refused\n";
       return true;
@@ -719,7 +721,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
   G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
   //Compare the sector difference with the minimum differences for valid coincidences
-  if (sectorDifference<m_minSectorDifference) {
+  if (sectorDifference<m_minSectorDifference && !m_forceMinSecDifferenceToZero) {
       	if (nVerboseLevel>1)
       	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
 	return true;

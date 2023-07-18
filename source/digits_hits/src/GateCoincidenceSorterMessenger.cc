@@ -53,6 +53,12 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   minSectorDiffCmd->SetParameterName("diff",false);
   minSectorDiffCmd->SetRange("diff>=1");
 
+  cmdName = GetDirectoryName()+"forceMinSecDifferenceToZero";
+  forceMinSectorDiffCmd = new G4UIcmdWithABool(cmdName,this);
+  forceMinSectorDiffCmd->SetGuidance("Force the minimum sector difference for valid coincidences to 0: specsific case for prototype testbench simulations.");
+  forceMinSectorDiffCmd->SetParameterName("ForceDiff0",false);
+
+  
   cmdName = GetDirectoryName()+"setDepth";
   setDepthCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
   setDepthCmd->SetGuidance("Set the depth of system-level for coincidences.");
@@ -111,7 +117,7 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
     delete SetTriggerOnlyByAbsorberCmd;
     delete SetAcceptancePolicy4CCCmd;
     delete SetEventIDCoincCmd;
-
+    delete forceMinSectorDiffCmd;
 }
 
 
@@ -125,6 +131,8 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { m_CoincidenceSorter->SetOffset(offsetCmd->GetNewDoubleValue(newValue)); }
   else if( aCommand == offsetJitterCmd )
     { m_CoincidenceSorter->SetOffsetJitter(offsetJitterCmd->GetNewDoubleValue(newValue)); }
+  else if( aCommand == forceMinSectorDiffCmd )
+    { m_CoincidenceSorter->SetForcedTo0MinSectorDifference(forceMinSectorDiffCmd->GetNewBoolValue(newValue)); }
   else if( aCommand == minSectorDiffCmd )
     { m_CoincidenceSorter->SetMinSectorDifference(minSectorDiffCmd->GetNewIntValue(newValue)); }
   else if( aCommand == setDepthCmd )
