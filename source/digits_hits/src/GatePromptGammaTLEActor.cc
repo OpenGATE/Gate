@@ -171,21 +171,26 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 
   // Get information
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
-  const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  //const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
-  const G4double &distance = step->GetStepLength();
-  randomNumberTime = G4UniformRand();
-  randomNumberEnergy = G4UniformRand();
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
+  if (step->GetTrack()->GetParentID() != 0) return; /** remove 2ndary protons **/
+
+  const G4double &particle_energy_in = step->GetPreStepPoint()->GetKineticEnergy();
+  const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
+  const G4double &distance = step->GetStepLength();
+  G4double inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+  G4double outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+  //randomization
+  G4double randomNumberTime = G4UniformRand();
+  G4double randomNumberEnergy = G4UniformRand();
+  G4double particle_energy = particle_energy_out + (particle_energy_in-particle_energy_out)*randomNumberEnergy;
+  G4double tof = inputtof + (outputtof-inputtof)*randomNumberTime;
 
   // Check if proton energy within bounds.
   if (particle_energy > data.GetProtonEMax()) {
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
-
-  if (step->GetTrack()->GetParentID() != 0) return; /** Modif JML suite Oreste **/
 
   // Post computation TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
   if (mIsDebugOutputEnabled) {
@@ -225,7 +230,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // assume everything exist (has been computed by InitializeMaterial)
   //particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
   TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy); //JML
-
+  double pg_stats[4];
+  h->GetStats(pg_stats);
+  double pg_sum = pg_stats[0];
+  
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
 
@@ -235,11 +243,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 
   //----------------------------------------------------------------------------------------------------------
   /** Modif Oreste **/
-  const G4double &inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
-  const G4double &outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
-  tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
   pTime->Fill(tof);
-  mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
+  mImagetof->AddValueDouble(index, pTime, pg_sum * w * distance * material->GetDensity() / (g / cm3));
   // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
   //if (index != mCurrentIndex) {
     //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)

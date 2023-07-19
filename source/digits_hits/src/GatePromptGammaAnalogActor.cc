@@ -114,6 +114,7 @@ void GatePromptGammaAnalogActor::SaveData()
     int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
     double f = 1.0 / n;
     mImageGamma->Scale(f); //converts image to float
+    mImagetof->Scale(f);
   }
   //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);

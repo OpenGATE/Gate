@@ -158,7 +158,7 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
       G4double local_energy = data.GetHEpSigmaInelastic()->GetBinCenter(bin)*MeV;  //bincenter is convert to
       //DD(local_energy); // Check this
       const G4double cross_section_local = store->GetCrossSectionPerVolume(particle, local_energy, process, material);
-      data.GetHEpSigmaInelastic()->SetBinContent(bin,cross_section_local);
+      data.GetHEpSigmaInelastic()->SetBinContent(bin,cross_section_local*cm);
     }
     sigma_filled = true;
   }
