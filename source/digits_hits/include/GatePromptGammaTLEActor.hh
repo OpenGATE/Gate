@@ -85,7 +85,7 @@ protected:
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
   double startEvtTime;
 
-  TH1D * pTime = new TH1D("","",1000,0,5);
+  TH1D * pTime = new TH1D("","",1000,0,5*ns); //TODO: ne pas coder en dur les 5ns
 };
 //-----------------------------------------------------------------------------
 

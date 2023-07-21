@@ -233,7 +233,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   double pg_stats[4];
   h->GetStats(pg_stats);
   double pg_sum = pg_stats[0];
-  
+
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
 

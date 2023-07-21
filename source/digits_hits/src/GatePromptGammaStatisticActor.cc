@@ -19,6 +19,7 @@
 //#include <G4ProtonInelasticProcess.hh>
 #include <G4CrossSectionDataStore.hh>
 #include <G4HadronicProcessStore.hh>
+#include <G4EmCalculator.hh>
 
 //-----------------------------------------------------------------------------
 GatePromptGammaStatisticActor::
@@ -77,11 +78,15 @@ void GatePromptGammaStatisticActor::SaveData()
   // proba of inelastic interaction by E proton (pHEpInelastic);
   double temp=0.0;
   double temp2=0.0;
+  double scalingfactor=0.;
+  const G4Material * m = mVolume->GetMaterial();
   for( int i=1; i <= data.GetGammaZ()->GetNbinsX(); i++) {
     for( int j = 1; j <= data.GetGammaZ()->GetNbinsY(); j++) {
       if(data.GetHEpInelastic()->GetBinContent(i) != 0) {
-        temp = data.GetGammaZ()->GetBinContent(i,j)/data.GetHEpInelastic()->GetBinContent(i);
-        temp2 = data.GetHEpEpgNormalized()->GetBinContent(i,j)/data.GetHEpInelastic()->GetBinContent(i); //for backwards compatibility
+	// Normalization by nr of inelastic and density (cf Equation 6 of ElKanawati PMB 2015)
+	scalingfactor = data.GetHEpInelastic()->GetBinContent(i) * m->GetDensity() / (g/cm3);
+        temp = data.GetGammaZ()->GetBinContent(i,j) / scalingfactor;
+	temp2 = data.GetHEpEpgNormalized()->GetBinContent(i,j) / scalingfactor;
       }
       else {
         if (data.GetGammaZ()->GetBinContent(i,j)> 0.) {
@@ -163,6 +168,9 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
     sigma_filled = true;
   }
 
+  G4EmCalculator emCalculator;
+  G4double dEdxFull = 0.;
+  
   // For all secondaries, store Energy spectrum
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   unsigned int produced_gamma = 0;
@@ -184,7 +192,11 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
       data.GetNgamma()->Fill(particle_energy/MeV, e);//N_{\gamma}
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);
       data.GetGammaZ()->Fill(particle_energy/MeV, e, cross_section);  //so we score cross_section*1 (\kappa_{inel}*N_{\gamma}) as func of Ep,Epg
-        //it stores Ngamma(which is 1) multiplied y crosssection. Divide at the end by EpInelastic to obtain GammaZ/rho(Z)
+      //it stores Ngamma(which is 1) multiplied y crosssection. Divide at the end by EpInelastic to obtain GammaZ/rho(Z)
+
+      dEdxFull = emCalculator.ComputeTotalDEDX(particle_energy,particle,material) / material->GetDensity(); //for a unit density. NB: divide by (cm*cm/g) to get it in cm2/g
+      // use it to scale GammaZ or EpEpgNormalized to get the version in energy integration and not distance (cf Kanawati equations 2 vs 5)
+      
       produced_gamma++;
     }
   }

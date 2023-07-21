@@ -26,8 +26,6 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   mInputDataFilename = "noFilenameGiven";
   pMessenger = new GatePromptGammaAnalogActorMessenger(this);
   //SetStepHitType("random");
-  mImageGamma = new GateImageOfHistograms("int");
-  mImagetof = new GateImageOfHistograms("double");
   mSetOutputCount = false;
   alreadyHere = false;
 }
@@ -67,28 +65,17 @@ void GatePromptGammaAnalogActor::Construct()
   //data.InitializeMaterial(); //we dont need the materials, only some metadata that is already extracted in Read()
 
   // Set image parameters and allocate (only mImageGamma not mImage)
-  mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mImageGamma->SetOrigin(mOrigin);
-  mImageGamma->SetTransformMatrix(mImage.GetTransformMatrix());
-  mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
-  mImageGamma->Allocate();
-  mImageGamma->PrintInfo();
-
-  mImagetof->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mImagetof->SetOrigin(mOrigin);
-  mImagetof->SetTransformMatrix(mImage.GetTransformMatrix());
-  mImagetof->SetHistoInfo(pTime->GetNbinsX(), pTime->GetXaxis()->GetFirst()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()), pTime->GetXaxis()->GetLast()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()));
-  mImagetof->Allocate();
-  mImagetof->PrintInfo();
+  SetTLEIoH(mImageGamma);
+  SetTofIoH(mImagetof, pTime);
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
     GateWarning("Actor '" << GetName() << "' : stepHitType forced to 'random'" << std::endl);
-    SetStepHitType("random");
   }
-
+  SetStepHitType("random");
+  
   // Set to zero
-  ResetData();
+  //ResetData();
 }
 //-----------------------------------------------------------------------------
 
@@ -96,8 +83,8 @@ void GatePromptGammaAnalogActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::ResetData()
 {
-  mImageGamma->Reset();
-  mImagetof->Reset();
+  //  mImageGamma->Reset();
+  //  mImagetof->Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -164,17 +151,13 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
-
-  // Process type, store cross_section for ProtonInelastic process
-  if (process != protonInelastic) return;
+  if (step->GetTrack()->GetParentID() != 0) return;  /** remove 2ndary protons **/
+  if (process != protonInelastic) return; // Process type, store cross_section for ProtonInelastic process
 
   // Check if proton energy within bounds.
   if (particle_energy > data.GetProtonEMax()) {
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
-  
-  // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
-  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
   
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
@@ -194,7 +177,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       //Get thet correct gammabin
       // -1 because TH1D start at 1, and end at index=size.
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
-      mImageGamma->AddValueInt(index, bin, 1);
+      mImageGamma->AddValueDouble(index, bin, 1);
 
       pTime->Fill(tof);
       mImagetof->AddValueDouble(index, pTime, 1);
@@ -214,6 +197,31 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       */
     }
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaAnalogActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
+  ioh->Allocate();
+  ioh->PrintInfo();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/** Modif Oreste **/
+void GatePromptGammaAnalogActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
+  ioh->Allocate();
+  ioh->PrintInfo();
 }
 //-----------------------------------------------------------------------------
 

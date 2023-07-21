@@ -50,10 +50,14 @@ protected:
   bool mSetOutputCount;
   bool alreadyHere;
 
+  //helper functions
+  void SetTLEIoH(GateImageOfHistograms*&);
+  void SetTofIoH(GateImageOfHistograms*&, TH1D*);
+
   GateImageOfHistograms * mImageGamma;  //main output (yield)
   GateImageOfHistograms * mImagetof;
   double startEvtTime;
-  TH1D * pTime = new TH1D("","",1000,0,5); //the source can be placed up to around 2.5 m upstream the target => Can be increased or decreased by modifying the TH size
+  TH1D * pTime = new TH1D("","",1000,0,5*ns); //the source can be placed up to around 2.5 m upstream the target => Can be increased or decreased by modifying the TH size
 
 };
 //-----------------------------------------------------------------------------
