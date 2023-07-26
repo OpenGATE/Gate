@@ -298,12 +298,6 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
     pEnableTOutCmd->SetGuidance(guidance);
     pEnableTOutCmd->SetParameterName("State", false);
 
-    bb = base+"/enablept";
-    pEnableptCmd = new G4UIcmdWithABool(bb,this);
-    guidance = "Save the time of arrival of the primary particle (defined as a IonTime) in the phase space file. Usefull only for the outgoing mode";
-    pEnableptCmd->SetGuidance(guidance);
-    pEnableptCmd->SetParameterName("State",false);
-    
     bb = base + "/enableTProd";
     pEnableTProdCmd = new G4UIcmdWithABool(bb, this);
     guidance = "Save the production time of the particle wrt to the primary production (defined as a GlobalTime - LocalTime)";

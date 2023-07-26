@@ -19,9 +19,8 @@
 #include <G4EmCalculator.hh>
 #include <G4VProcess.hh>
 #include <G4Run.hh>
-#include <G4ParticleTable.hh>
-#include "GateRunManager.hh"
 #include "GateMiscFunctions.hh"
+
 #include "GateSourceMgr.hh"
 #include "GateVImageActor.hh"
 #include "GateProtonNuclearInformationActor.hh"
@@ -51,8 +50,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     EnableProdVol = true;
     EnableProdProcess = true;
     EnableWeight = true;
-    EnableTime = true; //JML false
-    EnableIonTime = true;
+    EnableTime = false;
+    EnableIonTime = false;
     EnableLocalTime = false;
     EnableTimeFromBeginOfEvent = false;
     EnableMass = true;
@@ -62,8 +61,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     mUseVolFrame = false;
     mStoreOutPart = false;
     SetIsAllStep(false);
-    EnableTOut = true; //JML false
-    EnableTProd = true; //JML false
+    EnableTOut = false;
+    EnableTProd = false;
     EnableTrackLengthFlag = false;
 
     mSphereProjectionFlag = false;
@@ -74,13 +73,12 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     mTranslationLength = 0.0;
 
     bEnableCoordFrame = false;
-    bEnablePrimaryEnergy = true; //JML false
+    bEnablePrimaryEnergy = false;
     bEnableSpotID = false;
     bEnableCompact = false;
-    bEnableEmissionPoint = true ; //JML false
+    bEnableEmissionPoint = false;
     bEnablePDGCode = false;
     bEnableTOut = true;
-    bEnablept = true;
     bEnableTProd = true;
 
     bSpotID = 0;
@@ -124,13 +122,13 @@ void GatePhaseSpaceActor::Construct()
 {
     GateVActor::Construct();
     // Enable callbacks
-    EnableBeginOfRunAction(false); //JML true
-    EnableBeginOfEventAction(false); //JML true
+    EnableBeginOfRunAction(true);
+    EnableBeginOfEventAction(true);
     EnableRecordEndOfAcquisition(true);
     EnablePreUserTrackingAction(true);
     EnablePostUserTrackingAction(true);
     EnableUserSteppingAction(true);
-    
+
     G4String extension = getExtension(mSaveFilename);
 
     // If mask, load the image
@@ -382,7 +380,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 {
     // Set Primary Energy
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); // GetInitialEnergy oid.
-    pt = e->GetPrimaryVertex()->GetT0();
+    if (EnableIonTime) pt = e->GetPrimaryVertex()->GetT0();
 
     // Store the application time of the event
     auto app = GateApplicationMgr::GetInstance();

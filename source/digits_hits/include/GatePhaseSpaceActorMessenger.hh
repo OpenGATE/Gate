@@ -87,7 +87,6 @@ protected:
   G4UIcmdWithADoubleAndUnit *bSetTranslationAlongDirectionLength;
 
   G4UIcmdWithABool *pEnableTOutCmd;
-  G4UIcmdWithABool* pEnableptCmd;
   G4UIcmdWithABool *pEnableTProdCmd;
   G4UIcmdWithAString *pUseMaskCmd;
   G4UIcmdWithABool *pEnableKillCmd;

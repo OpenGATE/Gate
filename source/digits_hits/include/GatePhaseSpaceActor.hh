@@ -13,13 +13,6 @@
 #include "GateImage.hh"
 #include "GateTreeFileManager.hh"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TNtuple.h"
-#include "TTree.h"
-#include "TBranch.h"
-#include "TString.h"
-
 struct iaea_header_type;
 struct iaea_record_type;
 
@@ -171,9 +164,6 @@ protected:
   G4String mFileType;
   G4int mNevent;
 
-  TFile * pFile;
-  TTree * pListeVar;
-
   GateOutputTreeFileManager *mFile;
 
   bool EnableCharge;
@@ -233,7 +223,6 @@ protected:
   bool mKillParticleFlag;
 
   bool bEnableTOut;
-  bool bEnablept;
   bool bEnableTProd;
 
   double mFileSize;
