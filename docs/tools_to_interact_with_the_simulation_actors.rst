@@ -622,7 +622,7 @@ To understand the background, physics and mathematics of this example, refer to 
 LET Actor
 ~~~~~~~~~
 
-This actor calculates the dose or track averaged linear energy transfer::
+This actor calculates the dose or track averaged linear energy transfer in units of keV/um::
 
    /gate/actor/addActor    LETActor       MyActor
    /gate/actor/MyActor/save               output/myLETactor.mhd
@@ -1066,4 +1066,18 @@ Example: To kill particles in a cone of 20 degrees around x axis::
    /gate/actor/MyActor/angleFilter/setAngle                  20
    /gate/actor/MyActor/angleFilter/setDirection              1 0 0
 
+Filter on material type
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The attached volume of the actor may contains different materials. This filter is used to select particles hit different materials::
+
+   /gate/actor/[Actor Name]/addFilter                    materialFilter
+   /gate/actor/[Actor Name]/materialFilter/addMaterial   [Material Name]
+
+Example: To kill particles in the volume MyVolume that hits Water::
+
+   /gate/actor/addActor    KillActor                         MyActor
+   /gate/actor/MyActor/save                                  MyOutputFile.txt
+   /gate/actor/MyActor/attachTo                              MyVolume
+   /gate/actor/MyActor/addFilter                             materialFilter
+   /gate/actor/MyActor/materialFilter/addMaterial            Water
