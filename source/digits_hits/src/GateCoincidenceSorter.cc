@@ -14,6 +14,7 @@ See LICENSE.md for further details
 
 #include "GateVolumeID.hh"
 #include "GateObjectStore.hh"
+#include "GateSystemListManager.hh"
 
 
 #include "GateCoincidenceSorterMessenger.hh"
@@ -665,7 +666,14 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GateDigi& digi)
 // Check whether a coincidence is invalid: ring difference or sector difference too small...
 G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, const GateDigi* digi2)
 {
-		G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
+
+	if(!GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+	{
+		// TODO GND define case if there is no system defiend!
+
+	}
+
+	G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
         blockID2 = m_system->GetMainComponentIDGND(digi2);
 
    // Modif by D. Lazaro, February 25th, 2004
@@ -721,7 +729,8 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
   G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
   //Compare the sector difference with the minimum differences for valid coincidences
-  if (sectorDifference<m_minSectorDifference && !m_forceMinSecDifferenceToZero) {
+  if (sectorDifference<m_minSectorDifference && (digi1->GetSystemID()==digi2->GetSystemID())&& !m_forceMinSecDifferenceToZero ) {
+	  //G4cout<<digi1->GetSystemID()<<" "<<digi2->GetSystemID()<<G4endl;
       	if (nVerboseLevel>1)
       	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
 	return true;
