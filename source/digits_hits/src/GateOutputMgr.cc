@@ -247,6 +247,8 @@ void GateOutputMgr::RecordEndOfRun(const G4Run* run)
     if ( m_outputModules[iMod]->IsEnabled() )
       m_outputModules[iMod]->RecordEndOfRun(run);
   }
+  m_HCIDs.clear();
+
 }
 //----------------------------------------------------------------------------------
 

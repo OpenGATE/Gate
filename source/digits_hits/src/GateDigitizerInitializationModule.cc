@@ -97,6 +97,7 @@ void GateDigitizerInitializationModule::Digitize()
     		  Digi->SetComptonVolumeName( (*inHC)[i]->GetComptonVolumeName() );
     		  Digi->SetRayleighVolumeName( (*inHC)[i]->GetRayleighVolumeName() );
     		  Digi->SetVolumeID( (*inHC)[i]->GetVolumeID() );
+    		  Digi->SetSystemID( (*inHC)[i]->GetSystemID() );
     		  Digi->SetScannerPos( (*inHC)[i]->GetScannerPos() );
     		  Digi->SetScannerRotAngle( (*inHC)[i]->GetScannerRotAngle() );
     		  #ifdef GATE_USE_OPTICAL

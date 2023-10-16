@@ -14,6 +14,7 @@ See LICENSE.md for further details
 
 #include "GateVolumeID.hh"
 #include "GateObjectStore.hh"
+#include "GateSystemListManager.hh"
 
 
 #include "GateCoincidenceSorterMessenger.hh"
@@ -39,6 +40,7 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
     m_offset(0.),
     m_offsetJitter(0.),
     m_minSectorDifference(2),
+    m_forceMinSecDifferenceToZero(false),	  
     m_multiplesPolicy(kKeepIfAllAreGoods),
     m_allDigiOpenCoincGate(false),
     m_depth(1),
@@ -160,8 +162,11 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
 
 void GateCoincidenceSorter::Digitize()
 {
-	//G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
-		//G4cout<< "m_inputName "<< m_inputName<<G4endl;
+  //	G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
+  //	G4cout<< "m_inputName "<< m_inputName<<G4endl;
+		
+
+		
   GateDigi* digi;
   std::list<GateDigi*>::iterator buf_iter;                // presort buffer iterator
 
@@ -175,7 +180,9 @@ void GateCoincidenceSorter::Digitize()
   //Input digi collection
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
   GateSinglesDigitizer* inputDigitizer;
+
   inputDigitizer = digitizerMgr->FindSinglesDigitizer(m_inputName);//m_collectionName);
+  //G4cout<<"m_inputName "<<inputDigitizer->GetName()<<G4endl;
   if (!inputDigitizer)
 	  if (digitizerMgr->m_SDlist.size()==1)
   	  {
@@ -186,6 +193,14 @@ void GateCoincidenceSorter::Digitize()
 	  else
 		  GateError("ERROR: The name _"+ m_inputName+"_ is unknown for input singles digicollection! \n");
 
+  if(!m_system)
+    {
+      //G4cout<<"Unindefined system"<<G4endl;
+      m_system=inputDigitizer->GetSystem();
+    }		
+  //G4cout<<m_system->GetName()<<G4endl;
+
+  
   G4int inputCollID=inputDigitizer->m_outputDigiCollectionID;
   //G4cout<<"inputCollID "<<inputCollID<<G4endl;
   G4DigiManager *fDM = G4DigiManager::GetDMpointer();
@@ -652,7 +667,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GateDigi& digi)
                 }
           }
 
-      }
+      }x
       else{
           G4cout<<"[GateCoincidenceSorter]: Problems in CC accpetance policy"<<G4endl;
       }
@@ -664,7 +679,13 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GateDigi& digi)
 // Check whether a coincidence is invalid: ring difference or sector difference too small...
 G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, const GateDigi* digi2)
 {
-		G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
+
+  	if(!GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+	{
+		// TODO GND define case if there is no system defiend!
+
+	}
+	G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
         blockID2 = m_system->GetMainComponentIDGND(digi2);
 
    // Modif by D. Lazaro, February 25th, 2004
@@ -672,7 +693,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
   // the geometry construction of the scanner (spherical for system ecatAccel and cylindrical
   // for other systems as Ecat, CPET and cylindricalPET)
 
-  const G4String name = m_system->GetName();
+        const G4String name = m_system->GetName();
   G4String nameComp = "systems/ecatAccel";
   //G4cout << "NAME OF THE SYSTEM: " << name << "; NAME TO COMPARE: " << nameComp << Gateendl;
   int comp = strcmp(name,nameComp);
@@ -693,9 +714,10 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
     if (sectorDiff2<0)
       sectorDiff2 += sectorNumber;
     G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
-
+    //G4cout<<sectorDifference<<G4endl;
+    
     //Compare the sector difference with the minimum differences for valid coincidences
-    if (sectorDifference<m_minSectorDifference) {
+    if (sectorDifference<m_minSectorDifference && !m_forceMinSecDifferenceToZero) {
       if (nVerboseLevel>1)
         G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbor blocks --> refused\n";
       return true;
@@ -719,14 +741,15 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
   G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
   //Compare the sector difference with the minimum differences for valid coincidences
-  if (sectorDifference<m_minSectorDifference) {
+  if (sectorDifference<m_minSectorDifference && (digi1->GetSystemID()==digi2->GetSystemID())&& !m_forceMinSecDifferenceToZero ) {
+	  //G4cout<<digi1->GetSystemID()<<" "<<digi2->GetSystemID()<<G4endl;
       	if (nVerboseLevel>1)
       	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
 	return true;
-  }
+	}
 
   return false;
-  }
+   }
 
 }
 //------------------------------------------------------------------------------------------------------

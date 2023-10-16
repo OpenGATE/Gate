@@ -99,8 +99,15 @@ public:
     //! Set the minimum sector difference for valid coincidences
     inline void SetMinSectorDifference(G4int diff)
     { m_minSectorDifference = diff; }
+  
+   //! Get the force to 0 minimum sector difference for valid coincidences
+    inline G4bool GetForcedTo0MinSectorDifference() const
+    { return m_forceMinSecDifferenceToZero; }
+    //! Set the force to 0 minimum sector difference for valid coincidences
+    inline void SetForcedTo0MinSectorDifference(G4bool diff)
+    { m_forceMinSecDifferenceToZero = diff; }
 
-    //! Get the depth of the system-level for coincidences
+  //! Get the depth of the system-level for coincidences
     inline G4int GetDepth() const
     { return m_depth; }
     //! Set the depth of the system-level for coincidences
@@ -192,10 +199,12 @@ protected:
 private:
     //! \name Work storage variable
     //@{
-
+    G4bool m_forceMinSecDifferenceToZero;
+ 
     std::list<GateDigi*> m_presortBuffer;      // incoming digis are presorted and buffered
     G4int                 m_presortBufferSize;
     G4bool                m_presortWarning;     // avoid repeat warnings
+  
     bool                m_CCSorter;     // compton camera sorter
     G4bool             m_triggerOnlyByAbsorber; //! Is the window only open by digis generated in the absorber ?
     G4String      m_absorberSD;// absorber "SD' volume name CC

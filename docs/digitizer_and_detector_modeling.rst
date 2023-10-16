@@ -1251,17 +1251,17 @@ Example::
    6 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 
    7
    8 # E N E R G Y B L U R R I N G  
-   9 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert blurring  
-   10 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setResolution 0.26  
-   11 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setEnergyOfReference 511. keV 
+   9 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyResolution  
+   10 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/fwhm 0.26  
+   11 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/energyOfReference 511. keV 
    12 
    13 # L O W E N E R G Y C U T
-   14 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert thresholder
-   15 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/thresholder/setThreshold 50. keV
+   14 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyFraming
+   15 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyFraming/setMin 50. keV
    16
    17 /gate/digitizerMgr/name cutLowSingles
    18 /gate/digitizerMgr/insert SinglesDigitizer
-   19 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/setInputName Singles
+   19 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/setInputCollection Singles
    20 
    21 # N O I S E
    22 
@@ -1275,8 +1275,8 @@ Example::
    30 /gate/distributions/dt_distrib/setLambda 7.57 mus  
    31 
    32 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert noise (NOT YET IMPLEMENTED)
-   33 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setDeltaTDistributions dt_distrib  
-   34 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setEnergyDistributions energy_distrib
+   33 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise/setDeltaTDistributions dt_distrib  
+   34 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise/setEnergyDistributions energy_distrib
    35
    36  # D E A D T I M E  
    37 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert deadtime  
@@ -1287,7 +1287,8 @@ Example::
    42 # H I G H E N E R G Y C U T  
    43 /gate/digitizerMgr/name cutSingles  
    44 /gate/digitizerMgr/insert SinglesDigitizer  
-   45 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/setInputName cutLowSingles  
+      /gate/digitizerMgr/chooseSD crystal 
+   45 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/setInputCollection cutLowSingles  
    46
    47 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/insert energyFraming  
    48 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/energyFraming/setMin 350. keV  
@@ -1307,14 +1308,14 @@ Example::
    62
    63 
    64 # C O I N C I S O R T E R 65 
-   65 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputName cutSingles 
+   65 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection cutSingles 
    66 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setOffset 0. ns 
    67 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setWindow 24. ns 
    68 /gate/digitizerMgr/CoincidenceSorter/Coincidences/minSectorDifference 3  
    69 
    70 /gate/digitizerMgr/name delayedCoincidences  
    71 /gate/digitizerMgr/insert coincidenceSorter  
-   72 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setInputName cutSingles  
+   72 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setInputCollection cutSingles  
    73 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setOffset 100. ns  
    74 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setWindow 24. ns  
    75 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/minSectorDifference 3  
