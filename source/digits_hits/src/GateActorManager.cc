@@ -13,6 +13,7 @@
 #include "GateActorManager.hh"
 #include "GateVActor.hh"
 #include "GateMultiSensitiveDetector.hh"
+#include "GateEmptySD.hh"
 
 //-----------------------------------------------------------------------------
 GateActorManager::GateActorManager()
@@ -311,7 +312,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
       G4String detectorName2 = "MSD_"+ num.str();
 
       // Remove attached SD by replacing with a deactivated clone SD
-      G4VSensitiveDetector* replacementSD = volume->GetLogicalVolume()->GetSensitiveDetector()->Clone();
+      G4VSensitiveDetector* replacementSD = new GateEmptySD(volume->GetLogicalVolume()->GetSensitiveDetector()->GetName());
       G4SDManager::GetSDMpointer()->AddNewDetector(replacementSD);
       replacementSD->Activate(false);
 
