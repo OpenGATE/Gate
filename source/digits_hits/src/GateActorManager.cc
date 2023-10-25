@@ -13,7 +13,6 @@
 #include "GateActorManager.hh"
 #include "GateVActor.hh"
 #include "GateMultiSensitiveDetector.hh"
-#include "GateEmptySD.hh"
 
 //-----------------------------------------------------------------------------
 GateActorManager::GateActorManager()
