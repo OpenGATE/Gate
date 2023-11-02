@@ -920,7 +920,7 @@ MuMapActor
 In PET recon, it need MuMap to attenuation correction, people can use MuMapActor to get MuMap and sourceMap. Note: voxel Mu Uint(default) is cm-1::
 
    /gate/actor/addActor MuMapActor getMuMap
-   /gatt/actor/getMuMap/attachTo world
+   /gate/actor/getMuMap/attachTo world
    /gate/actor/getMuMap/save myMapFileName.mhd
    /gate/actor/getMuMap/setPosition 0 0 0 mm
    /gate/actor/getMuMap/setVoxelSize 2 2 2 mm
