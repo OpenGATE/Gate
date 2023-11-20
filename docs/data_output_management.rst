@@ -127,8 +127,8 @@ The system is set as a cylindricalPET system. Each line is a coincidence created
 * Column 8 : Deposited energy (first single) (8-bytes, G4double) **(8-bytes, G4double)**
 * Column 9 to 11 : XYZ position in the world referential (first single) **(8-bytes, G4double)**
 * Column 12 to 17 : volume IDs* (first single)
-* For binary : Column 12 and 13 **(8-bytes, G4double)**
-* For binary : Column 14 **(8-bytes, G4double)**
+* For binary : Column 12 and 13 **(4-bytes, G4int)**
+* For binary : Column 14 **(4-bytes, G4int)**
 * For binary : Column 15 to 17 **(4-bytes, G4int)**
 * Column 18 : Number of Compton interactions in phantoms before reaching the detector (first single) **(4-bytes, G4int)**
 * Column 19 : Number of Compton interactions in detectors before reaching the detector (first single) **(4-bytes, G4int)**
@@ -144,8 +144,8 @@ The system is set as a cylindricalPET system. Each line is a coincidence created
 * Column 31 : Energy deposited (second single) **(8-bytes, G4double)**
 * Column 32 to 34 : XYZ position in the world referential (second single) **(8-bytes, G4double)**
 * Column 35 to 40 : volume IDs
-* For binary : Column 35 and 36 **(8-bytes, G4double)**
-* For binary : Column 37 **(8-bytes, G4double)**
+* For binary : Column 35 and 36 **(4-bytes, G4int)**
+* For binary : Column 37 **(4-bytes, G4int)**
 * For binary : Column 38 to 40 **(4-bytes, G4int)**
 
 The number of different volumeIDs depends on the complexity of the system geometry (6 IDs for cylindricalPET system, 3 for ECAT system, ...). Then, the number of column of your ASCII file is not constant, but system-dependent.
