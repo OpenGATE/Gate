@@ -543,7 +543,7 @@ namespace GateFixedForcedDetectionFunctor
                              const double & itkNotUsed(rayCastValue),
                              const VectorType & stepInMM,
                              const VectorType & itkNotUsed(source),
-                             const VectorType & sourceToPixel,
+                             const VectorType & pixelToSource,
                              const VectorType & nearestPoint,
                              const VectorType & farthestPoint)
         {
@@ -559,7 +559,7 @@ namespace GateFixedForcedDetectionFunctor
         /* The last material is the world material. One must fill the weight with
          the length from source to nearest point and farthest point to pixel
          point. */
-        VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
+        VectorType worldVector = farthestPoint - nearestPoint - pixelToSource;
         for (int i = 0; i < 3; i++)
           {
           worldVector[i] *= m_VolumeSpacing[i];
@@ -651,14 +651,14 @@ namespace GateFixedForcedDetectionFunctor
                              const double &itkNotUsed(rayCastValue),
                              const VectorType &stepInMM,
                              const VectorType &itkNotUsed(source),
-                             const VectorType &sourceToPixel,
+                             const VectorType &pixelToSource,
                              const VectorType &nearestPoint,
                              const VectorType &farthestPoint)
         {
         /* Compute ray length in world material
          This is used to compute the length in world as well as the direction
          of the ray in mm. */
-        VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
+        VectorType worldVector = farthestPoint - nearestPoint - pixelToSource;
         for (int i = 0; i < 3; i++)
           {
           worldVector[i] *= m_VolumeSpacing[i];
@@ -710,7 +710,7 @@ namespace GateFixedForcedDetectionFunctor
 
         /* Final computation */
         // double weight = std::exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy);
-        double weight = std::exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
+        double weight = std::exp(-rayIntegral) * DCScompton * GetSolidAngle(pixelToSource);
         if (m_generatePhotons)
           {
           //Accumulate(threadId, output, weight, m_Energy);
@@ -730,7 +730,7 @@ namespace GateFixedForcedDetectionFunctor
           for (int i = 0; i < 3; i++)
             {
             photonDirection[i] = worldVector[i] / worldVectorNorm;
-            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            photonPosition[i] = -pixelToSource[i] * m_VolumeSpacing[i];
             }
           SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, energy);
           }
@@ -844,12 +844,12 @@ namespace GateFixedForcedDetectionFunctor
                              const double & itkNotUsed(rayCastValue),
                              const VectorType & stepInMM,
                              const VectorType & itkNotUsed(source),
-                             const VectorType & sourceToPixel,
+                             const VectorType & pixelToSource,
                              const VectorType & nearestPoint,
                              const VectorType & farthestPoint)
         {
         /* Compute ray length in world material. This is used to compute the length in world as well as the direction of the ray in mm. */
-        VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
+        VectorType worldVector = farthestPoint - nearestPoint - pixelToSource;
         for (int i = 0; i < 3; i++)
           {
           worldVector[i] *= m_VolumeSpacing[i];
@@ -886,7 +886,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = std::exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
+        double weight = std::exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(pixelToSource);
         if (m_generatePhotons)
           {
           VectorType photonDirection;
@@ -905,7 +905,7 @@ namespace GateFixedForcedDetectionFunctor
           for (int i = 0; i < 3; i++)
             {
             photonDirection[i] = worldVector[i] / worldVectorNorm;
-            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            photonPosition[i] = -pixelToSource[i] * m_VolumeSpacing[i];
             }
           SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
@@ -989,14 +989,14 @@ namespace GateFixedForcedDetectionFunctor
                              const double &itkNotUsed(rayCastValue),
                              const VectorType & stepInMM,
                              const VectorType & itkNotUsed(source),
-                             const VectorType & sourceToPixel,
+                             const VectorType & pixelToSource,
                              const VectorType & nearestPoint,
                              const VectorType & farthestPoint)
         {
         /* Compute ray length in world material
          This is used to compute the length in world as well as the direction
          of the ray in mm. */
-        VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
+        VectorType worldVector = farthestPoint - nearestPoint - pixelToSource;
         for (int i = 0; i < 3; i++)
           {
           worldVector[i] *= m_VolumeSpacing[i];
@@ -1023,7 +1023,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(pixelToSource)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
           VectorType photonDirection;
@@ -1042,7 +1042,7 @@ namespace GateFixedForcedDetectionFunctor
           for (int i = 0; i < 3; i++)
             {
             photonDirection[i] = worldVector[i] / worldVectorNorm;
-            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            photonPosition[i] = -pixelToSource[i] * m_VolumeSpacing[i];
             }
           SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
@@ -1095,14 +1095,14 @@ namespace GateFixedForcedDetectionFunctor
                              const double & itkNotUsed(rayCastValue),
                              const VectorType & stepInMM,
                              const VectorType & itkNotUsed(source),
-                             const VectorType & sourceToPixel,
+                             const VectorType & pixelToSource,
                              const VectorType & nearestPoint,
                              const VectorType & farthestPoint)
         {
         /* Compute ray length in world material
          This is used to compute the length in world as well as the direction
          of the ray in mm. */
-        VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
+        VectorType worldVector = farthestPoint - nearestPoint - pixelToSource;
         for (int i = 0; i < 3; i++)
           {
           worldVector[i] *= m_VolumeSpacing[i];
@@ -1136,7 +1136,7 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+        double weight = m_Weight * std::exp(-rayIntegral)*GetSolidAngle(pixelToSource)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
           VectorType photonDirection;
@@ -1155,7 +1155,7 @@ namespace GateFixedForcedDetectionFunctor
           for (int i = 0; i < 3; i++)
             {
             photonDirection[i] = worldVector[i] / worldVectorNorm;
-            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            photonPosition[i] = -pixelToSource[i] * m_VolumeSpacing[i];
             }
           SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
