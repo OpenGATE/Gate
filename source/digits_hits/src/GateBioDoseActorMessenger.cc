@@ -23,6 +23,10 @@ GateBioDoseActorMessenger::GateBioDoseActorMessenger(GateBioDoseActor* sensor):
 void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	G4String n;
 
+	n = base + "/setDoseScaleFactor";
+	pDoseScaleFactorCmd = std::make_unique<G4UIcmdWithADouble>(n, this);
+	pDoseScaleFactorCmd->SetGuidance("Set (physical) dose scale factor (default: 1.0)");
+
 	n = base + "/setAlphaRef";
 	pAlphaRefCmd = std::make_unique<G4UIcmdWithADouble>(n, this);
 	pAlphaRefCmd->SetGuidance("See [...] for values from publications");
@@ -60,18 +64,23 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	pEnableAlphaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableAlphaMixCmd->SetGuidance("Enable alpha mix output");
 
-	n = base + "/enableBetaMix";
-	pEnableBetaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
-	pEnableBetaMixCmd->SetGuidance("Enable beta mix output");
+	n = base + "/enableSqrtBetaMix";
+	pEnableSqrtBetaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableSqrtBetaMixCmd->SetGuidance("Enable sqrt(beta) mix output");
 
 	n = base + "/enableRBE";
 	pEnableRBECmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableRBECmd->SetGuidance("Enable RBE output");
+
+	n = base + "/enableUncertainty";
+	pEnableUncertaintyCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableUncertaintyCmd->SetGuidance("Enable uncertainty outputs");
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
-	if(cmd == pAlphaRefCmd.get())								pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(value));
+	if(cmd == pDoseScaleFactorCmd.get())		    pBioDoseActor->SetDoseScaleFactor(pDoseScaleFactorCmd->GetNewDoubleValue(value));
+	else if(cmd == pAlphaRefCmd.get())					pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(value));
 	else if(cmd == pBetaRefCmd.get())						pBioDoseActor->SetBetaRef(pBetaRefCmd->GetNewDoubleValue(value));
 	else if(cmd == pCellLineCmd.get())          pBioDoseActor->SetCellLine(value);
 	else if(cmd == pBioPhysicalModelCmd.get())  pBioDoseActor->SetBioPhysicalModel(value);
@@ -80,8 +89,9 @@ void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
 	else if(cmd == pEnableDoseCmd.get())        pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableBioDoseCmd.get())     pBioDoseActor->SetEnableBioDose(pEnableBioDoseCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableAlphaMixCmd.get())    pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableBetaMixCmd.get())     pBioDoseActor->SetEnableBetaMix(pEnableBetaMixCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableSqrtBetaMixCmd.get()) pBioDoseActor->SetEnableSqrtBetaMix(pEnableSqrtBetaMixCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableRBECmd.get())         pBioDoseActor->SetEnableRBE(pEnableRBECmd->GetNewBoolValue(value));
+	else if(cmd == pEnableUncertaintyCmd.get()) pBioDoseActor->SetEnableUncertainties(pEnableUncertaintyCmd->GetNewBoolValue(value));
 
 	GateImageActorMessenger::SetNewValue(cmd, value);
 }

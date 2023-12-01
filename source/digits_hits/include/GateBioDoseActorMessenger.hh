@@ -28,9 +28,10 @@ public:
 	void BuildCommands(G4String base) override;
 	void SetNewValue(G4UIcommand*, G4String) override;
 
-protected:
+private:
 	GateBioDoseActor* pBioDoseActor;
 
+	std::unique_ptr<G4UIcmdWithADouble> pDoseScaleFactorCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pAlphaRefCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pBetaRefCmd;
 	std::unique_ptr<G4UIcmdWithAString> pCellLineCmd;
@@ -41,8 +42,9 @@ protected:
 	std::unique_ptr<G4UIcmdWithABool>   pEnableDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableBioDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableAlphaMixCmd;
-	std::unique_ptr<G4UIcmdWithABool>   pEnableBetaMixCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableSqrtBetaMixCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableRBECmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableUncertaintyCmd;
 };
 
 #endif

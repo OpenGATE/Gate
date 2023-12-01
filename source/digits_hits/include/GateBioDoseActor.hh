@@ -41,6 +41,7 @@ public:
 
 	using VoxelIndex = int;
 	using DepositedMap = std::map<VoxelIndex, Deposited>;
+	using VoxelIndices = std::set<VoxelIndex>;
 
 	using Fragment = std::pair<int, double>;
 	using AlphaBetaInterpolTable = std::map<Fragment, AlphaBetaCoefficients>;
@@ -48,8 +49,6 @@ public:
 	using EnergyMaxForZ = std::map<int, double>;
 
 public:
-	~GateBioDoseActor() override = default;
-
 	FCT_FOR_AUTO_CREATOR_ACTOR(GateBioDoseActor)
 
 	//-----------------------------------------------------------------------------
@@ -60,6 +59,7 @@ public:
 	void BeginOfRunAction(const G4Run* r) override;
 	void EndOfRunAction(const G4Run* r) override;
 	void BeginOfEventAction(const G4Event* event) override;
+	void EndOfEventAction(const G4Event* event) override;
 	void UserSteppingActionInVoxel(const int index, const G4Step* step) override;
 
 	// Do nothing but needed because pure virtual
@@ -75,27 +75,27 @@ public:
 	void EndOfEvent(G4HCofThisEvent*) override {}
 
 	// Messenger
+	void SetDoseScaleFactor(G4double doseScaleFactor) { _doseScaleFactor = doseScaleFactor; }
 	void SetAlphaRef(G4double alphaRef) { _alphaRef = alphaRef; }
 	void SetBetaRef(G4double betaRef) { _betaRef = betaRef; }
-	void SetCellLine(G4String s) { _cellLine = s; }
-	void SetBioPhysicalModel(G4String s) { _bioPhysicalModel = s; }
-	void SetSOBPWeight(G4double d) { _SOBPWeight = d; }
+	void SetCellLine(G4String s) { _cellLine = std::move(s); }
+	void SetBioPhysicalModel(G4String s) { _bioPhysicalModel = std::move(s); }
+	void SetSOBPWeight(G4double d) { _sobpWeight = d; }
 
 	void SetEnableEdep(bool e) { _enableEdep = e; }
 	void SetEnableDose(bool e) { _enableDose = e; }
 	void SetEnableBioDose(bool e) { _enableBioDose = e; }
 	void SetEnableAlphaMix(bool e) { _enableAlphaMix = e; }
-	void SetEnableBetaMix(bool e) { _enableBetaMix = e; }
+	void SetEnableSqrtBetaMix(bool e) { _enableSqrtBetaMix = e; }
 	void SetEnableRBE(bool e) { _enableRBE = e; }
+	void SetEnableUncertainties(bool e) { _enableUncertainties = e; }
 
 	// Input database
 	void BuildDatabase();
-	Coefficients Interpol(double x1, double x2, double y1, double y2);
+	static Coefficients Interpol(double x1, double x2, double y1, double y2);
 
 protected:
 	GateBioDoseActor(G4String name, G4int depth = 0);
-
-	void ApplyDeposit(int index, DepositedMap::iterator& it, double energyDep);
 
 private:
 	//Counters
@@ -109,32 +109,52 @@ private:
 	G4String _dataBase;
 	G4String _cellLine;
 	G4String _bioPhysicalModel;
-	double _alphaRef, _betaRef; //manual implanted
+	double _alphaRef, _betaRef;
+	double _doseScaleFactor = 1.;
 
-	G4double _SOBPWeight;
+	G4double _sobpWeight;
 
 	// Maps
 	DepositedMap _depositedMap;
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
+	VoxelIndices _eventVoxelIndices;
+
 	// Images
+	GateImageWithStatistic _eventCountImage;
+
 	GateImageWithStatistic _bioDoseImage;
 	GateImageWithStatistic _edepImage;
 	GateImageWithStatistic _doseImage;
 	GateImageWithStatistic _alphaMixImage;
-	GateImageWithStatistic _betaMixImage;
-	GateImageWithStatistic _RBEImage;
+	GateImageWithStatistic _sqrtBetaMixImage;
+	GateImageWithStatistic _rbeImage;
+
+	GateImageWithStatistic _biodoseUncertaintyImage;
+	GateImageWithStatistic _eventEdepImage;
+	GateImageWithStatistic _eventDoseImage;
+	GateImageWithStatistic _squaredDoseImage;
+	GateImageWithStatistic _eventAlphaImage;
+	GateImageWithStatistic _squaredAlphaMixImage;
+	GateImageWithStatistic _eventSqrtBetaImage;
+	GateImageWithStatistic _squaredSqrtBetaMixImage;
+
+	GateImageWithStatistic _alphaMixSqrtBetaMixImage;
+	GateImageWithStatistic _alphaMixDoseImage;
+	GateImageWithStatistic _sqrtBetaMixDoseImage;
 
 	// Outputs
 	bool _enableEdep;
 	bool _enableDose;
 	bool _enableBioDose;
 	bool _enableAlphaMix;
-	bool _enableBetaMix;
+	bool _enableSqrtBetaMix;
 	bool _enableRBE;
+	bool _enableUncertainties;
 
-	int _eventCount = 0;
-	int _eventWithKnownIonCount = 0;
+	// Extra information
+	int _stepCount = 0;
+	int _stepWithKnownIonCount = 0;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(BioDoseActor, GateBioDoseActor)
