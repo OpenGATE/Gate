@@ -42,8 +42,8 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #include "GateNoise.hh"
 #include "GateDigitizerMerger.hh"
+#include "GateBuffer.hh"
 #include "GateIntrinsicResolution.hh"
-
 
 #include "GateDoIModels.hh"
 /*
@@ -114,7 +114,8 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution doIModels";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer doIModels";
+
 
    return theList;
 }
@@ -202,6 +203,13 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
          }
+
+  else if (childTypeName=="buffer")
+           {
+         	  newDM = new GateBuffer(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+           }
+
   else if (childTypeName=="intrinsicResolution")
          {
        	  newDM = new GateIntrinsicResolution(m_digitizer, DMname);
