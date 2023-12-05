@@ -809,22 +809,11 @@ Thus, the output of *Singles_crystal2* should be used in the following analysis 
 
    /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal2
 
-
-
-    
-
-
-
-
-Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Blurring: Intrinsic resolution blurring with crystals of different compositions
+Intrinsic resolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*(Previously blurring with crystals of different compositions, now includes GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency)*
 
-
-
-This blurring pulse-processor simulates a local Gaussian blurring of the energy spectrum (different for different crystals) based on the following model:
+This resolution simulates a Gaussian blurring of the energy spectrum based on the following model:
 
 :math:`R=\sqrt{{2.35}^2\cdot\frac{1+\bar{\nu}}{{\bar{N}}_{ph}\cdot \bar{\epsilon} \cdot \bar{p}} +{R_i}^2}`
 
@@ -834,7 +823,11 @@ where :math:`N_{ph}=LY\cdot E` and :math:`LY`, :math:`\bar p` and :math:`\bar \e
 
 If the intrinsic resolutions, :math:`( R_i )`, of the individual crystals are not defined, then they are set to one.
 
-To use this *digitizer* module properly, several modules must be set first. These digitizer modules are **GateLightYield**, **GateTransferEfficiency**, and **GateQuantumEfficiency**. The light yield pulse-processor simulates the crystal light yield. Each crystal must be given the correct light yield. This module converts the *pulse* energy into the number of scintillation photons emitted, :math:`N_{ph}`. The transfer efficiency pulse-processor simulates the transfer efficiencies of the light photons in each crystal. This digitizer reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1. The quantum efficiency pulse-processor simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
+LightYield: It converts the *digi* energy into the number of scintillation photons emitted, :math:`N_{ph}`.
+
+TransferEfficiency: the transfer efficiencies of the light photons in each crystal. It reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1.
+
+QuantumEfficiency: simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
 
 The command lines are illustrated using an example of a phoswich module made of two layers of different crystals. One crystal has a light yield of 27000 photons per MeV (LSO crystal), a transfer efficiency of 28%, and an intrinsic resolution of 8.8%. The other crystal has a light yield of 8500 photons per MeV (LuYAP crystal), a transfer efficiency of 24% and an intrinsic resolution of 5.3%
 
@@ -858,33 +851,21 @@ In the case of a *cylindricalPET* system, the construction of the crystal geomet
    # In this example the phoswich module is represented by the *crystal* volume and is made of two different material layers. 
    # To apply the resolution blurring of equation , the parameters discussed above must be defined for each layer 
    #(i.e. Light Yield, Transfer, Intrinsic Resolution, and the Quantum Efficiency).
-   # DEFINE TRANSFER EFFICIENCY FOR EACH LAYER 
-   /gate/digitizer/Singles/insert transferEfficiency 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/transferEfficiency/LSOlayer/setTECoef 0.28 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/transferEfficiency/LuYAPlayer/setTECoef 0.24
+   # DEFINE INTRINSIC RESOLUTION 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.28 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 27000 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.24
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 8500 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
    
-   # DEFINE LIGHT YIELD FOR EACH LAYER 
-   /gate/digitizer/Singles/insert lightYield 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/lightYield/LSOlayer/setLightOutput 27000 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/lightYield/LuYAPlayer/setLightOutput 8500
-   
-   # DEFINE INTRINSIC RESOLUTION FOR EACH LAYER 
-   /gate/digitizer/Singles/insert intrinsicResolutionBlurring 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setIntrinsicResolution 0.088 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setEnergyOfReference 511 keV 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setIntrinsicResolution 0.053 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setEnergyOfReference 511 keV
-   
-   # DEFINE QUANTUM EFFICIENCY OF THE PHOTODETECTOR 
-   /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/setUniqueQE 0.1 
 
 Note: A complete example of a phoswich module can be in the PET benchmark. 
 
@@ -895,29 +876,15 @@ With the previous commands, the same quantum efficiency will be applied to all t
 To set multiple quantum efficiencies using files (*fileName1*, *fileName2*, ... for each of the different modules), the following commands can be used::
 
    /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName1 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName2  
 
 If the *crystal* volume is a daughter of a *module* volume which is an array of 8 x 8 crystals, the file *fileName1* will contain 64 values of quantum efficiency. If several files are given (in this example two files), the program will choose randomly between theses files for each *module*.
 
-**Important note**
+Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After the introduction of the lightYield  (LY), transferEfficiency :math:`(\bar{p})` and quantumEfficiency} :math:`(\bar{\epsilon})` modules, the energy variable of a *pulse* is not in energy unit (MeV) but in number of photoelectrons :math:`N_{pe}`.
 
-:math:`N_{phe}={N}_{ph} \cdot \bar{\epsilon} \cdot \bar{p} = LY \cdot E \cdot \bar{\epsilon} \cdot \bar{p}`
-
-In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in :ref:`thresholder_upholder-label`. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
-
-Calibration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The Calibration module of the pulse-processor models a calibration between :math:`N_{phe}` and :math:`Energy`. This is useful when using the class(es) GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency. In addition, a user specified calibration factor can be used. To set a calibration factor on the energy, use the following commands::
-
-   /gate/digitizer/Singles/insert calibration 
-   /gate/digitizer/Singles/setCalibration VALUE 
-
-If the calibration digitizer is used without any value, it will correct the energy as a function of values used in GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency.
 
 Crosstalk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
