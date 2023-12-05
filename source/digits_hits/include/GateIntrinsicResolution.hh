@@ -51,6 +51,9 @@ public:
   void SetEref(const G4double& value ){ m_Eref=value;} ;
   void SetLightOutput(const G4double& value ){ m_LY=value;} ;
   void SetTransferEff(const G4double& value ){ m_TE=value;} ;
+  void SetEdgesFraction (G4double val)       { m_edgesCrosstalkFraction = val;  }
+  void SetCornersFraction (G4double val)     { m_cornersCrosstalkFraction = val;  }
+
 
   //! Allow to use file(s) as lookout table for quantum efficiency
   void UseFile(G4String aFile);
@@ -70,6 +73,7 @@ protected:
   G4double   m_LY; //Light Yield
   G4double   m_TE; //Transfer efficiency
   G4double   m_QE; //Quantum efficiency
+  G4double m_XtalkpCent;
   G4bool isFirstEvent;
 
   G4double m_uniqueQE;    //!< Value of the quantum efficiency if it's unique
@@ -93,6 +97,8 @@ protected:
   G4double** m_table;     //!< Lookout table for the quantum efficiency of all channels
   G4String m_volumeName;  //!< Name of the module
   G4int m_testVolume;     //!< equal to 1 if the volume name is valid, 0 else
+  G4double m_edgesCrosstalkFraction, m_cornersCrosstalkFraction; //!< Coefficient which connects energy to the resolution
+
 
 private:
   GateDigi* m_outputDigi;
