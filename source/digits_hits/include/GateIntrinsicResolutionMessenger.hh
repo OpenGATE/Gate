@@ -53,7 +53,7 @@ private:
   G4UIcmdWithADouble          *coeffTECmd;
   G4UIcmdWithAString   *newFileQECmd;
   G4UIcmdWithADouble   *uniqueQECmd;
-
+  G4UIcmdWithADouble   *varianceCmd;
 
 
 };

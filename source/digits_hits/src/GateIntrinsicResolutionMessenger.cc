@@ -58,6 +58,11 @@ GateIntrinsicResolutionMessenger::GateIntrinsicResolutionMessenger (GateIntrinsi
     cmdName = GetDirectoryName() + "setUniqueQE";
     uniqueQECmd = new G4UIcmdWithADouble(cmdName,this);
     uniqueQECmd->SetGuidance("Set an unique quantum efficiency");
+
+    cmdName = GetDirectoryName() + "setGainVariance";
+    varianceCmd = new G4UIcmdWithADouble(cmdName,this);
+    varianceCmd->SetGuidance("Set an unique quantum efficiency");
+    
 }
 
 
@@ -69,6 +74,7 @@ GateIntrinsicResolutionMessenger::~GateIntrinsicResolutionMessenger()
 	delete  coeffTECmd;
 	delete  newFileQECmd;
 	delete  uniqueQECmd;
+	delete  varianceCmd;
 }
 
 
@@ -98,7 +104,10 @@ void GateIntrinsicResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4Stri
 	    {
 	    	m_IntrinsicResolution->SetUniqueQE(uniqueQECmd->GetNewDoubleValue(newValue));
 	    }
-
+	    else if ( aCommand==varianceCmd )
+	    {
+	    	m_IntrinsicResolution->SetVariance(varianceCmd->GetNewDoubleValue(newValue));
+	    }
 	    else
 	    {
 	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
