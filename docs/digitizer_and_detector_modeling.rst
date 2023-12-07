@@ -875,11 +875,27 @@ With the previous commands, the same quantum efficiency will be applied to all t
 
 To set multiple quantum efficiencies using files (*fileName1*, *fileName2*, ... for each of the different modules), the following commands can be used::
 
-   /gate/digitizer/Singles/insert quantumEfficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert quantumEfficiency 
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName1 
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName2  
 
 If the *crystal* volume is a daughter of a *module* volume which is an array of 8 x 8 crystals, the file *fileName1* will contain 64 values of quantum efficiency. If several files are given (in this example two files), the program will choose randomly between theses files for each *module*.
+
+
+Memory buffers and bandwidth
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To mimic the effect of limited transfer rate, a module models the data loss due to an overflow of a memory buffer, read periodically, following a given reading frequency. This module uses two parameters, the reading frequency :math:`\nu ` and the memory depth :math:`D` . Moreover, two reading methods can be modelled, that is, in an event per event basis (an event is read at each reading clock tick), or in a full buffer reading basic (at each reading clock tick, the whole buffer is emptied out). In the first reading method, the data rate is then limited to :math:`\nu` , while in the second method, the data rate is limited to :math:`D\cdot\nu`. When the size limit is reached, any new pulse is rejected, until the next reading clock tick arrival which frees a part of the buffer. In such a case, a non null buffer depth allows to manage a local rise of the input data flow. To specify a buffer, read at 10 MHz, with a buffer depth of 64 events, in a mode where the whole buffer is read in one clock tick, one can use::
+
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert buffer 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setBufferSize 64 B 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setReadFrequency 10 MHz 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setMode 1 
+
+The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
+
+
+
 
 Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -912,20 +928,6 @@ In PET analysis, coincidence events provide the lines of response (LOR) needed f
    /gate/output/sinogram/setTangCrystalBlurring Your_Value_1 mm 
    /gate/output/sinogram/setAxialCrystalBlurring Your_Value_2 mm
 
-
-
-
-Memory buffers and bandwidth
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To mimic the effect of limited transfer rate, a module models the data loss due to an overflow of a memory buffer, read periodically, following a given reading frequency. This module uses two parameters, the reading frequency :math:`\nu ` and the memory depth :math:`D` . Moreover, two reading methods can be modelled, that is, in an event per event basis (an event is read at each reading clock tick), or in a full buffer reading basic (at each reading clock tick, the whole buffer is emptied out). In the first reading method, the data rate is then limited to :math:`\nu` , while in the second method, the data rate is limited to :math:`D\cdot\nu`. When the size limit is reached, any new pulse is rejected, until the next reading clock tick arrival which frees a part of the buffer. In such a case, a non null buffer depth allows to manage a local rise of the input data flow. To specify a buffer, read at 10 MHz, with a buffer depth of 64 events, in a mode where the whole buffer is read in one clock tick, one can use::
-
-   /gate/digitizer/Your_Single_chain/insert buffer 
-   /gate/digitizer/Your_Single_chain/buffer/setBufferSize 64 B 
-   /gate/digitizer/Your_Single_chain/buffer/setReadFrequency 10 MHz 
-   /gate/digitizer/Your_Single_chain/buffer/setMode 1 
-
-The chain *Your_Single_chain* can be the default chain *Singles* or any of single chain that the user has defined. The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
 
 
 

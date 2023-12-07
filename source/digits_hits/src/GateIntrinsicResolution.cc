@@ -39,6 +39,8 @@
 #include "GateDigi.hh"
 
 #include "GateDigitizerMgr.hh"
+#include "GateCrosstalk.hh"
+
 
 #include "G4SystemOfUnits.hh"
 #include "G4EventManager.hh"
@@ -58,7 +60,9 @@ GateIntrinsicResolution::GateIntrinsicResolution(GateSinglesDigitizer *digitizer
    m_LY(1),
    m_TE(1),
    m_QE(1),
-   m_variance(0.1),
+  m_variance(0.1),
+   m_edgesCrosstalkFraction(0),
+   m_cornersCrosstalkFraction(0),
    isFirstEvent(true),
    m_outputDigi(0),
    m_OutputDigiCollection(0),
@@ -84,7 +88,6 @@ GateIntrinsicResolution::~GateIntrinsicResolution()
 
 void GateIntrinsicResolution::Digitize()
 {
-	G4double XtalkpCent;
 
 	if(isFirstEvent)
 	{
@@ -105,22 +108,7 @@ void GateIntrinsicResolution::Digitize()
 	 // For QE (from QE class)
      CheckVolumeName(m_digitizer->GetSD()->GetName());
      CreateTable();
-
-	/* XtalkpCent = (GateCrosstalk::GetInstance(NULL,"name",0.,0.)) ?
-	 GateCrosstalk::GetInstance(NULL,"name",0.,0.)->GetXTPerCent() : 1.;
-
-	 if (GateQuantumEfficiency::GetInstance(NULL,"name"))
-	 		  {
-	 		    m_volumeName = GateQuantumEfficiency::GetInstance(NULL,"name")->GetVolumeName();
-	 		    FindInputPulseParams(&inputPulse->GetVolumeID());
-	 		    G4int level2No = GateQuantumEfficiency::GetInstance(NULL,"name")->Getlevel2No();
-	 		    G4int level3No = GateQuantumEfficiency::GetInstance(NULL,"name")->Getlevel3No();
-	 		    G4int tableNB = m_k + m_j*level3No + m_i*level3No*level2No;
-	 		    QECoef = GateQuantumEfficiency::GetInstance(NULL,"name")->GetQECoeff(tableNB, m_volumeIDNo);
-	 		  }
-	 		else
-	 		QECoef = 1.;
-	 */
+     m_XtalkpCent = (1-(4*m_edgesCrosstalkFraction+4*m_cornersCrosstalkFraction));
    isFirstEvent=false;
    }
 
@@ -177,7 +165,7 @@ void GateIntrinsicResolution::Digitize()
 		  m_outputDigi = new GateDigi(*inputDigi);
 
 		  G4double energy = inputDigi->GetEnergy();
-		  G4double Nph = energy*m_LY*m_TE*m_QE;//*XtalkpCent GND TODO;
+		  G4double Nph = energy*m_LY*m_TE*m_QE*m_XtalkpCent;
 		  G4double Ri = m_resolution * sqrt((m_Eref / energy));
 
 		  G4double resol = sqrt((1+m_variance/Nph)*(GateConstants::fwhm_to_sigma*GateConstants::fwhm_to_sigma) + Ri*Ri);

@@ -59,10 +59,21 @@ GateIntrinsicResolutionMessenger::GateIntrinsicResolutionMessenger (GateIntrinsi
     uniqueQECmd = new G4UIcmdWithADouble(cmdName,this);
     uniqueQECmd->SetGuidance("Set an unique quantum efficiency");
 
+
     cmdName = GetDirectoryName() + "setGainVariance";
     varianceCmd = new G4UIcmdWithADouble(cmdName,this);
     varianceCmd->SetGuidance("Set an unique quantum efficiency");
     
+
+	cmdName = GetDirectoryName() + "setXtalkEdgesFraction";
+	edgesFractionCmd = new G4UIcmdWithADouble(cmdName,this);
+	edgesFractionCmd->SetGuidance("Set the fraction of energy which leaves on each edge crystal");
+
+	cmdName = GetDirectoryName() + "setXtalkCornersFraction";
+	cornersFractionCmd = new G4UIcmdWithADouble(cmdName,this);
+	cornersFractionCmd->SetGuidance("Set the fraction of the energy which leaves on each corner crystal");
+
+
 }
 
 
@@ -75,6 +86,8 @@ GateIntrinsicResolutionMessenger::~GateIntrinsicResolutionMessenger()
 	delete  newFileQECmd;
 	delete  uniqueQECmd;
 	delete  varianceCmd;
+	delete edgesFractionCmd;
+	delete cornersFractionCmd;
 }
 
 
@@ -108,6 +121,14 @@ void GateIntrinsicResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4Stri
 	    {
 	    	m_IntrinsicResolution->SetVariance(varianceCmd->GetNewDoubleValue(newValue));
 	    }
+	    else if (aCommand ==edgesFractionCmd)
+	      {
+	    	m_IntrinsicResolution->SetEdgesFraction (edgesFractionCmd->GetNewDoubleValue(newValue));
+	      }
+	else if (aCommand ==cornersFractionCmd)
+	      {
+			m_IntrinsicResolution->SetCornersFraction (cornersFractionCmd->GetNewDoubleValue(newValue));
+	      }
 	    else
 	    {
 	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
