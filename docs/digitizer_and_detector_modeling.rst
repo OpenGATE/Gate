@@ -829,6 +829,9 @@ TransferEfficiency: the transfer efficiencies of the light photons in each cryst
 
 QuantumEfficiency: simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
 
+It is possible also take into account the crosstalk of the scintillation light between neighboring crystals. The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module for corners and for egdes, please use *setXtalkEdgesFraction* and *setXtalkCornersFraction*.
+
+
 The command lines are illustrated using an example of a phoswich module made of two layers of different crystals. One crystal has a light yield of 27000 photons per MeV (LSO crystal), a transfer efficiency of 28%, and an intrinsic resolution of 8.8%. The other crystal has a light yield of 8500 photons per MeV (LuYAP crystal), a transfer efficiency of 24% and an intrinsic resolution of 5.3%
 
 In the case of a *cylindricalPET* system, the construction of the crystal geometry is truncated for clarity (the truncation is denoted by ...). The *digitizer* command lines are::
@@ -858,6 +861,8 @@ In the case of a *cylindricalPET* system, the construction of the crystal geomet
    /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.28 
    /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 27000 
    /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.05
 
    /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/insert intrinsicResolution
    /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
@@ -865,6 +870,8 @@ In the case of a *cylindricalPET* system, the construction of the crystal geomet
    /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.24
    /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 8500 
    /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.15
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.1
    
 
 Note: A complete example of a phoswich module can be in the PET benchmark. 
@@ -881,6 +888,20 @@ To set multiple quantum efficiencies using files (*fileName1*, *fileName2*, ... 
 
 If the *crystal* volume is a daughter of a *module* volume which is an array of 8 x 8 crystals, the file *fileName1* will contain 64 values of quantum efficiency. If several files are given (in this example two files), the program will choose randomly between theses files for each *module*.
 
+Crosstalk
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The crosstalk module simulates the optical and/or electronic crosstalk of the scintillation light between neighboring crystals. Thus, if the input pulse arrives in a crystal array, this module creates pulses around it (in the edge and corner neighbor crystals). The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module that distributes 10% of input pulse energy to the adjacent crystals and 5% to the corner crystals, the following commands can be used::
+
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert crosstalk 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setEdgesFraction 0.1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setCornersFraction 0.05 
+
+In this example, a pulse is created in each neighbor of the crystal that received the initial pulse. These secondary pulses have 10% (5% for each corner crystals) of the initial energy of the pulse.
+
+**BEWARE:** this module works only for a chosen volume that is an array repeater!!!
+
+
 
 Memory buffers and bandwidth
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -893,43 +914,6 @@ To mimic the effect of limited transfer rate, a module models the data loss due 
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setMode 1 
 
 The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
-
-
-
-
-Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-Crosstalk
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The crosstalk module simulates the optical and/or electronic crosstalk of the scintillation light between neighboring crystals. Thus, if the input pulse arrives in a crystal array, this module creates pulses around it (in the edge and corner neighbor crystals). The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module that distributes 10% of input pulse energy to the adjacent crystals and 5% to the corner crystals, the following commands can be used::
-
-   /gate/digitizer/Singles/insert crosstalk 
-   /gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume crystal 
-   /gate/digitizer/Singles/crosstalk/setEdgesFraction 0.1 
-   /gate/digitizer/Singles/crosstalk/setCornersFraction 0.05 
-
-In this example, a pulse is created in each neighbor of the crystal that received the initial pulse. These secondary pulses have 10% (5% for each corner crystals) of the initial energy of the pulse.
-
-**BEWARE:** this module works only for a chosen volume that is an array repeater!!!
-
-
-Spatial blurring in sinogrmas
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In PET analysis, coincidence events provide the lines of response (LOR) needed for the image reconstruction. Only the two crystal numbers are transferred by the simulation. The determination of these crystal numbers is based on the crystal in which the highest energy has been deposited. Without additional spatial blurring of the crystal, simulation results will always have a better spatial resolution than experimental measurements. This module is only available for the *ecat* system. The spatial blurring is based on a 2D Gaussian function::
-
-   # E C A T 7 
-   /gate/output/sinogram/enable 
-   /gate/output/sinogram/RadialBins Your_Sinogram_Radial_Bin_Number 
-   /gate/output/sinogram/setTangCrystalBlurring Your_Value_1 mm 
-   /gate/output/sinogram/setAxialCrystalBlurring Your_Value_2 mm
-
-
-
 
 
 .. _digitizer_multiple_processor_chains-label:
