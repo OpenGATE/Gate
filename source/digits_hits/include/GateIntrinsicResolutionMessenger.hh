@@ -53,6 +53,9 @@ private:
   G4UIcmdWithADouble          *coeffTECmd;
   G4UIcmdWithAString   *newFileQECmd;
   G4UIcmdWithADouble   *uniqueQECmd;
+
+  G4UIcmdWithADouble   *varianceCmd;
+
   G4UIcmdWithADouble   *edgesFractionCmd;
   G4UIcmdWithADouble   *cornersFractionCmd;
 

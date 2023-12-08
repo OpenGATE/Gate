@@ -61,6 +61,8 @@ public:
   //! Apply an unique quantum efficiency for all the channels
   void SetUniqueQE(G4double val) { m_uniqueQE = val; };
 
+  void SetVariance(G4double val) { m_variance = val; };
+  
   void CreateTable();
 
   void CheckVolumeName(G4String val);
@@ -76,6 +78,8 @@ protected:
   G4double m_XtalkpCent;
   G4bool isFirstEvent;
 
+  G4double m_variance;
+  
   G4double m_uniqueQE;    //!< Value of the quantum efficiency if it's unique
   G4int m_nbFiles;        //!< Number of file(s) used for creating the lookout table
   std::vector<G4String> m_file;  //!< Vector which contains the name(s) of the file(s) for the lookout table

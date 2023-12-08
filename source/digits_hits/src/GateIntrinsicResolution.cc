@@ -60,6 +60,7 @@ GateIntrinsicResolution::GateIntrinsicResolution(GateSinglesDigitizer *digitizer
    m_LY(1),
    m_TE(1),
    m_QE(1),
+  m_variance(0.1),
    m_edgesCrosstalkFraction(0),
    m_cornersCrosstalkFraction(0),
    isFirstEvent(true),
@@ -167,7 +168,7 @@ void GateIntrinsicResolution::Digitize()
 		  G4double Nph = energy*m_LY*m_TE*m_QE*m_XtalkpCent;
 		  G4double Ri = m_resolution * sqrt((m_Eref / energy));
 
-		  G4double resol = sqrt((1.1/Nph)*(GateConstants::fwhm_to_sigma*GateConstants::fwhm_to_sigma) + Ri*Ri);
+		  G4double resol = sqrt((1+m_variance/Nph)*(GateConstants::fwhm_to_sigma*GateConstants::fwhm_to_sigma) + Ri*Ri);
 
 		  m_outputDigi->SetEnergy(G4RandGauss::shoot(energy,(resol * energy)/GateConstants::fwhm_to_sigma));
 
