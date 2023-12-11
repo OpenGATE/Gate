@@ -47,6 +47,8 @@ See LICENSE.md for further details
 #include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
+#include "GateDiscretization.hh"
+
 /*
 #include "GateLocalTimeDelay.hh"
 #include "GateBuffer.hh"
@@ -115,7 +117,9 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels";
+  
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels discretization";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels discretization";
 
 
    return theList;
@@ -228,6 +232,11 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
         }
+  else if (childTypeName=="discretization")
+          {
+            newDM = new GateDiscretization(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+          }
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);
