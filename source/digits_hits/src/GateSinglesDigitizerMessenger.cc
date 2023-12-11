@@ -47,6 +47,9 @@ See LICENSE.md for further details
 #include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
+
+#include "GateMultipleRejection.hh"
+
 #include "GateGridDiscretizator.hh"
 
 #include "GateAdderComptPhotIdeal.hh"
@@ -122,7 +125,8 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
 
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal gridDiscretizator";
+
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal gridDiscretizator multipleRejection";
    return theList;
 }
 
@@ -234,6 +238,13 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
         }
+
+else if (childTypeName=="multipleRejection")
+  	{
+  	  newDM = new GateMultipleRejection(m_digitizer, DMname);
+          m_digitizer->AddNewModule(newDM);
+  	}
+
   else if (childTypeName=="gridDiscretizator")
          {
             newDM = new GateGridDiscretizator(m_digitizer, DMname);
