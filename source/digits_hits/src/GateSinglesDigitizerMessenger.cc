@@ -42,6 +42,9 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #include "GateNoise.hh"
 #include "GateDigitizerMerger.hh"
+#include "GateBuffer.hh"
+#include "GateIntrinsicResolution.hh"
+#include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
 #include "GateDiscretization.hh"
@@ -114,7 +117,10 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
+  
    static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels discretization";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels discretization";
+
 
    return theList;
 }
@@ -202,6 +208,25 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
          }
+
+  else if (childTypeName=="buffer")
+           {
+         	  newDM = new GateBuffer(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+           }
+
+  else if (childTypeName=="intrinsicResolution")
+         {
+       	  newDM = new GateIntrinsicResolution(m_digitizer, DMname);
+       	  m_digitizer->AddNewModule(newDM);
+         }
+
+  else if (childTypeName=="crosstalk")
+         {
+       	  newDM = new GateCrosstalk(m_digitizer, DMname, 0, 0);
+       	  m_digitizer->AddNewModule(newDM);
+         }
+
   else if (childTypeName=="doIModels")
         {
           newDM = new GateDoIModels(m_digitizer, DMname);
