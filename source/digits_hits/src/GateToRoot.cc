@@ -98,7 +98,7 @@ ComptonRayleighData &ComptonRayleighData::operator=(const ComptonRayleighData &a
 
 //--------------------------------------------------------------------------
 GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode)
-        : GateVOutputModule(name, outputMgr, digiMode), m_hitBuffers(0) , m_hfile(0), m_treesHit(0),
+        : GateVOutputModule(name, outputMgr, digiMode), m_hitBuffers(0), m_hfile(0), m_treesHit(0),
 		  m_rootHitFlag(digiMode == kruntimeMode), m_rootNtupleFlag(true), m_saveRndmFlag(true),
          m_fileName(" ") // All default output file from all output modules are set to " ".
         // They are then checked in GateApplicationMgr::StartDAQ, using
@@ -249,6 +249,7 @@ void GateToRoot::BookBeginOfRun() {
     GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
     SetSDlistSize(digitizerMgr->m_SDlist.size() );
 
+
 	   for (G4int i=0; i<GetSDlistSize();i++)
 		{
 			GateRootHitBuffer hitBuffer;
@@ -256,16 +257,32 @@ void GateToRoot::BookBeginOfRun() {
 			m_hitBuffers.push_back(hitBuffer);
 		}
 
+
+
 	  for (size_t i=0; i< GetSDlistSize();i++)
 	  {
    		GateHitTree *treeHit;
+
+   		G4String treeName ;
+
    		if (digitizerMgr->m_SDlist.size() ==1 ) // keep the old name "Hits" if there is only one collection
-   			treeHit = new GateHitTree("Hits");
+   		{
+   				treeName = "Hits";
+   		}
    		else
-   			treeHit = new GateHitTree("Hits_"+digitizerMgr->m_SDlist[i]->GetName());
+   				treeName = "Hits_"+digitizerMgr->m_SDlist[i]->GetName();
+
+   		G4int runID=GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+   		if(runID>0)
+   			treeName = treeName+"_run"+std::to_string(runID);
+
+   		treeHit = new GateHitTree(treeName);
+
    		treeHit->Init(m_hitBuffers[i]);
    		m_treesHit.push_back(treeHit);
-   	    }
+
+
+   	  }
 
     // v. cuplov - optical photons
 	for (size_t i=0; i< digitizerMgr->m_SDlist.size();i++)
@@ -335,6 +352,7 @@ void GateToRoot::RecordBeginOfAcquisition() {
     if (nVerboseLevel > 1)
         G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << int(theMode) << Gateendl;
 
+
     // PY. Descourt 11/12/2008
     // NORMAL OR DETECTOR MODE
     if ((theMode == TrackingMode::kBoth) || (theMode == TrackingMode::kDetector)) {
@@ -366,6 +384,7 @@ void GateToRoot::RecordBeginOfAcquisition() {
                 //    m_hfile = new TFile( GetFilePath() ,"RECREATE","ROOT file with histograms");
                 m_hfile = new TFile((m_fileName + ".root").c_str(), "RECREATE", "ROOT file with histograms");
                 // v. cuplov
+
 
                 break;
             case kofflineMode:
@@ -411,6 +430,9 @@ void GateToRoot::RecordBeginOfAcquisition() {
         }
         //! We book histos and ntuples only once per acquisition
         BookBeginOfAquisition();
+        //BookBeginOfRun();
+
+
 
 
         return;
@@ -633,6 +655,7 @@ void GateToRoot::RecordBeginOfRun(const G4Run *) {
       }
       }*/
 
+
    if (nVerboseLevel > 2)
         G4cout << "GateToRoot::RecordBeginOfRun\n";
        BookBeginOfRun();
@@ -655,7 +678,8 @@ void GateToRoot::RecordEndOfRun(const G4Run *) {
 
     nbPrimaries -= 1.; // Number of primaries increase too much at each end of run !
 
-
+    m_hitBuffers.clear();
+    m_treesHit.clear();
 }
 //--------------------------------------------------------------------------
 
@@ -765,6 +789,9 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
     //OK GND 2022
     std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
 
+
+    G4int runID=GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+
     for (size_t i=0; i<CHC_vector.size();i++ )//HC_vector.size()
     {
     	GateHitsCollection* CHC = CHC_vector[i];
@@ -787,12 +814,13 @@ void GateToRoot::RecordEndOfEvent(const G4Event *event) {
 							<< ">    Particls PDG code : " << PDGEncoding << Gateendl;
 
 				if (aHit->GoodForAnalysis()) {
-					m_hitBuffers[i].Fill(aHit);
+						 m_hitBuffers[i].Fill(aHit);
+
 					if (nVerboseLevel > 1)
 						G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
 
-
 					if (m_rootHitFlag) m_treesHit[i]->Fill();
+
 
 				}
 			}
