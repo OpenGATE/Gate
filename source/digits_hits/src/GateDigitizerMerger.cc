@@ -120,9 +120,9 @@ void GateDigitizerMerger::Digitize()
 			{
 				//GateDigiCollection* IDCerror = 0;
 				//G4String err = fDM->GetDigiCollection(m_DCID-1)->GetName();
-				//TODO add more clean error messege
-				GateError("***ERROR*** Wrong usage of Merger Digitizer Module: the Digi collection that you want to use doesn't exist yet (not digitized yet). The Merger must be inserted as a module of last called sensitive detector\n "
-						"Please, read the description here: XXXX \n\n");
+				GateError("***ERROR*** Wrong usage of Merger Digitizer Module: the Digi collection that you want to use doesn't exist yet (not digitized yet?). The Merger must be inserted as a module of last called sensitive detector\n "
+						"Please, read the description here: https://opengate.readthedocs.io/en/latest/digitizer_and_detector_modeling.html#id28 \n "
+						"It is also possible that your input collection is empty at the first event. This bug will be addressed soon. \n\n");
 				return;
 
 			}

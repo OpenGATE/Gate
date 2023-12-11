@@ -809,22 +809,11 @@ Thus, the output of *Singles_crystal2* should be used in the following analysis 
 
    /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal2
 
-
-
-    
-
-
-
-
-Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Blurring: Intrinsic resolution blurring with crystals of different compositions
+Intrinsic resolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*(Previously blurring with crystals of different compositions, now includes GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency)*
 
-
-
-This blurring pulse-processor simulates a local Gaussian blurring of the energy spectrum (different for different crystals) based on the following model:
+This resolution simulates a Gaussian blurring of the energy spectrum based on the following model:
 
 :math:`R=\sqrt{{2.35}^2\cdot\frac{1+\bar{\nu}}{{\bar{N}}_{ph}\cdot \bar{\epsilon} \cdot \bar{p}} +{R_i}^2}`
 
@@ -834,7 +823,14 @@ where :math:`N_{ph}=LY\cdot E` and :math:`LY`, :math:`\bar p` and :math:`\bar \e
 
 If the intrinsic resolutions, :math:`( R_i )`, of the individual crystals are not defined, then they are set to one.
 
-To use this *digitizer* module properly, several modules must be set first. These digitizer modules are **GateLightYield**, **GateTransferEfficiency**, and **GateQuantumEfficiency**. The light yield pulse-processor simulates the crystal light yield. Each crystal must be given the correct light yield. This module converts the *pulse* energy into the number of scintillation photons emitted, :math:`N_{ph}`. The transfer efficiency pulse-processor simulates the transfer efficiencies of the light photons in each crystal. This digitizer reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1. The quantum efficiency pulse-processor simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
+LightYield: It converts the *digi* energy into the number of scintillation photons emitted, :math:`N_{ph}`.
+
+TransferEfficiency: the transfer efficiencies of the light photons in each crystal. It reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1.
+
+QuantumEfficiency: simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
+
+It is possible also take into account the crosstalk of the scintillation light between neighboring crystals. The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module for corners and for egdes, please use *setXtalkEdgesFraction* and *setXtalkCornersFraction*.
+
 
 The command lines are illustrated using an example of a phoswich module made of two layers of different crystals. One crystal has a light yield of 27000 photons per MeV (LSO crystal), a transfer efficiency of 28%, and an intrinsic resolution of 8.8%. The other crystal has a light yield of 8500 photons per MeV (LuYAP crystal), a transfer efficiency of 24% and an intrinsic resolution of 5.3%
 
@@ -858,33 +854,25 @@ In the case of a *cylindricalPET* system, the construction of the crystal geomet
    # In this example the phoswich module is represented by the *crystal* volume and is made of two different material layers. 
    # To apply the resolution blurring of equation , the parameters discussed above must be defined for each layer 
    #(i.e. Light Yield, Transfer, Intrinsic Resolution, and the Quantum Efficiency).
-   # DEFINE TRANSFER EFFICIENCY FOR EACH LAYER 
-   /gate/digitizer/Singles/insert transferEfficiency 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/transferEfficiency/LSOlayer/setTECoef 0.28 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/transferEfficiency/LuYAPlayer/setTECoef 0.24
+   # DEFINE INTRINSIC RESOLUTION 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.28 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 27000 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.05
+
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.24
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 8500 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.15
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.1
    
-   # DEFINE LIGHT YIELD FOR EACH LAYER 
-   /gate/digitizer/Singles/insert lightYield 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/lightYield/LSOlayer/setLightOutput 27000 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/lightYield/LuYAPlayer/setLightOutput 8500
-   
-   # DEFINE INTRINSIC RESOLUTION FOR EACH LAYER 
-   /gate/digitizer/Singles/insert intrinsicResolutionBlurring 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setIntrinsicResolution 0.088 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setEnergyOfReference 511 keV 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setIntrinsicResolution 0.053 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setEnergyOfReference 511 keV
-   
-   # DEFINE QUANTUM EFFICIENCY OF THE PHOTODETECTOR 
-   /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/setUniqueQE 0.1 
 
 Note: A complete example of a phoswich module can be in the PET benchmark. 
 
@@ -894,57 +882,24 @@ With the previous commands, the same quantum efficiency will be applied to all t
 
 To set multiple quantum efficiencies using files (*fileName1*, *fileName2*, ... for each of the different modules), the following commands can be used::
 
-   /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName1 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert quantumEfficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName2  
 
 If the *crystal* volume is a daughter of a *module* volume which is an array of 8 x 8 crystals, the file *fileName1* will contain 64 values of quantum efficiency. If several files are given (in this example two files), the program will choose randomly between theses files for each *module*.
-
-**Important note**
-
-After the introduction of the lightYield  (LY), transferEfficiency :math:`(\bar{p})` and quantumEfficiency} :math:`(\bar{\epsilon})` modules, the energy variable of a *pulse* is not in energy unit (MeV) but in number of photoelectrons :math:`N_{pe}`.
-
-:math:`N_{phe}={N}_{ph} \cdot \bar{\epsilon} \cdot \bar{p} = LY \cdot E \cdot \bar{\epsilon} \cdot \bar{p}`
-
-In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in :ref:`thresholder_upholder-label`. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
-
-Calibration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The Calibration module of the pulse-processor models a calibration between :math:`N_{phe}` and :math:`Energy`. This is useful when using the class(es) GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency. In addition, a user specified calibration factor can be used. To set a calibration factor on the energy, use the following commands::
-
-   /gate/digitizer/Singles/insert calibration 
-   /gate/digitizer/Singles/setCalibration VALUE 
-
-If the calibration digitizer is used without any value, it will correct the energy as a function of values used in GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency.
 
 Crosstalk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The crosstalk module simulates the optical and/or electronic crosstalk of the scintillation light between neighboring crystals. Thus, if the input pulse arrives in a crystal array, this module creates pulses around it (in the edge and corner neighbor crystals). The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module that distributes 10% of input pulse energy to the adjacent crystals and 5% to the corner crystals, the following commands can be used::
 
-   /gate/digitizer/Singles/insert crosstalk 
-   /gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume crystal 
-   /gate/digitizer/Singles/crosstalk/setEdgesFraction 0.1 
-   /gate/digitizer/Singles/crosstalk/setCornersFraction 0.05 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert crosstalk 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setEdgesFraction 0.1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setCornersFraction 0.05 
 
 In this example, a pulse is created in each neighbor of the crystal that received the initial pulse. These secondary pulses have 10% (5% for each corner crystals) of the initial energy of the pulse.
 
 **BEWARE:** this module works only for a chosen volume that is an array repeater!!!
-
-
-Spatial blurring in sinogrmas
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In PET analysis, coincidence events provide the lines of response (LOR) needed for the image reconstruction. Only the two crystal numbers are transferred by the simulation. The determination of these crystal numbers is based on the crystal in which the highest energy has been deposited. Without additional spatial blurring of the crystal, simulation results will always have a better spatial resolution than experimental measurements. This module is only available for the *ecat* system. The spatial blurring is based on a 2D Gaussian function::
-
-   # E C A T 7 
-   /gate/output/sinogram/enable 
-   /gate/output/sinogram/RadialBins Your_Sinogram_Radial_Bin_Number 
-   /gate/output/sinogram/setTangCrystalBlurring Your_Value_1 mm 
-   /gate/output/sinogram/setAxialCrystalBlurring Your_Value_2 mm
-
 
 
 
@@ -953,14 +908,12 @@ Memory buffers and bandwidth
 
 To mimic the effect of limited transfer rate, a module models the data loss due to an overflow of a memory buffer, read periodically, following a given reading frequency. This module uses two parameters, the reading frequency :math:`\nu ` and the memory depth :math:`D` . Moreover, two reading methods can be modelled, that is, in an event per event basis (an event is read at each reading clock tick), or in a full buffer reading basic (at each reading clock tick, the whole buffer is emptied out). In the first reading method, the data rate is then limited to :math:`\nu` , while in the second method, the data rate is limited to :math:`D\cdot\nu`. When the size limit is reached, any new pulse is rejected, until the next reading clock tick arrival which frees a part of the buffer. In such a case, a non null buffer depth allows to manage a local rise of the input data flow. To specify a buffer, read at 10 MHz, with a buffer depth of 64 events, in a mode where the whole buffer is read in one clock tick, one can use::
 
-   /gate/digitizer/Your_Single_chain/insert buffer 
-   /gate/digitizer/Your_Single_chain/buffer/setBufferSize 64 B 
-   /gate/digitizer/Your_Single_chain/buffer/setReadFrequency 10 MHz 
-   /gate/digitizer/Your_Single_chain/buffer/setMode 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert buffer 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setBufferSize 64 B 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setReadFrequency 10 MHz 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setMode 1 
 
-The chain *Your_Single_chain* can be the default chain *Singles* or any of single chain that the user has defined. The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
-
-
+The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
 
 
 .. _digitizer_multiple_processor_chains-label:
@@ -1251,17 +1204,17 @@ Example::
    6 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 
    7
    8 # E N E R G Y B L U R R I N G  
-   9 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert blurring  
-   10 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setResolution 0.26  
-   11 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setEnergyOfReference 511. keV 
+   9 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyResolution  
+   10 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/fwhm 0.26  
+   11 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/energyOfReference 511. keV 
    12 
    13 # L O W E N E R G Y C U T
-   14 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert thresholder
-   15 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/thresholder/setThreshold 50. keV
+   14 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyFraming
+   15 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyFraming/setMin 50. keV
    16
    17 /gate/digitizerMgr/name cutLowSingles
    18 /gate/digitizerMgr/insert SinglesDigitizer
-   19 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/setInputName Singles
+   19 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/setInputCollection Singles
    20 
    21 # N O I S E
    22 
@@ -1275,8 +1228,8 @@ Example::
    30 /gate/distributions/dt_distrib/setLambda 7.57 mus  
    31 
    32 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert noise (NOT YET IMPLEMENTED)
-   33 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setDeltaTDistributions dt_distrib  
-   34 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise setEnergyDistributions energy_distrib
+   33 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise/setDeltaTDistributions dt_distrib  
+   34 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/noise/setEnergyDistributions energy_distrib
    35
    36  # D E A D T I M E  
    37 /gate/digitizerMgr/crystal/SinglesDigitizer/cutLowSingles/insert deadtime  
@@ -1287,7 +1240,8 @@ Example::
    42 # H I G H E N E R G Y C U T  
    43 /gate/digitizerMgr/name cutSingles  
    44 /gate/digitizerMgr/insert SinglesDigitizer  
-   45 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/setInputName cutLowSingles  
+      /gate/digitizerMgr/chooseSD crystal 
+   45 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/setInputCollection cutLowSingles  
    46
    47 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/insert energyFraming  
    48 /gate/digitizerMgr/crystal/SinglesDigitizer/cutSingles/energyFraming/setMin 350. keV  
@@ -1307,14 +1261,14 @@ Example::
    62
    63 
    64 # C O I N C I S O R T E R 65 
-   65 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputName cutSingles 
+   65 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection cutSingles 
    66 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setOffset 0. ns 
    67 /gate/digitizerMgr/CoincidenceSorter/Coincidences/setWindow 24. ns 
    68 /gate/digitizerMgr/CoincidenceSorter/Coincidences/minSectorDifference 3  
    69 
    70 /gate/digitizerMgr/name delayedCoincidences  
    71 /gate/digitizerMgr/insert coincidenceSorter  
-   72 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setInputName cutSingles  
+   72 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setInputCollection cutSingles  
    73 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setOffset 100. ns  
    74 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/setWindow 24. ns  
    75 /gate/digitizerMgr/CoincidenceSorter/delayedCoincidences/minSectorDifference 3  

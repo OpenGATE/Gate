@@ -50,7 +50,7 @@ See LICENSE.md for further details
 
 //OK GND 2022
 #include "GateDigitizerMgr.hh"
-
+#include "GateRunManager.hh"
 /* PY Descourt 08/09/2009 */
 #include "GateActions.hh"
 #include "GateTrack.hh"
@@ -213,18 +213,29 @@ public:
             GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
 
             if (m_outputFlag) {
+                G4String treeName;
+
             	if( digitizerMgr->m_SDlist.size()==1 )
             	{
+
             		if(m_signlesCommands==0)
             		{
-            		std::string tmp_str = m_collectionName.substr(0, m_collectionName.find("_"));
-            		m_tree = new GateSingleTree(tmp_str);
+
+            			treeName = m_collectionName.substr(0, m_collectionName.find("_"));
+
             		}
             		else
-            			m_tree = new GateSingleTree(m_collectionName);
+            			treeName = m_collectionName;
             	}
             	else
-            		m_tree = new GateSingleTree(m_collectionName);
+            		treeName = m_collectionName;
+
+                G4int runID=GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+            	if(runID>0)
+            		treeName = treeName+"_run"+std::to_string(runID);
+
+
+            	m_tree = new GateSingleTree(treeName);
 
             	m_buffer.SetCCFlag(GetCCFlag());
             	m_tree->Init(m_buffer);

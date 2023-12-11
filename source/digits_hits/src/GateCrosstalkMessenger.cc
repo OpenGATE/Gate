@@ -6,57 +6,74 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
 
 #include "GateCrosstalkMessenger.hh"
-
 #include "GateCrosstalk.hh"
+#include "GateDigitizerMgr.hh"
+
+#include "G4SystemOfUnits.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIdirectory.hh"
 
 #include "G4UIcmdWithAString.hh"
-#include  "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
 
-GateCrosstalkMessenger::GateCrosstalkMessenger(GateCrosstalk* itsCrosstalk)
-    : GatePulseProcessorMessenger(itsCrosstalk)
+
+class G4UIcmdWithAString;
+class G4UIcmdWithADouble;
+
+
+GateCrosstalkMessenger::GateCrosstalkMessenger (GateCrosstalk* Crosstalk)
+:GateClockDependentMessenger(Crosstalk),
+ 	 m_Crosstalk(Crosstalk)
 {
-  G4String guidance;
-  G4String cmdName;
-  G4String cmdName2;
-  G4String cmdName3;
+	G4String guidance;
+	G4String cmdName;
 
-  cmdName = GetDirectoryName() + "chooseCrosstalkVolume";
-  newVolCmd = new G4UIcmdWithAString(cmdName,this);
-  newVolCmd->SetGuidance("Choose a volume for crosstalk (e.g. crystal)");
+	cmdName = GetDirectoryName() + "setEdgesFraction";
+	edgesFractionCmd = new G4UIcmdWithADouble(cmdName,this);
+	edgesFractionCmd->SetGuidance("Set the fraction of energy which leaves on each edge crystal");
 
-  cmdName2 = GetDirectoryName() + "setEdgesFraction";
-  edgesFractionCmd = new G4UIcmdWithADouble(cmdName2,this);
-  edgesFractionCmd->SetGuidance("Set the fraction of energy which leaves on each edge crystal");
+	cmdName = GetDirectoryName() + "setCornersFraction";
+	cornersFractionCmd = new G4UIcmdWithADouble(cmdName,this);
+	cornersFractionCmd->SetGuidance("Set the fraction of the energy which leaves on each corner crystal");
 
-  cmdName3 = GetDirectoryName() + "setCornersFraction";
-  cornersFractionCmd = new G4UIcmdWithADouble(cmdName3,this);
-  cornersFractionCmd->SetGuidance("Set the fraction of the energy which leaves on each corner crystal");
 }
-
 
 
 GateCrosstalkMessenger::~GateCrosstalkMessenger()
 {
-  delete newVolCmd;
-  delete edgesFractionCmd;
-  delete cornersFractionCmd;
+	delete edgesFractionCmd;
+	delete cornersFractionCmd;
 }
 
 
-void GateCrosstalkMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void GateCrosstalkMessenger::SetNewValue(G4UIcommand * aCommand,G4String newValue)
 {
-  if ( command==newVolCmd ) {
-    GetCrosstalk()->CheckVolumeName(newValue);
-  }
-  else if ( command==edgesFractionCmd ) {
-    GetCrosstalk()->SetEdgesFraction (edgesFractionCmd->GetNewDoubleValue(newValue));
-  }
-  else if ( command==cornersFractionCmd ) {
-    GetCrosstalk()->SetCornersFraction (cornersFractionCmd->GetNewDoubleValue(newValue));
-  }
-  else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue);
+	if (aCommand ==edgesFractionCmd)
+	      {
+			m_Crosstalk->SetEdgesFraction (edgesFractionCmd->GetNewDoubleValue(newValue));
+	      }
+	else if (aCommand ==cornersFractionCmd)
+	      {
+			m_Crosstalk->SetCornersFraction (cornersFractionCmd->GetNewDoubleValue(newValue));
+	      }
+	    else
+	    {
+	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);
+	    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

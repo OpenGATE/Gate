@@ -318,7 +318,6 @@ MESSAGE("- Coincidence digitizer modules (combining of several Coincidence Sorte
 MESSAGE("- Compton Camera digitizer modules and output")
 MESSAGE("- Output: Sinogram, Ecat7, LMF")
 MESSAGE("- ARF may work not properly yet")
-MESSAGE("- Digitizer Modules to be added soon: Buffer, intrinsicResolutionBlurring, lightYield, transferEfficiency, quantumEfficiency, crosstalk, calibration")
 MESSAGE("We apologize for this inconvenience and kindly ask for your patience.")
 MESSAGE("This functionalities will be added during 2023.")
 MESSAGE("Meanwhile, please, use Gate 9.2")
