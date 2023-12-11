@@ -6,21 +6,21 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-// OK GND 2022
+/*!
+  \class  GateEnergyFraming
+  \brief  GateEnergyFraming applies an energy window selection
+  ex-GateThresholder + ex-GateUpholder
 
-/*! \class  GateEnergyFraming
-    \brief  GateEnergyFraming applies an energy window selection
-    ex-GateThresholder + ex-GateUpholder
+  - GateEnergyFraming
 
-     - GateEnergyFraming
+  Previous authors: Daniel.Strul@iphe.unil.ch, Steven.Staelens@rug.ac.be
 
-    Previous authors: Daniel.Strul@iphe.unil.ch, Steven.Staelens@rug.ac.be
-
-   	Added to GND in November 2022 by olga.kochebina@cea.fr
-
-
-    \sa GateEnergyFraming, GateEnergyFramingMessenger
+  Added to GND in November 2022 by olga.kochebina@cea.fr
+  // OK GND 2022
+  
+  Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
+
 
 #ifndef GateEnergyFraming_h
 #define GateEnergyFraming_h 1
@@ -34,6 +34,7 @@ See LICENSE.md for further details
 
 #include "GateEnergyFramingMessenger.hh"
 #include "GateSinglesDigitizer.hh"
+#include "GateVEffectiveEnergyLaw.hh"
 
 
 class GateEnergyFraming : public GateVDigitizerModule
@@ -51,7 +52,7 @@ public:
   void SetMax(G4double val)   { m_max = val;  }
   G4double GetMax()   	      { return m_max; }
   
-
+  inline void SetEnergyFLaw(GateVEffectiveEnergyLaw* law)   { m_EnergyFramingLaw = law; }
   void DescribeMyself(size_t );
 
 protected:
@@ -65,8 +66,9 @@ private:
 
   GateDigiCollection*  m_OutputDigiCollection;
 
-  GateSinglesDigitizer *m_digitizer;
+  GateVEffectiveEnergyLaw* m_EnergyFramingLaw;
 
+  GateSinglesDigitizer *m_digitizer;
 
 };
 
