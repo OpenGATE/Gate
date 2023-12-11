@@ -8,15 +8,15 @@
   ----------------------*/
 
 /*!
-  \class  GateDiscretization
+  \class  GridDiscretizator
   
   This module allows to simulate the readout of strip and pixelated detectors
   
   Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
 
-#include "GateDiscretization.hh"
-#include "GateDiscretizationMessenger.hh"
+#include "GateGridDiscretizator.hh"
+#include "GateGridDiscretizatorMessenger.hh"
 #include "GateDigi.hh"
 
 #include "GateDigitizerMgr.hh"
@@ -34,26 +34,26 @@
 #include "GateConstants.hh"
 #include "GateTools.hh"
 
-GateDiscretization::GateDiscretization(GateSinglesDigitizer *digitizer, G4String name)
+GateGridDiscretizator::GateGridDiscretizator(GateSinglesDigitizer *digitizer, G4String name)
   :GateVDigitizerModule(name,"digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/"+name,digitizer,digitizer->GetSD()),
-   m_GateDiscretization(0),
+   m_GateGridDiscretizator(0),
    m_outputDigi(0),
    m_OutputDigiCollection(0),
    m_digitizer(digitizer)
  {
 	G4String colName = digitizer->GetOutputName() ;
 	collectionName.push_back(colName);
-	m_Messenger = new GateDiscretizationMessenger(this);
+	m_Messenger = new GateGridDiscretizatorMessenger(this);
 }
 
 
-GateDiscretization::~GateDiscretization()
+GateGridDiscretizator::~GateGridDiscretizator()
 {
   delete m_Messenger;
 
 }
 
-void GateDiscretization::SetGridPoints3D( int indexX, int indexY,int indexZ, G4ThreeVector& pos ){
+void GateGridDiscretizator::SetGridPoints3D( int indexX, int indexY,int indexZ, G4ThreeVector& pos ){
      double posX;
      double posY;
      double posZ;
@@ -70,15 +70,15 @@ void GateDiscretization::SetGridPoints3D( int indexX, int indexY,int indexZ, G4T
          pos.setZ(posZ);
      }
      else{
-         G4cout<<"problems with index (is  the right volume?)"<<G4endl;
+         GateError("GateGridDiscretizator" << GetObjectName() << "There is a problem with the index. Please ensure the index corresponds to the correct volume.");
      }
 
 
  }
 
-void GateDiscretization::Digitize()
+void GateGridDiscretizator::Digitize()
 {
-	//G4cout<< "Discretization = "<< m_GateDiscretization <<G4endl;
+	//G4cout<< "Discretization = "<< m_GateGridDiscretizator <<G4endl;
 
 
 	G4String digitizerName = m_digitizer->m_digitizerName;
@@ -138,7 +138,7 @@ void GateDiscretization::Digitize()
 
 		if (((m_outputDigi->GetVolumeID()).GetBottomCreator())){
 
-			// I can not access to Solid volume nor in GateDiscretization::ChooseVolume neither in the constructor. So I check here if the size of the volume has loaded for the
+			// I can not access to Solid volume nor in GateGridDiscretizator::ChooseVolume neither in the constructor. So I check here if the size of the volume has loaded for the
 			//considered volume and if not I enter the values
 			if(m_param.volSize.getX()==0){
 				//Fill volumeSize
@@ -148,7 +148,6 @@ void GateDiscretization::Digitize()
 				m_param.volSize.setY(max-min);
 				m_outputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
 				m_param.volSize.setZ(max-min);
-				G4cout<<"vol "<<m_param.volSize.getX()/cm<<" "<<m_param.volSize.getY()/cm<<"  "<<m_param.volSize.getZ()/cm<<G4endl; //
 
 				if( m_param.volSize.getX()<(m_param.numberStripsX*m_param.stripWidthX+2*m_param.stripOffsetX)){
 					 GateError("The volume defined by number of strips, width and offset is larger that the SD size in X-axis direction ");
@@ -159,7 +158,6 @@ void GateDiscretization::Digitize()
 				}
 				else if ( m_param.volSize.getZ()<(m_param.numberStripsZ*m_param.stripWidthZ+2*m_param.stripOffsetZ)) {
 					GateError("The volume defined by number of strips, width and offset is larger that the SD size in Z-axis direction ");
-
 				}
 				else{
 					//Fill deadSpace and pitch
@@ -369,7 +367,7 @@ void GateDiscretization::Digitize()
 		}
 
 		if (nVerboseLevel==1) {
-			G4cout << "[GateDiscretization::Digitize]: returning output pulse-list with " << OutputDigiCollectionVector->size() << " entries\n";
+			G4cout << "[GateGridDiscretizator::Digitize]: returning output pulse-list with " << OutputDigiCollectionVector->size() << " entries\n";
 			for (iter=OutputDigiCollectionVector->begin(); iter!= OutputDigiCollectionVector->end() ; ++iter)
 				G4cout << **iter << Gateendl;
 			G4cout << Gateendl;
@@ -379,7 +377,7 @@ void GateDiscretization::Digitize()
   else
     {
   	  if (nVerboseLevel>1)
-  	  	G4cout << "[GateDiscretization::Digitize]: input digi collection is null -> nothing to do\n\n";
+  	  	G4cout << "[GateGridDiscretizator::Digitize]: input digi collection is null -> nothing to do\n\n";
   	    return;
     }
   StoreDigiCollection(m_OutputDigiCollection);
@@ -390,12 +388,12 @@ void GateDiscretization::Digitize()
 
 
 
-void GateDiscretization::DescribeMyself(size_t indent )
+void GateGridDiscretizator::DescribeMyself(size_t indent )
 {
   ;
 }
 
-int GateDiscretization::GetXIndex(G4double posX){
+int GateGridDiscretizator::GetXIndex(G4double posX){
 
     int index_i;
 
@@ -438,7 +436,7 @@ int GateDiscretization::GetXIndex(G4double posX){
     return index_i;
 }
 
-int GateDiscretization::GetYIndex(G4double posY){
+int GateGridDiscretizator::GetYIndex(G4double posY){
 
       int index_j;
 
@@ -477,7 +475,7 @@ int GateDiscretization::GetYIndex(G4double posY){
       return index_j;
 }
 
-int GateDiscretization::GetZIndex(G4double posZ){
+int GateGridDiscretizator::GetZIndex(G4double posZ){
 
       int index_j;
 
@@ -516,9 +514,8 @@ int GateDiscretization::GetZIndex(G4double posZ){
       return index_j;
 }
 
-G4int GateDiscretization::ChooseVolume(G4String val)
+G4int GateGridDiscretizator::ChooseVolume(G4String val)
 {
-    G4cout<<" GateDiscretizATION::ChooseVolume Begin"<<G4endl;
     GateObjectStore* m_store = GateObjectStore::GetInstance();
 
 

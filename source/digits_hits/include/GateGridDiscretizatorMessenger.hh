@@ -10,19 +10,19 @@ See LICENSE.md for further details
 /*
   This class is not used by GATE !
   The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateDiscretization.cc for more detals
+  Please, check GridDiscretizator.cc for more detals
   // OK GND 2022
   
-  \class  GateDiscretizationMessenger
-  \brief  Messenger for the GateDiscretization
-  \sa GateDiscretization, GateDiscretizationMessenger
+  \class  GridDiscretizatorMessenger
+  \brief  Messenger for the GridDiscretizator
+  \sa GridDiscretizator, GridDiscretizatorMessenger
   Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 
 */
 
 
-#ifndef GateDiscretizationMessenger_h
-#define GateDiscretizationMessenger_h 1
+#ifndef GateGridDiscretizatorMessenger_h
+#define GateGridDiscretizatorMessenger_h 1
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
@@ -39,16 +39,16 @@ class G4UIcmdWithADouble;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWith3Vector;
 class G4UIcmdWith3VectorAndUnit;
-class GateDiscretization;
+class GateGridDiscretizator;
 class G4UIcmdWithAString;
 class G4UIcmdWithoutParameter;
 
-class GateDiscretizationMessenger : public GateClockDependentMessenger
+class GateGridDiscretizatorMessenger : public GateClockDependentMessenger
 {
   public:
   
-    GateDiscretizationMessenger(GateDiscretization*);
-    virtual ~GateDiscretizationMessenger();
+    GateGridDiscretizatorMessenger(GateGridDiscretizator*);
+    virtual ~GateGridDiscretizatorMessenger();
   
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
     inline  void SetNewValue2(G4UIcommand* aCommand, G4String aString);
@@ -57,7 +57,7 @@ class GateDiscretizationMessenger : public GateClockDependentMessenger
 private:
 
   std::vector<G4UIdirectory*> m_volDirectory;
-  GateDiscretization* m_GateDiscretization;
+  GateGridDiscretizator* m_GateGridDiscretizator;
   G4UIcmdWithAString          *DiscCmd;
   G4UIcmdWithADoubleAndUnit*   pStripOffsetX;
   G4UIcmdWithADoubleAndUnit*   pStripOffsetY;

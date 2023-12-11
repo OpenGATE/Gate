@@ -16,8 +16,8 @@ See LICENSE.md for further details
   Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
 
-#include "GateDiscretizationMessenger.hh"
-#include "GateDiscretization.hh"
+#include "GateGridDiscretizatorMessenger.hh"
+#include "GateGridDiscretizator.hh"
 #include "GateDigitizerMgr.hh"
 
 #include "G4SystemOfUnits.hh"
@@ -31,9 +31,9 @@ See LICENSE.md for further details
 
 
 
-GateDiscretizationMessenger::GateDiscretizationMessenger (GateDiscretization* GateDiscretization)
-:GateClockDependentMessenger(GateDiscretization),
- 	 m_GateDiscretization(GateDiscretization)
+GateGridDiscretizatorMessenger::GateGridDiscretizatorMessenger (GateGridDiscretizator* GateGridDiscretizator)
+:GateClockDependentMessenger(GateGridDiscretizator),
+ 	 m_GateGridDiscretizator(GateGridDiscretizator)
 {
 
 	G4String guidance;
@@ -110,7 +110,7 @@ GateDiscretizationMessenger::GateDiscretizationMessenger (GateDiscretization* Ga
 }
 
 
-GateDiscretizationMessenger::~GateDiscretizationMessenger()
+GateGridDiscretizatorMessenger::~GateGridDiscretizatorMessenger()
 {
 	delete  DiscCmd;
 	delete pStripOffsetX;
@@ -127,79 +127,79 @@ GateDiscretizationMessenger::~GateDiscretizationMessenger()
 	delete pNumberReadOutBlocksZ;
 }
 
-void GateDiscretizationMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void GateGridDiscretizatorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
 
 
 	    if ( command== pStripOffsetX ) {
-			m_GateDiscretization->SetStripOffsetX(m_name, pStripOffsetX->GetNewDoubleValue(newValue));
+			m_GateGridDiscretizator->SetStripOffsetX(m_name, pStripOffsetX->GetNewDoubleValue(newValue));
 
 	    }
 
-		if ( command==pStripOffsetY ) {
-			m_GateDiscretization->SetStripOffsetY(m_name, pStripOffsetY->GetNewDoubleValue(newValue));
+	    else if ( command==pStripOffsetY ) {
+			m_GateGridDiscretizator->SetStripOffsetY(m_name, pStripOffsetY->GetNewDoubleValue(newValue));
 
 
 		}
 
-		if ( command==pStripOffsetZ ) {
-			m_GateDiscretization->SetStripOffsetZ(m_name, pStripOffsetZ->GetNewDoubleValue(newValue));
+	    else if ( command==pStripOffsetZ ) {
+			m_GateGridDiscretizator->SetStripOffsetZ(m_name, pStripOffsetZ->GetNewDoubleValue(newValue));
 
 
 		}
 
-		if ( command==pStripWidthX ) {
-			m_GateDiscretization->SetStripWidthX(m_name, pStripWidthX->GetNewDoubleValue(newValue));
+	    else if ( command==pStripWidthX ) {
+			m_GateGridDiscretizator->SetStripWidthX(m_name, pStripWidthX->GetNewDoubleValue(newValue));
 
 
 		}
 
 
 
-		if ( command==pStripWidthY ) {
-			m_GateDiscretization->SetStripWidthY(m_name, pStripWidthY->GetNewDoubleValue(newValue));
+	    else if ( command==pStripWidthY ) {
+			m_GateGridDiscretizator->SetStripWidthY(m_name, pStripWidthY->GetNewDoubleValue(newValue));
 
 
 		}
 
-		if ( command==pStripWidthZ ) {
-			m_GateDiscretization->SetStripWidthZ(m_name, pStripWidthZ->GetNewDoubleValue(newValue));
+	    else if ( command==pStripWidthZ ) {
+			m_GateGridDiscretizator->SetStripWidthZ(m_name, pStripWidthZ->GetNewDoubleValue(newValue));
 
 
 		}
 
-		if ( command== pNumberStripsX ) {
-			m_GateDiscretization->SetNumberStripsX(m_name, pNumberStripsX->GetNewIntValue(newValue));
+	    else if ( command== pNumberStripsX ) {
+			m_GateGridDiscretizator->SetNumberStripsX(m_name, pNumberStripsX->GetNewIntValue(newValue));
 
 
 		}
 
-		if ( command== pNumberStripsY ) {
-			m_GateDiscretization->SetNumberStripsY(m_name, pNumberStripsY->GetNewIntValue(newValue));
+	    else if ( command== pNumberStripsY ) {
+			m_GateGridDiscretizator->SetNumberStripsY(m_name, pNumberStripsY->GetNewIntValue(newValue));
 
 		}
 
 
-		if ( command== pNumberStripsZ ) {
-			m_GateDiscretization->SetNumberStripsZ(m_name, pNumberStripsZ->GetNewIntValue(newValue));
+	    else if ( command== pNumberStripsZ ) {
+			m_GateGridDiscretizator->SetNumberStripsZ(m_name, pNumberStripsZ->GetNewIntValue(newValue));
 
 		}
 
 
-		if ( command== pNumberReadOutBlocksX ) {
-			m_GateDiscretization->SetNumberReadOutBlocksX(m_name, pNumberReadOutBlocksX->GetNewIntValue(newValue));
+	    else if ( command== pNumberReadOutBlocksX ) {
+			m_GateGridDiscretizator->SetNumberReadOutBlocksX(m_name, pNumberReadOutBlocksX->GetNewIntValue(newValue));
 
 		}
 
 
-		if ( command== pNumberReadOutBlocksY ) {
-			m_GateDiscretization->SetNumberReadOutBlocksY(m_name, pNumberReadOutBlocksY->GetNewIntValue(newValue));
+	    else if ( command== pNumberReadOutBlocksY ) {
+			m_GateGridDiscretizator->SetNumberReadOutBlocksY(m_name, pNumberReadOutBlocksY->GetNewIntValue(newValue));
 
 		}
 
 
-		if ( command== pNumberReadOutBlocksZ ) {
-			m_GateDiscretization->SetNumberReadOutBlocksZ(m_name, pNumberReadOutBlocksZ->GetNewIntValue(newValue));
+	    else if ( command== pNumberReadOutBlocksZ ) {
+			m_GateGridDiscretizator->SetNumberReadOutBlocksZ(m_name, pNumberReadOutBlocksZ->GetNewIntValue(newValue));
 
 		}
 

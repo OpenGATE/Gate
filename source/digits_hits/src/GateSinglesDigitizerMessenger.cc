@@ -47,6 +47,8 @@ See LICENSE.md for further details
 #include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
+#include "GateGridDiscretizator.hh"
+
 #include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
 #include "GateDiscretization.hh"
@@ -119,7 +121,8 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal";
+
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal gridDiscretizator";
    return theList;
 }
 
@@ -230,7 +233,13 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        {
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
-       }
+        }
+  else if (childTypeName=="gridDiscretizator")
+         {
+            newDM = new GateGridDiscretizator(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+          }
+
   else if (childTypeName=="adderComptPhotIdeal")
        {
   	  newDM = new GateAdderComptPhotIdeal(m_digitizer, DMname);
@@ -242,11 +251,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
    	  m_digitizer->AddNewModule(newDM);
        }
 
-  else if (childTypeName=="discretization")
-          {
-            newDM = new GateDiscretization(m_digitizer, DMname);
-         	  m_digitizer->AddNewModule(newDM);
-          }
+
 
 /*
   else if (childTypeName=="energyThresholder")
