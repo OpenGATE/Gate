@@ -1,29 +1,85 @@
+
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
+/*!
+  \class  GateCrosstalk
+
+  This class is not used by GATE !
+  The purpose of this class is to help to create new users digitizer module(DM).
+
+   - Create your DM by coping this class and GateDummyDigitizerMessenger class for your DM messenger
+   - Places to change are marked with // ****** comment and called with "dummy" names
+   - Include your module to GateSinglesDigitizerMessenger in the method DoInsertion(..)
+
+	If you adapting some already exiting class from Old Gate Digitizer here is some of the tips
+	- Digitize () is a fusion of GateVdigiProcessor::ProcessdigiList and GateXXX::Digitize
+	- digi --> Digi
+	- outputdigiList --> OutputDigiCollectionVector
+	- inputDigi-->inputDigi
+	- outputdigi --> m_outputDigi
+	- how to adapt iterators check GateAdder class
+
+  To create new Digitizer Module (DM), please, follow the steps:
+  1) Copy .cc and .hh of GateCrosstalk, GateCrosstalkMessenger to GateYourNewDigitizerModule and GateYourNewDigitizerModuleMessenger
+  2) Replace in these new files : Crosstalk -> YourNewDigitizerModule
+  3) Compile 1st time (so not forget to redo ccmake to)
+  4) Adapt GateYourNewDigitizerModuleMessenger.cc
+  5) Adapt GateYourNewDigitizerModuleMessenger.hh (!!!! DO NOT FORGET TO WRITE A SHORT EXPLANATION ON WHAT DOES YOUR DM !!!!)
+  6) Adapt GateYourNewDigitizerModule.hh
+  7) Adapt GateYourNewDigitizerModule.cc
+  	  - Change the names (x2) of YourDigitizerModule in the constructor of GateYourNewDigitizerModule.cc:
+   	   	   	  line:
+   	   	   	  :GateVDigitizerModule("Dummy","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/dummy",digitizer,digitizer->GetSD()),
+
+	  - !!!! DO NOT FORGET TO WRITE A SHORT EXPLANATION ON WHAT DOES YOUR DM !!!!
+	  - Comment everything inside Digitize() method
+   8) Compile 2ed time
+   9) In case of adaptation of old existing class:
+   	  - Copy everything inside Digitize() and ProcessdigiList() from old module to Digitize() (places where to copy are indicated in this class)
+   	  - Replace:
+   	  	  inputDigi -> inputDigi
+	      outputdigi -> m_outputDigi + correct the first declaration (as in this Dummy module)
+	      m_OutputDigiCollection->insert(outputdigi) ->  m_OutputDigiCollection->insert(m_outputDigi);
+	10) Add YourDigitizerModule to GateSinglesDigitizer.cc
+			- #include "YourDigitizerModule.hh"
+			- in DumpMap() method in
+				static G4String theList = " ...."
+			- in DoInsertion() :
+				  else if (childTypeName=="yourDM")
+     	 	 	 	 {
+   	  	  	  	  	  newDM = new GateYourDigitizerModule(m_digitizer);
+   	  	  	  	  	  m_digitizer->AddNewModule(newDM);
+     	 	 	 	 }
+	11) Compile 3ed time and execute
+
+	*/
 
 #include "GateCrosstalk.hh"
-
 #include "GateCrosstalkMessenger.hh"
-#include "GateTools.hh"
-#include <vector>
-#include "G4ThreeVector.hh"
+#include "GateDigi.hh"
 
-#include "GateVolumeID.hh"
-#include "GateOutputVolumeID.hh"
+#include "GateDigitizerMgr.hh"
+#include "GateObjectStore.hh"
 #include "GateDetectorConstruction.hh"
-#include "GateCrystalSD.hh"
-#include "GateVSystem.hh"
 #include "GateArrayParamsFinder.hh"
 
+
+#include "G4SystemOfUnits.hh"
+#include "G4EventManager.hh"
+#include "G4Event.hh"
+#include "G4SDManager.hh"
+#include "G4DigiManager.hh"
+#include "G4ios.hh"
 #include "G4UnitsTable.hh"
 
-#include "GateObjectStore.hh"
+
+
 
 // Static pointer to the GateCrosstalk singleton
 GateCrosstalk* GateCrosstalk::theGateCrosstalk=0;
@@ -33,7 +89,7 @@ GateCrosstalk* GateCrosstalk::theGateCrosstalk=0;
 	If this singleton does not exist yet, GetInstance creates it by calling the private
 	GateCrosstalk constructor
 */
-GateCrosstalk* GateCrosstalk::GetInstance(GatePulseProcessorChain* itsChain,
+GateCrosstalk* GateCrosstalk::GetInstance(GateSinglesDigitizer* itsChain,
 					  const G4String& itsName, G4double itsEdgesFraction,
 					  G4double itsCornersFraction)
 {
@@ -44,25 +100,31 @@ GateCrosstalk* GateCrosstalk::GetInstance(GatePulseProcessorChain* itsChain,
 }
 
 
-// Private constructor
-GateCrosstalk::GateCrosstalk(GatePulseProcessorChain* itsChain,
-			     const G4String& itsName, G4double itsEdgesFraction,
-			     G4double itsCornersFraction)
-  : GateVPulseProcessor(itsChain, itsName),
-    m_edgesCrosstalkFraction(itsEdgesFraction),m_cornersCrosstalkFraction(itsCornersFraction)
-{
-  m_messenger = new GateCrosstalkMessenger(this);
-  m_testVolume = 0;
+
+
+GateCrosstalk::GateCrosstalk(GateSinglesDigitizer *digitizer, G4String name, G4double itsEdgesFraction, G4double itsCornersFraction)
+  :GateVDigitizerModule(name,"digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/"+name,digitizer,digitizer->GetSD()),
+   m_edgesCrosstalkFraction(itsEdgesFraction),
+   m_cornersCrosstalkFraction(itsCornersFraction),
+   m_outputDigi(0),
+   m_OutputDigiCollection(0),
+   m_digitizer(digitizer)
+ {
+	G4String colName = digitizer->GetOutputName() ;
+	collectionName.push_back(colName);
+	m_Messenger = new GateCrosstalkMessenger(this);
+	m_testVolume = 0;
+	CheckVolumeName(m_digitizer->GetSD()->GetName());
 }
-
-
 
 
 GateCrosstalk::~GateCrosstalk()
 {
-  delete m_messenger;
-  delete ArrayFinder;
+	 delete m_messenger;
+	 delete ArrayFinder;
+
 }
+
 
 void GateCrosstalk::CheckVolumeName(G4String val)
 {
@@ -80,132 +142,187 @@ void GateCrosstalk::CheckVolumeName(G4String val)
   }
 }
 
-void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
+
+
+void GateCrosstalk::Digitize()
 {
+	  if(!m_testVolume)
+	    {
+	      G4cerr << 	Gateendl << "[GateCrosstalk::Digitize]:\n"
+		     <<   "Sorry, but you don't have choosen any volume !\n";
 
-  if(!m_testVolume)
+				G4String msg = "You must choose a volume for Crosstalk, e.g. crystal:\n"
+	      "\t/gate/digitizer/Singles/Crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
+	      "or disable the Crosstalk using:\n"
+	      "\t/gate/digitizer/Singles/Crosstalk/disable\n";
+
+				G4Exception( "GateCrosstalk::Digitize", "Digitize", FatalException, msg );
+	    }
+
+
+
+	G4String digitizerName = m_digitizer->m_digitizerName;
+	G4String outputCollName = m_digitizer-> GetOutputName();
+
+	m_OutputDigiCollection = new GateDigiCollection(GetName(),outputCollName); // to create the Digi Collection
+
+	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
+
+
+
+	GateDigiCollection* IDC = 0;
+	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
+
+	GateDigi* inputDigi;
+
+	std::vector< GateDigi* >* OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
+	std::vector<GateDigi*>::iterator iter;
+
+
+	/* if (nVerboseLevel==1)
+			    {
+			    	G4cout << "[ GateCrosstalk::Digitize]: returning output digi-list with " << m_OutputDigiCollection->entries() << " entries\n";
+			    	for (size_t k=0; k<m_OutputDigiCollection->entries();k++)
+			    		G4cout << *(*IDC)[k] << Gateendl;
+			    		G4cout << Gateendl;
+			    }
+	 */
+
+  if (IDC)
+     {
+	  G4int n_digi = IDC->entries();
+
+	  //loop over input digits
+	  for (G4int i=0;i<n_digi;i++)
+	  {
+		  inputDigi=(*IDC)[i];
+
+		  //Find the digi position in the array
+		    m_depth = (size_t)(inputDigi->GetVolumeID().GetCreatorDepth(m_volume));
+		    ArrayFinder->FindInputPulseParams(inputDigi->GetVolumeID().GetCopyNo(m_depth), m_i, m_j, m_k);
+
+		    //Numbers of edge and corner neighbors for the digis
+		    G4int countE = 0;
+		    G4int countC = 0;
+
+		    // Find the possible neighbors
+		    if (m_edgesCrosstalkFraction != 0) {
+		      if (m_i != 0) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i - 1, m_j, m_k));
+		        countE++;
+		      }
+		      if (m_i != m_nbX - 1) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i + 1, m_j, m_k));
+		        countE++;
+		      }
+		      if (m_j != 0) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i, m_j - 1, m_k));
+		        countE++;
+		      }
+		      if (m_j != m_nbY - 1) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i, m_j + 1, m_k));
+		        countE++;
+		      }
+		      if (m_k != 0) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i, m_j, m_k - 1));
+		        countE++;
+		      }
+		      if (m_k != m_nbZ - 1) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_edgesCrosstalkFraction, inputDigi, m_i, m_j, m_k + 1));
+		        countE++;
+		      }
+		    }
+
+		    if (m_cornersCrosstalkFraction != 0) {
+		      if ((m_i != 0) & (m_j != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i - 1, m_j - 1, m_k));
+		        countC++;
+		      }
+		      if ((m_i != 0) & (m_j != m_nbY - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i - 1, m_j + 1, m_k));
+		        countC++;
+		      }
+		      if ((m_i != 0) & (m_k != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i - 1, m_j, m_k - 1));
+		        countC++;
+		      }
+		      if ((m_i != 0) & (m_k != m_nbZ - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i - 1, m_j, m_k + 1));
+		        countC++;
+		      }
+		      if ((m_i != m_nbX - 1) & (m_j != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i + 1, m_j - 1, m_k));
+		        countC++;
+		      }
+		      if ((m_i != m_nbX - 1) & (m_j != m_nbY - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i + 1, m_j + 1, m_k));
+		        countC++;
+		      }
+		      if ((m_i != m_nbX - 1) & (m_k != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i + 1, m_j, m_k - 1));
+		        countC++;
+		      }
+		      if ((m_i != m_nbX - 1) & (m_k != m_nbZ - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i + 1, m_j, m_k + 1));
+		        countC++;
+		      }
+		      if ((m_j != 0) & (m_k != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i, m_j - 1, m_k - 1));
+		        countC++;
+		      }
+		      if ((m_j != 0) & (m_k != m_nbZ - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i, m_j - 1, m_k + 1));
+		        countC++;
+		      }
+
+		      if ((m_j != m_nbY - 1) & (m_k != 0)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i, m_j + 1, m_k - 1));
+		        countC++;
+		      }
+		      if ((m_j != m_nbY - 1) & (m_k != m_nbZ - 1)) {
+		        m_OutputDigiCollection->insert(CreateDigi(m_cornersCrosstalkFraction, inputDigi, m_i, m_j + 1, m_k + 1));
+		        countC++;
+		      }
+		    }
+
+		    // Check if the energy of neighbors is not higher than the energy of the incident digi
+		    G4double energytot = inputDigi->GetEnergy()*((countE*m_edgesCrosstalkFraction)+(countC*m_cornersCrosstalkFraction));
+
+		    if(energytot>=inputDigi->GetEnergy())
+		      {
+		        G4cerr << 	Gateendl << "[GateCrosstalk::Digitize]:\n"
+		  	     <<   "Sorry, but you have too much energy !\n";
+
+		  			G4String msg = "You must change your fractions of energy for the close crystals :\n"
+		        "\t/gate/digitizer/Singles/Crosstalk/setSidesFraction NUMBER\n"
+		        "\t/gate/digitizer/Singles/Crosstalk/setCornersFraction NUMBER\n"
+		        "or disable the Crosstalk using:\n"
+		        "\t/gate/digitizer/Singles/Crosstalk/disable\n";
+		  			G4Exception( "GateCrosstalk::Digitize", "Digitize", FatalException,msg);
+		      }
+
+
+		    // Add the incident digi in the digi list with less energy
+		    m_outputDigi = new GateDigi(*inputDigi);
+
+		    m_XtalkpCent = (1-(4*m_edgesCrosstalkFraction+4*m_cornersCrosstalkFraction));
+		    m_outputDigi->SetEnergy((inputDigi->GetEnergy())*m_XtalkpCent);
+		    m_OutputDigiCollection->insert(m_outputDigi);
+
+		    if (nVerboseLevel>1)
+		      G4cout << "the input digi created " << countE+countC << " digis around it"
+		  	   << Gateendl;
+
+	  } //loop  over input digits
+    } //IDC
+  else
     {
-      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:\n"
-	     <<   "Sorry, but you don't have choosen any volume !\n";
+  	  if (nVerboseLevel>1)
+  	  	G4cout << "[GateCrosstalk::Digitize]: input digi collection is null -> nothing to do\n\n";
+  	    return;
+    }
+  StoreDigiCollection(m_OutputDigiCollection);
 
-			G4String msg = "You must choose a volume for crosstalk, e.g. crystal:\n"
-      "\t/gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
-      "or disable the crosstalk using:\n"
-      "\t/gate/digitizer/Singles/crosstalk/disable\n";
-
-			G4Exception( "GateCrosstalk::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
-    }
-
-  //Find the pulse position in the array
-  m_depth = (size_t)(inputPulse->GetVolumeID().GetCreatorDepth(m_volume));
-  ArrayFinder->FindInputPulseParams(inputPulse->GetVolumeID().GetCopyNo(m_depth), m_i, m_j, m_k);
-
-  //Numbers of edge and corner neighbors for the pulses
-  G4int countE = 0;
-  G4int countC = 0;
-
-  // Find the possible neighbors
-  if (m_edgesCrosstalkFraction != 0) {
-    if (m_i != 0) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k));
-      countE++;
-    }
-    if (m_i != m_nbX - 1) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k));
-      countE++;
-    }
-    if (m_j != 0) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k));
-      countE++;
-    }
-    if (m_j != m_nbY - 1) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k));
-      countE++;
-    }
-    if (m_k != 0) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j, m_k - 1));
-      countE++;
-    }
-    if (m_k != m_nbZ - 1) {
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j, m_k + 1));
-      countE++;
-    }
-  }
-
-  if (m_cornersCrosstalkFraction != 0) {
-    if ((m_i != 0) & (m_j != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j - 1, m_k));
-      countC++;
-    }
-    if ((m_i != 0) & (m_j != m_nbY - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j + 1, m_k));
-      countC++;
-    }
-    if ((m_i != 0) & (m_k != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k - 1));
-      countC++;
-    }
-    if ((m_i != 0) & (m_k != m_nbZ - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k + 1));
-      countC++;
-    }
-    if ((m_i != m_nbX - 1) & (m_j != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j - 1, m_k));
-      countC++;
-    }
-    if ((m_i != m_nbX - 1) & (m_j != m_nbY - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j + 1, m_k));
-      countC++;
-    }
-    if ((m_i != m_nbX - 1) & (m_k != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k - 1));
-      countC++;
-    }
-    if ((m_i != m_nbX - 1) & (m_k != m_nbZ - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k + 1));
-      countC++;
-    }
-    if ((m_j != 0) & (m_k != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k - 1));
-      countC++;
-    }
-    if ((m_j != 0) & (m_k != m_nbZ - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k + 1));
-      countC++;
-    }
-
-    if ((m_j != m_nbY - 1) & (m_k != 0)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k - 1));
-      countC++;
-    }
-    if ((m_j != m_nbY - 1) & (m_k != m_nbZ - 1)) {
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k + 1));
-      countC++;
-    }
-  }
-
-  // Check if the energy of neighbors is not higher than the energy of the incident pulse
-  G4double energytot = inputPulse->GetEnergy()*((countE*m_edgesCrosstalkFraction)+(countC*m_cornersCrosstalkFraction));
-  if(energytot>=inputPulse->GetEnergy())
-    {
-      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:\n"
-	     <<   "Sorry, but you have too much energy !\n";
-
-			G4String msg = "You must change your fractions of energy for the close crystals :\n"
-      "\t/gate/digitizer/Singles/crosstalk/setSidesFraction NUMBER\n"
-      "\t/gate/digitizer/Singles/crosstalk/setCornersFraction NUMBER\n"
-      "or disable the crosstalk using:\n"
-      "\t/gate/digitizer/Singles/crosstalk/disable\n";
-			G4Exception( "GateCrosstalk::ProcessOnePulse", "ProcessOnePulse", FatalException,msg);
-    }
-  // Add the incident pulse in the pulse list with less energy
-  GatePulse* outputPulse = new GatePulse(*inputPulse);
-  m_XtalkpCent = (1-(4*m_edgesCrosstalkFraction+4*m_cornersCrosstalkFraction));
-  outputPulse->SetEnergy((inputPulse->GetEnergy())*m_XtalkpCent);
-  outputPulseList.push_back(outputPulse);
-  if (nVerboseLevel>1)
-    G4cout << "the input pulse created " << countE+countC << " pulses around it"
-	   << Gateendl;
 }
 
 
@@ -225,25 +342,31 @@ GateVolumeID GateCrosstalk::CreateVolumeID(const GateVolumeID* aVolumeID, G4int 
 
 GateOutputVolumeID GateCrosstalk::CreateOutputVolumeID(const GateVolumeID aVolumeID)
 {
-  GateDetectorConstruction* aDetectorConstruction = GateDetectorConstruction::GetGateDetectorConstruction();
-  GateOutputVolumeID anOutputVolumeID = aDetectorConstruction->GetCrystalSD()->GetSystem()->ComputeOutputVolumeID(aVolumeID);
+	//GateDetectorConstruction* aDetectorConstruction = GateDetectorConstruction::GetGateDetectorConstruction();
+	//GateOutputVolumeID anOutputVolumeID = aDetectorConstruction->GetCrystalSD()->GetSystem()->ComputeOutputVolumeID(aVolumeID);
+
+	GateOutputVolumeID anOutputVolumeID = m_digitizer->GetSystem()->ComputeOutputVolumeID(aVolumeID);
+
   return anOutputVolumeID;
 }
 
-GatePulse* GateCrosstalk::CreatePulse(G4double val, const GatePulse* pulse, G4int i, G4int j, G4int k)
+GateDigi* GateCrosstalk::CreateDigi(G4double val, const GateDigi* digi, G4int i, G4int j, G4int k)
 {
-  GatePulse* apulse = new GatePulse(pulse);
-  apulse->SetLocalPos(G4ThreeVector(0,0,0));
-  apulse->SetVolumeID(CreateVolumeID(&pulse->GetVolumeID(), i, j, k));
-  apulse->SetGlobalPos(apulse->GetVolumeID().MoveToAncestorVolumeFrame(apulse->GetLocalPos()));
-  apulse->SetOutputVolumeID(CreateOutputVolumeID(apulse->GetVolumeID()));
-  apulse->SetEnergy(pulse->GetEnergy()*val);
-  return apulse;
+  GateDigi* adigi = new GateDigi(digi);
+
+  adigi->SetLocalPos(G4ThreeVector(0,0,0));
+  adigi->SetVolumeID(CreateVolumeID(&digi->GetVolumeID(), i, j, k));
+  adigi->SetGlobalPos(adigi->GetVolumeID().MoveToAncestorVolumeFrame(adigi->GetLocalPos()));
+  adigi->SetOutputVolumeID(CreateOutputVolumeID(adigi->GetVolumeID()));
+  adigi->SetEnergy(digi->GetEnergy()*val);
+
+  return adigi;
 }
 
-void GateCrosstalk::DescribeMyself(size_t indent)
+
+void GateCrosstalk::DescribeMyself(size_t indent )
 {
-  G4cout << GateTools::Indent(indent) << "Optical crosstalk for " << m_volume << ":\n"
-	 << GateTools::Indent(indent+1) << "fraction of energy for side crystals: " << m_edgesCrosstalkFraction << "\n"
-	 << GateTools::Indent(indent+1) << "fraction of energy for corner crystals: " << m_cornersCrosstalkFraction << Gateendl;
+	G4cout << GateTools::Indent(indent) << "Optical Crosstalk for " << m_volume << ":\n"
+		 << GateTools::Indent(indent+1) << "fraction of energy for side crystals: " << m_edgesCrosstalkFraction << "\n"
+		 << GateTools::Indent(indent+1) << "fraction of energy for corner crystals: " << m_cornersCrosstalkFraction << Gateendl;
 }

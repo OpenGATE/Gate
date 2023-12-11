@@ -127,4 +127,21 @@ private:
   static GateActorManager *singleton_ActorManager;
 };
 
+/*! 
+  Empty SD class doing nothing for removing existing SD from G4SDManager
+*/
+//    Created by tontyoutoure@gmail.com 2023/10/24
+
+class GateEmptySD : public G4VSensitiveDetector
+{
+
+  public:
+      //! Constructor.
+      //! The argument is the name of the sensitive detector
+      GateEmptySD(const G4String& name):G4VSensitiveDetector(name){Activate(false);}
+
+      //! Reinplementation is mendatory.
+      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist) override {return true;}
+};
+
 #endif /* end #define GATEACTORMANAGER_HH */
