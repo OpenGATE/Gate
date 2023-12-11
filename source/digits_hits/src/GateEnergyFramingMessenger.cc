@@ -6,31 +6,24 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-// OK GND 2022
-	/*! This a messenger for EnergyFraming digitizer module
-	 * Previously Thresholder and Upholder
-	 *
-	 * TODO GND 202
-	 * Implement let law option for CC from old GateEnergyThresholder:
-	*
-	 * if ( law == "solidAngleWeighted" ) {
-        return new GateSolidAngleWeightedEnergyLaw(GetEnergyThresholder()->GetObjectName()+ G4String("/solidAngleWeighted"));
+/*!
+  This is a messenger for EnergyFraming digitizer module
+  Previously Thresholder and Upholder
+  // OK GND 2022
 
-    } else if ( law == "depositedEnergy" ) {
-        return new GateDepositedEnergyLaw(GetEnergyThresholder()->GetObjectName() + G4String("/depositedEnergy"));
-    } else {
-	 *
-	 *
-	 */
+  Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
+
 
 #include "GateEnergyFramingMessenger.hh"
 #include "GateEnergyFraming.hh"
 #include "GateDigitizerMgr.hh"
 
 #include "G4SystemOfUnits.hh"
+#include "G4UIcmdWithAString.hh"
 #include "G4UIdirectory.hh"
+#include "GateSolidAngleWeightedEnergyLaw.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
-
 
 
 GateEnergyFramingMessenger::GateEnergyFramingMessenger (GateEnergyFraming* EnergyFraming)
@@ -39,11 +32,10 @@ GateEnergyFramingMessenger::GateEnergyFramingMessenger (GateEnergyFraming* Energ
 {
 	G4String guidance;
 	G4String cmdName;
+	G4String cmdName2;
 
-	//G4cout<< GetDirectoryName()<<G4endl;
 
 	cmdName = GetDirectoryName() + "setMin";
-	//G4cout<<cmdName<<G4endl;
 	setMinCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
 	setMinCmd->SetGuidance("Set uphold (in keV) for pulse-limitation");
 	setMinCmd->SetUnitCategory("Energy");
@@ -54,13 +46,11 @@ GateEnergyFramingMessenger::GateEnergyFramingMessenger (GateEnergyFraming* Energ
 	 setMaxCmd->SetGuidance("Set threshold (in keV) for pulse-discrimination");
 	 setMaxCmd->SetUnitCategory("Energy");
 
-	//TODO GND 2022
-	//Implement let law option for CC from old GateThresholder
-	/*
-	cmdName2 = GetDirectoryName() + "setLaw";
-	  lawCmd = new G4UIcmdWithAString(cmdName2,this);
-	  lawCmd->SetGuidance("Set the law of effective energy  for the threshold");
-	 */
+
+	 cmdName2 = GetDirectoryName() + "setLaw";
+	 setLawCmd = new G4UIcmdWithAString(cmdName2,this);
+	 setLawCmd->SetGuidance("Set the law of effective energy  for the framing");
+
 }
 
 
@@ -68,8 +58,22 @@ GateEnergyFramingMessenger::~GateEnergyFramingMessenger()
 {
 	delete  setMaxCmd;
 	delete  setMinCmd;
+	delete	setLawCmd;
 }
 
+
+GateVEffectiveEnergyLaw* GateEnergyFramingMessenger::SetEnergyFLaw(const G4String& law)
+{
+	if ( law == "solidAngleWeighted" )
+	{
+	     return new GateSolidAngleWeightedEnergyLaw(m_EnergyFraming->GetObjectName()+ G4String("/solidAngleWeighted"));
+	}
+	else if ( law == "depositedEnergy" )
+	{
+	    ;
+	}
+	return NULL;
+}
 
 void GateEnergyFramingMessenger::SetNewValue(G4UIcommand * aCommand,G4String newValue)
 {
@@ -81,6 +85,14 @@ void GateEnergyFramingMessenger::SetNewValue(G4UIcommand * aCommand,G4String new
 	{
 		m_EnergyFraming->SetMax(setMaxCmd->GetNewDoubleValue(newValue));
 	}
+	else if (aCommand ==setLawCmd)
+		{
+			GateVEffectiveEnergyLaw* a_Law = SetEnergyFLaw(newValue);
+			if (a_Law != NULL)
+			{
+				m_EnergyFraming->SetEnergyFLaw(a_Law);
+			}
+		}
 	else
 	{
 		GateClockDependentMessenger::SetNewValue(aCommand,newValue);

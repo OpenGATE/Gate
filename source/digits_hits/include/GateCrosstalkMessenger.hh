@@ -6,34 +6,59 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+// OK GND 2022
+/*This class is not used by GATE !
+  The purpose of this class is to help to create new users digitizer module(DM).
+  Please, check GateCrosstalk.cc for more detals
+  */
+
+
+/*! \class  GateCrosstalkMessenger
+    \brief  Messenger for the GateCrosstalk
+
+    - GateCrosstalk - by name.surname@email.com
+
+    \sa GateCrosstalk, GateCrosstalkMessenger
+*/
+
 
 #ifndef GateCrosstalkMessenger_h
 #define GateCrosstalkMessenger_h 1
 
-#include "GatePulseProcessorMessenger.hh"
-#include <vector>
-#include "G4UIdirectory.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
+
+#include "GateClockDependentMessenger.hh"
+class GateCrosstalk;
 
 class G4UIcmdWithAString;
 class G4UIcmdWithADouble;
 
-class GateCrosstalk;
-
-class GateCrosstalkMessenger: public GatePulseProcessorMessenger
+class GateCrosstalkMessenger : public GateClockDependentMessenger
 {
-  public:
-    GateCrosstalkMessenger(GateCrosstalk* itsCrosstalk);
-    virtual ~GateCrosstalkMessenger();
+public:
+  
+  GateCrosstalkMessenger(GateCrosstalk*);
+  ~GateCrosstalkMessenger();
+  
+  void SetNewValue(G4UIcommand*, G4String);
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  
+private:
+  GateCrosstalk* m_Crosstalk;
 
-    inline GateCrosstalk* GetCrosstalk()
-      { return (GateCrosstalk*) GetPulseProcessor(); }
+  G4UIcmdWithADouble   *edgesFractionCmd;
+  G4UIcmdWithADouble   *cornersFractionCmd;
 
-  private:
-    G4UIcmdWithAString   *newVolCmd;
-    G4UIcmdWithADouble   *edgesFractionCmd;
-    G4UIcmdWithADouble   *cornersFractionCmd;
+
 };
 
 #endif
+
+
+
+
+
+
+
+

@@ -6,6 +6,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
+/*!
+  Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
+
+
 #include "GateVEffectiveEnergyLaw.hh"
 #include "GateMessageManager.hh"
 
