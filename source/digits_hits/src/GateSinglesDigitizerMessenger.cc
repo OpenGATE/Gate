@@ -47,7 +47,7 @@ See LICENSE.md for further details
 #include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
-
+#include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
 #include "GateDiscretization.hh"
 
@@ -119,8 +119,7 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal";
    return theList;
 }
 
@@ -203,10 +202,11 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  m_digitizer->AddNewModule(newDM);
        }
   else if (childTypeName=="merger")
-         {
+       {
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
-         }
+
+       }
 
   else if (childTypeName=="buffer")
            {
@@ -227,10 +227,15 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
          }
 
   else if (childTypeName=="doIModels")
-        {
+       {
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
-        }
+       }
+  else if (childTypeName=="adderComptPhotIdeal")
+       {
+  	  newDM = new GateAdderComptPhotIdeal(m_digitizer, DMname);
+      	  m_digitizer->AddNewModule(newDM);
+       }
   else if (childTypeName=="clustering")
        {
           newDM = new GateClustering(m_digitizer, DMname);
