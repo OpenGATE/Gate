@@ -529,6 +529,7 @@ The *Energy Framing* module allows the user to select an energy window to discar
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMin 400. keV
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMax 600. keV
 
+
 **Example**: 
 
 In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated with each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and energy frames::
@@ -563,7 +564,45 @@ In SPECT analysis, subtractive scatter correction methods such as the dual-energ
    /gate/output/projection/setInputDataName Window1
    /gate/output/projection/addInputDataName Window2
    /gate/output/projection/addInputDataName Window3
-   
+ 
+For the solid angle weighted energy policy, the effective energy for each pulse is calculated multiplying the deposited energy by a factor that represents the fraction of the solid angle from the pulse position subtended by a virtual pixel centered in the X-Y pulse position at the detector layer readout surface. To this end, the size of the pixel and detector readout surface must be specified. Those characteristics are included using the following commands::
+ 
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setLaw/ solidAngleWeighted
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthX [szX]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthY [szY]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setZSense4Readout   [1/-1]
+
+**Example**::
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setLaw solidAngleWeighted
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setMin 250 keV
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthX 2 mm  
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthY 6 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setZSense4Readout 1 mm
+
+Clustering
+^^^^^^^^^^
+This module has been designed with monolithic crystals read-out by segmented photodetectors in mind. The global module has been developed as follow::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert clustering
+
+If a detected hit is closer than a specified accepted distance to one of the clusters, it is added to the closest one; otherwise, it generates a new cluster. The hits are added summing their deposited energies and computing the energy-weighted centroid position. If two clusters are closer than the accepted distance they are merged following the same criteria. If requested, events with multiple clusters in the same volume can be rejected::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setAcceptedDistance [distance plus units]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setRejectionMultipleClusters [0/1]
+
+**Example**::
+
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setAcceptedDistance	5 mm
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	1
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setAcceptedDistance	10 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	0
+
    
 Efficiency
 ^^^^^^^^^^
