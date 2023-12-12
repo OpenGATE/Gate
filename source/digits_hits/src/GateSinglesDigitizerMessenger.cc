@@ -54,7 +54,6 @@ See LICENSE.md for further details
 
 #include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
-#include "GateDiscretization.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
