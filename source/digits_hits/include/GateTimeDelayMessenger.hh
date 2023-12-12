@@ -6,18 +6,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-/*
-  The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateTimeDelay.cc for more details
-*/
-
-
-/*! \class  GateTimeDelayMessenger
-    \brief  Messenger for the GateTimeDelay
-
-    \sa GateTimeDelay, GateTimeDelayMessenger
-
-    Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+/*! 
+  \class  GateTimeDelayMessenger
+  \brief  Messenger for the GateTimeDelay
+  \sa GateTimeDelay, GateTimeDelayMessenger
+    
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
 
 

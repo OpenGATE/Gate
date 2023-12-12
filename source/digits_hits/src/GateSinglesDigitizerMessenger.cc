@@ -54,6 +54,7 @@ See LICENSE.md for further details
 
 #include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
+#include "GateTimeDelay.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
@@ -125,7 +126,7 @@ const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
 
 
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels clustering discretization adderComptPhotIdeal gridDiscretizator multipleRejection";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels timeDelay clustering discretization adderComptPhotIdeal gridDiscretizator multipleRejection";
    return theList;
 }
 
@@ -237,6 +238,11 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
         }
+  else if (childTypeName=="timeDelay")
+         {
+            newDM = new GateTimeDelay(m_digitizer, DMname);
+            m_digitizer->AddNewModule(newDM);
+          }
 
 else if (childTypeName=="multipleRejection")
   	{

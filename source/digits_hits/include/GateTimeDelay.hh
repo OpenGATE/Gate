@@ -6,19 +6,16 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-// OK GND 2022
-
 /*!
   \class  GateTimeDelay
 
-  Digitizer module for simulating a DoI model
-  The user can choose the axes for each tracked volume.
-  
+  Digitizer module for simulating a TimeDelay
+  The user can choose a specific TimeDelay for each tracked volume.
   \sa GateTimeDelay, GateTimeDelayMessenger
-  OK GND 2022
-
-    Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+    
+  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
 */
+
 
 #ifndef GateTimeDelay_h
 #define GateTimeDelay_h 1
@@ -47,8 +44,6 @@ public:
   
   void Digitize() override;
 
-
-  // *******implement your methods here
   
   void SetTimeDelay(G4double val)   { m_TimeDelay = val; };
 
@@ -56,7 +51,6 @@ public:
   void DescribeMyself(size_t );
 
 protected:
-  // *******implement your parameters here
 
   G4double 	 m_TimeDelay;
 
