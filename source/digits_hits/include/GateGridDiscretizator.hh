@@ -52,60 +52,35 @@ public:
   GateGridDiscretizator(GateSinglesDigitizer *digitizer, G4String name);
   ~GateGridDiscretizator();
   
-  G4int ChooseVolume(G4String val);
+  //G4int ChooseVolume(G4String val);
 
   void Digitize() override;
 
   void SetDiscretization(G4double val)   { m_GateGridDiscretizator = val; };
 
 
-  void SetStripOffsetX(G4String name, G4double val)   {  m_param.stripOffsetX = val;  };
-  void SetStripOffsetY(G4String name, G4double val)   {  m_param.stripOffsetY = val;  };
-  void SetStripOffsetZ(G4String name, G4double val)   {  m_param.stripOffsetZ = val;  };
+  void SetStripOffsetX( G4double val)   {  stripOffsetX = val;  };
+  void SetStripOffsetY( G4double val)   {  stripOffsetY = val;  };
+  void SetStripOffsetZ( G4double val)   {  stripOffsetZ = val;  };
  
-  void SetNumberStripsX(G4String name,int val)   {  m_param.numberStripsX = val;  };
-  void SetNumberStripsY(G4String name, int val)   {  m_param.numberStripsY = val;  };
-  void SetNumberStripsZ(G4String name, int val)   {  m_param.numberStripsZ = val;  };
+  void SetNumberStripsX(int val)   {  numberStripsX = val;  };
+  void SetNumberStripsY( int val)   {  numberStripsY = val;  };
+  void SetNumberStripsZ( int val)   {  numberStripsZ = val;  };
  
-  void SetStripWidthX(G4String name,G4double val)   {  m_param.stripWidthX = val;  };
-  void SetStripWidthY(G4String name, G4double val)   {  m_param.stripWidthY = val;  };
-  void SetStripWidthZ(G4String name, G4double val)   {  m_param.stripWidthZ = val;  };
+  void SetStripWidthX(G4double val)   {  stripWidthX = val;  };
+  void SetStripWidthY( G4double val)   {  stripWidthY = val;  };
+  void SetStripWidthZ( G4double val)   {  stripWidthZ = val;  };
   
-  void SetNumberReadOutBlocksX(G4String name,int val)   {  m_param.numberReadOutBlocksX = val;  };
-  void SetNumberReadOutBlocksY(G4String name, int val)   {  m_param.numberReadOutBlocksY = val;  };
-  void SetNumberReadOutBlocksZ(G4String name, int val)   {  m_param.numberReadOutBlocksZ = val;  };
-  struct param {
+  void SetNumberReadOutBlocksX(int val)   {  numberReadOutBlocksX = val;  };
+  void SetNumberReadOutBlocksY( int val)   {  numberReadOutBlocksY = val;  };
+  void SetNumberReadOutBlocksZ( int val)   {  numberReadOutBlocksZ = val;  };
 
-	  G4double stripOffsetX;
-	  G4double stripOffsetY;
-	  G4double stripOffsetZ;
-	  G4double stripWidthX;
-	  G4double stripWidthY;
-	  G4double stripWidthZ;
-	  G4int numberStripsX;
-	  G4int numberStripsY;
-	  G4int numberStripsZ;
-	  G4int numberReadOutBlocksX;
-	  G4int numberReadOutBlocksY;
-	  G4int numberReadOutBlocksZ;
-	  G4ThreeVector volSize;
-	  G4double deadSpX;
-	  G4double deadSpY;
-	  G4double deadSpZ;
-	  G4double pitchY;
-	  G4double pitchX;
-	  G4double pitchZ;
-  };
-  param m_param;
 
-  std::vector<int > index_X_list;
-  std::vector<int > index_Y_list;
-  std::vector<int > index_Z_list;
+protected:
 
-  std::map<std::tuple<int,int,int>, std::vector<int>> blockIndex;
 
-  void SetVolumeName(G4String name) {
-	  m_name=name;};
+  //void SetVolumeName(G4String name) {
+  //	  m_name=name;};
 
   void DescribeMyself(size_t );
 
@@ -116,8 +91,38 @@ public:
   int GetYIndex(G4double posY);
   int GetZIndex(G4double posZ);
 
+  void ApplyBlockReadOut();
+
 protected:
   G4double   m_GateGridDiscretizator;
+
+  G4double stripOffsetX;
+  G4double stripOffsetY;
+  G4double stripOffsetZ;
+  G4double stripWidthX;
+  G4double stripWidthY;
+  G4double stripWidthZ;
+  G4int numberStripsX;
+  G4int numberStripsY;
+  G4int numberStripsZ;
+  G4int numberReadOutBlocksX;
+  G4int numberReadOutBlocksY;
+  G4int numberReadOutBlocksZ;
+  G4ThreeVector volSize;
+  G4double deadSpX;
+  G4double deadSpY;
+  G4double deadSpZ;
+  G4double pitchY;
+  G4double pitchX;
+  G4double pitchZ;
+
+
+std::vector<int > index_X_list;
+std::vector<int > index_Y_list;
+std::vector<int > index_Z_list;
+
+std::map<std::tuple<int,int,int>, std::vector<int>> blockIndex;
+
 
 private:
   GateDigi* m_outputDigi;

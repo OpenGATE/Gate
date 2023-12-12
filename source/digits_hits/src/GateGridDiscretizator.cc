@@ -44,7 +44,28 @@ GateGridDiscretizator::GateGridDiscretizator(GateSinglesDigitizer *digitizer, G4
 	G4String colName = digitizer->GetOutputName() ;
 	collectionName.push_back(colName);
 	m_Messenger = new GateGridDiscretizatorMessenger(this);
-}
+
+	m_name=m_digitizer->GetSD()->GetName();
+    /*numberStripsX= 1;
+    numberStripsY= 1;
+    numberStripsZ= 1;
+
+    numberReadOutBlocksX= 1;
+    numberReadOutBlocksY= 1;
+    numberReadOutBlocksZ= 1;
+
+    stripOffsetX=0;
+    stripOffsetY=0;
+    stripOffsetZ=0;
+
+    stripWidthX=0;
+    stripWidthY=0;
+    stripWidthZ=0;
+
+    deadSpX=0;
+    deadSpY=0;
+    deadSpZ=0;*/
+ }
 
 
 GateGridDiscretizator::~GateGridDiscretizator()
@@ -60,9 +81,9 @@ void GateGridDiscretizator::SetGridPoints3D( int indexX, int indexY,int indexZ, 
      //If there are no strips in a direction (an zero offset, deadspace), index should be 0. and stripWidth whole detector so position in te middle
 
      if(indexX>=0  && indexY>=0  &&  indexZ>=0  ){
-         posX=indexX*m_param.pitchX-(m_param.volSize.getX()-m_param.stripWidthX-2*m_param.stripOffsetX)/2;
-         posY=indexY*m_param.pitchY-(m_param.volSize.getY()-m_param.stripWidthY-2*m_param.stripOffsetY)/2;
-         posZ=indexZ*m_param.pitchZ-(m_param.volSize.getZ()-m_param.stripWidthZ-2*m_param.stripOffsetZ)/2;
+         posX=indexX*pitchX-(volSize.getX()-stripWidthX-2*stripOffsetX)/2;
+         posY=indexY*pitchY-(volSize.getY()-stripWidthY-2*stripOffsetY)/2;
+         posZ=indexZ*pitchZ-(volSize.getZ()-stripWidthZ-2*stripOffsetZ)/2;
 
 
          pos.setX(posX);
@@ -79,6 +100,7 @@ void GateGridDiscretizator::SetGridPoints3D( int indexX, int indexY,int indexZ, 
 void GateGridDiscretizator::Digitize()
 {
 	//G4cout<< "Discretization = "<< m_GateGridDiscretizator <<G4endl;
+
 
 
 	G4String digitizerName = m_digitizer->m_digitizerName;
@@ -99,6 +121,13 @@ void GateGridDiscretizator::Digitize()
 	std::vector< GateDigi* >* OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
 	std::vector<GateDigi*>::iterator iter;
 
+
+	index_X_list.clear();
+	index_Y_list.clear();
+	index_Z_list.clear();
+	blockIndex.erase(blockIndex.begin(), blockIndex.end());
+
+
   if (IDC)
      {
 	  G4int n_digi = IDC->entries();
@@ -108,110 +137,101 @@ void GateGridDiscretizator::Digitize()
 	  {
 		  inputDigi=(*IDC)[i];
 
-		  const GateDigiCollection* InputDigiCollectionVector = 0;
+		  //const GateDigiCollection* InputDigiCollectionVector = 0;
 
-		   index_X_list.clear();
-		   index_Y_list.clear();
-		   index_Z_list.clear();
-		 blockIndex.erase(blockIndex.begin(), blockIndex.end());
+		  int current_indexX=INVALID_INDEX;
+		  int current_indexY=INVALID_INDEX;
+		  int current_indexZ=INVALID_INDEX;
+		  int NumberPB_X;
+		  int NumberPB_Y;
+		  int NumberPB_Z;
 
+		  std::tuple<int, int, int> blockTempIndex;
 
-		 if (nVerboseLevel==1) {
-			 G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << OutputDigiCollectionVector->size() << " entries\n";
-			 for (iter = OutputDigiCollectionVector->begin() ; iter != OutputDigiCollectionVector->end() ; ++iter)
-			   G4cout << **iter << Gateendl;
-			 G4cout << Gateendl;
-		}
+		  m_outputDigi = new GateDigi(*inputDigi);
 
 
-		int current_indexX=INVALID_INDEX;
-		int current_indexY=INVALID_INDEX;
-		int current_indexZ=INVALID_INDEX;
-		int NumberPB_X;
-		int NumberPB_Y;
-		int NumberPB_Z;
-
-		std::tuple<int, int, int> blockTempIndex;
-
-		GateDigi* m_outputDigi = new GateDigi(*inputDigi);
-
-
-		if (((m_outputDigi->GetVolumeID()).GetBottomCreator())){
+		if (((m_outputDigi->GetVolumeID()).GetBottomCreator())){ /// ????
 
 			// I can not access to Solid volume nor in GateGridDiscretizator::ChooseVolume neither in the constructor. So I check here if the size of the volume has loaded for the
 			//considered volume and if not I enter the values
-			if(m_param.volSize.getX()==0){
+			if(volSize.getX()==0){
 				//Fill volumeSize
 				m_outputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
-				m_param.volSize.setX(max-min);
+				volSize.setX(max-min);
 				m_outputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
-				m_param.volSize.setY(max-min);
+				volSize.setY(max-min);
 				m_outputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
-				m_param.volSize.setZ(max-min);
+				volSize.setZ(max-min);
 
-				if( m_param.volSize.getX()<(m_param.numberStripsX*m_param.stripWidthX+2*m_param.stripOffsetX)){
-					 GateError("The volume defined by number of strips, width and offset is larger that the SD size in X-axis direction ");
+				if( volSize.getX()<(numberStripsX*stripWidthX+2*stripOffsetX)){
+					GateError("The volume defined by number of strips, width and offset is larger that the SD size in X-axis direction ");
 				}
-				else if ( m_param.volSize.getY()<(m_param.numberStripsY*m_param.stripWidthY+2*m_param.stripOffsetY)) {
+				else if ( volSize.getY()<(numberStripsY*stripWidthY+2*stripOffsetY)) {
 					GateError("The volume defined by number of strips, width and offset is larger that the SD size in Y-axis direction ");
 
 				}
-				else if ( m_param.volSize.getZ()<(m_param.numberStripsZ*m_param.stripWidthZ+2*m_param.stripOffsetZ)) {
+				else if ( volSize.getZ()<(numberStripsZ*stripWidthZ+2*stripOffsetZ)) {
 					GateError("The volume defined by number of strips, width and offset is larger that the SD size in Z-axis direction ");
+
 				}
 				else{
 					//Fill deadSpace and pitch
 					//deadspace is the inactive space between strips or pixels. If there is only one strip dead space is zero. The inactive material in the border is considere offset (stripOffset parameter)
-					if (m_param.numberStripsX==1){
-						m_param.deadSpX=0.0;
-						if (m_param.stripOffsetX==0){
-							//avoid precision errors
-							if (abs(m_param.stripWidthX-m_param.volSize.getX())>10*EPSILON){
-								GateError("Error when setting strip width, offset or number  in X direction ");
-							}
+					 if (numberStripsX==1){
+						 deadSpX=0.0;
+						 if (stripOffsetX==0){
+							 //avoid precision errors
+							 if (abs(stripWidthX-volSize.getX())>10*EPSILON){
+								 GateError("Error when setting strip width, offset or number  in X direction ");
+							 }
 
-							m_param.stripWidthX=m_param.volSize.getX();
-						}
-					}
+							 stripWidthX=volSize.getX();
+						 }
+					 }
 					else{
-						m_param.deadSpX=(m_param.volSize.getX()-2*m_param.stripOffsetX-m_param.stripWidthX)/(m_param.numberStripsX-1)-m_param.stripWidthX;
-						if( m_param.deadSpX<EPSILON) m_param.deadSpX=0.0;
+						deadSpX=(volSize.getX()-2*stripOffsetX-stripWidthX)/(numberStripsX-1)-stripWidthX;
+						if( deadSpX<EPSILON) deadSpX=0.0;
 					}
-					m_param.pitchX=m_param.stripWidthX+m_param.deadSpX;
-					
-					if (m_param.numberStripsY==1){
-						m_param.deadSpY=0.0;
-						if (m_param.stripOffsetY==0){
-							//avoid precision errors
-							if (abs(m_param.stripWidthY-m_param.volSize.getY())>10*EPSILON){
-								GateError("Error when setting strip width, offset or number in Y direction  ");
-							}
-							m_param.stripWidthY=m_param.volSize.getY();
-						}
-					}
-					else{
-						m_param.deadSpY=(m_param.volSize.getY()-2*m_param.stripOffsetY-m_param.stripWidthY)/(m_param.numberStripsY-1)-m_param.stripWidthY;
-						if( m_param.deadSpY<EPSILON) m_param.deadSpY=0;
-					}
-					m_param.pitchY=m_param.stripWidthY+m_param.deadSpY;
-					
-					if (m_param.numberStripsZ==1){
-						m_param.deadSpZ=0.0;
-						if (m_param.stripOffsetZ==0){
-							//avoid precision errors
-							if (abs(m_param.stripWidthZ-m_param.volSize.getZ())>10*EPSILON){
-								GateError("Error when setting strip width, offset or number in Z direction  ");
-							}
-							m_param.stripWidthZ=m_param.volSize.getZ();
-						}
+					 pitchX=stripWidthX+deadSpX;
+					//
 
 
-					}
+					 if (numberStripsY==1){
+						 deadSpY=0.0;
+						 if (stripOffsetY==0){
+							 //avoid precision errors
+							 if (abs(stripWidthY-volSize.getY())>10*EPSILON){
+								 GateError("Error when setting strip width, offset or number in Y direction  ");
+							 }
+							 stripWidthY=volSize.getY();
+						 }
+					 }
+					 else{
+						 deadSpY=(volSize.getY()-2*stripOffsetY-stripWidthY)/(numberStripsY-1)-stripWidthY;
+						 if( deadSpY<EPSILON) deadSpY=0;
+					 }
+					 pitchY=stripWidthY+deadSpY;
+					 //
+
+					 if (numberStripsZ==1){
+						 deadSpZ=0.0;
+						 if (stripOffsetZ==0){
+							 //avoid precision errors
+							 if (abs(stripWidthZ-volSize.getZ())>10*EPSILON){
+								 GateError("Error when setting strip width, offset or number in Z direction  ");
+							 }
+							 stripWidthZ=volSize.getZ();
+						 }
+
+
+					 }
 					else{
-						m_param.deadSpZ=(m_param.volSize.getZ()-2*m_param.stripOffsetZ-m_param.stripWidthZ)/(m_param.numberStripsZ-1)-m_param.stripWidthZ;
-						if( m_param.deadSpZ<EPSILON) m_param.deadSpZ=0.0;
+
+						 deadSpZ=(volSize.getZ()-2*stripOffsetZ-stripWidthZ)/(numberStripsZ-1)-stripWidthZ;
+						 if( deadSpZ<EPSILON) deadSpZ=0.0;
 					}
-					m_param.pitchZ=m_param.stripWidthZ+m_param.deadSpZ;
+					 pitchZ=stripWidthZ+deadSpZ;
 
 				}
 			}
@@ -220,20 +240,21 @@ void GateGridDiscretizator::Digitize()
 			m_outputDigi->SetEnergyIniTrack(-1);
 			m_outputDigi->SetEnergyFin(-1);
 
-			NumberPB_Y=m_param.numberStripsY;
-			NumberPB_X=m_param.numberStripsX;
-			NumberPB_Z=m_param.numberStripsZ;
 
-			if(m_param.numberReadOutBlocksX>0  ){
-				NumberPB_X=int(m_param.numberStripsX/m_param.numberReadOutBlocksX);
-			}
-			if(m_param.numberReadOutBlocksY>0){
-				NumberPB_Y=int(m_param.numberStripsY/m_param.numberReadOutBlocksY);
+	        NumberPB_Y=numberStripsY;
+	        NumberPB_X=numberStripsX;
+	        NumberPB_Z=numberStripsZ;
 
-			}
-			if(m_param.numberReadOutBlocksZ>0){
-				NumberPB_Z=int(m_param.numberStripsZ/m_param.numberReadOutBlocksZ);
-			}
+	        if(numberReadOutBlocksX>0  ){
+	            NumberPB_X=int(numberStripsX/numberReadOutBlocksX);
+	        }
+	        if(numberReadOutBlocksY>0){
+	            NumberPB_Y=int(numberStripsY/numberReadOutBlocksY);
+
+	        }
+	        if(numberReadOutBlocksZ>0){
+	            NumberPB_Z=int(numberStripsZ/numberReadOutBlocksZ);
+	        }
 
 			G4ThreeVector PosLocal = m_outputDigi->GetLocalPos();
 
@@ -247,6 +268,8 @@ void GateGridDiscretizator::Digitize()
 		   //G4cout<<"  Berfor analysing: indexX="<<current_indexX<<"   indexY="<<current_indexY<<G4endl;
 
 			if(current_indexX!=INVALID_INDEX &&current_indexY!=INVALID_INDEX && current_indexZ!=INVALID_INDEX ){
+
+				SetGridPoints3D(current_indexX, current_indexY,current_indexZ, PosLocal);
 
 				m_outputDigi->SetLocalPos(PosLocal);
 				m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos()));
@@ -267,7 +290,7 @@ void GateGridDiscretizator::Digitize()
 					//blockTempIndex.second=int (current_indexY/NumberPB_Y);
 
 					//If block readout is applied
-					if(NumberPB_X!=m_param.numberStripsX ||NumberPB_Y!=m_param.numberStripsY || NumberPB_Z!=m_param.numberStripsZ ){
+					if(NumberPB_X!=numberStripsX ||NumberPB_Y!=numberStripsY || NumberPB_Z!=numberStripsZ ){
 					   //the strucutre has been changed
 						blockIndex.insert(std::pair<std::tuple<int,int,int>, std::vector<int>>(blockTempIndex,{int(OutputDigiCollectionVector->size()-1)}));
 					}
@@ -320,7 +343,7 @@ void GateGridDiscretizator::Digitize()
 					}
 					//This is for the blocks
 					if(flagPulseIsAdded==false){
-						if(NumberPB_X!=m_param.numberStripsX ||NumberPB_Y!=m_param.numberStripsY || NumberPB_Z!=m_param.numberStripsZ){
+						if(NumberPB_X!=numberStripsX ||NumberPB_Y!=numberStripsY || NumberPB_Z!=numberStripsZ){
 
 							std::get<0>(blockTempIndex)= int (current_indexX/NumberPB_X);
 							std::get<1>(blockTempIndex)= int (current_indexY/NumberPB_Y);
@@ -373,6 +396,8 @@ void GateGridDiscretizator::Digitize()
 			G4cout << Gateendl;
 		}
 	  } //loop  over input digits
+	  ApplyBlockReadOut();
+
     }
   else
     {
@@ -390,156 +415,218 @@ void GateGridDiscretizator::Digitize()
 
 void GateGridDiscretizator::DescribeMyself(size_t indent )
 {
-  ;
+	G4cout << GateTools::Indent(indent) << "  and number of strips in X"
+	           << numberStripsX<<  Gateendl;
 }
 
 int GateGridDiscretizator::GetXIndex(G4double posX){
+	int index_i;
 
-    int index_i;
+	    //position in the new reference sys where the first strip active area starts
+	     double pos_SRN=posX-stripOffsetX+ volSize.getX()/2;
+	    int indexT=(int)(pos_SRN/pitchX);
+	    if(pos_SRN<0){
+	         //Invalid index to those that interact in the left offset
+	        index_i=INVALID_INDEX;
+	    }
+	    else{
+	        if(pos_SRN>(pitchX*indexT+stripWidthX)){
+	             //Invalid index to those that interact in dead space
+	             index_i=INVALID_INDEX;
+	        }
+	        else{
+	            if(indexT>=numberStripsX){
+	                double l_sp=pos_SRN-numberStripsX*pitchX;
+	                if(l_sp<EPSILON){
+	                    //hit in the limit of the last strip. Hit assigned to the last strip
+	                    index_i=numberStripsX-1;
+	                }
+	                else{
+	                     index_i=INVALID_INDEX;
+	                    //hit in the right offset of the detector
+	                    if(l_sp>stripOffsetX){
+	                        G4cout<<"[GateGridDiscretization::GetXIndex]: Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
+	                    }
+	                }
 
-    //position in the new reference sys where the first strip active area starts
-     double pos_SRN=posX-m_param.stripOffsetX+ m_param.volSize.getX()/2;
-    int indexT=(int)(pos_SRN/m_param.pitchX);
-    if(pos_SRN<0){
-         //Invalid index to those that interact in the left offset
-        index_i=INVALID_INDEX;
-    }
-    else{
-        if(pos_SRN>(m_param.pitchX*indexT+m_param.stripWidthX)){
-             //Invalid index to those that interact in dead space
-             index_i=INVALID_INDEX;
-        }
-        else{
-            if(indexT>=m_param.numberStripsX){
-                double l_sp=pos_SRN-m_param.numberStripsX*m_param.pitchX;
-                if(l_sp<EPSILON){
-                    //hit in the limit of the last strip. Hit assigned to the last strip
-                    index_i=m_param.numberStripsX-1;
-                }
-                else{
-                     index_i=INVALID_INDEX;
-                    //hit in the right offset of the detector
-                    if(l_sp>m_param.stripOffsetX){
-                        G4cout<<"[GateGridDiscretization::GetXIndex]: Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
-                    }
-                }
+	            }
+	            else {
+	                index_i=indexT;
+	            }
+	        }
 
-            }
-            else {
-                index_i=indexT;
-            }
-        }
-
-    }
+	    }
 
 
-    return index_i;
+	    return index_i;
+
 }
 
 int GateGridDiscretizator::GetYIndex(G4double posY){
 
-      int index_j;
+	 int index_j;
 
-      double pos_SRN=posY-m_param.stripOffsetY+m_param.volSize.getY()/2;
-      int indexT=(int)(pos_SRN/m_param.pitchY);
-      if(pos_SRN<0){
-           //Invalid index to those that interact in the left offset
-          index_j=INVALID_INDEX;
-      }
-      else{
-          if(pos_SRN>(m_param.pitchY*indexT+m_param.stripWidthY)){
-              //Invalid index to those that interact in dead space
-               index_j=INVALID_INDEX;
-          }
-          else{
-              if(indexT>=m_param.numberStripsY){
-                  double l_sp=pos_SRN-m_param.numberStripsY*m_param.pitchY;
-                  if(l_sp<EPSILON){
-                     //hit in the last strip
-                     index_j=m_param.numberStripsY-1;
-                  }
-                  else{
-                       index_j=INVALID_INDEX;
-                      //hit in the top offset of the detector
-                      if(l_sp>m_param.stripOffsetY){
-                          G4cout<<"[GateGridDiscretization::GetYIndex]:Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
-                      }
-                  }
+	      double pos_SRN=posY-stripOffsetY+volSize.getY()/2;
+	      int indexT=(int)(pos_SRN/pitchY);
+	      if(pos_SRN<0){
+	           //Invalid index to those that interact in the left offset
+	          index_j=INVALID_INDEX;
+	      }
+	      else{
+	          if(pos_SRN>(pitchY*indexT+stripWidthY)){
+	              //Invalid index to those that interact in dead space
+	               index_j=INVALID_INDEX;
+	          }
+	          else{
+	              if(indexT>=numberStripsY){
+	                  double l_sp=pos_SRN-numberStripsY*pitchY;
+	                  if(l_sp<EPSILON){
+	                     //hit in the last strip
+	                     index_j=numberStripsY-1;
+	                  }
+	                  else{
+	                       index_j=INVALID_INDEX;
+	                      //hit in the top offset of the detector
+	                      if(l_sp>stripOffsetY){
+	                          G4cout<<"[GateGridDiscretization::GetYIndex]:Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
+	                      }
+	                  }
 
-              }
-              else {
-                index_j=indexT;
-             }
-          }
-      }
-      return index_j;
+	              }
+	              else {
+	                index_j=indexT;
+	             }
+	          }
+	      }
+	      return index_j;
 }
 
 int GateGridDiscretizator::GetZIndex(G4double posZ){
+    int index_j;
 
-      int index_j;
+     double pos_SRN=posZ-stripOffsetZ+volSize.getZ()/2;
+     int indexT=(int)(pos_SRN/pitchZ);
+     if(pos_SRN<0){
+          //Invalid index to those that interact in the left offset
+         index_j=INVALID_INDEX;
+     }
+     else{
+         if(pos_SRN>(pitchZ*indexT+stripWidthZ)){
+             //Invalid index to those that interact in dead space
+              index_j=INVALID_INDEX;
+         }
+         else{
+             if(indexT>=numberStripsZ){
+                 double l_sp=pos_SRN-numberStripsZ*pitchZ;
+                 if(l_sp<EPSILON){
+                    //hit in the last strip
+                    index_j=numberStripsZ-1;
+                 }
+                 else{
+                      index_j=INVALID_INDEX;
+                     //hit in the top offset of the detector
+                     if(l_sp>deadSpZ){
+                         G4cout<<"[GateGridDiscretization::GetZIndex]:Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
+                     }
+                 }
 
-      double pos_SRN=posZ-m_param.stripOffsetZ+m_param.volSize.getZ()/2;
-      int indexT=(int)(pos_SRN/m_param.pitchZ);
-      if(pos_SRN<0){
-           //Invalid index to those that interact in the left offset
-          index_j=INVALID_INDEX;
-      }
-      else{
-          if(pos_SRN>(m_param.pitchZ*indexT+m_param.stripWidthZ)){
-              //Invalid index to those that interact in dead space
-               index_j=INVALID_INDEX;
-          }
-          else{
-              if(indexT>=m_param.numberStripsZ){
-                  double l_sp=pos_SRN-m_param.numberStripsZ*m_param.pitchZ;
-                  if(l_sp<EPSILON){
-                     //hit in the last strip
-                     index_j=m_param.numberStripsZ-1;
-                  }
-                  else{
-                       index_j=INVALID_INDEX;
-                      //hit in the top offset of the detector
-                      if(l_sp>m_param.deadSpZ){
-                          G4cout<<"[GateGridDiscretization::GetZIndex]:Check grid discretization parameters. A hit is registerd outside the defined grid "<<G4endl;
-                      }
-                  }
-
-              }
-              else {
-                index_j=indexT;
              }
-          }
-      }
-      return index_j;
+             else {
+               index_j=indexT;
+            }
+         }
+     }
+     return index_j;
 }
 
-G4int GateGridDiscretizator::ChooseVolume(G4String val)
+
+void GateGridDiscretizator::ApplyBlockReadOut(){
+  if(!m_OutputDigiCollection->entries()){
+	  std::vector< GateDigi* >* OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
+      //It can be applied to different volumesID even if they share the same volume name if they are generated by the repeater
+          std::vector<unsigned int> posErase;
+
+          for (auto const& x :  blockIndex){
+                     std::map<G4String,std::vector<int>> posToMerge;
+                     if(x.second.size()>1){
+                         //We have more then one pulse in the same block pair (x,y) (if repeaters were used they can correspond to diferent volumeID)
+                         //Important to  check if they are in same volumeID before merging (they can share volume name and not volume ID)
+                         //Middle sep to create posToMerge, map where the name of the current volume taking into account the copy number is used as keyvalue to analyse the coincidence for blockIndexPair key
+                         for(unsigned int i1=0; i1<x.second.size(); i1++){
+                             G4String currentVolumeName=(OutputDigiCollectionVector->at(x.second[i1])->GetVolumeID().GetBottomCreator())->GetObjectName();
+                             int currentNumber=OutputDigiCollectionVector->at(x.second[i1])->GetVolumeID().GetBottomVolume()->GetCopyNo();
+                             currentVolumeName=currentVolumeName+std::to_string(currentNumber);
+                             if(posToMerge.find(currentVolumeName)!=posToMerge.end()){
+                                 posToMerge[currentVolumeName].push_back(x.second[i1]);
+
+                             }
+                             else{
+                                 posToMerge.insert(std::pair<G4String,std::vector<int>> (currentVolumeName,{x.second[i1]}));
+                             }
+
+                         }
+                     }
+                    //If  the size of any of the vector associated to the same volume name  is bigger than 1 then yes merge
+                     for (auto const& ps :  posToMerge){
+                        if(ps.second.size()>1){
+                              //Do operations in the first index output and erase the others
+                            for(unsigned int i=1; i<ps.second.size(); i++){
+
+                                // ????? OutputDigiCollectionVector->at(ps.second[0])->CentroidMerge(OutputDigiCollectionVector->at(ps.second[i]));
+                                posErase.push_back(ps.second[i]);
+                            }
+
+                         }
+                     }
+
+
+
+           }
+          if(posErase.size()>0){
+
+              std::sort (posErase.begin(), posErase.end());
+              //delete the merged pulses if any
+
+              for (unsigned int k=0; k<posErase.size(); k++)
+              {
+                  //G4cout<<"pos to erase"<<  posErase.at(k)<<G4endl,
+                  delete OutputDigiCollectionVector->at(posErase.at(k)-k);
+                  OutputDigiCollectionVector->erase(OutputDigiCollectionVector->begin()+posErase.at(k)-k); /// ???
+              }
+
+          }
+
+  }
+}
+
+
+
+/*G4int GateGridDiscretizator::ChooseVolume(G4String val)
 {
     GateObjectStore* m_store = GateObjectStore::GetInstance();
 
 
     if (m_store->FindCreator(val)!=0) {
     
-        m_param.numberStripsX= 1;
-        m_param.numberStripsY= 1;
-        m_param.numberStripsZ= 1;
+        numberStripsX= 1;
+        numberStripsY= 1;
+        numberStripsZ= 1;
         
-        m_param.numberReadOutBlocksX= 1;
-        m_param.numberReadOutBlocksY= 1;
-        m_param.numberReadOutBlocksZ= 1;
+        numberReadOutBlocksX= 1;
+        numberReadOutBlocksY= 1;
+        numberReadOutBlocksZ= 1;
         
-        m_param.stripOffsetX=0;
-        m_param.stripOffsetY=0;
-        m_param.stripOffsetZ=0;
+        stripOffsetX=0;
+        stripOffsetY=0;
+        stripOffsetZ=0;
         
-        m_param.stripWidthX=0;
-        m_param.stripWidthY=0;
-        m_param.stripWidthZ=0;
+        stripWidthX=0;
+        stripWidthY=0;
+        stripWidthZ=0;
         
-        m_param.deadSpX=0;
-        m_param.deadSpY=0;
-        m_param.deadSpZ=0;
+        deadSpX=0;
+        deadSpY=0;
+        deadSpZ=0;
 
 
 
@@ -553,4 +640,4 @@ G4int GateGridDiscretizator::ChooseVolume(G4String val)
 
 
 }
-
+*/
