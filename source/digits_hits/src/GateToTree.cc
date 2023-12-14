@@ -495,7 +495,7 @@ void GateToTree::RecordBeginOfAcquisition() {
                         if (!m_outputIDHasName[k][depth])
                             continue;
                         std::stringstream ss;
-                        ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+                        ss << system->GetOwnName() << "_" << m_outputIDName[k][depth];
                         mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
                     }
                 }
@@ -648,7 +648,7 @@ void GateToTree::RecordBeginOfAcquisition() {
                         if (!m_outputIDHasName[k][depth])
                             continue;
                         std::stringstream ss;
-                        ss << system->GetOwnName() << "/" << m_outputIDName[k][depth];
+                        ss << system->GetOwnName() << "_" << m_outputIDName[k][depth];
                         mm.write_variable(ss.str(), &m_outputID[0][k][depth]);
                     }
                 }
@@ -822,7 +822,7 @@ void GateToTree::RecordBeginOfAcquisition() {
                             if (!m_outputIDHasName[k][depth])
                                 continue;
                             std::stringstream ss;
-                            ss << system->GetOwnName() << "/" << m_outputIDName[k][depth] << side;
+                            ss << system->GetOwnName() << "_" << m_outputIDName[k][depth] << side;
                             mm.write_variable(ss.str(), &m_outputID[side - 1][k][depth]);
                         }
                     }
