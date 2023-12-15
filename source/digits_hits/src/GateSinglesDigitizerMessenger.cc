@@ -126,7 +126,7 @@ const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
 
 
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModels timeDelay clustering discretization adderComptPhotIdeal gridDiscretizator multipleRejection";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModel timeDelay clustering adderComptPhotIdeal gridDiscretizator multipleRejection";
    return theList;
 }
 
