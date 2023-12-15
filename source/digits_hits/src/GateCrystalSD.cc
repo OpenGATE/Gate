@@ -299,11 +299,12 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetNCrystalCompton(0);//nCurrentHitCompton);
   aHit->SetNCrystalRayleigh(0);//nCurrentHitRayl);
 
-/*  aHit->SetPostStepProcess( processPostStep);
+ aHit->SetPostStepProcess( processPostStep);
 
   aHit->SetSourceEnergy(m_sourceEnergy);
   aHit->SetSourcePDG(m_sourcePDG);
-*/
+
+
 
   // Ask the system to compute the output volume ID and store it into the hit
 

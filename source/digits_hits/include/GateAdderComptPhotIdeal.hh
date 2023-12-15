@@ -48,8 +48,10 @@ public:
 
   void SetEvtRejectionPolicy(G4bool flgval){m_flgRejActPolicy=flgval; };
   void DescribeMyself(size_t);
-  bool flgEvtRej;
-  std::vector<G4int> lastTrackID;
+  GateDigi* CentroidMergeComptPhotIdeal(GateDigi *right, GateDigi *output);
+
+  bool m_flgEvtRej;
+  std::vector<G4int> m_lastTrackID;
 
 protected:
   G4double   m_GateAdderComptPhotIdeal;
