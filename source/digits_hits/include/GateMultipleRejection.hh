@@ -46,14 +46,14 @@ public:
 
   void DescribeMyself(size_t );
 
-  void SetRejectionPolicy(G4String name, G4bool val) { m_param.rejectionAllPolicy = val;  }
-  void SetMultipleDefinition(G4String name, G4String policy){
+
+  void SetMultipleDefinition( G4String policy){
       if (policy=="volumeID"){
-          m_param.multipleDef = kvolumeID;
+          m_multipleDef = kvolumeID;
       }
       else {
           if(policy=="volumeName"){
-              m_param.multipleDef = kvolumeName;
+              m_multipleDef = kvolumeName;
           }
           else{
               G4cout<<"WARNING : multiple rejection policy not recognized. Default volumeName policy is employed \n";
@@ -61,18 +61,17 @@ public:
       }
   }
 
-  void SetRejectionPolicy(G4bool flgval){m_MultipleRejection=flgval;};
 
 protected:
-  struct param {
-          G4bool rejectionAllPolicy;
-          multiple_def_t multipleDef;
 
-      };
-      std::map<G4String , std::vector<int>> multiplesIndex;
-      std::map<G4String , G4bool> multiplesRejPol;
+  //G4bool m_rejectionAllPolicy;
+  multiple_def_t m_multipleDef;
 
-  param m_param;
+  std::vector<int> m_multiplesIndex;
+  G4bool m_multiplesRejPol;
+
+  std::vector< GateDigi* >* m_waiting;
+
   G4bool  m_MultipleRejection;
 
 private:
@@ -84,10 +83,13 @@ private:
 
   GateSinglesDigitizer *m_digitizer;
 
+  std::vector<G4String> m_VolumeNames;
+  std::vector<GateVolumeID> m_VolumeIDs;
 
-  int currentNumber;
-  G4String currentVolumeName;
-  G4String m_name;
+
+ // int currentNumber;
+ // G4String currentVolumeName;
+ // G4String m_name;
 };
 
 #endif

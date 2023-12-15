@@ -233,7 +233,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
        	  m_digitizer->AddNewModule(newDM);
          }
 
-  else if (childTypeName=="doIModels")
+  else if (childTypeName=="doIModel")
        {
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
@@ -247,7 +247,7 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
 else if (childTypeName=="multipleRejection")
   	{
   	  newDM = new GateMultipleRejection(m_digitizer, DMname);
-          m_digitizer->AddNewModule(newDM);
+  	  m_digitizer->AddNewModule(newDM);
   	}
 
   else if (childTypeName=="gridDiscretizator")

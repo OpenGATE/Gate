@@ -35,7 +35,6 @@ public:
   
 
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
 
 
   
@@ -43,11 +42,6 @@ private:
   GateMultipleRejection* m_MultipleRejection;
   G4UIcmdWithABool   *newEventRejCmd;
   G4UIcmdWithAString *newMultiDefCmd;
-  std::vector<G4UIdirectory*> m_volDirectory;
-  std::vector<G4UIcmdWithABool *>   MultipleRejectionPolicyCmd;
-  std::vector<G4UIcmdWithAString *>   MultipleDefinitionCmd;
-  std::vector<G4String> m_name;
-  G4int m_count;
 
 
 };

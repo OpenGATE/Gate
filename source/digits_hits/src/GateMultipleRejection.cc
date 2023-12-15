@@ -11,7 +11,9 @@
 
   Digitizer module for simulating a MultipleRejection
 
-  Last modification (Adaptation to GND): August 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+  December 2023: rewritten by olga.kochebina@cea.fr
+  Important ! Not all options are tested
+
 */
 
 #include "GateMultipleRejection.hh"
@@ -46,6 +48,9 @@ GateMultipleRejection::GateMultipleRejection(GateSinglesDigitizer *digitizer, G4
 	G4String colName = digitizer->GetOutputName() ;
 	collectionName.push_back(colName);
 	m_Messenger = new GateMultipleRejectionMessenger(this);
+
+	//GateDigiCollection* tempDigiCollection = new GateDigiCollection(GetName(), m_digitizer-> GetOutputName()); // to create the Digi Collection
+	//m_waiting = tempDigiCollection->GetVector ();
 }
 
 
@@ -59,7 +64,7 @@ GateMultipleRejection::~GateMultipleRejection()
 void GateMultipleRejection::Digitize()
 {
 
-  G4String digitizerName = m_digitizer->m_digitizerName;
+	G4String digitizerName = m_digitizer->m_digitizerName;
   G4String outputCollName = m_digitizer-> GetOutputName();
   m_OutputDigiCollection = new GateDigiCollection(GetName(),outputCollName); // to create the Digi Collection
 
@@ -72,7 +77,9 @@ void GateMultipleRejection::Digitize()
 
   GateDigi* inputDigi;
   std::vector< GateDigi* >* OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
-  std::vector<GateDigi*>::iterator iter;
+
+	std::vector<GateDigi*>::iterator iter;
+	std::vector<std::vector<GateDigi*>::iterator> toDel;
 
   if (IDC)
      {
@@ -83,66 +90,36 @@ void GateMultipleRejection::Digitize()
 	  {
 		  inputDigi=(*IDC)[i];
 
-		  if (nVerboseLevel==1) {
-		 		  G4cout << "[" << GetObjectName() << "::OutputDigiCollectionVector]: processing input list with " << n_digi << " entries\n";
-		 		  for (iter = OutputDigiCollectionVector->begin() ; iter != OutputDigiCollectionVector->end() ; ++iter)
-		 		    G4cout << **iter << Gateendl;
-		 		  G4cout << Gateendl;
+		  m_outputDigi = new GateDigi(*inputDigi);
+
+		  G4String currentVolumeName = (inputDigi->GetVolumeID().GetBottomCreator())->GetObjectName();
+		  GateVolumeID currentVolumeID = inputDigi->GetVolumeID();
+		  m_VolumeNames.push_back(currentVolumeName);
+		  m_VolumeIDs.push_back(currentVolumeID);
+
+		  if(i>1)
+		  {
+			if(m_multipleDef==kvolumeID)
+			{
+				if ( std::find(m_VolumeIDs.begin(), m_VolumeIDs.end(), currentVolumeID) != m_VolumeIDs.end() )
+					return;
+				else
+					m_OutputDigiCollection->insert(m_outputDigi);
+			}
+			else
+			{
+				if (std::find(m_VolumeNames.begin(), m_VolumeNames.end(), currentVolumeName) != m_VolumeNames.end() )
+					return;
+
+			}
 		  }
+		else
+			{
+				if (n_digi==1) //save if only one digi
+					m_OutputDigiCollection->insert(m_outputDigi);
 
-		  multiplesIndex.erase(multiplesIndex.begin(), multiplesIndex.end());
-		  if( OutputDigiCollectionVector->size()>1){
-		      G4bool flagDeleteAll=false;
-		      std::vector<int> posErase;
-		      if(flagDeleteAll==true){
-		          while (OutputDigiCollectionVector->size())
-		         {
-		             delete OutputDigiCollectionVector->back();
-		             OutputDigiCollectionVector->erase(OutputDigiCollectionVector->end()-1);
-		           }
-		      }
-		      else if (flagDeleteAll==false && posErase.size()>1){
-		           std::sort (posErase.begin(), posErase.end());
-		          for(unsigned int i=0; i<posErase.size(); i++){
-		              // G4cout<<" position to delete="<<posErase.at(i)<<G4endl;
-		              delete OutputDigiCollectionVector->at(posErase.at(i)-i);
-		              OutputDigiCollectionVector->erase(OutputDigiCollectionVector->begin()+posErase.at(i)-i);
-		          }
-		      }
-	     }
+			}
 
-
-		  GateDigi* m_outputDigi = new GateDigi(*inputDigi);
-		  if (((m_outputDigi->GetVolumeID()).GetBottomCreator())){
-		      currentVolumeName=(m_outputDigi->GetVolumeID().GetBottomCreator())->GetObjectName();
-		      if(m_param.multipleDef==kvolumeID){
-		        currentNumber=m_outputDigi->GetVolumeID().GetBottomVolume()->GetCopyNo();
-		        currentVolumeName=currentVolumeName+std::to_string(currentNumber);
-		      }
-
-		       if( multiplesRejPol.find(currentVolumeName)== multiplesRejPol.end()){
-		           multiplesRejPol.insert(std::pair<G4String,G4bool> (currentVolumeName,m_param.rejectionAllPolicy));
-		       }
-
-		         //multiplesIndex.
-		      if(multiplesIndex.find(currentVolumeName)!=multiplesIndex.end()){;
-		           multiplesIndex[currentVolumeName].push_back(OutputDigiCollectionVector->size());
-		      }
-		      else{
-		          multiplesIndex.insert(std::pair<G4String,std::vector<int>> (currentVolumeName,{(int)(OutputDigiCollectionVector->size())}));
-		      }
-
-
-		   }
-		   m_OutputDigiCollection->insert(m_outputDigi);
-
-
-        if (nVerboseLevel==1) {
-			G4cout << "[GateMultipleRejection::Digitize]: returning output pulse-list with " << OutputDigiCollectionVector->size() << " entries\n";
-			for (iter=OutputDigiCollectionVector->begin(); iter!= OutputDigiCollectionVector->end() ; ++iter)
-				G4cout << **iter << Gateendl;
-			G4cout << Gateendl;
-		}
 	  } //loop  over input digits
     } //IDC
   else
@@ -158,5 +135,9 @@ void GateMultipleRejection::Digitize()
 
 void GateMultipleRejection::DescribeMyself(size_t indent )
 {
-  ;
+
+	    G4cout << GateTools::Indent(indent) << "Multiple rejection " << m_digitizer->GetSD()->GetName() << ":\n"
+	       << GateTools::Indent(indent+1) << m_multipleDef <<
+	         GateTools::Indent(indent+1) << m_MultipleRejection<<Gateendl;
+
 }
