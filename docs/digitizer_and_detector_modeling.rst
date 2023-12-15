@@ -954,6 +954,165 @@ To mimic the effect of limited transfer rate, a module models the data loss due 
 
 The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
 
+Grid discretization module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert gridDiscretizator
+
+The number of the strips/pixels must be specified in X and Y directions. In addition, the width of the strips/pixel and an offset can be specified to take into account the insensitive material in the detector layer::
+
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberStripsX [Nx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberStripsY [Ny]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetX  [offSet_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetY  [offSet_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetZ  [offSet_z]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthX   [size_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthY   [size_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthZ   [size_z]
+
+
+The *hits* detected in the strips/pixels are merged at the center of the strip/pixel in each spatial direction. When strips are defined in both spatial directions, only the hits in the volume defined by the intersection of two strips are stored; thus, generating pixels.
+
+When the grid discretization module is employed to reproduce the response of strip detectors, it should be generally applied followed by a strip activation energy threshold and a multiple single rejection module to avoid ambiguous strip-intersection identification.  
+
+On the other hand, when pixelated crystals are simulated, it can be of interest to  apply the readout at the level of blocks composed of several pixels. The number of readout blocks can be set individually in each direction using the following commands::
+
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberReadOutBlocksX [NBx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberReadOutBlocksY [NBy]
+	
+
+The energy in the block corresponds to the sum of the deposited energy and the position to the  energy weighted centroid position in the pixels that composed the block.
+
+Example::
+
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert gridDiscretizator
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberStripsX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberStripsY 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetX 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetY 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetZ 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthX 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthY 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthZ 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberReadOutBlocksX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberReadOutBlocksY 1
+	
+Ideal adder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This module has been designed with the aim of recovering the exact Compton kinematics to enable further studies.
+
+The adderCompton module was designed with the same aim.  However, it does not work properly when there are several photonic hits with secondary electronic hit associated in the same volume since the module only distinguish between photonic and electronic hits. The adderCompton module is designed so that the energy of the electronic *hits* is added to the last photonic hit in the same  volume. Therefore, when there are two photonic hits in the same volume, the energy of all the electronic hits is added to the second photonic hit  leaving the  first hit  in general with an incorrect  null energy deposition associated.
+
+In order to develop an adder that  allows us to recover the exact Compton kinematics also when several primary photonic hits occur in the same volume, extra information such as post-step process, creator process, initial energy of the track, final energy, trackID and parentID was  added to the pulses. This module creates a *single* from each primary photon *hit* that undergoes a Compton, Photoelectric or Pair Creation interaction. Additional information, such as the energy of the photon that generates the pulse before (*energyIni*) and after (*energyFinal*) the primary interaction is included to be able to recover the ideal Compton kinematics, hence its name. These attributes have invalid values (-1) when this module is not applied. The deposited energy value (*energy*) of each pulse should correspond to the sum of the deposited energy of the primary hit and all the secondary hits produced by it. The deposited energy was validated using livermore physics list. Note that the method applied to obtained  the deposited energy (*energy attribute) is not robust and may lead to incorrect values for other physics list.
+ 
+It can be employed using the following command::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert 	adderComptPhotIdeal
+ 
+The option to reject those events in which the primary photon undergoes at least one interaction different from Compton or Photoelectric is included in the global module using the following command:::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/adderComptPhotIdeal/rejectEvtOtherProcesses [1/0]
+
+In order to get one *single* per volume, the user can apply another module afterwards such as the standard adder to handle multiple interactions.
+
+Example::
+
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	adderComptPhotIdeal
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/adderComptPhotIdeal/rejectEvtOtherProcesses 0
+
+
+DoI modeling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The DoI modeling digitizer is applied using the following command.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert    doIModel
+
+..
+	 It is a global module. The local counterpart can be useful::
+
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert    doIModel
+
+The different considered DoI models can be applied to two readout geometries (Schaart et al. 2009): front surface (entrance surface) readout, in which the photodetector is placed on the crystal surface facing the radiation source, and conventional back-surface (exit surface) readout. To this end, the  growth-direction of the DoI must be specified using the command.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setAxis    	0 0 1
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setAxis     0 0 1	
+
+In the above example the growth-direction of the DoI is set to  the growth direction of the Z-axis.
+The criterion for the DoI growth is set towards the readout surface and thereby the DoI value in that surface corresponds to the thickness of the crystal. The opposite surface of the readout surface is referred to as exterior surface. Therefore, the  different uncertainty models implemented can be applied to the different readout configurations.
+
+Two options are available for the DoI modelling: dual layer structure and exponential function for the DoI uncertainty. The dual layer model discretizes the ground-truth DoI into  two positions in the crystal. If the position of the pulse is recorded in the half of the crystal closer to the readout surface, the DoI is set to the central section, otherwise it is set to the exterior surface.
+This model can be selected using the following command::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setDoIModel		dualLayer
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setDoIModel	    dualLayer	
+
+The DoI exponential uncertainty is modeled as a negative exponential function in the DoI growth-direction. FWHM value at the exterior surface (maximum uncertainty) and the exponential decay constant must be set as input parameters. This uncertainty model and the necessary parameters can be  loaded using the following commands.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/DoIBlurrNegExp/setExpInvDecayConst 		[length]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/DoIBlurrNegExp/setCrysEntranceFWHM 		[length]
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/DoIBlurrNegExp/setExpInvDecayConst 	1.4 nm
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/DoIBlurrNegExp/setCrysEntranceFWHM 	1.4 nm
+
+Time delay
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
+
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
+
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/timeDelay/setTimeDelay 12 ns
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY  14 ns
+
+Multiple rejection module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is a module that allows you to discard multiple digis on the level of Singles construction. It can be inserted using the following commands.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/insert 	multipleRejection
+
+The definition of  what is considered multiple pulses must be set. Two options are available: more than one pulse in the same volume name or more than one pulses in the same volumeID.
+When several identical volumes are needed, for example for several scatterer layers, they are usually created as copies using a repeater. In that case, all volumes share the same name but they have different volumeID.  The difference between the rejection based on volume name and volumeID is important in those cases.
+These options are selected using the following command line.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/multipleRejection/setMultipleDefinition [volumeID/volumeName]
+
+Then, the rejection can be set to the whole event or only to those pulses within the same volume name or volumeID where the multiplicity happened.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/multipleRejection//setEventRejection [1/0]
+
+Example::
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert                        multipleRejection
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/multipleRejection/setMultipleDefinition volumeID
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/multipleRejection/setEventRejection 1
+
 
 .. _digitizer_multiple_processor_chains-label:
 
