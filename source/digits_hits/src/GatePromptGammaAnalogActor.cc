@@ -66,7 +66,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Set image parameters and allocate (only mImageGamma not mImage)
   SetTLEIoH(mImageGamma);
-  SetTofIoH(mImagetof, pTime);
+  SetTofIoH(mImagetof);
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -214,12 +214,14 @@ void GatePromptGammaAnalogActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
 
 //-----------------------------------------------------------------------------
 /** Modif Oreste **/
-void GatePromptGammaAnalogActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
+void GatePromptGammaAnalogActor::SetTofIoH(GateImageOfHistograms*& ioh) {
+  pTime = new TH1D("","",data.GetTimeNbBins(),0,data.GetTimeTMax()); // fin bin set at 0*ns
   ioh = new GateImageOfHistograms("double");
   ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   ioh->SetOrigin(mOrigin);
   ioh->SetTransformMatrix(mImage.GetTransformMatrix());
-  ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
+  ioh->SetHistoInfo(data.GetTimeNbBins(), 0., data.GetTimeTMax()); // first bin = 0*ns assumed
+  //ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
   ioh->Allocate();
   ioh->PrintInfo();
 }

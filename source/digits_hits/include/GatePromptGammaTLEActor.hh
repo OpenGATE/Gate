@@ -61,7 +61,7 @@ protected:
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
-  void SetTofIoH(GateImageOfHistograms*&, TH1D*);
+  void SetTofIoH(GateImageOfHistograms*&);
   GateVImageVolume* GetPhantom();
   void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar per voxel. Not used.
   //void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv. Not used.
@@ -85,7 +85,7 @@ protected:
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
   double startEvtTime;
 
-  TH1D * pTime = new TH1D("","",1000,0,5*ns); //TODO: ne pas coder en dur les 5ns
+  TH1D * pTime; // TH1D buffer histogram to add a new time value 
 };
 //-----------------------------------------------------------------------------
 

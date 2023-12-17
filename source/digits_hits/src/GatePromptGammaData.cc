@@ -24,6 +24,8 @@ GatePromptGammaData::GatePromptGammaData()
   SetGammaEMax(10*MeV);
   SetProtonNbBins(250);
   SetGammaNbBins(250);
+  SetTimeNbBins(250);
+  SetTimeTMax(5*ns);
 }
 //-----------------------------------------------------------------------------
 
@@ -52,6 +54,8 @@ void GatePromptGammaData::SetGammaEMin(double x)  { min_gamma_energy = x; }
 void GatePromptGammaData::SetGammaEMax(double x)  { max_gamma_energy = x; }
 void GatePromptGammaData::SetProtonNbBins(int x)  { proton_bin = x; }
 void GatePromptGammaData::SetGammaNbBins(int x)   { gamma_bin = x; }
+void GatePromptGammaData::SetTimeNbBins(int x)    { time_bin = x; }
+void GatePromptGammaData::SetTimeTMax(double x)   { max_gamma_time = x; }
 //-----------------------------------------------------------------------------
 
 
@@ -381,6 +385,7 @@ void GatePromptGammaData::InitializeMaterial(bool DebugOutputEnabled)
     //tmpmat is complete, so we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
     for(unsigned int j=1; j<proton_bin+1; j++) {
       TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j)); //without a new it gives wrong results.
+      h->ResetStats(); //necessary for non simple elements: not sure why but it works ! 
       mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
       //delete h; DO NOT DELETE h!!!! Because mGammaEnergyHistoByMaterialByProtonEnergy only holds to pointer to h, not h itself.
     }

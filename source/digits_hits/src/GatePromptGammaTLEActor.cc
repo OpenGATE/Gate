@@ -66,7 +66,7 @@ void GatePromptGammaTLEActor::Construct()
 
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
-  SetTofIoH(mImagetof, pTime);
+  SetTofIoH(mImagetof);
   if (mIsDebugOutputEnabled){
     //set up and allocate lasthiteventimage
     SetOriginTransformAndFlagToImage(mLastHitEventImage);
@@ -233,7 +233,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   double pg_stats[4];
   h->GetStats(pg_stats);
   double pg_sum = pg_stats[0];
-
+    
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
 
@@ -244,6 +244,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   //----------------------------------------------------------------------------------------------------------
   /** Modif Oreste **/
   pTime->Fill(tof);
+  
   mImagetof->AddValueDouble(index, pTime, pg_sum * w * distance * material->GetDensity() / (g / cm3));
   // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
   //if (index != mCurrentIndex) {
@@ -405,12 +406,14 @@ void GatePromptGammaTLEActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
 
 //-----------------------------------------------------------------------------
 /** Modif Oreste **/
-void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
+void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh) {
+  pTime = new TH1D("","",data.GetTimeNbBins(),0,data.GetTimeTMax()); // fin bin set at 0*ns
   ioh = new GateImageOfHistograms("double");
   ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   ioh->SetOrigin(mOrigin);
   ioh->SetTransformMatrix(mImage.GetTransformMatrix());
-  ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
+  //ioh->SetHistoInfo(data.GetTimeNbBins(), data.GetTimeTMax()/data.GetTimeNbBins(), data.GetTimeTMax());
+  ioh->SetHistoInfo(data.GetTimeNbBins(), 0., data.GetTimeTMax()); // first bin = 0*ns assumed
   ioh->Allocate();
   ioh->PrintInfo();
 }

@@ -823,6 +823,11 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     else
     {
         mFile->fill();
+//#define CORRELATION_TIME_ENERGY_SPACE
+#ifdef CORRELATION_TIME_ENERGY_SPACE
+	// std::cout << e << " " << tProd << std::endl;
+	std::cout << e << " " << tProd << " " << x << " " << y << " " << z << std::endl;
+#endif
     }
     mIsFirstStep = false;
 
