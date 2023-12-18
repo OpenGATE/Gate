@@ -1,3 +1,14 @@
+/*----------------------
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See LICENSE.md for further details
+----------------------*/
+
+/*!
+  Last modification (Adaptation to GND): June 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+*/
 
 
 #include "GateSolidAngleWeightedEnergyLaw.hh"
@@ -14,7 +25,7 @@ GateSolidAngleWeightedEnergyLaw::GateSolidAngleWeightedEnergyLaw(const G4String&
 
 
 
-G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse) const {
+G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GateDigi digi) const {
 
     if(m_szX < 0. ) {
         G4cerr << 	Gateendl << "[GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy]:\n"
@@ -27,19 +38,18 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
         G4Exception( "GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy", "ComputeEffectiveEnergy", FatalException, "You must set the size od the square to calculate the subtended angles positive \n");
 	}
 
-  ///  double alfa=m_szX/(2*pulse.Get);
     G4VoxelLimits limits;
     G4double min, max;
     G4AffineTransform at;
-    pulse.GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
+    digi.GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
 
     double crystalThicknes=max-min;
     double zProp=0;
     if(m_zSense4Readout==1){
-         zProp=crystalThicknes/2 -pulse.GetLocalPos().getZ();
+         zProp=crystalThicknes/2 -digi.GetLocalPos().getZ();
     }
     else if(m_zSense4Readout==(-1)){
-         zProp=crystalThicknes/2 +pulse.GetLocalPos().getZ();
+         zProp=crystalThicknes/2 +digi.GetLocalPos().getZ();
     }
     else{
         G4cerr <<   Gateendl << "[GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy]]:\n"
@@ -52,15 +62,13 @@ G4double GateSolidAngleWeightedEnergyLaw::ComputeEffectiveEnergy(GatePulse pulse
         double alfap=m_szX/ (2*zProp);
         double betap=m_szY/ (2*zProp);
         fSolidAngle=(acos(sqrt((1+alfap*alfap+betap*betap)/((1+alfap*alfap)*(1+betap*betap)))))/pi;
-        // G4cout<<"zProp="<<zProp<<"  fsolidA="<<fSolidAngle<<"  Energy="<<pulse.GetEnergy()<<"  effectiveEnergy="<<pulse.GetEnergy()*fSolidAngle<<G4endl;
     }
     else{
         fSolidAngle=0.5;
     }
 
 
-    double energyf=(pulse.GetEnergy())*fSolidAngle;
-    // energyf=G4RandGauss::shoot(energyf,0.2*energyf);
+    double energyf=(digi.GetEnergy())*fSolidAngle;
     return energyf;
 
 }
@@ -71,3 +79,6 @@ void GateSolidAngleWeightedEnergyLaw::DescribeMyself (size_t indent) const {
     G4cout << GateTools::Indent(indent) << "size of the pixel in Y direction:\t" << G4BestUnit(GetRectangleSzY(),"Length") << Gateendl;
     G4cout << GateTools::Indent(indent) << "ReadoutSense in z:\t" <<GetZSense()  << Gateendl;
 }
+
+
+
