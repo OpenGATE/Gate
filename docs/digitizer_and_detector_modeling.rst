@@ -79,6 +79,10 @@ It manages several functionalities needed for imaging applications (see Figure b
    :alt: Figure 0: Digitizer Manager
    :name: DigitizerMgr 
 
+.. figure:: DigitizerClasses.jpeg
+   :alt: Figure 1: Class diagram for Gate Digitizer Unit. Inherited Geant4 classes are represent by blue color. Messenger Classes are presented in grey.
+   :name: Class diagram for Gate Digitizer Unit. Inherited Geant4 classes are represent by blue color. Messenger Classes are presented in grey.
+
 It also manages *GateDigiCollections* created in a simulation, output flags for writing down for Singles and Coincidences, different collections of Singles Digitizers, Coincidence Sorters, Coincidence Digitizers (to be added) and Waveform generators (to be added). 
 
 It also runs all Singles Digitizers, Coincidence Sorters, Coincidence Digitizers and Waveform generators.
