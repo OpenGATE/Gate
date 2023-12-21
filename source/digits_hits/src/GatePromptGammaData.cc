@@ -301,7 +301,7 @@ void GatePromptGammaData::InitializeMaterial(bool DebugOutputEnabled)
 
   for(unsigned int i=0; i<n; i++) {
     const G4Material * m = matTable[i];
-    if (m->GetName() == "worldDefaultAir") continue; //skip, should not occur in phantom.
+    //if (m->GetName() == "worldDefaultAir") continue; //skip, should not occur in phantom.
 
     GateMessage("Actor", 3,"Material: " << m->GetName() << std::endl);
 
