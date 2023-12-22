@@ -230,24 +230,26 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // assume everything exist (has been computed by InitializeMaterial)
   //particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
   TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy); //JML
-  double pg_stats[4];
-  h->GetStats(pg_stats);
-  double pg_sum = pg_stats[0];
+
+  if (h != NULL) { // NULL if material is "worldDefaultAir"
+    double pg_stats[4];
+    h->GetStats(pg_stats);
+    double pg_sum = pg_stats[0];
     
-  // Also take the particle weight into account
-  double w = step->GetTrack()->GetWeight();
+    // Also take the particle weight into account
+    double w = step->GetTrack()->GetWeight();
 
-  // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
-  // (material is converted from internal units to g/cm3)
+    // Do not scale h directly because it will be reused
+    mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
+    // (material is converted from internal units to g/cm3)
 
-  //----------------------------------------------------------------------------------------------------------
-  /** Modif Oreste **/
-  pTime->Fill(tof);
+    //----------------------------------------------------------------------------------------------------------
+    /** Modif Oreste **/
+    pTime->Fill(tof);
   
-  mImagetof->AddValueDouble(index, pTime, pg_sum * w * distance * material->GetDensity() / (g / cm3));
-  // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
-  //if (index != mCurrentIndex) {
+    mImagetof->AddValueDouble(index, pTime, pg_sum * w * distance * material->GetDensity() / (g / cm3));
+    // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
+    //if (index != mCurrentIndex) {
     //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
     //if (mCurrentIndex != -1) {
       //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
@@ -259,16 +261,17 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
     //inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
     //mCurrentIndex = index;
-  //}
-  //Recording of the time for the last index (index = mCurrentIndex) of the event
-  //if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
+    //}
+    //Recording of the time for the last index (index = mCurrentIndex) of the event
+    //if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
     //outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
     //tof = inputtof + (outputtof-inputtof)*randomNumberTime;
     //pTime->Fill(tof);
     //mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
-  //}
+    //}
 
-  pTime->Reset();
+    pTime->Reset();
+  }
   //------------------------------------------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------
