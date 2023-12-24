@@ -147,7 +147,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &tof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+  //const G4double &tof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -179,6 +179,10 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueDouble(index, bin, 1);
 
+      //JML the time should be the PG one, not the proton
+      const G4double &tof = (*fSecondary)[lp1]->GetGlobalTime() - startEvtTime;
+
+	
       pTime->Fill(tof);
       mImagetof->AddValueDouble(index, pTime, 1);
       pTime->Reset();
