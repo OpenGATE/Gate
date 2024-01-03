@@ -24,7 +24,7 @@ GatePromptGammaData::GatePromptGammaData()
   SetGammaEMax(10*MeV);
   SetProtonNbBins(250);
   SetGammaNbBins(250);
-  SetTimeNbBins(500);
+  SetTimeNbBins(250);
   SetTimeTMax(5*ns);
 }
 //-----------------------------------------------------------------------------

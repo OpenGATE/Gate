@@ -377,6 +377,8 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
     is >> h2;
     is >> n;
 
+    std::cout << "JML:" << h1 << " " << h2  << " " << n << std::endl;
+    
     low  = (h1<low)?h1:low; //set low to h1 if h1 is lower
     high = (h2>high)?h2:high; //set high to h2 if h2 is higher
 
