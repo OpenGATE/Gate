@@ -378,13 +378,14 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1, &minValue);
   m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1, &maxValue);
 
-  double p[3];
+  double p[4];
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
   // -> Add a half pixel
   p[0] = GetOrigin().x() + GetVoxelSize().x()/2.0;
   p[1] = GetOrigin().y() + GetVoxelSize().y()/2.0;
   p[2] = GetOrigin().z() + GetVoxelSize().z()/2.0;
+  p[3] = 0.; // needed to be defined as a unique value for the merging of several jobs
   m_MetaImage.Position(p);
 
   // Transform
