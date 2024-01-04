@@ -117,7 +117,7 @@ void GatePromptGammaTLEActor::SaveData()
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
   mImageGamma->Write(mSaveFilename);
 
-  //delete mImageGamma; //JML
+  //delete mImageGamma; 
   mImagetof->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
   mImagetof->Write(G4String(removeExtension(mSaveFilename))+"-tof."+G4String(getExtension(mSaveFilename)));
   
@@ -229,7 +229,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Get value from histogram. We do not check the material index, and
   // assume everything exist (has been computed by InitializeMaterial)
   //particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
-  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy); //JML
+  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy); 
 
   if (h != NULL) { // NULL if material is "worldDefaultAir"
     double pg_stats[4];

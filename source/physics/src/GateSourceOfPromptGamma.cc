@@ -161,8 +161,8 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
-  //vertex = new G4PrimaryVertex(particle_position, GetParticleTime()); //JML
-  vertex = new G4PrimaryVertex(particle_position, mTime); //JML
+  //vertex = new G4PrimaryVertex(particle_position, GetParticleTime()); 
+  vertex = new G4PrimaryVertex(particle_position, mTime); 
   vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
   vertex->SetT0(mTime); /** Modif Oreste **/

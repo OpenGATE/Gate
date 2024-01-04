@@ -42,6 +42,8 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
+  void SetTimeNbBins(int tbins) { data.SetTimeNbBins(tbins); } // nb of proton time bins
+  
   void EnableDebugOutput(bool b) { mIsDebugOutputEnabled = b; }
   void EnableOutputMatch(bool b) { mIsOutputMatchEnabled = b; }
   //void EnableSysVarianceImage(bool b) { mIsSysVarianceImageEnabled = b; }

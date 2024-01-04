@@ -42,9 +42,6 @@ void skipComment(std::istream & is)
   is >> c;
   while (is && (c == '#')) {
     is.getline (line, 1024);
-    
-    std::cout << "JML:" << line << std::endl;
-
     is >> c;
     if (is.eof()) return;
   }

@@ -55,7 +55,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
-  EnableBeginOfEventAction(true); //JML false
+  EnableBeginOfEventAction(true); 
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
@@ -106,7 +106,7 @@ void GatePromptGammaAnalogActor::SaveData()
   //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
 
-  //delete mImageGamma; //JML
+  //delete mImageGamma; 
   mImagetof->Write(G4String(removeExtension(mSaveFilename))+"-tof."+G4String(getExtension(mSaveFilename)));
 
   alreadyHere = true;
@@ -114,7 +114,7 @@ void GatePromptGammaAnalogActor::SaveData()
 //-----------------------------------------------------------------------------
 
 void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *e)
-{  // JML
+{  
   GateVActor::BeginOfEventAction(e);
   startEvtTime = e->GetPrimaryVertex()->GetT0();
 }
@@ -179,7 +179,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueDouble(index, bin, 1);
 
-      //JML the time should be the PG one, not the proton
+      // the time should be the PG one, not the proton
       const G4double &tof = (*fSecondary)[lp1]->GetGlobalTime() - startEvtTime;
 
 	

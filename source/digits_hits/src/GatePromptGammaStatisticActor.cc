@@ -136,26 +136,26 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
 
-  // G4cout << "Step = " << step->GetStepLength() / mm << " mm" << G4endl; //JML
+  // G4cout << "Step = " << step->GetStepLength() / mm << " mm" << G4endl; 
   
   // Incident Proton Energy spectrum
   data.GetHEp()->Fill(particle_energy/MeV);
 
   // Process type, store cross_section for ProtonInelastic process
   if ((process != protonInelastic)) return;
-  if ((step->GetPostStepPoint()->GetKineticEnergy() > 0.)) return; //JML To remove the proton inelastic that are not stopped, induce steps along the beam path and do not produce PG
+  if ((step->GetPostStepPoint()->GetKineticEnergy() > 0.)) return; // To remove the proton inelastic that are not stopped, induce steps along the beam path and do not produce PG
 
-  // G4cout << "Energy (MeV) = " << particle_energy/MeV << " -- TotalEnergyDeposit = " << step->GetTotalEnergyDeposit()/MeV << G4endl; // JML check the deposited energy before the proton inelastic process
+  // G4cout << "Energy (MeV) = " << particle_energy/MeV << " -- TotalEnergyDeposit = " << step->GetTotalEnergyDeposit()/MeV << G4endl; // check the deposited energy before the proton inelastic process
 
   G4double cross_section = store->GetCrossSectionPerVolume(particle, particle_energy, process, material);//(\kappa_{inel})
 
-  //JML: To test the protoninelastic events that are not stoppped and induce "steps" along the beam path 
+  // To test the protoninelastic events that are not stoppped and induce "steps" along the beam path 
   // if ((step->GetPostStepPoint()->GetKineticEnergy() > 0.)) data.GetHEpInelastic()->Fill(particle_energy/MeV);//N_{inel}
   // else return;
   data.GetHEpInelastic()->Fill(particle_energy/MeV);//N_{ine
   
-  // if (step->GetPostStepPoint()->GetKineticEnergy() > 0.) //JML
-  //   G4cout << "Ep pre = " << step->GetPreStepPoint()->GetKineticEnergy() / MeV << " & post = " << step->GetPostStepPoint()->GetKineticEnergy() / MeV << " MeV" << G4endl; //JML
+  // if (step->GetPostStepPoint()->GetKineticEnergy() > 0.) 
+  //   G4cout << "Ep pre = " << step->GetPreStepPoint()->GetKineticEnergy() / MeV << " & post = " << step->GetPostStepPoint()->GetKineticEnergy() / MeV << " MeV" << G4endl; 
   
   // Only once : cross section of ProtonInelastic in that material
   if (!sigma_filled) {
@@ -177,7 +177,7 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
-      // G4cout << "PG energy = " << e/MeV << "MeV" << G4endl; //JML
+      // G4cout << "PG energy = " << e/MeV << "MeV" << G4endl; 
       if (e>data.GetGammaEMax() || e<0.040) {
         // Without this lowE filter, we encountered a high number of 1.72keV,2.597keV,7,98467keV,8.5719keV,22.139keV,25.2572keV photons. And a bunch more.
         // These possibly correspond to Si molecular fluorescence and C-C,C-N binding energies (lung?) respectively.

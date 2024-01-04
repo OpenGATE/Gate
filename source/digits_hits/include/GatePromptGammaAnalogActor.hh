@@ -38,7 +38,8 @@ public:
   virtual void ResetData();
 
   void SetOutputCount(bool b) { mSetOutputCount = b; }  //output counts instead of yield
-
+  void SetTimeNbBins(int tbins) { data.SetTimeNbBins(tbins); } // nb of proton time bins
+  
 protected:
   GatePromptGammaAnalogActor(G4String name, G4int depth=0);
   GatePromptGammaAnalogActorMessenger * pMessenger;
