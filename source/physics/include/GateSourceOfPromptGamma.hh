@@ -22,7 +22,6 @@
 
 #include "G4UnitsTable.hh"
 #include "GateSourceOfPromptGammaData.hh"
-#include "GateSourceOfPromptGammaDataTof.hh"
 #include "GateVSource.hh"
 #include "GateSourceOfPromptGammaMessenger.hh"
 #include <iostream>
@@ -41,13 +40,13 @@ public:
   G4int GeneratePrimaries(G4Event* event);
   void GenerateVertex(G4Event* );
   void SetFilename(G4String filename);
+  void SetTof(G4bool newflag);
   
 protected:
   GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
   bool mIsInitializedNumberOfPrimariesFlag;
   GateSourceOfPromptGammaData * mData;
-  GateSourceOfPromptGammaDataTof * mDataToF; /** Modif Oreste **/
   G4String mFilename;
   double mEnergy; // because particle_energy is private (FIXME will be changed)
   double mTime; /** Modif Oreste **/

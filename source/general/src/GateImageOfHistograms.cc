@@ -375,8 +375,8 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   // computation could be performed in double to prevent potential
   // rounding error.
   MetaImage m_MetaImage(4, dimSize, spacing, MET_FLOAT);
-  m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1, &minValue);
-  m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1, &maxValue);
+  m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1, &minValue); // unit: MeV for energy, ns for time
+  m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1, &maxValue); // unit: MeV for energy, ns for time
 
   double p[4];
   // Gate convention: origin is the corner of the first pixel

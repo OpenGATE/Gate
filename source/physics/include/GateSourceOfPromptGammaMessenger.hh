@@ -11,9 +11,8 @@
 #ifndef GATESOURCEPROMPTGAMMAEMISSIONMESSENGER_HH
 #define GATESOURCEPROMPTGAMMAEMISSIONMESSENGER_HH
 
-#include "G4UImessenger.hh"
-#include "G4UIcmdWithAString.hh"
 #include "GateConfiguration.h"
+#include "GateImageActorMessenger.hh"
 #include "GateVSourceMessenger.hh"
 #include "GateSourceOfPromptGamma.hh"
 
@@ -30,6 +29,7 @@ public:
 private:
   GateSourceOfPromptGamma * pSourceOfPromptGamma;
   G4UIcmdWithAString * pSetFilenameCmd;
+  G4UIcmdWithABool * pSetTofCmd;
 };
 //------------------------------------------------------------------------
 

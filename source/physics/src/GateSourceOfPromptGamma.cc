@@ -15,7 +15,6 @@
 #include "GateSourceMgr.hh"
 
 #include "GateSourceOfPromptGammaData.hh"
-#include "GateSourceOfPromptGammaDataTof.hh"
 #include "GateImageOfHistograms.hh"
 #include <iostream>
 #include <fstream>
@@ -30,7 +29,6 @@ GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   pMessenger = new GateSourceOfPromptGammaMessenger(this);
   // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
-  mDataToF = new GateSourceOfPromptGammaDataTof;   /** Modif Oreste **/
   mIsInitializedFlag = false;
   mIsInitializedNumberOfPrimariesFlag = false;
   mFilename = "no filename given";
@@ -55,6 +53,14 @@ void GateSourceOfPromptGamma::SetFilename(G4String filename)
 
 
 //------------------------------------------------------------------------
+void GateSourceOfPromptGamma::SetTof(G4bool newflag)
+{
+  mData->SetTof(newflag);
+}
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
 void GateSourceOfPromptGamma::Initialize()
 {
 
@@ -74,10 +80,6 @@ void GateSourceOfPromptGamma::Initialize()
   // into number of gamma primaries. See GateApplicationMgrMessenger.cc
   // WILL NOT WORK WITH SEVERAL SOURCES !
   SetSourceWeight(mData->ComputeSum());
-  /** Modif Oreste **/
-  // Get and load file containing the pTime data
-  mDataToF->LoadDataToF(mFilename);
-  mDataToF->InitializeToF();
 
   // It is initialized
   mIsInitializedFlag = true;
@@ -139,8 +141,9 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   // Energy
   mData->SampleRandomEnergy(mEnergy);
 
-  // Time /** Modif Oreste **/
-  mDataToF->SampleRandomTime(mTime, mData->returnCurrentIndex_i(), mData->returnCurrentIndex_j(), mData->returnCurrentIndex_k());
+  // Time
+  mTime = GetParticleTime();
+  mData->SampleRandomPgtime(mTime);
 
   // Direction
   G4ParticleMomentum particle_direction;
