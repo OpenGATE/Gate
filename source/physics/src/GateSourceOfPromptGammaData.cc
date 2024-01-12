@@ -78,9 +78,10 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Build the scalar image with total number of counts at each pixel
-  mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts);
-  computesum = mImage->ComputeSum();
-
+  mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts); // "mDataCounts" is a 3D volume of the PG yield integrated of the the PG energy 
+  computesum = mImage->ComputeSum(); // = global PG yield per proton
+  // no need to do it for tof, mDataCounts is just used for biased spatial random sampling
+  
   // Initialize random generator for position. Loop over the total
   // count scalar image (mDataCounts)
   mPositionXGen.SetXBias(G4ThreeVector(0., 0., 0.)); // important
