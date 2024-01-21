@@ -174,7 +174,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
-  if (step->GetTrack()->GetParentID() != 0) return; /** remove 2ndary protons **/
+  //JML if (step->GetTrack()->GetParentID() != 0) return; /** remove 2ndary protons **/
 
   const G4double &particle_energy_in = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
