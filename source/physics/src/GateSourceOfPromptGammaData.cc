@@ -166,7 +166,7 @@ void GateSourceOfPromptGammaData::Initialize()
 	    indexDataTof+=nbOfBinsTof;
 	  }
 	  else {
-	    pgtime = mImageTof->GetMinValue();
+	    pgtime = mImageTof->GetMinValue() + pgtimeStep/2.; //JML mImageTof->GetMinValue();
 	    mPgtimeGen[indexImageTof] = new TH1D;
 	    // This is much much faster to use the constructor without
 	    // param, the SetBins than using the following line with constructor :
