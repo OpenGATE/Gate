@@ -79,7 +79,6 @@ public:
 protected:
   double minValue;
   double maxValue;
-  double binval; /** Modif Oreste **/ //Time value of the bin width
   unsigned int nbOfBins;
 
   // Data can be stored in double or float. Data always write/read in

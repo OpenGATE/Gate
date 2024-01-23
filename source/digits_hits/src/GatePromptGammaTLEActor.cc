@@ -235,6 +235,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     double pg_stats[4];
     h->GetStats(pg_stats);
     double pg_sum = pg_stats[0];
+
+    // G4cout << "GatePromptGammaTLEActor::UserSteppingActionInVoxel: lowEdge 1 = " << h->GetXaxis()->GetBinLowEdge(1) << " -- upEdge " << h->GetXaxis()->GetNbins() << " = " << h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetNbins()) << G4endl; //JML
     
     // Also take the particle weight into account
     double w = step->GetTrack()->GetWeight();

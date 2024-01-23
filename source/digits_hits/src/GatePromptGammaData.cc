@@ -187,7 +187,7 @@ void GatePromptGammaData::Read(std::string & filename)
     SetProtonEMin(GammaZ->GetXaxis()->GetXmin());
     SetProtonEMax(GammaZ->GetXaxis()->GetXmax());
     SetGammaEMin(GammaZ->GetYaxis()->GetXmin());
-    SetGammaEMax(GammaZ->GetYaxis()->GetXmax());
+    SetGammaEMax(GammaZ->GetYaxis()->GetXmax());    
   }
 
   for(unsigned int i=0; i<m; i++) {

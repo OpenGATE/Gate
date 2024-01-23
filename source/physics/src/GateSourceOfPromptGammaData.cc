@@ -111,6 +111,7 @@ void GateSourceOfPromptGammaData::Initialize()
   mEnergyGen.resize(nbOfValues);
   double energyStep  = (mImage->GetMaxValue()-mImage->GetMinValue())/nbOfBins;
   double energy = 0.0;
+  
   long indexImage = 0;
   long indexData = 0;
   float * data = mImage->GetDataFloatPointer();
@@ -124,14 +125,18 @@ void GateSourceOfPromptGammaData::Initialize()
           indexData+=nbOfBins;
         }
         else {
-          energy = mImage->GetMinValue();
+          energy = mImage->GetMinValue() + energyStep/2.; //JML mImage->GetMinValue();
           mEnergyGen[indexImage] = new TH1D;
           // This is much much faster to use the constructor without
           // param, the SetBins than using the following line with constructor :
           // new TH1D("", "", nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
           TH1D * h = mEnergyGen[indexImage];
           h->SetBins(nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
-          for(unsigned int l=0; l<nbOfBins; l++) {
+
+	  // G4cout << "GateSourceOfPromptGammaData::Initialize: lowEdge 1 = " << h->GetXaxis()->GetBinLowEdge(1) << " -- upEdge " << h->GetXaxis()->GetNbins() << " = " << h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetNbins()) << G4endl; //JML
+	  // G4cout << "GateSourceOfPromptGammaData::Initialize: binCenter 1 = " << h->GetXaxis()->GetBinCenter(1) << " -- binCenter " << h->GetXaxis()->GetNbins() << " = " << h->GetXaxis()->GetBinCenter(h->GetXaxis()->GetNbins()) << G4endl; //JML
+
+	  for(unsigned int l=0; l<nbOfBins; l++) {
             h->Fill(energy, data[indexData]);
             indexData++;
             energy += energyStep;
