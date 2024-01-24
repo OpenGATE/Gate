@@ -141,7 +141,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   // Check if we are inside the volume (YES THIS ACTUALLY NEEDS TO BE CHECKED).
   if (index<0) return;
 
-  //JML
+  // // To print the energy of annihilation gammas
   // G4StepPoint* prePoint = step->GetPreStepPoint();
   // G4StepPoint* postPoint = step->GetPostStepPoint();
   // const G4VProcess *post_step = postPoint->GetProcessDefinedStep();
@@ -150,11 +150,14 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   //   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
   //     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
   // 	const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
-  // 	G4cout << "TrackID=" << step->GetTrack()->GetTrackID() << " particle=" << step->GetTrack()->GetParticleDefinition()->GetParticleName()  << " pre=" << prePoint->GetKineticEnergy()/MeV << "MeV post=" << postPoint->GetKineticEnergy()/MeV << "MeV -- Gamma-#" << lp1 << " / " << post_step->GetProcessName() << ": " << e << "MeV" << G4endl;
+  // 	G4cout << "TrackID=" << step->GetTrack()->GetTrackID()
+  // 	       << " particle=" << step->GetTrack()->GetParticleDefinition()->GetParticleName()
+  // 	       << " pre=" << prePoint->GetKineticEnergy()/MeV
+  // 	       << "MeV post=" << postPoint->GetKineticEnergy()/MeV
+  // 	       << "MeV -- Gamma-#" << lp1 << " / " << post_step->GetProcessName() << ": " << e << "MeV" << G4endl;
   //     }
   //   }
   // }
-  //LMJ
   
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
@@ -166,7 +169,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
-  //JML if (step->GetTrack()->GetParentID() != 0) return;  /** remove 2ndary protons **/
+  // if (step->GetTrack()->GetParentID() != 0) return;  // Keep 2ndary protons
   if (process != protonInelastic) return; // Process type, store cross_section for ProtonInelastic process
 
   // Check if proton energy within bounds.

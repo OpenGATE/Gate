@@ -174,7 +174,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
-  //JML if (step->GetTrack()->GetParentID() != 0) return; /** remove 2ndary protons **/
+  // if (step->GetTrack()->GetParentID() != 0) return; // Keep 2ndary protons
 
   const G4double &particle_energy_in = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
@@ -236,7 +236,9 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     h->GetStats(pg_stats);
     double pg_sum = pg_stats[0];
 
-    // G4cout << "GatePromptGammaTLEActor::UserSteppingActionInVoxel: lowEdge 1 = " << h->GetXaxis()->GetBinLowEdge(1) << " -- upEdge " << h->GetXaxis()->GetNbins() << " = " << h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetNbins()) << G4endl; //JML
+    // // To print TH1D characteristics
+    // G4cout << "GatePromptGammaTLEActor::UserSteppingActionInVoxel: lowEdge 1 = " << h->GetXaxis()->GetBinLowEdge(1)
+    // 	   << " -- upEdge " << h->GetXaxis()->GetNbins() << " = " << h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetNbins()) << G4endl;
     
     // Also take the particle weight into account
     double w = step->GetTrack()->GetWeight();
