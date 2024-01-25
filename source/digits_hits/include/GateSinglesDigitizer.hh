@@ -91,14 +91,15 @@ class GateSinglesDigitizer : public GateModuleListManager
     void SetOutputCollectionID();
 
 
-
  protected:
       GateSinglesDigitizerMessenger*    m_messenger;
       GateVSystem *m_system;            //!< System to which the digitizer is attached
-      G4String				   m_outputName;
+      //G4String				   m_outputName;
       G4String                 m_inputName;
 
 public:
+
+      G4String				   m_outputName;
       G4bool                m_recordFlag;
 
       std::vector<GateVDigitizerModule*>    	m_DMlist;	 //!< List of DigitizerModules for this digitizer
@@ -106,6 +107,7 @@ public:
       G4String                 m_digitizerName;
 
       G4int      m_outputDigiCollectionID;
+      G4int      m_digiCollectionID4merger;
 };
 
 #endif

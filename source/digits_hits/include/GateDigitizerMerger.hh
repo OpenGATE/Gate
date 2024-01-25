@@ -41,6 +41,8 @@ public:
   void AddInputCollection(const G4String& );
   void DescribeMyself(size_t indent );
 
+  void SetInputCollectionID();
+
 protected:
   std::vector<G4String> m_names;
   std::vector<G4int> m_inputCollectionIDs;
@@ -54,7 +56,7 @@ private:
   GateDigiCollection*  m_OutputDigiCollection;
 
   GateSinglesDigitizer *m_digitizer;
-
+  G4int m_DigiCollectionID;
 
 };
 

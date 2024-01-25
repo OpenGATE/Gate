@@ -28,7 +28,7 @@ GateDigitizerMergerMessenger::GateDigitizerMergerMessenger (GateDigitizerMerger*
 
 	cmdName = GetDirectoryName()+"addInput";
     addCollCmd = new G4UIcmdWithAString(cmdName,this);
-    addCollCmd->SetGuidance("How to generate position");
+    addCollCmd->SetGuidance("Select input collection");
 
 }
 
