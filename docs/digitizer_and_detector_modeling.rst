@@ -810,43 +810,41 @@ In case of multiple sensitive detectors::
 
    /gate/<detector1>/attachCrystalSD
    /gate/<detector2>/attachCrystalSD
+   /gate/<detector3>/attachCrystalSD
 
 it is possible at some point of your simulation to merge Singles from these different sensitive detectora by doing :: 
   
   /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/insert merger
-  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/addInput <FullNameOfInputSinglesCollectionForDetector1>
-
-where <FullNameOfInputSinglesCollection> is **composed specific name**: <lastDigitizerModuleUsedForDetector2>/<singles_digitizer_name>_<detector1>
+  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/addInput <singles_digitizer_name>_<detector1>
 
 It is easy to see the correct use of the module on the exemple:: 
    
    # ATTACH SD
    /gate/crystal1/attachCrystalSD
    /gate/crystal2/attachCrystalSD
+   /gate/crystal3/attachCrystalSD
    ...
    # DIGITIZER
    /gate/digitizerMgr/crystal1/SinglesDigitizer/Singles/insert adder
    /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert adder
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/insert adder
    
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert       merger
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/addInput     adder/Singles_crystal1
-   
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/insert       merger
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/addInput     Singles_crystal1
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/addInput     Singles_crystal2
+
 **Important note:** merger must be inserted for the last attached sensitive detector otherwise it will not work.
 
-In the following of merger digitizer module, apply other modules only on the senstivie detector to which the merger was inserted. 
-
-Example:: 
-
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert                        readout
 
 In the output you will have Singles collections stored for both sensitive detectors, however only for the last attached you will have the result corresponding to merged output(ex., in Root):: 
 
-   Singles_crystal1 #(contains the outpout of last digitizer module used for crystal1. adder in this ex.) 
-   Singles_crystal2 #(contains the outpout of last digitizer module used for crystal2. adder+merger+readout in this ex.) 
+   Singles_crystal1 #(contains the outpout of last digitizer module used for crystal1 in this ex.) 
+   Singles_crystal2 #(contains the outpout of last digitizer module used for crystal2 in this ex.)  
+   Singles_crystal3 #(contains the outpout of last digitizer module used for crystal1+crystal2+crystal3 in this ex.) 
 
-Thus, the output of *Singles_crystal2* should be used in the following analysis or be inserted for CoincideneSorter::
+Thus, the output of *Singles_crystal3* should be used in the following analysis or be inserted for CoincideneSorter::
 
-   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal2
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal3
 
 Intrinsic resolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
