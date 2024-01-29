@@ -9,3 +9,4 @@ Getting started
    compilation_instructions
    validating_installation
    enabling_lut_davis_model
+   tutoriels
