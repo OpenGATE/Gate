@@ -75,10 +75,31 @@ void GateDigitizerMerger::Digitize()
 	//Do only in the first event as it is time consuming procedure
 	if(isFirstEvent)
 	{
-		for(G4int i=0; i<m_names.size();i++)
+	GateDigitizerMgr* mgr=GateDigitizerMgr::GetInstance();
+
+	 // This block is needed to find the last DM in the inserted SingleDigitizer
+	for(G4int i=0; i<m_names.size();i++)
 		{
-			//G4cout<<m_names[i]<< " "<< fDM->GetDigiCollectionID(m_names[i])<<G4endl;
-			m_inputCollectionIDs.push_back(fDM->GetDigiCollectionID(m_names[i]));
+		for(G4int k=0; k<mgr->m_SingleDigitizersList.size();k++)
+			{
+
+				if(mgr->m_SingleDigitizersList[k]->m_outputName != outputCollName)
+				{
+					if(mgr->m_SingleDigitizersList[k]->m_outputName == m_names[i])
+					{
+					G4int size=mgr->m_SingleDigitizersList[k]->m_DMlist.size();
+					//G4cout<<"size "<<size<< " of "<<  mgr->m_SingleDigitizersList[k]->m_outputName <<G4endl;
+					G4String inputDMname=mgr->m_SingleDigitizersList[k]->m_DMlist[size-1]->GetName();
+					//G4cout<< inputDMname <<G4endl;
+
+					G4String name=inputDMname+"/"+m_names[i];
+					//G4cout<< name<<G4endl;
+					m_inputCollectionIDs.push_back(fDM->GetDigiCollectionID(name));
+					}
+
+				}
+			}
+
 		}
 
 		isFirstEvent=false;
@@ -151,9 +172,41 @@ void GateDigitizerMerger::Digitize()
 
 void GateDigitizerMerger::AddInputCollection(const G4String& name)
 {
+	//adder/Singles_crystal
+	//name
 	m_names.push_back(name);
+}
+
+
+void GateDigitizerMerger::SetInputCollectionID()
+{
+
+	//Save the ID of the last digitizer module for current digitizer
+	//G4cout<<"GateSinglesDigitizer::SetOuptputCollectionID"<<G4endl;
+
+/*	G4DigiManager *fDM = G4DigiManager::GetDMpointer();
+
+	G4String name;
+	if(m_digitizer->m_DMlist.size()>1)
+	{
+		GateVDigitizerModule *DM = (GateVDigitizerModule*)(m_digitizer->m_DMlist[m_digitizer->m_DMlist.size()-2]);
+		name=DM->GetName()+"/"+m_digitizer->GetName()+"_"+m_SD->GetName();
+
+	}
+	else if (m_digitizer->m_DMlist.size()==1)
+	{
+		name="DigiInit/"+m_digitizer->GetName()+"_"+m_SD->GetName();
+	}
+	else
+		G4cout<<"error"<<G4endl;
+
+	m_DigiCollectionID  = fDM->GetDigiCollectionID(name);
+
+	G4cout<<"output collecionID "<<m_digitizer->GetName()<<" "<<fDM->GetDigiCollectionID(name)<<G4endl;
+*/
 
 }
+
 
 
 void GateDigitizerMerger::DescribeMyself(size_t indent )

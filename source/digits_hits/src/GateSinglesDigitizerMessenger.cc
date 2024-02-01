@@ -42,8 +42,20 @@ See LICENSE.md for further details
 #include "GateOpticalAdder.hh"
 #include "GateNoise.hh"
 #include "GateDigitizerMerger.hh"
+#include "GateBuffer.hh"
+#include "GateIntrinsicResolution.hh"
+#include "GateCrosstalk.hh"
 
 #include "GateDoIModels.hh"
+
+#include "GateMultipleRejection.hh"
+
+#include "GateGridDiscretizator.hh"
+
+#include "GateAdderComptPhotIdeal.hh"
+#include "GateClustering.hh"
+#include "GateTimeDelay.hh"
+
 /*
 #include "GateLocalTimeDelay.hh"
 #include "GateBuffer.hh"
@@ -112,8 +124,9 @@ void GateSinglesDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String ne
 
 const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger doIModels";
 
+
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModel timeDelay clustering adderComptPhotIdeal gridDiscretizator multipleRejection";
    return theList;
 }
 
@@ -196,15 +209,66 @@ void GateSinglesDigitizerMessenger::DoInsertion(const G4String& childTypeName)
      	  m_digitizer->AddNewModule(newDM);
        }
   else if (childTypeName=="merger")
-         {
+       {
        	  newDM = new GateDigitizerMerger(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
+
+       }
+
+  else if (childTypeName=="buffer")
+           {
+         	  newDM = new GateBuffer(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+           }
+
+  else if (childTypeName=="intrinsicResolution")
+         {
+       	  newDM = new GateIntrinsicResolution(m_digitizer, DMname);
+       	  m_digitizer->AddNewModule(newDM);
          }
-  else if (childTypeName=="doIModels")
-        {
+
+  else if (childTypeName=="crosstalk")
+         {
+       	  newDM = new GateCrosstalk(m_digitizer, DMname, 0, 0);
+       	  m_digitizer->AddNewModule(newDM);
+         }
+
+  else if (childTypeName=="doIModel")
+       {
           newDM = new GateDoIModels(m_digitizer, DMname);
        	  m_digitizer->AddNewModule(newDM);
         }
+  else if (childTypeName=="timeDelay")
+         {
+            newDM = new GateTimeDelay(m_digitizer, DMname);
+            m_digitizer->AddNewModule(newDM);
+          }
+
+else if (childTypeName=="multipleRejection")
+  	{
+  	  newDM = new GateMultipleRejection(m_digitizer, DMname);
+  	  m_digitizer->AddNewModule(newDM);
+  	}
+
+  else if (childTypeName=="gridDiscretizator")
+         {
+            newDM = new GateGridDiscretizator(m_digitizer, DMname);
+         	  m_digitizer->AddNewModule(newDM);
+          }
+
+  else if (childTypeName=="adderComptPhotIdeal")
+       {
+  	  newDM = new GateAdderComptPhotIdeal(m_digitizer, DMname);
+      	  m_digitizer->AddNewModule(newDM);
+       }
+  else if (childTypeName=="clustering")
+       {
+          newDM = new GateClustering(m_digitizer, DMname);
+   	  m_digitizer->AddNewModule(newDM);
+       }
+
+
+
 /*
   else if (childTypeName=="energyThresholder")
     newDM = new GateEnergyThresholder(m_digitizer,newInsertionName,50.*keV);

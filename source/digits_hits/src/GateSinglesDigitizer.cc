@@ -170,6 +170,8 @@ void GateSinglesDigitizer::SetOutputCollectionID()
 	{
 		GateVDigitizerModule *DM = (GateVDigitizerModule*)m_DMlist[m_DMlist.size()-1];
 		name=DM->GetName()+"/"+m_digitizerName+"_"+m_SD->GetName();
+
+
 	}
 	else
 		name="DigiInit/"+m_digitizerName+"_"+m_SD->GetName();

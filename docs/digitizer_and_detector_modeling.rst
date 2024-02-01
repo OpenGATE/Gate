@@ -79,6 +79,10 @@ It manages several functionalities needed for imaging applications (see Figure b
    :alt: Figure 0: Digitizer Manager
    :name: DigitizerMgr 
 
+.. figure:: DigitizerClasses.jpeg
+   :alt: Figure 1: Class diagram for Gate Digitizer Unit. Inherited Geant4 classes are represent by blue color. Messenger Classes are presented in grey.
+   :name: Class diagram for Gate Digitizer Unit. Inherited Geant4 classes are represent by blue color. Messenger Classes are presented in grey.
+
 It also manages *GateDigiCollections* created in a simulation, output flags for writing down for Singles and Coincidences, different collections of Singles Digitizers, Coincidence Sorters, Coincidence Digitizers (to be added) and Waveform generators (to be added). 
 
 It also runs all Singles Digitizers, Coincidence Sorters, Coincidence Digitizers and Waveform generators.
@@ -529,6 +533,7 @@ The *Energy Framing* module allows the user to select an energy window to discar
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMin 400. keV
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setMax 600. keV
 
+
 **Example**: 
 
 In SPECT analysis, subtractive scatter correction methods such as the dual-energy-window or the triple-energy-window method may be performed in post processing on images obtained from several energy windows. If one needs multiple energy windows, several digitizer branches will be created. Furthermore, the projections associated with each energy window can be recorded into one interfile output. In the following example, 3 energy windows are defined separately with their names and energy frames::
@@ -563,7 +568,45 @@ In SPECT analysis, subtractive scatter correction methods such as the dual-energ
    /gate/output/projection/setInputDataName Window1
    /gate/output/projection/addInputDataName Window2
    /gate/output/projection/addInputDataName Window3
-   
+ 
+For the solid angle weighted energy policy, the effective energy for each pulse is calculated multiplying the deposited energy by a factor that represents the fraction of the solid angle from the pulse position subtended by a virtual pixel centered in the X-Y pulse position at the detector layer readout surface. To this end, the size of the pixel and detector readout surface must be specified. Those characteristics are included using the following commands::
+ 
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/setLaw/ solidAngleWeighted
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthX [szX]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setRentangleLengthY [szY]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/energyFraming/solidAngleWeighted/setZSense4Readout   [1/-1]
+
+**Example**::
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert energyFraming
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setLaw solidAngleWeighted
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/setMin 250 keV
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthX 2 mm  
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setRentangleLengthY 6 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/energyFraming/solidAngleWeighted/setZSense4Readout 1 mm
+
+Clustering
+^^^^^^^^^^
+This module has been designed with monolithic crystals read-out by segmented photodetectors in mind. The global module has been developed as follow::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/insert clustering
+
+If a detected hit is closer than a specified accepted distance to one of the clusters, it is added to the closest one; otherwise, it generates a new cluster. The hits are added summing their deposited energies and computing the energy-weighted centroid position. If two clusters are closer than the accepted distance they are merged following the same criteria. If requested, events with multiple clusters in the same volume can be rejected::
+
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setAcceptedDistance [distance plus units]
+   /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/clustering/setRejectionMultipleClusters [0/1]
+
+**Example**::
+
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setAcceptedDistance	5 mm
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	1
+
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	clustering
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setAcceptedDistance	10 mm
+   /gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/clustering/setRejectionMultipleClusters 	0
+
    
 Efficiency
 ^^^^^^^^^^
@@ -771,60 +814,47 @@ In case of multiple sensitive detectors::
 
    /gate/<detector1>/attachCrystalSD
    /gate/<detector2>/attachCrystalSD
+   /gate/<detector3>/attachCrystalSD
 
 it is possible at some point of your simulation to merge Singles from these different sensitive detectora by doing :: 
   
   /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/insert merger
-  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/addInput <FullNameOfInputSinglesCollectionForDetector1>
-
-where <FullNameOfInputSinglesCollection> is **composed specific name**: <lastDigitizerModuleUsedForDetector2>/<singles_digitizer_name>_<detector1>
+  /gate/digitizerMgr/<detector2>/SinglesDigitizer/<singles_digitizer_name>/addInput <singles_digitizer_name>_<detector1>
 
 It is easy to see the correct use of the module on the exemple:: 
    
    # ATTACH SD
    /gate/crystal1/attachCrystalSD
    /gate/crystal2/attachCrystalSD
+   /gate/crystal3/attachCrystalSD
    ...
    # DIGITIZER
    /gate/digitizerMgr/crystal1/SinglesDigitizer/Singles/insert adder
    /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert adder
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/insert adder
    
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert       merger
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/addInput     adder/Singles_crystal1
-   
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/insert       merger
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/addInput     Singles_crystal1
+   /gate/digitizerMgr/crystal3/SinglesDigitizer/Singles/addInput     Singles_crystal2
+
 **Important note:** merger must be inserted for the last attached sensitive detector otherwise it will not work.
 
-In the following of merger digitizer module, apply other modules only on the senstivie detector to which the merger was inserted. 
-
-Example:: 
-
-   /gate/digitizerMgr/crystal2/SinglesDigitizer/Singles/insert                        readout
 
 In the output you will have Singles collections stored for both sensitive detectors, however only for the last attached you will have the result corresponding to merged output(ex., in Root):: 
 
-   Singles_crystal1 #(contains the outpout of last digitizer module used for crystal1. adder in this ex.) 
-   Singles_crystal2 #(contains the outpout of last digitizer module used for crystal2. adder+merger+readout in this ex.) 
+   Singles_crystal1 #(contains the outpout of last digitizer module used for crystal1 in this ex.) 
+   Singles_crystal2 #(contains the outpout of last digitizer module used for crystal2 in this ex.)  
+   Singles_crystal3 #(contains the outpout of last digitizer module used for crystal1+crystal2+crystal3 in this ex.) 
 
-Thus, the output of *Singles_crystal2* should be used in the following analysis or be inserted for CoincideneSorter::
+Thus, the output of *Singles_crystal3* should be used in the following analysis or be inserted for CoincideneSorter::
 
-   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal2
+   /gate/digitizerMgr/CoincidenceSorter/Coincidences/setInputCollection Singles_crystal3
 
-
-
-    
-
-
-
-
-Modules to be addapted (NOT YET INCLUDED IN GATE NEW DIGITIZER)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Blurring: Intrinsic resolution blurring with crystals of different compositions
+Intrinsic resolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*(Previously blurring with crystals of different compositions, now includes GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency)*
 
-
-
-This blurring pulse-processor simulates a local Gaussian blurring of the energy spectrum (different for different crystals) based on the following model:
+This resolution simulates a Gaussian blurring of the energy spectrum based on the following model:
 
 :math:`R=\sqrt{{2.35}^2\cdot\frac{1+\bar{\nu}}{{\bar{N}}_{ph}\cdot \bar{\epsilon} \cdot \bar{p}} +{R_i}^2}`
 
@@ -834,7 +864,14 @@ where :math:`N_{ph}=LY\cdot E` and :math:`LY`, :math:`\bar p` and :math:`\bar \e
 
 If the intrinsic resolutions, :math:`( R_i )`, of the individual crystals are not defined, then they are set to one.
 
-To use this *digitizer* module properly, several modules must be set first. These digitizer modules are **GateLightYield**, **GateTransferEfficiency**, and **GateQuantumEfficiency**. The light yield pulse-processor simulates the crystal light yield. Each crystal must be given the correct light yield. This module converts the *pulse* energy into the number of scintillation photons emitted, :math:`N_{ph}`. The transfer efficiency pulse-processor simulates the transfer efficiencies of the light photons in each crystal. This digitizer reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1. The quantum efficiency pulse-processor simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
+LightYield: It converts the *digi* energy into the number of scintillation photons emitted, :math:`N_{ph}`.
+
+TransferEfficiency: the transfer efficiencies of the light photons in each crystal. It reduces the "pulse" energy (by reducing the number of scintillation photons) by a transfer efficiency coefficient which must be a number between 0 and 1.
+
+QuantumEfficiency: simulates the quantum efficiency for each channel of a photo-detector, which can be a Photo Multiplier Tube (PMT) or an Avalanche Photo Diode (APD).
+
+It is possible also take into account the crosstalk of the scintillation light between neighboring crystals. The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module for corners and for egdes, please use *setXtalkEdgesFraction* and *setXtalkCornersFraction*.
+
 
 The command lines are illustrated using an example of a phoswich module made of two layers of different crystals. One crystal has a light yield of 27000 photons per MeV (LSO crystal), a transfer efficiency of 28%, and an intrinsic resolution of 8.8%. The other crystal has a light yield of 8500 photons per MeV (LuYAP crystal), a transfer efficiency of 24% and an intrinsic resolution of 5.3%
 
@@ -858,33 +895,25 @@ In the case of a *cylindricalPET* system, the construction of the crystal geomet
    # In this example the phoswich module is represented by the *crystal* volume and is made of two different material layers. 
    # To apply the resolution blurring of equation , the parameters discussed above must be defined for each layer 
    #(i.e. Light Yield, Transfer, Intrinsic Resolution, and the Quantum Efficiency).
-   # DEFINE TRANSFER EFFICIENCY FOR EACH LAYER 
-   /gate/digitizer/Singles/insert transferEfficiency 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/transferEfficiency/LSOlayer/setTECoef 0.28 
-   /gate/digitizer/Singles/transferEfficiency/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/transferEfficiency/LuYAPlayer/setTECoef 0.24
+   # DEFINE INTRINSIC RESOLUTION 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.28 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 27000 
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.05
+
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/insert intrinsicResolution
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setIntrinsicResolution 0.088 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setEnergyOfReference 511 keV
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setTECoef 0.24
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setLightOutput 8500 
+   /gate/digitizerMgr/LuYAPlayer/SinglesDigitizer/Singles/intrinsicResolution/setUniqueQE 0.1
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkEdgesFraction 0.15
+   /gate/digitizerMgr/LSOlayer/SinglesDigitizer/Singles/intrinsicResolution/setXtalkCornersFraction 0.1
    
-   # DEFINE LIGHT YIELD FOR EACH LAYER 
-   /gate/digitizer/Singles/insert lightYield 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/lightYield/LSOlayer/setLightOutput 27000 
-   /gate/digitizer/Singles/lightYield/chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/lightYield/LuYAPlayer/setLightOutput 8500
-   
-   # DEFINE INTRINSIC RESOLUTION FOR EACH LAYER 
-   /gate/digitizer/Singles/insert intrinsicResolutionBlurring 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LSOlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setIntrinsicResolution 0.088 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LSOlayer/setEnergyOfReference 511 keV 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ chooseNewVolume LuYAPlayer 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setIntrinsicResolution 0.053 
-   /gate/digitizer/Singles/intrinsicResolutionBlurring/ LuYAPlayer/setEnergyOfReference 511 keV
-   
-   # DEFINE QUANTUM EFFICIENCY OF THE PHOTODETECTOR 
-   /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/setUniqueQE 0.1 
 
 Note: A complete example of a phoswich module can be in the PET benchmark. 
 
@@ -894,57 +923,24 @@ With the previous commands, the same quantum efficiency will be applied to all t
 
 To set multiple quantum efficiencies using files (*fileName1*, *fileName2*, ... for each of the different modules), the following commands can be used::
 
-   /gate/digitizer/Singles/insert quantumEfficiency 
-   /gate/digitizer/Singles/quantumEfficiency/chooseQEVolume crystal 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName1 
-   /gate/digitizer/Singles/quantumEfficiency/useFileDataForQE fileName2 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert quantumEfficiency 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/intrinsicResolution/useFileDataForQE fileName2  
 
 If the *crystal* volume is a daughter of a *module* volume which is an array of 8 x 8 crystals, the file *fileName1* will contain 64 values of quantum efficiency. If several files are given (in this example two files), the program will choose randomly between theses files for each *module*.
-
-**Important note**
-
-After the introduction of the lightYield  (LY), transferEfficiency :math:`(\bar{p})` and quantumEfficiency} :math:`(\bar{\epsilon})` modules, the energy variable of a *pulse* is not in energy unit (MeV) but in number of photoelectrons :math:`N_{pe}`.
-
-:math:`N_{phe}={N}_{ph} \cdot \bar{\epsilon} \cdot \bar{p} = LY \cdot E \cdot \bar{\epsilon} \cdot \bar{p}`
-
-In order to correctly apply a threshold on a phoswhich module, the threshold should be based on this number and not on the real energy. In this situation, to apply a threshold at this step of the digitizer chain, the threshold should be applied as explained in :ref:`thresholder_upholder-label`. In this case, the GATE program knows that these modules have been used, and  will apply threshold based upon the number :math:`N_{pe}` rather than energy. The threshold set with this sigmoidal function in energy unit by the user is translated into number :math:`N_{pe}` with the lower light yield of the phoswish module. To retrieve the energy it is necessary to apply a calibration module.
-
-Calibration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The Calibration module of the pulse-processor models a calibration between :math:`N_{phe}` and :math:`Energy`. This is useful when using the class(es) GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency. In addition, a user specified calibration factor can be used. To set a calibration factor on the energy, use the following commands::
-
-   /gate/digitizer/Singles/insert calibration 
-   /gate/digitizer/Singles/setCalibration VALUE 
-
-If the calibration digitizer is used without any value, it will correct the energy as a function of values used in GateLightYield, GateTransferEfficiency, and GateQuantumEfficiency.
 
 Crosstalk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The crosstalk module simulates the optical and/or electronic crosstalk of the scintillation light between neighboring crystals. Thus, if the input pulse arrives in a crystal array, this module creates pulses around it (in the edge and corner neighbor crystals). The percentage of energy that is given to the neighboring crystals is determined by the user. To insert a crosstalk module that distributes 10% of input pulse energy to the adjacent crystals and 5% to the corner crystals, the following commands can be used::
 
-   /gate/digitizer/Singles/insert crosstalk 
-   /gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume crystal 
-   /gate/digitizer/Singles/crosstalk/setEdgesFraction 0.1 
-   /gate/digitizer/Singles/crosstalk/setCornersFraction 0.05 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert crosstalk 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setEdgesFraction 0.1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/crosstalk/setCornersFraction 0.05 
 
 In this example, a pulse is created in each neighbor of the crystal that received the initial pulse. These secondary pulses have 10% (5% for each corner crystals) of the initial energy of the pulse.
 
 **BEWARE:** this module works only for a chosen volume that is an array repeater!!!
-
-
-Spatial blurring in sinogrmas
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In PET analysis, coincidence events provide the lines of response (LOR) needed for the image reconstruction. Only the two crystal numbers are transferred by the simulation. The determination of these crystal numbers is based on the crystal in which the highest energy has been deposited. Without additional spatial blurring of the crystal, simulation results will always have a better spatial resolution than experimental measurements. This module is only available for the *ecat* system. The spatial blurring is based on a 2D Gaussian function::
-
-   # E C A T 7 
-   /gate/output/sinogram/enable 
-   /gate/output/sinogram/RadialBins Your_Sinogram_Radial_Bin_Number 
-   /gate/output/sinogram/setTangCrystalBlurring Your_Value_1 mm 
-   /gate/output/sinogram/setAxialCrystalBlurring Your_Value_2 mm
-
 
 
 
@@ -953,14 +949,171 @@ Memory buffers and bandwidth
 
 To mimic the effect of limited transfer rate, a module models the data loss due to an overflow of a memory buffer, read periodically, following a given reading frequency. This module uses two parameters, the reading frequency :math:`\nu ` and the memory depth :math:`D` . Moreover, two reading methods can be modelled, that is, in an event per event basis (an event is read at each reading clock tick), or in a full buffer reading basic (at each reading clock tick, the whole buffer is emptied out). In the first reading method, the data rate is then limited to :math:`\nu` , while in the second method, the data rate is limited to :math:`D\cdot\nu`. When the size limit is reached, any new pulse is rejected, until the next reading clock tick arrival which frees a part of the buffer. In such a case, a non null buffer depth allows to manage a local rise of the input data flow. To specify a buffer, read at 10 MHz, with a buffer depth of 64 events, in a mode where the whole buffer is read in one clock tick, one can use::
 
-   /gate/digitizer/Your_Single_chain/insert buffer 
-   /gate/digitizer/Your_Single_chain/buffer/setBufferSize 64 B 
-   /gate/digitizer/Your_Single_chain/buffer/setReadFrequency 10 MHz 
-   /gate/digitizer/Your_Single_chain/buffer/setMode 1 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert buffer 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setBufferSize 64 B 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setReadFrequency 10 MHz 
+   /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/buffer/setMode 1 
 
-The chain *Your_Single_chain* can be the default chain *Singles* or any of single chain that the user has defined. The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
+The size of the buffer represents the number of elements, 64 Singles in this example, that the user can store in a buffer. To read the buffer in an event by event basis, one should replace the last line by **setMode = 0.**
+
+Grid discretization module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This module allows to simulate the  readout of strip and pixelated detectors. Since it is a local module, the first thing is to attach it to a specific volume that must be acting as a SD::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert gridDiscretizator
+
+The number of the strips/pixels must be specified in X and Y directions. In addition, the width of the strips/pixel and an offset can be specified to take into account the insensitive material in the detector layer::
 
 
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberStripsX [Nx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberStripsY [Ny]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetX  [offSet_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetY  [offSet_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripOffsetZ  [offSet_z]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthX   [size_x]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthY   [size_y]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setStripWidthZ   [size_z]
+
+
+The *hits* detected in the strips/pixels are merged at the center of the strip/pixel in each spatial direction. When strips are defined in both spatial directions, only the hits in the volume defined by the intersection of two strips are stored; thus, generating pixels.
+
+When the grid discretization module is employed to reproduce the response of strip detectors, it should be generally applied followed by a strip activation energy threshold and a multiple single rejection module to avoid ambiguous strip-intersection identification.  
+
+On the other hand, when pixelated crystals are simulated, it can be of interest to  apply the readout at the level of blocks composed of several pixels. The number of readout blocks can be set individually in each direction using the following commands::
+
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberReadOutBlocksX [NBx]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/gridDiscretizator/setNumberReadOutBlocksY [NBy]
+	
+
+The energy in the block corresponds to the sum of the deposited energy and the position to the  energy weighted centroid position in the pixels that composed the block.
+
+Example::
+
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert gridDiscretizator
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberStripsX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberStripsY 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetX 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetY 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripOffsetZ 0.2 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthX 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthY 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setStripWidthZ 0.3 cm
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberReadOutBlocksX 1
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/gridDiscretizator/setNumberReadOutBlocksY 1
+	
+Ideal adder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This module has been designed with the aim of recovering the exact Compton kinematics to enable further studies.
+
+The adderCompton module was designed with the same aim.  However, it does not work properly when there are several photonic hits with secondary electronic hit associated in the same volume since the module only distinguish between photonic and electronic hits. The adderCompton module is designed so that the energy of the electronic *hits* is added to the last photonic hit in the same  volume. Therefore, when there are two photonic hits in the same volume, the energy of all the electronic hits is added to the second photonic hit  leaving the  first hit  in general with an incorrect  null energy deposition associated.
+
+In order to develop an adder that  allows us to recover the exact Compton kinematics also when several primary photonic hits occur in the same volume, extra information such as post-step process, creator process, initial energy of the track, final energy, trackID and parentID was  added to the pulses. This module creates a *single* from each primary photon *hit* that undergoes a Compton, Photoelectric or Pair Creation interaction. Additional information, such as the energy of the photon that generates the pulse before (*energyIni*) and after (*energyFinal*) the primary interaction is included to be able to recover the ideal Compton kinematics, hence its name. These attributes have invalid values (-1) when this module is not applied. The deposited energy value (*energy*) of each pulse should correspond to the sum of the deposited energy of the primary hit and all the secondary hits produced by it. The deposited energy was validated using livermore physics list. Note that the method applied to obtained  the deposited energy (*energy attribute) is not robust and may lead to incorrect values for other physics list.
+ 
+It can be employed using the following command::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert 	adderComptPhotIdeal
+ 
+The option to reject those events in which the primary photon undergoes at least one interaction different from Compton or Photoelectric is included in the global module using the following command:::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/adderComptPhotIdeal/rejectEvtOtherProcesses [1/0]
+
+In order to get one *single* per volume, the user can apply another module afterwards such as the standard adder to handle multiple interactions.
+
+Example::
+
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	adderComptPhotIdeal
+/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/adderComptPhotIdeal/rejectEvtOtherProcesses 0
+
+
+DoI modeling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The DoI modeling digitizer is applied using the following command.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/insert    doIModel
+
+..
+	 It is a global module. The local counterpart can be useful::
+
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert    doIModel
+
+The different considered DoI models can be applied to two readout geometries (Schaart et al. 2009): front surface (entrance surface) readout, in which the photodetector is placed on the crystal surface facing the radiation source, and conventional back-surface (exit surface) readout. To this end, the  growth-direction of the DoI must be specified using the command.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setAxis    	0 0 1
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setAxis     0 0 1	
+
+In the above example the growth-direction of the DoI is set to  the growth direction of the Z-axis.
+The criterion for the DoI growth is set towards the readout surface and thereby the DoI value in that surface corresponds to the thickness of the crystal. The opposite surface of the readout surface is referred to as exterior surface. Therefore, the  different uncertainty models implemented can be applied to the different readout configurations.
+
+Two options are available for the DoI modelling: dual layer structure and exponential function for the DoI uncertainty. The dual layer model discretizes the ground-truth DoI into  two positions in the crystal. If the position of the pulse is recorded in the half of the crystal closer to the readout surface, the DoI is set to the central section, otherwise it is set to the exterior surface.
+This model can be selected using the following command::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setDoIModel		dualLayer
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setDoIModel	    dualLayer	
+
+The DoI exponential uncertainty is modeled as a negative exponential function in the DoI growth-direction. FWHM value at the exterior surface (maximum uncertainty) and the exponential decay constant must be set as input parameters. This uncertainty model and the necessary parameters can be  loaded using the following commands.::
+
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/DoIBlurrNegExp/setExpInvDecayConst 		[length]
+	/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/<singles_digitizer_name>/doIModel/DoIBlurrNegExp/setCrysEntranceFWHM 		[length]
+	
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/setDoIModel 				DoIBlurrNegExp
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/DoIBlurrNegExp/setExpInvDecayConst 	1.4 nm
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/doIModel/DoIBlurrNegExp/setCrysEntranceFWHM 	1.4 nm
+
+Time delay
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module delays the time value of the detected pulses in a specified *Sensitive Detector* volume. It can be useful in a Compton camera system, for instance, to delay the *singles* in the scatterer detector when the absorber gives the coincidence trigger::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
+
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/insert 	timeDelay
+	/gate/digitizerMgr/<sensitive_detector_name2>/SinglesDigitizer/<singles_digitizer_name>/timeDelay/setTimeDelay [time value]
+
+Example::
+
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/scatterer/SinglesDigitizer/Singles/timeDelay/setTimeDelay 12 ns
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert 	timeDelay
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/timeDelay/setTimeDelaY  14 ns
+
+Multiple rejection module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is a module that allows you to discard multiple digis on the level of Singles construction. It can be inserted using the following commands.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/insert 	multipleRejection
+
+The definition of  what is considered multiple pulses must be set. Two options are available: more than one pulse in the same volume name or more than one pulses in the same volumeID.
+When several identical volumes are needed, for example for several scatterer layers, they are usually created as copies using a repeater. In that case, all volumes share the same name but they have different volumeID.  The difference between the rejection based on volume name and volumeID is important in those cases.
+These options are selected using the following command line.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/multipleRejection/setMultipleDefinition [volumeID/volumeName]
+
+Then, the rejection can be set to the whole event or only to those pulses within the same volume name or volumeID where the multiplicity happened.::
+
+	/gate/digitizerMgr/<sensitive_detector_name1>/SinglesDigitizer/<singles_digitizer_name>/multipleRejection//setEventRejection [1/0]
+
+Example::
+
+	/gate/digitizerMgr/absorber/SinglesDigitizer/Singles/insert                        multipleRejection
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/multipleRejection/setMultipleDefinition volumeID
+   /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/multipleRejection/setEventRejection 1
 
 
 .. _digitizer_multiple_processor_chains-label:
