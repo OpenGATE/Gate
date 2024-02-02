@@ -50,6 +50,7 @@ public:
   void AddValueFloat(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, const int &bin, const double value);
+  void AddValueDouble(const int & index, const double value, const double scale); /** Modif Oreste **/
   void SetValueDouble(const int & index, const int &bin, const double value);
   double GetValueDouble(const int & index, const int &bin);
   void AddValueInt(const int & index, const int &bin, const unsigned int value);

@@ -51,6 +51,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth) : GateVActo
     EnableProdProcess = true;
     EnableWeight = true;
     EnableTime = false;
+    EnableIonTime = false;
     EnableLocalTime = false;
     EnableTimeFromBeginOfEvent = false;
     EnableMass = true;
@@ -170,7 +171,7 @@ void GatePhaseSpaceActor::Construct()
             pIAEARecordType->iw = 1;
         if (EnableWeight)
             pIAEARecordType->iweight = 1;
-        if (EnableTime || EnableLocalTime)
+        if (EnableTime || EnableLocalTime || EnableIonTime)
         {
             GateWarning("'Time' is not available in IAEA phase space.");
         }
@@ -239,6 +240,8 @@ void GatePhaseSpaceActor::InitTree()
         mFile->write_variable("Weight", &w);
     if (EnableTime || EnableLocalTime)
         mFile->write_variable("Time", &t);
+    if (EnableIonTime)
+        mFile->write_variable("IonTime", &pt);
     if (EnableMass)
         mFile->write_variable("Mass", &m); // in MeV/c2
     if (EnableXPosition)
@@ -377,6 +380,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 {
     // Set Primary Energy
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); // GetInitialEnergy oid.
+    if (EnableIonTime) pt = e->GetPrimaryVertex()->GetT0();
 
     // Store the application time of the event
     auto app = GateApplicationMgr::GetInstance();
@@ -815,10 +819,15 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
         pIAEARecordType->write_particle();
 
         pIAEAheader->update_counters(pIAEARecordType);
-    }
+    } 
     else
     {
         mFile->fill();
+//#define CORRELATION_TIME_ENERGY_SPACE
+#ifdef CORRELATION_TIME_ENERGY_SPACE
+	// std::cout << e << " " << tProd << std::endl;
+	std::cout << e << " " << tProd << " " << x << " " << y << " " << z << std::endl;
+#endif
     }
     mIsFirstStep = false;
 
@@ -853,7 +862,7 @@ void GatePhaseSpaceActor::SaveData()
         fclose(pIAEAheader->fheader);
         fclose(pIAEARecordType->p_file);
     }
-    else
+    else 
     {
         if (!this->mOverWriteFilesFlag)
         {

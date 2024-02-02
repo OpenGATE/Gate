@@ -26,7 +26,6 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   mInputDataFilename = "noFilenameGiven";
   pMessenger = new GatePromptGammaAnalogActorMessenger(this);
   //SetStepHitType("random");
-  mImageGamma = new GateImageOfHistograms("int");
   mSetOutputCount = false;
   alreadyHere = false;
 }
@@ -56,7 +55,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
-  EnableBeginOfEventAction(false);
+  EnableBeginOfEventAction(true); 
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
@@ -66,21 +65,17 @@ void GatePromptGammaAnalogActor::Construct()
   //data.InitializeMaterial(); //we dont need the materials, only some metadata that is already extracted in Read()
 
   // Set image parameters and allocate (only mImageGamma not mImage)
-  mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mImageGamma->SetOrigin(mOrigin);
-  mImageGamma->SetTransformMatrix(mImage.GetTransformMatrix());
-  mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
-  mImageGamma->Allocate();
-  mImageGamma->PrintInfo();
+  SetTLEIoH(mImageGamma);
+  SetTofIoH(mImagetof);
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
     GateWarning("Actor '" << GetName() << "' : stepHitType forced to 'random'" << std::endl);
-    SetStepHitType("random");
   }
-
+  SetStepHitType("random");
+  
   // Set to zero
-  ResetData();
+  //ResetData();
 }
 //-----------------------------------------------------------------------------
 
@@ -88,7 +83,8 @@ void GatePromptGammaAnalogActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::ResetData()
 {
-  mImageGamma->Reset();
+  //  mImageGamma->Reset();
+  //  mImagetof->Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -105,12 +101,23 @@ void GatePromptGammaAnalogActor::SaveData()
     int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
     double f = 1.0 / n;
     mImageGamma->Scale(f); //converts image to float
+    mImagetof->Scale(f);
   }
   //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
+
+  //delete mImageGamma; 
+  mImagetof->Write(G4String(removeExtension(mSaveFilename))+"-tof."+G4String(getExtension(mSaveFilename)));
+
   alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
+
+void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *e)
+{  
+  GateVActor::BeginOfEventAction(e);
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
+}
 
 
 //-----------------------------------------------------------------------------
@@ -134,24 +141,42 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   // Check if we are inside the volume (YES THIS ACTUALLY NEEDS TO BE CHECKED).
   if (index<0) return;
 
+  // // To print the energy of annihilation gammas
+  // G4StepPoint* prePoint = step->GetPreStepPoint();
+  // G4StepPoint* postPoint = step->GetPostStepPoint();
+  // const G4VProcess *post_step = postPoint->GetProcessDefinedStep();
+  // if (post_step->GetProcessName() == "annihil") {
+  //   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
+  //   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
+  //     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
+  // 	const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
+  // 	G4cout << "TrackID=" << step->GetTrack()->GetTrackID()
+  // 	       << " particle=" << step->GetTrack()->GetParticleDefinition()->GetParticleName()
+  // 	       << " pre=" << prePoint->GetKineticEnergy()/MeV
+  // 	       << "MeV post=" << postPoint->GetKineticEnergy()/MeV
+  // 	       << "MeV -- Gamma-#" << lp1 << " / " << post_step->GetProcessName() << ": " << e << "MeV" << G4endl;
+  //     }
+  //   }
+  // }
+  
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-
+  //const G4double &tof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+  
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
-
-  // Process type, store cross_section for ProtonInelastic process
-  if (process != protonInelastic) return;
+  // if (step->GetTrack()->GetParentID() != 0) return;  // Keep 2ndary protons
+  if (process != protonInelastic) return; // Process type, store cross_section for ProtonInelastic process
 
   // Check if proton energy within bounds.
   if (particle_energy > data.GetProtonEMax()) {
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
-
+  
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
@@ -170,8 +195,17 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       //Get thet correct gammabin
       // -1 because TH1D start at 1, and end at index=size.
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
-      mImageGamma->AddValueInt(index, bin, 1);
+      mImageGamma->AddValueDouble(index, bin, 1);
 
+      // the time should be the PG one, not the proton
+      const G4double &tof = (*fSecondary)[lp1]->GetGlobalTime() - startEvtTime;
+
+	
+      pTime->Fill(tof);
+      mImagetof->AddValueDouble(index, pTime, 1);
+      pTime->Reset();
+
+      
       /*Some debug stuff for lowE gammas.
       GateMessage("Actor",4,"PGAn "<<"PG added."<<std::endl);
       //GateMessage("Actor",4,"PGAn "<<"EventID: "<< step->GetEvent()->GetEventID()<<std::endl);
@@ -185,6 +219,33 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       */
     }
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaAnalogActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
+  ioh->Allocate();
+  ioh->PrintInfo();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/** Modif Oreste **/
+void GatePromptGammaAnalogActor::SetTofIoH(GateImageOfHistograms*& ioh) {
+  pTime = new TH1D("","",data.GetTimeNbBins(),0,data.GetTimeTMax()); // fin bin set at 0*ns
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(data.GetTimeNbBins(), 0., data.GetTimeTMax()); // first bin = 0*ns assumed
+  //ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
+  ioh->Allocate();
+  ioh->PrintInfo();
 }
 //-----------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 GatePromptGammaTLEActorMessenger::
 GatePromptGammaTLEActorMessenger(GatePromptGammaTLEActor* v)
-:GateImageActorMessenger(v), pTLEActor(v)
+:GateImageActorMessenger(v), pPGTLEActor(v)
 {
   BuildCommands(baseName+pActor->GetObjectName());
 }
@@ -52,6 +52,11 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
   guidance = G4String("Enable this too make sure the regular TLE output and debug output match. In corner cases where voxels of the image and TLE actor don't match, DebugOutput will take the material at the voxel center, while regular TLE will take the material at the interaction point. Enabling this will force regular TLE to also look at the voxel center.");
   pEnableOutputMatchCmd->SetGuidance(guidance);
 
+  bb = base+"/setTimeNbBins";
+  pTimeNbBinsCmd = new G4UIcmdWithAnInteger(bb, this);
+  guidance = G4String("Set number of bins of the time proton histograms");
+  pTimeNbBinsCmd->SetGuidance(guidance);
+  pTimeNbBinsCmd->SetParameterName("Nbins", false);
 }
 //-----------------------------------------------------------------------------
 
@@ -59,11 +64,12 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
-  if (cmd == pEnableDebugOutputCmd) pTLEActor->EnableDebugOutput(pEnableDebugOutputCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableOutputMatchCmd) pTLEActor->EnableOutputMatch(pEnableOutputMatchCmd->GetNewBoolValue(newValue));
-  //if (cmd == pEnableSysVarianceCmd) pTLEActor->EnableSysVarianceImage(pEnableSysVarianceCmd->GetNewBoolValue(newValue));
-  //if (cmd == pEnableIntermediaryUncertaintyOutputCmd) pTLEActor->EnableIntermediaryUncertaintyOutput(pEnableIntermediaryUncertaintyOutputCmd->GetNewBoolValue(newValue));
+  if (cmd == pSetInputDataFileCmd) pPGTLEActor->SetInputDataFilename(newValue);
+  if (cmd == pEnableDebugOutputCmd) pPGTLEActor->EnableDebugOutput(pEnableDebugOutputCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableOutputMatchCmd) pPGTLEActor->EnableOutputMatch(pEnableOutputMatchCmd->GetNewBoolValue(newValue));
+  if (cmd == pTimeNbBinsCmd) pPGTLEActor->SetTimeNbBins(pTimeNbBinsCmd->GetNewIntValue(newValue));
+  //if (cmd == pEnableSysVarianceCmd) pPGTLEActor->EnableSysVarianceImage(pEnableSysVarianceCmd->GetNewBoolValue(newValue));
+  //if (cmd == pEnableIntermediaryUncertaintyOutputCmd) pPGTLEActor->EnableIntermediaryUncertaintyOutput(pEnableIntermediaryUncertaintyOutputCmd->GetNewBoolValue(newValue));
   GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------
