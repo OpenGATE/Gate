@@ -176,12 +176,15 @@ void GateFixedForcedDetectionActor::GetEnergyList(std::vector<double> & energyLi
       }
     auto energyHistogram = mSource->GetEneDist()->GetUserDefinedEnergyHisto();
     double weightSum = 0.;
-    double energy = 0;
-    for (unsigned int i = 0; i < energyHistogram.GetVectorLength(); i++)
+    double leftEdge = energyHistogram.Energy(0);
+    for (unsigned int i = 1; i < energyHistogram.GetVectorLength(); i++)
       {
-      energy = energyHistogram.Energy(i);
+      // See https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html?highlight=gps
+      double rightEdge = energyHistogram.Energy(i);
+      double energy = 0.5*(rightEdge+leftEdge);
+      leftEdge = rightEdge;
       energyList.push_back(energy);
-      energyWeightList.push_back(energyHistogram.Value(energy));
+      energyWeightList.push_back(energyHistogram.Value(rightEdge));
       weightSum += energyWeightList.back();
       /* noise is desactivated */
       if (mNoisePrimary == 0)
