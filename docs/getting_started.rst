@@ -625,11 +625,11 @@ If you want to exit from the Gate program when the simulation time exceed the
 time duration, the last line of your program has to be **exit**.
 
 As a Monte Carlo tool, GATE needs a random generator. The CLHEP libraries
-provide various ones. Three different random engines are currently available in
-GATE, the Ranlux64, the James Random and the Mersenne Twister. The default one
-is the Mersenne Twister, but this can be changed easily using::
+provide various ones. Four different random engines are currently available in
+GATE, Ranlux64, James Random, MixMaxRng (default random engine in Geant4), and Mersenne Twister. The default random
+engine in GATE is James Random, but this can be changed easily using::
 
-  /gate/random/setEngineName aName    (where aName can be: Ranlux64, JamesRandom, or MersenneTwister)
+  /gate/random/setEngineName aName    (where aName can be: Ranlux64, JamesRandom, MixMaxRng, or MersenneTwister)
 
 **NB** Several users have reported artifacts in PET data when using the Ranlux64
 generator. These users have said that the artifacts are not present in data

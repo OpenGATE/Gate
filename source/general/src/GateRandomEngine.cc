@@ -11,6 +11,7 @@
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/RandomEngine.h"
 #include "CLHEP/Random/JamesRandom.h"
+#include "CLHEP/Random/MixMaxRng.h"
 #include "CLHEP/Random/MTwistEngine.h"
 #include "CLHEP/Random/Ranlux64Engine.h"
 #include <ctime>
@@ -72,6 +73,10 @@ void GateRandomEngine::SetRandomEngine(const G4String& aName) {
   else if (aName=="MersenneTwister") {
     delete theRandomEngine;
     theRandomEngine = new CLHEP::MTwistEngine();
+  }
+  else if (aName=="MixMaxRng") {
+      delete theRandomEngine;
+      theRandomEngine = new CLHEP::MixMaxRng();
   }
   else {
 		G4String msg = "Unknown random engine '"+aName+"'. Computation aborted !!!\n";
