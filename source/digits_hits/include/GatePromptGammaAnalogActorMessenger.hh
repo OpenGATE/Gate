@@ -31,6 +31,7 @@ protected:
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
   G4UIcmdWithABool * pSetOutputCountCmd;
+  G4UIcmdWithAnInteger * pTimeNbBinsCmd;
 };
 //-----------------------------------------------------------------------------
 

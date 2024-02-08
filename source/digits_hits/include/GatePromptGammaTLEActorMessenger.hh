@@ -27,11 +27,12 @@ public:
 
 protected:
   void BuildCommands(G4String base);
-  GatePromptGammaTLEActor* pTLEActor;
+  GatePromptGammaTLEActor* pPGTLEActor;
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
   G4UIcmdWithABool * pEnableDebugOutputCmd;
   G4UIcmdWithABool * pEnableOutputMatchCmd;
+  G4UIcmdWithAnInteger * pTimeNbBinsCmd;
 };
 //-----------------------------------------------------------------------------
 

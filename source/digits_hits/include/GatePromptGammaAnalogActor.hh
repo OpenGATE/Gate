@@ -31,13 +31,15 @@ public:
   virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
-
+  virtual void BeginOfEventAction(const G4Event * e);
+  
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
   virtual void ResetData();
 
   void SetOutputCount(bool b) { mSetOutputCount = b; }  //output counts instead of yield
-
+  void SetTimeNbBins(int tbins) { data.SetTimeNbBins(tbins); } // nb of proton time bins
+  
 protected:
   GatePromptGammaAnalogActor(G4String name, G4int depth=0);
   GatePromptGammaAnalogActorMessenger * pMessenger;
@@ -49,7 +51,14 @@ protected:
   bool mSetOutputCount;
   bool alreadyHere;
 
+  //helper functions
+  void SetTLEIoH(GateImageOfHistograms*&);
+  void SetTofIoH(GateImageOfHistograms*&);
+
   GateImageOfHistograms * mImageGamma;  //main output (yield)
+  GateImageOfHistograms * mImagetof;
+  double startEvtTime;
+  TH1D * pTime; // TH1D buffer histogram to add a new time value 
 
 };
 //-----------------------------------------------------------------------------

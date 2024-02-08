@@ -33,6 +33,9 @@ public:
   void SetProtonNbBins(int x);
   void SetGammaNbBins(int x);
 
+  void SetTimeNbBins(int x);
+  void SetTimeTMax(double x);
+  
   double GetProtonEMin() { return min_proton_energy; }
   double GetProtonEMax() { return max_proton_energy; }
   double GetGammaEMin()  { return min_gamma_energy; }
@@ -40,6 +43,9 @@ public:
   int GetProtonNbBins()  { return proton_bin; }
   int GetGammaNbBins()   { return gamma_bin; }
 
+  double GetTimeTMax() { return max_gamma_time;}
+  int GetTimeNbBins() { return time_bin;}
+  
   void Initialize(std::string & filename, const G4Material * m);
   void InitializeMaterial(bool DebugOutputEnabled);
   void Read(std::string & filename);
@@ -75,6 +81,9 @@ protected:
   unsigned int proton_bin;
   unsigned int gamma_bin;
 
+  double max_gamma_time;
+  unsigned int time_bin;
+  
   void SetCurrentPointerForThisElement(const G4Element * elem);
 
   //final outputs used to create tle source.

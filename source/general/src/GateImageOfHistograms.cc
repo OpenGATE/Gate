@@ -257,8 +257,8 @@ void GateImageOfHistograms::Read(G4String filename)
 
   {//start metaImage scope. setup all metadata. separate scope to save memory
     MetaImage m_MetaImage;
-    m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1);
-    m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1);
+    m_MetaImage.AddUserField("HistoMin", MET_FLOAT_ARRAY, 1);
+    m_MetaImage.AddUserField("HistoMax", MET_FLOAT_ARRAY, 1);
 
     if (!m_MetaImage.Read(filename.c_str(), true)) {
       GateError("MHD File cannot be read: " << filename << std::endl);
@@ -301,12 +301,12 @@ void GateImageOfHistograms::Read(G4String filename)
 
     // Read info in mhd
     void * r = 0;
-    r = m_MetaImage.GetUserField("HistoMinInMeV");
+    r = m_MetaImage.GetUserField("HistoMin");
     if (r==0) {
       GateError("User field HistoMin not found in this mhd file : " << filename);
     }
     minValue = *static_cast<float*>(r);
-    r = m_MetaImage.GetUserField("HistoMaxInMeV");
+    r = m_MetaImage.GetUserField("HistoMax");
     if (r==0) {
       GateError("User field HistoMax not found in this mhd file : " << filename);
     }
@@ -375,16 +375,17 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   // computation could be performed in double to prevent potential
   // rounding error.
   MetaImage m_MetaImage(4, dimSize, spacing, MET_FLOAT);
-  m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1, &minValue);
-  m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1, &maxValue);
+  m_MetaImage.AddUserField("HistoMin", MET_FLOAT_ARRAY, 1, &minValue); // unit: MeV for energy, ns for time
+  m_MetaImage.AddUserField("HistoMax", MET_FLOAT_ARRAY, 1, &maxValue); // unit: MeV for energy, ns for time
 
-  double p[3];
+  double p[4];
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
   // -> Add a half pixel
   p[0] = GetOrigin().x() + GetVoxelSize().x()/2.0;
   p[1] = GetOrigin().y() + GetVoxelSize().y()/2.0;
   p[2] = GetOrigin().z() + GetVoxelSize().z()/2.0;
+  p[3] = 0.; // needed to be defined as a unique value for the merging of several jobs
   m_MetaImage.Position(p);
 
   // Transform

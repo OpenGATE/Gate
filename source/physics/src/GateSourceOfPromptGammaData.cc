@@ -13,11 +13,15 @@
 #include "Randomize.hh" // needed for G4UniformRand
 #include "G4Gamma.hh"
 #include "GateRandomEngine.hh"
+#include <random>
+#include <iostream>
+#include <fstream>
 
 //------------------------------------------------------------------------
 GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()
 {
-    computesum = 0;
+  computesum = 0;
+  mTofFlag = false;
 }
 //------------------------------------------------------------------------
 
@@ -39,6 +43,19 @@ void GateSourceOfPromptGammaData::LoadData(std::string mFilename)
 {
   mImage = new GateImageOfHistograms("float");
   mImage->Read(mFilename);
+  
+  if (mTofFlag) {
+    mImageTof = new GateImageOfHistograms("float");
+    mImageTof->Read(G4String(removeExtension(mFilename))+"-tof."+G4String(getExtension(mFilename)));
+  }
+}
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+void GateSourceOfPromptGammaData::SetTof(G4bool newflag)
+{
+  mTofFlag = newflag;
 }
 //------------------------------------------------------------------------
 
@@ -50,6 +67,7 @@ void GateSourceOfPromptGammaData::Initialize()
   unsigned int sizeY = mImage->GetResolution().y();
   unsigned int sizeZ = mImage->GetResolution().z();
   unsigned int nbOfBins = mImage->GetNbOfBins();
+  unsigned int nbOfBinsTof = mImageTof->GetNbOfBins();
   unsigned long nbOfValues = sizeX*sizeY*sizeZ;
 
   // Random generators for position: set sizes
@@ -60,9 +78,10 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Build the scalar image with total number of counts at each pixel
-  mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts);
-  computesum = mImage->ComputeSum();
-
+  mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts); // "mDataCounts" is a 3D volume of the PG yield integrated of the the PG energy 
+  computesum = mImage->ComputeSum(); // = global PG yield per proton
+  // no need to do it for tof, mDataCounts is just used for biased spatial random sampling
+  
   // Initialize random generator for position. Loop over the total
   // count scalar image (mDataCounts)
   mPositionXGen.SetXBias(G4ThreeVector(0., 0., 0.)); // important
@@ -92,8 +111,9 @@ void GateSourceOfPromptGammaData::Initialize()
   mEnergyGen.resize(nbOfValues);
   double energyStep  = (mImage->GetMaxValue()-mImage->GetMinValue())/nbOfBins;
   double energy = 0.0;
-  long index_image = 0;
-  long index_data = 0;
+  
+  long indexImage = 0;
+  long indexData = 0;
   float * data = mImage->GetDataFloatPointer();
   long nbNonZero = 0;
 
@@ -101,25 +121,69 @@ void GateSourceOfPromptGammaData::Initialize()
   for(unsigned int k=0; k<sizeZ; k++) {
     for(unsigned int j=0; j<sizeY; j++) {
       for(unsigned int i=0; i<sizeX; i++) {
-        if (mDataCounts[index_image] == 0) { // FIXME
-          index_data+=nbOfBins;
+        if (mDataCounts[indexImage] == 0) { // FIXME
+          indexData+=nbOfBins;
         }
         else {
-          energy = mImage->GetMinValue();
-          mEnergyGen[index_image] = new TH1D;
+          energy = mImage->GetMinValue() + energyStep/2.; //the energy of each bin corresponds to its center 
+          mEnergyGen[indexImage] = new TH1D;
           // This is much much faster to use the constructor without
           // param, the SetBins than using the following line with constructor :
           // new TH1D("", "", nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
-          TH1D * h = mEnergyGen[index_image];
+          TH1D * h = mEnergyGen[indexImage];
           h->SetBins(nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
-          for(unsigned int l=0; l<nbOfBins; l++) {
-            h->Fill(energy, data[index_data]);
-            index_data++;
+	  // G4cout << "GateSourceOfPromptGammaData::Initialize: lowEdge 1 = " << h->GetXaxis()->GetBinLowEdge(1)
+	  // 	 << " -- upEdge " << h->GetXaxis()->GetNbins()
+	  // 	 << " = " << h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetNbins()) << G4endl;
+	  // G4cout << "GateSourceOfPromptGammaData::Initialize: binCenter 1 = " << h->GetXaxis()->GetBinCenter(1)
+	  // 	 << " -- binCenter " << h->GetXaxis()->GetNbins()
+	  // 	 << " = " << h->GetXaxis()->GetBinCenter(h->GetXaxis()->GetNbins()) << G4endl;
+	  for(unsigned int l=0; l<nbOfBins; l++) {
+            h->Fill(energy, data[indexData]);
+            indexData++;
             energy += energyStep;
           }
           nbNonZero++;
         }
-        index_image++;
+        indexImage++;
+      }
+    }
+  }
+
+  // Initialize pgtime.
+  if (mTofFlag) {
+    mPgtimeGen.resize(nbOfValues);
+    double pgtimeStep  = (mImageTof->GetMaxValue()-mImageTof->GetMinValue())/nbOfBinsTof;
+    double pgtime = 0.0;
+    long indexImageTof = 0;
+    long indexDataTof = 0;
+    float * dataTof = mImageTof->GetDataFloatPointer();
+    long nbNonZeroTof = 0;
+
+    // We only create TH1D for non zero pixel.
+    for(unsigned int k=0; k<sizeZ; k++) {
+      for(unsigned int j=0; j<sizeY; j++) {
+	for(unsigned int i=0; i<sizeX; i++) {
+	  if (mDataCounts[indexImageTof] == 0) { // FIXME
+	    indexDataTof+=nbOfBinsTof;
+	  }
+	  else {
+	    pgtime = mImageTof->GetMinValue() + pgtimeStep/2.; // The TH1D bin center must be selected (ie half he width is added)
+	    mPgtimeGen[indexImageTof] = new TH1D;
+	    // This is much much faster to use the constructor without
+	    // param, the SetBins than using the following line with constructor :
+	    // new TH1D("", "", nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
+	    TH1D * hTof = mPgtimeGen[indexImageTof];
+	    hTof->SetBins(nbOfBinsTof, mImageTof->GetMinValue(), mImageTof->GetMaxValue());
+	    for(unsigned int l=0; l<nbOfBinsTof; l++) {
+	      hTof->Fill(pgtime, dataTof[indexDataTof]);
+	      indexDataTof++;
+	      pgtime += pgtimeStep;
+	    }
+	    nbNonZeroTof++;
+	  }
+	  indexImageTof++;
+	}
       }
     }
   }
@@ -133,6 +197,7 @@ void GateSourceOfPromptGammaData::Initialize()
   // ATTENTION: THIS DELETES THE ON DISK DATA FROM MEMORY. ACCESSING THE DATA IN mImage
   // WILL SEGFAULT. METADATA IS KEPT.
   mImage->Deallocate();
+  if (mTofFlag) mImageTof->Deallocate();
 }
 //------------------------------------------------------------------------
 
@@ -178,6 +243,22 @@ void GateSourceOfPromptGammaData::SampleRandomEnergy(double & energy)
     energy = mEnergyGen[index]->GetRandom();
   }
   else energy = 0.0;
+}
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+void GateSourceOfPromptGammaData::SampleRandomPgtime(double & pgtime)
+{
+  if (mTofFlag) {
+    // Get energy spectrum in the current pixel
+    long index = mImageTof->GetIndexFromPixelIndex(mCurrentIndex_i, mCurrentIndex_j, mCurrentIndex_k);
+
+    if (mDataCounts[index] != 0) {
+      pgtime = mPgtimeGen[index]->GetRandom();
+    }
+    else pgtime = 0.0;
+  }
 }
 //------------------------------------------------------------------------
 

@@ -63,6 +63,7 @@ protected:
   G4UIcmdWithABool *pEnableParticleNameCmd;
   G4UIcmdWithABool *pEnableWeightCmd;
   G4UIcmdWithABool *pEnableTimeCmd;
+  G4UIcmdWithABool* pEnableIonTimeCmd;
   G4UIcmdWithABool *pEnableTimeFromBeginOfEventCmd;
   G4UIcmdWithABool *pEnableTrackLengthCmd;
   G4UIcmdWithABool *pEnableMassCmd;

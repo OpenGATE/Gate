@@ -171,6 +171,12 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
     pEnableTimeCmd->SetGuidance(guidance);
     pEnableTimeCmd->SetParameterName("State", false);
 
+    bb = base+"/enableIonTime";
+    pEnableIonTimeCmd = new G4UIcmdWithABool(bb,this);
+    guidance = "Save the time of primary particles in the phase space file.";
+    pEnableIonTimeCmd->SetGuidance(guidance);
+    pEnableIonTimeCmd->SetParameterName("State",false);
+    
     bb = base + "/enableTimeFromBeginOfEvent";
     pEnableTimeFromBeginOfEventCmd = new G4UIcmdWithABool(bb, this);
     guidance = "Save the time of particles since the begin of event time.";
@@ -346,6 +352,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
         pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
     if (command == pEnableTimeCmd)
         pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
+    if (command == pEnableIonTimeCmd)
+        pActor->SetIsIonTimeEnabled(pEnableIonTimeCmd->GetNewBoolValue(param));
     if (command == pEnableTimeFromBeginOfEventCmd)
         pActor->SetIsTimeFromBeginOfEventEnabled(pEnableTimeFromBeginOfEventCmd->GetNewBoolValue(param));
     if (command == pEnableTrackLengthCmd)
@@ -401,6 +409,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand *command, G4String pa
 
     if (command == pEnableTOutCmd)
         pActor->SetIsTOutEnabled(pEnableTOutCmd->GetNewBoolValue(param));
+    if(command == pEnableTProdCmd)
+        pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
     if (command == pEnableTProdCmd)
         pActor->SetIsTProdEnabled(pEnableTProdCmd->GetNewBoolValue(param));
     if (command == pUseMaskCmd)
