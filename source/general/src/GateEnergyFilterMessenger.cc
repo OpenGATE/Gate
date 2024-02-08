@@ -31,6 +31,7 @@ GateEnergyFilterMessenger::~GateEnergyFilterMessenger()
 {
   delete pSetEminCmd;
   delete pSetEmaxCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -55,6 +56,11 @@ void GateEnergyFilterMessenger::BuildCommands(G4String base)
   pSetEmaxCmd->SetParameterName("Emax", false);
   pSetEmaxCmd->SetDefaultUnit("MeV");
 
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -71,6 +77,8 @@ void GateEnergyFilterMessenger::SetNewValue(G4UIcommand* command, G4String param
     {
       pEnergyFilter->SetEmax(pSetEmaxCmd->GetNewDoubleValue(param) );
     }
+  if(command==pInvertCmd)
+    pEnergyFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

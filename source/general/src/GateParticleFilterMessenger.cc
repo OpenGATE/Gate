@@ -30,6 +30,7 @@ GateParticleFilterMessenger::GateParticleFilterMessenger(GateParticleFilter* par
 GateParticleFilterMessenger::~GateParticleFilterMessenger()
 {
   delete pAddParticleCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -76,6 +77,11 @@ void GateParticleFilterMessenger::BuildCommands(G4String base)
   guidance = "Add direct parent particle";
   pAddDirectParentParticleCmd->SetGuidance(guidance);
   pAddDirectParentParticleCmd->SetParameterName("Particle name",false);
+
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -95,6 +101,8 @@ void GateParticleFilterMessenger::SetNewValue(G4UIcommand* command, G4String par
     pParticleFilter->AddParent(param);
   if(command==pAddDirectParentParticleCmd)
     pParticleFilter->AddDirectParent(param);
+  if(command==pInvertCmd)
+    pParticleFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

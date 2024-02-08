@@ -30,6 +30,8 @@ GateIDFilterMessenger::GateIDFilterMessenger(GateIDFilter* idFilter)
 GateIDFilterMessenger::~GateIDFilterMessenger()
 {
   delete pAddIDCmd;
+  delete pAddParentIDCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -52,6 +54,11 @@ void GateIDFilterMessenger::BuildCommands(G4String base)
   pAddParentIDCmd->SetGuidance(guidance);
   pAddParentIDCmd->SetParameterName("Parent ID",false);
 
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
+
 
 }
 //-----------------------------------------------------------------------------
@@ -64,6 +71,8 @@ void GateIDFilterMessenger::SetNewValue(G4UIcommand* command, G4String param)
     pIDFilter->addID(pAddIDCmd->GetNewIntValue(param));
   if(command==pAddParentIDCmd)
     pIDFilter->addParentID(pAddParentIDCmd->GetNewIntValue(param));
+  if(command==pInvertCmd)
+    pIDFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

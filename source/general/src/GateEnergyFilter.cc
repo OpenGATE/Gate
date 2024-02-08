@@ -30,10 +30,10 @@ G4bool GateEnergyFilter::Accept(const G4Step* aStep)
     G4double kinetic = aStep->GetPreStepPoint()->GetKineticEnergy();
 
 
-    if ( fLowEnergy!=0. && kinetic < fLowEnergy  ) return false;
-    if ( fHighEnergy!= 0. && kinetic >= fHighEnergy ) return false;
+    if ( fLowEnergy!=0. && kinetic < fLowEnergy  ) _FILTER_RETURN_WITH_INVERSION false;
+    if ( fHighEnergy!= 0. && kinetic >= fHighEnergy ) _FILTER_RETURN_WITH_INVERSION false;
   
-    return true;
+    _FILTER_RETURN_WITH_INVERSION true;
 }
 //---------------------------------------------------------------------------
 
@@ -43,10 +43,10 @@ G4bool GateEnergyFilter::Accept(const G4Track* aTrack)
     G4double kinetic = aTrack->GetKineticEnergy();
 
 
-    if ( fLowEnergy!=0. && kinetic < fLowEnergy  ) return false;
-    if ( fHighEnergy!= 0. && kinetic >= fHighEnergy ) return false;
+    if ( fLowEnergy!=0. && kinetic < fLowEnergy  ) _FILTER_RETURN_WITH_INVERSION false;
+    if ( fHighEnergy!= 0. && kinetic >= fHighEnergy ) _FILTER_RETURN_WITH_INVERSION false;
   
-    return true;
+    _FILTER_RETURN_WITH_INVERSION true;
 }
 //---------------------------------------------------------------------------
 

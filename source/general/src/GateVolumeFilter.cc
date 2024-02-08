@@ -33,9 +33,9 @@ G4bool GateVolumeFilter::Accept(const G4Step* aStep)
    G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
 
    for(unsigned int k =0 ; k<theListOfLogicalVolume.size();k++)
-            if(theListOfLogicalVolume[k]== currentVol ) return true;
+            if(theListOfLogicalVolume[k]== currentVol ) _FILTER_RETURN_WITH_INVERSION true;
    
-   return false;
+   _FILTER_RETURN_WITH_INVERSION false;
 }
 //---------------------------------------------------------------------------
 
@@ -49,9 +49,9 @@ G4bool GateVolumeFilter::Accept(const G4Track* t)
    G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
 
    for(unsigned int k =0 ; k<theListOfLogicalVolume.size();k++)
-            if(theListOfLogicalVolume[k]== currentVol ) return true;
+            if(theListOfLogicalVolume[k]== currentVol ) _FILTER_RETURN_WITH_INVERSION true;
    
-   return false;
+   _FILTER_RETURN_WITH_INVERSION false;
 }
 
 //---------------------------------------------------------------------------

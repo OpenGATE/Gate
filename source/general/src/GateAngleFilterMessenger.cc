@@ -31,6 +31,7 @@ GateAngleFilterMessenger::~GateAngleFilterMessenger()
 {
   delete pSetDirectionCmd;
   delete pSetAngleCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -54,6 +55,11 @@ void GateAngleFilterMessenger::BuildCommands(G4String base)
   pSetDirectionCmd->SetGuidance(guidance);
   pSetDirectionCmd->SetParameterName("direction_x","direction_y", "direction_z", false, false);
 
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -70,6 +76,9 @@ void GateAngleFilterMessenger::SetNewValue(G4UIcommand* command, G4String param)
   {
     pAngleFilter->SetMomentum( pSetDirectionCmd->GetNew3VectorValue(param) );
   }
+  
+  if(command==pInvertCmd) 
+    pAngleFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

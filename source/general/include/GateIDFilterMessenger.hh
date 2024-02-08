@@ -21,6 +21,7 @@ See LICENSE.md for further details
 #include "G4UImessenger.hh"
 
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 
 class GateIDFilter;
@@ -39,6 +40,7 @@ protected:
 
   G4UIcmdWithAnInteger* pAddIDCmd;
   G4UIcmdWithAnInteger* pAddParentIDCmd;
+  G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif /* end #define GATEIDFILTERMESSENGER_HH */

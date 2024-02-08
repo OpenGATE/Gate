@@ -28,13 +28,13 @@ GateIDFilter::GateIDFilter(G4String name)
 G4bool GateIDFilter::Accept(const G4Track* aTrack) 
 {
 
-  if(mID!=0) if(aTrack->GetTrackID()!=mID) return false;
+  if(mID!=0) if(aTrack->GetTrackID()!=mID) _FILTER_RETURN_WITH_INVERSION false;
 
 
   if(mParentID!=0)
-       if(aTrack->GetParentID()!=mParentID) return false;
+       if(aTrack->GetParentID()!=mParentID) _FILTER_RETURN_WITH_INVERSION false;
 
-  return true;
+  _FILTER_RETURN_WITH_INVERSION true;
 }
 //---------------------------------------------------------------------------
 

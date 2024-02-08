@@ -30,6 +30,7 @@ GateVolumeFilterMessenger::GateVolumeFilterMessenger(GateVolumeFilter* idFilter)
 GateVolumeFilterMessenger::~GateVolumeFilterMessenger()
 {
   delete pAddVolumeCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -45,6 +46,11 @@ void GateVolumeFilterMessenger::BuildCommands(G4String base)
   guidance = "Add volume";
   pAddVolumeCmd->SetGuidance(guidance);
   pAddVolumeCmd->SetParameterName("Volume name",false);
+
+  bb = base+"/invert";
+  pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+  guidance = "Invert the filter";
+  pInvertCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -53,6 +59,7 @@ void GateVolumeFilterMessenger::BuildCommands(G4String base)
 void GateVolumeFilterMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
   if(command==pAddVolumeCmd) pVolumeFilter->addVolume(param);
+  if(command==pInvertCmd) pVolumeFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 

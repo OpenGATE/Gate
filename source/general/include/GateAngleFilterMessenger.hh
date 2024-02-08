@@ -23,6 +23,7 @@ See LICENSE.md for further details
 
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3Vector.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 
 class GateAngleFilter;
@@ -41,6 +42,7 @@ protected:
 
   G4UIcmdWithADoubleAndUnit * pSetAngleCmd;
   G4UIcmdWith3Vector        * pSetDirectionCmd;
+  G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif /* end #define GATEANGLEFILTERMESSENGER_HH */

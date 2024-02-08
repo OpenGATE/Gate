@@ -278,7 +278,9 @@ jobs:
                         t27_Hits_2SD,
                         t28_Singles_2SD,
                         t29_optical_digi,
-                        t30_dna]
+                        t30_dna,
+                        t32_isotopes,
+                        t33_invert_filter]
 
     steps:
     - name: Checkout github repo

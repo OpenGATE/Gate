@@ -16,6 +16,7 @@ See LICENSE.md for further details
 #include "globals.hh"
 #include "G4UImessenger.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 
 class GateMaterialFilter;
@@ -33,6 +34,7 @@ protected:
   GateMaterialFilter * pMaterialFilter;
 
   G4UIcmdWithAString* pAddMaterialCmd;
+  G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif /* end #define GATEMATFILTERMESSENGER_HH */

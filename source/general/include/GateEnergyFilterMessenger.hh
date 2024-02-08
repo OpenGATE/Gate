@@ -21,6 +21,7 @@ See LICENSE.md for further details
 #include "G4UImessenger.hh"
 
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 
 class GateEnergyFilter;
@@ -39,6 +40,7 @@ protected:
 
   G4UIcmdWithADoubleAndUnit * pSetEminCmd;
   G4UIcmdWithADoubleAndUnit * pSetEmaxCmd;
+  G4UIcmdWithoutParameter* pInvertCmd;
 };
 
 #endif /* end #define GATEENEFILTERMESSENGER_HH */

@@ -31,14 +31,14 @@ GateCreatorProcessFilter::~GateCreatorProcessFilter()
 G4bool GateCreatorProcessFilter::Accept(const G4Track* aTrack) 
 {
   const G4VProcess *creatorProcess = aTrack->GetCreatorProcess();
-  if (!creatorProcess) return false;
+  if (!creatorProcess) _FILTER_RETURN_WITH_INVERSION false;
 
   G4String creatorProcessName = creatorProcess->GetProcessName();
   for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); iter++)
     if (*iter==creatorProcessName)
-      return true;
+      _FILTER_RETURN_WITH_INVERSION true;
 
-  return false;
+  _FILTER_RETURN_WITH_INVERSION false;
 }
 
 //---------------------------------------------------------------------------

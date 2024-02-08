@@ -21,6 +21,11 @@ GateCreatorProcessFilterMessenger::GateCreatorProcessFilterMessenger(GateCreator
     G4String guidance = "Add creator process";
     pAddCreatorProcessCmd->SetGuidance(guidance);
     pAddCreatorProcessCmd->SetParameterName("Creator process name",false);
+
+    bb = base+"/invert";
+    pInvertCmd = new G4UIcmdWithoutParameter(bb,this);
+    guidance = "Invert the filter";
+    pInvertCmd->SetGuidance(guidance);
   }
 }
 //-----------------------------------------------------------------------------
@@ -30,6 +35,7 @@ GateCreatorProcessFilterMessenger::GateCreatorProcessFilterMessenger(GateCreator
 GateCreatorProcessFilterMessenger::~GateCreatorProcessFilterMessenger()
 {
   delete pAddCreatorProcessCmd;
+  delete pInvertCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -38,6 +44,7 @@ GateCreatorProcessFilterMessenger::~GateCreatorProcessFilterMessenger()
 void GateCreatorProcessFilterMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
   if(command==pAddCreatorProcessCmd) pFilter->AddCreatorProcess(param);
+  if(command==pInvertCmd) pFilter->setInvert();
 }
 //-----------------------------------------------------------------------------
 
