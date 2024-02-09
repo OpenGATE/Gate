@@ -98,8 +98,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 11.1)
-  MESSAGE("Warning! This GATE version is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 11.1 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 11.2)
+  MESSAGE("Warning! This GATE version is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 11.2 distribution instead.")
 ENDIF()
 
 #=========================================================

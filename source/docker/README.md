@@ -10,7 +10,7 @@ login: `docker login`
 
 [build and use]
 * build: 
-    * `docker build -t opengatecollaboration/geant4:11.1.0 -f DockerFileGeant --build-arg ROOT_Version=v6-24-06 --build-arg Geant4_Version=v11.1.0 .`
+    * `docker build -t opengatecollaboration/geant4:11.2.1 -f DockerFileGeant --build-arg ROOT_Version=v6-24-06 --build-arg Geant4_Version=v11.2.1 .`
 * push: 
     * `docker push opengatecollaboration/geant4:$version`
 * interactive: 
@@ -18,7 +18,7 @@ login: `docker login`
 
 Where: 
 
-* `$version` is `11.1.0` for gate `9.3`
+* `$version` is `11.2.1` for gate `9.4`
 
 # Second image Gate
 ## Docker for gate
@@ -29,7 +29,7 @@ login: `docker login`
 
 [build and use]
 * build: 
-    * `docker build -t opengatecollaboration/gate:9.3 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:11.1.0 --build-arg Gate_Version=v9.3 .`
+    * `docker build -t opengatecollaboration/gate:9.4 -f DockerFileGate --build-arg Geant4_Version=opengatecollaboration/geant4:11.2.1 --build-arg Gate_Version=v9.4 .`
 * push:  
     * `docker push opengatecollaboration/gate:$version`
 * run command:  

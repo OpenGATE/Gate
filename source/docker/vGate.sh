@@ -69,7 +69,7 @@ make
 cd
 cd Software/Geant4
 mkdir src bin install data
-git clone -b v11.1.1 https://github.com/Geant4/geant4.git src
+git clone -b v11.2.1 https://github.com/Geant4/geant4.git src
 cd bin
 ccmake ../src -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_INSTALL_DATADIR=/home/vgate/Software/Geant4/data -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/Geant4/install -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON
 make install
