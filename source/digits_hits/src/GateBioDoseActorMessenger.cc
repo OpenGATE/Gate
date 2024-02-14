@@ -56,10 +56,6 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	pEnableDoseCmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableDoseCmd->SetGuidance("Enable dose output");
 
-	n = base + "/enableBioDose";
-	pEnableBioDoseCmd = std::make_unique<G4UIcmdWithABool>(n, this);
-	pEnableBioDoseCmd->SetGuidance("Enable biodose output (default: true)");
-
 	n = base + "/enableAlphaMix";
 	pEnableAlphaMixCmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableAlphaMixCmd->SetGuidance("Enable alpha mix output");
@@ -87,7 +83,6 @@ void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
 	else if(cmd == pSOBPWeightCmd.get())        pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(value));
 	else if(cmd == pEnableEdepCmd.get())        pBioDoseActor->SetEnableEdep(pEnableEdepCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableDoseCmd.get())        pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableBioDoseCmd.get())     pBioDoseActor->SetEnableBioDose(pEnableBioDoseCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableAlphaMixCmd.get())    pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableSqrtBetaMixCmd.get()) pBioDoseActor->SetEnableSqrtBetaMix(pEnableSqrtBetaMixCmd->GetNewBoolValue(value));
 	else if(cmd == pEnableRBECmd.get())         pBioDoseActor->SetEnableRBE(pEnableRBECmd->GetNewBoolValue(value));

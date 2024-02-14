@@ -23,13 +23,6 @@ See LICENSE.md for further details
 class GateBioDoseActor: public GateVImageActor
 {
 public:
-	struct Deposited {
-		double alpha;
-		double sqrtBeta;
-		double energy;
-		double dose;
-	};
-
 	struct Coefficients {
 		double a, b;
 	};
@@ -40,7 +33,6 @@ public:
 	};
 
 	using VoxelIndex = int;
-	using DepositedMap = std::map<VoxelIndex, Deposited>;
 	using VoxelIndices = std::set<VoxelIndex>;
 
 	using Fragment = std::pair<int, double>;
@@ -84,18 +76,17 @@ public:
 
 	void SetEnableEdep(bool e) { _enableEdep = e; }
 	void SetEnableDose(bool e) { _enableDose = e; }
-	void SetEnableBioDose(bool e) { _enableBioDose = e; }
 	void SetEnableAlphaMix(bool e) { _enableAlphaMix = e; }
 	void SetEnableSqrtBetaMix(bool e) { _enableSqrtBetaMix = e; }
 	void SetEnableRBE(bool e) { _enableRBE = e; }
 	void SetEnableUncertainties(bool e) { _enableUncertainties = e; }
 
-	// Input database
-	void BuildDatabase();
-	static Coefficients Interpol(double x1, double x2, double y1, double y2);
-
 protected:
 	GateBioDoseActor(G4String name, G4int depth = 0);
+
+	void updateData();
+	void buildDatabase();
+	static Coefficients interpol(double x1, double x2, double y1, double y2);
 
 private:
 	//Counters
@@ -114,31 +105,31 @@ private:
 
 	G4double _sobpWeight;
 
-	// Maps
-	DepositedMap _depositedMap;
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
 	VoxelIndices _eventVoxelIndices;
+	VoxelIndices _voxelIndices;
 
 	// Images
-	GateImageWithStatistic _eventCountImage;
+	GateImageWithStatistic _hitEventCountImage;
 
-	GateImageWithStatistic _bioDoseImage;
+	GateImageWithStatistic _eventEdepImage;
+	GateImageWithStatistic _eventDoseImage;
+	GateImageWithStatistic _eventAlphaImage;
+	GateImageWithStatistic _eventSqrtBetaImage;
+
 	GateImageWithStatistic _edepImage;
 	GateImageWithStatistic _doseImage;
+	GateImageWithStatistic _scaledDoseImage;
 	GateImageWithStatistic _alphaMixImage;
 	GateImageWithStatistic _sqrtBetaMixImage;
+	GateImageWithStatistic _bioDoseImage;
 	GateImageWithStatistic _rbeImage;
 
 	GateImageWithStatistic _biodoseUncertaintyImage;
-	GateImageWithStatistic _eventEdepImage;
-	GateImageWithStatistic _eventDoseImage;
 	GateImageWithStatistic _squaredDoseImage;
-	GateImageWithStatistic _eventAlphaImage;
 	GateImageWithStatistic _squaredAlphaMixImage;
-	GateImageWithStatistic _eventSqrtBetaImage;
 	GateImageWithStatistic _squaredSqrtBetaMixImage;
-
 	GateImageWithStatistic _alphaMixSqrtBetaMixImage;
 	GateImageWithStatistic _alphaMixDoseImage;
 	GateImageWithStatistic _sqrtBetaMixDoseImage;
@@ -146,7 +137,6 @@ private:
 	// Outputs
 	bool _enableEdep;
 	bool _enableDose;
-	bool _enableBioDose;
 	bool _enableAlphaMix;
 	bool _enableSqrtBetaMix;
 	bool _enableRBE;
