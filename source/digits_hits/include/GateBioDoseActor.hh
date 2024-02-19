@@ -126,6 +126,7 @@ private:
 	GateImageWithStatistic _bioDoseImage;
 	GateImageWithStatistic _rbeImage;
 
+	GateImageWithStatistic _doseUncertaintyImage;
 	GateImageWithStatistic _biodoseUncertaintyImage;
 	GateImageWithStatistic _squaredDoseImage;
 	GateImageWithStatistic _squaredAlphaMixImage;
