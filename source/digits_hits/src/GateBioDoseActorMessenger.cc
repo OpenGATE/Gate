@@ -71,22 +71,33 @@ void GateBioDoseActorMessenger::BuildCommands(G4String base) {
 	n = base + "/enableUncertainty";
 	pEnableUncertaintyCmd = std::make_unique<G4UIcmdWithABool>(n, this);
 	pEnableUncertaintyCmd->SetGuidance("Enable uncertainty outputs");
+
+	n = base + "/enableUncertaintyDetails";
+	pEnableUncertaintyDetailsCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableUncertaintyDetailsCmd->SetGuidance("Enable uncertainty intermediary outputs");
+
+	n = base + "/enableHitEventCount";
+	pEnableHitEventCountCmd = std::make_unique<G4UIcmdWithABool>(n, this);
+	pEnableHitEventCountCmd->SetGuidance("Enable hit-event count output");
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void GateBioDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String value) {
-	if(cmd == pDoseScaleFactorCmd.get())		    pBioDoseActor->SetDoseScaleFactor(pDoseScaleFactorCmd->GetNewDoubleValue(value));
-	else if(cmd == pAlphaRefCmd.get())					pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(value));
-	else if(cmd == pBetaRefCmd.get())						pBioDoseActor->SetBetaRef(pBetaRefCmd->GetNewDoubleValue(value));
-	else if(cmd == pCellLineCmd.get())          pBioDoseActor->SetCellLine(value);
-	else if(cmd == pBioPhysicalModelCmd.get())  pBioDoseActor->SetBioPhysicalModel(value);
-	else if(cmd == pSOBPWeightCmd.get())        pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(value));
-	else if(cmd == pEnableEdepCmd.get())        pBioDoseActor->SetEnableEdep(pEnableEdepCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableDoseCmd.get())        pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableAlphaMixCmd.get())    pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableSqrtBetaMixCmd.get()) pBioDoseActor->SetEnableSqrtBetaMix(pEnableSqrtBetaMixCmd->GetNewBoolValue(value));
-	else if(cmd == pEnableRBECmd.get())         pBioDoseActor->SetEnableRBE(pEnableRBECmd->GetNewBoolValue(value));
-	else if(cmd == pEnableUncertaintyCmd.get()) pBioDoseActor->SetEnableUncertainties(pEnableUncertaintyCmd->GetNewBoolValue(value));
+	if(cmd == pDoseScaleFactorCmd.get())		      pBioDoseActor->SetDoseScaleFactor(pDoseScaleFactorCmd->GetNewDoubleValue(value));
+	else if(cmd == pAlphaRefCmd.get())					  pBioDoseActor->SetAlphaRef(pAlphaRefCmd->GetNewDoubleValue(value));
+	else if(cmd == pBetaRefCmd.get())						  pBioDoseActor->SetBetaRef(pBetaRefCmd->GetNewDoubleValue(value));
+	else if(cmd == pCellLineCmd.get())            pBioDoseActor->SetCellLine(value);
+	else if(cmd == pBioPhysicalModelCmd.get())    pBioDoseActor->SetBioPhysicalModel(value);
+	else if(cmd == pSOBPWeightCmd.get())          pBioDoseActor->SetSOBPWeight(pSOBPWeightCmd->GetNewDoubleValue(value));
+	else if(cmd == pEnableEdepCmd.get())          pBioDoseActor->SetEnableEdep(pEnableEdepCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableDoseCmd.get())          pBioDoseActor->SetEnableDose(pEnableDoseCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableAlphaMixCmd.get())      pBioDoseActor->SetEnableAlphaMix(pEnableAlphaMixCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableSqrtBetaMixCmd.get())   pBioDoseActor->SetEnableSqrtBetaMix(pEnableSqrtBetaMixCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableRBECmd.get())           pBioDoseActor->SetEnableRBE(pEnableRBECmd->GetNewBoolValue(value));
+	else if(cmd == pEnableUncertaintyCmd.get())   pBioDoseActor->SetEnableUncertainty(pEnableUncertaintyCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableUncertaintyDetailsCmd.get())
+		pBioDoseActor->SetEnableUncertaintyDetails(pEnableUncertaintyDetailsCmd->GetNewBoolValue(value));
+	else if(cmd == pEnableHitEventCountCmd.get()) pBioDoseActor->SetEnableHitEventCount(pEnableHitEventCountCmd->GetNewBoolValue(value));
 
 	GateImageActorMessenger::SetNewValue(cmd, value);
 }

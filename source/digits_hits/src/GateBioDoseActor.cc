@@ -17,17 +17,7 @@ See LICENSE.md for further details
 //-----------------------------------------------------------------------------
 GateBioDoseActor::GateBioDoseActor(G4String name, G4int depth):
 	GateVImageActor(std::move(name), depth),
-	_currentEvent(0),
-	_messenger(this),
-	_alphaRef(-1),
-	_betaRef(-1),
-	_sobpWeight(0),
-	_enableEdep(false),
-	_enableDose(true),
-	_enableAlphaMix(false),
-	_enableSqrtBetaMix(false),
-	_enableRBE(false),
-	_enableUncertainties(true)
+	_messenger(this)
 {
 	GateDebugMessageInc("Actor", 4, "GateBioDoseActor() -- begin\n");
 }
@@ -37,10 +27,7 @@ void GateBioDoseActor::Construct() {
 	GateDebugMessageInc("Actor", 4, "GateBioDoseActor -- Construct - begin\n");
 	GateVImageActor::Construct();
 
-	// Find G4_WATER
 	G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
-	// Find OtherMaterial
-	//G4NistManager::Instance()->FindOrBuildMaterial(mOtherMaterial);
 	G4EmParameters::Instance()->SetBuildCSDARange(true);
 
 	// Enable callbacks BioDose
@@ -67,7 +54,7 @@ void GateBioDoseActor::Construct() {
 			}
 		};
 
-		setupImage(_hitEventCountImage);
+		setupImage(_hitEventCountImage, "hitevent_count");
 
 		setupImage(_eventEdepImage);
 		setupImage(_eventDoseImage);
@@ -82,7 +69,7 @@ void GateBioDoseActor::Construct() {
 		setupImage(_bioDoseImage, "biodose");
 		if(_enableRBE)          setupImage(_rbeImage, "rbe");
 
-		if(_enableUncertainties) {
+		if(_enableUncertainty) {
 			setupImage(_doseUncertaintyImage, "dose_uncertainty");
 			setupImage(_biodoseUncertaintyImage, "biodose_uncertainty");
 			setupImage(_squaredDoseImage);
@@ -91,6 +78,18 @@ void GateBioDoseActor::Construct() {
 			setupImage(_alphaMixSqrtBetaMixImage);
 			setupImage(_alphaMixDoseImage);
 			setupImage(_sqrtBetaMixDoseImage);
+
+			if(_enableUncertaintyDetails) {
+				setupImage(_pdBiodoseAlphaMixMean, "pd_biodose_alphamixmean");
+				setupImage(_pdBiodoseSqrtBetaMixMean, "pd_biodose_sqrtbetamixmean");
+				setupImage(_pdBiodoseDoseMean, "pd_biodose_dosemean");
+				setupImage(_varAlphaMixMeanImage, "var_alphamixmean");
+				setupImage(_varSqrtBetaMixMeanImage, "var_sqrtbetamixmean");
+				setupImage(_varDoseMeanImage, "var_dosemean");
+				setupImage(_covAlphaMixMeanSqrtBetaMixMeanImage, "cov_alphamixmean_sqrtbetamixmean");
+				setupImage(_covAlphaMixMeanDoseMean, "cov_alphamixmean_dosemean");
+				setupImage(_covSqrtBetaMixMeanDoseMean, "cov_sqrtbetamixmean_dosemean");
+			}
 		}
 	}
 
@@ -215,7 +214,7 @@ void GateBioDoseActor::EndOfEventAction(const G4Event* e) {
 		_alphaMixImage.AddValue(index, eventAlphaMix);
 		_sqrtBetaMixImage.AddValue(index, eventSqrtBetaMix);
 
-		if(_enableUncertainties) {
+		if(_enableUncertainty) {
 			_squaredDoseImage.AddValue(index, eventDose * eventDose);
 			_squaredAlphaMixImage.AddValue(index, eventAlphaMix * eventAlphaMix);
 			_squaredSqrtBetaMixImage.AddValue(index, eventSqrtBetaMix * eventSqrtBetaMix);
@@ -290,52 +289,6 @@ void GateBioDoseActor::updateData() {
 	auto const sqAlphaRef = _alphaRef * _alphaRef;
 	double const n = _currentEvent;
 
-	/* ******************* */
-	// TODO remove
-	G4String basename = removeExtension(mSaveFilename);
-	G4String ext = getExtension(mSaveFilename);
-	auto setupImage = [&](GateImageWithStatistic& image, std::string const& suffix = "") {
-		SetOriginTransformAndFlagToImage(image);
-		image.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-		image.Allocate();
-
-		if(!suffix.empty()) {
-			G4String filename = basename + "_" + suffix + "." + ext;
-			image.SetFilename(filename);
-		}
-	};
-
-	GateImageWithStatistic partAlphaMixImg;
-	GateImageWithStatistic partSqrtBetaMixImg;
-	GateImageWithStatistic partDoseImg;
-	GateImageWithStatistic partAlphaMixSqrtBetaMixImg;
-	GateImageWithStatistic partAlphaMixDoseImg;
-	GateImageWithStatistic partSqrtBetaMixDoseImg;
-	GateImageWithStatistic partSquaredBioDoseImg;
-
-	GateImageWithStatistic squaredPdBioDoseAlphaMixImg;
-	GateImageWithStatistic squaredPdBioDoseSqrtBetaMixImg;
-	GateImageWithStatistic squaredPdBioDoseDoseImg;
-	GateImageWithStatistic varAlphaMixImg;
-	GateImageWithStatistic varSqrtBetaMixImg;
-	GateImageWithStatistic varDoseImg;
-
-	setupImage(partAlphaMixImg, "part_alphamix");
-	setupImage(partSqrtBetaMixImg, "part_sqrtbetamix");
-	setupImage(partDoseImg, "part_dose");
-	setupImage(partAlphaMixSqrtBetaMixImg, "part_alphamixsqrtbetamix");
-	setupImage(partAlphaMixDoseImg, "part_alphamixdose");
-	setupImage(partSqrtBetaMixDoseImg, "part_sqrtbetamixdose");
-	setupImage(partSquaredBioDoseImg, "part_squaredbiodose");
-
-	setupImage(squaredPdBioDoseAlphaMixImg, "squared_pdbiodosealphamix");
-	setupImage(squaredPdBioDoseSqrtBetaMixImg, "squared_pdbiodosesqrtbetamix");
-	setupImage(squaredPdBioDoseDoseImg, "squared_pdbiodosedose");
-	setupImage(varAlphaMixImg, "var_alphamix");
-	setupImage(varSqrtBetaMixImg, "var_sqrtbetamix");
-	setupImage(varDoseImg, "var_dose");
-	/* ******************* */
-
 	for(auto const& index: _voxelIndices) {
 		auto const hitEventCount = _hitEventCountImage.GetValue(index);
 
@@ -362,66 +315,63 @@ void GateBioDoseActor::updateData() {
 		if(scaledDose > 0)
 			rbe = biodose / scaledDose;
 
-		if(_enableUncertainties) {
+		if(_enableUncertainty) {
 			if(scaledDose > 0 && alphaMixMean != 0 && sqrtBetaMixMean != 0 && sqrtDelta > 0 && _currentEvent > 0) {
-				double const doseMean = dose / n;
-				double const biodoseMean = biodose / n;
+				auto const doseMean = dose / n;
+				auto const scaledDoseMean = scaledDose / n;
+				auto const sqScaledDoseMean = sqScaledDose / n / n;
+				auto const biodoseMean = biodose / n;
 				auto const deltaMean = sqAlphaRef + 4 * _betaRef *
-					(alphaMixMean * scaledDose/n + sqrtBetaMixMean * sqrtBetaMixMean * sqScaledDose/n/n);
-				double sqrtDeltaMean = 0;
+					(alphaMixMean * scaledDoseMean + sqrtBetaMixMean * sqrtBetaMixMean * sqScaledDoseMean);
+				double sqrtDeltaMean = 0.;
 				if(deltaMean >= 0)
 					sqrtDeltaMean = std::sqrt(deltaMean);
 
-				double sumSquaredAlphaMix = _squaredAlphaMixImage.GetValue(index);
-				double sumSquaredSqrtBetaMix = _squaredSqrtBetaMixImage.GetValue(index);
-				double sumSquaredDose = _squaredDoseImage.GetValue(index);
+				auto sumSquaredAlphaMix = _squaredAlphaMixImage.GetValue(index);
+				auto sumSquaredSqrtBetaMix = _squaredSqrtBetaMixImage.GetValue(index);
+				auto sumSquaredDose = _squaredDoseImage.GetValue(index);
 
-				double pdBiodoseAlphaMixMean = scaledDose/n / sqrtDeltaMean;
-				double pdBiodoseSqrtBetaMixMean = 2 * sqScaledDose/n/n * sqrtBetaMixMean / sqrtDeltaMean;
-				double pdBiodoseDose = (
+				auto pdBiodoseAlphaMixMean = scaledDoseMean / sqrtDeltaMean;
+				auto pdBiodoseSqrtBetaMixMean = 2 * sqScaledDoseMean * sqrtBetaMixMean / sqrtDeltaMean;
+				auto pdBiodoseDoseMean = (
 					(alphaMixMean * _doseScaleFactor) +
-					2 * sqrtBetaMixMean * sqrtBetaMixMean * _doseScaleFactor * scaledDose/n
+					2 * sqrtBetaMixMean * sqrtBetaMixMean * _doseScaleFactor * scaledDoseMean
 				) / sqrtDeltaMean;
 
-				double varAlphaMixMean = (sumSquaredAlphaMix / hitEventCount - alphaMixMean * alphaMixMean) / hitEventCount;
-				double varSqrtBetaMixMean = (sumSquaredSqrtBetaMix / hitEventCount - sqrtBetaMixMean * sqrtBetaMixMean) / hitEventCount;
-				double varDose = (sumSquaredDose / n - doseMean * doseMean) / n;
+				auto varAlphaMixMean = (sumSquaredAlphaMix / hitEventCount - alphaMixMean * alphaMixMean) / hitEventCount;
+				auto varSqrtBetaMixMean = (sumSquaredSqrtBetaMix / hitEventCount - sqrtBetaMixMean * sqrtBetaMixMean) / hitEventCount;
+				auto varDoseMean = (sumSquaredDose / n - doseMean * doseMean) / n;
 
-				double sumAlphaMixSqrtBetaMix = _alphaMixSqrtBetaMixImage.GetValue(index);
-				double sumAlphaMixDose = _alphaMixDoseImage.GetValue(index);
-				double sumSqrtBetaMixDose = _sqrtBetaMixDoseImage.GetValue(index);
-				double covAlphaMixMeanSqrtBetaMixMean = (sumAlphaMixSqrtBetaMix / hitEventCount - alphaMixMean * sqrtBetaMixMean) / hitEventCount;
-				double covAlphaMixMeanDose = (sumAlphaMixDose / n - alphaMixMean * doseMean) / n;
-				double covSqrtBetaMixMeanDose = (sumSqrtBetaMixDose / n - sqrtBetaMixMean * doseMean) / n;
+				auto sumAlphaMixSqrtBetaMix = _alphaMixSqrtBetaMixImage.GetValue(index);
+				auto sumAlphaMixDose = _alphaMixDoseImage.GetValue(index);
+				auto sumSqrtBetaMixDose = _sqrtBetaMixDoseImage.GetValue(index);
+				auto covAlphaMixMeanSqrtBetaMixMean = (sumAlphaMixSqrtBetaMix / hitEventCount - alphaMixMean * sqrtBetaMixMean) / hitEventCount;
+				auto covAlphaMixMeanDoseMean = (sumAlphaMixDose / n - alphaMixMean * doseMean) / n;
+				auto covSqrtBetaMixMeanDoseMean = (sumSqrtBetaMixDose / n - sqrtBetaMixMean * doseMean) / n;
 
-				double partAlphaMix = pdBiodoseAlphaMixMean * pdBiodoseAlphaMixMean * varAlphaMixMean;
-				double partSqrtBetaMix = pdBiodoseSqrtBetaMixMean * pdBiodoseSqrtBetaMixMean * varSqrtBetaMixMean;
-				double partDose = pdBiodoseDose * pdBiodoseDose * varDose;
-				double partAlphaMixSqrtBetaMix = 2 * pdBiodoseAlphaMixMean * pdBiodoseSqrtBetaMixMean * covAlphaMixMeanSqrtBetaMixMean;
-				double partAlphaMixDose = 2 * pdBiodoseAlphaMixMean * pdBiodoseDose * covAlphaMixMeanDose;
-				double partSqrtBetaMixDose = 2 * pdBiodoseSqrtBetaMixMean * pdBiodoseDose * covSqrtBetaMixMeanDose;
+				auto partAlphaMix = pdBiodoseAlphaMixMean * pdBiodoseAlphaMixMean * varAlphaMixMean;
+				auto partSqrtBetaMix = pdBiodoseSqrtBetaMixMean * pdBiodoseSqrtBetaMixMean * varSqrtBetaMixMean;
+				auto partDose = pdBiodoseDoseMean * pdBiodoseDoseMean * varDoseMean;
+				auto partAlphaMixSqrtBetaMix = 2 * pdBiodoseAlphaMixMean * pdBiodoseSqrtBetaMixMean * covAlphaMixMeanSqrtBetaMixMean;
+				auto partAlphaMixDose = 2 * pdBiodoseAlphaMixMean * pdBiodoseDoseMean * covAlphaMixMeanDoseMean;
+				auto partSqrtBetaMixDose = 2 * pdBiodoseSqrtBetaMixMean * pdBiodoseDoseMean * covSqrtBetaMixMeanDoseMean;
 
-				double uncertaintyDose = std::sqrt(varDose) / doseMean;
-				double uncertaintyBiodose = std::sqrt(
+				auto uncertaintyDose = std::sqrt(varDoseMean) / doseMean;
+				auto uncertaintyBiodose = std::sqrt(
 					partAlphaMix + partSqrtBetaMix + partDose +
 					partAlphaMixSqrtBetaMix + partAlphaMixDose + partSqrtBetaMixDose
-				) / (biodose/n);
+				) / biodoseMean;
 
-				{ // TODO remove
-					partAlphaMixImg.SetValue(index, partAlphaMix);
-					partSqrtBetaMixImg.SetValue(index, partSqrtBetaMix);
-					partDoseImg.SetValue(index, partDose);
-					partAlphaMixDoseImg.SetValue(index, partAlphaMixDose);
-					partAlphaMixSqrtBetaMixImg.SetValue(index, partAlphaMixSqrtBetaMix);
-					partSqrtBetaMixDoseImg.SetValue(index, partSqrtBetaMixDose);
-					partSquaredBioDoseImg.SetValue(index, biodose * biodose);
-
-					squaredPdBioDoseAlphaMixImg.SetValue(index, pdBiodoseAlphaMixMean * pdBiodoseAlphaMixMean);
-					squaredPdBioDoseSqrtBetaMixImg.SetValue(index, pdBiodoseSqrtBetaMixMean * pdBiodoseSqrtBetaMixMean);
-					squaredPdBioDoseDoseImg.SetValue(index, pdBiodoseDose * pdBiodoseDose);
-					varAlphaMixImg.SetValue(index, varAlphaMixMean);
-					varSqrtBetaMixImg.SetValue(index, varSqrtBetaMixMean);
-					varDoseImg.SetValue(index, varDose);
+				if(_enableUncertaintyDetails) {
+					_pdBiodoseAlphaMixMean.SetValue(index, pdBiodoseAlphaMixMean);
+					_pdBiodoseSqrtBetaMixMean.SetValue(index, pdBiodoseSqrtBetaMixMean);
+					_pdBiodoseDoseMean.SetValue(index, pdBiodoseDoseMean);
+					_varAlphaMixMeanImage.SetValue(index, varAlphaMixMean);
+					_varSqrtBetaMixMeanImage.SetValue(index, varSqrtBetaMixMean);
+					_varDoseMeanImage.SetValue(index, varDoseMean);
+					_covAlphaMixMeanSqrtBetaMixMeanImage.SetValue(index, covAlphaMixMeanSqrtBetaMixMean);
+					_covAlphaMixMeanDoseMean.SetValue(index, covAlphaMixMeanDoseMean);
+					_covSqrtBetaMixMeanDoseMean.SetValue(index, covSqrtBetaMixMeanDoseMean);
 				}
 
 				_doseUncertaintyImage.SetValue(index, uncertaintyDose);
@@ -436,23 +386,6 @@ void GateBioDoseActor::updateData() {
 		if(_enableDose)         _scaledDoseImage.SetValue(index, scaledDose);
 		_bioDoseImage.SetValue(index, biodose);
 		if(_enableRBE)          _rbeImage.SetValue(index, rbe);
-	}
-
-	{ // TODO remove
-		partAlphaMixImg.SaveData(_currentEvent);
-		partSqrtBetaMixImg.SaveData(_currentEvent);
-		partDoseImg.SaveData(_currentEvent);
-		partAlphaMixDoseImg.SaveData(_currentEvent);
-		partAlphaMixSqrtBetaMixImg.SaveData(_currentEvent);
-		partSqrtBetaMixDoseImg.SaveData(_currentEvent);
-		partSquaredBioDoseImg.SaveData(_currentEvent);
-
-		squaredPdBioDoseAlphaMixImg.SaveData(_currentEvent);
-		squaredPdBioDoseSqrtBetaMixImg.SaveData(_currentEvent);
-		squaredPdBioDoseDoseImg.SaveData(_currentEvent);
-		varAlphaMixImg.SaveData(_currentEvent);
-		varSqrtBetaMixImg.SaveData(_currentEvent);
-		varDoseImg.SaveData(_currentEvent);
 	}
 }
 //-----------------------------------------------------------------------------
@@ -470,8 +403,23 @@ void GateBioDoseActor::SaveData() {
 	if(_enableSqrtBetaMix)    _sqrtBetaMixImage.SaveData(_currentEvent);
 	_bioDoseImage.SaveData(_currentEvent);
 	if(_enableRBE)            _rbeImage.SaveData(_currentEvent);
-	if(_enableUncertainties)  _doseUncertaintyImage.SaveData(_currentEvent);
-	if(_enableUncertainties)  _biodoseUncertaintyImage.SaveData(_currentEvent);
+	if(_enableUncertainty) {
+		_doseUncertaintyImage.SaveData(_currentEvent);
+	  _biodoseUncertaintyImage.SaveData(_currentEvent);
+
+		if(_enableUncertaintyDetails) {
+			_pdBiodoseAlphaMixMean.SaveData(_currentEvent);
+			_pdBiodoseSqrtBetaMixMean.SaveData(_currentEvent);
+			_pdBiodoseDoseMean.SaveData(_currentEvent);
+			_varAlphaMixMeanImage.SaveData(_currentEvent);
+			_varSqrtBetaMixMeanImage.SaveData(_currentEvent);
+			_varDoseMeanImage.SaveData(_currentEvent);
+			_covAlphaMixMeanSqrtBetaMixMeanImage.SaveData(_currentEvent);
+			_covAlphaMixMeanDoseMean.SaveData(_currentEvent);
+			_covSqrtBetaMixMeanDoseMean.SaveData(_currentEvent);
+		}
+	}
+	if(_enableHitEventCount)  _hitEventCountImage.SaveData(_currentEvent);
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -491,7 +439,7 @@ void GateBioDoseActor::ResetData() {
 	_bioDoseImage.Reset();
 	if(_enableRBE)          _rbeImage.Reset();
 
-	if(_enableUncertainties) {
+	if(_enableUncertainty) {
 		_doseUncertaintyImage.Reset();
 		_biodoseUncertaintyImage.Reset();
 		_squaredDoseImage.Reset();
@@ -500,6 +448,18 @@ void GateBioDoseActor::ResetData() {
 		_alphaMixSqrtBetaMixImage.Reset();
 		_alphaMixDoseImage.Reset();
 		_sqrtBetaMixDoseImage.Reset();
+
+		if(_enableUncertaintyDetails) {
+			_pdBiodoseAlphaMixMean.Reset();
+			_pdBiodoseSqrtBetaMixMean.Reset();
+			_pdBiodoseDoseMean.Reset();
+			_varAlphaMixMeanImage.Reset();
+			_varSqrtBetaMixMeanImage.Reset();
+			_varDoseMeanImage.Reset();
+			_covAlphaMixMeanSqrtBetaMixMeanImage.Reset();
+			_covAlphaMixMeanDoseMean.Reset();
+			_covSqrtBetaMixMeanDoseMean.Reset();
+		}
 	}
 }
 //-----------------------------------------------------------------------------

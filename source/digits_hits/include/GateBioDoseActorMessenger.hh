@@ -45,6 +45,8 @@ private:
 	std::unique_ptr<G4UIcmdWithABool>   pEnableSqrtBetaMixCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableRBECmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableUncertaintyCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableUncertaintyDetailsCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableHitEventCountCmd;
 };
 
 #endif

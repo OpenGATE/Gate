@@ -79,7 +79,9 @@ public:
 	void SetEnableAlphaMix(bool e) { _enableAlphaMix = e; }
 	void SetEnableSqrtBetaMix(bool e) { _enableSqrtBetaMix = e; }
 	void SetEnableRBE(bool e) { _enableRBE = e; }
-	void SetEnableUncertainties(bool e) { _enableUncertainties = e; }
+	void SetEnableUncertainty(bool e) { _enableUncertainty = e; }
+	void SetEnableUncertaintyDetails(bool e) { _enableUncertaintyDetails = e; }
+	void SetEnableHitEventCount(bool e) { _enableHitEventCount = e; }
 
 protected:
 	GateBioDoseActor(G4String name, G4int depth = 0);
@@ -90,7 +92,7 @@ protected:
 
 private:
 	//Counters
-	int _currentEvent;
+	int _currentEvent = 0;
 
 	GateBioDoseActorMessenger _messenger;
 
@@ -100,10 +102,11 @@ private:
 	G4String _dataBase;
 	G4String _cellLine;
 	G4String _bioPhysicalModel;
-	double _alphaRef, _betaRef;
+	double _alphaRef = -1;
+	double _betaRef = -1;
 	double _doseScaleFactor = 1.;
 
-	G4double _sobpWeight;
+	G4double _sobpWeight = 0;
 
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
@@ -135,13 +138,25 @@ private:
 	GateImageWithStatistic _alphaMixDoseImage;
 	GateImageWithStatistic _sqrtBetaMixDoseImage;
 
+	GateImageWithStatistic _pdBiodoseAlphaMixMean;
+	GateImageWithStatistic _pdBiodoseSqrtBetaMixMean;
+	GateImageWithStatistic _pdBiodoseDoseMean;
+	GateImageWithStatistic _varAlphaMixMeanImage;
+	GateImageWithStatistic _varSqrtBetaMixMeanImage;
+	GateImageWithStatistic _varDoseMeanImage;
+	GateImageWithStatistic _covAlphaMixMeanSqrtBetaMixMeanImage;
+	GateImageWithStatistic _covAlphaMixMeanDoseMean;
+	GateImageWithStatistic _covSqrtBetaMixMeanDoseMean;
+
 	// Outputs
-	bool _enableEdep;
-	bool _enableDose;
-	bool _enableAlphaMix;
-	bool _enableSqrtBetaMix;
-	bool _enableRBE;
-	bool _enableUncertainties;
+	bool _enableEdep = false;
+	bool _enableDose = true;
+	bool _enableAlphaMix = false;
+	bool _enableSqrtBetaMix = false;
+	bool _enableRBE = false;
+	bool _enableUncertainty = true;
+	bool _enableUncertaintyDetails = false;
+	bool _enableHitEventCount = false;
 
 	// Extra information
 	int _stepCount = 0;
