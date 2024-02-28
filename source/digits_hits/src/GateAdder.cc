@@ -17,7 +17,7 @@
       and whose position is the centroid of the input-pulse positions.
 
 */
-
+  
 #include "GateAdder.hh"
 #include "GateAdderMessenger.hh"
 #include "GateDigi.hh"
