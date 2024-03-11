@@ -62,11 +62,13 @@ jobs:
                                   fftw3-dev
           gcc -v
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew update
+          brew install python@3.12 || true
+          brew link --overwrite python@3.12
+          #brew update
           brew cleanup
           brew config
-          rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
-          rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
+          #rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
+          #rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
           brew install --force --verbose --overwrite --debug qt5 \
                                                              ccache \
                                                              tbb \
