@@ -213,6 +213,8 @@ void GateToASCIIMessenger::CreateNewOutputChannelCommand(GateToASCII::VOutputCha
   newCmd->SetGuidance(aGuidance.c_str());
   newCmd->SetGuidance("1. true/false");
   OutputChannelCmdList.push_back( newCmd );
+
+  //delete newCmd;
 }
 //--------------------------------------------------------------------------------------------------------
 

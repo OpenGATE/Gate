@@ -50,7 +50,6 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_fwhmY(0),
    m_fwhmZ(0),
    m_IsConfined(true),
-   m_Navigator(0),
    m_Touchable(0),
    m_systemDepth(-1),
    m_outputDigi(0),
@@ -60,13 +59,15 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
 	G4String colName = digitizer->GetOutputName() ;
 	collectionName.push_back(colName);
 	m_Messenger = new GateSpatialResolutionMessenger(this);
+	m_Navigator = new G4Navigator();
+
 }
 
 
 GateSpatialResolution::~GateSpatialResolution()
 {
   delete m_Messenger;
-
+  delete m_Navigator;
 }
 
 
@@ -188,7 +189,6 @@ void GateSpatialResolution::Digitize()
 			  // Do not use from TransportationManager as it is not recommended
 			  G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
 			  G4VPhysicalVolume *WorldVolume = navigator->GetWorldVolume();
-			  m_Navigator = new G4Navigator();
 			  m_Navigator->SetWorldVolume(WorldVolume);
 
 			  G4VPhysicalVolume* PV = m_Navigator->LocateGlobalPointAndSetup(m_outputDigi->GetGlobalPos());
@@ -199,6 +199,8 @@ void GateSpatialResolution::Digitize()
 			  {
 				  UpdateVolumeID();
 			  }
+
+
 			  m_OutputDigiCollection->insert(m_outputDigi);
 
 

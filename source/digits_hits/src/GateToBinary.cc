@@ -425,6 +425,8 @@ void GateToBinary::RegisterNewSingleDigiCollection(
   m_outputChannelVector.push_back( singleOutputChannel );
 
   m_binaryMessenger->CreateNewOutputChannelCommand( singleOutputChannel );
+
+  //delete singleOutputChannel;
 }
 
 
@@ -437,6 +439,8 @@ void GateToBinary::RegisterNewCoincidenceDigiCollection(
   m_outputChannelVector.push_back( coincOutputChannel );
 
   m_binaryMessenger->CreateNewOutputChannelCommand( coincOutputChannel );
+
+  //delete coincOutputChannel;
 }
 
 void GateToBinary::VOutputChannel::OpenFile(
