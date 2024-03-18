@@ -242,6 +242,90 @@ The output of the TetMeshDoseActor is a csv-file tabulating the results, e.g.::
 
 Each row corresponds to one tetrahedron. The region marker column identifies to which macroscopic structure a tetrahedron belongs to -- it is equal to the region attribute defined for this tetrahedron in the '.ele' file the TetMeshBox is constructed from.
 
+.. _biodose_measurement_biodoseactor-label:
+
+Biological dose measurement (BioDoseActor)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The BioDoseActor builds 3D images of::
+
+   the energy deposited (edep)
+   physical and biological doses deposited
+   alphamix and sqrtbetamix deposited
+   the number of hits
+
+in a given box volume.
+The biological dose is computed as::
+
+   :math:`\frac{-\alpha_{ref} + \sqrt{\alpha_{ref}^2 + 4\,\beta_{ref}\,({\alpha_{mix}}\,Z + ({\sqrt{\beta_{mix}}}\,Z)^2 )}}{2\,\beta_{ref}}`
+
+It takes into account the weight of particles.
+It can store multiple information into a 3D grid, each information can be enabled by using::
+
+   /gate/actor/[Actor Name]/enableEdep                true
+   /gate/actor/[Actor Name]/enableDose                true
+   /gate/actor/[Actor Name]/enableAlphaMix            true
+   /gate/actor/[Actor Name]/enableSqrtBetaMix         true
+   /gate/actor/[Actor Name]/enableRBE                 true
+   /gate/actor/[Actor Name]/enableUncertainty         true
+   /gate/actor/[Actor Name]/enableUncertaintyDetails  true
+   /gate/actor/[Actor Name]/enableHitEventCount       true
+
+Informations can be disabled by using "false" (default) instead of "true".
+The unit of edep is MeV, the unit of dose is Gy, the unit of biological dose is Gy RBE.
+The uncertainty outputs are relative statistical uncertainties.
+
+For the output, the suffixes::
+
+   _edep
+   _dose
+   _alphamix
+   _sqrtbetamix
+   _biodose
+   _rbe
+   _hitevent_count
+   _dose_uncertainty
+   _biodose_uncertainty
+
+are added to the output file name given by the user.
+
+The user must provide a cell line and a biophysical model::
+
+   /gate/actor/[Actor Name]/setCellLine         HSG
+   /gate/actor/[Actor Name]/setBioPhysicalModel NanOx
+
+which will be combined to make a filename: data/{CellLine}_{BioPhysicalModel}.db, for example data/HSG_NanOx.db.
+Only HSG (Human Salivary Gland) cell line is provided.
+Two biophysical models are available: NanOx (carbon, proton) and MMKM (carbon).
+User can provide its own data files (cell line associated to a biophysical model database).
+
+The user must also provide the alpha and beta reference values corresponding to the cell line::
+
+   /gate/actor/[Actor Name]/setAlphaRef         0.313
+   /gate/actor/[Actor Name]/setBetaRef          0.0615
+
+If the user wants to reach a large dose value output to 
+The user can use a dose scale factor in order to reach a large dose value without needing to run higher number of primary particles.
+The dose scale factor is set with this command (default 1)::
+
+   /gate/actor/[Actor Name]/setDoseScaleFactor  1e3
+
+It will multiply the dose value (and affect the biological dose value).
+Note that it will not affect the relative uncertainty, so it can be used once some uncertainty threshold has been reached.
+
+Usage example::
+
+   /gate/actor/addActor                    BioDoseActor MyBio
+   /gate/actor/MyBio/attachTo              MyVolume
+   /gate/actor/MyBio/setVoxelSize          200 200 1 mm
+   /gate/actor/MyBio/setPosition           0 0 0
+   /gate/actor/MyBio/setCellLine           HSG
+   /gate/actor/MyBio/setBioPhysicalModel   NanOx
+   /gate/actor/MyBio/setAlphaRef           0.313
+   /gate/actor/MyBio/setBetaRef            0.0615
+   /gate/actor/MyBio/enableDose            true
+   /gate/actor/MyBio/save                  output/{particleName}.mhd
+
 .. _kill_track-label:
 
 Kill track

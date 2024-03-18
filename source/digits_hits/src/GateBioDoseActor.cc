@@ -80,15 +80,15 @@ void GateBioDoseActor::Construct() {
 			setupImage(_sqrtBetaMixDoseImage);
 
 			if(_enableUncertaintyDetails) {
-				setupImage(_pdBiodoseAlphaMixMean, "pd_biodose_alphamixmean");
-				setupImage(_pdBiodoseSqrtBetaMixMean, "pd_biodose_sqrtbetamixmean");
-				setupImage(_pdBiodoseDoseMean, "pd_biodose_dosemean");
+				setupImage(_pdBiodoseAlphaMixMeanImage, "pd_biodose_alphamixmean");
+				setupImage(_pdBiodoseSqrtBetaMixMeanImage, "pd_biodose_sqrtbetamixmean");
+				setupImage(_pdBiodoseDoseMeanImage, "pd_biodose_dosemean");
 				setupImage(_varAlphaMixMeanImage, "var_alphamixmean");
 				setupImage(_varSqrtBetaMixMeanImage, "var_sqrtbetamixmean");
 				setupImage(_varDoseMeanImage, "var_dosemean");
 				setupImage(_covAlphaMixMeanSqrtBetaMixMeanImage, "cov_alphamixmean_sqrtbetamixmean");
-				setupImage(_covAlphaMixMeanDoseMean, "cov_alphamixmean_dosemean");
-				setupImage(_covSqrtBetaMixMeanDoseMean, "cov_sqrtbetamixmean_dosemean");
+				setupImage(_covAlphaMixMeanDoseMeanImage, "cov_alphamixmean_dosemean");
+				setupImage(_covSqrtBetaMixMeanDoseMeanImage, "cov_sqrtbetamixmean_dosemean");
 			}
 		}
 	}
@@ -363,15 +363,15 @@ void GateBioDoseActor::updateData() {
 				) / biodoseMean;
 
 				if(_enableUncertaintyDetails) {
-					_pdBiodoseAlphaMixMean.SetValue(index, pdBiodoseAlphaMixMean);
-					_pdBiodoseSqrtBetaMixMean.SetValue(index, pdBiodoseSqrtBetaMixMean);
-					_pdBiodoseDoseMean.SetValue(index, pdBiodoseDoseMean);
+					_pdBiodoseAlphaMixMeanImage.SetValue(index, pdBiodoseAlphaMixMean);
+					_pdBiodoseSqrtBetaMixMeanImage.SetValue(index, pdBiodoseSqrtBetaMixMean);
+					_pdBiodoseDoseMeanImage.SetValue(index, pdBiodoseDoseMean);
 					_varAlphaMixMeanImage.SetValue(index, varAlphaMixMean);
 					_varSqrtBetaMixMeanImage.SetValue(index, varSqrtBetaMixMean);
 					_varDoseMeanImage.SetValue(index, varDoseMean);
 					_covAlphaMixMeanSqrtBetaMixMeanImage.SetValue(index, covAlphaMixMeanSqrtBetaMixMean);
-					_covAlphaMixMeanDoseMean.SetValue(index, covAlphaMixMeanDoseMean);
-					_covSqrtBetaMixMeanDoseMean.SetValue(index, covSqrtBetaMixMeanDoseMean);
+					_covAlphaMixMeanDoseMeanImage.SetValue(index, covAlphaMixMeanDoseMean);
+					_covSqrtBetaMixMeanDoseMeanImage.SetValue(index, covSqrtBetaMixMeanDoseMean);
 				}
 
 				_doseUncertaintyImage.SetValue(index, uncertaintyDose);
@@ -408,15 +408,15 @@ void GateBioDoseActor::SaveData() {
 	  _biodoseUncertaintyImage.SaveData(_currentEvent);
 
 		if(_enableUncertaintyDetails) {
-			_pdBiodoseAlphaMixMean.SaveData(_currentEvent);
-			_pdBiodoseSqrtBetaMixMean.SaveData(_currentEvent);
-			_pdBiodoseDoseMean.SaveData(_currentEvent);
+			_pdBiodoseAlphaMixMeanImage.SaveData(_currentEvent);
+			_pdBiodoseSqrtBetaMixMeanImage.SaveData(_currentEvent);
+			_pdBiodoseDoseMeanImage.SaveData(_currentEvent);
 			_varAlphaMixMeanImage.SaveData(_currentEvent);
 			_varSqrtBetaMixMeanImage.SaveData(_currentEvent);
 			_varDoseMeanImage.SaveData(_currentEvent);
 			_covAlphaMixMeanSqrtBetaMixMeanImage.SaveData(_currentEvent);
-			_covAlphaMixMeanDoseMean.SaveData(_currentEvent);
-			_covSqrtBetaMixMeanDoseMean.SaveData(_currentEvent);
+			_covAlphaMixMeanDoseMeanImage.SaveData(_currentEvent);
+			_covSqrtBetaMixMeanDoseMeanImage.SaveData(_currentEvent);
 		}
 	}
 	if(_enableHitEventCount)  _hitEventCountImage.SaveData(_currentEvent);
@@ -450,15 +450,15 @@ void GateBioDoseActor::ResetData() {
 		_sqrtBetaMixDoseImage.Reset();
 
 		if(_enableUncertaintyDetails) {
-			_pdBiodoseAlphaMixMean.Reset();
-			_pdBiodoseSqrtBetaMixMean.Reset();
-			_pdBiodoseDoseMean.Reset();
+			_pdBiodoseAlphaMixMeanImage.Reset();
+			_pdBiodoseSqrtBetaMixMeanImage.Reset();
+			_pdBiodoseDoseMeanImage.Reset();
 			_varAlphaMixMeanImage.Reset();
 			_varSqrtBetaMixMeanImage.Reset();
 			_varDoseMeanImage.Reset();
 			_covAlphaMixMeanSqrtBetaMixMeanImage.Reset();
-			_covAlphaMixMeanDoseMean.Reset();
-			_covSqrtBetaMixMeanDoseMean.Reset();
+			_covAlphaMixMeanDoseMeanImage.Reset();
+			_covSqrtBetaMixMeanDoseMeanImage.Reset();
 		}
 	}
 }

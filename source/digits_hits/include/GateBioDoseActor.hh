@@ -138,23 +138,23 @@ private:
 	GateImageWithStatistic _alphaMixDoseImage;
 	GateImageWithStatistic _sqrtBetaMixDoseImage;
 
-	GateImageWithStatistic _pdBiodoseAlphaMixMean;
-	GateImageWithStatistic _pdBiodoseSqrtBetaMixMean;
-	GateImageWithStatistic _pdBiodoseDoseMean;
+	GateImageWithStatistic _pdBiodoseAlphaMixMeanImage;
+	GateImageWithStatistic _pdBiodoseSqrtBetaMixMeanImage;
+	GateImageWithStatistic _pdBiodoseDoseMeanImage;
 	GateImageWithStatistic _varAlphaMixMeanImage;
 	GateImageWithStatistic _varSqrtBetaMixMeanImage;
 	GateImageWithStatistic _varDoseMeanImage;
 	GateImageWithStatistic _covAlphaMixMeanSqrtBetaMixMeanImage;
-	GateImageWithStatistic _covAlphaMixMeanDoseMean;
-	GateImageWithStatistic _covSqrtBetaMixMeanDoseMean;
+	GateImageWithStatistic _covAlphaMixMeanDoseMeanImage;
+	GateImageWithStatistic _covSqrtBetaMixMeanDoseMeanImage;
 
 	// Outputs
 	bool _enableEdep = false;
-	bool _enableDose = true;
+	bool _enableDose = false;
 	bool _enableAlphaMix = false;
 	bool _enableSqrtBetaMix = false;
 	bool _enableRBE = false;
-	bool _enableUncertainty = true;
+	bool _enableUncertainty = false;
 	bool _enableUncertaintyDetails = false;
 	bool _enableHitEventCount = false;
 
