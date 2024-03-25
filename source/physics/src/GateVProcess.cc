@@ -18,7 +18,7 @@
 #include "G4Element.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4VMultipleScattering.hh"
-
+#include "G4HadronicParameters.hh"
 
 //-----------------------------------------------------------------------------
 GateVProcess::GateVProcess(G4String name)
