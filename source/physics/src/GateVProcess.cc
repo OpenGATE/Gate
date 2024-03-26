@@ -18,7 +18,7 @@
 #include "G4Element.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4VMultipleScattering.hh"
-
+#include "G4HadronicParameters.hh"
 
 //-----------------------------------------------------------------------------
 GateVProcess::GateVProcess(G4String name)
@@ -30,6 +30,9 @@ GateVProcess::GateVProcess(G4String name)
   theHandler = 0;
   mG4ProcessName = name;
   mKeepSec=false;
+
+  //fix for G4 11.2.1
+  G4HadronicParameters::Instance()->SetTimeThresholdForRadioactiveDecay( 3.171e+10*CLHEP::year );
 }
 //-----------------------------------------------------------------------------
 
