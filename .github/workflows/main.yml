@@ -283,7 +283,8 @@ jobs:
                         t30_dna,
                         t31_vpgTLE-tt,
                         t32_isotopes,
-                        t33_invert_filter]
+                        t33_invert_filter,
+                        t34_biodose_actor]
 
     steps:
     - name: Checkout github repo
