@@ -75,6 +75,7 @@ public:
     void LocateOutputDigi(GateDigi* inputDigi, G4double PxNew,G4double PyNew,G4double PzNew);
 
     void UpdateVolumeID();
+    void UpdateVolumeID(G4int newCopyNo);
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the blurring

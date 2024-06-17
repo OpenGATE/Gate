@@ -27,7 +27,6 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 
-#include "GateAdderMessenger.hh"
 #include "GateSinglesDigitizer.hh"
 
 
