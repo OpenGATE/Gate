@@ -54,6 +54,8 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_fwhmX(0),
    m_fwhmXdistrib(0),
    m_fwhmYdistrib(0),
+   m_fwhmXdistrib2D(0),
+    m_fwhmYdistrib2D(0),
    m_fwhmY(0),
    m_fwhmZ(0),
    m_IsConfined(true),
@@ -152,20 +154,60 @@ void GateSpatialResolution::Digitize()
 		  G4double Py = P.y();
 		  G4double Pz = P.z();
 		  G4double stddevX, stddevY, stddevZ;
-		  if (m_fwhmXdistrib && m_fwhmYdistrib) {
 
-		      stddevX = m_fwhmXdistrib->Value(P.x()*mm);// Assuming m_fwhmXdistrib provides 1D value
-		      stddevY = m_fwhmYdistrib->Value(P.y()*mm);// Assuming m_fwhmYdistrib provides 1D value
-		  } else if (m_fwhmXdistrib) {
+				  if (m_fwhmXdistrib) {
+				      if (m_fwhmYdistrib) {
 
-		      stddevY=stddevX = m_fwhmXdistrib->Value2D(P.x()*mm, P.y()*mm);// Assuming m_fwhmXdistrib provides 2D value
+				          stddevX = m_fwhmXdistrib->Value(P.x() * mm);
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      } else if (m_fwhmY) {
 
-		  } else {
-			  //if m_fwhmXdistrib && m_fwhmYdistrib not found  use default values
+				          stddevX = m_fwhmXdistrib->Value(P.x() * mm);
+				          stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+				      } else if (m_fwhmYdistrib2D) {
 
-		      stddevX =fwhmX/GateConstants::fwhm_to_sigma ;
-		      stddevY=fwhmY/GateConstants::fwhm_to_sigma ;
-		  }
+				          stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+				          stddevY = m_fwhmYdistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				      } else {
+				          stddevX = m_fwhmXdistrib->Value(P.x() * mm);
+				          stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+				      }
+				  } else if (m_fwhmXdistrib2D) {
+				      if (m_fwhmYdistrib) {
+
+				          stddevX = m_fwhmXdistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      } else if (m_fwhmY) {
+
+				          stddevX = m_fwhmXdistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				          stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+				      } else {
+
+				          stddevX = stddevY = m_fwhmXdistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				      }
+				  } else if (m_fwhmYdistrib) {
+				      if (m_fwhmXdistrib) {
+				          // Distribution 1D pour X, distribution 1D pour Y
+				          stddevX = m_fwhmXdistrib->Value(P.x() * mm);
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      } else if (m_fwhmX) {
+				          // Valeur par défaut pour X, distribution 1D pour Y
+				          stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      } else if (m_fwhmXdistrib2D) {
+				          // Distribution 2D pour X, distribution 1D pour Y
+				          stddevX = m_fwhmXdistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      } else {
+				          // Valeur par défaut pour X, distribution 1D pour Y
+				          stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+				          stddevY = m_fwhmYdistrib->Value(P.y() * mm);
+				      }
+				  } else {
+				      // Valeur par défaut pour les deux axes
+				      stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+				      stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+				  }
 		  G4double PxNew = G4RandGauss::shoot(Px,stddevX);
 		  G4double PyNew = G4RandGauss::shoot(Py,stddevY);
 		  G4double PzNew = G4RandGauss::shoot(Pz,fwhmZ/GateConstants::fwhm_to_sigma);

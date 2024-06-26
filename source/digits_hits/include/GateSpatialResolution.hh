@@ -47,8 +47,10 @@ public:
 
   //! These functions return the resolution in use.
     G4double GetFWHM()   	       { return m_fwhm; }
-    inline GateVDistribution* GetFWHMxdistrib()    { return m_fwhmXdistrib; }
+    GateVDistribution* GetFWHMxdistrib()    { return m_fwhmXdistrib; }
     GateVDistribution* GetFWHMydistrib()    { return m_fwhmYdistrib; }
+    GateVDistribution* GetFWHMxdistrib2D()    { return m_fwhmXdistrib2D; }
+    GateVDistribution* GetFWHMydistrib2D()    { return m_fwhmYdistrib2D; }
     G4double GetFWHMx()            { return m_fwhmX; }
     G4double GetFWHMy()   	       { return m_fwhmY; }
     G4double GetFWHMz()   	       { return m_fwhmZ; }
@@ -60,6 +62,8 @@ public:
     void SetFWHM(G4double val)   { m_fwhm = val;  }
     void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXdistrib= dist; }
     void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYdistrib = dist; }
+    void SetFWHMxdistrib2D(GateVDistribution* dist)  { m_fwhmXdistrib2D= dist; }
+    void SetFWHMydistrib2D(GateVDistribution* dist)  { m_fwhmYdistrib2D = dist; }
     void SetFWHMx(G4double val)   { m_fwhmX = val;  }
     void SetFWHMy(G4double val)   { m_fwhmY = val;  }
     void SetFWHMz(G4double val)   { m_fwhmZ = val;  }
@@ -87,6 +91,8 @@ protected:
 
     GateVDistribution*  m_fwhmXdistrib;
     GateVDistribution* m_fwhmYdistrib;
+    GateVDistribution*  m_fwhmXdistrib2D;
+    GateVDistribution* m_fwhmYdistrib2D;
     G4bool m_IsConfined;
     G4Navigator* m_Navigator;
     G4TouchableHistoryHandle m_Touchable;

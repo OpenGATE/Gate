@@ -44,6 +44,8 @@ private:
   G4UIcmdWithADouble*   spresolutionXCmd;
   G4UIcmdWithAString   *spresolutionXdistribCmd;
   G4UIcmdWithAString   *spresolutionYdistribCmd;
+  G4UIcmdWithAString   *spresolutionXdistrib2DCmd;
+  G4UIcmdWithAString   *spresolutionYdistrib2DCmd;
   G4UIcmdWithADouble*   spresolutionYCmd;
   G4UIcmdWithADouble*   spresolutionZCmd;
   G4UIcmdWithABool* 	confineCmd;

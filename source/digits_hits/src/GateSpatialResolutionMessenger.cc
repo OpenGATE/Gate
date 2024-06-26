@@ -43,14 +43,18 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	cmdName = GetDirectoryName() + "fwhmZ";
 	spresolutionZCmd = new G4UIcmdWithADouble(cmdName,this);
 	spresolutionZCmd->SetGuidance("Set the resolution in position for gaussian spblurring");
-
 	cmdName = GetDirectoryName() + "fwhmXdistrib";
 	spresolutionXdistribCmd = new G4UIcmdWithAString(cmdName,this);
 	spresolutionXdistribCmd->SetGuidance("Set the distribution  resolution in position for gaussian spblurring");
 	cmdName = GetDirectoryName() + "fwhmYdistrib";
 	spresolutionYdistribCmd = new G4UIcmdWithAString(cmdName,this);
 	spresolutionYdistribCmd->SetGuidance("Set the  distribution resolution in position for gaussian spblurring");
-
+	cmdName = GetDirectoryName() + "fwhmXdistrib2D";
+	spresolutionXdistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionXdistrib2DCmd->SetGuidance("Set the distribution 2D of  spatial resolution in position for gaussian spblurring");
+	cmdName = GetDirectoryName() + "fwhmYdistrib2D";
+	spresolutionYdistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionYdistrib2DCmd->SetGuidance("Set the  distribution 2D of spatial  resolution in position for gaussian spblurring");
 	cmdName = GetDirectoryName() + "confineInsideOfSmallestElement";
 	confineCmd = new G4UIcmdWithABool(cmdName,this);
 	confineCmd->SetGuidance("To be set true, if you want to moves the outsiders of the crystal after spblurring inside the same crystal");
@@ -64,6 +68,8 @@ GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 	delete  spresolutionXCmd;
 	delete  spresolutionXdistribCmd;
 	delete  spresolutionYdistribCmd;
+	delete  spresolutionXdistrib2DCmd;
+	delete  spresolutionYdistrib2DCmd;
 	delete  spresolutionYCmd;
 	delete  spresolutionZCmd;
 	delete  confineCmd;
@@ -83,7 +89,14 @@ void GateSpatialResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4String
   	 	{ GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
   		if (distrib)m_SpatialResolution->SetFWHMydistrib(distrib);
   }
-
+   else if ( aCommand==spresolutionXdistrib2DCmd )
+	 	{ GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+		if (distrib)m_SpatialResolution->SetFWHMxdistrib2D(distrib);
+}
+   else if ( aCommand==spresolutionYdistrib2DCmd )
+  	 	{ GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+  		if (distrib)m_SpatialResolution->SetFWHMydistrib2D(distrib);
+  }
    else if ( aCommand==spresolutionXCmd )
    		{ m_SpatialResolution->SetFWHMx(spresolutionXCmd->GetNewDoubleValue(newValue)); }
 	 else if ( aCommand==spresolutionYCmd )
