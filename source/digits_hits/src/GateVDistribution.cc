@@ -19,3 +19,11 @@ GateVDistribution::GateVDistribution(const G4String& itsName)
 GateVDistribution::~GateVDistribution()
 {
 }
+
+G4double GateVDistribution::Value2D(G4double x, G4double y)const {
+
+
+    G4cerr << "Warning: GateVDistribution::Value2D always returns 0 for Gaussian, flat (uniform), and exponential distributions." <<G4endl;
+
+    return 0.0;
+}

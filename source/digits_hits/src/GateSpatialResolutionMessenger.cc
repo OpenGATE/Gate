@@ -14,8 +14,12 @@ See LICENSE.md for further details
 
 #include "G4SystemOfUnits.hh"
 #include "G4UIcmdWithADouble.hh"
+
 #include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithAString.hh"
 #include "G4UIdirectory.hh"
+#include "GateDistributionListManager.hh"
+#include "GateVDistribution.hh"
 
 
 
@@ -29,11 +33,9 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	cmdName = GetDirectoryName() + "fwhm";
 	spresolutionCmd = new G4UIcmdWithADouble(cmdName,this);
 	spresolutionCmd->SetGuidance("Set the resolution in position for gaussian spblurring");
-
 	cmdName = GetDirectoryName() + "fwhmX";
-	spresolutionXCmd = new G4UIcmdWithADouble(cmdName,this);
-	spresolutionXCmd->SetGuidance("Set the resolution in position for gaussian spblurring");
-
+	spresolutionXCmd= new G4UIcmdWithADouble(cmdName,this);
+	spresolutionXCmd->SetGuidance("Set the resolution ");
 	cmdName = GetDirectoryName() + "fwhmY";
 	spresolutionYCmd = new G4UIcmdWithADouble(cmdName,this);
 	spresolutionYCmd->SetGuidance("Set the resolution in position for gaussian spblurring");
@@ -41,6 +43,13 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	cmdName = GetDirectoryName() + "fwhmZ";
 	spresolutionZCmd = new G4UIcmdWithADouble(cmdName,this);
 	spresolutionZCmd->SetGuidance("Set the resolution in position for gaussian spblurring");
+
+	cmdName = GetDirectoryName() + "fwhmXdistrib";
+	spresolutionXdistribCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionXdistribCmd->SetGuidance("Set the distribution  resolution in position for gaussian spblurring");
+	cmdName = GetDirectoryName() + "fwhmYdistrib";
+	spresolutionYdistribCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionYdistribCmd->SetGuidance("Set the  distribution resolution in position for gaussian spblurring");
 
 	cmdName = GetDirectoryName() + "confineInsideOfSmallestElement";
 	confineCmd = new G4UIcmdWithABool(cmdName,this);
@@ -53,10 +62,11 @@ GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 {
 	delete  spresolutionCmd;
 	delete  spresolutionXCmd;
+	delete  spresolutionXdistribCmd;
+	delete  spresolutionYdistribCmd;
 	delete  spresolutionYCmd;
 	delete  spresolutionZCmd;
 	delete  confineCmd;
-
 
 }
 
@@ -65,8 +75,17 @@ void GateSpatialResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4String
 {
 	 if ( aCommand==spresolutionCmd )
 	    { m_SpatialResolution->SetFWHM(spresolutionCmd->GetNewDoubleValue(newValue)); }
-	 else if ( aCommand==spresolutionXCmd )
-	 	{ m_SpatialResolution->SetFWHMx(spresolutionXCmd->GetNewDoubleValue(newValue)); }
+   else if ( aCommand==spresolutionXdistribCmd )
+	 	{ GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+		if (distrib)m_SpatialResolution->SetFWHMxdistrib(distrib);
+}
+   else if ( aCommand==spresolutionYdistribCmd )
+  	 	{ GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+  		if (distrib)m_SpatialResolution->SetFWHMydistrib(distrib);
+  }
+
+   else if ( aCommand==spresolutionXCmd )
+   		{ m_SpatialResolution->SetFWHMx(spresolutionXCmd->GetNewDoubleValue(newValue)); }
 	 else if ( aCommand==spresolutionYCmd )
 		{ m_SpatialResolution->SetFWHMy(spresolutionYCmd->GetNewDoubleValue(newValue)); }
 	 else if ( aCommand==spresolutionZCmd )

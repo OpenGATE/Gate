@@ -54,6 +54,7 @@ GateDistributionMessenger::GateDistributionMessenger(GateVDistribution* itsDistr
   getValueCmd->SetGuidance(guidance);
   getValueCmd->SetParameterName("x",false);
 
+
 }
 
 
@@ -67,6 +68,7 @@ GateDistributionMessenger::~GateDistributionMessenger()
   delete getMaxY_Cmd;
   delete getRandom_Cmd;
   delete getValueCmd;
+
 }
 G4String GateDistributionMessenger::withUnity(G4double value,G4String category) const
 {
@@ -82,9 +84,8 @@ void GateDistributionMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 {
   if       ( command==getValueCmd ){
     G4double x = getValueCmd->GetNewDoubleValue(newValue);
-    G4double y = GetDistribution()->Value(x);
-    G4cout<<GetDistribution()->GetObjectName()<<'('<<x<<")="<<withUnity(y,UnitCategoryY())<< Gateendl;
-  } else if( command==getMinX_Cmd ) {
+    G4double y = GetDistribution()->Value(x);}
+else if( command==getMinX_Cmd ) {
     G4double x = GetDistribution()->MinX();
     G4cout<<GetDistribution()->GetObjectName()<<" MinX "<<withUnity(x,UnitCategoryX())<< Gateendl;
   } else if( command==getMinY_Cmd ) {

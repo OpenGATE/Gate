@@ -41,6 +41,8 @@ class GateVDistribution : public GateNamedObject
     virtual G4double MaxX() const=0;
     virtual G4double MaxY() const=0;
     virtual G4double Value(G4double x) const=0;
+    virtual G4double Value2D(G4double  x, G4double y) const;
+
     // Returns a random number following the current distribution
     // should be optimised according to each distrbution type
     virtual G4double ShootRandom() const=0;

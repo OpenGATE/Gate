@@ -45,7 +45,10 @@ GateDistributionFileMessenger::GateDistributionFileMessenger(GateDistributionFil
   guidance = "Do read the file";
   readCmd = new G4UIcmdWithoutParameter(cmdName,this);
   readCmd->SetGuidance(guidance);
-
+  cmdName = GetDirectoryName()+"readMatrix2d";
+  guidance = "Do read the file";
+  read2DCmd = new G4UIcmdWithoutParameter(cmdName,this);
+  read2DCmd->SetGuidance(guidance);
   cmdName = GetDirectoryName()+"autoX";
   guidance = "Set automatic mode for X";
   autoXCmd = new G4UIcmdWithoutParameter(cmdName,this);
@@ -58,6 +61,7 @@ GateDistributionFileMessenger::GateDistributionFileMessenger(GateDistributionFil
 GateDistributionFileMessenger::~GateDistributionFileMessenger()
 {
     delete readCmd;
+    delete read2DCmd;
     delete autoXCmd;
     delete setColYCmd;
     delete setColXCmd;
@@ -82,6 +86,9 @@ void GateDistributionFileMessenger::SetNewValue(G4UIcommand* command,G4String ne
     GetDistributionFile()->SetColumnY(y);
   }   else if( command==readCmd ) {
     GetDistributionFile()->Read();
+  }
+ else if( command==read2DCmd ){
+	  GetDistributionFile()->ReadMatrix2d();
   }
   else
     GateDistributionArrayMessenger::SetNewValue(command,newValue);

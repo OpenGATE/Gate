@@ -30,9 +30,10 @@ class GateDistributionMessenger: public GateNamedObjectMessenger
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
     void SetUnitX(const G4String& unitX);
     void SetUnitY(const G4String& unitY);
+    void SetUnitSigma(const G4String& unitSigma);
     inline G4String UnitCategoryX() const {return m_unitX.empty()?"":G4UIcommand::CategoryOf(m_unitX);}
     inline G4String UnitCategoryY() const {return m_unitY.empty()?"":G4UIcommand::CategoryOf(m_unitY);}
-
+    inline G4String UnitCategorySigma() const {return m_unitSigma.empty()?"":G4UIcommand::CategoryOf(m_unitSigma);}
   private:
     G4String withUnity(G4double value,G4String category) const;
     G4UIcmdWithoutParameter        *getMinX_Cmd ;
@@ -41,8 +42,10 @@ class GateDistributionMessenger: public GateNamedObjectMessenger
     G4UIcmdWithoutParameter        *getMaxY_Cmd ;
     G4UIcmdWithoutParameter        *getRandom_Cmd ;
     G4UIcmdWithADoubleAndUnit      *getValueCmd ;
+    G4UIcmdWithADoubleAndUnit      *getSigmaCmd ;
     G4String	    	    	   m_unitX;
     G4String	    	    	   m_unitY;
+    G4String	    	    	   m_unitSigma;
 };
 
 #endif

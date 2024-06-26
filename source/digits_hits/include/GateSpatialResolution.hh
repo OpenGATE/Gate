@@ -31,7 +31,10 @@ See LICENSE.md for further details
 #include "G4TouchableHistoryHandle.hh"
 #include "GateSinglesDigitizer.hh"
 
+class GateVDistribution;
+
 class GateSpatialResolution : public GateVDigitizerModule
+
 {
 public:
   
@@ -40,9 +43,13 @@ public:
   
   void Digitize() override;
 
+
+
   //! These functions return the resolution in use.
     G4double GetFWHM()   	       { return m_fwhm; }
-    G4double GetFWHMx()   	       { return m_fwhmX; }
+    inline GateVDistribution* GetFWHMxdistrib()    { return m_fwhmXdistrib; }
+    GateVDistribution* GetFWHMydistrib()    { return m_fwhmYdistrib; }
+    G4double GetFWHMx()            { return m_fwhmX; }
     G4double GetFWHMy()   	       { return m_fwhmY; }
     G4double GetFWHMz()   	       { return m_fwhmZ; }
 
@@ -51,10 +58,11 @@ public:
       If you want a resolution of 10%, SetSpresolution(0.1)
     */
     void SetFWHM(G4double val)   { m_fwhm = val;  }
+    void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXdistrib= dist; }
+    void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYdistrib = dist; }
     void SetFWHMx(G4double val)   { m_fwhmX = val;  }
     void SetFWHMy(G4double val)   { m_fwhmY = val;  }
     void SetFWHMz(G4double val)   { m_fwhmZ = val;  }
-
 
     inline void ConfineInsideOfSmallestElement(const G4bool& value) { m_IsConfined = value; };
     inline G4bool IsConfinedInsideOfSmallestElement() const  	      	{ return m_IsConfined; }
@@ -64,7 +72,6 @@ public:
 
     void UpdateVolumeID();
 
-
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the blurring
     void DescribeMyself(size_t );
@@ -72,9 +79,14 @@ public:
 protected:
     G4double m_fwhm;
 
+
     G4double m_fwhmX;
+
     G4double m_fwhmY;
     G4double m_fwhmZ;
+
+    GateVDistribution*  m_fwhmXdistrib;
+    GateVDistribution* m_fwhmYdistrib;
     G4bool m_IsConfined;
     G4Navigator* m_Navigator;
     G4TouchableHistoryHandle m_Touchable;
@@ -83,10 +95,9 @@ protected:
 
 private:
 
-    G4int m_systemDepth;
+   G4int m_systemDepth;
 
-  GateDigi* m_outputDigi;
-
+  GateDigi* m_outputDigi;;
   GateSpatialResolutionMessenger *m_Messenger;
 
   GateDigiCollection*  m_OutputDigiCollection;

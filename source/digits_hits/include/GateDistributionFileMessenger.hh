@@ -33,6 +33,7 @@ class GateDistributionFileMessenger: public GateDistributionArrayMessenger
     G4UIcmdWithAnInteger      *setColXCmd;
     G4UIcmdWithAnInteger      *setColYCmd;
     G4UIcmdWithoutParameter   *readCmd;
+    G4UIcmdWithoutParameter   *read2DCmd;
     G4UIcmdWithoutParameter   *autoXCmd;
 };
 

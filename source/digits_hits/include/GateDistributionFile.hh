@@ -32,7 +32,8 @@ class GateDistributionFile : public GateVDistributionArray
     inline G4int GetColumnX() const {return m_column_for_X;}
     inline G4int GetColumnY() const {return m_column_for_Y;}
 
-    void Read();
+     void Read();
+     void ReadMatrix2d();
 
     virtual void DescribeMyself(size_t indent);
   private:
@@ -41,6 +42,11 @@ class GateDistributionFile : public GateVDistributionArray
     G4int m_column_for_X;
     G4int m_column_for_Y;
     GateDistributionFileMessenger* m_messenger;
+    std::map<std::pair<double, double>, double> stddevMap;
+
+    std::vector<double> xValues;
+        std::vector<double> yValues;
+
 };
 
 
