@@ -125,6 +125,7 @@ public:
       inline G4double GetScannerRotAngle() const                   	      	{ return m_scannerRotAngle; }
 
       inline void  SetOutputVolumeID(const GateOutputVolumeID& outputVolumeID)        	{ m_outputVolumeID = outputVolumeID; }
+      inline void  SetOutputVolumeID(const G4int outputVolumeID,G4int depth)        	{ m_outputVolumeID[depth] = outputVolumeID; }
       inline const GateOutputVolumeID& GetOutputVolumeID()  const             	      	{ return m_outputVolumeID; }
       inline G4int GetComponentID(size_t depth) const    { return (m_outputVolumeID.size()>depth) ? m_outputVolumeID[depth] : -1; }
 

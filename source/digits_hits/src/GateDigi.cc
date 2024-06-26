@@ -190,6 +190,9 @@ void GateDigi::ChangeVolumeIDAndOutputVolumeIDValue(size_t depth, G4int copyNo)
     delete volSelector;
     // Finally change the outputVolumeID accordingly
     m_outputVolumeID[depth] = copyNo;
+
+    //With the new method the line above could be changed to:
+    //SetOutputVolumeID(copyNo,depth)
 }
 
 

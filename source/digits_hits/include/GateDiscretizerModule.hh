@@ -9,21 +9,21 @@ See LICENSE.md for further details
 // OK GND 2022
 /*This class is not used by GATE !
   The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateDummyDigitizerModule.cc for more detals
+  Please, check GateDiscretizerModule.cc for more detals
   */
 
 
-/*! \class  GateDummyDigitizerModule
-    \brief  GateDummyDigitizerModule does some dummy things with input digi
+/*! \class  GateDiscretizerModule
+    \brief  GateDiscretizerModule does some dummy things with input digi
     to create output digi
 
-    - GateDummyDigitizerModule - by name.surname@email.com
+    - GateDiscretizerModule - by marc.granado@universite-paris-saclay.fr
 
-    \sa GateDummyDigitizerModule, GateDummyDigitizerModuleMessenger
+    \sa GateDiscretizerModule, GateDiscretizerModuleMessenger
 */
 
-#ifndef GateDummyDigitizerModule_h
-#define GateDummyDigitizerModule_h 1
+#ifndef GateDiscretizerModule_h
+#define GateDiscretizerModule_h 1
 
 #include "GateVDigitizerModule.hh"
 #include "GateDigi.hh"
@@ -32,35 +32,67 @@ See LICENSE.md for further details
 
 #include "globals.hh"
 
-#include "GateDummyDigitizerModuleMessenger.hh"
+#include "GateDiscretizerModuleMessenger.hh"
 #include "GateSinglesDigitizer.hh"
 
 
-class GateDummyDigitizerModule : public GateVDigitizerModule
+class GateDiscretizerModule : public GateVDigitizerModule
 {
 public:
   
-  GateDummyDigitizerModule(GateSinglesDigitizer *digitizer, G4String name);
-  ~GateDummyDigitizerModule();
+  GateDiscretizerModule(GateSinglesDigitizer *digitizer, G4String name);
+  ~GateDiscretizerModule();
   
   void Digitize() override;
-
-  // *******implement your methods here
-  void SetDummyParameter(const G4String& );
   
-  void DummyMethod1(GateDigi *);
-  void DummyMethod2(GateDigi *);
+  //! These functions return the resolution in use.
+  	 G4String GetNameAxis()				   { return m_nameAxis;     }
+  	 G4double GetResolution()   	       { return m_resolution;  }
+     G4double GetResolutionX()   	       { return m_resolutionX; }
+     G4double GetResolutionY()   	       { return m_resolutionY; }
+     G4double GetResolutionZ()   	       { return m_resolutionZ; }
 
-  void DescribeMyself(size_t );
+     G4double calculatePitch(G4double crystal_size, G4double spatial_resolution);
+
+
+     //Set Parameter
+     void SetNameAxis(const G4String&);
+
+
+
+     //Set Variables
+     void SetResolution(G4double  val)   { m_resolution  = val;  }
+     void SetResolutionX(G4double val)   { m_resolutionX = val;  }
+     void SetResolutionY(G4double val)   { m_resolutionY = val;  }
+     void SetResolutionZ(G4double val)   { m_resolutionZ = val;  }
+
+
+     void SetVirtualIDs(int nBinsX, int nBinsY,int nBinsZ, G4ThreeVector& pos);
+     void DescribeMyself(size_t );
 
 protected:
   // *******implement your parameters here
-  G4String   m_parameter;
+     G4double m_resolution;
+
+     G4String m_nameAxis;
+     G4double m_resolutionX;
+     G4double m_resolutionY;
+     G4double m_resolutionZ;
+
+
+     //These are in Spatial resolution but aren't there rom touchable?
+     //We'll need to check
+
+     //G4Navigator* m_Navigator;
+     //G4TouchableHistoryHandle m_Touchable;
 
 private:
+
+  G4int m_systemDepth;
+
   GateDigi* m_outputDigi;
 
-  GateDummyDigitizerModuleMessenger *m_Messenger;
+  GateDiscretizerModuleMessenger *m_Messenger;
 
   GateDigiCollection*  m_OutputDigiCollection;
 

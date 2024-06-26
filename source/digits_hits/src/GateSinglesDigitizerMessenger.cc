@@ -55,6 +55,7 @@ See LICENSE.md for further details
 #include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
 #include "GateTimeDelay.hh"
+#include "GateDiscretizerModule.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
@@ -266,6 +267,13 @@ else if (childTypeName=="multipleRejection")
           newDM = new GateClustering(m_digitizer, DMname);
    	  m_digitizer->AddNewModule(newDM);
        }
+
+  else if (childTypeName=="discretizer")
+         {
+            newDM = new GateDiscretizerModule(m_digitizer, DMname);
+     	  m_digitizer->AddNewModule(newDM);
+         }
+
 
 
 

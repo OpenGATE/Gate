@@ -9,44 +9,48 @@ See LICENSE.md for further details
 // OK GND 2022
 /*This class is not used by GATE !
   The purpose of this class is to help to create new users digitizer module(DM).
-  Please, check GateDummyDigitizerModule.cc for more detals
+  Please, check GateDiscretizerModule.cc for more detals
   */
 
 
-/*! \class  GateDummyDigitizerModuleMessenger
-    \brief  Messenger for the GateDummyDigitizerModule
+/*! \class  GateDiscretizerModuleMessenger
+    \brief  Messenger for the GateDiscretizerModule
 
-    - GateDummyDigitizerModule - by name.surname@email.com
+    - GateDiscretizerModule - by marc.granado@universite-paris-saclay.fr
 
-    \sa GateDummyDigitizerModule, GateDummyDigitizerModuleMessenger
+    \sa GateDiscretizerModule, GateDiscretizerModuleMessenger
 */
 
 
-#ifndef GateDummyDigitizerModuleMessenger_h
-#define GateDummyDigitizerModuleMessenger_h 1
+#ifndef GateDiscretizerModuleMessenger_h
+#define GateDiscretizerModuleMessenger_h 1
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
 
 #include "GateClockDependentMessenger.hh"
-class GateDummyDigitizerModule;
+class GateDiscretizerModule;
 class G4UIcmdWithAString;
 
-class GateDummyDigitizerModuleMessenger : public GateClockDependentMessenger
+class GateDiscretizerModuleMessenger : public GateClockDependentMessenger
 {
 public:
   
-  GateDummyDigitizerModuleMessenger(GateDummyDigitizerModule*);
-  ~GateDummyDigitizerModuleMessenger();
+  GateDiscretizerModuleMessenger(GateDiscretizerModule*);
+  ~GateDiscretizerModuleMessenger();
   
   void SetNewValue(G4UIcommand*, G4String);
 
   
 private:
-  GateDummyDigitizerModule* m_DummyDigitizerModule;
-  G4UIcmdWithAString          *dummyCmd;
+  GateDiscretizerModule* m_DiscretizerModule;
 
+  G4UIcmdWithAString*	nameAxisCmd;
 
+  G4UIcmdWithADouble*  	resCmd;
+  G4UIcmdWithADouble*   resolutionXCmd;
+  G4UIcmdWithADouble*   resolutionYCmd;
+  G4UIcmdWithADouble*   resolutionZCmd;
 };
 
 #endif
