@@ -30,6 +30,7 @@
 
 #include "GateDigitizerMgr.hh"
 
+#include "G4Box.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
@@ -84,13 +85,14 @@ void GateDiscretizerModule::Digitize()
 {
 
 
+//From here
 
 	GateSpatialResolution* digi_SpatialResolution;
 	digi_SpatialResolution =  dynamic_cast<GateSpatialResolution*>(m_digitizer->FindDigitizerModule("digitizerMgr/"
 	    		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  +m_digitizer->GetSD()->GetName()
 																						  +"/SinglesDigitizer/"
 																						  + m_digitizer->GetName()
-																						  + "/SpatialResolution"));
+																						  + "/spatialResolution"));
 
 
 
@@ -98,17 +100,21 @@ void GateDiscretizerModule::Digitize()
 	G4double resolutionY;
 	G4double resolutionZ;
 
+	G4int nBinsX;
+	G4int nBinsY;
+	G4int nBinsZ;
+
+	G4double pitchX;
+	G4double pitchY;
+	G4double pitchZ;
 
 
 
-
-
-
-
-
+	//TODO bulletproof this!
 
 	if (digi_SpatialResolution->GetFWHM())
 	{
+
 		if(m_nameAxis.find('X') != std::string::npos)
 			{resolutionX = digi_SpatialResolution->GetFWHM();}
 
@@ -121,6 +127,7 @@ void GateDiscretizerModule::Digitize()
 
 
 	else if(digi_SpatialResolution->GetFWHMx() || digi_SpatialResolution->GetFWHMy()|| digi_SpatialResolution->GetFWHMz()){
+
 		if(digi_SpatialResolution->GetFWHMx() && m_nameAxis.find('X') != std::string::npos)
 				{resolutionX = digi_SpatialResolution->GetFWHMx();}
 
@@ -131,25 +138,12 @@ void GateDiscretizerModule::Digitize()
 				{resolutionZ = digi_SpatialResolution->GetFWHMz();}
 	}
 
+
+
 	else if (m_nameAxis == "XYZ" && (m_resolution==0) || (m_resolutionX==0 || m_resolutionY==0 ||m_resolutionZ==0))
 	{
 
 		GateError("***ERROR*** Discretization in XYZ has been selected but at least one axis has resolution = 0. Please ensure that all axis have a non zero value of resolution.");
-	}
-
-
-	if (m_resolution != 0)
-	{
-		resolutionX = m_resolution;
-		resolutionY = m_resolution;
-		resolutionZ = m_resolution;
-	}
-
-	else
-	{
-		resolutionX = m_resolutionX;
-		resolutionY = m_resolutionY;
-		resolutionZ = m_resolutionZ;
 	}
 
 
@@ -167,11 +161,12 @@ void GateDiscretizerModule::Digitize()
 				 "Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
 	}
 
+
+
 	m_systemDepth = m_system->GetTreeDepth();
 	//TODO I need to create another parameter asking if spatial resolution is provided by hand.
 	//I need to get system, system depth. Check that the size for the last 4 solids is the same (Monolithic crystal)
 	//Need to access spatial resolution
-
 
 
 
@@ -195,6 +190,10 @@ void GateDiscretizerModule::Digitize()
 
 
 
+	G4double xLength,yLength,zLength;
+
+
+
   if (IDC)
      {
 	  G4int n_digi = IDC->entries();
@@ -205,21 +204,19 @@ void GateDiscretizerModule::Digitize()
 		  inputDigi=(*IDC)[i];
 		  // ***** the following part of the code to adapt
 		  /// *** This part is from ProcessPulseList
+		  if (inputDigi->GetVolumeID().size()){
+		  G4Box* box = dynamic_cast<G4Box*>(inputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid());
+	        xLength = 2*box->GetXHalfLength();
+	        yLength = 2*box->GetYHalfLength();
+	        zLength = 2*box->GetZHalfLength();
+		  }
+		  else std::cout<<"Well that's another problem here..."<< std::endl;
 
-		  ////// ** This part is from ProcessOnePulse
-		     for (iter=OutputDigiCollectionVector->begin(); iter!= OutputDigiCollectionVector->end() ; ++iter)
-		     {
-		    	 if ( (*iter)->GetVolumeID()   == inputDigi->GetVolumeID() )
-		    	 {
-		    		continue;
-		    		if(m_nameAxis=="XYZ"){continue;}
-		    		/* if(m_parameter=="numAxis"){
-		                 DummyMethod1(inputDigi);
-		    		 }
-		    		 else{
-		    			 DummyMethod2( inputDigi );
-		    		 }
-					*/
+
+
+
+
+
 		      if (nVerboseLevel>1)
 		      {
 		    	 G4cout << "Merged previous pulse for volume " << inputDigi->GetVolumeID()
@@ -227,15 +224,34 @@ void GateDiscretizerModule::Digitize()
 		 		 << "Resulting pulse is: \n"
 		 		 << **iter << Gateendl << Gateendl ;
 		      }
-		 	  break;
-		       }
-		     }
 
-		     if ( iter == OutputDigiCollectionVector->end() )
-		     {
+
 		       m_outputDigi = new GateDigi(*inputDigi);
 		       m_outputDigi->SetEnergyIniTrack(-1);
 		       m_outputDigi->SetEnergyFin(-1);
+
+
+
+
+		       if(m_nameAxis=="XYZ"){
+
+		       			    		pitchX = calculatePitch(xLength,resolutionX);
+		       			    		nBinsX = int(xLength/pitchX);
+		       			    		pitchY = calculatePitch(yLength,resolutionY);
+		       			    		nBinsY = int(yLength/pitchY);
+		       			    		pitchZ = calculatePitch(zLength,resolutionZ);
+		       			    		nBinsZ = int(zLength/pitchZ);
+
+
+		       			    		G4ThreeVector localPos = inputDigi->GetLocalPos();
+		       			    		//std::cout<<"Local position = " << localPos <<" nBinsX "<<nBinsX<<" nBinsY "<<nBinsY<<" nBinsZ "<<nBinsZ<<std::endl;
+		       			    		SetVirtualIDs(nBinsX,nBinsY,nBinsZ,pitchX,pitchY,pitchZ,localPos);
+
+		       		    			}
+
+		       std::cout<<"m_outputdigi "<<m_outputDigi->GetOutputVolumeID()<<std::endl;
+
+
 		       if (nVerboseLevel>1)
 		 	  G4cout << "Created new pulse for volume " << inputDigi->GetVolumeID() << ".\n"
 		 		 << "Resulting pulse is: \n"
@@ -243,7 +259,7 @@ void GateDiscretizerModule::Digitize()
 		      /// !!!!!! The following line should be kept !!!! -> inserts the outputdigi to collection
 		       m_OutputDigiCollection->insert(m_outputDigi);
 
-		     }
+
 		 ////// ** End of the part from ProcessOnePulse
 
 
@@ -286,10 +302,13 @@ void GateDiscretizerModule::SetNameAxis(const G4String &param)
 
 
 
-
+/*
 G4double GateDiscretizerModule::calculatePitch(G4double crystal_size, G4double spatial_resolution) {
-         // Target pitch size
+
+
+	// Target pitch size
          double target_pitch = spatial_resolution / 2.0;
+         std::cout<<"Spatial Resolution: "<<spatial_resolution<<std::endl;
          double best_pitch = 0;
          double min_diff = std::numeric_limits<double>::max();
 
@@ -302,51 +321,91 @@ G4double GateDiscretizerModule::calculatePitch(G4double crystal_size, G4double s
              }
          }
 
+         std::cout<<"Best pitch is: "<<best_pitch<<" weird since the condition is to be smaller than: "<< min_diff<<std::endl;
+
          return best_pitch;
      }
+*/
+
+//TODO: This function needs much optimising
+G4double GateDiscretizerModule::calculatePitch(G4double crystal_size, G4double spatial_resolution) {
+    // Target pitch size
+    double target_pitch = spatial_resolution / 2.0;
+    double best_pitch = 0;
+    double min_diff = 999;
+    int num_pitches = 1;
+
+    while (true) {
+        double pitch = crystal_size / num_pitches;
+
+        // Check if pitch meets both conditions
+        if (pitch <= target_pitch && std::fmod(crystal_size, pitch) == 0) {
+            double diff = std::fabs(pitch - target_pitch);
+            if (diff <= min_diff) {
+                min_diff = diff;
+                best_pitch = pitch;
+            }
+        }
+
+        // Break if pitch is smaller than a threshold, to prevent infinite loop
+        if ((best_pitch <= target_pitch)&&(best_pitch!=0)) {
+            break;
+        }
+        else if (num_pitches>1000){
+        	std::cout<<"ERROR! No pitch found in 1000 iterations!"<<std::endl;
+        	break;
+        }
+
+        ++num_pitches;
+    }
 
 
+    return best_pitch;
+}
 
 
-void GateDiscretizerModule::SetVirtualIDs( int nBinsX, int nBinsY,int nBinsZ, G4ThreeVector& pos ){
-     int crystalID;
-     int subModuleID;
-     int layerID;
+void GateDiscretizerModule::SetVirtualIDs( int nBinsX, int nBinsY,int nBinsZ,double pitchX,double pitchY,double pitchZ, G4ThreeVector& pos ){
+
 
      int binX,binY,binZ;
 
-	 binX = (pos.X/nBinsX+nBinsX/2);
-	 binY = (pos.Y/nBinsY+nBinsY/2);
-	 binZ = (pos.Z/nBinsY+nBinsY/2);
+
+
+	 binX = static_cast<int>(pos.getX()/pitchX)+static_cast<int>(nBinsX/2);
+	 binY = static_cast<int>(pos.getY()/pitchY)+static_cast<int>(nBinsY/2);
+	 binZ = static_cast<int>(pos.getZ()/pitchZ)+static_cast<int>(nBinsY/2);
+
 
 	 //Change the OutputVolumeID at depths 3,4,5
 	 //(SubmoduleID=binX, crystalID = binY and layerID = binZ)
-	 m_outputDigi->SetOutputVolumeID(3,binX);
-	 m_outputDigi->SetOutputVolumeID(4,binY);
-	 m_outputDigi->SetOutputVolumeID(5,binZ);
+	 m_outputDigi->SetOutputVolumeID(binX,3);
+	 m_outputDigi->SetOutputVolumeID(binY,4);
+	 m_outputDigi->SetOutputVolumeID(binZ,5);
+
+
  }
 
 
 
 
-/*
-void GateDiscretizerModule::DummyMethod1(GateDigi *right)
-{
-	//to copy all variables that are not changed
-	m_outputDigi=right;
+
+void GateDiscretizerModule::SetVirtualID( int nBins, double pitch, G4double pos , int depth){
 
 
-}
 
-void GateDiscretizerModule::DummyMethod2(GateDigi *right)
-{
-	//to copy all variables that are not changed
-	m_outputDigi=right;
+     int bin;
 
 
-}
+	 bin = static_cast<int>(pos/pitch)+static_cast<int>(nBins/2);
 
-*/
+
+	 m_outputDigi->SetOutputVolumeID(bin,depth);
+
+ }
+
+
+
+
 void GateDiscretizerModule::DescribeMyself(size_t indent )
 {
 	if(m_resolution)

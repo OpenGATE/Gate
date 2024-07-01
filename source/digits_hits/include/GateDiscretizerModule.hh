@@ -67,7 +67,8 @@ public:
      void SetResolutionZ(G4double val)   { m_resolutionZ = val;  }
 
 
-     void SetVirtualIDs(int nBinsX, int nBinsY,int nBinsZ, G4ThreeVector& pos);
+     void SetVirtualIDs(int nBinsX, int nBinsY,int nBinsZ,double pitchX,double pitchY,double pitchZ, G4ThreeVector& pos);
+     void SetVirtualID(int nBins,double pitch, G4double pos, int depth);
      void DescribeMyself(size_t );
 
 protected:
