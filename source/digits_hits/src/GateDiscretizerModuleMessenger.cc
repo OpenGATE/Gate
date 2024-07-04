@@ -46,8 +46,8 @@ GateDiscretizerModuleMessenger::GateDiscretizerModuleMessenger (GateDiscretizerM
 
     cmdName = GetDirectoryName()+"nameAxis";
     nameAxisCmd = new G4UIcmdWithAString(cmdName,this);
-    nameAxisCmd ->SetGuidance("Provide the number of axis that need to be discretized, XY or XYZ");
-    nameAxisCmd ->SetCandidates("XY XYZ");
+    nameAxisCmd ->SetGuidance("Provide the number of axis that need to be discretized, XYZ, XY, XZ, or YZ");
+    nameAxisCmd ->SetCandidates("XYZ XY XZ YZ");
 
 
     cmdName = GetDirectoryName() + "resolution";

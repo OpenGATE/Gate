@@ -42,7 +42,7 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-
+#include <cstdlib>
 
 
 
@@ -96,9 +96,9 @@ void GateDiscretizerModule::Digitize()
 
 
 
-	G4double resolutionX;
-	G4double resolutionY;
-	G4double resolutionZ;
+	G4double resolutionX=0;
+	G4double resolutionY=0;
+	G4double resolutionZ=0;
 
 	G4int nBinsX;
 	G4int nBinsY;
@@ -108,11 +108,41 @@ void GateDiscretizerModule::Digitize()
 	G4double pitchY;
 	G4double pitchZ;
 
-
+	G4int depthX=5;
+	G4int depthY=4;
+	G4int depthZ=3;
 
 	//TODO bulletproof this!
 
-	if (digi_SpatialResolution->GetFWHM())
+	if(m_resolution){
+		if(m_nameAxis.find('X') != std::string::npos)
+			{resolutionX = m_resolution;}
+
+		if(m_nameAxis.find('Y') != std::string::npos)
+			{resolutionY = m_resolution;}
+
+		if(m_nameAxis.find('Z') != std::string::npos)
+			{resolutionZ = m_resolution;}
+
+
+		if	(m_resolutionX!=0 || m_resolutionY!=0 ||m_resolutionZ!=0)
+			{GateWarning("The values provided for spatial resolution are ambiguous. Only the value of 'resolution' was taken, any value provided for 'resolutionX', 'resolutionY' and 'resolutionZ' was ignored");}
+	}
+
+	else if	(m_resolutionX!=0 || m_resolutionY!=0 ||m_resolutionZ!=0){
+
+		if(m_resolutionX && m_nameAxis.find('X') != std::string::npos)
+				{resolutionX = m_resolutionX;}
+
+		if(m_resolutionY && m_nameAxis.find('Y') != std::string::npos)
+				{resolutionY = m_resolutionY;}
+
+		if(m_resolutionZ && m_nameAxis.find('Z') != std::string::npos)
+				{resolutionZ = m_resolutionZ;}
+
+	}
+
+	else if (digi_SpatialResolution->GetFWHM())
 	{
 
 		if(m_nameAxis.find('X') != std::string::npos)
@@ -139,15 +169,36 @@ void GateDiscretizerModule::Digitize()
 	}
 
 
+	if(resolutionX == 0 && m_nameAxis.find('X') != std::string::npos)
+			{GateError("***ERROR*** Discretization in X axis has been selected but no value for FWHM was provided.");
+	}
 
+	if(resolutionY == 0 && m_nameAxis.find('Y') != std::string::npos)
+			{GateError("***ERROR*** Discretization in Y axis has been selected but no value for FWHM was provided.");
+	}
+	if(resolutionZ == 0 && m_nameAxis.find('Z') != std::string::npos)
+			{GateError("***ERROR*** Discretization in Z axis has been selected but no value for FWHM was provided.");
+	}
+
+	/*
 	else if (m_nameAxis == "XYZ" && (m_resolution==0) || (m_resolutionX==0 || m_resolutionY==0 ||m_resolutionZ==0))
 	{
 
 		GateError("***ERROR*** Discretization in XYZ has been selected but at least one axis has resolution = 0. Please ensure that all axis have a non zero value of resolution.");
 	}
+*/
 
+	if (true){
+		std::string path_to_script = "/home/granado/GATE_projects/MonoCrystals/tests/mac/";
+		std::string path_to_macros = "/home/granado/GATE_projects/MonoCrystals/tests/mac/";
+		std::string command = "python3 "+path_to_script+"macro_converter.py";
+		command +=" -d "+path_to_macros+"digitizer.mac";
+		command +=" -g "+path_to_macros+"geometry_pseudo-crystal.mac";
+		int result = system(command.c_str());
+		if (result ==0) std::cout<<"The macro converter script has been executed corectly"<<std::endl;
+		else std::cout<<"There was an error in the execution of the macro converter script"<<std::endl;
 
-
+	}
 	//TODO Create the check that tells you that
 	GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 
@@ -232,7 +283,7 @@ void GateDiscretizerModule::Digitize()
 
 
 
-
+/*
 		       if(m_nameAxis=="XYZ"){
 
 		       			    		pitchX = calculatePitch(xLength,resolutionX);
@@ -248,8 +299,63 @@ void GateDiscretizerModule::Digitize()
 		       			    		SetVirtualIDs(nBinsX,nBinsY,nBinsZ,pitchX,pitchY,pitchZ,localPos);
 
 		       		    			}
+*/
+		       G4ThreeVector localPos = inputDigi->GetLocalPos();
 
-		       std::cout<<"m_outputdigi "<<m_outputDigi->GetOutputVolumeID()<<std::endl;
+
+
+		       if(m_nameAxis.find('X') != std::string::npos){
+		    	   std::cout<<"In X! "<<std::endl;
+		    	   pitchX = calculatePitch(xLength,resolutionX);
+		    	   nBinsX = int(xLength/pitchX);
+		    	   SetVirtualID(nBinsX,pitchX,localPos.getX(),depthX);
+
+		    	   if(m_nameAxis.find('Y') != std::string::npos){
+		    		   std::cout<<"In Y! "<<std::endl;
+		    		   pitchY = calculatePitch(yLength,resolutionY);
+  			    	   nBinsY = int(yLength/pitchY);
+		    		   SetVirtualID(nBinsY,pitchY,localPos.getY(),depthY);
+
+		    		   if(m_nameAxis.find('Z') != std::string::npos){
+		    			   std::cout<<"In Z! "<<std::endl;
+		    			   pitchZ = calculatePitch(zLength,resolutionZ);
+		    			   nBinsZ = int(zLength/pitchZ);
+		    			   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ);
+
+		    		   }
+		    	   }
+		    	   else if(m_nameAxis.find('Z') != std::string::npos){
+
+		    		   pitchZ = calculatePitch(zLength,resolutionZ);
+		    		   nBinsZ = int(zLength/pitchZ);
+		    		   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+1);
+		    	   	   }
+		       }
+		       else if(m_nameAxis.find('Y') != std::string::npos){
+
+		    	   pitchY = calculatePitch(yLength,resolutionY);
+			       nBinsY = int(yLength/pitchY);
+		    	   SetVirtualID(nBinsY,pitchY,localPos.getY(),depthY+1);
+
+		    	   if(m_nameAxis.find('Z') != std::string::npos){
+
+		    		   pitchZ = calculatePitch(zLength,resolutionZ);
+		    		   nBinsZ = int(zLength/pitchZ);
+		    		   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+1);
+		    	   }
+		       }
+		       else if(m_nameAxis.find('Z') != std::string::npos){
+
+		    	   pitchZ = calculatePitch(zLength,resolutionZ);
+		    	   nBinsZ = int(zLength/pitchZ);
+		    	   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+2);
+		       }
+
+		       else GateError("Not entering any of the depths!");
+
+
+		       std::cout<<"m_outputdigi "<<m_outputDigi->GetOutputVolumeID()<<" Pitches "<<pitchX<<", "<<pitchY<<", "<<pitchZ<<std::endl;
+		       std::cout<<"Bins "<<nBinsX<<", "<<nBinsY<<", "<<nBinsZ<<std::endl;
 
 
 		       if (nVerboseLevel>1)
@@ -371,16 +477,16 @@ void GateDiscretizerModule::SetVirtualIDs( int nBinsX, int nBinsY,int nBinsZ,dou
 
 
 
-	 binX = static_cast<int>(pos.getX()/pitchX)+static_cast<int>(nBinsX/2);
-	 binY = static_cast<int>(pos.getY()/pitchY)+static_cast<int>(nBinsY/2);
-	 binZ = static_cast<int>(pos.getZ()/pitchZ)+static_cast<int>(nBinsY/2);
+	 binX = std::floor(pos.getX()/pitchX+nBinsX/2);
+	 binY = std::floor(pos.getY()/pitchY+nBinsY/2);
+	 binZ = std::floor(pos.getZ()/pitchZ+nBinsY/2);
 
 
 	 //Change the OutputVolumeID at depths 3,4,5
-	 //(SubmoduleID=binX, crystalID = binY and layerID = binZ)
-	 m_outputDigi->SetOutputVolumeID(binX,3);
+	 //(SubmoduleID=binZ, crystalID = binY and layerID = binX)
+	 m_outputDigi->SetOutputVolumeID(binZ,3);
 	 m_outputDigi->SetOutputVolumeID(binY,4);
-	 m_outputDigi->SetOutputVolumeID(binZ,5);
+	 m_outputDigi->SetOutputVolumeID(binX,5);
 
 
  }
@@ -388,17 +494,13 @@ void GateDiscretizerModule::SetVirtualIDs( int nBinsX, int nBinsY,int nBinsZ,dou
 
 
 
-
 void GateDiscretizerModule::SetVirtualID( int nBins, double pitch, G4double pos , int depth){
-
-
 
      int bin;
 
 
-	 bin = static_cast<int>(pos/pitch)+static_cast<int>(nBins/2);
-
-
+	 bin = std::floor(pos/pitch+nBins/2.);
+	 std::cout<<"[pitch,nBins,pos,bin, sum] = ["<<pitch<<", "<<nBins<<", "<<pos<<", "<<bin<<", "<< pos/pitch+nBins/2<<"]"<<std::endl;
 	 m_outputDigi->SetOutputVolumeID(bin,depth);
 
  }
