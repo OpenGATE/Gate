@@ -1769,7 +1769,7 @@ Finally, we call the 'triCoincProcessor' module and we plug on it the second sys
 
 
 Virtual segmentation
-""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~
 
 
 In traditional PET image reconstruction, software like CASToR utilizes crystal IDs instead of the position of the interaction. This approach has sufficed due to the spatial resolution being inherently defined by the size of the small crystals used. However, new PET scanner systems are exploring the use of monolithic crystals, which can reconstruct interaction positions within the crystal with a specific resolution.
