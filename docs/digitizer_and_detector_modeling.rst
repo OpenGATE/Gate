@@ -1182,6 +1182,7 @@ The size of the crystal should be defined at the Submodule level using Air as th
 The crystal and layer0 levels should both reflect the crystal size and use the crystal's material.
 This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, Crystal, and Submodule levels, respectively.
 **Commands**
+
 Discretization Control: The digitizer includes commands that enable users to specify which axes require discretization. With "nameAxis".
 
 The commands "pitch, pitchX, pitchY, pitchZ" allow users to specify the desired pitch size for all axis, or specific values for X,Y and Z axis. If no pitch size is provided, the digitizer will use the spatial resolution value to compute the optimal pitch size ensuring that the number of bins, defined as (crystal size)/(pitch), is integer. Note that the spatial resolution must be a single value for each axis; if a the spatial resolution is defined with a distribution and no pitch value is provided, the digitizer will not function correctly.
