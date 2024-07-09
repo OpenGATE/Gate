@@ -1193,9 +1193,7 @@ pitch, pitchX, pitchY, pitchZ: These commands allow users to specify the desired
 Example::
 
 /gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/insert                       virtualSegmentation
-
 /gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/nameAxis XYZ
-
 /gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/pitch 5.0 mm
 
 
