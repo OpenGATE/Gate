@@ -55,7 +55,7 @@ See LICENSE.md for further details
 #include "GateAdderComptPhotIdeal.hh"
 #include "GateClustering.hh"
 #include "GateTimeDelay.hh"
-#include "GateDiscretizerModule.hh"
+#include "GateVirtualSegmentationSD.hh"
 
 /*
 #include "GateLocalTimeDelay.hh"
@@ -127,7 +127,7 @@ const G4String& GateSinglesDigitizerMessenger::DumpMap()
 {
 
 
-   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModel timeDelay clustering adderComptPhotIdeal gridDiscretizator multipleRejection discretizer";
+   static G4String theList = "readout adder energyFraming timeResolution energyResolution spatialResolution efficiency deadtime pileup adderCompton opticaladder noise merger intrinsicResolution buffer crosstalk doIModel timeDelay clustering adderComptPhotIdeal gridDiscretizator multipleRejection virtualSegmentation";
    return theList;
 }
 
@@ -268,9 +268,9 @@ else if (childTypeName=="multipleRejection")
    	  m_digitizer->AddNewModule(newDM);
        }
 
-  else if (childTypeName=="discretizer")
+  else if (childTypeName=="virtualSegmentation")
          {
-            newDM = new GateDiscretizerModule(m_digitizer, DMname);
+            newDM = new GateVirtualSegmentationSD(m_digitizer, DMname);
      	  m_digitizer->AddNewModule(newDM);
          }
 

@@ -46,7 +46,7 @@
    	  	  inputPulse -> inputDigi
 	      outputPulse -> m_outputDigi + correct the first declaration (as in this Dummy module)
 	      outputPulseList.push_back(outputPulse) ->  m_OutputDigiCollection->insert(m_outputDigi);
-	10) Add YourDigitizerModule to GateSinglesDigitizer
+	10) Add YourDigitizerModule to GateSinglesDigitizerMessenger
 			- #include "YourDigitizerModule.hh"
 			- in DumpMap() method in
 				static G4String theList = " ...."
