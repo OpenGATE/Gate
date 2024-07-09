@@ -1779,7 +1779,7 @@ The Virtual Segmentation Digitizer module provides a mechanism to generate an ID
 A GateTool associated with this digitizer allows users to create a new geometry macro with the segmented geometry, suitable for use in image reconstruction software.
 
 *Key Features*
-^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Discretization Control: The digitizer includes commands that enable users to specify which axes require discretization.
 
