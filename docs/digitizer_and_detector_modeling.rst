@@ -1159,6 +1159,54 @@ Example::
    /gate/digitizerMgr/absorber/SinglesDigitizer/Singles/multipleRejection/setEventRejection 1
 
 
+
+
+
+
+
+
+Virtual segmentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+In traditional PET image reconstruction, software like CASToR utilizes crystal IDs instead of the position of the interaction. This approach has sufficed due to the spatial resolution being inherently defined by the size of the small crystals used. However, new PET scanner systems are exploring the use of monolithic crystals, which can reconstruct interaction positions within the crystal with a specific resolution.
+
+The Virtual Segmentation Digitizer module provides a mechanism to generate an ID based on a virtual segmentation of the monolithic crystal, aligned with its spatial resolution. Ideally, the pitch size should be at least half of the position resolution. This virtual segmentation occurs post-simulation, ensuring that the simulation speed remains uncompromised even when dealing with large systems and numerous crystals.
+
+A GateTool associated with this digitizer allows users to create a new geometry macro with the segmented geometry, suitable for use in image reconstruction software.
+
+**Key Features**
+
+
+Discretization Control: The digitizer includes commands that enable users to specify which axes require discretization.
+
+**Geometry Requirements:**
+
+To utilize this digitizer, the cylindricalPET geometry must be configured as follows:
+The size of the crystal should be defined at the Submodule level using Air as the material.
+The crystal and layer0 levels should both reflect the crystal size and use the crystal's material.
+This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, Crystal, and Submodule levels, respectively.
+**Commands**
+
+pitch, pitchX, pitchY, pitchZ: These commands allow users to specify the desired pitch size. If no pitch size is provided, the digitizer will use the spatial resolution value to compute the optimal pitch size. The number of bins, defined as (crystal size)/(pitch), must be an integer. Note that the spatial resolution must be a single value; if only a distribution is provided, the digitizer will not function correctly.
+
+Example::
+
+/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/insert                       virtualSegmentation
+
+/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/nameAxis XYZ
+
+/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/pitch 5.0 mm
+
+
+
+
+
+
+
+
+
+
 .. _digitizer_multiple_processor_chains-label:
 
 Examples of multiple Single Digitizers 
@@ -1764,41 +1812,5 @@ Finally, we call the 'triCoincProcessor' module and we plug on it the second sys
    /gate/digitizer/TriCoinc/triCoincProcessor/setSinglesPulseListName Singles_S1
    /gate/digitizer/TriCoinc/triCoincProcessor/setWindow 15 ns
    /gate/digitizer/TriCoinc/triCoincProcessor/setSinglesBufferSize 40
-
-
-
-
-Virtual segmentation
-~~~~~~~~~~~~~~~~~~~~~~~
-
-
-In traditional PET image reconstruction, software like CASToR utilizes crystal IDs instead of the position of the interaction. This approach has sufficed due to the spatial resolution being inherently defined by the size of the small crystals used. However, new PET scanner systems are exploring the use of monolithic crystals, which can reconstruct interaction positions within the crystal with a specific resolution.
-
-The Virtual Segmentation Digitizer module provides a mechanism to generate an ID based on a virtual segmentation of the monolithic crystal, aligned with its spatial resolution. Ideally, the pitch size should be at least half of the position resolution. This virtual segmentation occurs post-simulation, ensuring that the simulation speed remains uncompromised even when dealing with large systems and numerous crystals.
-
-A GateTool associated with this digitizer allows users to create a new geometry macro with the segmented geometry, suitable for use in image reconstruction software.
-
-*Key Features*
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Discretization Control: The digitizer includes commands that enable users to specify which axes require discretization.
-
-*Geometry Requirements:*
-~~~~~~~~~~~~~~~~~~~~~~~
-To utilize this digitizer, the cylindricalPET geometry must be configured as follows:
-The size of the crystal should be defined at the Submodule level using Air as the material.
-The crystal and layer0 levels should both reflect the crystal size and use the crystal's material.
-This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, Crystal, and Submodule levels, respectively.
-*Commands*
-~~~~~~~~~~
-pitch, pitchX, pitchY, pitchZ: These commands allow users to specify the desired pitch size. If no pitch size is provided, the digitizer will use the spatial resolution value to compute the optimal pitch size. The number of bins, defined as (crystal size)/(pitch), must be an integer. Note that the spatial resolution must be a single value; if only a distribution is provided, the digitizer will not function correctly.
-
-*Example Usage*
-~~~~~~~~~~~~~~~
-gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/insert                       virtualSegmentation
-
-/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/nameAxis XYZ
-
-/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/pitch 5.0 mm
 
 
