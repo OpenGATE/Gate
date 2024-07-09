@@ -1777,13 +1777,26 @@ The Virtual Segmentation Digitizer module provides a mechanism to generate an ID
 
 A GateTool associated with this digitizer allows users to create a new geometry macro with the segmented geometry, suitable for use in image reconstruction software.
 
-Key Features
+*Key Features*
+~~~~~~~~~~~~~
 Discretization Control: The digitizer includes commands that enable users to specify which axes require discretization.
 
-*Geometry Requirements:* To utilize this digitizer, the cylindricalPET geometry must be configured as follows:
-
+*Geometry Requirements:*
+~~~~~~~~~~~~~~~~~~~~~~~
+To utilize this digitizer, the cylindricalPET geometry must be configured as follows:
 The size of the crystal should be defined at the Submodule level using Air as the material.
 The crystal and layer0 levels should both reflect the crystal size and use the crystal's material.
 This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, Crystal, and Submodule levels, respectively.
 *Commands*
+~~~~~~~~~~
 pitch, pitchX, pitchY, pitchZ: These commands allow users to specify the desired pitch size. If no pitch size is provided, the digitizer will use the spatial resolution value to compute the optimal pitch size. The number of bins, defined as (crystal size)/(pitch), must be an integer. Note that the spatial resolution must be a single value; if only a distribution is provided, the digitizer will not function correctly.
+
+*Example Usage*
+~~~~~~~~~~~~~~~
+gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/insert                       virtualSegmentation
+
+/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/nameAxis XYZ
+
+/gate/digitizerMgr/pseudo-crystal/SinglesDigitizer/Singles/virtualSegmentation/pitch 5.0 mm
+
+
