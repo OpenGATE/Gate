@@ -1169,9 +1169,9 @@ Virtual segmentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-In traditional PET image reconstruction, software like CASToR utilizes crystal IDs instead of the position of the interaction. This approach has sufficed due to the spatial resolution being inherently defined by the size of the small crystals used. However, new PET scanner systems are exploring the use of monolithic crystals, which can reconstruct interaction positions within the crystal with a specific resolution.
+In traditional PET image reconstruction, software like CASToR utilizes crystal IDs instead of the position of the interaction. This approach has sufficed because the small crystals' size inherently defines the spatial resolution. However, new PET scanner systems are exploring the use of monolithic crystals, which can reconstruct interaction positions within the crystal with a specific resolution.
 
-The Virtual Segmentation Digitizer module provides a mechanism to generate an ID based on a virtual segmentation of the monolithic crystal, aligned with its spatial resolution. Ideally, the pitch size should be at least half of the position resolution. This virtual segmentation occurs post-simulation, ensuring that the simulation speed remains uncompromised even when dealing with large systems and numerous crystals.
+The Virtual Segmentation Digitizer module provides a mechanism to generate an ID based on a virtual segmentation of the monolithic crystal, aligned with its spatial resolution. Ideally, the pitch size should be at least half of the position resolution. This virtual segmentation occurs post-simulation, ensuring that the simulation speed remains uncompromised even when dealing with large systems and numerous crystals such as total-body PET scans.
 
 A GateTool associated with this digitizer allows users to create a new geometry macro with the segmented geometry, suitable for use in image reconstruction software.
 
