@@ -1190,13 +1190,29 @@ This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, 
 
 *"useMacroGenerator"* boolean flag that determines if the user wants to generate the new geometry macro with the segmentation.
 
-Example::
+
+
+
+Example providing spatial resolution::
+
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/insert                      		spatialResolution
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/spatialResolution/fwhm			2. mm
+
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/insert                       		virtualSegmentation
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/nameAxis 		XYZ
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/useMacroGenerator true
+
+In this case, a value for the FWHM for the spatial resolution was provided but no pitch size was given to the virtual segmentation. The module will read the value of spatial resolution and will generate a pitch size that is, at least, half of the value of the FWHM in spatial resolution.
+
+
+Example providing the pitch::
 
 /gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/insert                       virtualSegmentation
 /gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/nameAxis XYZ
-/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/pitch 5.0 mm
+/gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/pitch 1.0 mm
 /gate/digitizerMgr/<sensitive_detector>/SinglesDigitizer/Singles/virtualSegmentation/useMacroGenerator true
 
+In this case, the pitch size is provided by the user and it will be used regardless of any values of FWHM provided in the spatial resolution module.
 
 
 
