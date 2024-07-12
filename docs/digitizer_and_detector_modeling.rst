@@ -1182,6 +1182,43 @@ The size of the crystal should be defined at the Submodule level using Air as th
 The crystal and layer0 levels should both reflect the crystal size and use the crystal's material.
 This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, Crystal, and Submodule levels, respectively.
 
+Example::
+
+# C R Y S T A L
+/gate/rsector/daughters/name crystal
+/gate/rsector/daughters/insert box
+/gate/crystal/geometry/setXLength 10. mm
+/gate/crystal/geometry/setYLength 59. mm
+/gate/crystal/geometry/setZLength 59. mm
+/gate/crystal/setMaterial Air
+
+# COLUMN
+
+/gate/crystal/daughters/name column
+/gate/crystal/daughters/insert box
+/gate/column/geometry/setXLength 10. mm
+/gate/column/geometry/setYLength 59. mm
+/gate/column/geometry/setZLength 59. mm
+/gate/column/setMaterial Air
+
+
+#ROW
+/gate/column/daughters/name row
+/gate/column/daughters/insert box
+/gate/row/geometry/setXLength 10. mm
+/gate/row/geometry/setYLength 59. mm
+/gate/row/geometry/setZLength 59. mm
+/gate/row/setMaterial Air
+
+#Pseudo-Crystal
+/gate/row/daughters/name pseudo-crystal
+/gate/row/daughters/insert box
+/gate/pseudo-crystal/geometry/setXLength 10. mm
+/gate/pseudo-crystal/geometry/setYLength 59. mm
+/gate/pseudo-crystal/geometry/setZLength 59. mm
+/gate/pseudo-crystal/setMaterial PWO
+
+
 **Commands**
 
 *"nameAxis"* Enable users to specify which axes require discretization. The axis selected can be any combination of "XYZ", "XY", "XZ" or "YZ", "X", "Y" or "Z".
