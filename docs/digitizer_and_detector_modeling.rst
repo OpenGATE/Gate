@@ -1184,7 +1184,7 @@ This setup allows new virtual IDs for the XYZ axes to be assigned at the Layer, 
 
 Example::
 
-	# C R Y S T A L
+	# CRYSTAL
 	/gate/rsector/daughters/name crystal
 	/gate/rsector/daughters/insert box
 	/gate/crystal/geometry/setXLength 10. mm
@@ -1192,8 +1192,7 @@ Example::
 	/gate/crystal/geometry/setZLength 59. mm
 	/gate/crystal/setMaterial Air
 
-	# COLUMN
-
+	# Level saved for the virtual COLUMN
 	/gate/crystal/daughters/name column
 	/gate/crystal/daughters/insert box
 	/gate/column/geometry/setXLength 10. mm
@@ -1202,7 +1201,7 @@ Example::
 	/gate/column/setMaterial Air
 
 
-	#ROW
+	#Level saved for the virtual ROW
 	/gate/column/daughters/name row
 	/gate/column/daughters/insert box
 	/gate/row/geometry/setXLength 10. mm
@@ -1210,7 +1209,7 @@ Example::
 	/gate/row/geometry/setZLength 59. mm
 	/gate/row/setMaterial Air
 
-	#Pseudo-Crystal
+	#Level saved for the virtual Pseudo-Crystal (now the real material needs to be used)
 	/gate/row/daughters/name pseudo-crystal
 	/gate/row/daughters/insert box
 	/gate/pseudo-crystal/geometry/setXLength 10. mm
