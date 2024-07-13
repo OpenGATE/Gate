@@ -9,7 +9,7 @@ See LICENSE.md for further details
 /*!
   \class  GateSinglesDigitizerMessenger
 
-  Last modification (Adaptation to GND): May 2023 by Mohamed-Jordan Soumano mjsoumano@yahoo.com
+  Last modification (Adaptation to GND): July 2024 by Marc Granado-Gonzalez marc.granado@universite-paris-saclay.fr
   */
 
 #include "GateSinglesDigitizer.hh"

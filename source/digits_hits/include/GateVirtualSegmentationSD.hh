@@ -14,8 +14,9 @@ See LICENSE.md for further details
 
 
 /*! \class  GateVirtualSegmentationSD
-    \brief  GateVirtualSegmentationSD does some dummy things with input digi
-    to create output digi
+    \brief  GateVirtualSegmentationSD  - For each volume the local position of the interactions within the crystal are virtually segmented.
+	the X,Y,Z vector is translated into the IDs of virtual divisions within the crystal
+
 
     - GateVirtualSegmentationSD - by marc.granado@universite-paris-saclay.fr
 

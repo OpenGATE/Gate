@@ -188,6 +188,15 @@ void GateVirtualSegmentationSD::Digitize()
 					std::string command = "python3 "+path_to_script+"macro_converter.py";
 					command +=" -d "+path_to_macros+"digitizer.mac";
 					command +=" -g "+path_to_macros+"geometry_pseudo-crystal.mac";
+
+					if (pitchX) command +=" -x "+std::to_string(pitchX);
+					if (pitchY) command +=" -y "+std::to_string(pitchY);
+					if (pitchZ) command +=" -z "+std::to_string(pitchZ);
+
+					if (nBinsX) command +=" --binsX "+std::to_string(nBinsX);
+					if (nBinsY) command +=" --binsY "+std::to_string(nBinsY);
+					if (nBinsZ) command +=" --binsZ "+std::to_string(nBinsZ);
+
 					int result = system(command.c_str());
 					if (result ==0) std::cout<<"The macro converter script has been executed corectly"<<std::endl;
 					else std::cout<<"There was an error in the execution of the macro converter script"<<std::endl;
@@ -333,7 +342,7 @@ G4double GateVirtualSegmentationSD::calculatePitch(G4double crystal_size, G4doub
             break;
         }
         else if (num_pitches>1000){
-        	std::cout<<"ERROR! No pitch found in 1000 iterations!"<<std::endl;
+        	std::cout<<"ERROR! No pitch found in 1000 iterations! Size = "<<crystal_size<<" and desired pitch = "<<pitch<<std::endl;
         	break;
         }
 
@@ -479,16 +488,21 @@ void GateVirtualSegmentationSD::SetParameters()
 		if(pitchX == 0 && m_nameAxis.find('X') != std::string::npos)
 				{GateError("***ERROR*** Virtual setmentation in X axis has been selected but no value for FWHM was provided.");
 		}
-		else{
-	    	   pitchX = calculatePitch(xLength,pitchX);
-	    	   nBinsX = int(xLength/pitchX);
+		else if (pitchX!=0){
+
+				std::cout<<"Calculating pitchX with = "<<pitchX<<std::endl;
+				pitchX = calculatePitch(xLength,pitchX);
+				std::cout<<"Resulting pitchX = "<<pitchX<<std::endl;
+				nBinsX = int(xLength/pitchX);
 		}
 
 		if(pitchY == 0 && m_nameAxis.find('Y') != std::string::npos)
 				{GateError("***ERROR*** Virtual setmentation in Y axis has been selected but no value for FWHM was provided.");
 		}
-		else{
+		else if (pitchY!=0){
+			   std::cout<<"Calculating pitchY with = "<<pitchY<<std::endl;
 	    	   pitchY = calculatePitch(yLength,pitchY);
+	    	   std::cout<<"Resulting pitchY = "<<pitchY<<std::endl;
 	    	   nBinsY = int(yLength/pitchY);
 		}
 
@@ -497,8 +511,11 @@ void GateVirtualSegmentationSD::SetParameters()
 		if(pitchZ == 0 && m_nameAxis.find('Z') != std::string::npos)
 				{GateError("***ERROR*** Virtual setmentation in Z axis has been selected but no value for FWHM was provided.");
 		}
-		else{
+		else if (pitchZ!=0){
+
+			   std::cout<<"Calculating pitchZ with = "<<pitchZ<<std::endl;
 	    	   pitchZ = calculatePitch(zLength,pitchZ);
+	    	   std::cout<<"Resulting pitchZ = "<<pitchZ<<std::endl;
 	    	   nBinsZ = int(zLength/pitchZ);
 		}
 
