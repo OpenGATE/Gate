@@ -26,7 +26,7 @@
 #include "GateSpatialResolution.hh"
 #include "GateSpatialResolutionMessenger.hh"
 
-
+#include "GateBoxComponent.hh"
 
 #include "GateDigitizerMgr.hh"
 
@@ -104,15 +104,14 @@ GateVirtualSegmentationSD::~GateVirtualSegmentationSD()
 void GateVirtualSegmentationSD::Digitize()
 {
 
-	//TODO Create the check that tells you that
 	GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 
-	if (m_system==NULL) G4Exception( "GateSpatialResolution::Digitize", "Digitize", FatalException,
+	if (m_system==NULL) G4Exception( "GateVirtualSegmentationSD::Digitize", "Digitize", FatalException,
 				 "Failed to get the system corresponding to that digitizer. Abort.\n");
 
 	if (!m_system->CheckIfEnoughLevelsAreDefined())
 	{
-		 GateError( " *** ERROR*** GateSpatialResolution::Digitize. Not all defined geometry levels has their mother levels defined."
+		 GateError( " *** ERROR*** GateVirtualSegmentationSD::Digitize. Not all defined geometry levels has their mother levels defined."
 				 "(Ex.: for cylindricalPET, the levels are: rsector, module, submodule, crystal). If you have defined submodule, you have to have resector and module defined as well."
 				 "Please, add them to your geometry macro in /gate/systems/cylindricalPET/XXX/attach    YYY. Abort.\n");
 	}
@@ -120,11 +119,6 @@ void GateVirtualSegmentationSD::Digitize()
 
 
 	m_systemDepth = m_system->GetTreeDepth();
-	//TODO I need to create another parameter asking if pitch is provided by hand.
-	//I need to get system, system depth. Check that the size for the last 4 solids is the same (Monolithic crystal)
-	//Need to access  pitch
-
-
 
 	G4String digitizerName = m_digitizer->m_digitizerName;
 	G4String outputCollName = m_digitizer-> GetOutputName();
@@ -139,8 +133,6 @@ void GateVirtualSegmentationSD::Digitize()
 	IDC = (GateDigiCollection*) (DigiMan->GetDigiCollection(m_DCID));
 
 	GateDigi* inputDigi;
-
-	//What about these lines? Why are they not in SpatialResolution? Apparetnly
 	std::vector< GateDigi* >* OutputDigiCollectionVector = m_OutputDigiCollection->GetVector ();
 	std::vector<GateDigi*>::iterator iter;
 
@@ -163,7 +155,7 @@ void GateVirtualSegmentationSD::Digitize()
 	        yLength = 2*box->GetYHalfLength();
 	        zLength = 2*box->GetZHalfLength();
 		  }
-		  else std::cout<<"Well that's another problem here..."<< std::endl;
+		  else GateError( " *** ERROR*** No volumeID in inputDigi!");
 
 
 
@@ -180,7 +172,9 @@ void GateVirtualSegmentationSD::Digitize()
 				SetParameters();
 
 
+
 				if (useMacroGenerator){
+					/*
 					std::string path_to_script = "/home/granado/GATE_projects/MonoCrystals/tests/mac/";
 					std::string path_to_macros = "/home/granado/GATE_projects/MonoCrystals/tests/mac/";
 				//Once this is implemented as a GateTool it will be:
@@ -200,6 +194,8 @@ void GateVirtualSegmentationSD::Digitize()
 					int result = system(command.c_str());
 					if (result ==0) std::cout<<"The macro converter script has been executed corectly"<<std::endl;
 					else std::cout<<"There was an error in the execution of the macro converter script"<<std::endl;
+				*/
+					std::cout<<"Sorry, the macro converter script has not yet been implemented"<<std::endl;
 				}
 
 				m_IsFirstEntry=0;
@@ -221,9 +217,9 @@ void GateVirtualSegmentationSD::Digitize()
 		       m_outputDigi->SetEnergyFin(-1);
 
 
+		       //Accessing the local position of the hit to define and set the new VirtualID
+
 		       G4ThreeVector localPos = inputDigi->GetLocalPos();
-
-
 
 		       if(m_nameAxis.find('X') != std::string::npos){
 		    	   SetVirtualID(nBinsX,pitchX,localPos.getX(),depthX);
@@ -291,33 +287,8 @@ void GateVirtualSegmentationSD::SetNameAxis(const G4String &param)
 ///////////////////////////////////////////
 
 
+//TODO: This function could be further optimised (but only used once)
 
-/*
-G4double GateVirtualSegmentationSD::calculatePitch(G4double crystal_size, G4double target_pitch) {
-
-
-	// Target pitch size
-
-         std::cout<<"Spatial Resolution: "<<spatial_resolution<<std::endl;
-         double best_pitch = 0;
-         double min_diff = std::numeric_limits<double>::max();
-
-         // Iterate to find the best pitch size
-         for (int num_pitches = 1; num_pitches <= crystal_size; ++num_pitches) {
-             double pitch = crystal_size / num_pitches;
-             if (std::fabs(pitch - target_pitch) < min_diff && std::fmod(crystal_size, pitch) == 0) {
-                 min_diff = std::fabs(pitch - target_pitch);
-                 best_pitch = pitch;
-             }
-         }
-
-         std::cout<<"Best pitch is: "<<best_pitch<<" weird since the condition is to be smaller than: "<< min_diff<<std::endl;
-
-         return best_pitch;
-     }
-*/
-
-//TODO: This function needs much optimising
 G4double GateVirtualSegmentationSD::calculatePitch(G4double crystal_size, G4double target_pitch) {
     // Target pitch size
 
@@ -353,28 +324,6 @@ G4double GateVirtualSegmentationSD::calculatePitch(G4double crystal_size, G4doub
     return best_pitch;
 }
 
-/*
-void GateVirtualSegmentationSD::SetVirtualIDs( int nBinsX, int nBinsY,int nBinsZ,double pitchX,double pitchY,double pitchZ, G4ThreeVector& pos ){
-
-
-     int binX,binY,binZ;
-
-
-
-	 binX = std::floor(pos.getX()/pitchX+nBinsX/2);
-	 binY = std::floor(pos.getY()/pitchY+nBinsY/2);
-	 binZ = std::floor(pos.getZ()/pitchZ+nBinsY/2);
-
-
-	 //Change the OutputVolumeID at depths 3,4,5
-	 //(SubmoduleID=binZ, crystalID = binY and layerID = binX)
-	 m_outputDigi->SetOutputVolumeID(binZ,3);
-	 m_outputDigi->SetOutputVolumeID(binY,4);
-	 m_outputDigi->SetOutputVolumeID(binX,5);
-
-
- }
-*/
 
 
 
@@ -410,12 +359,22 @@ void GateVirtualSegmentationSD::SetParameters()
 
 {
 
+
+	//Setting the global parameters
+
+
+
+	//Obtaining the spatial resolution digitizer to use the its values for the definition of the pitch in case no pitch has been provided by the user
 	GateSpatialResolution* digi_SpatialResolution;
 		digi_SpatialResolution =  dynamic_cast<GateSpatialResolution*>(m_digitizer->FindDigitizerModule("digitizerMgr/"
 		    		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  +m_digitizer->GetSD()->GetName()
 																							  +"/SinglesDigitizer/"
 																							  + m_digitizer->GetName()
+
 																							  + "/spatialResolution"));
+
+
+	//Setting the pitch size provided by the user
 
 	if(m_pitch){
 			if(m_nameAxis.find('X') != std::string::npos)
@@ -522,7 +481,7 @@ void GateVirtualSegmentationSD::SetParameters()
 
 
 
-
+		//setting the levels of depth for each variable from bottom to top in order XYZ
 
 	       if(m_nameAxis.find('X') != std::string::npos){
     		   depthX=depthX;
@@ -556,73 +515,48 @@ void GateVirtualSegmentationSD::SetParameters()
 
 
 
+	       //Testing there are no repeaters in the depth levels needed for the virtual ID's.
+
+	       GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
+
+
+	       GateSystemComponent* m_submoduleComponent = m_system->FindComponent("submodule");
+	       GateSystemComponent* m_crystalComponent = m_system->FindComponent("crystal");
+	       GateSystemComponent* m_layer0Component= m_system->FindComponent("layer0");
+	       std::cout<<"System depth is: "<<m_systemDepth<<std::endl;
+	       G4int repeaterNumber = 0;
+
+
+
+	       repeaterNumber = m_layer0Component-> GetVolumeNumber();
+      	   if (repeaterNumber > 1)
+	       	        GateError( " *** ERROR*** GateVirtualSegmentationSD::Digitize. Crystal level needs to be empty (no repeaters) to use VirtualSegmentationSD with XYZ segmentation");
+
+
+
+	       	if (m_nameAxis.size()>=2)
+	       	{
+	       	   repeaterNumber = m_crystalComponent-> GetVolumeNumber();
+	       	   if (repeaterNumber > 1)
+	       	        GateError( " *** ERROR*** GateVirtualSegmentationSD::Digitize. Crystal level needs to be empty (no repeaters) to use VirtualSegmentationSD with XYZ segmentation");
+
+	       	}
+
+
+
+
+	       if (m_nameAxis.size()==3)
+	       {
+        	   repeaterNumber = m_submoduleComponent-> GetVolumeNumber();
+	           if (repeaterNumber >1)
+	        	   	   GateError( " *** ERROR*** GateVirtualSegmentationSD::Digitize. Submodule level needs to be empty (no repeaters) to use VirtualSegmentationSD with XYZ segmentation");
+
+	       	}
+
 }
 
 
 
 
 
-/*
- *
- *
- *
- *
- *
-
-
-
-		       if(m_nameAxis.find('X') != std::string::npos){
-
-		    	   pitchX = calculatePitch(xLength,pitchX);
-		    	   nBinsX = int(xLength/pitchX);
-		    	   SetVirtualID(nBinsX,pitchX,localPos.getX(),depthX);
-
-		    	   if(m_nameAxis.find('Y') != std::string::npos){
-
-		    		   pitchY = calculatePitch(yLength,pitchY);
-  			    	   nBinsY = int(yLength/pitchY);
-		    		   SetVirtualID(nBinsY,pitchY,localPos.getY(),depthY);
-
-		    		   if(m_nameAxis.find('Z') != std::string::npos){
-
-		    			   pitchZ = calculatePitch(zLength,pitchZ);
-		    			   nBinsZ = int(zLength/pitchZ);
-		    			   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ);
-
-		    		   }
-		    	   }
-		    	   else if(m_nameAxis.find('Z') != std::string::npos){
-
-		    		   pitchZ = calculatePitch(zLength,pitchZ);
-		    		   nBinsZ = int(zLength/pitchZ);
-		    		   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+1);
-		    	   	   }
-		       }
-		       else if(m_nameAxis.find('Y') != std::string::npos){
-
-		    	   pitchY = calculatePitch(yLength,pitchY);
-			       nBinsY = int(yLength/pitchY);
-		    	   SetVirtualID(nBinsY,pitchY,localPos.getY(),depthY+1);
-
-		    	   if(m_nameAxis.find('Z') != std::string::npos){
-
-		    		   pitchZ = calculatePitch(zLength,pitchZ);
-		    		   nBinsZ = int(zLength/pitchZ);
-		    		   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+1);
-		    	   }
-		       }
-		       else if(m_nameAxis.find('Z') != std::string::npos){
-
-		    	   pitchZ = calculatePitch(zLength,pitchZ);
-		    	   nBinsZ = int(zLength/pitchZ);
-		    	   SetVirtualID(nBinsZ,pitchZ,localPos.getZ(),depthZ+2);
-		       }
-
-		       else GateError("Not entering any of the depths!");
-
-
-
-
- *
- * */
 
