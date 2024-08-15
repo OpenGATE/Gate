@@ -95,7 +95,7 @@ void GateEnergyResolution::Digitize()
 
 	GateDigi* inputDigi;
 
-	G4double reso;
+	G4double reso = 0;
 
   if (IDC)
      {
