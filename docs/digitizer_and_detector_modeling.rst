@@ -537,7 +537,7 @@ Here is an example of how to configure this in a macro file:
   /gate/distributions/my_distrib2D/setFileName    Lut(X,Y).txt
   /gate/distributions/my_distrib2D/readMatrix2d
   /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/insert spatialResolution
-  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmXdistrib2D my_distrib2D
+  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmXYdistrib2D my_distrib2D
 **Example for 1D distribution**::
 
   /gate/distributions/name   my_distrib1D
@@ -1442,8 +1442,8 @@ If the multiple coincidences are kept and not split into pairs (i.e., if any of 
 Coincidence Time Difference Selector
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Responsible for selecting events based on the time difference between input signals.
-Here is an example of how to configure this in a macro file:
+Responsible for selecting events based on the time difference between input signals. Below is an example of how to configure it in a macro file:
+
 
 
 **Example** ::
