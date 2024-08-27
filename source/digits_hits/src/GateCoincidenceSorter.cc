@@ -739,42 +739,42 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
       	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
 	return true;
 	}
-     G4ThreeVector globalPos1 = digi1->GetGlobalPos();
-      G4ThreeVector globalPos2 = digi2->GetGlobalPos();
+  G4ThreeVector globalPos1 = digi1->GetGlobalPos();
+  G4ThreeVector globalPos2 = digi2->GetGlobalPos();
 
-      // Vérification de la différence en Z entre les deux positions
-      if ((m_maxDeltaZ > 0) && (fabs(globalPos2.z() - globalPos1.z()) > m_maxDeltaZ)) {
-          if (nVerboseLevel > 1)
-              G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: difference in Z too large --> refused\n";
-          return true;
-      }
+  // Check the difference in Z between the two positions
+  if ((m_maxDeltaZ > 0) && (fabs(globalPos2.z() - globalPos1.z()) > m_maxDeltaZ)) {
+      if (nVerboseLevel > 1)
+          G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: difference in Z too large --> refused\n";
+      return true;
+  }
 
-      // Calcul du dénominateur pour la distance 's' dans le plan XY
-      G4double denom = (globalPos1.y() - globalPos2.y()) * (globalPos1.y() - globalPos2.y()) +
-                       (globalPos2.x() - globalPos1.x()) * (globalPos2.x() - globalPos1.x());
+  // Calculate the denominator for distance 's' in the XY plane
+  G4double denom = (globalPos1.y() - globalPos2.y()) * (globalPos1.y() - globalPos2.y()) +
+                   (globalPos2.x() - globalPos1.x()) * (globalPos2.x() - globalPos1.x());
 
-      G4double s = 0.0;
-      if (denom != 0.0) {
-          denom = sqrt(denom);
-          s = (globalPos1.x() * (globalPos1.y() - globalPos2.y()) +
-               globalPos1.y() * (globalPos2.x() - globalPos1.x())) / denom;
-      }
+  G4double s = 0.0;
+  if (denom != 0.0) {
+      denom = sqrt(denom);
+      s = (globalPos1.x() * (globalPos1.y() - globalPos2.y()) +
+           globalPos1.y() * (globalPos2.x() - globalPos1.x())) / denom;
+  }
 
-      // Calcul de l'angle theta dans le plan XY
-      G4double theta = atan2(globalPos1.x() - globalPos2.x(), globalPos1.y() - globalPos2.y());
-      if (theta < 0.0) {
-          theta += pi; // Ajuste theta pour qu'il soit dans l'intervalle [0, pi]
-          s = -s;      // Inverse la distance s si l'angle est ajusté
-      }
+  // Calculate the angle theta in the XY plane
+  G4double theta = atan2(globalPos1.x() - globalPos2.x(), globalPos1.y() - globalPos2.y());
+  if (theta < 0.0) {
+      theta += pi; // Adjust theta to be in the range [0, pi]
+      s = -s;      // Invert the distance s if the angle is adjusted
+  }
 
-      // Vérification de la distance 's' par rapport au seuil maximal
-      if ((m_maxS > 0) && (fabs(s) > m_maxS)) {
-          if (nVerboseLevel > 1)
-              G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: distance s too large --> refused\n";
-          return true;
-      }
+  // Check the distance 's' against the maximum threshold
+  if ((m_maxS > 0) && (fabs(s) > m_maxS)) {
+      if (nVerboseLevel > 1)
+          G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: distance s too large --> refused\n";
+      return true;
+  }
 
-      return false;
+  return false;
   }
 }
 //------------------------------------------------------------------------------------------------------
