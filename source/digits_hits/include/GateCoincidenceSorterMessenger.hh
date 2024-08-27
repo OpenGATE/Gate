@@ -69,6 +69,8 @@ private:
     G4UIcmdWithABool            *AllDigiOpenCoincGateCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *SetTriggerOnlyByAbsorberCmd;
     G4UIcmdWithABool            *SetEventIDCoincCmd;
+    G4UIcmdWithADoubleAndUnit *maxSCmd; //!< set the max time window
+    G4UIcmdWithADoubleAndUnit *maxDeltaZCmd; //!< set the max time window
     GateCoincidenceSorter* m_CoincidenceSorter;
 
 };

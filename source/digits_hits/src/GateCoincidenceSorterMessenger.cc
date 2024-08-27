@@ -53,6 +53,16 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   minSectorDiffCmd->SetParameterName("diff",false);
   minSectorDiffCmd->SetRange("diff>=1");
 
+  cmdName = GetDirectoryName() + "setSMax";
+  maxSCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  maxSCmd->SetGuidance("Set max S value accepted (<0 --> all is accepted)");
+  maxSCmd->SetUnitCategory("Length");
+
+  cmdName = GetDirectoryName() + "setDeltaZMax";
+  maxDeltaZCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  maxDeltaZCmd->SetGuidance("Set max delta Z value accepted (<0 --> all is accepted)");
+  maxDeltaZCmd->SetUnitCategory("Length");
+
   cmdName = GetDirectoryName()+"forceMinSecDifferenceToZero";
   forceMinSectorDiffCmd = new G4UIcmdWithABool(cmdName,this);
   forceMinSectorDiffCmd->SetGuidance("Force the minimum sector difference for valid coincidences to 0: specsific case for prototype testbench simulations.");
@@ -118,6 +128,8 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
     delete SetAcceptancePolicy4CCCmd;
     delete SetEventIDCoincCmd;
     delete forceMinSectorDiffCmd;
+    delete maxSCmd;
+    delete maxDeltaZCmd;
 }
 
 
@@ -135,6 +147,10 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { m_CoincidenceSorter->SetForcedTo0MinSectorDifference(forceMinSectorDiffCmd->GetNewBoolValue(newValue)); }
   else if( aCommand == minSectorDiffCmd )
     { m_CoincidenceSorter->SetMinSectorDifference(minSectorDiffCmd->GetNewIntValue(newValue)); }
+  else if (aCommand==maxSCmd)
+	  m_CoincidenceSorter->SetMaxS(maxSCmd->GetNewDoubleValue(newValue));
+  else if (aCommand==maxDeltaZCmd)
+	  m_CoincidenceSorter->SetMaxDeltaZ(maxDeltaZCmd->GetNewDoubleValue(newValue));
   else if( aCommand == setDepthCmd )
     { m_CoincidenceSorter->SetDepth(setDepthCmd->GetNewIntValue(newValue)); }
   else if( aCommand == setPresortBufferSizeCmd )
