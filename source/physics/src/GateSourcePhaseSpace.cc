@@ -219,10 +219,10 @@ void GateSourcePhaseSpace::InitializeROOTSingle()
             time_type = typeid(double);
         }
     }
-    if (mTimeIsUsed and !mChain.has_variable("Time"))
+    /*if (mTimeIsUsed and !mChain.has_variable("Time"))
     {
         GateError("The option 'ignoreTime' is false, but no time was found in the phsp.");
-    }
+    }*/
 }
 // ----------------------------------------------------------------------------------
 

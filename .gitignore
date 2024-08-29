@@ -8,6 +8,8 @@ GTAGS
 .DS_Store
 -/.idea/
 cmake-build-*
+.idea_save
+
 
 /.idea/
 /GateBenchmarks
