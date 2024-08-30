@@ -1432,7 +1432,6 @@ Here is an example of how to configure this in a macro file:
 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/setMode 1
 
 
-
 For a coincidence sorter user can chose a presort buffer with a following command: 
 
    /gate/digitizer/Coincidences/setPresortBufferSize 256 
@@ -1444,7 +1443,7 @@ A presort buffer contains singles that have not yet been checked for coincidence
 Multiple coincidence removal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the multiple coincidences are kept and not split into pairs (i.e., if any of the **keepXXX** multiple coincidence policies are used), the multicoincidences could contribute to dataflow occupancy but cannot be written to the disk. Unless otherwise specified, any multicoincidence is then cleared from data just before the disk writing. If needed, this clearing could be performed at any earlier coincidence processing step by inserting the **MultiplesKiller** module at the required level. This module has no parameters and simply removes the multicoincidence events. Multiple coincidences split into many pairs are not affected by this module and cannot be distinguished from normal "simple" coincidences. To insert a multipleKiller, use the syntax ::
+If the multiple coincidences are kept and not split into pairs (i.e., if any of the **keepXXX** multiple coincidence policies are used), the multicoincidences could contribute to dataflow occupancy but cannot be written to the disk. Unless otherwise specified, any multicoincidence is then cleared from data just before the disk writing. If needed, this clearing could be performed at any earlier coincidence processing step by inserting the **multiplesKiller** module at the required level. This module has no parameters and simply removes the multicoincidence events. Multiple coincidences split into many pairs are not affected by this module and cannot be distinguished from normal "simple" coincidences. To insert a multipleKiller, use the syntax ::
 
 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert multiplesKiller
 
@@ -1453,7 +1452,7 @@ If the multiple coincidences are kept and not split into pairs (i.e., if any of 
 Coincidence Time Difference Selector
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Responsible for selecting events based on the time difference between input signals. Below is an example of how to configure it in a macro file:
+This module reprocesses the list of coincidences and applies a cut on the time difference between two Singles forming the coincidence, i. e. appalling a cut tighter than coincidence time window selected by coincidence sorter.
 
 
 
