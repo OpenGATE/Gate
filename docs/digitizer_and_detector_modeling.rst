@@ -1302,12 +1302,20 @@ To change the default value of the minimum sector difference for valid coinciden
 To change the default value of the maximum allowable difference in the z positions of two events (disabled by default), the command line should be used::
 
 
-/gate/digitizer/Coincidences/setMaxDeltaZ <value_in_mm>
+  /gate/digitizer/Coincidences/setMaxDeltaZ <value_in_mm>
 
 To change the default value of the maximum allowable sector distance s between two events (disabled by default), the command line should be used::
 
 
-/gate/digitizer/Coincidences/setMaxS <value_in_mm>
+  /gate/digitizer/Coincidences/setMaxS <value_in_mm>
+
+
+Comment: The setMaxS command performs a similar function to minSectorDifference but is adapted for non-standard scanners, such as square-shaped ones. It is an additional option provided for the user to offer greater flexibility.
+
+
+
+
+
 
 By default, the offset value is equal to 0, which corresponds to a prompt coincidence sorter. If a delayed coincidence sorter is to be simulated, with a 100 ns time shift for instance, the offset value should be set using the command::
 
