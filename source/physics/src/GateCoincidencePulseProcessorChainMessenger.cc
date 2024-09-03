@@ -20,7 +20,7 @@ See LICENSE.md for further details
 #include "GateCoincidencePulseProcessorChain.hh"
 
 //#include "GateCoincidenceDeadTime.hh"
-#include "GateCoincidenceGeometrySelector.hh"
+//#include "GateCoincidenceGeometrySelector.hh"
 #include "GateTriCoincidenceSorter.hh" //mhadi_add
 #include "GateCCCoincidenceSequenceRecon.hh"//AE
 
@@ -94,8 +94,8 @@ void GateCoincidencePulseProcessorChainMessenger::DoInsertion(const G4String& ch
     newProcessor = new GateCCCoincidenceSequenceRecon(GetProcessorChain(),newInsertionName);
   //else if (childTypeName=="timeDiffSelector")
     //newProcessor = new GateCoincidenceTimeDiffSelector(GetProcessorChain(),newInsertionName);
-  else if (childTypeName=="geometrySelector")
-    newProcessor = new GateCoincidenceGeometrySelector(GetProcessorChain(),newInsertionName);
+  //else if (childTypeName=="geometrySelector")
+    //newProcessor = new GateCoincidenceGeometrySelector(GetProcessorChain(),newInsertionName);
  // else if (childTypeName=="buffer")
    // newProcessor = new GateCoincidenceBuffer(GetProcessorChain(),newInsertionName);
   //else if (childTypeName=="multiplesKiller")
