@@ -762,7 +762,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
 
 
   // Check the distance 's' against the maximum threshold
-  if ((m_minS > 0) && (fabs(s) > m_minS)) {
+  if ((m_minS < 0) && (fabs(s) < m_minS)) {
       if (nVerboseLevel > 1)
           G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: distance s too large --> refused\n";
       return true;
