@@ -40,7 +40,7 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
     m_offset(0.),
     m_offsetJitter(0.),
     m_minSectorDifference(2),
-	m_maxS (-1),
+	m_minS (-1),
 	m_maxDeltaZ ( -1),
     m_forceMinSecDifferenceToZero(false),	  
     m_multiplesPolicy(kKeepIfAllAreGoods),
@@ -760,15 +760,9 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
            globalPos1.y() * (globalPos2.x() - globalPos1.x())) / denom;
   }
 
-  // Calculate the angle theta in the XY plane
-  G4double theta = atan2(globalPos1.x() - globalPos2.x(), globalPos1.y() - globalPos2.y());
-  if (theta < 0.0) {
-      theta += pi; // Adjust theta to be in the range [0, pi]
-      s = -s;      // Invert the distance s if the angle is adjusted
-  }
 
   // Check the distance 's' against the maximum threshold
-  if ((m_maxS > 0) && (fabs(s) > m_maxS)) {
+  if ((m_minS > 0) && (fabs(s) > m_minS)) {
       if (nVerboseLevel > 1)
           G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: distance s too large --> refused\n";
       return true;
