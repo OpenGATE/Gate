@@ -1304,16 +1304,14 @@ To change the default value of the maximum allowable difference in the z positio
 
   /gate/digitizer/Coincidences/setMaxDeltaZ <value_in_mm>
 
-To change the default value of the maximum allowable sector distance s between two events (disabled by default), the command line should be used::
 
 
-  /gate/digitizer/Coincidences/setMaxS <value_in_mm>
+For non-standard scanners, such as square-shaped ones, you can set the minimum allowable sector distance s between two events. This option provides more flexibility than the default minimum sector difference::
 
 
-Comment: The setMaxS command performs a similar function to minSectorDifference but is adapted for non-standard scanners, such as square-shaped ones. It is an additional option provided for the user to offer greater flexibility.
+/gate/digitizer/Coincidences/setMinS <value_in_mm>
 
-
-
+This command is particularly useful for defining the minimum spatial separation required between two events in non-circular or irregular scanner geometries. The setMinS command allows users to control this parameter directly.
 
 
 
