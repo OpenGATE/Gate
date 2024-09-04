@@ -1296,24 +1296,17 @@ To set up a coincidence window of 10 ns, the user should specify::
 
 To change the default value of the minimum sector difference for valid coincidences (the default value is 2), the command line should be used::
 
-
-
    /gate/digitizerMgr/CoincidenceSorter/Coincidences/minSectorDifference <number> 
-To change the default value of the maximum allowable difference in the z positions of two events (disabled by default), the command line should be used::
 
+To change the default value of the maximum allowable difference in the z positions of two events (disabled by default), the command line should be used::
 
   /gate/digitizer/Coincidences/setMaxDeltaZ <value_in_mm>
 
-
-
 For non-standard scanners, such as square-shaped ones, you can set the minimum allowable sector distance s between two events. This option provides more flexibility than the default minimum sector difference::
 
-
-/gate/digitizer/Coincidences/setMinS <value_in_mm>
+/gate/digitizer/Coincidences/setSMin <value_in_mm>
 
 This command is particularly useful for defining the minimum spatial separation required between two events in non-circular or irregular scanner geometries. The setMinS command allows users to control this parameter directly.
-
-
 
 By default, the offset value is equal to 0, which corresponds to a prompt coincidence sorter. If a delayed coincidence sorter is to be simulated, with a 100 ns time shift for instance, the offset value should be set using the command::
 
@@ -1579,13 +1572,13 @@ Example::
    89 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/deadtime/conserveAllEvent false #true
    90 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/deadtime/verbose  6
    91
-   92 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert Buffer
-   93 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setBufferSize 64 B
-   94 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setReadFrequency 0.1 MHz
-   95 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setMode 0
-   96 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/describe
+   92 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert buffer
+   93 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/setBufferSize 64 B
+   94 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/setReadFrequency 0.1 MHz
+   95 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/setMode 0
+   96 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/describe
    97
-   98 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert MultiplesKiller
+   98 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert multiplesKiller
    99  
    100 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert timeDiffSelector
    101 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/timeDiffSelector/setMin 1 ns
