@@ -53,7 +53,7 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   minSectorDiffCmd->SetParameterName("diff",false);
   minSectorDiffCmd->SetRange("diff>=1");
 
-  cmdName = GetDirectoryName() + "SetMinS";
+  cmdName = GetDirectoryName() + "setSMin";
   minSCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
   minSCmd->SetGuidance("Set min S value accepted (<0 --> all is accepted)");
   minSCmd->SetUnitCategory("Length");
