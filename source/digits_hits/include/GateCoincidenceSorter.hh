@@ -39,16 +39,29 @@ class GateDigitizerMgr;
 
 //    01/2016 Rewritten completely by Jared.STRYDHORST@cea.fr
 
+//    2023 Added to GND kochebina@gmail.com
+
+/*
+  09/24 kochebina@gmail.com
+  Simplification of number of options for multiple coincidences 
+  remove "keep" and replace (or remove if double) with "take", 
+  i.e. all coincidecnes are now written on disk
+  keepIfAllAreGoods = takeWinnerIfAllAreGoods
+  keepIfOnlyOneGood = takeWinnerIfOnlyOneGood
+  keepIfAnyIsGood = takeWinnerOfGoods
+  kKeepAll = removed
+*/
 typedef enum {kKillAll,
               kTakeAllGoods,
               kKillAllIfMultipleGoods,
               kTakeWinnerOfGoods,
               kTakeWinnerIfIsGood,
               kTakeWinnerIfAllAreGoods,
-              kKeepIfAllAreGoods,
-              kKeepIfOnlyOneGood,
-              kKeepIfAnyIsGood,
-              kKeepAll} multiple_policy_t;
+              kTakeWinnerIfOnlyOneGood
+              //kKeepIfOnlyOneGood,
+              //kKeepIfAnyIsGood,
+              //kKeepAll
+              } multiple_policy_t;
 
 
 

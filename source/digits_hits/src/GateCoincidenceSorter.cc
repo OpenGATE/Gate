@@ -43,7 +43,7 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
 	m_minS (-1),
 	m_maxDeltaZ ( -1),
     m_forceMinSecDifferenceToZero(false),	  
-    m_multiplesPolicy(kKeepIfAllAreGoods),
+    m_multiplesPolicy(kTakeWinnerIfAllAreGoods),
     m_allDigiOpenCoincGate(false),
     m_depth(1),
     m_presortBufferSize(256),
@@ -132,15 +132,31 @@ void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
     else if (policy=="killAllIfMultipleGoods")
     	m_multiplesPolicy=kKillAllIfMultipleGoods;
     else if (policy=="keepIfAnyIsGood")
-    	m_multiplesPolicy=kKeepIfAnyIsGood;
+      {
+	m_multiplesPolicy= kTakeWinnerOfGoods;//kKeepIfAnyIsGood;
+	G4cout<<"WARNING (Coincidence Sorter): used policy keepIfAnyIsGood is outdated. Please, use takeWinnerOfGoods instead.\n";
+      }
     else if (policy=="keepIfOnlyOneGood")
-    	m_multiplesPolicy=kKeepIfOnlyOneGood;
-    else if (policy=="keepAll")
-    	m_multiplesPolicy=kKeepAll;
+      {
+      m_multiplesPolicy= kTakeWinnerIfOnlyOneGood;//kKeepIfOnlyOneGood;
+      G4cout<<"WARNING (Coincidence Sorter): used policy keepIfOnlyOneGood is outdated. Please, use takeWinnerIfOnlyOneGood instead.\n";
+      }
+    else if (policy=="takeWinnerIfOnlyOneGood")
+      {
+      m_multiplesPolicy= kTakeWinnerIfOnlyOneGood;
+      }
+    
+    //else if (policy=="keepAll")
+    //	m_multiplesPolicy=kKeepAll;
     else {
-    	if (policy!="keepIfAllAreGoods")
-    	    G4cout<<"WARNING : policy not recognized, using default : keepMultiplesIfAllAreGoods\n";
-  	m_multiplesPolicy=kKeepIfAllAreGoods;
+      if(policy == "keepIfAllAreGoods")
+	G4cout<<"WARNING (Coincidence Sorter): used policy keepIfAllAreGoods is outdated. Please, use takeWinnerIfAllAreGoods instead.\n";
+      else
+    	if (policy!="takeWinnerIfAllAreGoods" )
+	  G4cout<<"WARNING : policy not recognized, using default : takeWinnerIfAllAreGoods\n";
+	
+  	m_multiplesPolicy= kTakeWinnerIfAllAreGoods;//kKeepIfAllAreGoods;
+
     }
 }
 //------------------------------------------------------------------------------------------------------
@@ -454,9 +470,9 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
       return;
     }
 
-    //G4cout<<"nGoods = "<<  nGoods<<G4endl;
+    /*//G4cout<<"nGoods = "<<  nGoods<<G4endl;
     // all the Keep* policies pass on a multi-coincidence rather than breaking into pairs
-    if( ( (m_multiplesPolicy==kKeepIfAnyIsGood) /*&& (nGoods>0)*/ ) || // if nGoods = 0, we don't get here
+    if( ( (m_multiplesPolicy==kKeepIfAnyIsGood) /*&& (nGoods>0)*/ /*) || // if nGoods = 0, we don't get here
     	( (m_multiplesPolicy==kKeepIfOnlyOneGood) && (nGoods==1)           ) ||
         ( (m_multiplesPolicy==kKeepIfAllAreGoods) && (nGoods==(nDigis*(nDigis-1)/2)) ) )
     {
@@ -470,6 +486,21 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
       delete coincidence;
       return;
     }
+     */
+    if	( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) && (nGoods==1)) 
+    {
+    	m_OutputCoincidenceDigiCollection->insert(coincidence);
+      return; // don't delete the coincidence
+    }
+    if( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) )
+    {
+      delete coincidence;
+      return;
+    }
+
+
+
+    
     // find winner and count the goods
     maxE = 0.0;
     nGoods = 0;

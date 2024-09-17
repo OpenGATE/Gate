@@ -89,7 +89,7 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   cmdName = GetDirectoryName()+"MultiplesPolicy";
   MultiplePolicyCmd = new G4UIcmdWithAString(cmdName,this);
   MultiplePolicyCmd->SetGuidance("How to treat multiples coincidences");
-  MultiplePolicyCmd->SetCandidates("killAll takeAllGoods killAllIfMultipleGoods takeWinnerOfGoods takeWinnerIfIsGood takeWinnerIfAllAreGoods keepAll keepIfAnyIsGood keepIfOnlyOneGood keepIfAllAreGoods");
+  MultiplePolicyCmd->SetCandidates("killAll takeAllGoods killAllIfMultipleGoods takeWinnerOfGoods takeWinnerIfIsGood takeWinnerIfAllAreGoods takeWinnerIfOnlyOneGood keepIfAllAreGoods keepIfOnlyOneGood keepIfAnyIsGood");
 
   cmdName = GetDirectoryName()+"allDigiOpenCoincGate";
   AllDigiOpenCoincGateCmd = new G4UIcmdWithABool(cmdName,this);
