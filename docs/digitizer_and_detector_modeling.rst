@@ -1225,9 +1225,9 @@ An experimental method used to estimate the number of random coincidences consis
 Multiple coincidences
 ~~~~~~~~~~~~~~~~~~~~~
 
-When more than two *singles* are found in coincidence, several type of behavior could be implemented. GATE allows to model 9 different rules that can be used in such a case. The list of rules along with their explanation are given in :numref:`policy_tab`, and a comparison of the effects of each processing rule for various cases of multiple coincidences is shown in :numref:`MultipleCases`. If no policy is specified, the default one used is: keepIfAllAreGoods.
+When more than two *singles* are found in coincidence, several type of behavior could be implemented. GATE allows to model 9 different rules that can be used in such a case. The list of rules along with their explanation are given in :numref:`policy_tab`, and a comparison of the effects of each processing rule for various cases of multiple coincidences is shown in :numref:`MultipleCases`. If no policy is specified, the default one used is: takeWinnerIfAllAreGoods.
 
-.. table:: Available multiple policy and associated meaning. When a multiple coincidence involving n *singles* is peocessed, it is first decomposed into a list of n·(n−1) pairs which are analyzed individually. In this table, the term "good" means that a pair of singles are in coincidence and that the 2 singles are separated by a number of blocks greater than or equal to the **minSectorDifference** parameter of the coincidence sorter. The prefix "take" means that 1 or more pairs of coincidences will be stored, while the prefix "keep" means that a unique coincidence, composed of at least three singles will be kept in the data flow and is called "multicoincidence". In the latter case, the multicoincidence will not be written to the disk, but may participate to a possible deadtime or bandwidth occupancy. The user may clear the multicoincidence at any desired step of the acquisition, by using the multipleKiller pulse processor (described in #Multiple coincidence removal). The "kill" prefix means that all events will be discarded and will not produce any coincidence.
+.. table:: Available multiple policy and associated meaning. When a multiple coincidence involving n *singles* is peocessed, it is first decomposed into a list of n·(n−1) pairs which are analyzed individually. In this table, the term "good" means that a pair of singles are in coincidence and that the 2 singles are separated by a number of blocks greater than or equal to the **minSectorDifference** parameter of the coincidence sorter. The prefix "take" means that 1 or more pairs of coincidences will be stored. The user may clear the multicoincidence at any desired step of the acquisition, by using the multipleKiller module (described in #Multiple coincidence removal). The "kill" prefix means that all events will be discarded and will not produce any coincidence.
    :widths: auto
    :name: policy_tab
 
@@ -1242,11 +1242,7 @@ When more than two *singles* are found in coincidence, several type of behavior 
    +-------------------------+--------------------------------------------------------------------------------------------------------+
    | takeWinnerIfAllAreGoods | If all pairs are goods, take the one with the highest energy                                           | 
    +-------------------------+--------------------------------------------------------------------------------------------------------+
-   | keepIfOnlyOneGood       | If exactly one pair is good, keep the multicoincidence                                                 | 
-   +-------------------------+--------------------------------------------------------------------------------------------------------+
-   | keepIfAnyIsGood         | If at least one pair is good, keep the multicoincidence                                                | 
-   +-------------------------+--------------------------------------------------------------------------------------------------------+
-   | keepIfAllAreGoods       | If all pairs are goods, keep the multicoincidence                                                      | 
+   | takeWinnerIfOnlyOneGood | If exactly one pair is good 			                                                      | 
    +-------------------------+--------------------------------------------------------------------------------------------------------+
    | killAllIfMultipleGoods  | If more than one pairs is good, the event is seen as a real "multiple" and thus, all events are killed | 
    +-------------------------+--------------------------------------------------------------------------------------------------------+
@@ -1257,7 +1253,7 @@ When more than two *singles* are found in coincidence, several type of behavior 
    :alt: Figure 5: MultipleCases
    :name: MultipleCases
 
-   Comparison of the behavior of the available multiple processing policies, for various multiple coincidence situations. The stars represent the detected singles. The size of the star, as well as the number next to it, indicate the energy level of the single (ie. single no 1 has more energy than single no 2, which has itself more energy than the single no 3). The lines represent the possible good coincidences (ie. with a sector difference higher than or equal to the minSectorDifference of the coincidence sorter). In the table, a minus(-) sign indicates that the event is killed (ie. no coincidence is formed). The ⋆ sign indicates that all the singles are kept into a unique multicoincidence, which will not be written to disk, but which might participate to data loss via dead time or bandwidth occupancy. In the other cases, the list of pairs which are written to the disk (unless being removed thereafter by possible filter applied to the coincidences) is indicated
+   Comparison of the behavior of the available multiple processing policies, for various multiple coincidence situations. The stars represent the detected singles. The size of the star, as well as the number next to it, indicate the energy level of the single (ie. single no 1 has more energy than single no 2, which has itself more energy than the single no 3). The lines represent the possible good coincidences (ie. with a sector difference higher than or equal to the minSectorDifference of the coincidence sorter). In the table, a minus(-) sign indicates that the event is killed (ie. no coincidence is formed).
 
 .. table:: Table associated with :numref:`MultipleCases`
    :widths: auto
@@ -1274,16 +1270,14 @@ When more than two *singles* are found in coincidence, several type of behavior 
    +-------------------------+--------+---------------------+--------------+--------------+
    | takeWinnerIfAllAreGoods | \-     | (1,2)               | \-           | \-           | 
    +-------------------------+--------+---------------------+--------------+--------------+
-   | keepIfOnlyOneGood       | \*     | \-                  | \-           | \-           | 
-   +-------------------------+--------+---------------------+--------------+--------------+
-   | keepIfAnyIsGood         | \*     | \*                  | \*           | \*           | 
-   +-------------------------+--------+---------------------+--------------+--------------+
-   | keepIfAllAreGoods       | \-     | \*                  | \-           | \-           | 
+   | takeWinnerIfOnlyOneGood | (1,2)  | \-                  | \-           | \-           | 
    +-------------------------+--------+---------------------+--------------+--------------+
    | killAllIfMultipleGoods  | (1,2)  | \-                  | \-           | \-           | 
    +-------------------------+--------+---------------------+--------------+--------------+
    | killAll                 | \-     | \-                  | \-           | \-           | 
    +-------------------------+--------+---------------------+--------------+--------------+
+
+**NOTE: In the previous versions (before 9.4) there were outdated policies with prefix "keep". Please, use keepIfOnlyOneGood=takeWinnerIfOnlyOneGood, keepIfAnyIsGood = takeWinnerOfGoods, keepIfAllAreGoods = takeWinnerIfAllAreGoods.** 
 
 .. _command_line-label:
 
