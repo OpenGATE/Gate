@@ -421,16 +421,14 @@ void GateVirtualSegmentationSD::SetParameters()
 			else if(digi_SpatialResolution->GetFWHMx() || digi_SpatialResolution->GetFWHMy()|| digi_SpatialResolution->GetFWHMz()){
 
 
-				// DO NOT DELETE!
-				/*
-				//This is awaiting for Radia's code!!!
-				 if(digi_SpatialResolution->GetFWHMxdistrib()||digi_SpatialResolution->GetFWHMydistrib()||digi_SpatialResolution->GetFWHMxydistrib())
+
+				if(digi_SpatialResolution->GetFWHMxdistrib()||digi_SpatialResolution->GetFWHMydistrib()||digi_SpatialResolution->GetFWHMxydistrib())
 				 {
 				 GateError("***ERROR*** No value of the target pitch has been provided and no value can be obtained from the spatial resolution distribution. /n Please provide a value for the pitch that is at least half of the minimum value of the distribution. ");
 				 }
 
 
-				 */
+	
 
 				if(digi_SpatialResolution->GetFWHMx() && m_nameAxis.find('X') != std::string::npos)
 					{pitchX = 0.5*digi_SpatialResolution->GetFWHMx();}
