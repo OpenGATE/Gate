@@ -147,8 +147,7 @@ void GateVirtualSegmentationSD::Digitize()
 	  for (G4int i=0;i<n_digi;i++)
 	  {
 		  inputDigi=(*IDC)[i];
-		  // ***** the following part of the code to adapt
-		  /// *** This part is from ProcessPulseList
+
 		  if (inputDigi->GetVolumeID().size()){
 		  G4Box* box = dynamic_cast<G4Box*>(inputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid());
 	        xLength = 2*box->GetXHalfLength();
