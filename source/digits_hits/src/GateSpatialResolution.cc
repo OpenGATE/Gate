@@ -314,15 +314,6 @@ void GateSpatialResolution::UpdateVolumeID()
 }
 
 
-void GateSpatialResolution::UpdateVolumeID(G4int newCopyNo)
-{
- for (G4int i=1;i<m_systemDepth;i++)
-		{
-		m_outputDigi->ChangeVolumeIDAndOutputVolumeIDValue(i,newCopyNo);
-		}
-
-
-}
 
 
 void GateSpatialResolution::DescribeMyself(size_t indent )

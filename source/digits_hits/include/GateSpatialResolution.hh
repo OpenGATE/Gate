@@ -46,14 +46,14 @@ public:
 
 
   //! These functions return the resolution in use.
-    G4double GetFWHM()   	       { return m_fwhm; }
-    GateVDistribution* GetFWHMxdistrib()    { return m_fwhmXdistrib; }
-    GateVDistribution* GetFWHMydistrib()    { return m_fwhmYdistrib; }
-    GateVDistribution* GetFWHMxydistrib2D()    { return m_fwhmXYdistrib2D; }
+    G4double GetFWHM()				{ return m_fwhm; }
+    GateVDistribution* GetFWHMxdistrib()	{ return m_fwhmXdistrib; }
+    GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYdistrib; }
+    GateVDistribution* GetFWHMxydistrib2D()	{ return m_fwhmXYdistrib2D; }
 
-    G4double GetFWHMx()            { return m_fwhmX; }
-    G4double GetFWHMy()   	       { return m_fwhmY; }
-    G4double GetFWHMz()   	       { return m_fwhmZ; }
+    G4double GetFWHMx()            	{ return m_fwhmX; }
+    G4double GetFWHMy()			{ return m_fwhmY; }
+    G4double GetFWHMz()			{ return m_fwhmZ; }
 
     //! These functions set the spresolution of a gaussian spblurring.
     /*!
@@ -75,7 +75,7 @@ public:
     void LocateOutputDigi(GateDigi* inputDigi, G4double PxNew,G4double PyNew,G4double PzNew);
 
     void UpdateVolumeID();
-    void UpdateVolumeID(G4int newCopyNo);
+
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the blurring
