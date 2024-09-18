@@ -422,7 +422,7 @@ void GateVirtualSegmentationSD::SetParameters()
 
 
 
-				if(digi_SpatialResolution->GetFWHMxdistrib()||digi_SpatialResolution->GetFWHMydistrib()||digi_SpatialResolution->GetFWHMxydistrib())
+				if(digi_SpatialResolution->GetFWHMxdistrib()||digi_SpatialResolution->GetFWHMydistrib()||digi_SpatialResolution->GetFWHMxydistrib2D())
 				 {
 				 GateError("***ERROR*** No value of the target pitch has been provided and no value can be obtained from the spatial resolution distribution. /n Please provide a value for the pitch that is at least half of the minimum value of the distribution. ");
 				 }
