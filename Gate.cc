@@ -256,7 +256,7 @@ int main( int argc, char* argv[] )
           break;
         case 'v':
           ss << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
-          std::cout << "Gate version is 9.2 ; Geant4 version is " << ss.str() << std::endl;
+          std::cout << "Gate version is 9.4 ; Geant4 version is " << ss.str() << std::endl;
           exit(0);
           break;
         case 'a':
