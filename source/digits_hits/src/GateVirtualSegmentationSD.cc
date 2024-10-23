@@ -295,6 +295,8 @@ G4double GateVirtualSegmentationSD::calculatePitch(G4double crystal_size, G4doub
     double min_diff = 999;
     int num_pitches = 1;
 
+    if (std::fmod(crystal_size, target_pitch) == 0) return target_pitch;
+
     while (true) {
         double pitch = crystal_size / num_pitches;
 
