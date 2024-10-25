@@ -173,8 +173,6 @@ GateBioDoseActor::Coefficients GateBioDoseActor::interpol(double x1, double x2, 
 void GateBioDoseActor::BeginOfRunAction(const G4Run* r) {
 	GateVActor::BeginOfRunAction(r);
 	GateDebugMessage("Actor", 3, "GateBioDoseActor -- Begin of Run\n");
-
-	ResetData();
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
