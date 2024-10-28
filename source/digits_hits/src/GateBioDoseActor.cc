@@ -99,9 +99,6 @@ void GateBioDoseActor::Construct() {
 	//Just matrix information
 	G4cout << "Memory space to store physical dose into " << mResolution.x() * mResolution.y() * mResolution.z() << " voxels has been allocated " << G4endl;
 
-	// SOBP
-	if(_sobpWeight == 0) { _sobpWeight = 1; }
-
 	//Building the cell line information
 	_dataBase = "data/" + _cellLine + "_" + _bioPhysicalModel + ".db";
 	buildDatabase();
@@ -118,7 +115,7 @@ void GateBioDoseActor::buildDatabase() {
 	int nZ = 0;
 	double prevKineticEnergy = 1;
 	double prevAlpha = 1;
-	double prevBeta =1;
+	double prevBeta = 1;
 
 	for(std::string line; std::getline(f, line); ) {
 		std::istringstream iss(line);
@@ -232,22 +229,22 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	if(energyDep == 0)  return;
 	if(index < 0)       return;
 
-	// Accumulate energy inconditionnaly
-	_eventEdepImage.AddValue(index, energyDep);
-
 	auto* currentMaterial = step->GetPreStepPoint()->GetMaterial();
 	double density = currentMaterial->GetDensity();
 	double mass = _bioDoseImage.GetVoxelVolume() * density;
 	double dose = energyDep / mass / CLHEP::gray;
 
+	// Accumulate energy and dose inconditionnaly
+	_eventEdepImage.AddValue(index, energyDep);
 	_eventDoseImage.AddValue(index, dose);
+
+	++_stepCount;
+	_eventVoxelIndices.insert(index);
 
 	// Get information from step
 	// Particle
 	G4int nZ = step->GetTrack()->GetDefinition()->GetAtomicNumber();
 	double kineticEnergyPerNucleon = (step->GetPreStepPoint()->GetKineticEnergy()) / (step->GetTrack()->GetDefinition()->GetAtomicMass());
-
-	++_stepCount;
 
 	// Accumulation of alpha/beta if ion type if known
 	// -> check if the ion type is known
@@ -277,8 +274,6 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 		// Accumulate alpha/beta
 		_eventAlphaImage.AddValue(index, alpha);
 		_eventSqrtBetaImage.AddValue(index, sqrtBeta);
-
-		_eventVoxelIndices.insert(index);
 	}
 }
 //-----------------------------------------------------------------------------

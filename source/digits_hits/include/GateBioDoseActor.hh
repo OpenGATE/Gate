@@ -72,7 +72,6 @@ public:
 	void SetBetaRef(G4double betaRef) { _betaRef = betaRef; }
 	void SetCellLine(G4String s) { _cellLine = std::move(s); }
 	void SetBioPhysicalModel(G4String s) { _bioPhysicalModel = std::move(s); }
-	void SetSOBPWeight(G4double d) { _sobpWeight = d; }
 
 	void SetEnableEdep(bool e) { _enableEdep = e; }
 	void SetEnableDose(bool e) { _enableDose = e; }
@@ -105,8 +104,6 @@ private:
 	double _alphaRef = -1;
 	double _betaRef = -1;
 	double _doseScaleFactor = 1.;
-
-	G4double _sobpWeight = 0;
 
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
