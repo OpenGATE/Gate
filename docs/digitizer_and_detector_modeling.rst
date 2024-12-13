@@ -1395,7 +1395,7 @@ To change the default value of the minimum sector difference for valid coinciden
 
 To change the default value of the maximum allowable difference in the z positions of two events (disabled by default), the command line should be used::
 
-  /gate/digitizer/Coincidences/setMaxDeltaZ <value_in_mm>
+  /gate/digitizer/Coincidences/setDeltaZMax <value_in_mm>
 
 For non-standard scanners, such as square-shaped ones, you can set the minimum allowable sector distance s between two events. This option provides more flexibility than the default minimum sector difference::
 
