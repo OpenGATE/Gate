@@ -4,3 +4,4 @@
 ./Generate-8.2.sh
 ./Generate-9.0.sh
 ./Generate-9.1.sh
+./Generate-9.4.1.sh

@@ -1,0 +1,57 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.4.1        #
+#                          #
+#        02/2025           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 11.3.0 only. 
+Gate cannot be compiled with earlier Geant4 versions. 
+It *may* works with other ROOT, ITK, libtorch version but it is not tested.
+
+Dependencies:
+- Geant4: v11.3.0 (cxx17 is required)
+- ROOT: v6-32-08 (must be compiled with -DCMAKE_CXX_STANDARD=17)
+- ITK: v5.2.0 (with RTK enabled)
+- libtorch: v1.10.1
+
+
+-----------------
+Main new features
+-----------------
+
+- Bug corrections:
+1) Coincidence Sorter: Remove "keep" options in multiple policy PR #703
+2) Init value for Energy Resolution module PR #699
+3) Coincidence Sorter: Option for removal of oblique coincidences (setDeltaZMax)  #700
+
+From 9.4 version: 
+1) Some of functionalities are temporarily disabled:
+          - Outputs: Sino, LMF, Ecat7
+
+New features:
+1) Option to save Hits from several sensitive detectors in the same ROOT tree
+2) Generalisation of Spatial resolution (x,sigma(x))
+3) Coincidence digitizers added (Multiples Killer, Buffer, Time Difference)
+4) New Digitizer Module : Virtal Segmentation (for Monolithic crystal)
+5) 
+
+
+- additional Benchmarks
+https://github.com/OpenGATE/GateBenchmarks
+
+----------
+Gate Tools
+----------
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
+GATE tools:         https://github.com/OpenGATE/GateTools

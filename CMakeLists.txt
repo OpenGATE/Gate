@@ -312,14 +312,13 @@ MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
 
 #=========================================================
 # Display message about this version
-MESSAGE("IMPORTANT! This version of GATE (9.4) has still some traces of passage for new digitizer.")
+MESSAGE("IMPORTANT! This version of GATE (9.4.1) has still some traces of passage for new digitizer.")
 MESSAGE("Please, be aware that some of functionalities are NOT YET re-implemented: ")
-MESSAGE("- Coincidence digitizer modules (combining of several Coincidence Sorters)")
 MESSAGE("- Output: Sinogram, Ecat7, LMF")
 MESSAGE("- ARF may work not properly yet")
 MESSAGE("We apologize for this inconvenience and kindly ask for your patience.")
-MESSAGE("This functionalities will be added during 2024.")
-MESSAGE("Meanwhile, please, use Gate 9.3")
+MESSAGE("This functionalities will be added during 2025.")
+MESSAGE("Meanwhile, please, use Gate 9.4")
 
 
 

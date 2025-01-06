@@ -24,8 +24,8 @@ jobs:
 
     env:
       ROOT_VERSION: 'v6-32-02'
-      GEANT4_VERSION: 'v11.2.1'
       ITK_VERSION: 'v5.4.2'
+      GEANT4_VERSION: 'v11.3.0'
       ROOT_DIR: $(HOME)/software/root
       GEANT4_DIR: $(HOME)/software/geant4
 
@@ -338,5 +338,5 @@ jobs:
         mkdir gate_benchmarks
         export GIT_SSL_NO_VERIFY=1
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
-        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.4 /home/.github/workflows/runTest.sh
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.4.1 /home/.github/workflows/runTest.sh
 
