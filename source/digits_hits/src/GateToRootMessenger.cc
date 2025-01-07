@@ -339,7 +339,7 @@ void GateToRootMessenger::ExecuteOutputChannelCmd(G4UIcommand* command, G4String
     	  digitizer->m_recordFlag=true;
 
       //Setting flag in the digitizerMgr
-      //G4cout<<"ExecuteOutputChannelCmd "<<m_outputChannelList[i]->m_collectionName<<G4endl;
+      G4cout<<"ExecuteOutputChannelCmd "<<m_outputChannelList[i]->m_collectionName<<G4endl;
       if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Singles"))
       {
     	  m_outputChannelList[i]->AddSinglesCommand();
@@ -348,6 +348,8 @@ void GateToRootMessenger::ExecuteOutputChannelCmd(G4UIcommand* command, G4String
       }
       if (G4StrUtil::contains(m_outputChannelList[i]->m_collectionName, "Coincidences"))
       {
+    	  m_outputChannelList[i]->AddCoincidencesCommand();
+    	  if(OutputChannelCmdList[i]->GetNewBoolValue(newValue))
     		  digitizerMgr->m_recordCoincidences=OutputChannelCmdList[i]->GetNewBoolValue(newValue);
       }
 
