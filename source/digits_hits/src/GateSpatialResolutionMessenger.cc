@@ -75,7 +75,7 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 {
 	delete  nameAxisCmd;
-
+	delete 	spresolutionDistrib2DCmd;
 	delete  spresolutionCmd;
 	delete  spresolutionXCmd;
 	delete  spresolutionXdistribCmd;
