@@ -55,6 +55,17 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	spresolutionXYdistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
 	spresolutionXYdistrib2DCmd->SetGuidance("Set the distribution 2D of  spatial resolution in position for gaussian spblurring");
 
+	cmdName = GetDirectoryName() + "fwhmDistrib2D";
+	spresolutionDistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionDistrib2DCmd->SetGuidance("Set the distribution 2D of  spatial resolution in position for gaussian spblurring");
+
+
+    cmdName = GetDirectoryName()+"nameAxis";
+    nameAxisCmd = new G4UIcmdWithAString(cmdName,this);
+    nameAxisCmd ->SetGuidance("Provide the name of the axis that will follow the spatial resolution distribution, X, Y, Z, XY, XZ, or YZ");
+    nameAxisCmd ->SetCandidates("X Y Z XY XZ YZ");
+
+
 	cmdName = GetDirectoryName() + "confineInsideOfSmallestElement";
     confineCmd = new G4UIcmdWithABool(cmdName,this);
     confineCmd->SetGuidance("To be set true, if you want to moves the outsiders of the crystal after spblurring inside the same crystal");
@@ -63,6 +74,8 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 
 GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 {
+	delete  nameAxisCmd;
+
 	delete  spresolutionCmd;
 	delete  spresolutionXCmd;
 	delete  spresolutionXdistribCmd;
@@ -95,6 +108,15 @@ void GateSpatialResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4String
           {GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
         if (distrib) m_SpatialResolution->SetFWHMxydistrib2D(distrib);
         }
+
+   if (aCommand == nameAxisCmd)
+	 	      {
+	 			m_SpatialResolution->SetNameAxis(newValue);
+	 	      }
+   else if (aCommand == spresolutionDistrib2DCmd)
+             {GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+           if (distrib) m_SpatialResolution->SetFWHMDistrib2D(distrib);
+           }
 
    else if ( aCommand==spresolutionXCmd )
    		{ m_SpatialResolution->SetFWHMx(spresolutionXCmd->GetNewDoubleValue(newValue)); }

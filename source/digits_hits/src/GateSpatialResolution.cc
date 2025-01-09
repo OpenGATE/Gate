@@ -55,6 +55,8 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_fwhmXdistrib(0),
    m_fwhmYdistrib(0),
    m_fwhmXYdistrib2D(0),
+   m_nameAxis("XY"),
+   m_fwhmDistrib2D(0),
    m_fwhmY(0),
    m_fwhmZ(0),
    m_IsConfined(true),
@@ -193,6 +195,24 @@ void GateSpatialResolution::Digitize(){
 		    	 stddevX = m_fwhmXYdistrib2D->Value2D(P.x() * mm, P.y() * mm);
 		          stddevY = stddevX;  // Assuming the 2D distribution returns the same for both axes
 		      }
+		  else if (m_fwhmDistrib2D){
+			  if (m_nameAxis.length() != 2) {
+				    GateError( " *** ERROR***   GateSpatialResolution::Digitize. There was an attempt to use fwhmDistrib2D but the length of the axis is not 2!\n");
+				}
+
+			  else if(m_nameAxis.find('X') != std::string::npos){
+				  stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+			  }
+			  else if(m_nameAxis.find('Y') != std::string::npos){
+			  	  stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+			  }
+
+			  else if(m_nameAxis.find('Z') != std::string::npos){
+				  stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+			  			  }
+
+		  }
+
 		 else if (m_fwhmXdistrib) {
 		      // If the FWHM distribution for X is defined
 		      if (m_fwhmYdistrib) {

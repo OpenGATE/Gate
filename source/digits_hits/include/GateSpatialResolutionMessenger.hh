@@ -44,9 +44,11 @@ private:
   G4UIcmdWithADoubleAndUnit*   spresolutionXCmd;
   G4UIcmdWithADoubleAndUnit*   spresolutionYCmd;
   G4UIcmdWithADoubleAndUnit*   spresolutionZCmd;
-  G4UIcmdWithAString   *spresolutionXdistribCmd;// Command declaration for 1D X-resolution distribution
-  G4UIcmdWithAString   *spresolutionYdistribCmd;// Command declaration for 1D Y-resolution distribution
-  G4UIcmdWithAString   *spresolutionXYdistrib2DCmd; // Command declaration for 2D XY-resolution distribution
+  G4UIcmdWithAString	*spresolutionXdistribCmd;// Command declaration for 1D X-resolution distribution
+  G4UIcmdWithAString	*spresolutionYdistribCmd;// Command declaration for 1D Y-resolution distribution
+  G4UIcmdWithAString	*spresolutionXYdistrib2DCmd; // Command declaration for 2D XY-resolution distribution
+  G4UIcmdWithAString	*nameAxisCmd;
+  G4UIcmdWithAString	*spresolutionDistrib2DCmd; // Command declaration for 2D resolution distribution will be used with nameAxisCmd
   G4UIcmdWithABool* 	confineCmd;
 
 
