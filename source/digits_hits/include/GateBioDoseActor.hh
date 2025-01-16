@@ -72,6 +72,7 @@ public:
 	void SetBetaRef(G4double betaRef) { _betaRef = betaRef; }
 	void SetCellLine(G4String s) { _cellLine = std::move(s); }
 	void SetBioPhysicalModel(G4String s) { _bioPhysicalModel = std::move(s); }
+	void SetSOBPWeight(G4double d) { _sobpWeight = d; }
 
 	void SetEnableEdep(bool e) { _enableEdep = e; }
 	void SetEnableDose(bool e) { _enableDose = e; }
@@ -105,45 +106,45 @@ private:
 	double _betaRef = -1;
 	double _doseScaleFactor = 1.;
 
+	G4double _sobpWeight = 0;
+
 	AlphaBetaInterpolTable _alphaBetaInterpolTable;
 
 	VoxelIndices _eventVoxelIndices;
 	VoxelIndices _voxelIndices;
 
 	// Images
-	GateImageWithStatistic _hitEventCountImage;
-
 	GateImageWithStatistic _eventEdepImage;
 	GateImageWithStatistic _eventDoseImage;
-	GateImageWithStatistic _eventAlphaImage;
-	GateImageWithStatistic _eventSqrtBetaImage;
+	GateImageWithStatistic _eventSumAlphaMixDoseImage;
+	GateImageWithStatistic _eventSumSqrtBetaMixDoseImage;
 
+	// Images at Run level
+	GateImageWithStatistic _hitEventCountImage;
+	GateImageWithStatistic _sumAlphaMixDoseImage;
+	GateImageWithStatistic _sumSqrtBetaMixDoseImage;
+
+	// Images for uncertainty computation
+	GateImageWithStatistic _squaredDoseImage;
+	GateImageWithStatistic _squaredAlphaMixDoseImage;
+	GateImageWithStatistic _squaredSqrtBetaMixDoseImage;
+	GateImageWithStatistic _alphaMixDoseDoseImage;
+	GateImageWithStatistic _sqrtBetaMixDoseDoseImage;
+	GateImageWithStatistic _alphaMixDoseSqrtBetaMixDoseImage;
+
+	// Images for output
 	GateImageWithStatistic _edepImage;
 	GateImageWithStatistic _doseImage;
 	GateImageWithStatistic _scaledDoseImage;
-	GateImageWithStatistic _alphaMixImage;
-	GateImageWithStatistic _sqrtBetaMixImage;
+	GateImageWithStatistic _alphaMixDoseImage;
+	GateImageWithStatistic _sqrtBetaMixDoseImage;
 	GateImageWithStatistic _bioDoseImage;
 	GateImageWithStatistic _rbeImage;
 
 	GateImageWithStatistic _doseUncertaintyImage;
 	GateImageWithStatistic _biodoseUncertaintyImage;
-	GateImageWithStatistic _squaredDoseImage;
-	GateImageWithStatistic _squaredAlphaMixImage;
-	GateImageWithStatistic _squaredSqrtBetaMixImage;
-	GateImageWithStatistic _alphaMixSqrtBetaMixImage;
-	GateImageWithStatistic _alphaMixDoseImage;
-	GateImageWithStatistic _sqrtBetaMixDoseImage;
-
-	GateImageWithStatistic _pdBiodoseAlphaMixMeanImage;
-	GateImageWithStatistic _pdBiodoseSqrtBetaMixMeanImage;
-	GateImageWithStatistic _pdBiodoseDoseMeanImage;
-	GateImageWithStatistic _varAlphaMixMeanImage;
-	GateImageWithStatistic _varSqrtBetaMixMeanImage;
-	GateImageWithStatistic _varDoseMeanImage;
-	GateImageWithStatistic _covAlphaMixMeanSqrtBetaMixMeanImage;
-	GateImageWithStatistic _covAlphaMixMeanDoseMeanImage;
-	GateImageWithStatistic _covSqrtBetaMixMeanDoseMeanImage;
+	GateImageWithStatistic _alphaMixUncertaintyImage;
+	GateImageWithStatistic _sqrtBetaMixUncertaintyImage;
 
 	// Outputs
 	bool _enableEdep = false;
