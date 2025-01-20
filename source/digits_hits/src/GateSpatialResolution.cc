@@ -193,24 +193,23 @@ void GateSpatialResolution::Digitize(){
 		      // If the 2D FWHM distribution for X and Y is defined
 
 		    	 stddevX = m_fwhmXYdistrib2D->Value2D(P.x() * mm, P.y() * mm);
-		          stddevY = stddevX;  // Assuming the 2D distribution returns the same for both axes
+		         stddevY = stddevX;  // Assuming the 2D distribution returns the same for both axes
 		      }
 		  else if (m_fwhmDistrib2D){
 			  if (m_nameAxis.length() != 2) {
 				    GateError( " *** ERROR***   GateSpatialResolution::Digitize. There was an attempt to use fwhmDistrib2D but the length of the axis is not 2!\n");
 				}
+			  else {
 
-			  else if(m_nameAxis.find('X') != std::string::npos){
-				  stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				  if(m_nameAxis.find('X') != std::string::npos) stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				  else if (m_fwhmX) stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+
+				  if(m_nameAxis.find('Y') != std::string::npos) stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				  else if (m_fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+
+				  if(m_nameAxis.find('Z') != std::string::npos) stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+				  else if (m_fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
 			  }
-			  else if(m_nameAxis.find('Y') != std::string::npos){
-			  	  stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-			  }
-
-			  else if(m_nameAxis.find('Z') != std::string::npos){
-				  stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-			  			  }
-
 		  }
 
 		 else if (m_fwhmXdistrib) {
@@ -241,10 +240,20 @@ void GateSpatialResolution::Digitize(){
 		      stddevY = fwhmY / GateConstants::fwhm_to_sigma;
 		  }
 
+		  //std::cout<<"Position X,Y,Z "<<Px<<", "<<Py<<", "<<Pz<<std::endl;
+
+		  std::cout<<"Stdev Vector "<<stddevX<<", "<<stddevY<<", "<<stddevZ<<std::endl;
 		  G4double PxNew = G4RandGauss::shoot(Px,stddevX);
 		  G4double PyNew = G4RandGauss::shoot(Py,stddevY);
-		  G4double PzNew = G4RandGauss::shoot(Pz,fwhmZ/GateConstants::fwhm_to_sigma);
-	if (m_IsConfined)
+		  //G4double PzNew = G4RandGauss::shoot(Pz,fwhmZ/GateConstants::fwhm_to_sigma);
+		  G4double PzNew = G4RandGauss::shoot(Pz,stddevZ);
+
+		  //std::cout<<"new Position X,Y,Z "<<PxNew<<", "<<PyNew<<", "<<PzNew<<std::endl;
+
+		  std::cout<< PxNew-Px<<", "<<PyNew-Py<<", "<<PzNew-Pz<<std::endl;
+
+
+		  if (m_IsConfined)
 		  {
 			  //set the position on the border of the crystal
 			  //no need to update volume ID

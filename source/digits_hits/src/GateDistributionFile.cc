@@ -110,7 +110,7 @@ void GateDistributionFile::ReadMatrix2d() {
     std::vector<G4double> xValues;
     bool isFirstLine = true;
     bool is2D = true;
-
+    size_t stddevCountXY = 0;
     while (std::getline(f, line)) {
         std::stringstream iss(line);
 
@@ -120,6 +120,7 @@ void GateDistributionFile::ReadMatrix2d() {
             size_t xCount = 0;
 
             while (iss >> x) {
+
                 xValues.push_back(x);
                 ++xCount;
                 if (iss.peek() == ',') iss.ignore();
@@ -137,27 +138,28 @@ void GateDistributionFile::ReadMatrix2d() {
             G4double y;
             iss >> y;
             if (iss.peek() == ',') iss.ignore();
-            size_t stddevCount = 0;
+            size_t stddevCountX = 0;
+
 
             // Read stddev values for each x value
             for (size_t i = 0; i < xValues.size(); ++i) {
                 G4double stddev;
                 if (iss >> stddev) {
-                    ++stddevCount;
+                    ++stddevCountX;
                     // Insert the (x, y) -> stddev pair into the map using InsertPoint
                     InsertPoint(xValues[i], y, stddev);
                     if (iss.peek() == ',') iss.ignore();
                 }
+                if (stddevCountX == xValues.size()) ++stddevCountXY;
             }
-
             // Check if the number of stddev values matches the number of x values
-            if (stddevCount != xValues.size()) {
-                is2D = false;
-                break;
-            }
+
         }
     }
 
+    if (stddevCountXY != xValues.size()) {
+        is2D = false;
+    }
     f.close();
     //G4cout << "Content of stddevMap:\n";
   	    //for (const auto& entry : stddevMap) {
@@ -165,13 +167,12 @@ void GateDistributionFile::ReadMatrix2d() {
   	       // G4double stddev = entry.second;
   	        //std::cout << "Coordinates: (" << coordinates.first << ", " << coordinates.second << "), stddev: " << stddev << std::endl;
   	    //}
-
     if (!is2D) {
         G4cerr << "[GateDistributionFile::ReadMatrix2d] ERROR: File " << m_FileName << " is not a valid 2D distribution file\n";
         Clear();
         return;
     }
 
-	    FillRepartition();
+	   FillRepartition();
 	}
 
