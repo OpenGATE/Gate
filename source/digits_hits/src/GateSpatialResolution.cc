@@ -242,7 +242,7 @@ void GateSpatialResolution::Digitize(){
 
 		  //std::cout<<"Position X,Y,Z "<<Px<<", "<<Py<<", "<<Pz<<std::endl;
 
-		  std::cout<<"Stdev Vector "<<stddevX<<", "<<stddevY<<", "<<stddevZ<<std::endl;
+
 		  G4double PxNew = G4RandGauss::shoot(Px,stddevX);
 		  G4double PyNew = G4RandGauss::shoot(Py,stddevY);
 		  //G4double PzNew = G4RandGauss::shoot(Pz,fwhmZ/GateConstants::fwhm_to_sigma);
@@ -250,7 +250,7 @@ void GateSpatialResolution::Digitize(){
 
 		  //std::cout<<"new Position X,Y,Z "<<PxNew<<", "<<PyNew<<", "<<PzNew<<std::endl;
 
-		  std::cout<< PxNew-Px<<", "<<PyNew-Py<<", "<<PzNew-Pz<<std::endl;
+
 
 
 		  if (m_IsConfined)
