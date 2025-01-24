@@ -78,6 +78,8 @@ public:
 	void SetEnableDose(bool e) { _enableDose = e; }
 	void SetEnableAlphaMix(bool e) { _enableAlphaMix = e; }
 	void SetEnableSqrtBetaMix(bool e) { _enableSqrtBetaMix = e; }
+	void SetEnableAlphaMixDose(bool e) { _enableAlphaMixDose = e; }
+	void SetEnableSqrtBetaMixDose(bool e) { _enableSqrtBetaMixDose = e; }
 	void SetEnableRBE(bool e) { _enableRBE = e; }
 	void SetEnableUncertainty(bool e) { _enableUncertainty = e; }
 	void SetEnableUncertaintyDetails(bool e) { _enableUncertaintyDetails = e; }
@@ -121,6 +123,8 @@ private:
 
 	// Images at Run level
 	GateImageWithStatistic _hitEventCountImage;
+	GateImageWithStatistic _sumAlphaMixImage;
+	GateImageWithStatistic _sumSqrtBetaMixImage;
 	GateImageWithStatistic _sumAlphaMixDoseImage;
 	GateImageWithStatistic _sumSqrtBetaMixDoseImage;
 
@@ -136,6 +140,8 @@ private:
 	GateImageWithStatistic _edepImage;
 	GateImageWithStatistic _doseImage;
 	GateImageWithStatistic _scaledDoseImage;
+	GateImageWithStatistic _alphaMixImage;
+	GateImageWithStatistic _sqrtBetaMixImage;
 	GateImageWithStatistic _alphaMixDoseImage;
 	GateImageWithStatistic _sqrtBetaMixDoseImage;
 	GateImageWithStatistic _bioDoseImage;
@@ -146,11 +152,21 @@ private:
 	GateImageWithStatistic _alphaMixUncertaintyImage;
 	GateImageWithStatistic _sqrtBetaMixUncertaintyImage;
 
+	GateImageWithStatistic _pdBiodoseAlphaMixDoseMeanImage;
+	GateImageWithStatistic _pdBiodoseSqrtBetaMixDoseMeanImage;
+	GateImageWithStatistic _varAlphaMixDoseMeanImage;
+	GateImageWithStatistic _varSqrtBetaMixDoseMeanImage;
+	GateImageWithStatistic _covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage;
+	GateImageWithStatistic _covAlphaMixDoseMeanDoseMeanImage;
+	GateImageWithStatistic _covSqrtBetaMixDoseMeanDoseMeanImage;
+
 	// Outputs
 	bool _enableEdep = false;
 	bool _enableDose = false;
 	bool _enableAlphaMix = false;
 	bool _enableSqrtBetaMix = false;
+	bool _enableAlphaMixDose = false;
+	bool _enableSqrtBetaMixDose = false;
 	bool _enableRBE = false;
 	bool _enableUncertainty = false;
 	bool _enableUncertaintyDetails = false;

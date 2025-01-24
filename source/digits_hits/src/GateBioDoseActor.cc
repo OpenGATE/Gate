@@ -60,16 +60,20 @@ void GateBioDoseActor::Construct() {
 		setupImage(_eventSumSqrtBetaMixDoseImage);
 
 		setupImage(_hitEventCountImage, "hitevent_count");
+		setupImage(_sumAlphaMixImage);
+		setupImage(_sumSqrtBetaMixImage);
 		setupImage(_sumAlphaMixDoseImage);
 		setupImage(_sumSqrtBetaMixDoseImage);
 
-		if(_enableEdep)         setupImage(_edepImage, "edep");
+		setupImage(_edepImage, "edep"); // always active
 		setupImage(_doseImage); // dose output can be scaled, see SaveData()
-		if(_enableDose)         setupImage(_scaledDoseImage, "dose");
-		if(_enableAlphaMix)     setupImage(_alphaMixDoseImage, "alphamix_dose");
-		if(_enableSqrtBetaMix)  setupImage(_sqrtBetaMixDoseImage, "sqrtbetamix_dose");
+		if(_enableDose)             setupImage(_scaledDoseImage, "dose");
+		if(_enableAlphaMix)         setupImage(_alphaMixImage, "alphamix");
+		if(_enableSqrtBetaMix)      setupImage(_sqrtBetaMixImage, "sqrtbetamix");
+		if(_enableAlphaMixDose)     setupImage(_alphaMixDoseImage, "alphamix_dose");
+		if(_enableSqrtBetaMixDose)  setupImage(_sqrtBetaMixDoseImage, "sqrtbetamix_dose");
 		setupImage(_bioDoseImage, "biodose");
-		if(_enableRBE)          setupImage(_rbeImage, "rbe");
+		if(_enableRBE)              setupImage(_rbeImage, "rbe");
 
 		if(_enableUncertainty) {
 			setupImage(_squaredDoseImage);
@@ -85,7 +89,13 @@ void GateBioDoseActor::Construct() {
 			setupImage(_sqrtBetaMixUncertaintyImage, "sqrtbetamix_uncertainty");
 
 			if(_enableUncertaintyDetails) {
-				// TODO
+				setupImage(_pdBiodoseAlphaMixDoseMeanImage, "pd_biodose_alphamixdosemean");
+				setupImage(_pdBiodoseSqrtBetaMixDoseMeanImage, "pd_biodose_sqrtbetamixdosemean");
+				setupImage(_varAlphaMixDoseMeanImage, "var_alphamixdosemean");
+				setupImage(_varSqrtBetaMixDoseMeanImage, "var_sqrtbetamixdosemean");
+				setupImage(_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage, "cov_alphamixdosemean_sqrtbetamixdosemean");
+				setupImage(_covAlphaMixDoseMeanDoseMeanImage, "cov_alphamixdosemean_dosemean");
+				setupImage(_covSqrtBetaMixDoseMeanDoseMeanImage, "cov_sqrtbetamixdosemean_dosemean");
 			}
 		}
 	}
@@ -195,6 +205,7 @@ void GateBioDoseActor::EndOfEventAction(const G4Event* e) {
 	GateVActor::EndOfEventAction(e);
 
 	for(auto const& index: _eventVoxelIndices) {
+		auto const eventEdep = _eventEdepImage.GetValue(index);
 		auto const eventDose = _eventDoseImage.GetValue(index);
 		auto const eventSumAlphaMixDose = _eventSumAlphaMixDoseImage.GetValue(index);
 		auto const eventSumSqrtBetaMixDose = _eventSumSqrtBetaMixDoseImage.GetValue(index);
@@ -202,11 +213,7 @@ void GateBioDoseActor::EndOfEventAction(const G4Event* e) {
 		_voxelIndices.insert(index);
 		_hitEventCountImage.AddValue(index, 1);
 
-		if(_enableEdep) {
-			auto const eventEdep = _eventEdepImage.GetValue(index);
-			_edepImage.AddValue(index, eventEdep);
-		}
-
+		_edepImage.AddValue(index, eventEdep);
 		_doseImage.AddValue(index, eventDose);
 		_sumAlphaMixDoseImage.AddValue(index, eventSumAlphaMixDose);
 		_sumSqrtBetaMixDoseImage.AddValue(index, eventSumSqrtBetaMixDose);
@@ -267,11 +274,14 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 		// Calculation of alphaDep and betaDep (K = (a*Z+b)*E)
 		auto const& interpol = (*itInterpol).second;
 
-		double alpha = (interpol.alpha.a * kineticEnergyPerNucleon + interpol.alpha.b) * energyDep;
-		double sqrtBeta = (interpol.sqrtBeta.a * kineticEnergyPerNucleon + interpol.sqrtBeta.b) * energyDep;
+		double alpha = interpol.alpha.a * kineticEnergyPerNucleon + interpol.alpha.b;
+		double sqrtBeta = interpol.sqrtBeta.a * kineticEnergyPerNucleon + interpol.sqrtBeta.b;
 
 		if(alpha < 0) alpha = 0;
 		if(sqrtBeta < 0) sqrtBeta = 0;
+
+		_sumAlphaMixImage.AddValue(index, alpha * energyDep);
+		_sumSqrtBetaMixImage.AddValue(index, sqrtBeta * energyDep);
 
 		// Accumulate weighted alpha/sqrt(beta)
 		_eventSumAlphaMixDoseImage.AddValue(index, alpha * dose);
@@ -289,8 +299,11 @@ void GateBioDoseActor::updateData() {
 	for(auto const& index: _voxelIndices) {
 		auto const hitEventCount = _hitEventCountImage.GetValue(index);
 
-		auto const alphaMixDose = _sumAlphaMixDoseImage.GetValue(index) / hitEventCount;
-		auto const sqrtBetaMixDose = _sumSqrtBetaMixDoseImage.GetValue(index) / hitEventCount;
+		auto const alphaMix = _sumAlphaMixImage.GetValue(index) / _edepImage.GetValue(index);
+		auto const sqrtBetaMix = _sumSqrtBetaMixImage.GetValue(index) / _edepImage.GetValue(index);
+
+		auto const alphaMixDose = _sumAlphaMixDoseImage.GetValue(index);
+		auto const sqrtBetaMixDose = _sumSqrtBetaMixDoseImage.GetValue(index);
 
 		auto const dose = _doseImage.GetValue(index);
 		auto const scaledDose = _doseScaleFactor * dose;
@@ -385,24 +398,46 @@ void GateBioDoseActor::updateData() {
 				auto uncertaintyAlphaMixDose = std::sqrt(varAlphaMixDose) / alphaMixDoseMean;
 				auto uncertaintySqrtBetaMixDose = std::sqrt(varSqrtBetaMixDose) / sqrtBetaMixDoseMean;
 
-				if(_enableUncertaintyDetails) {
-					// TODO
-				}
-
 				_doseUncertaintyImage.SetValue(index, uncertaintyDose);
 				_biodoseUncertaintyImage.SetValue(index, uncertaintyBiodose);
+				_alphaMixUncertaintyImage.SetValue(index, uncertaintyAlphaMixDose);
+				_sqrtBetaMixUncertaintyImage.SetValue(index, uncertaintySqrtBetaMixDose);
+
+				if(_enableUncertaintyDetails) {
+					_pdBiodoseAlphaMixDoseMeanImage.SetValue(index, pdBiodoseAlphaMixDoseMean);
+					_pdBiodoseSqrtBetaMixDoseMeanImage.SetValue(index, pdBiodoseSqrtBetaMixDoseMean);
+					_varAlphaMixDoseMeanImage.SetValue(index, varAlphaMixDoseMean);
+					_varSqrtBetaMixDoseMeanImage.SetValue(index, varSqrtBetaMixDoseMean);
+					_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SetValue(index, covAlphaMixDoseMeanSqrtBetaMixDoseMean);
+					_covAlphaMixDoseMeanDoseMeanImage.SetValue(index, covAlphaMixDoseMeanDoseMean);
+					_covSqrtBetaMixDoseMeanDoseMeanImage.SetValue(index, covSqrtBetaMixDoseMeanDoseMean);
+				}
 			} else {
 				_doseUncertaintyImage.SetValue(index, 1);
 				_biodoseUncertaintyImage.SetValue(index, 1);
+				_alphaMixUncertaintyImage.SetValue(index, 1);
+				_sqrtBetaMixUncertaintyImage.SetValue(index, 1);
+
+				if(_enableUncertaintyDetails) {
+					_pdBiodoseAlphaMixDoseMeanImage.SetValue(index, 1);
+					_pdBiodoseSqrtBetaMixDoseMeanImage.SetValue(index, 1);
+					_varAlphaMixDoseMeanImage.SetValue(index, 1);
+					_varSqrtBetaMixDoseMeanImage.SetValue(index, 1);
+					_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SetValue(index, 1);
+					_covAlphaMixDoseMeanDoseMeanImage.SetValue(index, 1);
+					_covSqrtBetaMixDoseMeanDoseMeanImage.SetValue(index, 1);
+				}
 			}
 		}
 
 		// Write data
-		if(_enableDose)         _scaledDoseImage.SetValue(index, scaledDose);
-		if(_enableAlphaMix)     _alphaMixDoseImage.SetValue(index, alphaMixDose);
-		if(_enableSqrtBetaMix)  _sqrtBetaMixDoseImage.SetValue(index, sqrtBetaMixDose);
+		if(_enableDose)             _scaledDoseImage.SetValue(index, scaledDose);
+		if(_enableAlphaMix)         _alphaMixImage.SetValue(index, alphaMix);
+		if(_enableSqrtBetaMix)      _sqrtBetaMixImage.SetValue(index, sqrtBetaMix);
+		if(_enableAlphaMixDose)     _alphaMixDoseImage.SetValue(index, alphaMixDose);
+		if(_enableSqrtBetaMixDose)  _sqrtBetaMixDoseImage.SetValue(index, sqrtBetaMixDose);
 		_bioDoseImage.SetValue(index, biodose);
-		if(_enableRBE)          _rbeImage.SetValue(index, rbe);
+		if(_enableRBE)              _rbeImage.SetValue(index, rbe);
 	}
 }
 //-----------------------------------------------------------------------------
@@ -414,18 +449,28 @@ void GateBioDoseActor::SaveData() {
 
 	GateVActor::SaveData();
 
-	if(_enableEdep)           _edepImage.SaveData(_currentEvent);
-	if(_enableDose)           _scaledDoseImage.SaveData(_currentEvent);
-	if(_enableAlphaMix)       _alphaMixDoseImage.SaveData(_currentEvent);
-	if(_enableSqrtBetaMix)    _sqrtBetaMixDoseImage.SaveData(_currentEvent);
+	if(_enableEdep)             _edepImage.SaveData(_currentEvent);
+	if(_enableDose)             _scaledDoseImage.SaveData(_currentEvent);
+	if(_enableAlphaMix)         _alphaMixImage.SaveData(_currentEvent);
+	if(_enableSqrtBetaMix)      _sqrtBetaMixImage.SaveData(_currentEvent);
+	if(_enableAlphaMixDose)     _alphaMixDoseImage.SaveData(_currentEvent);
+	if(_enableSqrtBetaMixDose)  _sqrtBetaMixDoseImage.SaveData(_currentEvent);
 	_bioDoseImage.SaveData(_currentEvent);
-	if(_enableRBE)            _rbeImage.SaveData(_currentEvent);
+	if(_enableRBE)              _rbeImage.SaveData(_currentEvent);
 	if(_enableUncertainty) {
 		_doseUncertaintyImage.SaveData(_currentEvent);
 	  _biodoseUncertaintyImage.SaveData(_currentEvent);
+		_alphaMixUncertaintyImage.SaveData(_currentEvent);
+		_sqrtBetaMixUncertaintyImage.SaveData(_currentEvent);
 
 		if(_enableUncertaintyDetails) {
-			// TODO
+			_pdBiodoseAlphaMixDoseMeanImage.SaveData(_currentEvent);
+			_pdBiodoseSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
+			_varAlphaMixDoseMeanImage.SaveData(_currentEvent);
+			_varSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
+			_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
+			_covAlphaMixDoseMeanDoseMeanImage.SaveData(_currentEvent);
+			_covSqrtBetaMixDoseMeanDoseMeanImage.SaveData(_currentEvent);
 		}
 	}
 	if(_enableHitEventCount)  _hitEventCountImage.SaveData(_currentEvent);
@@ -442,16 +487,20 @@ void GateBioDoseActor::ResetData() {
 	_eventSumSqrtBetaMixDoseImage.Reset();
 
 	_hitEventCountImage.Reset();
+	_sumAlphaMixImage.Reset();
+	_sumSqrtBetaMixImage.Reset();
 	_sumAlphaMixDoseImage.Reset();
 	_sumSqrtBetaMixDoseImage.Reset();
 
-	if(_enableEdep)         _edepImage.Reset();
+	if(_enableEdep)             _edepImage.Reset();
 	_doseImage.Reset();
-	if(_enableDose)         _scaledDoseImage.Reset();
-	if(_enableAlphaMix)     _alphaMixDoseImage.SaveData(_currentEvent);
-	if(_enableSqrtBetaMix)  _sqrtBetaMixDoseImage.SaveData(_currentEvent);
+	if(_enableDose)             _scaledDoseImage.Reset();
+	if(_enableAlphaMix)         _alphaMixImage.Reset();
+	if(_enableSqrtBetaMix)      _sqrtBetaMixImage.Reset();
+	if(_enableAlphaMixDose)     _alphaMixDoseImage.Reset();
+	if(_enableSqrtBetaMixDose)  _sqrtBetaMixDoseImage.Reset();
 	_bioDoseImage.Reset();
-	if(_enableRBE)          _rbeImage.Reset();
+	if(_enableRBE)              _rbeImage.Reset();
 
 	if(_enableUncertainty) {
 		_squaredDoseImage.Reset();
@@ -467,7 +516,11 @@ void GateBioDoseActor::ResetData() {
 		_sqrtBetaMixUncertaintyImage.Reset();
 
 		if(_enableUncertaintyDetails) {
-			// TODO
+			_pdBiodoseAlphaMixDoseMeanImage.Reset();
+			_pdBiodoseSqrtBetaMixDoseMeanImage.Reset();
+			_varAlphaMixDoseMeanImage.Reset();
+			_varSqrtBetaMixDoseMeanImage.Reset();
+			_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.Reset();
 		}
 	}
 }

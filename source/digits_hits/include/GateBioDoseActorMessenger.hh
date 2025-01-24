@@ -43,6 +43,8 @@ private:
 	std::unique_ptr<G4UIcmdWithABool>   pEnableBioDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableAlphaMixCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableSqrtBetaMixCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableAlphaMixDoseCmd;
+	std::unique_ptr<G4UIcmdWithABool>   pEnableSqrtBetaMixDoseCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableRBECmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableUncertaintyCmd;
 	std::unique_ptr<G4UIcmdWithABool>   pEnableUncertaintyDetailsCmd;
