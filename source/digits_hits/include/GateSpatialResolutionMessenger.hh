@@ -50,6 +50,7 @@ private:
   G4UIcmdWithAString	*nameAxisCmd;
   G4UIcmdWithAString	*spresolutionDistrib2DCmd; // Command declaration for 2D resolution distribution will be used with nameAxisCmd
   G4UIcmdWithABool* 	confineCmd;
+  G4UIcmdWithABool*		useTruncatedGaussianCmd;
 
 
 };

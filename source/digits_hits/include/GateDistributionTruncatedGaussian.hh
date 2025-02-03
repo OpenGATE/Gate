@@ -12,32 +12,45 @@ See LICENSE.md for further details
 ----------------------*/
 
 
-#ifndef GateDistributionGauss_h
-#define GateDistributionGauss_h 1
+#ifndef GateDistributionTruncatedGaussian_h
+#define GateDistributionTruncatedGaussian_h 1
 
 #include "GateVDistribution.hh"
-#include "GateDistributionGaussMessenger.hh"
+//#include "GateDistributionTruncatedGaussianMessenger.hh"
 
-class GateDistributionGaussMessenger;
-class GateDistributionGauss : public GateVDistribution
+
+class GateDistributionTruncatedGaussian : public GateVDistribution
 {
   public:
 
-    //! Constructor
-    GateDistributionGauss(const G4String& itsName);
+    //! Constructors
+    GateDistributionTruncatedGaussian(const G4String& itsName);
+    GateDistributionTruncatedGaussian(const G4String& itsName, 
+                                          G4double mu, 
+                                          G4double sigma, 
+                                          G4double lowLimit, 
+                                          G4double highLimit);
     //! Destructor
-    virtual ~GateDistributionGauss() ;
-
+    virtual ~GateDistributionTruncatedGaussian() ;
+   
+    //Static methods
+    
     //! Setters
-    inline void SetMean(G4double mean) {m_Mean=mean;}
+    inline void SetMu(G4double mu) {m_Mu=mu;}
     inline void SetSigma(G4double sigma) {m_Sigma=sigma;}
-    inline void SetAmplitude(G4double amplitude) {m_Amplitude=amplitude;}
+    inline void SetAmplitude(G4double amplitude) 	{m_Amplitude=amplitude;}
+    inline void SetLowLimit(G4double lowLimit)		{m_lowLimit = lowLimit;}
+    inline void SethighLimit(G4double highLimit)	{m_highLimit = highLimit;}
     //! Getters
-    inline G4double GetMean() const {return m_Mean;}
+    inline G4double GetMu() const {return m_Mu;}
     inline G4double GetSigma() const {return m_Sigma;}
     inline G4double GetAmplitude() const {return m_Amplitude;}
     virtual void DescribeMyself(size_t indent);
-
+    //!Math functions
+    static G4double pdf(double x);
+    static G4double cdf(double x);
+    virtual G4double computeTruncatedSigma() const;
+    virtual G4double shootTruncatedGaussian() const;
 
 
     virtual G4double MinX() const;
@@ -47,15 +60,16 @@ class GateDistributionGauss : public GateVDistribution
     virtual G4double Value(G4double x) const;
     // Returns a random number following the current distribution
     // should be optimised according to each distrbution type
-    virtual G4double ShootRandom() const;
+    //virtual G4double ShootRandom() const;
+    static G4double shootRandom(G4double mu, G4double sigma, G4double lowLimit, G4double highLimit);   
+    static G4double computeTruncatedSigmaStatic(G4double mu, G4double sigma, G4double lowLimit, G4double highLimit) ;
 
   private:
-    G4double m_Mean;
+    G4double m_Mu;
     G4double m_Sigma;
     G4double m_lowLimit;
     G4double m_highLimit;
     G4double m_Amplitude;
-    GateDistributionGaussMessenger* m_messenger;
 
 
 };

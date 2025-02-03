@@ -71,7 +71,13 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	cmdName = GetDirectoryName() + "confineInsideOfSmallestElement";
     confineCmd = new G4UIcmdWithABool(cmdName,this);
     confineCmd->SetGuidance("To be set true, if you want to moves the outsiders of the crystal after spblurring inside the same crystal");
+
+    cmdName = GetDirectoryName() + "useTruncatedGaussian";
+    useTruncatedGaussianCmd = new G4UIcmdWithABool(cmdName,this);
+    useTruncatedGaussianCmd->SetGuidance("To be set true, if you want to use a truncated Gaussian distribution to keep the blurring within the same crystal");
 }
+
+
 
 
 GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
@@ -91,6 +97,7 @@ GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 	delete 	spresolutionDistrib2DCmd;
 
 	delete  confineCmd;
+	delete	useTruncatedGaussianCmd;
 
 }
 
@@ -132,6 +139,8 @@ void GateSpatialResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4String
 		{ m_SpatialResolution->SetFWHMz(spresolutionZCmd->GetNewDoubleValue(newValue)); }
 	  else if ( aCommand==confineCmd )
 		{ m_SpatialResolution->ConfineInsideOfSmallestElement(confineCmd->GetNewBoolValue(newValue)); }
+	  else if ( aCommand==useTruncatedGaussianCmd )
+	  		{ m_SpatialResolution->SetUseTruncatedGaussian(useTruncatedGaussianCmd->GetNewBoolValue(newValue)); }
 	 else
 	    {
 	    	GateClockDependentMessenger::SetNewValue(aCommand,newValue);

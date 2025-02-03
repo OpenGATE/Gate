@@ -44,6 +44,7 @@
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 #include "GateVDistribution.hh"
+#include "GateDistributionTruncatedGaussian.hh"
 
 
 
@@ -60,6 +61,7 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_nameAxis("XY"),
    m_fwhmDistrib2D(0),
    m_IsConfined(true),
+   m_UseTruncatedGaussian(true),
    m_Navigator(0),
    m_Touchable(0),
    m_systemDepth(-1),
@@ -224,9 +226,10 @@ void GateSpatialResolution::Digitize(){
 		  }
 
 
-		  G4double PxNew = G4RandGauss::shoot(Px,stddevX);
-		  G4double PyNew = G4RandGauss::shoot(Py,stddevY);
-		  G4double PzNew = G4RandGauss::shoot(Pz,stddevZ);
+
+			  G4double PxNew ;//= G4RandGauss::shoot(Px,stddevX);
+			  G4double PyNew ;//= G4RandGauss::shoot(Py,stddevY);
+			  G4double PzNew ;//= G4RandGauss::shoot(Pz,stddevZ);
 
 
 
@@ -241,13 +244,26 @@ void GateSpatialResolution::Digitize(){
 			inputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
 			inputDigi->GetVolumeID().GetBottomCreator()->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
 
+			if (m_UseTruncatedGaussian)
+					  {
+
+						 PxNew = GateDistributionTruncatedGaussian::shootRandom(Px,stddevX,Xmin, Xmax);
+						 PyNew = GateDistributionTruncatedGaussian::shootRandom(Py,stddevY,Ymin, Ymax);
+						 PzNew = GateDistributionTruncatedGaussian::shootRandom(Pz,stddevZ,Zmin, Zmax);
+					  }
+			else{
+
+				PxNew = G4RandGauss::shoot(Px,stddevX);
+				PyNew = G4RandGauss::shoot(Py,stddevY);
+				PzNew = G4RandGauss::shoot(Pz,stddevZ);
+
 			if(PxNew<Xmin) PxNew=Xmin;
 			if(PyNew<Ymin) PyNew=Ymin;
 			if(PzNew<Zmin) PzNew=Zmin;
 			if(PxNew>Xmax) PxNew=Xmax;
 			if(PyNew>Ymax) PyNew=Ymax;
 			if(PzNew>Zmax) PzNew=Zmax;
-
+			}
 
 
 			m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
@@ -261,11 +277,25 @@ void GateSpatialResolution::Digitize(){
 		  {
 			//Not confined:
 			//Update volume IDs and new locations inside crystal
-
-			// TODO Test properly and maybe extent to more general cases
+			  // TODO Test properly and maybe extent to more general cases
 			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, Xmin, Xmax);
-			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
-			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
+  			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
+  			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
+
+
+				if (m_UseTruncatedGaussian)
+						  {
+
+							 PxNew = GateDistributionTruncatedGaussian::shootRandom(Px,stddevX,Xmin, Xmax);
+							 PyNew = GateDistributionTruncatedGaussian::shootRandom(Py,stddevY,Ymin, Ymax);
+							 PzNew = GateDistributionTruncatedGaussian::shootRandom(Pz,stddevZ,Zmin, Zmax);
+						  }
+				else{
+
+					PxNew = G4RandGauss::shoot(Px,stddevX);
+					PyNew = G4RandGauss::shoot(Py,stddevY);
+					PzNew = G4RandGauss::shoot(Pz,stddevZ);
+				}
 
 			  if(PxNew<Xmin) PxNew=Xmin;
 			  if(PyNew<Ymin) PyNew=Ymin;

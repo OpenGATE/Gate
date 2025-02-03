@@ -76,6 +76,8 @@ public:
     void SetSpatialResolutionParameters();
     inline void ConfineInsideOfSmallestElement(const G4bool& value) { m_IsConfined = value; };
     inline G4bool IsConfinedInsideOfSmallestElement() const  	      	{ return m_IsConfined; }
+    inline void SetUseTruncatedGaussian(const G4bool& value) { m_UseTruncatedGaussian = value; };
+    inline G4bool GetUseTruncatedGaussian(const G4bool& value) 	      	{ return m_UseTruncatedGaussian; }
 
     void UpdatePos(G4double ,G4double ,G4double );
     void LocateOutputDigi(GateDigi* inputDigi, G4double PxNew,G4double PyNew,G4double PzNew);
@@ -105,6 +107,7 @@ protected:
 
 
     G4bool m_IsConfined;
+    G4bool m_UseTruncatedGaussian;
     G4Navigator* m_Navigator;
     G4TouchableHistoryHandle m_Touchable;
 
