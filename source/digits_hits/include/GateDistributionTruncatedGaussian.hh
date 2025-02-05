@@ -46,21 +46,22 @@ class GateDistributionTruncatedGaussian : public GateVDistribution
     inline G4double GetSigma() const {return m_Sigma;}
     inline G4double GetAmplitude() const {return m_Amplitude;}
     virtual void DescribeMyself(size_t indent);
-    //!Math functions
-    static G4double pdf(double x);
-    static G4double cdf(double x);
-    virtual G4double computeTruncatedSigma() const;
-    virtual G4double shootTruncatedGaussian() const;
-
+    
+    
 
     virtual G4double MinX() const;
     virtual G4double MinY() const;
     virtual G4double MaxX() const;
     virtual G4double MaxY() const;
     virtual G4double Value(G4double x) const;
-    // Returns a random number following the current distribution
-    // should be optimised according to each distrbution type
-    //virtual G4double ShootRandom() const;
+
+    //! Math functions
+    virtual G4double computeTruncatedSigma() const;
+    virtual G4double shootTruncatedGaussian() const;
+
+    //! Static methods;
+    static G4double pdf(double x);
+    static G4double cdf(double x);
     static G4double shootRandom(G4double mu, G4double sigma, G4double lowLimit, G4double highLimit);   
     static G4double computeTruncatedSigmaStatic(G4double mu, G4double sigma, G4double lowLimit, G4double highLimit) ;
 
