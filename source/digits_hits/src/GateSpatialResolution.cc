@@ -227,12 +227,9 @@ void GateSpatialResolution::Digitize(){
 
 
 
-			  G4double PxNew ;//= G4RandGauss::shoot(Px,stddevX);
-			  G4double PyNew ;//= G4RandGauss::shoot(Py,stddevY);
-			  G4double PzNew ;//= G4RandGauss::shoot(Pz,stddevZ);
-
-
-
+			  G4double PxNew ;
+			  G4double PyNew ;
+			  G4double PzNew ;
 
 
 
