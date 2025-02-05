@@ -63,7 +63,7 @@ jobs:
                                   libssl-dev \
                                   python3.8-dev \
                                   ccache \
-                                  fftw3-dev
+                                  libfftw3-dev
           gcc -v
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
           brew install python@3.12 || true
@@ -330,8 +330,7 @@ jobs:
                                 cmake \
                                 libssl-dev \
                                 python3.8-dev \
-                                ccache \
-                                fftw3-dev
+                                ccache
         gcc -v
         cd
     - name: Run the test in docker
