@@ -76,12 +76,12 @@ void GateBioDoseActor::Construct() {
 		if(_enableRBE)              setupImage(_rbeImage, "rbe");
 
 		if(_enableUncertainty) {
-			setupImage(_squaredDoseImage);
-			setupImage(_squaredAlphaMixDoseImage);
-			setupImage(_squaredSqrtBetaMixDoseImage);
-			setupImage(_alphaMixDoseDoseImage);
-			setupImage(_sqrtBetaMixDoseDoseImage);
-			setupImage(_alphaMixDoseSqrtBetaMixDoseImage);
+			setupImage(_squaredDoseImage, "sq_dose");
+			setupImage(_squaredAlphaMixDoseImage, "sq_alphamix_dose");
+			setupImage(_squaredSqrtBetaMixDoseImage, "sq_sqrtbetamix_dose");
+			setupImage(_alphaMixDoseDoseImage, "alphamixdose_dose");
+			setupImage(_sqrtBetaMixDoseDoseImage, "sqrtbetamixdose_dose");
+			setupImage(_alphaMixDoseSqrtBetaMixDoseImage, "alphamixdose_sqrtbetamixdose");
 
 			setupImage(_doseUncertaintyImage, "dose_uncertainty");
 			setupImage(_biodoseUncertaintyImage, "biodose_uncertainty");
@@ -464,6 +464,13 @@ void GateBioDoseActor::SaveData() {
 		_sqrtBetaMixUncertaintyImage.SaveData(_currentEvent);
 
 		if(_enableUncertaintyDetails) {
+			_squaredDoseImage.SaveData(_currentEvent);
+			_squaredAlphaMixDoseImage.SaveData(_currentEvent);
+			_squaredSqrtBetaMixDoseImage.SaveData(_currentEvent);
+			_alphaMixDoseDoseImage.SaveData(_currentEvent);
+			_sqrtBetaMixDoseDoseImage.SaveData(_currentEvent);
+			_alphaMixDoseSqrtBetaMixDoseImage.SaveData(_currentEvent);
+
 			_pdBiodoseAlphaMixDoseMeanImage.SaveData(_currentEvent);
 			_pdBiodoseSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
 			_varAlphaMixDoseMeanImage.SaveData(_currentEvent);
