@@ -226,7 +226,7 @@ void GateSpatialResolution::Digitize(){
 			 if (m_fwhmYdistrib) stddevY = m_fwhmYdistrib->Value(P.y() * mm);
 			 else if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
 
-			 if (m_fwhmZdistrib) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;// TODO! stddevZ = m_fwhmZdistrib->Value(P.z() * mm);
+			 if (m_fwhmZdistrib) stddevZ = m_fwhmZdistrib->Value(P.z() * mm);
 			 else if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
 
 		  }
