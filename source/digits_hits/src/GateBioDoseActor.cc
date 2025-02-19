@@ -378,19 +378,20 @@ void GateBioDoseActor::updateData() {
 					sqrtBetaMixDoseMean, doseMean
 				);
 
-				auto const partAlphaMixDoseMean = pdBiodoseAlphaMixDoseMean * varAlphaMixDoseMean;
-				auto const partSqrtBetaMixDoseMean = pdBiodoseSqrtBetaMixDoseMean * varSqrtBetaMixDoseMean;
+				// TODO mistake here, must square lonely pd
+				auto const partAlphaMixDoseMean = pdBiodoseAlphaMixDoseMean * pdBiodoseAlphaMixDoseMean * varAlphaMixDoseMean;
+				auto const partSqrtBetaMixDoseMean = pdBiodoseSqrtBetaMixDoseMean * pdBiodoseSqrtBetaMixDoseMean * varSqrtBetaMixDoseMean;
 				auto const partAlphaMixDoseMeanSqrtBetaMixDoseMean = 2 * pdBiodoseAlphaMixDoseMean * pdBiodoseSqrtBetaMixDoseMean * covAlphaMixDoseMeanSqrtBetaMixDoseMean;
 				auto const varBiodose = partAlphaMixDoseMean + partSqrtBetaMixDoseMean + partAlphaMixDoseMeanSqrtBetaMixDoseMean;
 
 				auto const varAlphaMixDosePartA = (1 / doseMean / doseMean) * varAlphaMixDoseMean;
-				auto const varAlphaMixDosePartB = (alphaMixDoseMean * alphaMixDoseMean / doseMean / doseMean / doseMean) * varDoseMean;
+				auto const varAlphaMixDosePartB = (alphaMixDoseMean * alphaMixDoseMean / doseMean / doseMean / doseMean / doseMean) * varDoseMean;
 				auto const varAlphaMixDosePartC = 2 * (alphaMixDoseMean / doseMean / doseMean / doseMean) * covAlphaMixDoseMeanDoseMean;
 				auto const varAlphaMixDose = varAlphaMixDosePartA + varAlphaMixDosePartB + varAlphaMixDosePartC;
 
 				auto const varSqrtBetaMixDosePartA = (1 / doseMean / doseMean) * varSqrtBetaMixDoseMean;
-				auto const varSqrtBetaMixDosePartB = (alphaMixDoseMean * alphaMixDoseMean / doseMean / doseMean / doseMean) * varDoseMean;
-				auto const varSqrtBetaMixDosePartC = 2 * (alphaMixDoseMean / doseMean / doseMean / doseMean) * covSqrtBetaMixDoseMeanDoseMean;
+				auto const varSqrtBetaMixDosePartB = (sqrtBetaMixDoseMean * sqrtBetaMixDoseMean / doseMean / doseMean / doseMean / doseMean) * varDoseMean;
+				auto const varSqrtBetaMixDosePartC = 2 * (sqrtBetaMixDoseMean / doseMean / doseMean / doseMean) * covSqrtBetaMixDoseMeanDoseMean;
 				auto const varSqrtBetaMixDose = varSqrtBetaMixDosePartA + varSqrtBetaMixDosePartB + varSqrtBetaMixDosePartC;
 
 				auto uncertaintyDose = std::sqrt(varDoseMean) / doseMean;
