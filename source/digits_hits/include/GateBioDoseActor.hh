@@ -152,13 +152,13 @@ private:
 	GateImageWithStatistic _alphaMixUncertaintyImage;
 	GateImageWithStatistic _sqrtBetaMixUncertaintyImage;
 
-	GateImageWithStatistic _pdBiodoseAlphaMixDoseMeanImage;
-	GateImageWithStatistic _pdBiodoseSqrtBetaMixDoseMeanImage;
-	GateImageWithStatistic _varAlphaMixDoseMeanImage;
-	GateImageWithStatistic _varSqrtBetaMixDoseMeanImage;
-	GateImageWithStatistic _covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage;
-	GateImageWithStatistic _covAlphaMixDoseMeanDoseMeanImage;
-	GateImageWithStatistic _covSqrtBetaMixDoseMeanDoseMeanImage;
+	GateImageWithStatistic _pdBiodoseAlphaMixDoseImage;
+	GateImageWithStatistic _pdBiodoseSqrtBetaMixDoseImage;
+	GateImageWithStatistic _varAlphaMixDoseImage;
+	GateImageWithStatistic _varSqrtBetaMixDoseImage;
+	GateImageWithStatistic _covAlphaMixDoseSqrtBetaMixDoseImage;
+	GateImageWithStatistic _covAlphaMixDoseDoseImage;
+	GateImageWithStatistic _covSqrtBetaMixDoseDoseImage;
 
 	// Outputs
 	bool _enableEdep = false;

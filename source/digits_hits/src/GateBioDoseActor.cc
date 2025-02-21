@@ -89,13 +89,13 @@ void GateBioDoseActor::Construct() {
 			setupImage(_sqrtBetaMixUncertaintyImage, "sqrtbetamix_uncertainty");
 
 			if(_enableUncertaintyDetails) {
-				setupImage(_pdBiodoseAlphaMixDoseMeanImage, "pd_biodose_alphamixdosemean");
-				setupImage(_pdBiodoseSqrtBetaMixDoseMeanImage, "pd_biodose_sqrtbetamixdosemean");
-				setupImage(_varAlphaMixDoseMeanImage, "var_alphamixdosemean");
-				setupImage(_varSqrtBetaMixDoseMeanImage, "var_sqrtbetamixdosemean");
-				setupImage(_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage, "cov_alphamixdosemean_sqrtbetamixdosemean");
-				setupImage(_covAlphaMixDoseMeanDoseMeanImage, "cov_alphamixdosemean_dosemean");
-				setupImage(_covSqrtBetaMixDoseMeanDoseMeanImage, "cov_sqrtbetamixdosemean_dosemean");
+				setupImage(_pdBiodoseAlphaMixDoseImage, "pd_biodose_alphamixdose");
+				setupImage(_pdBiodoseSqrtBetaMixDoseImage, "pd_biodose_sqrtbetamixdose");
+				setupImage(_varAlphaMixDoseImage, "var_alphamixdose");
+				setupImage(_varSqrtBetaMixDoseImage, "var_sqrtbetamixdose");
+				setupImage(_covAlphaMixDoseSqrtBetaMixDoseImage, "cov_alphamixdose_sqrtbetamixdose");
+				setupImage(_covAlphaMixDoseDoseImage, "cov_alphamixdose_dose");
+				setupImage(_covSqrtBetaMixDoseDoseImage, "cov_sqrtbetamixdose_dose");
 			}
 		}
 	}
@@ -335,83 +335,60 @@ void GateBioDoseActor::updateData() {
 					return 1 / (n - 1) * (ab - a * b);
 				};
 
-				auto const alphaMixDoseMean = alphaMixDose / n;
-				auto const sqrtBetaMixDoseMean = sqrtBetaMixDose / n;
+				auto const squaredAlphaMixDose = _squaredAlphaMixDoseImage.GetValue(index);
+				auto const squaredSqrtBetaMixDose = _squaredSqrtBetaMixDoseImage.GetValue(index);
+				auto const squaredDose = _squaredDoseImage.GetValue(index);
 
-				auto const doseMean = dose / n;
-				auto const scaledDoseMean = scaledDose / n;
-				auto const sqScaledDoseMean = sqScaledDose / n / n;
-				auto const biodoseMean = biodose / n;
+				auto const pdBiodoseAlphaMixDose = 1 / sqrtDelta;
+				auto const pdBiodoseSqrtBetaMixDose = 2 * sqrtBetaMixDose / sqrtDelta;
 
-				auto const deltaMean = sqAlphaRef + 4 * _betaRef * (alphaMixDoseMean + sqrtBetaMixDoseMean * sqrtBetaMixDoseMean);
+				auto const varAlphaMixDose = var(n, squaredAlphaMixDose, alphaMixDose);
+				auto const varSqrtBetaMixDose = var(n, squaredSqrtBetaMixDose, sqrtBetaMixDose);
+				auto const varDose = var(n, squaredDose, dose);
 
-				double sqrtDeltaMean = 0.;
-				if(deltaMean >= 0)
-					sqrtDeltaMean = std::sqrt(deltaMean);
+				auto const alphaMixDoseSqrtBetaMixDose = _alphaMixDoseSqrtBetaMixDoseImage.GetValue(index);
+				auto const covAlphaMixDoseSqrtBetaMixDose = cov(n, alphaMixDoseSqrtBetaMixDose, alphaMixDose, sqrtBetaMixDose);
 
-				auto const squaredAlphaMixDoseMean = _squaredAlphaMixDoseImage.GetValue(index) / n;
-				auto const squaredSqrtBetaMixDoseMean = _squaredSqrtBetaMixDoseImage.GetValue(index) / n;
-				auto const squaredDoseMean = _squaredDoseImage.GetValue(index) / n;
+				auto const alphaMixDoseDose = _alphaMixDoseDoseImage.GetValue(index);
+				auto const covAlphaMixDoseDose = cov(n, alphaMixDoseDose, alphaMixDose, dose);
 
-				auto const pdBiodoseAlphaMixDoseMean = 1 / sqrtDeltaMean;
-				auto const pdBiodoseSqrtBetaMixDoseMean = 2 * sqrtBetaMixDoseMean / sqrtDeltaMean;
-
-				auto const varAlphaMixDoseMean = var(n, squaredAlphaMixDoseMean, alphaMixDoseMean);
-				auto const varSqrtBetaMixDoseMean = var(n, squaredSqrtBetaMixDoseMean, sqrtBetaMixDoseMean);
-				auto const varDoseMean = var(n, squaredDoseMean, doseMean);
-
-				auto const alphaMixDoseSqrtBetaMixDoseMean = _alphaMixDoseSqrtBetaMixDoseImage.GetValue(index) / n;
-				auto const covAlphaMixDoseMeanSqrtBetaMixDoseMean = cov(
-					n, alphaMixDoseSqrtBetaMixDoseMean,
-					alphaMixDoseMean, sqrtBetaMixDoseMean
-				);
-
-				auto const alphaMixDoseDoseMean = _alphaMixDoseDoseImage.GetValue(index) / n;
-				auto const covAlphaMixDoseMeanDoseMean = cov(
-					n, alphaMixDoseDoseMean,
-					alphaMixDoseMean, doseMean
-				);
-
-				auto const sqrtBetaMixDoseDoseMean = _sqrtBetaMixDoseDoseImage.GetValue(index) / n;
-				auto const covSqrtBetaMixDoseMeanDoseMean = cov(
-					n, sqrtBetaMixDoseDoseMean,
-					sqrtBetaMixDoseMean, doseMean
-				);
+				auto const sqrtBetaMixDoseDose = _sqrtBetaMixDoseDoseImage.GetValue(index);
+				auto const covSqrtBetaMixDoseDose = cov(n, sqrtBetaMixDoseDose, sqrtBetaMixDose, dose);
 
 				// TODO mistake here, must square lonely pd
-				auto const partAlphaMixDoseMean = pdBiodoseAlphaMixDoseMean * pdBiodoseAlphaMixDoseMean * varAlphaMixDoseMean;
-				auto const partSqrtBetaMixDoseMean = pdBiodoseSqrtBetaMixDoseMean * pdBiodoseSqrtBetaMixDoseMean * varSqrtBetaMixDoseMean;
-				auto const partAlphaMixDoseMeanSqrtBetaMixDoseMean = 2 * pdBiodoseAlphaMixDoseMean * pdBiodoseSqrtBetaMixDoseMean * covAlphaMixDoseMeanSqrtBetaMixDoseMean;
-				auto const varBiodose = partAlphaMixDoseMean + partSqrtBetaMixDoseMean + partAlphaMixDoseMeanSqrtBetaMixDoseMean;
+				auto const partAlphaMixDose = pdBiodoseAlphaMixDose * pdBiodoseAlphaMixDose * varAlphaMixDose;
+				auto const partSqrtBetaMixDose = pdBiodoseSqrtBetaMixDose * pdBiodoseSqrtBetaMixDose * varSqrtBetaMixDose;
+				auto const partAlphaMixDoseSqrtBetaMixDose = 2 * pdBiodoseAlphaMixDose * pdBiodoseSqrtBetaMixDose * covAlphaMixDoseSqrtBetaMixDose;
+				auto const varBiodose = partAlphaMixDose + partSqrtBetaMixDose + partAlphaMixDoseSqrtBetaMixDose;
 
-				auto const varAlphaMixDosePartA = (1 / doseMean / doseMean) * varAlphaMixDoseMean;
-				auto const varAlphaMixDosePartB = (alphaMixDoseMean * alphaMixDoseMean / doseMean / doseMean / doseMean / doseMean) * varDoseMean;
-				auto const varAlphaMixDosePartC = 2 * (alphaMixDoseMean / doseMean / doseMean / doseMean) * covAlphaMixDoseMeanDoseMean;
-				auto const varAlphaMixDose = varAlphaMixDosePartA + varAlphaMixDosePartB + varAlphaMixDosePartC;
+				auto const varAlphaMixDosePartA = (1 / dose / dose) * varAlphaMixDose;
+				auto const varAlphaMixDosePartB = (alphaMixDose * alphaMixDose / dose / dose / dose / dose) * varDose;
+				auto const varAlphaMixDosePartC = 2 * (alphaMixDose / dose / dose / dose) * covAlphaMixDoseDose;
+				auto const varAlphaMix = varAlphaMixDosePartA + varAlphaMixDosePartB + varAlphaMixDosePartC;
 
-				auto const varSqrtBetaMixDosePartA = (1 / doseMean / doseMean) * varSqrtBetaMixDoseMean;
-				auto const varSqrtBetaMixDosePartB = (sqrtBetaMixDoseMean * sqrtBetaMixDoseMean / doseMean / doseMean / doseMean / doseMean) * varDoseMean;
-				auto const varSqrtBetaMixDosePartC = 2 * (sqrtBetaMixDoseMean / doseMean / doseMean / doseMean) * covSqrtBetaMixDoseMeanDoseMean;
-				auto const varSqrtBetaMixDose = varSqrtBetaMixDosePartA + varSqrtBetaMixDosePartB + varSqrtBetaMixDosePartC;
+				auto const varSqrtBetaMixDosePartA = (1 / dose / dose) * varSqrtBetaMixDose;
+				auto const varSqrtBetaMixDosePartB = (sqrtBetaMixDose * sqrtBetaMixDose / dose / dose / dose / dose) * varDose;
+				auto const varSqrtBetaMixDosePartC = 2 * (sqrtBetaMixDose / dose / dose / dose) * covSqrtBetaMixDoseDose;
+				auto const varSqrtBetaMix = varSqrtBetaMixDosePartA + varSqrtBetaMixDosePartB + varSqrtBetaMixDosePartC;
 
-				auto uncertaintyDose = std::sqrt(varDoseMean) / doseMean;
-				auto uncertaintyBiodose = std::sqrt(varBiodose) / biodoseMean;
-				auto uncertaintyAlphaMixDose = std::sqrt(varAlphaMixDose) / alphaMixDoseMean;
-				auto uncertaintySqrtBetaMixDose = std::sqrt(varSqrtBetaMixDose) / sqrtBetaMixDoseMean;
+				auto uncertaintyDose = std::sqrt(varDose) / dose;
+				auto uncertaintyBiodose = std::sqrt(varBiodose) / biodose;
+				auto uncertaintyAlphaMix = std::sqrt(varAlphaMix) / alphaMix;
+				auto uncertaintySqrtBetaMix = std::sqrt(varSqrtBetaMix) / sqrtBetaMix;
 
 				_doseUncertaintyImage.SetValue(index, uncertaintyDose);
 				_biodoseUncertaintyImage.SetValue(index, uncertaintyBiodose);
-				_alphaMixUncertaintyImage.SetValue(index, uncertaintyAlphaMixDose);
-				_sqrtBetaMixUncertaintyImage.SetValue(index, uncertaintySqrtBetaMixDose);
+				_alphaMixUncertaintyImage.SetValue(index, uncertaintyAlphaMix);
+				_sqrtBetaMixUncertaintyImage.SetValue(index, uncertaintySqrtBetaMix);
 
 				if(_enableUncertaintyDetails) {
-					_pdBiodoseAlphaMixDoseMeanImage.SetValue(index, pdBiodoseAlphaMixDoseMean);
-					_pdBiodoseSqrtBetaMixDoseMeanImage.SetValue(index, pdBiodoseSqrtBetaMixDoseMean);
-					_varAlphaMixDoseMeanImage.SetValue(index, varAlphaMixDoseMean);
-					_varSqrtBetaMixDoseMeanImage.SetValue(index, varSqrtBetaMixDoseMean);
-					_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SetValue(index, covAlphaMixDoseMeanSqrtBetaMixDoseMean);
-					_covAlphaMixDoseMeanDoseMeanImage.SetValue(index, covAlphaMixDoseMeanDoseMean);
-					_covSqrtBetaMixDoseMeanDoseMeanImage.SetValue(index, covSqrtBetaMixDoseMeanDoseMean);
+					_pdBiodoseAlphaMixDoseImage.SetValue(index, pdBiodoseAlphaMixDose);
+					_pdBiodoseSqrtBetaMixDoseImage.SetValue(index, pdBiodoseSqrtBetaMixDose);
+					_varAlphaMixDoseImage.SetValue(index, varAlphaMixDose);
+					_varSqrtBetaMixDoseImage.SetValue(index, varSqrtBetaMixDose);
+					_covAlphaMixDoseSqrtBetaMixDoseImage.SetValue(index, covAlphaMixDoseSqrtBetaMixDose);
+					_covAlphaMixDoseDoseImage.SetValue(index, covAlphaMixDoseDose);
+					_covSqrtBetaMixDoseDoseImage.SetValue(index, covSqrtBetaMixDoseDose);
 				}
 			} else {
 				_doseUncertaintyImage.SetValue(index, 1);
@@ -420,13 +397,13 @@ void GateBioDoseActor::updateData() {
 				_sqrtBetaMixUncertaintyImage.SetValue(index, 1);
 
 				if(_enableUncertaintyDetails) {
-					_pdBiodoseAlphaMixDoseMeanImage.SetValue(index, 1);
-					_pdBiodoseSqrtBetaMixDoseMeanImage.SetValue(index, 1);
-					_varAlphaMixDoseMeanImage.SetValue(index, 1);
-					_varSqrtBetaMixDoseMeanImage.SetValue(index, 1);
-					_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SetValue(index, 1);
-					_covAlphaMixDoseMeanDoseMeanImage.SetValue(index, 1);
-					_covSqrtBetaMixDoseMeanDoseMeanImage.SetValue(index, 1);
+					_pdBiodoseAlphaMixDoseImage.SetValue(index, 1);
+					_pdBiodoseSqrtBetaMixDoseImage.SetValue(index, 1);
+					_varAlphaMixDoseImage.SetValue(index, 1);
+					_varSqrtBetaMixDoseImage.SetValue(index, 1);
+					_covAlphaMixDoseSqrtBetaMixDoseImage.SetValue(index, 1);
+					_covAlphaMixDoseDoseImage.SetValue(index, 1);
+					_covSqrtBetaMixDoseDoseImage.SetValue(index, 1);
 				}
 			}
 		}
@@ -472,13 +449,13 @@ void GateBioDoseActor::SaveData() {
 			_sqrtBetaMixDoseDoseImage.SaveData(_currentEvent);
 			_alphaMixDoseSqrtBetaMixDoseImage.SaveData(_currentEvent);
 
-			_pdBiodoseAlphaMixDoseMeanImage.SaveData(_currentEvent);
-			_pdBiodoseSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
-			_varAlphaMixDoseMeanImage.SaveData(_currentEvent);
-			_varSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
-			_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.SaveData(_currentEvent);
-			_covAlphaMixDoseMeanDoseMeanImage.SaveData(_currentEvent);
-			_covSqrtBetaMixDoseMeanDoseMeanImage.SaveData(_currentEvent);
+			_pdBiodoseAlphaMixDoseImage.SaveData(_currentEvent);
+			_pdBiodoseSqrtBetaMixDoseImage.SaveData(_currentEvent);
+			_varAlphaMixDoseImage.SaveData(_currentEvent);
+			_varSqrtBetaMixDoseImage.SaveData(_currentEvent);
+			_covAlphaMixDoseSqrtBetaMixDoseImage.SaveData(_currentEvent);
+			_covAlphaMixDoseDoseImage.SaveData(_currentEvent);
+			_covSqrtBetaMixDoseDoseImage.SaveData(_currentEvent);
 		}
 	}
 	if(_enableHitEventCount)  _hitEventCountImage.SaveData(_currentEvent);
@@ -524,11 +501,13 @@ void GateBioDoseActor::ResetData() {
 		_sqrtBetaMixUncertaintyImage.Reset();
 
 		if(_enableUncertaintyDetails) {
-			_pdBiodoseAlphaMixDoseMeanImage.Reset();
-			_pdBiodoseSqrtBetaMixDoseMeanImage.Reset();
-			_varAlphaMixDoseMeanImage.Reset();
-			_varSqrtBetaMixDoseMeanImage.Reset();
-			_covAlphaMixDoseMeanSqrtBetaMixDoseMeanImage.Reset();
+			_pdBiodoseAlphaMixDoseImage.Reset();
+			_pdBiodoseSqrtBetaMixDoseImage.Reset();
+			_varAlphaMixDoseImage.Reset();
+			_varSqrtBetaMixDoseImage.Reset();
+			_covAlphaMixDoseSqrtBetaMixDoseImage.Reset();
+			_covAlphaMixDoseDoseImage.Reset();
+			_covSqrtBetaMixDoseDoseImage.Reset();
 		}
 	}
 }
