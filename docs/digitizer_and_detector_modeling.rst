@@ -512,7 +512,7 @@ or if resolution is varying for X, Y and Z::
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhmY 3.0 mm 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/fwhmZ 1.0 mm 
 
-In case if the position obtained after applying a Gaussian blurring exceeds the limits of the original volume, it is set to the surface of that volume (ex, crystal) or surface of a group of volumes (ex, block of crystals). For example, in SPECT the final position should be located within the original detector volume (smallest volume), in this case one should apply the following commande::
+In case if the position obtained after applying a Gaussian blurring exceeds the limits of the original volume, it is set to the surface of that volume (ex, crystal) or surface of a group of volumes (ex, block of crystals). For example, in SPECT the final position should be located within the original detector volume (smallest volume), in this case one should apply the following command::
 
    /gate/digitizerMgr/<detector_name>/SinglesDigitizer/<singles_digitizer_name>/spatialResolution/confineInsideOfSmallestElement true
 
@@ -524,20 +524,36 @@ BEWARE: This relocation procedure is validated only for the first group level of
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/fwhm 1.0 mm
    /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/confineInsideOfSmallestElement true 
 
+The option for a Gaussian distribution truncated at the crystal's edge has been introduced to preserve the standard deviation of the hits positioned close to the edge of the crystal. This option is particularly useful to confine elements in large crystals without compromising the standard deviation (and FWHM) of the spatial blurring.
+
+BEWARE: The confined and the use of the truncated Gaussian are default options. Use the following commands to activate or deactivate both options:
+
+**Example**::
+
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/confineInsideOfSmallestElement true 
+/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/useTruncatedGaussian 		true
+
+
 **Configuring Spatial Resolution with 1D and 2D Distributions**::
 
-This approach is particularly essential  for  monolithic crystal detectors, where factors like edge effects and interaction positions significantly  may influence spatial  resolution.
+This approach is particularly essential  for  monolithic crystal detectors, where factors like edge effects and interaction positions significantly  may influence spatial  resolution. The spatial distribution resolution allows to select what axis will be using such distribution. Currently only one distribution is allowed for all axis.
+
 Here is an example of how to configure this in a macro file:
 
 **Example for 2D distribution**::
 
 
-  /gate/distributions/name    my_distrib2D
-  /gate/distributions/insert   File
-  /gate/distributions/my_distrib2D/setFileName    Lut(X,Y).txt
-  /gate/distributions/my_distrib2D/readMatrix2d
-  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/insert spatialResolution
-  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmXYdistrib2D my_distrib2D
+The axis are selected with a "nameAxis". IMPORTANT NOTE: Only the "XY" axis are available:
+
+/gate/distributions/name                                                                                        my_distrib2D
+/gate/distributions/insert                                                                                      File
+/gate/distributions/my_distrib2D/setFileName                                                                    data/my_stddev_distribuion_file.txt
+/gate/distributions/my_distrib2D/readMatrix2d
+/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/insert                                               spatialResolution
+/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/nameAxis                           XY
+/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/fwhmDistrib2D                      my_distrib2D
+
+
 **Example for 1D distribution**::
 
   /gate/distributions/name   my_distrib1D
@@ -549,22 +565,27 @@ Here is an example of how to configure this in a macro file:
 
 
 
-
-
 These commands allow for more precise control over the spatial resolution by using predefined distributions for the X and Y axes.
 
 BEWARE : The file for 2D Distribution  should be structured such that:
 
--The first line contains the x values.
+-The first line contains the values of the x position. See the example below where the first line has values from -29.5 to 29.5 in this example for a 59 mm crystal.
 
--Each subsequent line begins with a y value followed by the standard deviation (stddev) values corresponding to each x value and y value pair.
+-Each subsequent line begins with the value of the y position followed by the standard deviation (stddev) values corresponding to each x value and y value pair.
 
 **Example**::
 
--29.50 -28.50 -27.50 
--29.50 9.62 13.66 10.22
--28.50 11.38 11.18 10.23
--27.50 12.82 10.43 9.70
+-29.50 -22.94 -16.39 -9.83 -3.28 3.28 9.83 16.39 22.94 29.50
+-29.50 8.05 5.1 4.24 4.23 4.23 4.19 4.56 4.6 5.02 7.68
+-22.94 4.76 2.39 2.31 2.35 2.4 2.35 2.36 2.32 2.44 4.52
+-16.39 4.53 2.45 2.28 2.39 2.35 2.36 2.46 2.46 2.55 4.52
+-9.83 4.38 2.35 2.13 2.09 2.13 2.07 2.14 2.11 2.33 4.44
+-3.28 4.18 2.18 1.97 1.96 1.97 1.97 2.03 2.02 2.19 4.2
+3.28 4.2 2.27 2.04 2.01 2.03 2.06 1.98 1.97 2.24 4.13
+9.83 4.24 2.4 2.23 2.24 2.21 2.28 2.22 2.21 2.35 4.36
+16.39 4.32 2.59 2.47 2.55 2.56 2.52 2.45 2.42 2.55 4.51
+22.94 4.07 2.32 2.33 2.34 2.34 2.27 2.36 2.29 2.4 4.3
+29.50 7.2 4.58 4.07 3.9 3.89 3.83 4.09 3.99 4.47 7.08
 
 Energy Framing
 ^^^^^^^^^^^^^^
