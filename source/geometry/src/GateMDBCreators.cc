@@ -70,7 +70,7 @@ G4Element* GateCompoundElementCreator::Construct()
     components[i]->AddToElement(element);
 
   double f=0.0;
-  for(unsigned int j=0; j<element->GetNumberOfElements(); j++) {
+  for(unsigned int j=0; j<element->GetNumberOfIsotopes(); j++) {
 	double frac = element->GetRelativeAbundanceVector()[j];
 	f+=frac;
 	if (frac<0.0) {

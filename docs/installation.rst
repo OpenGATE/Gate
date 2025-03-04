@@ -1,7 +1,7 @@
 .. _installation_guide-label:
 
-Installation Guide V9.4
-=======================
+Installation Guide V9.4.1
+=========================
 
 .. contents:: Table of Contents
    :depth: 15
