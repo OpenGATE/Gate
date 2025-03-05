@@ -165,6 +165,10 @@ void GateReadout::SetReadoutParameters()
 			if (m_system==NULL) G4Exception( "GateReadout::Digitize", "Digitize", FatalException,
 					"Failed to get the system corresponding to that processor chain. Abort.\n");
 			// Get the array component corresponding to the crystal level using the name 'crystal'
+			if(m_system->GetName()== "systems/scanner")
+				GateError( " *** ERROR*** GateReadout::Digitize. The TakeEnergyCentroid policy cannot be used with \"scanner\" system. Please use other system");
+
+
 			GateArrayComponent* m_crystalComponent = m_system->FindArrayComponent("crystal");
 			if (m_crystalComponent==NULL) G4Exception( "GateReadout::Digitize", "Digitize", FatalException,
 												  "Failed to get the array component corresponding to the crystal. Abort.\n");

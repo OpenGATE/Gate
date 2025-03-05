@@ -4,7 +4,11 @@
 
 sudo apt update
 sudo apt install build-essential
-sudo apt-get install -y git \
+sudo apt-get install -y
+                        gcc \
+                        git \
+                        make \
+                        binutils \
                         cmake \
                         cmake-curses-gui \
                         freeglut3-dev \
@@ -18,8 +22,17 @@ sudo apt-get install -y git \
                         git-lfs \
                         libssl-dev \
                         libxml2-dev \
-                        fftw3-dev
-                     
+                        libfftw3-dev
+                        libx11-dev \
+                        libtbb-dev \
+                        libxext-dev \
+                        qtbase5-dev \
+                        qt5-qmake \
+                        python3.8-dev \
+                        ccache \
+                        libfftw3-dev
+
+
 cd
 mkdir Software
 cd Software
@@ -35,7 +48,7 @@ cd ..
 cd
 cd Software/ITK
 mkdir src bin
-git clone -b v5.2.1 https://github.com/InsightSoftwareConsortium/ITK.git src
+git clone -b v5.4.2 https://github.com/InsightSoftwareConsortium/ITK.git src
 cd bin
 ccmake ../src -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DModule_ITKVtkGlue=ON #+path to VTK
 make
@@ -61,15 +74,20 @@ cd ..
 cd
 cd Software/root
 mkdir src bin
-git clone -b v6-26-08 https://github.com/root-project/root.git src
+git clone -b v6-32-02 https://github.com/root-project/root.git src
 cd bin
-ccmake ../src -Dpython=OFF
-make
+cmake ../src -DCMAKE_CXX_STANDARD=17 \
+                       -Dpython=OFF \
+                       -Dpyroot=OFF \
+                       -Dclad=OFF \
+                       -Dxrootd=OFF \
+                       -DCMAKE_INSTALL_PREFIX=$HOME/Software/root/install
+make install
 
 cd
 cd Software/Geant4
 mkdir src bin install data
-git clone -b v11.2.1 https://github.com/Geant4/geant4.git src
+git clone -b v11.3.0 https://github.com/Geant4/geant4.git src
 cd bin
 ccmake ../src -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_INSTALL_DATADIR=/home/vgate/Software/Geant4/data -DCMAKE_INSTALL_PREFIX=/home/vgate/Software/Geant4/install -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON
 make install
@@ -101,7 +119,7 @@ echo 'source /home/vgate/Software/Geant4/install/bin/geant4.sh' >> /home/vgate/.
 cd
 cd Software/Gate
 mkdir src bin
-git clone -b v9.4 https://github.com/OpenGATE/Gate.git src
+git clone -b v9.4.1 https://github.com/OpenGATE/Gate.git src
 cd bin
 ccmake ../src -DGATE_USE_RTK=ON -DGATE_USE_TORCH=ON -DTorch_DIR=/home/vgate/Software/libtorch/share/cmake/Torch -DGATE_COMPILE_GATEDIGIT=ON
 make

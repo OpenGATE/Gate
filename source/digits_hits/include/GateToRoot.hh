@@ -163,7 +163,8 @@ public:
 				  m_CCFlag(CCFlag),
                   m_collectionName(aCollectionName),
                   m_collectionID(-1),
-				  m_signlesCommands(0){}
+				  m_singlesCommands(0),
+				  m_coinsCommands(0){}
 
         virtual inline ~VOutputChannel() {}
 
@@ -179,8 +180,9 @@ public:
         inline G4bool GetCCFlag(){return m_CCFlag;};
 
 
-        inline void AddSinglesCommand() { m_signlesCommands++; };
+        inline void AddSinglesCommand() { m_singlesCommands++; };
 
+        inline void AddCoincidencesCommand() { m_coinsCommands++; };
 
         inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
@@ -190,7 +192,8 @@ public:
 
         G4String m_collectionName;
         G4int m_collectionID;
-        G4int m_signlesCommands;
+        G4int m_singlesCommands;
+        G4int m_coinsCommands;
 
     };
 
@@ -218,7 +221,7 @@ public:
             	if( digitizerMgr->m_SDlist.size()==1 )
             	{
 
-            		if(m_signlesCommands==0)
+            		if(m_singlesCommands==0)
             		{
 
             			treeName = m_collectionName.substr(0, m_collectionName.find("_"));
@@ -234,7 +237,7 @@ public:
             	if(runID>0)
             		treeName = treeName+"_run"+std::to_string(runID);
 
-
+            	//G4cout<<"!!!! "<< runID <<" "<<treeName<<G4endl;
             	m_tree = new GateSingleTree(treeName);
 
             	m_buffer.SetCCFlag(GetCCFlag());
@@ -262,8 +265,33 @@ public:
 
         inline void Book() {
         	 m_collectionID = -1;
-            if (m_outputFlag) {
-                m_tree = new GateCoincTree(m_collectionName);
+
+        	 //OK GND 2024 multiSD backward compatibility
+        	 GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+
+        	 if (m_outputFlag) {
+        		 G4String treeName;
+
+        		 if( digitizerMgr->m_SDlist.size()==1 )
+        		 {
+
+        			 if(m_coinsCommands==0)
+        			 {
+
+        				 treeName = m_collectionName.substr(0, m_collectionName.find("_"));
+
+        			 }
+        			 else
+        		 	 	 treeName = m_collectionName;
+        		 }
+        		 else
+        			 treeName = m_collectionName;
+
+        	 	 G4int runID=GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+        	 	 if(runID>0)
+        	 		 treeName = treeName+"_run"+std::to_string(runID);
+
+                m_tree = new GateCoincTree(treeName);
                 m_tree->Init(m_buffer);
             }
         }
