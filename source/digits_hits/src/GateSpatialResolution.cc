@@ -195,23 +195,29 @@ void GateSpatialResolution::Digitize(){
 		  G4double Pz = P.z();
 		  G4double stddevX, stddevY, stddevZ;
 
-		  if (m_fwhmDistrib2D){
-			  if (m_nameAxis.length() != 2) {
-				    GateError( " *** ERROR***   GateSpatialResolution::Digitize. There was an attempt to use fwhmDistrib2D but the length of the named axis is not 2!\n");
-				}
-			  else {
-
-				  if(m_nameAxis.find('X') != std::string::npos) stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-				  else if (fwhmX) stddevX = fwhmX / GateConstants::fwhm_to_sigma;
-
-				  if(m_nameAxis.find('Y') != std::string::npos) stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-				  else if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
-
-				  if(m_nameAxis.find('Z') != std::string::npos) stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-				  else if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
-			  }
+		  if (m_fwhmDistrib2D) {
+		      if (m_nameAxis.size() != 2) {
+		          GateError(" *** ERROR***   GateSpatialResolution::Digitize. "
+		                    "Attempt to use fwhmDistrib2D but the length of the named axis is not 2!\n");
+		      } else {
+		          if (m_nameAxis == "XY") {
+		              stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+		              stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
+		              if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
+		          } else if (m_nameAxis == "XZ") {
+		              stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+		              stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+		              if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+		          } else if (m_nameAxis == "YZ") {
+		              stddevY = m_fwhmDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+		              stddevZ = m_fwhmDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+		              if (fwhmX) stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+		          } else {
+		              GateError(" *** ERROR***   GateSpatialResolution::Digitize. "
+		                        "Unrecognized axis configuration: " + m_nameAxis + "\n");
+		          }
+		      }
 		  }
-
 		 else {
 
 			 if (m_fwhmXdistrib) stddevX = m_fwhmXdistrib->Value(P.x() * mm);
@@ -220,7 +226,7 @@ void GateSpatialResolution::Digitize(){
 			 if (m_fwhmYdistrib) stddevY = m_fwhmYdistrib->Value(P.y() * mm);
 			 else if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
 
-			 if (m_fwhmZdistrib) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;// TODO! stddevZ = m_fwhmZdistrib->Value(P.z() * mm);
+			 if (m_fwhmZdistrib) stddevZ = m_fwhmZdistrib->Value(P.z() * mm);
 			 else if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
 
 		  }
