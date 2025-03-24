@@ -124,6 +124,9 @@ void GateSpatialResolution::SetSpatialResolutionParameters() {
 
 
 void GateSpatialResolution::Digitize(){
+
+	GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
+
 	  if (m_IsFirstEntrance) {
 		  SetSpatialResolutionParameters();
 			if (!m_system->CheckIfEnoughLevelsAreDefined())
@@ -156,7 +159,6 @@ void GateSpatialResolution::Digitize(){
 
 
 
-	GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 
 	if (m_system==NULL) G4Exception( "GateSpatialResolution::Digitize", "Digitize", FatalException,
 				 "Failed to get the system corresponding to that digitizer. Abort.\n");
