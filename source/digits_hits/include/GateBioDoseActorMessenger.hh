@@ -31,7 +31,6 @@ public:
 private:
 	GateBioDoseActor* pBioDoseActor;
 
-	std::unique_ptr<G4UIcmdWithADouble> pDoseScaleFactorCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pAlphaRefCmd;
 	std::unique_ptr<G4UIcmdWithADouble> pBetaRefCmd;
 	std::unique_ptr<G4UIcmdWithAString> pCellLineCmd;

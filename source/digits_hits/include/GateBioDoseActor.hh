@@ -67,7 +67,6 @@ public:
 	void EndOfEvent(G4HCofThisEvent*) override {}
 
 	// Messenger
-	void SetDoseScaleFactor(G4double doseScaleFactor) { _doseScaleFactor = doseScaleFactor; }
 	void SetAlphaRef(G4double alphaRef) { _alphaRef = alphaRef; }
 	void SetBetaRef(G4double betaRef) { _betaRef = betaRef; }
 	void SetCellLine(G4String s) { _cellLine = std::move(s); }
@@ -106,7 +105,6 @@ private:
 	G4String _bioPhysicalModel;
 	double _alphaRef = -1;
 	double _betaRef = -1;
-	double _doseScaleFactor = 1.;
 
 	G4double _sobpWeight = 0;
 
@@ -139,7 +137,6 @@ private:
 	// Images for output
 	GateImageWithStatistic _edepImage;
 	GateImageWithStatistic _doseImage;
-	GateImageWithStatistic _scaledDoseImage;
 	GateImageWithStatistic _alphaMixImage;
 	GateImageWithStatistic _sqrtBetaMixImage;
 	GateImageWithStatistic _alphaMixDoseImage;

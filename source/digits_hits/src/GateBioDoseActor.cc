@@ -66,8 +66,7 @@ void GateBioDoseActor::Construct() {
 		setupImage(_sumSqrtBetaMixDoseImage);
 
 		setupImage(_edepImage, "edep"); // always active
-		setupImage(_doseImage); // dose output can be scaled, see SaveData()
-		if(_enableDose)             setupImage(_scaledDoseImage, "dose");
+		setupImage(_doseImage, "dose"); // always active
 		if(_enableAlphaMix)         setupImage(_alphaMixImage, "alphamix");
 		if(_enableSqrtBetaMix)      setupImage(_sqrtBetaMixImage, "sqrtbetamix");
 		if(_enableAlphaMixDose)     setupImage(_alphaMixDoseImage, "alphamix_dose");
@@ -244,7 +243,7 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	auto* currentMaterial = step->GetPreStepPoint()->GetMaterial();
 	double density = currentMaterial->GetDensity();
 	double mass = _bioDoseImage.GetVoxelVolume() * density;
-	double dose = energyDep / mass / CLHEP::gray * _doseScaleFactor;
+	double dose = energyDep / mass / CLHEP::gray;
 
 	_eventDoseImage.AddValue(index, dose);
 
@@ -336,8 +335,8 @@ void GateBioDoseActor::updateData() {
 				auto const squaredSqrtBetaMixDose = _squaredSqrtBetaMixDoseImage.GetValue(index);
 				auto const squaredDose = _squaredDoseImage.GetValue(index);
 
-				auto const pdBiodoseAlphaMixDose = _doseScaleFactor / sqrtDelta;
-				auto const pdBiodoseSqrtBetaMixDose = 2 * _doseScaleFactor * _doseScaleFactor * sqrtBetaMixDose / sqrtDelta;
+				auto const pdBiodoseAlphaMixDose = 1. / sqrtDelta;
+				auto const pdBiodoseSqrtBetaMixDose = 2 * sqrtBetaMixDose / sqrtDelta;
 
 				auto const varAlphaMixDose = var(n, squaredAlphaMixDose, alphaMixDose);
 				auto const varSqrtBetaMixDose = var(n, squaredSqrtBetaMixDose, sqrtBetaMixDose);
@@ -406,7 +405,7 @@ void GateBioDoseActor::updateData() {
 		}
 
 		// Write data
-		if(_enableDose)             _scaledDoseImage.SetValue(index, scaledDose);
+		if(_enableDose)             _doseImage.SetValue(index, dose);
 		if(_enableAlphaMix)         _alphaMixImage.SetValue(index, alphaMix);
 		if(_enableSqrtBetaMix)      _sqrtBetaMixImage.SetValue(index, sqrtBetaMix);
 		if(_enableAlphaMixDose)     _alphaMixDoseImage.SetValue(index, alphaMixDose);
@@ -425,7 +424,7 @@ void GateBioDoseActor::SaveData() {
 	GateVActor::SaveData();
 
 	if(_enableEdep)             _edepImage.SaveData(_currentEvent);
-	if(_enableDose)             _scaledDoseImage.SaveData(_currentEvent);
+	if(_enableDose)             _doseImage.SaveData(_currentEvent);
 	if(_enableAlphaMix)         _alphaMixImage.SaveData(_currentEvent);
 	if(_enableSqrtBetaMix)      _sqrtBetaMixImage.SaveData(_currentEvent);
 	if(_enableAlphaMixDose)     _alphaMixDoseImage.SaveData(_currentEvent);
@@ -476,7 +475,6 @@ void GateBioDoseActor::ResetData() {
 
 	if(_enableEdep)             _edepImage.Reset();
 	_doseImage.Reset();
-	if(_enableDose)             _scaledDoseImage.Reset();
 	if(_enableAlphaMix)         _alphaMixImage.Reset();
 	if(_enableSqrtBetaMix)      _sqrtBetaMixImage.Reset();
 	if(_enableAlphaMixDose)     _alphaMixDoseImage.Reset();
