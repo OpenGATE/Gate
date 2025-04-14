@@ -244,7 +244,7 @@ void GateBioDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	auto* currentMaterial = step->GetPreStepPoint()->GetMaterial();
 	double density = currentMaterial->GetDensity();
 	double mass = _bioDoseImage.GetVoxelVolume() * density;
-	double dose = energyDep / mass / CLHEP::gray;
+	double dose = energyDep / mass / CLHEP::gray * _doseScaleFactor;
 
 	_eventDoseImage.AddValue(index, dose);
 
@@ -306,8 +306,6 @@ void GateBioDoseActor::updateData() {
 		auto const sqrtBetaMixDose = _sumSqrtBetaMixDoseImage.GetValue(index);
 
 		auto const dose = _doseImage.GetValue(index);
-		auto const scaledDose = _doseScaleFactor * dose;
-		auto const sqScaledDose = scaledDose * scaledDose;
 		auto const delta = sqAlphaRef + 4 * _betaRef * (alphaMixDose + sqrtBetaMixDose * sqrtBetaMixDose);
 
 		double sqrtDelta = 0;
@@ -318,29 +316,28 @@ void GateBioDoseActor::updateData() {
 		double biodose  = 0;
 		double rbe      = 0;
 
-		if(scaledDose > 0 && alphaMixDose != 0 && sqrtBetaMixDose != 0)
-			biodose = (-_alphaRef + sqrtDelta) / (2 * _betaRef);
-		if(biodose < 0) biodose = 0; // TODO improve
+		biodose = (-_alphaRef + sqrtDelta) / (2 * _betaRef);
+		if(biodose < 0) biodose = 0; // TODO error?
 
-		if(scaledDose > 0)
-			rbe = biodose / scaledDose;
+		if(dose > 0)
+			rbe = biodose / dose;
 
 		if(_enableUncertainty) {
-			if(scaledDose > 0 && alphaMixDose != 0 && sqrtBetaMixDose != 0 && sqrtDelta > 0 && _currentEvent > 0) {
+			if(dose > 0 && alphaMixDose > 0 && sqrtBetaMixDose > 0 && sqrtDelta > 0 && _currentEvent > 0) {
 				auto var = [](double n, double sq, double v) {
-					return 1 / (n - 1) * (sq - v * v);
+					return sq - v * v / n;
 				};
 
 				auto cov = [](double n, double ab, double a, double b) {
-					return 1 / (n - 1) * (ab - a * b);
+					return ab - a * b / n;
 				};
 
 				auto const squaredAlphaMixDose = _squaredAlphaMixDoseImage.GetValue(index);
 				auto const squaredSqrtBetaMixDose = _squaredSqrtBetaMixDoseImage.GetValue(index);
 				auto const squaredDose = _squaredDoseImage.GetValue(index);
 
-				auto const pdBiodoseAlphaMixDose = 1 / sqrtDelta;
-				auto const pdBiodoseSqrtBetaMixDose = 2 * sqrtBetaMixDose / sqrtDelta;
+				auto const pdBiodoseAlphaMixDose = _doseScaleFactor / sqrtDelta;
+				auto const pdBiodoseSqrtBetaMixDose = 2 * _doseScaleFactor * _doseScaleFactor * sqrtBetaMixDose / sqrtDelta;
 
 				auto const varAlphaMixDose = var(n, squaredAlphaMixDose, alphaMixDose);
 				auto const varSqrtBetaMixDose = var(n, squaredSqrtBetaMixDose, sqrtBetaMixDose);
@@ -361,15 +358,15 @@ void GateBioDoseActor::updateData() {
 				auto const partAlphaMixDoseSqrtBetaMixDose = 2 * pdBiodoseAlphaMixDose * pdBiodoseSqrtBetaMixDose * covAlphaMixDoseSqrtBetaMixDose;
 				auto const varBiodose = partAlphaMixDose + partSqrtBetaMixDose + partAlphaMixDoseSqrtBetaMixDose;
 
-				auto const varAlphaMixDosePartA = (1 / dose / dose) * varAlphaMixDose;
-				auto const varAlphaMixDosePartB = (alphaMixDose * alphaMixDose / dose / dose / dose / dose) * varDose;
-				auto const varAlphaMixDosePartC = 2 * (alphaMixDose / dose / dose / dose) * covAlphaMixDoseDose;
-				auto const varAlphaMix = varAlphaMixDosePartA + varAlphaMixDosePartB + varAlphaMixDosePartC;
+				auto const varAlphaMixPartA = (1 / dose / dose) * varAlphaMixDose;
+				auto const varAlphaMixPartB = (alphaMixDose * alphaMixDose / dose / dose / dose / dose) * varDose;
+				auto const varAlphaMixPartC = 2 * (alphaMixDose / dose / dose / dose) * covAlphaMixDoseDose;
+				auto const varAlphaMix = varAlphaMixPartA + varAlphaMixPartB + varAlphaMixPartC;
 
-				auto const varSqrtBetaMixDosePartA = (1 / dose / dose) * varSqrtBetaMixDose;
-				auto const varSqrtBetaMixDosePartB = (sqrtBetaMixDose * sqrtBetaMixDose / dose / dose / dose / dose) * varDose;
-				auto const varSqrtBetaMixDosePartC = 2 * (sqrtBetaMixDose / dose / dose / dose) * covSqrtBetaMixDoseDose;
-				auto const varSqrtBetaMix = varSqrtBetaMixDosePartA + varSqrtBetaMixDosePartB + varSqrtBetaMixDosePartC;
+				auto const varSqrtBetaMixPartA = (1 / dose / dose) * varSqrtBetaMixDose;
+				auto const varSqrtBetaMixPartB = (sqrtBetaMixDose * sqrtBetaMixDose / dose / dose / dose / dose) * varDose;
+				auto const varSqrtBetaMixPartC = 2 * (sqrtBetaMixDose / dose / dose / dose) * covSqrtBetaMixDoseDose;
+				auto const varSqrtBetaMix = varSqrtBetaMixPartA + varSqrtBetaMixPartB + varSqrtBetaMixPartC;
 
 				auto uncertaintyDose = std::sqrt(varDose) / dose;
 				auto uncertaintyBiodose = std::sqrt(varBiodose) / biodose;
