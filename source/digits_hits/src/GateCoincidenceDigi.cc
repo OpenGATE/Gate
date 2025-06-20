@@ -24,6 +24,15 @@ GateCoincidenceDigi::GateCoincidenceDigi(const void* itsMother)
 {
 }
 
+GateCoincidenceDigi::~GateCoincidenceDigi() {
+  // G4cout << "GateCoincidenceDigi::~GateCoincidenceDigi() called" << Gateendl;
+  //  delete all digis
+  std::vector<GateDigi *>::iterator iter;
+  for (iter = begin(); iter < end(); ++iter) {
+    delete *iter;
+  }
+  clear();
+}
 
 GateCoincidenceDigi::GateCoincidenceDigi(GateDigi *firstDigi,
         								G4double itsCoincidenceWindow,

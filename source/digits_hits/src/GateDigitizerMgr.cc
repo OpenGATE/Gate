@@ -63,7 +63,15 @@ GateDigitizerMgr::GateDigitizerMgr()
 
 GateDigitizerMgr::~GateDigitizerMgr()
 {
+  for (size_t i = 0; i < m_SingleDigitizersList.size(); ++i) {
+    delete m_SingleDigitizersList[i];
+  }
+  m_SingleDigitizersList.clear();
 
+  for (size_t i = 0; i < m_CoincidenceSortersList.size(); ++i) {
+    delete m_CoincidenceSortersList[i];
+  }
+  m_CoincidenceSortersList.clear();
  delete fMessenger;
 }
 
