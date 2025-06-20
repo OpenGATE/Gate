@@ -34,7 +34,7 @@ public:
 						G4double itsOffsetWindow);
 	//GateCoincidenceDigi(GateCoincidencePulse* coincidencePulse);
 	GateCoincidenceDigi(const GateCoincidenceDigi& src);
-	inline ~GateCoincidenceDigi() {};
+	~GateCoincidenceDigi() ;
 
 	inline void* operator new(size_t);
 	inline void  operator delete(void*);

@@ -233,7 +233,7 @@ private:
 
     std::deque<GateCoincidenceDigi*> m_coincidenceDigis;  // open coincidence windows
 
-    void ProcessCompletedCoincidenceWindow(GateCoincidenceDigi*);
+    bool ProcessCompletedCoincidenceWindow(GateCoincidenceDigi*);
     //TODO GND 2022 CC
     void ProcessCompletedCoincidenceWindow4CC(GateCoincidenceDigi *);
 
