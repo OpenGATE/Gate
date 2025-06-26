@@ -186,71 +186,15 @@ jobs:
                 -DBUILD_TESTING=ON \
                 $GITHUB_WORKSPACE
         fi
-    - name: Configure CTest
-      if: steps.cache_gate_dependencies.outputs.cache-hit == 'true'
-      run: |
-          cd $HOME
-          cat > dashboard.cmake << EOF
-          set(CTEST_SITE "Github.macos-latest.none")
-          file(TO_CMAKE_PATH "$HOME" CTEST_DASHBOARD_ROOT)
-          file(TO_CMAKE_PATH "$GITHUB_WORKSPACE" CTEST_SOURCE_DIRECTORY)
-          file(TO_CMAKE_PATH "$HOME/build" CTEST_BINARY_DIRECTORY)
-          set(dashboard_source_name "$GITHUB_REPOSITORY")
-          if("$GITHUB_REF" MATCHES "^refs/pull/")
-            set(branch "")
-            set(pr "-PR$GITHUB_REF")
-            set(dashboard_model "Experimental")
-          elseif("$GITHUB_REF" STREQUAL "refs/heads/develop")
-            set(branch "-develop")
-            set(pr "")
-            set(dashboard_model "Continuous")
-          else()
-            set(branch "-BRANCH$GITHUB_REF")
-            set(pr "")
-            set(dashboard_model "Experimental")
-          endif()
-          set(CTEST_BUILD_NAME "github_macos-latest.none-Build$GITHUB_RUN_NUMBER\${pr}\${branch}")
-          set(CTEST_UPDATE_VERSION_ONLY 1)
-          set(CTEST_TEST_ARGS \${CTEST_TEST_ARGS} PARALLEL_LEVEL \${PARALLEL_LEVEL})
-          set(CTEST_CONFIGURATION_TYPE "Release")
-          set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
-          set(CTEST_BUILD_FLAGS "\${CTEST_BUILD_FLAGS} -j4")
-          set(CTEST_CUSTOM_WARNING_EXCEPTION
-            \${CTEST_CUSTOM_WARNING_EXCEPTION}
-            # macOS Azure Pipelines
-            "ld: warning: text-based stub file"
-            )
-          set(dashboard_no_clean 1)
-          set(ENV{CC} $(cCompiler))
-          set(ENV{CXX} $(cxxCompiler))
-          string(TIMESTAMP build_date "%Y-%m-%d")
-          message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
-          message("CTEST_SITE = \${CTEST_SITE}")
-          ctest_start("\${dashboard_model}")
-          ctest_configure(CAPTURE_CMAKE_ERROR configure_errors RETURN_VALUE configure_Results)
-          ctest_build(NUMBER_ERRORS build_errors RETURN_VALUE build_Results)
-          ctest_submit(RETURN_VALUE submit_Results)
-          if ((NOT \${configure_errors} EQUAL 0) OR (NOT \${configure_Results} EQUAL 0))
-            message( FATAL_ERROR "Configuration error" )
-          endif()
-          if ((NOT \${build_errors} EQUAL 0) OR (NOT \${build_Results} EQUAL 0))
-            message( FATAL_ERROR "Build error" )
-          endif()
-          if (NOT \${submit_Results} EQUAL 0)
-            message( FATAL_ERROR "Submit error" )
-          endif()
-          EOF
-          cat dashboard.cmake
     - name: Build Gate
       run: |
         if [ "${{ steps.cache_gate_dependencies.outputs.cache-hit }}" == 'true' ]; then
           cd $HOME/build
-          cp ../dashboard.cmake .
           export ROOTSYS=$HOME/software/root/install
           export PATH=${ROOTSYS}:${PATH}
           source $HOME/software/root/install/bin/thisroot.sh
           source $HOME/software/geant4/install/bin/geant4.sh
-          ctest -S dashboard.cmake -VV
+          make -j4
           if [ ! $? -eq 0 ]; then
             exit 1
           fi
