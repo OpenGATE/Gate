@@ -43,7 +43,7 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizerMgr* itsDigitizerMgr,
 	m_minS (-1),
 	m_maxDeltaZ ( -1),
     m_forceMinSecDifferenceToZero(false),	  
-    m_multiplesPolicy(kTakeWinnerIfAllAreGoods),
+      m_multiplesPolicy(kTakeWinnerIfAllAreGoods),
     m_allDigiOpenCoincGate(false),
     m_depth(1),
     m_presortBufferSize(256),
@@ -144,20 +144,20 @@ void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
     else if (policy=="takeWinnerIfOnlyOneGood")
       {
       m_multiplesPolicy= kTakeWinnerIfOnlyOneGood;
-      }
-    
+  }
+
     //else if (policy=="keepAll")
-    //	m_multiplesPolicy=kKeepAll;
-    else {
+  //	m_multiplesPolicy=kKeepAll;
+  else {
       if(policy == "keepIfAllAreGoods")
 	G4cout<<"WARNING (Coincidence Sorter): used policy keepIfAllAreGoods is outdated. Please, use takeWinnerIfAllAreGoods instead.\n";
       else
     	if (policy!="takeWinnerIfAllAreGoods" )
 	  G4cout<<"WARNING : policy not recognized, using default : takeWinnerIfAllAreGoods\n";
-	
+
   	m_multiplesPolicy= kTakeWinnerIfAllAreGoods;//kKeepIfAllAreGoods;
 
-    }
+  }
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -170,10 +170,10 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
         m_acceptance_policy_4CC=kkeepIfMultipleVolumeIDsInvolved_CC;
     else if (policy=="keepIfMultipleVolumeNamesInvolved")
         m_acceptance_policy_4CC=kkeepIfMultipleVolumeNamesInvolved_CC;
-    else {
+  else {
           G4cout<<"WARNING : acceptance policy  for CC not recognized, using default : kkeepIfMultipleVolumeNamesInvolved\n";
           m_acceptance_policy_4CC=kkeepIfMultipleVolumeNamesInvolved_CC;
-    }
+  }
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -182,7 +182,7 @@ void GateCoincidenceSorter::Digitize()
 {
   //	G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
   //	G4cout<< "m_inputName "<< m_inputName<<G4endl;
-		
+
 
 		
   GateDigi* digi;
@@ -192,7 +192,6 @@ void GateCoincidenceSorter::Digitize()
 
   G4bool inCoincidence;
 
-  GateCoincidenceDigi* coincidence;
   G4double window, offset;
 
   //Input digi collection
@@ -205,10 +204,10 @@ void GateCoincidenceSorter::Digitize()
     {
       //G4cout<<"Unindefined system"<<G4endl;
       m_system=inputDigitizer->GetSystem();
-    }		
+  }
   //G4cout<<m_system->GetName()<<G4endl;
 
-  
+
   G4int inputCollID=inputDigitizer->m_outputDigiCollectionID;
   //G4cout<<"inputCollID "<<inputCollID<<G4endl;
   G4DigiManager *fDM = G4DigiManager::GetDMpointer();
@@ -226,37 +225,38 @@ void GateCoincidenceSorter::Digitize()
 
 
   if (!IsEnabled())
-     return;
+    return;
 
-
+  
 
   if(m_eventIDCoinc){
+      GateCoincidenceDigi *coincidence;
       bool isCoincCreated=false;
       if(IDCvector->size()>1){
           if(m_coincidenceWindowJitter > 0.0)
             window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
-          else
-            window = m_coincidenceWindow;
+      else
+        window = m_coincidenceWindow;
 
           if(m_offsetJitter > 0.0)
             offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
-          else
-            offset = m_offset;
+      else
+        offset = m_offset;
 
 
           for(gpl_iter = IDCvector->begin();gpl_iter != IDCvector->end();gpl_iter++)
           {
-              digi = new GateDigi(**gpl_iter);
+        digi = new GateDigi(**gpl_iter);
               if(!isCoincCreated){
                   isCoincCreated=true;
                   coincidence = new GateCoincidenceDigi(digi,window,offset);
               }
               else{
                    coincidence->push_back(new GateDigi(digi)); // add a copy so we can delete safely
-                   delete digi;
-              }
+          delete digi;
+        }
 
-          }
+      }
 
 
 
@@ -265,11 +265,14 @@ void GateCoincidenceSorter::Digitize()
             //  ProcessCompletedCoincidenceWindow4CC(coincidence);
           }
           else{
-              ProcessCompletedCoincidenceWindow(coincidence);
-          }
-
+        auto is_stored = ProcessCompletedCoincidenceWindow(coincidence);
+        if (!is_stored) {
+          delete coincidence; // delete the coincidence if not stored
+        }
       }
-   return;
+
+    }
+    return;
   }
 
 
@@ -277,28 +280,28 @@ void GateCoincidenceSorter::Digitize()
   //------ put input digis in sorted input buffer----------
   for(gpl_iter = IDCvector->begin();gpl_iter != IDCvector->end();gpl_iter++)
   {
-      // make a copy of the digi
-      digi = new GateDigi(**gpl_iter);
+    // make a copy of the digi
+    digi = new GateDigi(**gpl_iter);
 
       if(m_presortBuffer.empty())
-    	  m_presortBuffer.push_back(digi);
+      m_presortBuffer.push_back(digi);
       else if(digi->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
-      {
+    {
           if(!m_presortWarning)
               GateWarning("Event is earlier than earliest event in coincidence presort buffer. Consider using a larger buffer (/setPresortBufferSize n, where n>256)");
-          m_presortWarning = true;
+      m_presortWarning = true;
           m_presortBuffer.push_back(digi); // this will probably not cause a problem, but coincidences may be missed
       }
       else // put the event into the presort buffer in the right place
-      {
-          buf_iter = m_presortBuffer.begin();
+    {
+      buf_iter = m_presortBuffer.begin();
           while(digi->GetTime() < (*buf_iter)->GetTime())
-              buf_iter++;
-          m_presortBuffer.insert(buf_iter, digi);
+        buf_iter++;
+      m_presortBuffer.insert(buf_iter, digi);
           // G4cout<<"presortBuffer filled in position "<<std::distance(m_presortBuffer.begin(),buf_iter)<<G4endl;
-          // G4cout<<"digiTime "<<digi->GetTime()<<G4endl;
-          // G4cout<<"digiTime "<<digi->GetTime()/ns<<G4endl;
-      }
+      // G4cout<<"digiTime "<<digi->GetTime()<<G4endl;
+      // G4cout<<"digiTime "<<digi->GetTime()/ns<<G4endl;
+    }
 
   }
 
@@ -311,19 +314,20 @@ void GateCoincidenceSorter::Digitize()
     // process completed coincidence pulse window at front of list
     while(!m_coincidenceDigis.empty() && m_coincidenceDigis.front()->IsAfterWindow(digi))
     {
-    	coincidence = m_coincidenceDigis.front();
+      auto coincidence = m_coincidenceDigis.front();
 
-    	m_coincidenceDigis.pop_front();
+      m_coincidenceDigis.pop_front();
 
-        if(m_CCSorter==true){
-        //TODO CC sorter
-           // ProcessCompletedCoincidenceWindow4CC(coincidence);
+      if (m_CCSorter == true) {
+        // TODO CC sorter
+        //  ProcessCompletedCoincidenceWindow4CC(coincidence);
+      } else {
+        auto is_stored = ProcessCompletedCoincidenceWindow(coincidence);
+        if (!is_stored) {
+          delete coincidence; // delete the coincidence if not stored
         }
-        else{
-            ProcessCompletedCoincidenceWindow(coincidence);
-        }
-
-   }
+      }
+    }
     // add event to coincidences
     inCoincidence = false;
     coince_iter = m_coincidenceDigis.begin();
@@ -343,39 +347,35 @@ void GateCoincidenceSorter::Digitize()
         {
           if(m_coincidenceWindowJitter > 0.0)
             window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
-          else
-            window = m_coincidenceWindow;
+      else
+        window = m_coincidenceWindow;
 
           if(m_offsetJitter > 0.0)
             offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
-          else
-            offset = m_offset;
+      else
+        offset = m_offset;
 
           if(m_triggerOnlyByAbsorber==1){
 
               if(((digi->GetVolumeID()).GetBottomCreator())->GetObjectName()==m_absorberSD){
-              //if(digi->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
-                  coincidence = new GateCoincidenceDigi(digi,window,offset);
-                   //AE here open coincidence
-                   m_coincidenceDigis.push_back(coincidence);
 
-              }
-          }
-          else{
-            coincidence = new GateCoincidenceDigi(digi,window,offset);
-             //AE here open window with the digi
-             m_coincidenceDigis.push_back(coincidence);
-          }
+          // if(digi->GetVolumeID().GetVolume(2)->GetName()==m_absorberDepth2Name){
+          auto coincidence =
+              new GateCoincidenceDigi(new GateDigi(digi), window, offset);
+          // AE here open coincidence
+          m_coincidenceDigis.push_back(coincidence);
         }
-        else
-          delete digi; // digis that don't open a coincidence window can be discarded
+      } else {
+        auto coincidence =
+            new GateCoincidenceDigi(new GateDigi(digi), window, offset);
+        // AE here open window with the digi
+        m_coincidenceDigis.push_back(coincidence);
+      }
+    }
+    delete digi;
   }
 
   StoreDigiCollection(m_OutputCoincidenceDigiCollection);
-
-
-
-
 }
 
 /*
@@ -412,7 +412,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidence
 }
 */
 // look for valid coincidences
-void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDigi *coincidence)
+bool GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDigi *coincidence)
 {
   G4int i, j, nDigis;
   G4int nGoods, maxGoods;
@@ -424,25 +424,25 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
 
   nDigis = coincidence->size();
   if (nDigis<2)
-  {
-    delete coincidence;
-    return;
-  }
+   {
+      return false;
+  } 
   else if (nDigis==2)
-  {
+   {
     // check if good
     if(IsForbiddenCoincidence(coincidence->at(0),coincidence->at(1)) )
-      delete coincidence;
-    else
-    	m_OutputCoincidenceDigiCollection->insert(coincidence);
-    return;
-  }
+      return false;
+    else {
+      m_OutputCoincidenceDigiCollection->insert(coincidence);
+      return true;
+    }
+
+  } 
   else // nDigis>2 multiples
   {
     if(m_multiplesPolicy==kKillAll)
-    {
-      delete coincidence;
-      return;
+     {
+      return false;
     }
     // if dealing with a delayed window or if other digis open coincidence windows,
     // we only want to pair with the first digi to avoid invalid pairs, or double counting
@@ -451,11 +451,11 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
     if(m_multiplesPolicy==kTakeAllGoods)
     {
       for(i=0; i<(PairWithFirstDigiOnly?1:(nDigis-1)); i++) // iterate over all pairs (single window) or just pairs with initial event (multi-window)
-        for(j=i+1; j<nDigis; j++)
+      for(j=i+1; j<nDigis; j++)
           if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)) )
         	  m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, i, j));
-      delete coincidence; // valid digis extracted so we can delete
-      return;
+
+      return false;
     }
     // count the goods (iterate over all pairs because we're considering the multi as a unit, not breaking it up into pairs)
     nGoods = 0;
@@ -466,8 +466,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
 
     if( nGoods == 0 )  // all of the remaining options expect at least one good
     {
-      delete coincidence;
-      return;
+     return false;
     }
 
     /*//G4cout<<"nGoods = "<<  nGoods<<G4endl;
@@ -489,18 +488,14 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
      */
     if	( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) && (nGoods==1)) 
     {
-    	m_OutputCoincidenceDigiCollection->insert(coincidence);
-      return; // don't delete the coincidence
+      m_OutputCoincidenceDigiCollection->insert(coincidence);
+      return true; 
     }
     if( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) )
-    {
-      delete coincidence;
-      return;
+     {
+      return false;
     }
 
-
-
-    
     // find winner and count the goods
     maxE = 0.0;
     nGoods = 0;
@@ -521,23 +516,23 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
       }
     if(nGoods==0) // check again, we may have reduced the subset.
     {
-      delete coincidence;
-      return;
+
+      return false;
     }
 
     if(m_multiplesPolicy==kTakeWinnerIfIsGood)
-    {
+     {
       if(!IsForbiddenCoincidence(coincidence->at(winner_i),coincidence->at(winner_j)) )
     	  m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
-      delete coincidence;
-      return;
+
+      return false;
     }
     if(m_multiplesPolicy==kKillAllIfMultipleGoods)
     {
       if(nGoods>1)
-      {
-        delete coincidence;
-        return;
+       {
+
+        return false;
       } // else find and return the one good event
       else // nGoods==1
       {
@@ -545,23 +540,22 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
           for(j=i+1; j<nDigis; j++)
             if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
             	m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, i, j));
-        delete coincidence;
-        return;
+
+        return false;
       }
     }
     maxGoods = PairWithFirstDigiOnly?(nDigis-1):(nDigis*(nDigis-1)/2);
-    if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods)
+    if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods) 
     {
-      if(nGoods==maxGoods)
+      if(nGoods==maxGoods) 
       {
-    	  m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
-        delete coincidence;
-        return;
-      }
-      else
-      {
-        delete coincidence;
-        return;
+        m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
+
+
+        return false;
+      } else {
+
+        return false;
       }
     }
 
@@ -583,13 +577,13 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
             }
           }
         }
-	  m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
-      delete coincidence; // valid digis extracted so we can delete
-      return;
+      m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
+
+      return false;
     }
   }
-  delete coincidence;
-  return;
+
+  return false;
 
 }
 
@@ -609,42 +603,42 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GateDigi& digi)
     if (m_depth>=(G4int)digi.GetOutputVolumeID().size()) {
     	G4cerr<<"[GateCoincidenceSorter::ComputeSectorID]: Required depth's too deep, setting it to 1\n";
 	m_depth=1;
-    }
-    static std::vector<G4int> gkSectorMultiplier;
-    static std::vector<G4int> gkSectorNumber;
+  }
+  static std::vector<G4int> gkSectorMultiplier;
+  static std::vector<G4int> gkSectorNumber;
     if (gkSectorMultiplier.empty()){
-    	// this code is done just one time for performance improving
-	// one suppose that the system hierarchy is linear until the desired depth
+    // this code is done just one time for performance improving
+    // one suppose that the system hierarchy is linear until the desired depth
     	GateSystemComponent* comp = m_system->GetBaseComponent();
 	G4int depth=0;
 	while (comp){
-	    G4int rep_num = comp->GetAngularRepeatNumber();
-	    if (rep_num == 1)
-	        // Check for generic repeater
-	        rep_num = comp->GetGenericRepeatNumber();
-	    gkSectorNumber.push_back(rep_num);
+      G4int rep_num = comp->GetAngularRepeatNumber();
+      if (rep_num == 1)
+        // Check for generic repeater
+        rep_num = comp->GetGenericRepeatNumber();
+      gkSectorNumber.push_back(rep_num);
 
 	    if ( (depth<m_depth) && ( comp->GetChildNumber() == 1)   ){
-	    	comp = comp->GetChildComponent(0);
-		depth++;
+        comp = comp->GetChildComponent(0);
+        depth++;
 	    }
 	    else
 	    	comp=0;
-	}
-	gkSectorMultiplier.resize(gkSectorNumber.size());
+    }
+    gkSectorMultiplier.resize(gkSectorNumber.size());
 	gkSectorMultiplier[gkSectorNumber.size()-1] = 1;
 	for (G4int i=(G4int)gkSectorNumber.size()-2;i>=0;--i){
 	    gkSectorMultiplier[i] = gkSectorMultiplier[i+1] * gkSectorNumber[i+1];
-	}
-	gm_coincSectNum = gkSectorMultiplier[0];
     }
+    gm_coincSectNum = gkSectorMultiplier[0];
+  }
     G4int ans=0;
     for (G4int i=0;i<=m_depth;i++){
     	G4int x = digi.GetComponentID(i)%gkSectorNumber[i];
     	ans += x*gkSectorMultiplier[i];
-    }
+  }
 
-    return ans;
+  return ans;
 }
 
 /*
@@ -705,18 +699,18 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
 
   	if(!GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
 	{
-		// TODO GND define case if there is no system defiend!
+    // TODO GND define case if there is no system defiend!
 
-	}
-	G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
+  }
+  G4int blockID1 = m_system->GetMainComponentIDGND(digi1),
         blockID2 = m_system->GetMainComponentIDGND(digi2);
 
-   // Modif by D. Lazaro, February 25th, 2004
+  // Modif by D. Lazaro, February 25th, 2004
   // Computation of sectorID, sectorNumber and sectorDifference, paramaters depending on
   // the geometry construction of the scanner (spherical for system ecatAccel and cylindrical
   // for other systems as Ecat, CPET and cylindricalPET)
 
-        const G4String name = m_system->GetName();
+  const G4String name = m_system->GetName();
   G4String nameComp = "systems/ecatAccel";
   //G4cout << "NAME OF THE SYSTEM: " << name << "; NAME TO COMPARE: " << nameComp << Gateendl;
   int comp = strcmp(name,nameComp);
@@ -724,7 +718,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
   if (comp == 0) {
     // Compute the sector difference
     G4int sectorID1 = m_system->ComputeSectorIDSphere(blockID1),
-    sectorID2 = m_system->ComputeSectorIDSphere(blockID2);
+          sectorID2 = m_system->ComputeSectorIDSphere(blockID2);
 
     // Get the number of sectors per ring
     G4int sectorNumber = m_system->GetCoincidentSectorNumberSphere();
@@ -738,7 +732,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
       sectorDiff2 += sectorNumber;
     G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
     //G4cout<<sectorDifference<<G4endl;
-    
+
     //Compare the sector difference with the minimum differences for valid coincidences
     if (sectorDifference<m_minSectorDifference && !m_forceMinSecDifferenceToZero) {
       if (nVerboseLevel>1)
@@ -748,19 +742,19 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
     return false;
   }
   else {
-  // Compute the sector difference
-  G4int sectorID1 = ComputeSectorID(*digi1),
-      	sectorID2 = ComputeSectorID(*digi2);
+    // Compute the sector difference
+    G4int sectorID1 = ComputeSectorID(*digi1),
+          sectorID2 = ComputeSectorID(*digi2);
 
-  // Get the number of sectors per ring
-  // G4int sectorNumber = GetCoincidentSectorNumber();
-  // Deal with the circular difference problem
-  G4int sectorDiff1 = sectorID1 - sectorID2;
+    // Get the number of sectors per ring
+    // G4int sectorNumber = GetCoincidentSectorNumber();
+    // Deal with the circular difference problem
+    G4int sectorDiff1 = sectorID1 - sectorID2;
   if (sectorDiff1<0)
-    sectorDiff1 += gm_coincSectNum;
-  G4int sectorDiff2 = sectorID2 - sectorID1;
+      sectorDiff1 += gm_coincSectNum;
+    G4int sectorDiff2 = sectorID2 - sectorID1;
   if (sectorDiff2<0)
-    sectorDiff2 += gm_coincSectNum;
+      sectorDiff2 += gm_coincSectNum;
   G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
   //Compare the sector difference with the minimum differences for valid coincidences
@@ -768,38 +762,38 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GateDigi* digi1, cons
 	  //G4cout<<digi1->GetSystemID()<<" "<<digi2->GetSystemID()<<G4endl;
       	if (nVerboseLevel>1)
       	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
-	return true;
-	}
-  G4ThreeVector globalPos1 = digi1->GetGlobalPos();
-  G4ThreeVector globalPos2 = digi2->GetGlobalPos();
+      return true;
+    }
+    G4ThreeVector globalPos1 = digi1->GetGlobalPos();
+    G4ThreeVector globalPos2 = digi2->GetGlobalPos();
 
-  // Check the difference in Z between the two positions
+    // Check the difference in Z between the two positions
   if ((m_maxDeltaZ > 0) && (fabs(globalPos2.z() - globalPos1.z()) > m_maxDeltaZ)) {
       if (nVerboseLevel > 1)
           G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: difference in Z too large --> refused\n";
       return true;
-  }
+    }
 
-  // Calculate the denominator for distance 's' in the XY plane
+    // Calculate the denominator for distance 's' in the XY plane
   G4double denom = (globalPos1.y() - globalPos2.y()) * (globalPos1.y() - globalPos2.y()) +
-                   (globalPos2.x() - globalPos1.x()) * (globalPos2.x() - globalPos1.x());
+        (globalPos2.x() - globalPos1.x()) * (globalPos2.x() - globalPos1.x());
 
-  G4double s = 0.0;
-  if (denom != 0.0) {
+    G4double s = 0.0;
+    if (denom != 0.0) {
       denom = sqrt(denom);
       s = (globalPos1.x() * (globalPos1.y() - globalPos2.y()) +
            globalPos1.y() * (globalPos2.x() - globalPos1.x())) / denom;
-  }
+    }
 
 
-  // Check the distance 's' against the maximum threshold
-  if ((m_minS < 0) && (fabs(s) < m_minS)) {
+    // Check the distance 's' against the maximum threshold
+    if ((m_minS < 0) && (fabs(s) < m_minS)) {
       if (nVerboseLevel > 1)
           G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: distance s too large --> refused\n";
       return true;
-  }
+    }
 
-  return false;
+    return false;
   }
 }
 //------------------------------------------------------------------------------------------------------
@@ -816,9 +810,9 @@ void GateCoincidenceSorter::SetSystem(G4String& inputName)
       if(pPCOutputName.compare(inputName) == 0)
       {
     	  m_system=m_digitizerMgr->m_SingleDigitizersList[i]->GetSystem();
-         break;
-      }
-   }
+      break;
+    }
+  }
 
 }
 
