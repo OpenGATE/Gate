@@ -8,7 +8,6 @@
 #include "Randomize.hh"
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 #include "G4DecayProducts.hh"
 #include "G4LorentzVector.hh"
 #include "G4ParticleTable.hh"
