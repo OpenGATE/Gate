@@ -55,19 +55,19 @@ public:
 
   /** Set enable emission of additional gamma - from deexcitation ( prompt gamma )
    **/
-  void SetEnableDeexcitation( const G4bool& enable_deexcitation );
+  void SetEnableDeexcitation( const G4bool enable_deexcitation );
   /** Set fixed direction of single gamma ( or prompt gamma )
    **/
   void SetFixedEmissionDirection( const G4ThreeVector& fixed_emission_direction );
   /** Set enable/disable emission of single gamma with fixed direction
    **/
-  void SetEnableFixedEmissionDirection( const G4bool& enable_fixed_emission_direction );
+  void SetEnableFixedEmissionDirection( const G4bool enable_fixed_emission_direction );
   /** Set single gamma kinetic energy
    **/
-  void SetEmissionEnergy( const G4double& energy );
+  void SetEmissionEnergy( const G4double energy );
   /** Set seed for Randomize.hh generatores
    **/
-  void SetSeed( const G4long& seed );
+  void SetSeed( const G4long seed );
   /** Set positronium lifetime - which is included as constant for exponential distribution ( G4RandExponential )
     * @param: positronium_name - for example: pPs, oPs
     * @param: life_time - in ns
@@ -77,13 +77,13 @@ public:
   /** Set prompt gamma energy ( deexcictation energy ). 
     * If user set enable emission of prompt gamma without set prompt energy then il wii be default value used ( deexcitation of Na22 )
    **/
-  void SetPromptGammaEnergy( const G4double& energy );
+  void SetPromptGammaEnergy( const G4double energy );
   /** Set propability of gammas emission from different positronium.
     * @param: positronium_kind - positronium name: pPs, oPs
     * @param: fraction - number in range from 0.0 to 1.0
     * You have to call this method for only one kind of positronium - for the second one propability will be calculated as: 1.0 - fraction.
   **/
-  void SetPositroniumFraction( const G4String& positronium_kind, const G4double& fraction );
+  void SetPositroniumFraction( const G4String& positronium_kind, const G4double fraction );
 
  protected:
   /** Set model used for this source. If is not defined then this class will behave like GateVSource.

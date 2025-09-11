@@ -5,7 +5,6 @@
   See LICENSE.md for further details
   ----------------------*/
 #include "GateExtendedVSource.hh"
-#include <algorithm>
 #include "GatePositroniumDecayModel.hh"
 #include "G4Event.hh"
 
@@ -32,15 +31,15 @@ void GateExtendedVSource::SetModel( const G4String& model_name )
   G4cout << "GateExtendedVSource::SetModel : Unknown gamma source model. Enable: sg, pPs, oPs, Ps. Switching to GateVSource behavour." << G4endl; }
 }
 
-void GateExtendedVSource::SetEnableDeexcitation( const G4bool& enable_deexcitation ) { fEnableDeexcitation.Set( enable_deexcitation ); }
+void GateExtendedVSource::SetEnableDeexcitation( const G4bool enable_deexcitation ) { fEnableDeexcitation.Set( enable_deexcitation ); }
 
 void GateExtendedVSource::SetFixedEmissionDirection( const G4ThreeVector& fixed_emission_direction ) { fFixedEmissionDirection.Set( fixed_emission_direction ); }
 
-void GateExtendedVSource::SetEnableFixedEmissionDirection( const G4bool& enable_fixed_emission_direction ) { fEnableFixedEmissionDirection.Set( enable_fixed_emission_direction ); }
+void GateExtendedVSource::SetEnableFixedEmissionDirection( const G4bool enable_fixed_emission_direction ) { fEnableFixedEmissionDirection.Set( enable_fixed_emission_direction ); }
 
-void GateExtendedVSource::SetEmissionEnergy( const G4double& energy ) { fEmissionEnergy.Set( energy ); }
+void GateExtendedVSource::SetEmissionEnergy( const G4double energy ) { fEmissionEnergy.Set( energy ); }
 
-void GateExtendedVSource::SetSeed( const G4long& seed ) { fSeed.Set( seed ); }
+void GateExtendedVSource::SetSeed( const G4long seed ) { fSeed.Set( seed ); }
 
 void GateExtendedVSource::SetPostroniumLifetime( const G4String& positronium_name, const G4double& life_time ) 
 {
@@ -49,9 +48,9 @@ void GateExtendedVSource::SetPostroniumLifetime( const G4String& positronium_nam
  else { GateError( "GateExtendedVSource::SetPostroniumLifetime : incorrect positronium name - try: pPs or oPs" ); } 
 }
 
-void GateExtendedVSource::SetPromptGammaEnergy( const G4double& energy ) { fPromptGammaEnergy.Set( energy ); }
+void GateExtendedVSource::SetPromptGammaEnergy( const G4double energy ) { fPromptGammaEnergy.Set( energy ); }
 
-void GateExtendedVSource::SetPositroniumFraction( const G4String& positronium_kind, const G4double& fraction )
+void GateExtendedVSource::SetPositroniumFraction( const G4String& positronium_kind, const G4double fraction )
 {
  if ( fraction > 1.0 || fraction < 0.0 )
  {
