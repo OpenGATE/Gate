@@ -16,14 +16,21 @@
  **/
 class GateParaPositronium : public G4ParticleDefinition
 {
- private:
-  static GateParaPositronium* theInstance;
-  GateParaPositronium() {}
-  ~GateParaPositronium() {}
  public:
   static GateParaPositronium* Definition();
   static GateParaPositronium* ParaPositroniumDefinition();
   static GateParaPositronium* ParaPositronium();
+
+ private:
+  static GateParaPositronium* theInstance;
+
+  GateParaPositronium() = default; 
+  ~GateParaPositronium() override = default; 
+
+ public:
+  GateParaPositronium(const GateParaPositronium&) = delete;
+  GateParaPositronium& operator=(const GateParaPositronium&) = delete;
+
 };
 
 #endif

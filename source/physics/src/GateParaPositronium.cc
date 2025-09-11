@@ -12,15 +12,15 @@
 #include "GatePositroniumDecayChannel.hh"
 
 
-GateParaPositronium* GateParaPositronium::theInstance = 0;
+GateParaPositronium* GateParaPositronium::theInstance = nullptr;
 
 GateParaPositronium* GateParaPositronium::Definition()
 {
- if (theInstance !=0) return theInstance;
+ if (theInstance) return theInstance;
  
  const G4String name = "pPs";
  const G4double mass = 2.0 * electron_mass_c2;
- const G4int  spin = 0;
+ const G4int spin = 0;
  const G4int parity = 1;
  const G4double lifetime = 0.1244 * ns;
  const G4double BR = 1.0;
@@ -49,9 +49,9 @@ GateParaPositronium* GateParaPositronium::Definition()
                     nullptr, false, "e" );
 
   //create Decay Table 
-  G4DecayTable* table = new G4DecayTable();
+  auto table = new G4DecayTable();
   // create a decay channel
-  G4VDecayChannel* mode = new GatePositroniumDecayChannel( name, BR );
+  auto mode = new GatePositroniumDecayChannel(name, BR);
   table->Insert(mode);
   anInstance->SetDecayTable(table);
  }
