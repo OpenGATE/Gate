@@ -126,12 +126,6 @@ G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
  
  event->AddPrimaryVertex( GetPrimaryVertexFromPositroniumAnnihilation(particle_time, particle_position) );
 
- //Do testu
- /*G4PrimaryVertex* vertex = new G4PrimaryVertex(particle_position, particle_time);
- std::vector<G4PrimaryParticle*> gammas_ps = GetGammasFromPositroniumAnnihilation();
- vertex->SetPrimary( GetGammaFromDeexcitation() );
- std::for_each( gammas_ps.begin(), gammas_ps.end(), [&]( G4PrimaryParticle* gamma ) { vertex->SetPrimary( gamma ); } );*/
-
  return vertexes_number;
 }
 
