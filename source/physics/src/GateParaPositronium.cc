@@ -29,7 +29,7 @@ GateParaPositronium* GateParaPositronium::Definition()
  G4ParticleTable* pTable = G4ParticleTable::GetParticleTable();
  G4ParticleDefinition* anInstance = pTable->FindParticle(name);
 
- if ( anInstance == 0 )
+ if (!anInstance)
  {
   // create particle
 

@@ -16,14 +16,20 @@
  **/
 class GateOrthoPositronium : public G4ParticleDefinition
 {
- private:
-  static GateOrthoPositronium* theInstance;
-  GateOrthoPositronium() {}
-  ~GateOrthoPositronium() {}
  public:
   static GateOrthoPositronium* Definition();
   static GateOrthoPositronium* OrthoPositroniumDefinition();
   static GateOrthoPositronium* OrthoPositronium();
+
+ private:
+  static GateOrthoPositronium* theInstance;
+
+  GateOrthoPositronium() = default; 
+  ~GateOrthoPositronium() override = default; 
+
+ public:
+  GateOrthoPositronium(const GateOrthoPositronium&) = delete;
+  GateOrthoPositronium& operator=(const GateOrthoPositronium&) = delete;
 };
 
 #endif

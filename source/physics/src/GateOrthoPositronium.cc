@@ -12,11 +12,11 @@
 #include "GatePositroniumDecayChannel.hh"
 
 
-GateOrthoPositronium* GateOrthoPositronium::theInstance = 0;
+GateOrthoPositronium* GateOrthoPositronium::theInstance = nullptr;
 
 GateOrthoPositronium* GateOrthoPositronium::Definition()
 {
- if (theInstance !=0) return theInstance;
+ if (theInstance) return theInstance;
  
  const G4String name = "oPs";
  const G4double mass = 2.0 * electron_mass_c2;
@@ -29,7 +29,7 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
  G4ParticleTable* pTable = G4ParticleTable::GetParticleTable();
  G4ParticleDefinition* anInstance = pTable->FindParticle(name);
 
- if ( anInstance == 0 )
+ if (!anInstance)
  {
   // create particle
 
@@ -49,9 +49,9 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
                     nullptr, false, "e" );
 
   //create Decay Table 
-  G4DecayTable* table = new G4DecayTable();
+  auto table = new G4DecayTable();
   // create a decay channel
-  G4VDecayChannel* mode = new GatePositroniumDecayChannel( name, BR );
+  auto mode = new GatePositroniumDecayChannel( name, BR );
   table->Insert(mode);
   anInstance->SetDecayTable(table);
  }
