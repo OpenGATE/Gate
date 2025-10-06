@@ -109,7 +109,7 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
   //Positronium model - for current event
   Positronium* pInfoPs = nullptr;
   //Default deexcitation gamma energy - if user didn't set prompt gamma energy this value will be used
-  const G4double kSodium22DeexcitationGammaEnergy = 1.022 * MeV;//[MeV]
+  static constexpr G4double kSodium22DeexcitationGammaEnergy = 1.022 * MeV;
   
   //Which positronium use for gammas generation
   PositroniumKind fPositroniumKind = PositroniumKind::pPs;
@@ -121,7 +121,38 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
   G4double fParaPositroniumFraction = 1.0;
   //It is required to generate mixed positronium decays ( pPs and oPs witch propability controled by varaible fParaPositroniumFraction )
   G4bool fUsePositroniumFractions = false;
-  
+
+  ///wk: We want to use  std::vector<float> fractions
+  ///wk: std::vector<annihilation gammas number> 2G or 3G
+  ///wk std::vector<float> lifetimes
+  ///wk std::vector<prompt_gammas> 
+  ///
+  enum PositroniumDecayKind { k2g, k3orth, k3isotropic};
+  struct PositroniumDecayModelParams
+  {
+    std::vector<float> fFractions;
+    std::vector<float> fLifetimes;
+    std::vector<PositroniumDecayKind> fDecayKind;
+  };
+  class MiniPositroniumDecayModel
+  {
+    public:
+    int getPositroniumDecayParamsForEvent() {
+      //r = G4UniformRand(); 
+      float r =0.3; //probability
+      float curr_frac_cumulative = 0.0;
+      for (int i = 0; i < fModelParams.fFractions.size(); ++i) {
+        curr_frac_cumulative = curr_frac_cumulative +fModelParams.fFractions[i];
+        if(r<= curr_frac_cumulative) return i;   
+     }
+      return -1;
+    }
+    MiniPositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
+    {}
+    private:
+    PositroniumDecayModelParams fModelParams;
+  };
 };
+
 
 #endif
