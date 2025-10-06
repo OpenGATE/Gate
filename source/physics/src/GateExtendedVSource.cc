@@ -10,16 +10,10 @@
 
 #include <map>
 
-GateExtendedVSource::GateExtendedVSource(const G4String& name ) : GateVSource( name )
-{
- pMessenger =  new GateExtendedVSourceMessenger( this );
-}
-
-GateExtendedVSource::~GateExtendedVSource()
-{
- if ( pMessenger != nullptr ) { delete pMessenger; } 
- if ( pModel != nullptr ) { delete pModel; }
-}
+GateExtendedVSource::GateExtendedVSource(const G4String &name)
+    : GateVSource(name),
+      pMessenger(std::make_unique<GateExtendedVSourceMessenger>(this)) 
+{}
 
 void GateExtendedVSource::SetModel(const G4String &model_name) 
 {
@@ -87,9 +81,7 @@ void GateExtendedVSource::PrepareModel()
   if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium ||
       fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium ||
       fModelKind == GateExtendedVSource::ModelKind::Positronium) {
-    pModel = new GatePositroniumDecayModel();
-    GatePositroniumDecayModel *model =
-        dynamic_cast<GatePositroniumDecayModel *>(pModel);
+    auto model  = std::make_unique<GatePositroniumDecayModel>();  
 
     if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
       model->SetPositroniumKind(
@@ -114,8 +106,9 @@ void GateExtendedVSource::PrepareModel()
     if (fPromptGammaEnergy.has_value()) {
       model->SetPromptGammaEnergy(fPromptGammaEnergy.value());
     }
+    pModel = std::move(model);
   } else if (fModelKind == GateExtendedVSource::ModelKind::SingleGamma) {
-    pModel = new GateGammaEmissionModel();
+    pModel = std::make_unique<GateGammaEmissionModel>();
   } else {
     GateError("GateExtendedVSource::PrepareModel - unknown model.");
   }

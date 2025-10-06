@@ -8,6 +8,7 @@
 #define GateExtendedVSource_hh
 
 #include <optional>
+#include <memory>
 
 #include "GateVSource.hh"
 #include "GateExtendedVSourceMessenger.hh"
@@ -15,7 +16,7 @@
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
- *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
+ *  Refactored by: Wojciech Krzemien
  *  About class: Extended version of GateVSource. It focuses on generating gammas from positronium decay.
  **/
 class GateExtendedVSource : public GateVSource
@@ -31,7 +32,7 @@ public:
   };
 
   explicit GateExtendedVSource(const G4String& name);
-  virtual ~GateExtendedVSource();
+  virtual ~GateExtendedVSource() = default;
 
   /** Generate gammas for event
    **/
@@ -75,9 +76,9 @@ public:
 
  protected:
   //Gamma emission model
-  GateGammaEmissionModel* pModel = nullptr;
+   std::unique_ptr<GateGammaEmissionModel> pModel;
   //Source messanger
-  GateExtendedVSourceMessenger* pMessenger = nullptr;
+   std::unique_ptr<GateExtendedVSourceMessenger> pMessenger;
   //User settings:
   ModelKind fModelKind = ModelKind::NotDefined;
   std::optional<G4bool> fEnableDeexcitation;
