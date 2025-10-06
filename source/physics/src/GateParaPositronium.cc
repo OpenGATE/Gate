@@ -5,60 +5,58 @@
   See LICENSE.md for further details
   ----------------------*/
 #include "GateParaPositronium.hh"
+#include "G4DecayTable.hh"
+#include "G4ParticleTable.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4ParticleTable.hh"
-#include "G4DecayTable.hh"
 #include "GatePositroniumDecayChannel.hh"
 
+GateParaPositronium *GateParaPositronium::theInstance = nullptr;
 
-GateParaPositronium* GateParaPositronium::theInstance = nullptr;
+GateParaPositronium *GateParaPositronium::Definition() {
+  if (theInstance)
+    return theInstance;
 
-GateParaPositronium* GateParaPositronium::Definition()
-{
- if (theInstance) return theInstance;
- 
- const G4String name = "pPs";
- const G4double mass = 2.0 * electron_mass_c2;
- const G4int spin = 0;
- const G4int parity = 1;
- const G4double lifetime = 0.1244 * ns;
- const G4double BR = 1.0;
+  const G4String name = "pPs";
+  const G4double mass = 2.0 * electron_mass_c2;
+  const G4int spin = 0;
+  const G4int parity = 1;
+  const G4double lifetime = 0.1244 * ns;
+  const G4double BR = 1.0;
 
- // search in particle table
- G4ParticleTable* pTable = G4ParticleTable::GetParticleTable();
- G4ParticleDefinition* anInstance = pTable->FindParticle(name);
+  // search in particle table
+  G4ParticleTable *pTable = G4ParticleTable::GetParticleTable();
+  G4ParticleDefinition *anInstance = pTable->FindParticle(name);
 
- if (!anInstance)
- {
-  // create particle
+  if (!anInstance) {
+    // create particle
 
-  // Arguments for constructor:
-  // name, mass, width, charge,
-  // spin, parity, C-conjugation,
-  // isospin, isospin3, G-parity,
-  // type, lepton number, baryon number,
-  // PDG encoding, stable, lifetime, 
-  // decay table, shortlived, subType
-  anInstance = new G4ParticleDefinition( 
-                    name, mass, 0.0, 0,
-                    spin, parity, 0,
-                    0, 0, 0,
-                    "lepton", 2, 0,
-                    0, false, lifetime,
-                    nullptr, false, "e" );
+    // Arguments for constructor:
+    // name, mass, width, charge,
+    // spin, parity, C-conjugation,
+    // isospin, isospin3, G-parity,
+    // type, lepton number, baryon number,
+    // PDG encoding, stable, lifetime,
+    // decay table, shortlived, subType
+    anInstance = new G4ParticleDefinition(name, mass, 0.0, 0, spin, parity, 0,
+                                          0, 0, 0, "lepton", 2, 0, 0, false,
+                                          lifetime, nullptr, false, "e");
 
-  //create Decay Table 
-  auto table = new G4DecayTable();
-  // create a decay channel
-  auto mode = new GatePositroniumDecayChannel(name, BR);
-  table->Insert(mode);
-  anInstance->SetDecayTable(table);
- }
- theInstance = dynamic_cast<GateParaPositronium*>(anInstance);
- return theInstance;
+    // create Decay Table
+    auto table = new G4DecayTable();
+    // create a decay channel
+    auto mode = new GatePositroniumDecayChannel(name, BR);
+    table->Insert(mode);
+    anInstance->SetDecayTable(table);
+  }
+  theInstance = dynamic_cast<GateParaPositronium *>(anInstance);
+  return theInstance;
 }
 
-GateParaPositronium* GateParaPositronium::ParaPositroniumDefinition() { return Definition(); }
+GateParaPositronium *GateParaPositronium::ParaPositroniumDefinition() {
+  return Definition();
+}
 
-GateParaPositronium* GateParaPositronium::ParaPositronium() { return Definition(); }
+GateParaPositronium *GateParaPositronium::ParaPositronium() {
+  return Definition();
+}
