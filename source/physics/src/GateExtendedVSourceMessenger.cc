@@ -112,14 +112,15 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  }
  else if ( command == upCmdSetPostroniumLifetime.get() )
  {
-  G4String positronium_name = "";
-  G4String units = "";
+  G4String positronium_name;
+  G4String units;
   G4double value = 0.0;
-  std::stringstream ss;
-  ss << new_value;
+
+  std::stringstream ss(new_value);
   ss >> positronium_name >> value >> units;
-  G4String new_value_lifetime = std::to_string( value ) + " " + units;
-  pSource->SetPostroniumLifetime( positronium_name, upCmdSetLifetime->GetNewDoubleValue( new_value_lifetime ) );
+
+  G4String new_lifetime_value = std::to_string( value ) + " " + units;
+  pSource->SetPostroniumLifetime(positronium_name, upCmdSetLifetime->GetNewDoubleValue(new_lifetime_value ));
   
  }
  else if ( command == upCmdSetPromptGammaEnergy.get() )
@@ -129,15 +130,16 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  else if ( command ==  upCmdSetPositroniumFraction.get() )
  {
   G4double fraction = 0.0;
-  G4String positronium_kind = "";
-  std::stringstream ss;
-  ss << new_value;
+  G4String positronium_kind;
+
+  std::stringstream ss(new_value);
   ss >> positronium_kind >> fraction;
-  pSource->SetPositroniumFraction( positronium_kind, fraction );
+
+  pSource->SetPositroniumFraction(positronium_kind, fraction);
  }
  else
  {
-  GateVSourceMessenger::SetNewValue( command, new_value );
+  GateVSourceMessenger::SetNewValue(command, new_value);
  }
 }
 
