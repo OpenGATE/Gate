@@ -76,34 +76,63 @@ void GateExtendedVSource::SetPositroniumFraction( const G4String& positronium_ki
  fParaPositroniumFraction =  pPs_fraction;
 }
 
-void GateExtendedVSource::PrepareModel()
+void GateExtendedVSource::PrepareModel() 
 {
- SetModel( GetType() );
+  SetModel(GetType());
 
- if ( fBehaveLikeVSource )  return;
+  if (fBehaveLikeVSource) {
+    return;
+  }
 
-   
- if ( fModelKind == GateExtendedVSource::ModelKind::ParaPositronium || fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium || fModelKind == GateExtendedVSource::ModelKind::Positronium )
- {
-  pModel = new GatePositroniumDecayModel();
-  GatePositroniumDecayModel* model = dynamic_cast<GatePositroniumDecayModel*>( pModel );
+  if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium ||
+      fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium ||
+      fModelKind == GateExtendedVSource::ModelKind::Positronium) {
+    pModel = new GatePositroniumDecayModel();
+    GatePositroniumDecayModel *model =
+        dynamic_cast<GatePositroniumDecayModel *>(pModel);
 
-  if ( fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium ) { model->SetPositroniumKind( GatePositroniumDecayModel::PositroniumKind::oPs ); }
-  if ( fModelKind == GateExtendedVSource::ModelKind::Positronium && fParaPositroniumFraction.has_value() ) { model->SetParaPositroniumFraction( fParaPositroniumFraction.value() ); }
+    if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
+      model->SetPositroniumKind(
+          GatePositroniumDecayModel::PositroniumKind::oPs);
+    }
+    if (fModelKind == GateExtendedVSource::ModelKind::Positronium &&
+        fParaPositroniumFraction.has_value()) {
+      model->SetParaPositroniumFraction(fParaPositroniumFraction.value());
+    }
 
-  if ( fEnableDeexcitation.has_value() && fEnableDeexcitation.value() ) { model->SetDecayModel( GatePositroniumDecayModel::DecayModel::WithPrompt ); } 
-  if ( fParaPostroniumLifetime.has_value() ) { model->SetPostroniumLifetime( kParaPositroniumName, fParaPostroniumLifetime.value() ); }
-  if ( fOrthoPostroniumLifetime.has_value() ) { model->SetPostroniumLifetime( kOrthoPositroniumName, fOrthoPostroniumLifetime.value() ); }
-  if ( fPromptGammaEnergy.has_value() ) { model->SetPromptGammaEnergy( fPromptGammaEnergy.value() ); }
- }
- else if ( fModelKind == GateExtendedVSource::ModelKind::SingleGamma ) { pModel = new GateGammaEmissionModel(); }
- else { GateError( "GateExtendedVSource::PrepareModel - unknown model." ); }
+    if (fEnableDeexcitation.has_value() && fEnableDeexcitation.value()) {
+      model->SetDecayModel(GatePositroniumDecayModel::DecayModel::WithPrompt);
+    }
+    if (fParaPostroniumLifetime.has_value()) {
+      model->SetPostroniumLifetime(kParaPositroniumName,
+                                   fParaPostroniumLifetime.value());
+    }
+    if (fOrthoPostroniumLifetime.has_value()) {
+      model->SetPostroniumLifetime(kOrthoPositroniumName,
+                                   fOrthoPostroniumLifetime.value());
+    }
+    if (fPromptGammaEnergy.has_value()) {
+      model->SetPromptGammaEnergy(fPromptGammaEnergy.value());
+    }
+  } else if (fModelKind == GateExtendedVSource::ModelKind::SingleGamma) {
+    pModel = new GateGammaEmissionModel();
+  } else {
+    GateError("GateExtendedVSource::PrepareModel - unknown model.");
+  }
 
- if ( fFixedEmissionDirection.has_value() ) { pModel->SetFixedEmissionDirection( fFixedEmissionDirection.value() ); }
- if ( fEnableFixedEmissionDirection.has_value() ) { pModel->SetEnableFixedEmissionDirection( fEnableFixedEmissionDirection.value() ); }
- if ( fEmissionEnergy.has_value() ) { pModel->SetEmissionEnergy( fEmissionEnergy.value() ); }
- if ( fSeed.has_value() ) { pModel->SetSeed( fSeed.value() ); }
-
+  if (fFixedEmissionDirection.has_value()) {
+    pModel->SetFixedEmissionDirection(fFixedEmissionDirection.value());
+  }
+  if (fEnableFixedEmissionDirection.has_value()) {
+    pModel->SetEnableFixedEmissionDirection(
+        fEnableFixedEmissionDirection.value());
+  }
+  if (fEmissionEnergy.has_value()) {
+    pModel->SetEmissionEnergy(fEmissionEnergy.value());
+  }
+  if (fSeed.has_value()) {
+    pModel->SetSeed(fSeed.value());
+  }
 }
 
 G4int GateExtendedVSource::GeneratePrimaries(G4Event* event)

@@ -7,10 +7,8 @@
 #ifndef GatePositroniumDecayChannel_hh
 #define GatePositroniumDecayChannel_hh
 
-//#include "globals.hh"
 #include "G4GeneralPhaseSpaceDecay.hh"
 #include "G4PhysicalConstants.hh"
-//#include "G4SystemOfUnits.hh"
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
