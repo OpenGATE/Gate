@@ -8,25 +8,18 @@
 #define PositroniumDecayModel_hh
 
 #include<vector>
-#include "G4DecayTable.hh"
-#include "G4ParticleTable.hh"
+
 #include "G4PrimaryParticle.hh"
-#include "G4GeneralPhaseSpaceDecay.hh"
-#include "G4DecayTable.hh"
-#include "G4ParticleDefinition.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4VDecayChannel.hh"
+#include "G4PrimaryVertex.hh"
+
 #include "GateEmittedGammaInformation.hh"
 #include "GateGammaEmissionModel.hh"
 
-#include "G4PhysicalConstants.hh"
-#include "G4SystemOfUnits.hh"
-
-#include "G4VDecayChannel.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4PrimaryVertex.hh"
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
- *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Class generate gammas from positronium decay with including deexcitation gamma ( prompt gamma ) if is required.
  **/
 class GatePositroniumDecayModel : public GateGammaEmissionModel

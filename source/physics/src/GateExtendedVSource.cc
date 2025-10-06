@@ -4,11 +4,13 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateExtendedVSource.hh"
-#include "GatePositroniumDecayModel.hh"
+#include <map>
+
 #include "G4Event.hh"
 
-#include <map>
+#include "GateExtendedVSource.hh"
+#include "GatePositroniumDecayModel.hh"
+
 
 GateExtendedVSource::GateExtendedVSource(const G4String &name)
     : GateVSource(name),

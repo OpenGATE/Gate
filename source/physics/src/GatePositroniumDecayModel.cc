@@ -4,15 +4,21 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GatePositroniumDecayModel.hh"
-#include "Randomize.hh"
 #include <cmath>
 #include <algorithm>
+
+#include "Randomize.hh"
 #include "G4DecayProducts.hh"
 #include "G4LorentzVector.hh"
 #include "G4ParticleTable.hh"
+#include "G4DecayTable.hh"
+#include "G4ParticleTable.hh"
+#include "G4DecayTable.hh"
+#include "G4ParticleDefinition.hh"
 
-GatePositroniumDecayModel::Positronium::Positronium( G4String name, G4double life_time, G4int annihilation_gammas_number ) : fName( name ), fLifeTime( life_time ), fAnnihilationGammasNumber( annihilation_gammas_number )
+#include "GatePositroniumDecayModel.hh"
+
+GatePositroniumDecayModel::Positronium::Positronium(const G4String name, G4double life_time, G4int annihilation_gammas_number ) : fName( name ), fLifeTime( life_time ), fAnnihilationGammasNumber( annihilation_gammas_number )
 {
  G4ParticleDefinition* positronium_def = G4ParticleTable::GetParticleTable()->FindParticle( name );
  G4DecayTable* positronium_decay_table = positronium_def->GetDecayTable();
