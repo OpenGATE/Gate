@@ -8,8 +8,6 @@
 #define GateGammaEmissionModel_hh
 
 #include "G4PrimaryParticle.hh"
-#include <vector>
-#include <string>
 #include "GateEmittedGammaInformation.hh"
 #include "G4Event.hh"
 #include "G4SystemOfUnits.hh"
