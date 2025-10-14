@@ -121,7 +121,7 @@ void GateExtendedVSource::PrepareModel()
         //params.fLifetimes={0.1244 ,138.6, 2, 3};
         //params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma, PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
         params.fFractions={1};
-        params.fLifetimes={5 * ns};
+        params.fLifetimes={5};
         params.fPromptPhotonEnergy={1.274 * MeV};
         params.fIsPromptPhoton={true};
         params.fDecayKind={PositroniumDecayKind::k2Gamma};

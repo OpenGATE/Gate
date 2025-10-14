@@ -201,7 +201,6 @@ G4PrimaryVertex* MiniPositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnih
  return vertex;
 }
 
-// For this moment without prompt
 G4int MiniPositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position)
 {
   auto decayIndex = MiniPositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
