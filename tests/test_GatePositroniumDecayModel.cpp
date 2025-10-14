@@ -31,7 +31,6 @@ bool run_tests2()
   params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma};
   MiniPositroniumDecayModel model(params);
 
-
   return true;
 }
 

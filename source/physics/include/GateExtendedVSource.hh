@@ -28,7 +28,8 @@ public:
    SingleGamma, // generate single gamma
    ParaPositronium, //generate gammas from para-positronium decay
    OrthoPositronium, //generate gammas from ortho-positronium decay
-   Positronium //generate gammas from mixed model ( from pPs and oPs decay with setted ratio )
+   Positronium, //generate gammas from mixed model ( from pPs and oPs decay with setted ratio )
+   MiniPositronium //generate gammas from extended mixed model 
   };
 
   explicit GateExtendedVSource(const G4String& name);

@@ -134,6 +134,8 @@ struct PositroniumDecayModelParams
 {
   std::vector<float> fFractions;
   std::vector<float> fLifetimes;
+  std::vector<bool> fIsPromptPhoton;
+  std::vector<float> fPromptPhotonEnergy;
   std::vector<PositroniumDecayKind> fDecayKind;
 };
 
@@ -144,24 +146,21 @@ class MiniPositroniumDecayModel:public GateGammaEmissionModel
   explicit MiniPositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
   {
     auto num_of_decay_channels = fModelParams.fDecayKind.size();
-    std::cout << num_of_decay_channels  << std::endl;
     for (int i = 0; i < num_of_decay_channels; i++) {
       if (fModelParams.fDecayKind[i] == PositroniumDecayKind::k2Gamma) 
       {
-        std::cout << "creating pPs"  << std::endl;
         fPositroniumDecayChannel.push_back(std::move(GatePositroniumDecayModel::Positronium("pPs", fModelParams.fLifetimes[i]* ns, 2)));
-        std::cout << "after creating pPs"  << std::endl;
       } else {
-        std::cout << "creating oPs"  << std::endl;
         fPositroniumDecayChannel.push_back(std::move(GatePositroniumDecayModel::Positronium("oPs", fModelParams.fLifetimes[i]* ns, 3)));
-        std::cout << "after creating oPs"  << std::endl;
       }
     }
   }
 
   protected:
   virtual G4int GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position) override;
+  G4PrimaryVertex* GetPrimaryVertexFromDeexcitation(G4double particle_time, const  G4ThreeVector& particle_position, int decayIndex);
   G4PrimaryVertex *GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector &particle_position, int decayIndex);
+  G4PrimaryParticle* GetGammaFromDeexcitation(int decayIndex);
   std::vector<G4PrimaryParticle*> GetGammasFromPositroniumAnnihilation(int decayIndex);
 
 private:
