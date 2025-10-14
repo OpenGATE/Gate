@@ -5,19 +5,17 @@
   See LICENSE.md for further details
   ----------------------*/
 
-#include "GateExtendedVSourceMessenger.hh"
-#include "GateExtendedVSource.hh"
 #include <sstream>
 
-GateExtendedVSourceMessenger::GateExtendedVSourceMessenger( GateExtendedVSource* source ) : GateVSourceMessenger( source )
+#include "GateExtendedVSourceMessenger.hh"
+#include "GateExtendedVSource.hh"
+
+GateExtendedVSourceMessenger::GateExtendedVSourceMessenger(GateExtendedVSource *source): GateVSourceMessenger(source), pSource(source) 
 {
- pSource = source;
- InitCommands();
+  InitCommands();
 }
 
-GateExtendedVSourceMessenger::~GateExtendedVSourceMessenger() {}
-
-G4UIcmdWithABool* GateExtendedVSourceMessenger::GetBoolCmd( const G4String cmd_name, const G4String cmd_guidance )
+G4UIcmdWithABool* GateExtendedVSourceMessenger::GetBoolCmd(const G4String& cmd_name, const G4String& cmd_guidance )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWithABool* cmd = new G4UIcmdWithABool( cmd_path, this );
@@ -26,7 +24,7 @@ G4UIcmdWithABool* GateExtendedVSourceMessenger::GetBoolCmd( const G4String cmd_n
  return cmd;
 }
 
-G4UIcmdWithADoubleAndUnit* GateExtendedVSourceMessenger::GetDoubleCmdWithUnit( const G4String cmd_name, const G4String cmd_guidance, const G4String default_unit, const G4String unit_candidates )
+G4UIcmdWithADoubleAndUnit* GateExtendedVSourceMessenger::GetDoubleCmdWithUnit( const G4String& cmd_name, const G4String& cmd_guidance, const G4String& default_unit, const G4String& unit_candidates )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWithADoubleAndUnit* cmd = new G4UIcmdWithADoubleAndUnit( cmd_path , this );
@@ -37,7 +35,7 @@ G4UIcmdWithADoubleAndUnit* GateExtendedVSourceMessenger::GetDoubleCmdWithUnit( c
  return cmd;
 }
 
-G4UIcmdWith3Vector* GateExtendedVSourceMessenger::GetVectorCmd( const G4String cmd_name, const G4String cmd_guidance )
+G4UIcmdWith3Vector* GateExtendedVSourceMessenger::GetVectorCmd( const G4String& cmd_name, const G4String& cmd_guidance )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWith3Vector* cmd = new G4UIcmdWith3Vector( cmd_path, this );
@@ -46,7 +44,7 @@ G4UIcmdWith3Vector* GateExtendedVSourceMessenger::GetVectorCmd( const G4String c
  return cmd;
 }
 
-G4UIcmdWithAnInteger* GateExtendedVSourceMessenger::GetIntCmd( const G4String cmd_name, const G4String cmd_guidance )
+G4UIcmdWithAnInteger* GateExtendedVSourceMessenger::GetIntCmd( const G4String& cmd_name, const G4String& cmd_guidance )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWithAnInteger* cmd = new G4UIcmdWithAnInteger( cmd_path, this );
@@ -55,7 +53,7 @@ G4UIcmdWithAnInteger* GateExtendedVSourceMessenger::GetIntCmd( const G4String cm
  return cmd;
 }
 
-G4UIcmdWithAString* GateExtendedVSourceMessenger::GetStringCmd(const G4String cmd_name, const G4String cmd_guidance )
+G4UIcmdWithAString* GateExtendedVSourceMessenger::GetStringCmd(const G4String& cmd_name, const G4String& cmd_guidance )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWithAString* cmd = new G4UIcmdWithAString( cmd_path, this );
@@ -64,7 +62,7 @@ G4UIcmdWithAString* GateExtendedVSourceMessenger::GetStringCmd(const G4String cm
  return cmd;
 }
 
-G4UIcmdWith3VectorAndUnit* GateExtendedVSourceMessenger::GetVectorCmdWithUnit( const G4String cmd_name, const G4String cmd_guidance, const G4String default_unit, const G4String unit_candidates )
+G4UIcmdWith3VectorAndUnit* GateExtendedVSourceMessenger::GetVectorCmdWithUnit( const G4String& cmd_name, const G4String& cmd_guidance, const G4String& default_unit, const G4String& unit_candidates )
 {
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWith3VectorAndUnit* cmd = new G4UIcmdWith3VectorAndUnit( cmd_path , this );
@@ -82,7 +80,7 @@ void GateExtendedVSourceMessenger::InitCommands()
  upCmdSetEnableFixedEmissionDirection.reset( GetBoolCmd( "setEnableFixedEmissionDirection", "Set fixed direction enable/disable." ) );
  upCmdSetEmissionEnergy.reset( GetDoubleCmdWithUnit( "setEmissionEnergy", "Set energy for single gamma.", "keV", "keV MeV GeV" ) );
  upCmdSetSeed.reset( GetIntCmd("setSeed", "Set seed for random generator" ) );
- upCmdSetPostroniumLifetime.reset( GetStringCmd( "setPostroniumLifetime", "Set life-time of positronium." ) ); 
+ upCmdSetPositroniumLifetime.reset( GetStringCmd( "setPositroniumLifetime", "Set life-time of positronium." ) ); 
  upCmdSetLifetime.reset( GetDoubleCmdWithUnit( "setLifetime", "Set life-time of positronium - disable for user.", "ns", "ps ns" ) ); 
  upCmdSetPromptGammaEnergy.reset( GetDoubleCmdWithUnit( "setPromptGammaEnergy", "Set energy for prompt gamma.", "keV", "keV MeV GeV" ) );
  upCmdSetPositroniumFraction.reset( GetStringCmd( "setPositroniumFraction", "\"positronium_kind fraction\" - where positronium_kind = {pPs, oPs} and fraction in [0.0, 1.0]" ) );
@@ -110,7 +108,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  {
   pSource->SetSeed( static_cast<G4long>( upCmdSetSeed->GetNewIntValue( new_value ) ) );
  }
- else if ( command == upCmdSetPostroniumLifetime.get() )
+ else if ( command == upCmdSetPositroniumLifetime.get() )
  {
   G4String positronium_name;
   G4String units;
