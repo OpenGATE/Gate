@@ -16,6 +16,7 @@
 
 #include "GateEmittedGammaInformation.hh"
 #include "GateGammaEmissionModel.hh"
+#include "GatePositroniumDecayModelParams.hh"
 
 
 /** Author: Mateusz Bała
@@ -129,15 +130,6 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
 ///wk std::vector<float> lifetimes
 ///wk std::vector<prompt_gammas> 
 ///
-enum PositroniumDecayKind { k2Gamma, k3Gamma};
-struct PositroniumDecayModelParams
-{
-  std::vector<float> fFractions;
-  std::vector<float> fLifetimes;
-  std::vector<bool> fIsPromptPhoton;
-  std::vector<float> fPromptPhotonEnergy;
-  std::vector<PositroniumDecayKind> fDecayKind;
-};
 
 class MiniPositroniumDecayModel:public GateGammaEmissionModel
 {

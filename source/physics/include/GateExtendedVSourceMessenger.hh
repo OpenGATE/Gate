@@ -7,6 +7,8 @@
 #ifndef GateExtendedVSourceMessenger_hh
 #define GateExtendedVSourceMessenger_hh
 
+#include <memory>
+
 #include "GateVSourceMessenger.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -14,7 +16,6 @@
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
-#include <memory>
 
 class GateExtendedVSource;
 
@@ -55,6 +56,13 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
   
   //Supporting commands - disable for user
   std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetLifetime;
+
+  //New commands
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumFractions;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetimes;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetIsPromptPhoton;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonEnergies;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetDecayKinds;
   
 };
 

@@ -115,17 +115,57 @@ void GateExtendedVSource::PrepareModel()
         pModel = std::make_unique<GateGammaEmissionModel>();
       } else {
       if(fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) {
+        /// WK: todo extract a dedicated function that creates proper params
         std::cout << "initializing MiniPositronium model" << std::endl;
         PositroniumDecayModelParams params;
-        //params.fFractions={0.4,0.3, 0.2, 0.1};
-        //params.fLifetimes={0.1244 ,138.6, 2, 3};
-        //params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma, PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
-        params.fFractions={1};
-        params.fLifetimes={5};
-        params.fPromptPhotonEnergy={1.274 * MeV};
-        params.fIsPromptPhoton={true};
-        params.fDecayKind={PositroniumDecayKind::k2Gamma};
+        if(fPositroniumFractions.has_value()) {
+          std::cout <<"we get some values from fParaPositroniumFractions"  << std::endl;
+          params.fFractions=fPositroniumFractions.value();
+        } else {
+          params.fFractions={0.4, 0.3, 0.2, 0.1};
+        }
+
+        if(fPositroniumLifetimes.has_value()) {
+          std::cout <<"we get some values from fPositroniumLifetimes"  << std::endl;
+          params.fLifetimes=fPositroniumLifetimes.value();
+        } else {
+          params.fLifetimes={0.1244 ,6, 2, 3};
+        }
+
+        if(fDecayKinds.has_value()) {
+          std::cout <<"we get some values from fDecayKinds"  << std::endl;
+          params.fDecayKind=fDecayKinds.value();
+        } else {
+          params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma, PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
+        }
+
+        if(fIsPromptPhoton.has_value()) {
+          std::cout <<"we get some values from fIsPromptPhoton"  << std::endl;
+          params.fIsPromptPhoton=fIsPromptPhoton.value();
+        } else {
+          params.fIsPromptPhoton={true,true, true, true};
+        }
+
+        if(fPromptPhotonEnergies.has_value()) {
+          std::cout <<"we get some values from fPromptPhotonEnergies"  << std::endl;
+          params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
+        } else {
+          params.fPromptPhotonEnergy={1.274 * MeV,1.274 * MeV,1.274 * MeV, 1.274 * MeV};
+        }
+
+       
+        //params.fFractions={0.6, 0.4};
+        //params.fLifetimes={5, 2};
+        //params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
+        //params.fIsPromptPhoton={false,false};
+        //params.fFractions={1};
+        //params.fLifetimes={5};
+        //params.fPromptPhotonEnergy={1.274 * MeV};
+        ////params.fIsPromptPhoton={false,false, false, false};
+        //params.fIsPromptPhoton={true};
+        //params.fDecayKind={PositroniumDecayKind::k2Gamma};
         pModel = std::make_unique<MiniPositroniumDecayModel>(params);
+        std::cout << "initializing MiniPositronium model 2" << std::endl;
       } else {
         GateError("GateExtendedVSource::PrepareModel - unknown model.");
       }

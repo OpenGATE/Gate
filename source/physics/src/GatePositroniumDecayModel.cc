@@ -204,12 +204,13 @@ G4PrimaryVertex* MiniPositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnih
 G4int MiniPositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position)
 {
   auto decayIndex = MiniPositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
+
   G4int number_of_vertices = 1;
- if(fModelParams.fIsPromptPhoton[decayIndex]) 
- { 
-  ++number_of_vertices ;
-  event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
- }
+  if(fModelParams.fIsPromptPhoton[decayIndex]) 
+  { 
+    ++number_of_vertices;
+    event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
+  }
   event->AddPrimaryVertex(GetPrimaryVertexFromPositroniumAnnihilation(particle_time, particle_position, decayIndex));
   return number_of_vertices;
 } 
