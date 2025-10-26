@@ -21,7 +21,7 @@ GatePositronium::GatePositronium(const G4String& name, G4double life_time, G4int
 
 G4double GatePositronium::GetLifeTime() const { return fLifeTime; }
 
-G4String GatePositronium::GetName() const { return fName; }
+const G4String& GatePositronium::GetName() const { return fName; }
 
 G4int GatePositronium::GetAnnihilationGammasNumber() const { return fAnnihilationGammasNumber; }
 
