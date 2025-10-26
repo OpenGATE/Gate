@@ -22,7 +22,6 @@ void initializeGateRunManager(GateRunManager* runManager)
 
 bool run_tests()
 {
-  bool res = true;
   GatePositronium pPs("pPs", 0.1 , 2); 
   if (pPs.GetLifeTime() != 0.1) {
     return false;
@@ -33,12 +32,11 @@ bool run_tests()
   if (pPs.GetAnnihilationGammasNumber() != 2) {
     return false;
   }
-  return res;
+  return true;
 }
 
 bool run_tests2()
 {
-  bool res = true;
   GatePositronium oPs("oPs", 1000, 3); 
   if (oPs.GetLifeTime() != 1000) {
     return false;
@@ -49,7 +47,57 @@ bool run_tests2()
   if (oPs.GetAnnihilationGammasNumber() != 3) {
     return false;
   }
-  return res;
+  return true;
+}
+
+/// todo: add test to check what happens if pPs with 3 ?
+bool run_tests3()
+{
+  std::vector<GatePositronium> vect;
+  vect.push_back(std::move(GatePositronium("oPs", 1000, 3)));
+  vect.push_back(std::move(GatePositronium("pPs", 0.1, 2)));
+  vect.push_back(std::move(GatePositronium("oPs", 2000, 2)));
+  vect.push_back(std::move(GatePositronium("oPs", 5000, 2)));
+  if(vect[0].GetName()!="oPs") {
+    return false;
+  }
+  if(vect[1].GetName()!="pPs") {
+    return false;
+  }
+  if(vect[2].GetName()!="oPs") {
+    return false;
+  }
+  if(vect[3].GetName()!="oPs") {
+    return false;
+  }
+
+  if(vect[0].GetLifeTime()!= 1000) {
+    return false;
+  }
+  if(vect[1].GetLifeTime()!= 0.1) {
+    return false;
+  }
+  if(vect[2].GetLifeTime()!=2000) {
+    return false;
+  }
+  if(vect[3].GetLifeTime()!=5000) {
+    return false;
+  }
+
+  if(vect[0].GetAnnihilationGammasNumber()!= 3) {
+    return false;
+  }
+  if(vect[1].GetAnnihilationGammasNumber()!= 2) {
+    return false;
+  }
+  if(vect[2].GetAnnihilationGammasNumber()!= 2) {
+    return false;
+  }
+  if(vect[3].GetAnnihilationGammasNumber()!= 2) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -62,6 +110,7 @@ int main()
   bool res = true;
   res = res & run_tests();
   res = res & run_tests2();
+  res = res & run_tests3();
 
   if (res) {
     std::cout << "All tests have passed" << std::endl;
