@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include <GatePositroniumDecayModel.hh>
+#include <GateMiniPositroniumDecayModel.hh>
 
 #include "GateRunManager.hh"
 #include "GatePhysicsList.hh"
