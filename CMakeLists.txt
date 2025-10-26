@@ -34,6 +34,11 @@ IF(BUILD_TESTING)
 
   ADD_TEST(NAME test_GatePositroniumDecayModel COMMAND test_GatePositroniumDecayModel)
 
+  ADD_EXECUTABLE(test_GatePositronium tests/test_GatePositronium.cpp)
+  TARGET_LINK_LIBRARIES(test_GatePositronium GateLib)
+
+  ADD_TEST(NAME test_GatePositronium COMMAND test_GatePositronium)
+
 ENDIF(BUILD_TESTING)
 #=========================================================
 
