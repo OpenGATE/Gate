@@ -125,12 +125,6 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
 
 };
 
-///wk: We want to use  std::vector<float> fractions
-///wk: std::vector<annihilation gammas number> 2G or 3G
-///wk std::vector<float> lifetimes
-///wk std::vector<prompt_gammas> 
-///
-
 class MiniPositroniumDecayModel:public GateGammaEmissionModel
 {
   public:
