@@ -20,20 +20,6 @@ void initializeGateRunManager(GateRunManager* runManager)
   runManager->InitializeAll();
 }
 
-//bool run_tests2()
-//{
-  //std::unique_ptr<GateRunManager> runManager(new GateRunManager);
-  //initializeGateRunManager(runManager.get());
-
-  //PositroniumDecayModelParams params;
-  //params.fFractions={0.3,0.7};
-  //params.fLifetimes={0.1244 ,138.6};
-  //params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma};
-  //MiniPositroniumDecayModel model(params);
-
-  //return true;
-//}
-
 bool run_tests()
 {
   bool res = true;
