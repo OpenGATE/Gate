@@ -29,9 +29,9 @@ MiniPositroniumDecayModel::MiniPositroniumDecayModel(const PositroniumDecayModel
   for (int i = 0; i < num_of_decay_channels; i++) {
     if (fModelParams.fDecayKind[i] == PositroniumDecayKind::k2Gamma) 
     {
-      fPositroniumDecayChannel.push_back(std::move(GatePositronium("pPs", fModelParams.fLifetimes[i]* ns, 2)));
+      fPositroniumDecayChannel.push_back(std::move(GatePositronium("pPs", fModelParams.fLifetimes[i]* ns)));
     } else {
-      fPositroniumDecayChannel.push_back(std::move(GatePositronium("oPs", fModelParams.fLifetimes[i]* ns, 3)));
+      fPositroniumDecayChannel.push_back(std::move(GatePositronium("oPs", fModelParams.fLifetimes[i]* ns)));
     }
   }
 }

@@ -12,17 +12,17 @@
 
 #include "GatePositronium.hh"
 
-GatePositronium::GatePositronium(const G4String& name, G4double life_time, G4int annihilation_gammas_number ): fName(name), fLifeTime(life_time), fAnnihilationGammasNumber(annihilation_gammas_number)
+GatePositronium::GatePositronium(const G4String& name, G4double life_time): fName(name), fLifeTime(life_time)
 {
   G4ParticleDefinition *positronium_def = G4ParticleTable::GetParticleTable()->FindParticle(name);
   G4DecayTable *positronium_decay_table = positronium_def->GetDecayTable();
-  pDecayChannel = positronium_decay_table->GetDecayChannel(0);
+  pDecayChannel = static_cast<GatePositroniumDecayChannel*>(positronium_decay_table->GetDecayChannel(0));
 }
 
 G4double GatePositronium::GetLifeTime() const { return fLifeTime; }
 
 const G4String& GatePositronium::GetName() const { return fName; }
 
-G4int GatePositronium::GetAnnihilationGammasNumber() const { return fAnnihilationGammasNumber; }
+G4int GatePositronium::GetAnnihilationGammasNumber() const { return pDecayChannel->GetNumberOfDaughters(); }
 
 G4DecayProducts* GatePositronium::GetDecayProducts() const { return pDecayChannel->DecayIt(); }

@@ -27,7 +27,7 @@ class GatePositroniumDecayChannel : public G4GeneralPhaseSpaceDecay
   virtual ~GatePositroniumDecayChannel() = default;
   /** Return gammas from positronium decay
   **/
-  virtual G4DecayProducts* DecayIt(G4double) override;
+  virtual G4DecayProducts* DecayIt(G4double m=0.0) override;
 
  protected:
   /** Return gammas from para-positronium decay

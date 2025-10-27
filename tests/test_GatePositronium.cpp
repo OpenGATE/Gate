@@ -22,7 +22,7 @@ void initializeGateRunManager(GateRunManager* runManager)
 
 bool run_tests()
 {
-  GatePositronium pPs("pPs", 0.1 , 2); 
+  GatePositronium pPs("pPs", 0.1); 
   if (pPs.GetLifeTime() != 0.1) {
     return false;
   }
@@ -37,7 +37,7 @@ bool run_tests()
 
 bool run_tests2()
 {
-  GatePositronium oPs("oPs", 1000, 3); 
+  GatePositronium oPs("oPs", 1000); 
   if (oPs.GetLifeTime() != 1000) {
     return false;
   }
@@ -54,10 +54,10 @@ bool run_tests2()
 bool run_tests3()
 {
   std::vector<GatePositronium> vect;
-  vect.push_back(std::move(GatePositronium("oPs", 1000, 3)));
-  vect.push_back(std::move(GatePositronium("pPs", 0.1, 2)));
-  vect.push_back(std::move(GatePositronium("oPs", 2000, 2)));
-  vect.push_back(std::move(GatePositronium("oPs", 5000, 2)));
+  vect.push_back(std::move(GatePositronium("oPs", 1000)));
+  vect.push_back(std::move(GatePositronium("pPs", 0.1)));
+  vect.push_back(std::move(GatePositronium("oPs", 2000)));
+  vect.push_back(std::move(GatePositronium("oPs", 5000)));
   if(vect[0].GetName()!="oPs") {
     return false;
   }
@@ -90,10 +90,10 @@ bool run_tests3()
   if(vect[1].GetAnnihilationGammasNumber()!= 2) {
     return false;
   }
-  if(vect[2].GetAnnihilationGammasNumber()!= 2) {
+  if(vect[2].GetAnnihilationGammasNumber()!= 3) {
     return false;
   }
-  if(vect[3].GetAnnihilationGammasNumber()!= 2) {
+  if(vect[3].GetAnnihilationGammasNumber()!= 3) {
     return false;
   }
 
