@@ -41,10 +41,10 @@ class GatePositroniumDecayChannel : public G4GeneralPhaseSpaceDecay
     * Chapter: 89. Annihilation of positronium
     * Equation: 89.14
   **/
-  G4double GetOrthoPsM( const G4double w1, const G4double w2, const G4double w3 ) const;
+  G4double GetOrthoPsM(G4double w1, G4double w2, G4double w3) const;
   /** Calculate polarization orthogonal to momentum direction
    **/
-  G4ThreeVector GetPolarization( const G4ThreeVector& momentum ) const;
+  G4ThreeVector GetPolarization(const G4ThreeVector& momentum) const;
   /** Generate perpendiculator vector ( to calculate orthogonal polarization )
    **/
   G4ThreeVector GetPerpendicularVector(const G4ThreeVector& v) const;

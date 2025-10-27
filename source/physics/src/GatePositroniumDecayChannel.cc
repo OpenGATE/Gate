@@ -115,21 +115,23 @@ G4DecayProducts* GatePositroniumDecayChannel::DecayOrthoPositronium()
  return decay_products; 
 }
 
-G4double GatePositroniumDecayChannel::GetOrthoPsM( const G4double w1, const G4double w2, const G4double w3 ) const
+G4double GatePositroniumDecayChannel::GetOrthoPsM(G4double w1, G4double w2, G4double w3) const
 {
- return pow( ( kElectronMass - w1 ) / ( w2 * w3 ), 2 ) + pow( ( kElectronMass - w2 ) / ( w1 * w3 ), 2 ) + pow( ( kElectronMass - w3 ) / ( w1 * w2 ), 2 );
+  return pow((kElectronMass - w1) / (w2 * w3), 2) +
+         pow((kElectronMass - w2) / (w1 * w3), 2) +
+         pow((kElectronMass - w3) / (w1 * w2), 2);
 }
 
-G4ThreeVector GatePositroniumDecayChannel::GetPolarization( const G4ThreeVector& momentum ) const
+G4ThreeVector GatePositroniumDecayChannel::GetPolarization(const G4ThreeVector& momentum) const 
 {
- auto d0 = momentum.unit();
- auto a0 = GetPerpendicularVector( d0 ).unit();
- auto b0 = d0.cross( a0 ).unit();
- G4double angle_radians = G4UniformRand() * M_PI;
- auto polarization = std::cos( angle_radians ) * a0 + std::sin( angle_radians ) * b0;
- return polarization.unit();
+  auto d0 = momentum.unit();
+  auto a0 = GetPerpendicularVector(d0).unit();
+  auto b0 = d0.cross(a0).unit();
+  G4double angle_radians = G4UniformRand() * M_PI;
+  auto polarization = std::cos(angle_radians) * a0 + std::sin(angle_radians) * b0;
+  return polarization.unit();
 }
-  
+
 G4ThreeVector GatePositroniumDecayChannel::GetPerpendicularVector(const G4ThreeVector& v) const
 {
  G4double dx = v.x();
