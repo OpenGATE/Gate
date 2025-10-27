@@ -16,7 +16,6 @@
 
 #include "GateEmittedGammaInformation.hh"
 #include "GateGammaEmissionModel.hh"
-#include "GatePositroniumDecayModelParams.hh"
 
 
 /** Author: Mateusz Bała
@@ -124,35 +123,4 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
   G4bool fUsePositroniumFractions = false;
 
 };
-
-class MiniPositroniumDecayModel:public GateGammaEmissionModel
-{
-  public:
-  static int getPositroniumDecayIndex(const std::vector<float>& fractions); 
-  explicit MiniPositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
-  {
-    auto num_of_decay_channels = fModelParams.fDecayKind.size();
-    for (int i = 0; i < num_of_decay_channels; i++) {
-      if (fModelParams.fDecayKind[i] == PositroniumDecayKind::k2Gamma) 
-      {
-        fPositroniumDecayChannel.push_back(std::move(GatePositroniumDecayModel::Positronium("pPs", fModelParams.fLifetimes[i]* ns, 2)));
-      } else {
-        fPositroniumDecayChannel.push_back(std::move(GatePositroniumDecayModel::Positronium("oPs", fModelParams.fLifetimes[i]* ns, 3)));
-      }
-    }
-  }
-
-  protected:
-  virtual G4int GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position) override;
-  G4PrimaryVertex* GetPrimaryVertexFromDeexcitation(G4double particle_time, const  G4ThreeVector& particle_position, int decayIndex);
-  G4PrimaryVertex *GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector &particle_position, int decayIndex);
-  G4PrimaryParticle* GetGammaFromDeexcitation(int decayIndex);
-  std::vector<G4PrimaryParticle*> GetGammasFromPositroniumAnnihilation(int decayIndex);
-
-private:
-  PositroniumDecayModelParams fModelParams;
-  std::vector<GatePositroniumDecayModel::Positronium> fPositroniumDecayChannel;
-};
-
-
 #endif

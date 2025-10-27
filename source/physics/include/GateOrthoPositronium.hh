@@ -11,7 +11,6 @@
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
- *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Generate ortho-positronium definition and set decay chanel for oPs.
  **/
 class GateOrthoPositronium : public G4ParticleDefinition

@@ -14,7 +14,6 @@
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
- *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Basic class for other model of gammas emission. Provides basic tools for calculation and can generate single gamma.
  **/
 class GateGammaEmissionModel
