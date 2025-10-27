@@ -100,6 +100,8 @@ public:
   static inline const G4String kParaPositroniumName = "pPs";
   static inline const G4String kOrthoPositroniumName = "oPs";
 
+  PositroniumDecayModelParams generatePositroniumDecayParams() const;
+
  public:
 
   std::optional<std::vector<float>> fPositroniumFractions;
@@ -107,7 +109,6 @@ public:
   std::optional<std::vector<bool>> fIsPromptPhoton;
   std::optional<std::vector<float>> fPromptPhotonEnergies;
   std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
-
   
 
 };

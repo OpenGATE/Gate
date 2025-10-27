@@ -10,6 +10,7 @@
 
 #include "GateExtendedVSource.hh"
 #include "GatePositroniumDecayModel.hh"
+#include "GateMiniPositroniumDecayModel.hh"
 
 
 GateExtendedVSource::GateExtendedVSource(const G4String &name)
@@ -33,7 +34,7 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
   } else {
     fBehaveLikeVSource = true;
     G4cout << "GateExtendedVSource::SetModel : Unknown gamma source model. "
-              "Enable: sg, pPs, oPs, Ps. Switching to GateVSource behavour."
+              "Enable: sg, pPs, oPs, Ps, mPs. Switching to GateVSource behavour."
            << G4endl;
   }
 }
@@ -71,6 +72,41 @@ void GateExtendedVSource::SetPositroniumFraction( const G4String& positronium_ki
  else { GateError( "GateExtendedVSource::SetPositroniumFraction : incorrect positronium kind - enable are: pPs, oPs" ); }
 
  fParaPositroniumFraction =  pPs_fraction;
+}
+
+PositroniumDecayModelParams GateExtendedVSource::generatePositroniumDecayParams() const
+{
+  PositroniumDecayModelParams params;
+  if(fPositroniumFractions.has_value()) {
+    params.fFractions=fPositroniumFractions.value();
+  } else {
+    GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay fractions are not set");
+  }
+
+  if(fPositroniumLifetimes.has_value()) {
+    params.fLifetimes=fPositroniumLifetimes.value();
+  } else {
+    GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium lifetimes are not set");
+  }
+
+  if(fDecayKinds.has_value()) {
+    params.fDecayKind=fDecayKinds.value();
+  } else {
+    GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay kinds are not set");
+  }
+
+  if(fIsPromptPhoton.has_value()) {
+    params.fIsPromptPhoton=fIsPromptPhoton.value();
+  } else {
+    GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium is prompt photon flags are not set");
+  }
+
+  if(fPromptPhotonEnergies.has_value()) {
+    params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
+  } else {
+    GateError("GateExtendedVSource::generatePositroniumDecayParams: Prompt photon energies are not set");
+  }
+  return params;
 }
 
 void GateExtendedVSource::PrepareModel() 
@@ -115,55 +151,8 @@ void GateExtendedVSource::PrepareModel()
         pModel = std::make_unique<GateGammaEmissionModel>();
       } else {
       if(fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) {
-        /// WK: todo extract a dedicated function that creates proper params
         std::cout << "initializing MiniPositronium model" << std::endl;
-        PositroniumDecayModelParams params;
-        if(fPositroniumFractions.has_value()) {
-          std::cout <<"we get some values from fParaPositroniumFractions"  << std::endl;
-          params.fFractions=fPositroniumFractions.value();
-        } else {
-          params.fFractions={0.4, 0.3, 0.2, 0.1};
-        }
-
-        if(fPositroniumLifetimes.has_value()) {
-          std::cout <<"we get some values from fPositroniumLifetimes"  << std::endl;
-          params.fLifetimes=fPositroniumLifetimes.value();
-        } else {
-          params.fLifetimes={0.1244 ,6, 2, 3};
-        }
-
-        if(fDecayKinds.has_value()) {
-          std::cout <<"we get some values from fDecayKinds"  << std::endl;
-          params.fDecayKind=fDecayKinds.value();
-        } else {
-          params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma, PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
-        }
-
-        if(fIsPromptPhoton.has_value()) {
-          std::cout <<"we get some values from fIsPromptPhoton"  << std::endl;
-          params.fIsPromptPhoton=fIsPromptPhoton.value();
-        } else {
-          params.fIsPromptPhoton={true,true, true, true};
-        }
-
-        if(fPromptPhotonEnergies.has_value()) {
-          std::cout <<"we get some values from fPromptPhotonEnergies"  << std::endl;
-          params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
-        } else {
-          params.fPromptPhotonEnergy={1.274 * MeV,1.274 * MeV,1.274 * MeV, 1.274 * MeV};
-        }
-
-       
-        //params.fFractions={0.6, 0.4};
-        //params.fLifetimes={5, 2};
-        //params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k2Gamma};
-        //params.fIsPromptPhoton={false,false};
-        //params.fFractions={1};
-        //params.fLifetimes={5};
-        //params.fPromptPhotonEnergy={1.274 * MeV};
-        ////params.fIsPromptPhoton={false,false, false, false};
-        //params.fIsPromptPhoton={true};
-        //params.fDecayKind={PositroniumDecayKind::k2Gamma};
+        auto params = generatePositroniumDecayParams();
         pModel = std::make_unique<MiniPositroniumDecayModel>(params);
         std::cout << "initializing MiniPositronium model 2" << std::endl;
       } else {
@@ -197,4 +186,3 @@ G4int GateExtendedVSource::GeneratePrimaries(G4Event* event)
  ChangeParticlePositionRelativeToAttachedVolume(particle_position);
  return pModel->GeneratePrimaryVertices(event, particle_time, particle_position);
 }
-
