@@ -151,10 +151,8 @@ void GateExtendedVSource::PrepareModel()
         pModel = std::make_unique<GateGammaEmissionModel>();
       } else {
       if(fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) {
-        std::cout << "initializing MiniPositronium model" << std::endl;
         auto params = generatePositroniumDecayParams();
         pModel = std::make_unique<MiniPositroniumDecayModel>(params);
-        std::cout << "initializing MiniPositronium model 2" << std::endl;
       } else {
         GateError("GateExtendedVSource::PrepareModel - unknown model.");
       }
