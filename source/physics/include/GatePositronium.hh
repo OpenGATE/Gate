@@ -7,9 +7,8 @@
 #ifndef GatePositronium_hh
 #define GatePositronium_hh
 
-//#include "G4VDecayChannel.hh"
 #include "G4DecayProducts.hh"
-#include <GatePositroniumDecayChannel.hh>
+#include "GatePositroniumDecayChannel.hh"
 
 class GatePositronium {
 public:
