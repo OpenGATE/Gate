@@ -83,6 +83,7 @@ protected:
   G4double m_Pileup;
   std::vector< GateDigi* >* m_waiting;
   G4bool m_firstEvent;
+  GateDigiCollection* m_tempDigiCollection = nullptr;
 
 
 private:
