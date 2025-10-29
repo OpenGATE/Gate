@@ -219,7 +219,7 @@ class GateVSystem : public GateClockDependent
     size_t ComputeIdFromVolID(const GateOutputVolumeID& volID,std::vector<G4bool>& enableList) const;
     //G4ThreeVector ComputeObjectCenter(const std::vector<G4int>& numList) const;
     G4ThreeVector ComputeObjectCenter(const GateVolumeID* volID) const;
-    GateVolumeID* MakeVolumeID(const std::vector<G4int>& numList) const;
+    GateVolumeID MakeVolumeID(const std::vector<G4int>& numList) const;
   public:
     typedef std::vector< GateSystemComponent* > compList_t;
     compList_t* MakeComponentListAtLevel(G4int level) const;

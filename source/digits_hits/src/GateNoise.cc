@@ -116,10 +116,9 @@ void GateNoise::Digitize()
 		    	//      G4cout<< Gateendl;
 		    	digi->SetOutputVolumeID(outputVol);
 
-		    	GateVolumeID* volID = system->MakeVolumeID(outputVol);
-		    	digi->SetVolumeID(*volID);
-		    	digi->SetGlobalPos(system->ComputeObjectCenter(volID));
-		    	delete volID;
+		    	GateVolumeID volID = system->MakeVolumeID(outputVol);
+		    	digi->SetVolumeID(volID);
+		    	digi->SetGlobalPos(system->ComputeObjectCenter(&volID));
 
 		    	digi->SetEventID(-2);
 
@@ -145,6 +144,9 @@ void GateNoise::Digitize()
 			m_OutputDigiCollection->insert(new GateDigi(*inputDigi));
 
 		   	  } //loop  over input digits
+				  for (const GateDigi* d : m_createdDigis) {
+				          delete d;
+				            }
     } //IDC
   else
     {
@@ -161,13 +163,12 @@ void GateNoise::Digitize()
 G4double GateNoise::ComputeStartTime(GateDigiCollection* IDC)
 {
 
-  	GateDigi* digi = new GateDigi();
+  	GateDigi* digi = nullptr;
 
   	std::vector< GateDigi* >* IDCVector = IDC->GetVector ();
   	std::vector<GateDigi*>::iterator iter;
 
   	G4double startTime = DBL_MAX;
-  	digi=0;
   	for (iter = IDCVector->begin(); iter < IDCVector->end() ; ++iter) {
   		if ( (*iter)->GetTime() < startTime ){
   			startTime  = (*iter)->GetTime();

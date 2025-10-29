@@ -54,15 +54,15 @@ GatePileup::GatePileup(GateSinglesDigitizer *digitizer, G4String name)
 	collectionName.push_back(colName);
 	m_Messenger = new GatePileupMessenger(this);
 
-	GateDigiCollection* tempDigiCollection = new GateDigiCollection(GetName(), m_digitizer-> GetOutputName()); // to create the Digi Collection
-	m_waiting = tempDigiCollection->GetVector ();
+	m_tempDigiCollection = new GateDigiCollection(GetName(), m_digitizer-> GetOutputName()); // to create the Digi Collection
+	m_waiting = m_tempDigiCollection->GetVector ();
 }
 
 
 GatePileup::~GatePileup()
 {
   delete m_Messenger;
-
+  delete m_tempDigiCollection;
 }
 
 

@@ -114,6 +114,8 @@ void GateAdderComptPhotIdeal::Digitize()
     			}
     		else
     		{
+    			delete m_outputDigi;
+    			m_outputDigi = nullptr;
     			if(inputDigi->GetPostStepProcess()!="Transportation")
     				m_flgEvtRej=1;
     		}
@@ -241,6 +243,8 @@ void GateAdderComptPhotIdeal::Digitize()
 
 
     	    }
+    	    delete m_outputDigi;
+    	    m_outputDigi = nullptr;
     	}
 
 
@@ -248,6 +252,13 @@ void GateAdderComptPhotIdeal::Digitize()
 
 
     	}
+#ifdef GATE_USE_OPTICAL
+    else
+    {
+        delete m_outputDigi;
+        m_outputDigi = nullptr;
+    }
+#endif
 	  } //loop  over input digits
     } //IDC
   else
