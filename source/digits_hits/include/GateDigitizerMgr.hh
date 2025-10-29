@@ -83,7 +83,7 @@ public:
    //! Run Singles Digitizers
    void RunDigitizers();
    //! Integrates a new digitizer/singlesCollection
-   void AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer);
+   bool AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer);
    //! Find Digitizer by its name
   GateSinglesDigitizer* FindSinglesDigitizer(G4String mName);
    /// End of methods for Singles
