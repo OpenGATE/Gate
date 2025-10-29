@@ -132,6 +132,7 @@ void GateDigitizerInitializationModule::Digitize()
     		        	G4cout << "[GateDigitizerInitializationModule::Digitize]: \n"
     		  	       << "\tprocessed " << *(*inHC)[i] << Gateendl
     		  	       << "\tcreated new Digi:\n"
+    		  	       << Digi << Gateendl
     		  	       << *Digi << Gateendl;
 */
     		  m_outputDigiCollection->insert(Digi);

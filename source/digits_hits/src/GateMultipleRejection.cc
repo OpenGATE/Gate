@@ -101,22 +101,26 @@ void GateMultipleRejection::Digitize()
 		  {
 			if(m_multipleDef==kvolumeID)
 			{
-				if ( std::find(m_VolumeIDs.begin(), m_VolumeIDs.end(), currentVolumeID) != m_VolumeIDs.end() )
+				if ( std::find(m_VolumeIDs.begin(), m_VolumeIDs.end(), currentVolumeID) != m_VolumeIDs.end() ) {
+				    delete m_outputDigi;
 					return;
+				}
 				else
 					m_OutputDigiCollection->insert(m_outputDigi);
 			}
 			else
 			{
+				delete m_outputDigi;
 				if (std::find(m_VolumeNames.begin(), m_VolumeNames.end(), currentVolumeName) != m_VolumeNames.end() )
 					return;
-
 			}
 		  }
 		else
 			{
 				if (n_digi==1) //save if only one digi
 					m_OutputDigiCollection->insert(m_outputDigi);
+				else
+					delete m_outputDigi;
 
 			}
 

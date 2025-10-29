@@ -120,7 +120,6 @@ void GateEnergyFraming::Digitize()
 				  G4cout << "[GateEnergyFraming::Digitize]Ignored digi with energy above uphold:\n"
 				  << *inputDigi << Gateendl << Gateendl ;
 				  
-			  else
 			  	delete m_outputDigi;	  
 		      }
 

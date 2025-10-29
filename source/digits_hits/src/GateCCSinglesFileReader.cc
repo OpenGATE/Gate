@@ -146,6 +146,7 @@ G4int GateCCSinglesFileReader::PrepareNextEvent( )
         GateDigi* aSingleDigi=m_singleBuffer.CreateSingle();
          // OK GND 2022 TODO: uncomment for CC when no pulse list
         // pList->push_back(&aSingleDigi->GetPulse());
+        delete aSingleDigi;
 
       // Load the next set of Singles-data into the root-Singles structure
       LoadSinglesData();

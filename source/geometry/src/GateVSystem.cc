@@ -451,14 +451,14 @@ size_t GateVSystem::ComputeIdFromVolID(const GateOutputVolumeID& volID,std::vect
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
+GateVolumeID GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
 {
   GateSystemComponent* comp = GetBaseComponent();
   if (!comp) return 0;
   G4VPhysicalVolume *vol=comp->GetPhysicalVolume(0), *last_vol=vol;
-  GateVolumeID* ans = new GateVolumeID;
-  ans->push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
-  if (vol) ans->push_back( GateVolumeSelector(vol)); else return ans;
+  GateVolumeID ans;
+  ans.push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
+  if (vol) ans.push_back( GateVolumeSelector(vol)); else return ans;
    
   for (size_t i=1;i<numList.size();++i){
     if (comp->GetChildNumber()<1) break;
@@ -484,14 +484,14 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
           for (unsigned int ii=0;ii<logical->GetNoDaughters();++ii){
             last_vol=logical->GetDaughter(ii);
             if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
-              ans->push_back(last_vol);
+              ans.push_back(last_vol);
               pb=false;
               break;
             }
           }
           if (pb) return ans; // no last_vol child is ancestor of vol...
         } else {
-          ans->push_back(vol);
+          ans.push_back(vol);
           last_vol=vol;
           break;
         }
