@@ -9,7 +9,6 @@
 #include "G4Event.hh"
 
 #include "GateExtendedVSource.hh"
-#include "GatePositroniumDecayModel.hh"
 #include "GateMiniPositroniumDecayModel.hh"
 
 
