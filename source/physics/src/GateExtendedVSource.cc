@@ -104,7 +104,6 @@ G4int GateExtendedVSource::GeneratePrimaries(G4Event* event)
  G4double particle_time = GetTime();
  G4ThreeVector particle_position = GetPosDist()->GenerateOne();
  ChangeParticlePositionRelativeToAttachedVolume(particle_position);
- pModel->GeneratePrimaryVertices(event, particle_time, particle_position);
  return pModel->GeneratePrimaryVertices(event, particle_time, particle_position);
 }
 
