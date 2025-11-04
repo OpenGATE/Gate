@@ -129,7 +129,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> num) {
     lifetimes.push_back(num);
   }
-  fParamGenerator.SetPostroniumLifetimes(lifetimes);
+  fParamGenerator.SetPositroniumLifetimes(lifetimes);
  }
  else if(command ==  upCmdSetIsPromptPhoton.get())
  {
@@ -168,7 +168,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   GateVSourceMessenger::SetNewValue(command, new_value);
  }
 }
-
 
 PositroniumDecayModelParams GateExtendedVSourceMessenger::generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model) const
 {

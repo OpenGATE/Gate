@@ -11,7 +11,7 @@ void GatePositroniumDecayParamsGenerator::SetDecayKinds(const std::vector<Positr
 {
   fDecayKinds = decayKinds;
 }
-void GatePositroniumDecayParamsGenerator::SetPostroniumLifetimes(const std::vector<float>& positroniumLifetimes)
+void GatePositroniumDecayParamsGenerator::SetPositroniumLifetimes(const std::vector<float>& positroniumLifetimes)
 {
   fPositroniumLifetimes = positroniumLifetimes;
 }

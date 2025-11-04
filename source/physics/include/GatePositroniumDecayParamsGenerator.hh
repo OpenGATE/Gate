@@ -30,7 +30,7 @@ public:
 
   void SetEnableDeexcitation(const std::vector<bool>& IsPromptPhoton);
   void SetPromptGammaEnergies(const std::vector<float>& energies);
-  void SetPostroniumLifetimes(const std::vector<float>& fPositroniumLifetimes);
+  void SetPositroniumLifetimes(const std::vector<float>& fPositroniumLifetimes);
   void SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds);
   void SetPositroniumFraction(const std::vector<float>& positroniumFractions);
 
