@@ -9,11 +9,10 @@
 
 #include <optional>
 #include <memory>
-
 #include "GateVSource.hh"
 #include "GateExtendedVSourceMessenger.hh"
 #include "GateGammaEmissionModel.hh"
-#include "GatePositroniumDecayModelParams.hh"
+//#include "GatePositroniumDecayModelParams.hh"
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
@@ -35,6 +34,8 @@ public:
 
   explicit GateExtendedVSource(const G4String& name);
   virtual ~GateExtendedVSource() = default;
+
+  //PositroniumDecayModelParams generatePositroniumDecayParams() const;
 
   /** Generate gammas for event
    **/
@@ -99,18 +100,6 @@ public:
   //Constants for Set(...) methods
   static inline const G4String kParaPositroniumName = "pPs";
   static inline const G4String kOrthoPositroniumName = "oPs";
-
-  PositroniumDecayModelParams generatePositroniumDecayParams() const;
-
- public:
-
-  std::optional<std::vector<float>> fPositroniumFractions;
-  std::optional<std::vector<float>> fPositroniumLifetimes;
-  std::optional<std::vector<bool>> fIsPromptPhoton;
-  std::optional<std::vector<float>> fPromptPhotonEnergies;
-  std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
-  
-
 };
 
 #endif

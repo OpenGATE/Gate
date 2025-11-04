@@ -17,6 +17,8 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
+#include "GatePositroniumDecayParamsGenerator.hh"
+
 class GateExtendedVSource;
 
 /** Author: Mateusz Bała
@@ -27,10 +29,12 @@ class GateExtendedVSource;
 class GateExtendedVSourceMessenger: public GateVSourceMessenger
 {
  public:
-   explicit GateExtendedVSourceMessenger(GateExtendedVSource *source);
-   ~GateExtendedVSourceMessenger()=default;
+  explicit GateExtendedVSourceMessenger(GateExtendedVSource *source);
+  ~GateExtendedVSourceMessenger()=default;
 
-   void SetNewValue(G4UIcommand *command, G4String newValue) override;
+  void SetNewValue(G4UIcommand *command, G4String newValue) override;
+   
+  PositroniumDecayModelParams generatePositroniumDecayParams() const;
 
  protected:
   void InitCommands();
@@ -63,6 +67,8 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
   std::unique_ptr<G4UIcmdWithAString> upCmdSetIsPromptPhoton;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonEnergies;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetDecayKinds;
+
+  GatePositroniumDecayParamsGenerator fParamGenerator;
   
 };
 

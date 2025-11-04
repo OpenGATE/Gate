@@ -150,18 +150,9 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> num) {
     fractions.push_back(num);
   }
-  pSource->fPositroniumFractions=fractions;
+  fParamGenerator.SetPositroniumFraction(fractions);
+  //pSource->fPositroniumFractions=fractions;
  }
- else if(command ==  upCmdSetPositroniumFractions.get())
- {
-  std::vector<float> fractions;
-  std::stringstream ss(new_value);
-  G4double num;
-  while (ss >> num) {
-    fractions.push_back(num);
-  }
-  pSource->fPositroniumFractions=fractions;
- } 
  else if(command ==  upCmdSetPositroniumLifetimes.get())
  {
   std::vector<float> lifetimes;
@@ -170,7 +161,8 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> num) {
     lifetimes.push_back(num);
   }
-  pSource->fPositroniumLifetimes=lifetimes;
+  //pSource->fPositroniumLifetimes=lifetimes;
+  fParamGenerator.SetPostroniumLifetimes(lifetimes);
  }
  else if(command ==  upCmdSetIsPromptPhoton.get())
  {
@@ -180,7 +172,8 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> std::boolalpha >> flag) {
     isPromptPhoton.push_back(flag);
   }
-  pSource->fIsPromptPhoton=isPromptPhoton;
+  //pSource->fIsPromptPhoton=isPromptPhoton;
+  fParamGenerator.SetEnableDeexcitation(isPromptPhoton);
  } 
  else if(command ==  upCmdSetPromptPhotonEnergies.get()) {
   std::vector<float> promptPhotonEnergies;
@@ -189,7 +182,8 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> energy) {
     promptPhotonEnergies.push_back(energy);
   }
-  pSource->fPromptPhotonEnergies=promptPhotonEnergies;
+  //pSource->fPromptPhotonEnergies=promptPhotonEnergies;
+  fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
  }
  else if(command ==  upCmdSetDecayKinds.get()) {
   std::vector<PositroniumDecayKind> decayKinds;
@@ -202,7 +196,8 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
       decayKinds.push_back(k3Gamma);
       }
   }
-  pSource->fDecayKinds=decayKinds;
+  fParamGenerator.SetDecayKinds(decayKinds);
+  //pSource->fDecayKinds=decayKinds;
  }
  else
  {
@@ -211,5 +206,9 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
 }
 
 
+PositroniumDecayModelParams GateExtendedVSourceMessenger::generatePositroniumDecayParams() const
+{
+  return fParamGenerator.generatePositroniumDecayParams();
+}
 
 
