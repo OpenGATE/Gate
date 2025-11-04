@@ -172,7 +172,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
 
 PositroniumDecayModelParams GateExtendedVSourceMessenger::generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model) const
 {
-  return fParamGenerator.generatePositroniumDecayParams();
+  return fParamGenerator.generatePositroniumDecayParams(model);
 }
 
 
