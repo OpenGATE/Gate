@@ -34,8 +34,6 @@ public:
   explicit GateExtendedVSource(const G4String& name);
   virtual ~GateExtendedVSource() = default;
 
-  //PositroniumDecayModelParams generatePositroniumDecayParams() const;
-
   /** Generate gammas for event
    **/
   virtual G4int GeneratePrimaries( G4Event* event ) override;
