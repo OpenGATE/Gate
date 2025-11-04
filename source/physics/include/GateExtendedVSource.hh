@@ -12,7 +12,6 @@
 #include "GateVSource.hh"
 #include "GateExtendedVSourceMessenger.hh"
 #include "GateGammaEmissionModel.hh"
-//#include "GatePositroniumDecayModelParams.hh"
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
