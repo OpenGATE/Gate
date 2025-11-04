@@ -18,9 +18,13 @@
  *
  *  Detailed description
  */
+
+
 class GatePositroniumDecayParamsGenerator
 {
 public:
+  enum DecayModel {kParaPositronium, kOrthoPositronium, kPositronium};
+
   GatePositroniumDecayParamsGenerator()= default;
   virtual ~GatePositroniumDecayParamsGenerator()=default;
 
@@ -30,7 +34,7 @@ public:
   void SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds);
   void SetPositroniumFraction(const std::vector<float>& positroniumFractions);
 
-  PositroniumDecayModelParams generatePositroniumDecayParams() const;
+  PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model= kPositronium) const;
 
 private:
   std::optional<std::vector<float>> fPositroniumFractions;

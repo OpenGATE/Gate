@@ -95,11 +95,7 @@ void GateExtendedVSourceMessenger::InitCommands()
 
 void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String new_value )
 {
- if ( command == upCmdSetEnableDeexcitation.get() )
- {
-  pSource->SetEnableDeexcitation( upCmdSetEnableDeexcitation->GetNewBoolValue( new_value ) );
- }
- else if ( command == upCmdSetFixedEmissionDirection.get() )
+ if ( command == upCmdSetFixedEmissionDirection.get() )
  {
   pSource->SetFixedEmissionDirection( upCmdSetFixedEmissionDirection->GetNew3VectorValue( new_value ) );
  }
@@ -115,33 +111,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  {
   pSource->SetSeed( static_cast<G4long>( upCmdSetSeed->GetNewIntValue( new_value ) ) );
  }
- else if ( command == upCmdSetPositroniumLifetime.get() )
- {
-  G4String positronium_name;
-  G4String units;
-  G4double value = 0.0;
-
-  std::stringstream ss(new_value);
-  ss >> positronium_name >> value >> units;
-
-  G4String new_lifetime_value = std::to_string( value ) + " " + units;
-  pSource->SetPostroniumLifetime(positronium_name, upCmdSetLifetime->GetNewDoubleValue(new_lifetime_value ));
-  
- }
- else if ( command == upCmdSetPromptGammaEnergy.get() )
- {
-  pSource->SetPromptGammaEnergy( upCmdSetPromptGammaEnergy->GetNewDoubleValue( new_value ) );
- }
- else if ( command ==  upCmdSetPositroniumFraction.get() )
- {
-  G4double fraction = 0.0;
-  G4String positronium_kind;
-
-  std::stringstream ss(new_value);
-  ss >> positronium_kind >> fraction;
-
-  pSource->SetPositroniumFraction(positronium_kind, fraction);
- }
  else if(command ==  upCmdSetPositroniumFractions.get())
  {
   std::vector<float> fractions;
@@ -151,7 +120,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
     fractions.push_back(num);
   }
   fParamGenerator.SetPositroniumFraction(fractions);
-  //pSource->fPositroniumFractions=fractions;
  }
  else if(command ==  upCmdSetPositroniumLifetimes.get())
  {
@@ -161,7 +129,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> num) {
     lifetimes.push_back(num);
   }
-  //pSource->fPositroniumLifetimes=lifetimes;
   fParamGenerator.SetPostroniumLifetimes(lifetimes);
  }
  else if(command ==  upCmdSetIsPromptPhoton.get())
@@ -172,7 +139,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> std::boolalpha >> flag) {
     isPromptPhoton.push_back(flag);
   }
-  //pSource->fIsPromptPhoton=isPromptPhoton;
   fParamGenerator.SetEnableDeexcitation(isPromptPhoton);
  } 
  else if(command ==  upCmdSetPromptPhotonEnergies.get()) {
@@ -182,7 +148,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> energy) {
     promptPhotonEnergies.push_back(energy);
   }
-  //pSource->fPromptPhotonEnergies=promptPhotonEnergies;
   fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
  }
  else if(command ==  upCmdSetDecayKinds.get()) {
@@ -197,7 +162,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
       }
   }
   fParamGenerator.SetDecayKinds(decayKinds);
-  //pSource->fDecayKinds=decayKinds;
  }
  else
  {
@@ -206,7 +170,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
 }
 
 
-PositroniumDecayModelParams GateExtendedVSourceMessenger::generatePositroniumDecayParams() const
+PositroniumDecayModelParams GateExtendedVSourceMessenger::generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model) const
 {
   return fParamGenerator.generatePositroniumDecayParams();
 }

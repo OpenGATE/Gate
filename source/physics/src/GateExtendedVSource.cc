@@ -40,7 +40,6 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
   }
 }
 
-void GateExtendedVSource::SetEnableDeexcitation(G4bool enable_deexcitation) { fEnableDeexcitation =  enable_deexcitation; }
 
 void GateExtendedVSource::SetFixedEmissionDirection(const G4ThreeVector& fixed_emission_direction) { fFixedEmissionDirection = fixed_emission_direction; }
 
@@ -50,65 +49,6 @@ void GateExtendedVSource::SetEmissionEnergy(G4double energy) { fEmissionEnergy =
 
 void GateExtendedVSource::SetSeed(G4long seed) { fSeed = seed; }
 
-void GateExtendedVSource::SetPostroniumLifetime(const G4String& positronium_name, G4double life_time) 
-{
- if ( positronium_name == kParaPositroniumName ) { fParaPostroniumLifetime = life_time; }
- else if ( positronium_name == kOrthoPositroniumName ) { fOrthoPostroniumLifetime =  life_time; }
- else { GateError( "GateExtendedVSource::SetPostroniumLifetime : incorrect positronium name - try: pPs or oPs" ); } 
-}
-
-void GateExtendedVSource::SetPromptGammaEnergy(G4double energy) { fPromptGammaEnergy = energy; }
-
-void GateExtendedVSource::SetPositroniumFraction( const G4String& positronium_kind, G4double fraction )
-{
- if ( fraction > 1.0 || fraction < 0.0 )
- {
-  GateError( "GateExtendedVSource::SetPositroniumFraction : incorrect fraction value - required: 0.0 <= fraction <= 1.0 " ); 
- }
-
- G4double pPs_fraction = 0.0;
- 
- if ( positronium_kind == kParaPositroniumName ) { pPs_fraction = fraction; }
- else if ( positronium_kind == kOrthoPositroniumName ) { pPs_fraction = 1.0 - fraction; }
- else { GateError( "GateExtendedVSource::SetPositroniumFraction : incorrect positronium kind - enable are: pPs, oPs" ); }
-
- fParaPositroniumFraction =  pPs_fraction;
-}
-
-//PositroniumDecayModelParams GateExtendedVSource::generatePositroniumDecayParams() const
-//{
-  //PositroniumDecayModelParams params;
-  //if(fPositroniumFractions.has_value()) {
-    //params.fFractions=fPositroniumFractions.value();
-  //} else {
-    //GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay fractions are not set");
-  //}
-
-  //if(fPositroniumLifetimes.has_value()) {
-    //params.fLifetimes=fPositroniumLifetimes.value();
-  //} else {
-    //GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium lifetimes are not set");
-  //}
-
-  //if(fDecayKinds.has_value()) {
-    //params.fDecayKind=fDecayKinds.value();
-  //} else {
-    //GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay kinds are not set");
-  //}
-
-  //if(fIsPromptPhoton.has_value()) {
-    //params.fIsPromptPhoton=fIsPromptPhoton.value();
-  //} else {
-    //GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium is prompt photon flags are not set");
-  //}
-
-  //if(fPromptPhotonEnergies.has_value()) {
-    //params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
-  //} else {
-    //GateError("GateExtendedVSource::generatePositroniumDecayParams: Prompt photon energies are not set");
-  //}
-  //return params;
-//}
 
 void GateExtendedVSource::PrepareModel() 
 {
@@ -118,44 +58,25 @@ void GateExtendedVSource::PrepareModel()
     return;
   }
 
-  if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium ||
-      fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium ||
-      fModelKind == GateExtendedVSource::ModelKind::Positronium) {
-    auto model  = std::make_unique<GatePositroniumDecayModel>();  
-
-    if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
-      model->SetPositroniumKind(
-          GatePositroniumDecayModel::PositroniumKind::oPs);
-    }
-    if (fModelKind == GateExtendedVSource::ModelKind::Positronium &&
-        fParaPositroniumFraction.has_value()) {
-      model->SetParaPositroniumFraction(fParaPositroniumFraction.value());
-    }
-
-    if (fEnableDeexcitation.has_value() && fEnableDeexcitation.value()) {
-      model->SetDecayModel(GatePositroniumDecayModel::DecayModel::WithPrompt);
-    }
-    if (fParaPostroniumLifetime.has_value()) {
-      model->SetPostroniumLifetime(kParaPositroniumName,
-                                   fParaPostroniumLifetime.value());
-    }
-    if (fOrthoPostroniumLifetime.has_value()) {
-      model->SetPostroniumLifetime(kOrthoPositroniumName,
-                                   fOrthoPostroniumLifetime.value());
-    }
-    if (fPromptGammaEnergy.has_value()) {
-      model->SetPromptGammaEnergy(fPromptGammaEnergy.value());
-    }
-    pModel = std::move(model);
+  if (fModelKind == GateExtendedVSource::ModelKind::SingleGamma) {
+    pModel = std::make_unique<GateGammaEmissionModel>();
   } else {
-      if (fModelKind == GateExtendedVSource::ModelKind::SingleGamma) {
-        pModel = std::make_unique<GateGammaEmissionModel>();
-      } else {
-      if(fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) {
-        auto params = pMessenger->generatePositroniumDecayParams();
+    if ((fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) ||
+        (fModelKind == GateExtendedVSource::ModelKind::Positronium)) {
+      auto params = pMessenger->generatePositroniumDecayParams();
+      pModel = std::make_unique<MiniPositroniumDecayModel>(params);
+    } else {
+      if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium) {
+        auto params = pMessenger->generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
         pModel = std::make_unique<MiniPositroniumDecayModel>(params);
+
       } else {
-        GateError("GateExtendedVSource::PrepareModel - unknown model.");
+        if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
+          auto params = pMessenger->generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kOrthoPositronium);
+          pModel = std::make_unique<MiniPositroniumDecayModel>(params);
+        } else {
+          GateError("GateExtendedVSource::PrepareModel - unknown model.");
+        }
       }
     }
   }

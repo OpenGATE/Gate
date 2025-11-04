@@ -24,7 +24,7 @@ class GateExtendedVSource : public GateVSource
 public:
 
   enum class ModelKind { 
-   NotDefined, //by default - in this case this clas will behave like GateVSource
+   NotDefined, //by default - in this case this class will behave like GateVSource
    SingleGamma, // generate single gamma
    ParaPositronium, //generate gammas from para-positronium decay
    OrthoPositronium, //generate gammas from ortho-positronium decay
@@ -41,7 +41,6 @@ public:
    **/
   virtual G4int GeneratePrimaries( G4Event* event ) override;
 
-  void SetEnableDeexcitation(G4bool enable_deexcitation);
   /** Set fixed direction of single gamma ( or prompt gamma )
    **/
   void SetFixedEmissionDirection(const G4ThreeVector &fixed_emission_direction);
@@ -52,22 +51,6 @@ public:
    **/
   void SetEmissionEnergy(G4double energy);
   void SetSeed(G4long seed);
-  /** Set positronium lifetime - which is included as constant for exponential distribution ( G4RandExponential )
-    * @param: positronium_name - for example: pPs, oPs
-    * @param: life_time - in ns
-    * Lifetime value will have inpact of vertex time set for annihilation gammas
-   **/
-  void SetPostroniumLifetime(const G4String &positronium_name, G4double life_time);
-  /** Set prompt gamma energy ( deexcictation energy ). 
-    * If user set enable emission of prompt gamma without set prompt energy then il wii be default value used ( deexcitation of Na22 )
-   **/
-  void SetPromptGammaEnergy(G4double energy);
-  /** Set propability of gammas emission from different positronium.
-    * @param: positronium_kind - positronium name: pPs, oPs
-    * @param: fraction - number in range from 0.0 to 1.0
-    * You have to call this method for only one kind of positronium - for the second one propability will be calculated as: 1.0 - fraction.
-  **/
-  void SetPositroniumFraction(const G4String& positronium_kind, G4double fraction);
 
  protected:
   /** Set model used for this source. If is not defined then this class will behave like GateVSource.
@@ -84,16 +67,11 @@ public:
    std::unique_ptr<GateExtendedVSourceMessenger> pMessenger;
   //User settings:
   ModelKind fModelKind = ModelKind::NotDefined;
-  std::optional<G4bool> fEnableDeexcitation;
   std::optional<G4ThreeVector> fFixedEmissionDirection;
   std::optional<G4bool> fEnableFixedEmissionDirection;
   std::optional<G4double> fEmissionEnergy;
   std::optional<G4long> fSeed;
-  std::optional<G4double> fParaPostroniumLifetime;
-  std::optional<G4double> fOrthoPostroniumLifetime;
-  std::optional<G4double> fPromptGammaEnergy;
-  std::optional<G4double> fParaPositroniumFraction;
-  //
+  
   //Set by PrepareModel() and used in GeneratePrimaries()
   G4bool fBehaveLikeVSource = false;
 

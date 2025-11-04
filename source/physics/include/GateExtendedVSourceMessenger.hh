@@ -34,7 +34,7 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
 
   void SetNewValue(G4UIcommand *command, G4String newValue) override;
    
-  PositroniumDecayModelParams generatePositroniumDecayParams() const;
+  PositroniumDecayModelParams generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model= GatePositroniumDecayParamsGenerator::kPositronium) const;
 
  protected:
   void InitCommands();
