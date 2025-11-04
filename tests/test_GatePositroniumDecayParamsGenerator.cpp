@@ -46,7 +46,7 @@ bool test_ortho_default()
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kOrthoPositronium);
 
   CHECK(p.fFractions[0] == 1, "ortho fraction != 1");
-  CHECK(p.fLifetimes[0] == 138.6f, "ortho lifetime wrong");
+  CHECK(p.fLifetimes[0] == 142.0f, "ortho lifetime wrong");
   CHECK(p.fDecayKind[0] == k3Gamma, "ortho decay kind wrong");
   CHECK(p.fIsPromptPhoton[0] == false, "ortho prompt flag wrong");
   CHECK(p.fPromptPhotonEnergy[0] == 0.0f, "ortho prompt energy wrong");
@@ -55,15 +55,15 @@ bool test_ortho_default()
 
 bool test_para_prompt_gamma()
 {
-  std::cout << "test_para_prompt_gamma" << std::endl;
+  std::cout << "test_prompt_gamma" << std::endl;
   GatePositroniumDecayParamsGenerator gen;
   gen.SetEnableDeexcitation({true});
-  gen.SetPromptGammaEnergies({0.511f});
+  gen.SetPromptGammaEnergies({1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
 
   CHECK(p.fIsPromptPhoton[0] == true, "para prompt photon flag wrong");
-  CHECK(p.fPromptPhotonEnergy[0] == 0.511f, "para prompt photon energy wrong");
+  CHECK(p.fPromptPhotonEnergy[0] == 1.2f, "prompt photon energy wrong");
   return true;
 }
 
@@ -73,18 +73,24 @@ bool test_positronium_custom()
   GatePositroniumDecayParamsGenerator gen;
 
   gen.SetPositroniumFraction({0.3f, 0.7f});
-  gen.SetPostroniumLifetimes({0.12f, 140.0f});
+  gen.SetPositroniumLifetimes({0.12f, 140.0f});
   gen.SetDecayKinds({k2Gamma, k3Gamma});
   gen.SetEnableDeexcitation({false, true});
-  gen.SetPromptGammaEnergies({0.0f, 0.511f});
+  gen.SetPromptGammaEnergies({0.0f, 1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kPositronium);
+
+  CHECK(p.fFractions[0] == 0.3f, "PS fraction mismatch");
+  CHECK(p.fLifetimes[0] == 0.12f, "PS lifetime mismatch");
+  CHECK(p.fDecayKind[0] == k2Gamma, "PS decay kind mismatch");
+  CHECK(p.fIsPromptPhoton[0] == false, "PS prompt flag mismatch");
+  CHECK(p.fPromptPhotonEnergy[0] == 0.0f, "PS prompt energy mismatch");
 
   CHECK(p.fFractions[1] == 0.7f, "PS fraction mismatch");
   CHECK(p.fLifetimes[1] == 140.0f, "PS lifetime mismatch");
   CHECK(p.fDecayKind[1] == k3Gamma, "PS decay kind mismatch");
   CHECK(p.fIsPromptPhoton[1] == true, "PS prompt flag mismatch");
-  CHECK(p.fPromptPhotonEnergy[1] == 0.511f, "PS prompt energy mismatch");
+  CHECK(p.fPromptPhotonEnergy[1] == 1.2f, "PS prompt energy mismatch");
   return true;
 }
 
@@ -109,7 +115,7 @@ bool test_vector_size_mismatch()
   GatePositroniumDecayParamsGenerator gen;
 
   gen.SetPositroniumFraction({0.5f, 0.5f});
-  gen.SetPostroniumLifetimes({0.12f}); // mismatch!
+  gen.SetPositroniumLifetimes({0.12f}); // mismatch!
   gen.SetDecayKinds({k2Gamma, k3Gamma});
   gen.SetEnableDeexcitation({false, false});
   gen.SetPromptGammaEnergies({0.0f, 0.0f});
@@ -118,6 +124,7 @@ bool test_vector_size_mismatch()
   try {
     auto p = gen.generatePositroniumDecayParams();
   } catch (...) {
+    std::cout << "we caught the exception" << std::endl;
     caught = true;
   }
   CHECK(caught, "Mismatch in vector sizes did NOT throw");

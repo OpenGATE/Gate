@@ -43,7 +43,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
   }
   if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
     params.fFractions= {1};
-    params.fLifetimes= {138.6}; // [ns]
+    params.fLifetimes= {142}; // [ns]
     params.fDecayKind= {k3Gamma};
     if(fIsPromptPhoton.has_value() && fPromptPhotonEnergies.has_value()) {
       params.fIsPromptPhoton=fIsPromptPhoton.value();
