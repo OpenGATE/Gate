@@ -29,7 +29,6 @@ public:
 private:
   G4String fName;
   G4double fLifeTime = 0.0; //[ns]
-  G4int fAnnihilationGammasNumber = 0;
   GatePositroniumDecayChannel *pDecayChannel = nullptr; // Todo check who owns pDecayChannel?
 };
 #endif
