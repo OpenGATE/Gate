@@ -8,14 +8,8 @@
 #include "GatePhysicsList.hh"
 #include "GateDetectorConstruction.hh"
 
-#define CHECK(cond, msg) \
-  do { \
-    if (!(cond)) { \
-      std::cerr << "Test failure: " << msg \
-                << " (in " << __FUNCTION__ << ", line " << __LINE__ << ")\n"; \
-      return false; \
-    } \
-  } while(0)
+#include "TestingTools.h"
+
 
 void initializeGateRunManager(GateRunManager* runManager)
 {
