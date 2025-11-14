@@ -79,7 +79,6 @@ void GateExtendedVSourceMessenger::InitCommands()
  upCmdSetFixedEmissionDirection.reset( GetVectorCmd( "setFixedEmissionDirection", "Set fixed direction for single and prompt gamma." ) );
  upCmdSetEnableFixedEmissionDirection.reset( GetBoolCmd( "setEnableFixedEmissionDirection", "Set fixed direction enable/disable." ) );
  upCmdSetEmissionEnergy.reset( GetDoubleCmdWithUnit( "setEmissionEnergy", "Set energy for single gamma.", "keV", "keV MeV GeV" ) );
- upCmdSetSeed.reset( GetIntCmd("setSeed", "Set seed for random generator" ) );
  upCmdSetPositroniumLifetime.reset( GetStringCmd( "setPositroniumLifetime", "Set life-time of positronium." ) ); 
  upCmdSetLifetime.reset( GetDoubleCmdWithUnit( "setLifetime", "Set life-time of positronium - disable for user.", "ns", "ps ns" ) ); 
  upCmdSetPromptGammaEnergy.reset( GetDoubleCmdWithUnit( "setPromptGammaEnergy", "Set energy for prompt gamma.", "keV", "keV MeV GeV" ) );
@@ -106,10 +105,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  else if ( command == upCmdSetEmissionEnergy.get() )
  {
   pSource->SetEmissionEnergy( upCmdSetEmissionEnergy->GetNewDoubleValue( new_value ) );
- }
- else if ( command == upCmdSetSeed.get() )
- {
-  pSource->SetSeed( static_cast<G4long>( upCmdSetSeed->GetNewIntValue( new_value ) ) );
  }
  else if(command ==  upCmdSetPositroniumFractions.get())
  {

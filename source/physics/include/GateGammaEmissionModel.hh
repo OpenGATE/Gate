@@ -37,13 +37,6 @@ class GateGammaEmissionModel
    **/
   G4double GetEmissionEnergy() const;
 
-  /** Set seed for generators from "Randomize.hh"
-   **/
-  void SetSeed( G4long seed );
-  /** Get seed for generators from "Randomize.hh"
-   **/
-  G4long GetSeed() const;
-
   /** Generate single vertex with single gamma
    **/
   virtual G4int GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position);

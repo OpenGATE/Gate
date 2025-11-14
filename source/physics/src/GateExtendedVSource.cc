@@ -46,9 +46,6 @@ void GateExtendedVSource::SetEnableFixedEmissionDirection(G4bool enable_fixed_em
 
 void GateExtendedVSource::SetEmissionEnergy(G4double energy) { fEmissionEnergy =energy; }
 
-void GateExtendedVSource::SetSeed(G4long seed) { fSeed = seed; }
-
-
 void GateExtendedVSource::PrepareModel() 
 {
   SetModel(GetType());
@@ -89,9 +86,6 @@ void GateExtendedVSource::PrepareModel()
   }
   if (fEmissionEnergy.has_value()) {
     pModel->SetEmissionEnergy(fEmissionEnergy.value());
-  }
-  if (fSeed.has_value()) {
-    pModel->SetSeed(fSeed.value());
   }
 }
 

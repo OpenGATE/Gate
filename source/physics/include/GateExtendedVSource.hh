@@ -47,7 +47,6 @@ public:
   /** Set single gamma kinetic energy
    **/
   void SetEmissionEnergy(G4double energy);
-  void SetSeed(G4long seed);
 
  protected:
   /** Set model used for this source. If is not defined then this class will behave like GateVSource.
@@ -67,7 +66,6 @@ public:
   std::optional<G4ThreeVector> fFixedEmissionDirection;
   std::optional<G4bool> fEnableFixedEmissionDirection;
   std::optional<G4double> fEmissionEnergy;
-  std::optional<G4long> fSeed;
   
   //Set by PrepareModel() and used in GeneratePrimaries()
   G4bool fBehaveLikeVSource = false;

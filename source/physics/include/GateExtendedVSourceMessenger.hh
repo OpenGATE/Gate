@@ -53,7 +53,6 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
   std::unique_ptr<G4UIcmdWith3Vector> upCmdSetFixedEmissionDirection;
   std::unique_ptr<G4UIcmdWithABool> upCmdSetEnableFixedEmissionDirection;
   std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetEmissionEnergy;
-  std::unique_ptr<G4UIcmdWithAnInteger> upCmdSetSeed;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetime;
   std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetPromptGammaEnergy;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumFraction;
