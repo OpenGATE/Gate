@@ -52,7 +52,7 @@ G4int MiniPositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
   auto decayIndex = MiniPositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
 
   G4int number_of_vertices = 1;
-  if(fModelParams.fIsPromptPhoton[decayIndex]) 
+  if(fModelParams.fIsPromptGamma[decayIndex]) 
   { 
     ++number_of_vertices;
     event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
@@ -63,7 +63,7 @@ G4int MiniPositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
 
 G4PrimaryParticle* MiniPositroniumDecayModel::GetGammaFromDeexcitation(int decayIndex)
 {
- G4PrimaryParticle* gamma = GetSingleGamma(fModelParams.fPromptPhotonEnergy[decayIndex]);
+ G4PrimaryParticle* gamma = GetSingleGamma(fModelParams.fPromptGammaEnergy[decayIndex]);
  gamma->SetUserInformation( GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt ) );
  return gamma;
 }

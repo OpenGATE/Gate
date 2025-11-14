@@ -1,11 +1,11 @@
-
-#include "GateMessageManager.hh" 
-#include "GatePositroniumDecayParamsGenerator.hh"
 #include <cassert>
 
-void GatePositroniumDecayParamsGenerator::SetEnablePromptGamma(const std::vector<bool>& isPromptPhoton)
+#include "GateMessageManager.hh"
+#include "GatePositroniumDecayParamsGenerator.hh"
+
+void GatePositroniumDecayParamsGenerator::SetEnablePromptGamma(const std::vector<bool>& isPromptGamma)
 {
-  fIsPromptPhoton = isPromptPhoton;
+  fIsPromptGamma = isPromptGamma;
 }
 void GatePositroniumDecayParamsGenerator::SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds)
 {
@@ -17,7 +17,7 @@ void GatePositroniumDecayParamsGenerator::SetPositroniumLifetimes(const std::vec
 }
 void GatePositroniumDecayParamsGenerator::SetPromptGammaEnergies(const std::vector<float>& energies)
 {
-  fPromptPhotonEnergies = energies;
+  fPromptGammaEnergies = energies;
 }
 void GatePositroniumDecayParamsGenerator::SetPositroniumFraction(const std::vector<float>& positroniumFractions)
 {
@@ -31,28 +31,28 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     params.fFractions= {1};
     params.fLifetimes= {0.1244}; // [ns]
     params.fDecayKind= {k2Gamma};
-    if(fIsPromptPhoton.has_value() && fPromptPhotonEnergies.has_value()) {
-      params.fIsPromptPhoton=fIsPromptPhoton.value();
-      assert(params.fIsPromptPhoton.size()==1);
-      params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
-      assert(params.fPromptPhotonEnergy.size()==1);
+    if(fIsPromptGamma.has_value() && fPromptGammaEnergies.has_value()) {
+      params.fIsPromptGamma=fIsPromptGamma.value();
+      assert(params.fIsPromptGamma.size()==1);
+      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
+      assert(params.fPromptGammaEnergy.size()==1);
     } else {
-      params.fIsPromptPhoton={false};
-      params.fPromptPhotonEnergy ={0.0};
+      params.fIsPromptGamma={false};
+      params.fPromptGammaEnergy ={0.0};
     }
   }
   if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
     params.fFractions= {1};
     params.fLifetimes= {142}; // [ns]
     params.fDecayKind= {k3Gamma};
-    if(fIsPromptPhoton.has_value() && fPromptPhotonEnergies.has_value()) {
-      params.fIsPromptPhoton=fIsPromptPhoton.value();
-      assert(params.fIsPromptPhoton.size()==1);
-      params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
-      assert(params.fPromptPhotonEnergy.size()==1);
+    if(fIsPromptGamma.has_value() && fPromptGammaEnergies.has_value()) {
+      params.fIsPromptGamma=fIsPromptGamma.value();
+      assert(params.fIsPromptGamma.size()==1);
+      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
+      assert(params.fPromptGammaEnergy.size()==1);
     } else {
-      params.fIsPromptPhoton={false};
-      params.fPromptPhotonEnergy ={0.0};
+      params.fIsPromptGamma={false};
+      params.fPromptGammaEnergy ={0.0};
     }
   }
 
@@ -75,14 +75,14 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay kinds are not set");
     }
 
-    if(fIsPromptPhoton.has_value()) {
-      params.fIsPromptPhoton=fIsPromptPhoton.value();
+    if(fIsPromptGamma.has_value()) {
+      params.fIsPromptGamma=fIsPromptGamma.value();
     } else {
       GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium is prompt photon flags are not set");
     }
 
-    if(fPromptPhotonEnergies.has_value()) {
-      params.fPromptPhotonEnergy=fPromptPhotonEnergies.value();
+    if(fPromptGammaEnergies.has_value()) {
+      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
     } else {
       GateError("GateExtendedVSource::generatePositroniumDecayParams: Prompt photon energies are not set");
     }

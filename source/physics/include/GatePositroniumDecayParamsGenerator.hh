@@ -39,8 +39,8 @@ public:
 private:
   std::optional<std::vector<float>> fPositroniumFractions;
   std::optional<std::vector<float>> fPositroniumLifetimes;
-  std::optional<std::vector<bool>> fIsPromptPhoton;
-  std::optional<std::vector<float>> fPromptPhotonEnergies;
+  std::optional<std::vector<bool>> fIsPromptGamma;
+  std::optional<std::vector<float>> fPromptGammaEnergies;
   std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
 };
 #endif
