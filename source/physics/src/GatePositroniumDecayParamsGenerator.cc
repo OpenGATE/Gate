@@ -3,7 +3,7 @@
 #include "GatePositroniumDecayParamsGenerator.hh"
 #include <cassert>
 
-void GatePositroniumDecayParamsGenerator::SetEnableDeexcitation(const std::vector<bool>& isPromptPhoton)
+void GatePositroniumDecayParamsGenerator::SetEnablePromptGamma(const std::vector<bool>& isPromptPhoton)
 {
   fIsPromptPhoton = isPromptPhoton;
 }

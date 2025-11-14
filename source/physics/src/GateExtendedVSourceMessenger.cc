@@ -139,7 +139,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   while (ss >> std::boolalpha >> flag) {
     isPromptPhoton.push_back(flag);
   }
-  fParamGenerator.SetEnableDeexcitation(isPromptPhoton);
+  fParamGenerator.SetEnablePromptGamma(isPromptPhoton);
  } 
  else if(command ==  upCmdSetPromptPhotonEnergies.get()) {
   std::vector<float> promptPhotonEnergies;

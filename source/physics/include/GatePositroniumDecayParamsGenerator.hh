@@ -28,7 +28,7 @@ public:
   GatePositroniumDecayParamsGenerator()= default;
   virtual ~GatePositroniumDecayParamsGenerator()=default;
 
-  void SetEnableDeexcitation(const std::vector<bool>& IsPromptPhoton);
+  void SetEnablePromptGamma(const std::vector<bool>& IsPromptPhoton);
   void SetPromptGammaEnergies(const std::vector<float>& energies);
   void SetPositroniumLifetimes(const std::vector<float>& fPositroniumLifetimes);
   void SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds);

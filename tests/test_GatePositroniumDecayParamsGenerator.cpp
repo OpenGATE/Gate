@@ -51,7 +51,7 @@ bool test_para_prompt_gamma()
 {
   std::cout << "test_prompt_gamma" << std::endl;
   GatePositroniumDecayParamsGenerator gen;
-  gen.SetEnableDeexcitation({true});
+  gen.SetEnablePromptGamma({true});
   gen.SetPromptGammaEnergies({1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
@@ -69,7 +69,7 @@ bool test_positronium_custom()
   gen.SetPositroniumFraction({0.3f, 0.7f});
   gen.SetPositroniumLifetimes({0.12f, 140.0f});
   gen.SetDecayKinds({k2Gamma, k3Gamma});
-  gen.SetEnableDeexcitation({false, true});
+  gen.SetEnablePromptGamma({false, true});
   gen.SetPromptGammaEnergies({0.0f, 1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kPositronium);
@@ -108,7 +108,7 @@ bool test_vector_size_mismatch()
   gen.SetPositroniumFraction({0.5f, 0.5f});
   gen.SetPositroniumLifetimes({0.12f}); // mismatch!
   gen.SetDecayKinds({k2Gamma, k3Gamma});
-  gen.SetEnableDeexcitation({false, false});
+  gen.SetEnablePromptGamma({false, false});
   gen.SetPromptGammaEnergies({0.0f, 0.0f});
 
   bool caught = false;
