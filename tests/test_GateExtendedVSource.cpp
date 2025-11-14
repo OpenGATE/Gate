@@ -26,8 +26,8 @@ bool run_tests()
   if(source.GetName() !="source1") {
     return false;
   }
-  source.SetType("mPs");
-  if(source.GetType() !="mPs") {
+  source.SetType("Ps");
+  if(source.GetType() !="Ps") {
     return false;
   }
 

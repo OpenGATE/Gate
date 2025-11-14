@@ -23,8 +23,7 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
   static const std::map<G4String, ModelKind> models{
       {"pPs", GateExtendedVSource::ModelKind::ParaPositronium},
       {"oPs", GateExtendedVSource::ModelKind::OrthoPositronium},
-      {"Ps", GateExtendedVSource::ModelKind::Positronium},
-      {"mPs", GateExtendedVSource::ModelKind::MiniPositronium}};
+      {"Ps", GateExtendedVSource::ModelKind::Positronium}};
 
   auto it = models.find(model_name);
   if (it != models.end())
@@ -33,7 +32,7 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
   } else {
     fBehaveLikeVSource = true;
     G4cout << "GateExtendedVSource::SetModel : Unknown gamma source model. "
-              "Enable: sg, pPs, oPs, Ps, mPs. Switching to GateVSource behavour."
+              "Enable: pPs, oPs, Ps. Switching to GateVSource behavour."
            << G4endl;
   }
 }
@@ -46,8 +45,7 @@ void GateExtendedVSource::PrepareModel()
     return;
   }
 
-  if ((fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) ||
-      (fModelKind == GateExtendedVSource::ModelKind::Positronium)) {
+  if (fModelKind == GateExtendedVSource::ModelKind::Positronium) {
     auto params = pMessenger->generatePositroniumDecayParams();
     pModel = std::make_unique<MiniPositroniumDecayModel>(params);
   } else {

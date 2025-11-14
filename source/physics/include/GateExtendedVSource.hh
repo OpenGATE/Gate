@@ -8,6 +8,7 @@
 #define GateExtendedVSource_hh
 
 #include <memory>
+
 #include "GateVSource.hh"
 #include "GateExtendedVSourceMessenger.hh"
 #include "GateGammaEmissionModel.hh"
@@ -25,9 +26,7 @@ public:
    NotDefined, //by default - in this case this class will behave like GateVSource
    ParaPositronium, //generate gammas from para-positronium decay
    OrthoPositronium, //generate gammas from ortho-positronium decay
-   Positronium, //generate gammas from mixed model ( from pPs and oPs decay with setted ratio )
-   MiniPositronium //generate gammas from extended mixed model 
-  };
+   Positronium}; // generate gammas from mixed model
 
   explicit GateExtendedVSource(const G4String& name);
   virtual ~GateExtendedVSource() = default;
@@ -55,9 +54,7 @@ public:
    void PrepareModel();
 
  protected:
-  //Gamma emission model
    std::unique_ptr<GateGammaEmissionModel> pModel;
-  //Source messanger
    std::unique_ptr<GateExtendedVSourceMessenger> pMessenger;
   //User settings:
   ModelKind fModelKind = ModelKind::NotDefined;

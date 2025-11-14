@@ -75,13 +75,6 @@ G4UIcmdWith3VectorAndUnit* GateExtendedVSourceMessenger::GetVectorCmdWithUnit( c
 
 void GateExtendedVSourceMessenger::InitCommands()
 {
- upCmdSetEnableDeexcitation.reset( GetBoolCmd( "setEnableDeexcitation", "Generate prompt gamma from positron source which precedes positronium formation and decay." ) );
- upCmdSetPositroniumLifetime.reset( GetStringCmd( "setPositroniumLifetime", "Set life-time of positronium." ) ); 
- upCmdSetLifetime.reset( GetDoubleCmdWithUnit( "setLifetime", "Set life-time of positronium - disable for user.", "ns", "ps ns" ) ); 
- upCmdSetPromptGammaEnergy.reset( GetDoubleCmdWithUnit( "setPromptGammaEnergy", "Set energy for prompt gamma.", "keV", "keV MeV GeV" ) );
- upCmdSetPositroniumFraction.reset( GetStringCmd( "setPositroniumFraction", "\"positronium_kind fraction\" - where positronium_kind = {pPs, oPs} and fraction in [0.0, 1.0]" ) );
-
-
  upCmdSetPositroniumFractions.reset(GetStringCmd( "setPositroniumFractions", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] and sum of all fi ==1" ) );
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where" ) );
  upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki " ) );

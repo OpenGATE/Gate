@@ -49,15 +49,6 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
  protected:
   GateExtendedVSource* pSource = nullptr;
 
-  std::unique_ptr<G4UIcmdWithABool> upCmdSetEnableDeexcitation;
-  std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetime;
-  std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetPromptGammaEnergy;
-  std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumFraction;
-  
-  //Supporting commands - disable for user
-  std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetLifetime;
-
-  //New commands
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumFractions;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetimes;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetIsPromptPhoton;
