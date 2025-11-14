@@ -76,9 +76,6 @@ G4UIcmdWith3VectorAndUnit* GateExtendedVSourceMessenger::GetVectorCmdWithUnit( c
 void GateExtendedVSourceMessenger::InitCommands()
 {
  upCmdSetEnableDeexcitation.reset( GetBoolCmd( "setEnableDeexcitation", "Generate prompt gamma from positron source which precedes positronium formation and decay." ) );
- upCmdSetFixedEmissionDirection.reset( GetVectorCmd( "setFixedEmissionDirection", "Set fixed direction for single and prompt gamma." ) );
- upCmdSetEnableFixedEmissionDirection.reset( GetBoolCmd( "setEnableFixedEmissionDirection", "Set fixed direction enable/disable." ) );
- upCmdSetEmissionEnergy.reset( GetDoubleCmdWithUnit( "setEmissionEnergy", "Set energy for single gamma.", "keV", "keV MeV GeV" ) );
  upCmdSetPositroniumLifetime.reset( GetStringCmd( "setPositroniumLifetime", "Set life-time of positronium." ) ); 
  upCmdSetLifetime.reset( GetDoubleCmdWithUnit( "setLifetime", "Set life-time of positronium - disable for user.", "ns", "ps ns" ) ); 
  upCmdSetPromptGammaEnergy.reset( GetDoubleCmdWithUnit( "setPromptGammaEnergy", "Set energy for prompt gamma.", "keV", "keV MeV GeV" ) );
@@ -94,19 +91,7 @@ void GateExtendedVSourceMessenger::InitCommands()
 
 void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String new_value )
 {
- if ( command == upCmdSetFixedEmissionDirection.get() )
- {
-  pSource->SetFixedEmissionDirection( upCmdSetFixedEmissionDirection->GetNew3VectorValue( new_value ) );
- }
- else if ( command == upCmdSetEnableFixedEmissionDirection.get() )
- {
-  pSource->SetEnableFixedEmissionDirection( upCmdSetEnableFixedEmissionDirection->GetNewBoolValue( new_value ) );
- }
- else if ( command == upCmdSetEmissionEnergy.get() )
- {
-  pSource->SetEmissionEnergy( upCmdSetEmissionEnergy->GetNewDoubleValue( new_value ) );
- }
- else if(command ==  upCmdSetPositroniumFractions.get())
+ if(command ==  upCmdSetPositroniumFractions.get())
  {
   std::vector<float> fractions;
   std::stringstream ss(new_value);

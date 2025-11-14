@@ -7,7 +7,6 @@
 #ifndef GateExtendedVSource_hh
 #define GateExtendedVSource_hh
 
-#include <optional>
 #include <memory>
 #include "GateVSource.hh"
 #include "GateExtendedVSourceMessenger.hh"
@@ -24,7 +23,6 @@ public:
 
   enum class ModelKind { 
    NotDefined, //by default - in this case this class will behave like GateVSource
-   SingleGamma, // generate single gamma
    ParaPositronium, //generate gammas from para-positronium decay
    OrthoPositronium, //generate gammas from ortho-positronium decay
    Positronium, //generate gammas from mixed model ( from pPs and oPs decay with setted ratio )
@@ -63,9 +61,6 @@ public:
    std::unique_ptr<GateExtendedVSourceMessenger> pMessenger;
   //User settings:
   ModelKind fModelKind = ModelKind::NotDefined;
-  std::optional<G4ThreeVector> fFixedEmissionDirection;
-  std::optional<G4bool> fEnableFixedEmissionDirection;
-  std::optional<G4double> fEmissionEnergy;
   
   //Set by PrepareModel() and used in GeneratePrimaries()
   G4bool fBehaveLikeVSource = false;

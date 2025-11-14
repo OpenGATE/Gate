@@ -21,7 +21,6 @@ GateExtendedVSource::GateExtendedVSource(const G4String &name)
 void GateExtendedVSource::SetModel(const G4String &model_name) 
 {
   static const std::map<G4String, ModelKind> models{
-      {"sg", GateExtendedVSource::ModelKind::SingleGamma},
       {"pPs", GateExtendedVSource::ModelKind::ParaPositronium},
       {"oPs", GateExtendedVSource::ModelKind::OrthoPositronium},
       {"Ps", GateExtendedVSource::ModelKind::Positronium},
@@ -39,13 +38,6 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
   }
 }
 
-
-void GateExtendedVSource::SetFixedEmissionDirection(const G4ThreeVector& fixed_emission_direction) { fFixedEmissionDirection = fixed_emission_direction; }
-
-void GateExtendedVSource::SetEnableFixedEmissionDirection(G4bool enable_fixed_emission_direction) { fEnableFixedEmissionDirection = enable_fixed_emission_direction; }
-
-void GateExtendedVSource::SetEmissionEnergy(G4double energy) { fEmissionEnergy =energy; }
-
 void GateExtendedVSource::PrepareModel() 
 {
   SetModel(GetType());
@@ -54,38 +46,25 @@ void GateExtendedVSource::PrepareModel()
     return;
   }
 
-  if (fModelKind == GateExtendedVSource::ModelKind::SingleGamma) {
-    pModel = std::make_unique<GateGammaEmissionModel>();
+  if ((fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) ||
+      (fModelKind == GateExtendedVSource::ModelKind::Positronium)) {
+    auto params = pMessenger->generatePositroniumDecayParams();
+    pModel = std::make_unique<MiniPositroniumDecayModel>(params);
   } else {
-    if ((fModelKind == GateExtendedVSource::ModelKind::MiniPositronium) ||
-        (fModelKind == GateExtendedVSource::ModelKind::Positronium)) {
-      auto params = pMessenger->generatePositroniumDecayParams();
+    if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium) {
+      auto params = pMessenger->generatePositroniumDecayParams(
+          GatePositroniumDecayParamsGenerator::kParaPositronium);
       pModel = std::make_unique<MiniPositroniumDecayModel>(params);
-    } else {
-      if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium) {
-        auto params = pMessenger->generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
-        pModel = std::make_unique<MiniPositroniumDecayModel>(params);
 
+    } else {
+      if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
+        auto params = pMessenger->generatePositroniumDecayParams(
+            GatePositroniumDecayParamsGenerator::kOrthoPositronium);
+        pModel = std::make_unique<MiniPositroniumDecayModel>(params);
       } else {
-        if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
-          auto params = pMessenger->generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kOrthoPositronium);
-          pModel = std::make_unique<MiniPositroniumDecayModel>(params);
-        } else {
-          GateError("GateExtendedVSource::PrepareModel - unknown model.");
-        }
+        GateError("GateExtendedVSource::PrepareModel - unknown model.");
       }
     }
-  }
-
-  if (fFixedEmissionDirection.has_value()) {
-    pModel->SetFixedEmissionDirection(fFixedEmissionDirection.value());
-  }
-  if (fEnableFixedEmissionDirection.has_value()) {
-    pModel->SetEnableFixedEmissionDirection(
-        fEnableFixedEmissionDirection.value());
-  }
-  if (fEmissionEnergy.has_value()) {
-    pModel->SetEmissionEnergy(fEmissionEnergy.value());
   }
 }
 
