@@ -35,16 +35,6 @@ public:
    **/
   virtual G4int GeneratePrimaries( G4Event* event ) override;
 
-  /** Set fixed direction of single gamma ( or prompt gamma )
-   **/
-  void SetFixedEmissionDirection(const G4ThreeVector &fixed_emission_direction);
-  /** Set enable/disable emission of single gamma with fixed direction
-   **/
-  void SetEnableFixedEmissionDirection(G4bool enable_fixed_emission_direction);
-  /** Set single gamma kinetic energy
-   **/
-  void SetEmissionEnergy(G4double energy);
-
  protected:
   /** Set model used for this source. If is not defined then this class will behave like GateVSource.
    **/
@@ -61,10 +51,6 @@ public:
   
   //Set by PrepareModel() and used in GeneratePrimaries()
   G4bool fBehaveLikeVSource = false;
-
-  //Constants for Set(...) methods
-  static inline const G4String kParaPositroniumName = "pPs";
-  static inline const G4String kOrthoPositroniumName = "oPs";
 };
 
 #endif
