@@ -60,32 +60,44 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     if(fPositroniumFractions.has_value()) {
       params.fFractions=fPositroniumFractions.value();
     } else {
-      GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay fractions are not set");
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay fractions are not set");
     }
 
     if(fPositroniumLifetimes.has_value()) {
       params.fLifetimes=fPositroniumLifetimes.value();
     } else {
-      GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium lifetimes are not set");
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium lifetimes are not set");
     }
 
     if(fDecayKinds.has_value()) {
       params.fDecayKind=fDecayKinds.value();
     } else {
-      GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium decay kinds are not set");
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay kinds are not set");
     }
 
     if(fIsPromptGamma.has_value()) {
       params.fIsPromptGamma=fIsPromptGamma.value();
     } else {
-      GateError("GateExtendedVSource::generatePositroniumDecayParams: Positronium is prompt photon flags are not set");
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium is prompt gamma flags are not set");
     }
 
     if(fPromptGammaEnergies.has_value()) {
       params.fPromptGammaEnergy=fPromptGammaEnergies.value();
     } else {
-      GateError("GateExtendedVSource::generatePositroniumDecayParams: Prompt photon energies are not set");
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Prompt gamma energies are not set");
     }
+  }
+
+  auto ref_param_number = params.fDecayKind.size();
+  bool size_mismatch = (ref_param_number != params.fFractions.size()) ||
+                       (ref_param_number != params.fIsPromptGamma.size()) ||
+                       (ref_param_number != params.fLifetimes.size()) ||
+                       (ref_param_number != params.fPromptGammaEnergy.size());
+  if (size_mismatch) {
+    GateError(
+        "GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: "
+        "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
+        "Gamma Energies are not the same");
   }
 
   return params;
