@@ -9,15 +9,18 @@
 
 #include <vector>
 
+#include <GatePositroniumHelper.hh>
+
 enum PositroniumDecayKind { k2Gamma, k3Gamma};
 
 struct PositroniumDecayModelParams
 {
   std::vector<float> fFractions;
   std::vector<float> fLifetimes;
-  std::vector<bool> fIsPromptGamma;
+  std::vector<float> fPromptGammaProbabilities;
   std::vector<float> fPromptGammaEnergy;
   std::vector<PositroniumDecayKind> fDecayKind;
+  std::vector<PositronElectronInteraction> fPositronInteractions;
 };
 
 #endif

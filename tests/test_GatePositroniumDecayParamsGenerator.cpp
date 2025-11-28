@@ -28,7 +28,7 @@ bool test_para_default()
   CHECK(p.fFractions[0] == 1, "para fraction != 1");
   CHECK(p.fLifetimes[0] == 0.1244f, "para lifetime wrong");
   CHECK(p.fDecayKind[0] == k2Gamma, "para decay kind wrong");
-  CHECK(p.fIsPromptGamma[0] == false, "para prompt flag wrong");
+  CHECK(p.fPromptGammaProbabilities[0] == 0.0, "para prompt probability wrong");
   CHECK(p.fPromptGammaEnergy[0] == 0.0f, "para prompt energy wrong");
   return true;
 }
@@ -42,7 +42,7 @@ bool test_ortho_default()
   CHECK(p.fFractions[0] == 1, "ortho fraction != 1");
   CHECK(p.fLifetimes[0] == 142.0f, "ortho lifetime wrong");
   CHECK(p.fDecayKind[0] == k3Gamma, "ortho decay kind wrong");
-  CHECK(p.fIsPromptGamma[0] == false, "ortho prompt flag wrong");
+  CHECK(p.fPromptGammaProbabilities[0] == 0.0, "ortho prompt probability wrong");
   CHECK(p.fPromptGammaEnergy[0] == 0.0f, "ortho prompt energy wrong");
   return true;
 }
@@ -56,7 +56,7 @@ bool test_para_prompt_gamma()
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
 
-  CHECK(p.fIsPromptGamma[0] == true, "para prompt photon flag wrong");
+  CHECK(p.fPromptGammaProbabilities[0] == 1.0, "para prompt photon probability wrong");
   CHECK(p.fPromptGammaEnergy[0] == 1.2f, "prompt photon energy wrong");
   return true;
 }
@@ -77,13 +77,13 @@ bool test_positronium_custom()
   CHECK(p.fFractions[0] == 0.3f, "PS fraction mismatch");
   CHECK(p.fLifetimes[0] == 0.12f, "PS lifetime mismatch");
   CHECK(p.fDecayKind[0] == k2Gamma, "PS decay kind mismatch");
-  CHECK(p.fIsPromptGamma[0] == false, "PS prompt flag mismatch");
+  CHECK(p.fPromptGammaProbabilities[0] == 0.0, "PS prompt probability mismatch");
   CHECK(p.fPromptGammaEnergy[0] == 0.0f, "PS prompt energy mismatch");
 
   CHECK(p.fFractions[1] == 0.7f, "PS fraction mismatch");
   CHECK(p.fLifetimes[1] == 140.0f, "PS lifetime mismatch");
   CHECK(p.fDecayKind[1] == k3Gamma, "PS decay kind mismatch");
-  CHECK(p.fIsPromptGamma[1] == true, "PS prompt flag mismatch");
+  CHECK(p.fPromptGammaProbabilities[1] == 1.0, "PS prompt probability mismatch");
   CHECK(p.fPromptGammaEnergy[1] == 1.2f, "PS prompt energy mismatch");
   return true;
 }

@@ -77,8 +77,10 @@ void GateExtendedVSourceMessenger::InitCommands()
 {
  upCmdSetPositroniumFractions.reset(GetStringCmd( "setPositroniumFractions", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] and sum of all fi ==1" ) );
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where" ) );
- upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki " ) );
+ upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2gamma or k3gamma" ) );
+ upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kpPs, kdirect or koPs" ) );
  upCmdSetIsPromptPhoton.reset(GetStringCmd( "setIsPromptPhoton", "\"f1, f2, f3 .., fn\" - where fi are true or false " ) );
+ upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
 }
 
@@ -113,7 +115,21 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
     isPromptPhoton.push_back(flag);
   }
   fParamGenerator.SetEnablePromptGamma(isPromptPhoton);
- } 
+ }
+ else if(command ==  upCmdSetPromptPhotonProbabilites.get())
+ {
+   std::vector<float> promptPhotonProb;
+   std::stringstream ss(new_value);
+   float prob;
+   while (ss >> prob) {
+     if (prob < 0)
+       prob = 0;
+     else if (prob > 1)
+       prob = 1;
+     promptPhotonProb.push_back(prob);
+   }
+   fParamGenerator.SetPromptGammaProbabilities(promptPhotonProb);
+ }
  else if(command ==  upCmdSetPromptPhotonEnergies.get()) {
   std::vector<float> promptPhotonEnergies;
   std::stringstream ss(new_value);
@@ -129,12 +145,27 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
   std::string kind;
   while (ss >> kind) {
     if (kind == "k2Gamma")  {
-        decayKinds.push_back(k2Gamma);
-      } else {
+      decayKinds.push_back(k2Gamma);
+    } else {
       decayKinds.push_back(k3Gamma);
-      }
+    }
   }
   fParamGenerator.SetDecayKinds(decayKinds);
+ }
+ else if(command ==  upCmdSetPositronInteractions.get()) {
+   std::vector<PositronElectronInteraction> positronInteractions;
+   std::stringstream ss(new_value);
+   std::string inter;
+   while (ss >> inter) {
+     if (inter == "kpPs")  {
+       positronInteractions.push_back(PositronElectronInteraction::kpPs);
+     } else if (inter == "kdirect") {
+       positronInteractions.push_back(PositronElectronInteraction::kdirect);
+     } else {
+       positronInteractions.push_back(PositronElectronInteraction::koPs);
+     }
+   }
+   fParamGenerator.SetPositronInteractions(positronInteractions);
  }
  else
  {

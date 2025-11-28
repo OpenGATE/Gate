@@ -17,6 +17,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
+#include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayParamsGenerator.hh"
 
 class GateExtendedVSource;
@@ -51,9 +52,10 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
 
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumFractions;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetimes;
-  std::unique_ptr<G4UIcmdWithAString> upCmdSetIsPromptPhoton;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonProbabilites;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonEnergies;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetDecayKinds;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetPositronInteractions;
 
   GatePositroniumDecayParamsGenerator fParamGenerator;
   

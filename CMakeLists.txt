@@ -39,6 +39,11 @@ IF(BUILD_TESTING)
 
   ADD_TEST(NAME test_GatePositronium COMMAND test_GatePositronium)
 
+  ADD_EXECUTABLE(test_GatePositroniumHelper tests/test_GatePositroniumHelper.cpp)
+  TARGET_LINK_LIBRARIES(test_GatePositroniumHelper GateLib)
+
+  ADD_TEST(NAME test_GatePositroniumHelper COMMAND test_GatePositroniumHelper)
+
 ENDIF(BUILD_TESTING)
 #=========================================================
 

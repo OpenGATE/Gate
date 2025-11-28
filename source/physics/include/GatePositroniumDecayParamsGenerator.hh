@@ -11,6 +11,7 @@
 #include <optional>
 #include <vector>
 
+#include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayModelParams.hh"
 
 /*! class GatePositroniumDecayParamsGenerator
@@ -28,10 +29,11 @@ public:
   GatePositroniumDecayParamsGenerator()= default;
   virtual ~GatePositroniumDecayParamsGenerator()=default;
 
-  void SetEnablePromptGamma(const std::vector<bool>& IsPromptPhoton);
+  void SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb);
   void SetPromptGammaEnergies(const std::vector<float>& energies);
   void SetPositroniumLifetimes(const std::vector<float>& fPositroniumLifetimes);
   void SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds);
+  void SetPositronInteractions(const std::vector<PositronElectronInteraction>& positronInteractions);
   void SetPositroniumFraction(const std::vector<float>& positroniumFractions);
 
   PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model= kPositronium) const;
@@ -39,8 +41,9 @@ public:
 private:
   std::optional<std::vector<float>> fPositroniumFractions;
   std::optional<std::vector<float>> fPositroniumLifetimes;
-  std::optional<std::vector<bool>> fIsPromptGamma;
+  std::optional<std::vector<float>> fPromptGammaProbabilities;
   std::optional<std::vector<float>> fPromptGammaEnergies;
   std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
+  std::optional<std::vector<PositronElectronInteraction>> fPositronInteractions;
 };
 #endif
