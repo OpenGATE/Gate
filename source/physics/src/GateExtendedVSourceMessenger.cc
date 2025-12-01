@@ -79,7 +79,6 @@ void GateExtendedVSourceMessenger::InitCommands()
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where" ) );
  upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2gamma or k3gamma" ) );
  upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kpPs, kdirect or koPs" ) );
- upCmdSetIsPromptPhoton.reset(GetStringCmd( "setIsPromptPhoton", "\"f1, f2, f3 .., fn\" - where fi are true or false " ) );
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
 }
@@ -105,16 +104,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
     lifetimes.push_back(num);
   }
   fParamGenerator.SetPositroniumLifetimes(lifetimes);
- }
- else if(command ==  upCmdSetIsPromptPhoton.get())
- {
-  std::vector<bool> isPromptPhoton;
-  std::stringstream ss(new_value);
-  bool flag;
-  while (ss >> std::boolalpha >> flag) {
-    isPromptPhoton.push_back(flag);
-  }
-  fParamGenerator.SetEnablePromptGamma(isPromptPhoton);
  }
  else if(command ==  upCmdSetPromptPhotonProbabilites.get())
  {
@@ -160,7 +149,7 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
      if (inter == "kpPs")  {
        positronInteractions.push_back(PositronElectronInteraction::kpPs);
      } else if (inter == "kdirect") {
-       positronInteractions.push_back(PositronElectronInteraction::kdirect);
+       positronInteractions.push_back(PositronElectronInteraction::kDirect);
      } else {
        positronInteractions.push_back(PositronElectronInteraction::koPs);
      }

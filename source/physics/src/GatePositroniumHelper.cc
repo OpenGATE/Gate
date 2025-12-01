@@ -31,7 +31,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
     return params;
   }
 // setting pPs
-  float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions)
+  float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
   if (pPsIntens > 0) {
     paramsOut.fFractions.push_back(pPsIntens);
     paramsOut.fLifetimes.push_back(fpPsLifetime);

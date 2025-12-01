@@ -5,15 +5,13 @@
 #include "GatePositroniumDecayModel.hh"
 #include "globals.hh"
 
-enum PositronElectronInteraction {kpPs, kDirect, koPs};
-
 class GatePositroniumHelper
 {
 public:
   GatePositroniumHelper() {};
   virtual ~GatePositroniumHelper() {};
 
-  PositroniumDecayModelParams CalculateFractionsFromLifetimes(PositroniumDecayModelParams params);
+  struct PositroniumDecayModelParams CalculateFractionsFromLifetimes(struct PositroniumDecayModelParams params);
   float CalcPPsFractionFromOPs(std::vector<float> fractions, std::vector<PositronElectronInteraction> decays);
   std::pair<float, float> CalcFractionsFromLifetime(float intensity, float lifetime, PositronElectronInteraction inter);
   float CalcFractionFromOPsLifetime(float intensity, float lifetime, PositroniumDecayKind decay);

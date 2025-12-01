@@ -64,8 +64,9 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
   }
 
   if (model == GatePositroniumDecayParamsGenerator::kPositronium) {
+    GatePositroniumHelper positronHelper;
     if(fPositroniumFractions.has_value()) {
-      params.fFractions=GatePositroniumHelper::NormalizeFractions(fPositroniumFractions.value());
+      params.fFractions=positronHelper.NormalizeFractions(fPositroniumFractions.value());
     } else {
       GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay fractions are not set");
     }
@@ -101,7 +102,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     }
 
     if (params.fDecayKind.empty() && !params.fPositronInteractions.empty() && !params.fLifetimes.empty() && !params.fFractions.empty()) {
-      params = GatePositroniumHelper::CalculateFractionsFromLifetimes(params);
+      params = positronHelper.CalculateFractionsFromLifetimes(params);
     }
   }
 
