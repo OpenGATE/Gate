@@ -9,6 +9,7 @@
 PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetimes(PositroniumDecayModelParams params)
 {
   PositroniumDecayModelParams paramsOut;
+  bool pPsExist = false;
   for (unsigned i=0; i<params.fPositronInteractions.size(); i++) {
     if (params.fPositronInteractions.at(i) != PositronElectronInteraction::kpPs) {
       std::pair<float, float> intens = CalcFractionsFromLifetime(params.fFractions.at(i), params.fLifetimes.at(i), params.fPositronInteractions.at(i));
@@ -30,6 +31,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
     GateError("GatePositroniumHelper::CalculateFractionsFromLifetimes: Could not calculate fraction from lifetimes");
     return params;
   }
+
 // setting pPs
   float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
   if (pPsIntens > 0) {
@@ -38,10 +40,11 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
     paramsOut.fPromptGammaProbabilities.push_back(paramsOut.fPromptGammaProbabilities.at(0));
     paramsOut.fPromptGammaEnergy.push_back(paramsOut.fPromptGammaEnergy.at(0));
     paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
-    paramsOut.fPositronInteractions.push_back(PositronElectronInteraction::koPs);
+    paramsOut.fPositronInteractions.push_back(PositronElectronInteraction::kpPs);
   }
 
   paramsOut.fFractions = NormalizeFractions(paramsOut.fFractions);
+
   return paramsOut;
 }
 
@@ -107,7 +110,7 @@ float GatePositroniumHelper::CalcFractionFromDirectLifetime(float intensity, Pos
 }
 
 std::vector<float> GatePositroniumHelper::NormalizeFractions(std::vector<float> fractions) {
-  std::vector<float> normalizedVector;
+  std::vector<float> normalizedVector = fractions;
   double sum = std::accumulate(fractions.begin(), fractions.end(), 0.0);
   if (sum > 0)
     std::transform(fractions.begin(), fractions.end(), normalizedVector.begin(), [sum](float element){ return element/sum; });
