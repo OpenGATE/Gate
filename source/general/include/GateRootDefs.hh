@@ -338,6 +338,10 @@ class GateRootSingleBuffer
     Float_t  energyIni;
 
     Int_t    septalNb;							//!< HDS : septal penetration
+    // Spatial resolution standard deviations (from 2D FWHM distribution) in mm
+    Float_t  spatialRes2DStdDevX;
+    Float_t  spatialRes2DStdDevY;
+    Float_t  spatialRes2DStdDevZ;
     //@}
 };
 
@@ -433,6 +437,11 @@ class GateRootCoincBuffer
     Int_t    RayleighCrystal2;    
     Char_t   comptonVolumeName2[40];
     Char_t   RayleighVolumeName2[40];
+
+    // Spatial resolution standard deviations (averaged from both digis) in mm
+    Float_t  spatialRes2DStdDevX;
+    Float_t  spatialRes2DStdDevY;
+    Float_t  spatialRes2DStdDevZ;
 
     Float_t  sinogramTheta;
     Float_t  sinogramS;

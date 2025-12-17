@@ -462,6 +462,11 @@ void GateRootSingleBuffer::Clear()
 
   // HDS : septal
   septalNb = 0;
+
+  // initialize spatial resolution stddev fields
+  spatialRes2DStdDevX = 0.;
+  spatialRes2DStdDevY = 0.;
+  spatialRes2DStdDevZ = 0.;
   for ( d = 0 ; d < ROOT_VOLUMEIDSIZE ; ++d )
       volumeID[d] = -1;
 
@@ -489,6 +494,10 @@ void GateRootSingleBuffer::Clear()
 	  nCrystalConv=0;
 	  nCrystalCompt=0;
 	  nCrystalRayl=0;
+
+  	  spatialRes2DStdDevX = 0.;
+  	  spatialRes2DStdDevY = 0.;
+  	  spatialRes2DStdDevZ = 0.;
 
   }
 
@@ -550,6 +559,11 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
 	  nCrystalCompt =aDigi->GetNCrystalCompton();
 
   }
+
+  // spatial resolution stddevs stored by digitizer (in internal units), convert to mm for output
+  spatialRes2DStdDevX = static_cast<Float_t>(aDigi->GetSpatialRes2DStdDevX()/mm);
+  spatialRes2DStdDevY = static_cast<Float_t>(aDigi->GetSpatialRes2DStdDevY()/mm);
+  spatialRes2DStdDevZ = static_cast<Float_t>(aDigi->GetSpatialRes2DStdDevZ()/mm);
 
 
   aDigi->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
@@ -630,8 +644,13 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 
   }
 
-	  //Initialized by default.TO DO: Mask option should be included or a flag
-	  Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
+  // spatial resolution stddevs (2D distribution) - in mm
+  Branch("spatialRes2DStdDevX", &buffer.spatialRes2DStdDevX, "spatialRes2DStdDevX/F");
+  Branch("spatialRes2DStdDevY", &buffer.spatialRes2DStdDevY, "spatialRes2DStdDevY/F");
+  Branch("spatialRes2DStdDevZ", &buffer.spatialRes2DStdDevZ, "spatialRes2DStdDevZ/F");
+
+    //Initialized by default.TO DO: Mask option should be included or a flag
+    Branch("volumeID",       (void *)buffer.volumeID,"volumeID[10]/I");
 }
 
 
@@ -682,7 +701,11 @@ void GateRootCoincBuffer::Clear()
   RayleighCrystal2 = -1;
   strcpy (comptonVolumeName2," ");
   strcpy (RayleighVolumeName2," ");
-}
+
+  // initialize spatial resolution stddev fields for coincidences
+  spatialRes2DStdDevX = 0.;
+  spatialRes2DStdDevY = 0.;
+  spatialRes2DStdDevZ = 0.;
 
 
 
@@ -735,6 +758,21 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 
     strcpy (comptonVolumeName2,((aDigi->GetDigi(1))->GetComptonVolumeName()).c_str());
     strcpy (RayleighVolumeName2,((aDigi->GetDigi(1))->GetRayleighVolumeName()).c_str());
+
+    // spatial resolution stddevs: average the two constituent digis and convert to mm for output
+    {
+      G4double sX1 = (aDigi->GetDigi(0))->GetSpatialRes2DStdDevX();
+      G4double sX2 = (aDigi->GetDigi(1))->GetSpatialRes2DStdDevX();
+      spatialRes2DStdDevX = static_cast<Float_t>(((sX1 + sX2) / 2.0) / mm);
+
+      G4double sY1 = (aDigi->GetDigi(0))->GetSpatialRes2DStdDevY();
+      G4double sY2 = (aDigi->GetDigi(1))->GetSpatialRes2DStdDevY();
+      spatialRes2DStdDevY = static_cast<Float_t>(((sY1 + sY2) / 2.0) / mm);
+
+      G4double sZ1 = (aDigi->GetDigi(0))->GetSpatialRes2DStdDevZ();
+      G4double sZ2 = (aDigi->GetDigi(1))->GetSpatialRes2DStdDevZ();
+      spatialRes2DStdDevZ = static_cast<Float_t>(((sZ1 + sZ2) / 2.0) / mm);
+    }
 
     sinogramTheta  = ComputeSinogramTheta();
     sinogramS      = ComputeSinogramS();
@@ -863,6 +901,11 @@ void GateCoincTree::Init(GateRootCoincBuffer& buffer)
     Branch("sinogramTheta",  &buffer.sinogramTheta,"sinogramTheta/F");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(19) )
     Branch("sinogramS",      &buffer.sinogramS,"sinogramS/F");
+
+  // spatial resolution stddevs (averaged per coincidence) - in mm
+  Branch("spatialRes2DStdDevX", &buffer.spatialRes2DStdDevX, "spatialRes2DStdDevX/F");
+  Branch("spatialRes2DStdDevY", &buffer.spatialRes2DStdDevY, "spatialRes2DStdDevY/F");
+  Branch("spatialRes2DStdDevZ", &buffer.spatialRes2DStdDevZ, "spatialRes2DStdDevZ/F");
 
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(20) )
     Branch("comptVolName1",  (void *)buffer.comptonVolumeName1,"comptVolName1/C");

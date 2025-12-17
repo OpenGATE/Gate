@@ -196,7 +196,7 @@ void GateSpatialResolution::Digitize(){
 		  G4double Px = P.x();
 		  G4double Py = P.y();
 		  G4double Pz = P.z();
-		  G4double stddevX, stddevY, stddevZ;
+		  G4double stddevX = 0., stddevY = 0., stddevZ = 0.;
 
 		  if (m_fwhmDistrib2D) {
 		      if (m_nameAxis.size() != 2) {
@@ -239,6 +239,11 @@ void GateSpatialResolution::Digitize(){
 			  G4double PxNew ;
 			  G4double PyNew ;
 			  G4double PzNew ;
+
+// store the computed stddevs into the digi for later ROOT output
+		  m_outputDigi->SetSpatialRes2DStdDevX(stddevX);
+		  m_outputDigi->SetSpatialRes2DStdDevY(stddevY);
+		  m_outputDigi->SetSpatialRes2DStdDevZ(stddevZ);
 
 
 

@@ -173,6 +173,13 @@ public:
       inline void SetParentID(G4int parentID)          { m_parentID = parentID; }
       inline G4int GetParentID() const                { return m_parentID; }
 
+      inline void SetSpatialRes2DStdDevX(G4double v) { m_spatialRes2DStdDevX = v; }
+      inline G4double GetSpatialRes2DStdDevX() const { return m_spatialRes2DStdDevX; }
+      inline void SetSpatialRes2DStdDevY(G4double v) { m_spatialRes2DStdDevY = v; }
+      inline G4double GetSpatialRes2DStdDevY() const { return m_spatialRes2DStdDevY; }
+      inline void SetSpatialRes2DStdDevZ(G4double v) { m_spatialRes2DStdDevZ = v; }
+      inline G4double GetSpatialRes2DStdDevZ() const { return m_spatialRes2DStdDevZ; }
+
       //AE
       inline G4double GetEnergyError()   const                  	      { return m_energyError; }
       inline void SetEnergyError(G4double value)           	      { m_energyError = value; }
@@ -251,6 +258,11 @@ public:
   G4int m_sourcePDG;
   G4int m_nCrystalConv;
   //--------------------
+
+  // Spatial resolution info set by spatial resolution digitizer when using 2D distributions
+  G4double m_spatialRes2DStdDevX;
+  G4double m_spatialRes2DStdDevY;
+  G4double m_spatialRes2DStdDevZ;
 
 
   //! Pointer to the original crystal hit if known

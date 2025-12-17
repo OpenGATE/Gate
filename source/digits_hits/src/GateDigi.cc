@@ -42,6 +42,9 @@ GateDigi::GateDigi(const void* itsMother):
       m_energyError(0.0),
       m_globalPosError(0.0),
       m_localPosError(0.0),
+      m_spatialRes2DStdDevX(0.0),
+      m_spatialRes2DStdDevY(0.0),
+      m_spatialRes2DStdDevZ(0.0),
       m_mother(itsMother)
 {
 }
