@@ -51,7 +51,11 @@ public:
     GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYdistrib; }
     GateVDistribution* GetFWHMzdistrib()    	{ return m_fwhmZdistrib; }
     G4String GetNameAxis()				   { return m_nameAxis;     }
-    GateVDistribution* GetFWHMDistrib2D()	{ return m_fwhmDistrib2D; }
+    GateVDistribution* GetFWHMDistrib2D()	{ return m_fwhmXDistrib2D ? m_fwhmXDistrib2D : (m_fwhmYDistrib2D? m_fwhmYDistrib2D : m_fwhmZDistrib2D); }
+
+    GateVDistribution* GetFWHMXDistrib2D() { return m_fwhmXDistrib2D; }
+    GateVDistribution* GetFWHMYDistrib2D() { return m_fwhmYDistrib2D; }
+    GateVDistribution* GetFWHMZDistrib2D() { return m_fwhmZDistrib2D; }
 
     G4double GetFWHMx()         { return m_fwhmX; }
     G4double GetFWHMy()			{ return m_fwhmY; }
@@ -68,7 +72,12 @@ public:
 
 
     void SetNameAxis(const G4String& name) {m_nameAxis=name;}
-    void SetFWHMDistrib2D(GateVDistribution* dist)  { m_fwhmDistrib2D= dist;}
+    // Backwards-compatible: sets all 3 axis 2D distributions to the same distribution
+    void SetFWHMDistrib2D(GateVDistribution* dist)  { m_fwhmXDistrib2D = m_fwhmYDistrib2D = m_fwhmZDistrib2D = dist; }
+
+    void SetFWHMXDistrib2D(GateVDistribution* dist) { m_fwhmXDistrib2D = dist; }
+    void SetFWHMYDistrib2D(GateVDistribution* dist) { m_fwhmYDistrib2D = dist; }
+    void SetFWHMZDistrib2D(GateVDistribution* dist) { m_fwhmZDistrib2D = dist; }
 
     void SetFWHMx(G4double val)   { m_fwhmX = val;  }
     void SetFWHMy(G4double val)   { m_fwhmY = val;  }
@@ -101,7 +110,9 @@ protected:
     GateVDistribution* m_fwhmYdistrib;
     GateVDistribution* m_fwhmZdistrib;
 
-    GateVDistribution* m_fwhmDistrib2D;
+    GateVDistribution* m_fwhmXDistrib2D;
+    GateVDistribution* m_fwhmYDistrib2D;
+    GateVDistribution* m_fwhmZDistrib2D;
 
     G4String m_nameAxis;
 

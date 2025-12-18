@@ -706,6 +706,7 @@ void GateRootCoincBuffer::Clear()
   spatialRes2DStdDevX = 0.;
   spatialRes2DStdDevY = 0.;
   spatialRes2DStdDevZ = 0.;
+}
 
 
 

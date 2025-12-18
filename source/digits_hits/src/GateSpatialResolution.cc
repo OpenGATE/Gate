@@ -55,11 +55,13 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
    m_fwhmX(0),
    m_fwhmY(0),
    m_fwhmZ(0),
-   m_fwhmXdistrib(0),
-   m_fwhmYdistrib(0),
-   m_fwhmZdistrib(0),
-   m_nameAxis("XY"),
-   m_fwhmDistrib2D(0),
+	 m_fwhmXdistrib(0),
+	 m_fwhmYdistrib(0),
+	 m_fwhmZdistrib(0),
+ 	m_nameAxis("YZ"),
+	m_fwhmXDistrib2D(0),
+	m_fwhmYDistrib2D(0),
+	m_fwhmZDistrib2D(0),
    m_IsConfined(true),
    m_UseTruncatedGaussian(true),
    m_Navigator(0),
@@ -83,28 +85,29 @@ GateSpatialResolution::~GateSpatialResolution()
 }
 void GateSpatialResolution::SetSpatialResolutionParameters() {
     // Check FWHM parameters
-    if (m_fwhm != 0 && (m_fwhmX != 0 || m_fwhmY != 0 || m_fwhmZ != 0 || m_fwhmDistrib2D != 0 || m_fwhmXdistrib !=0 || m_fwhmYdistrib !=0 || m_fwhmZdistrib !=0 )) {
+	if (m_fwhm != 0 && (m_fwhmX != 0 || m_fwhmY != 0 || m_fwhmZ != 0 || m_fwhmXDistrib2D != 0 || m_fwhmYDistrib2D != 0 || m_fwhmZDistrib2D != 0 || m_fwhmXdistrib !=0 || m_fwhmYdistrib !=0 || m_fwhmZdistrib !=0 )) {
         G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set a unique FWHM for all 3 axes OR set FWHM for X, Y, Z individually." << G4endl;
         abort();
     }
 
-    if (m_fwhmDistrib2D)
-    {
-    	if ((m_fwhmX != 0 || m_fwhmXdistrib !=0) && (m_nameAxis.find('X') != std::string::npos)) {
-        G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for X OR set FWHM for X distribution." << G4endl;
-        abort();
-    	}
-
-    	if ((m_fwhmY != 0|| m_fwhmYdistrib !=0) && (m_nameAxis.find('Y') != std::string::npos)) {
-        G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for Y OR set FWHM for Y distribution." << G4endl;
-        abort();
-    	}
-
-    	if ((m_fwhmZ != 0 || m_fwhmZdistrib !=0) && (m_nameAxis.find('Z') != std::string::npos)) {
-        G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for Z OR set FWHM for Z distribution." << G4endl;
-        abort();
-    	}
-    }
+	if (m_fwhmXDistrib2D || m_fwhmYDistrib2D || m_fwhmZDistrib2D)
+	{
+		// If a per-axis 2D distribution is provided for an axis, it is
+		// ambiguous to also provide a scalar FWHM or a 1D distribution for
+		// the same axis. Check per-axis instead of using nameAxis combinatorics.
+		if (m_fwhmXDistrib2D && (m_fwhmX != 0 || m_fwhmXdistrib != 0)) {
+			G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for X OR set FWHM distribution for X." << G4endl;
+			abort();
+		}
+		if (m_fwhmYDistrib2D && (m_fwhmY != 0 || m_fwhmYdistrib != 0)) {
+			G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for Y OR set FWHM distribution for Y." << G4endl;
+			abort();
+		}
+		if (m_fwhmZDistrib2D && (m_fwhmZ != 0 || m_fwhmZdistrib != 0)) {
+			G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for Z OR set FWHM distribution for Z." << G4endl;
+			abort();
+		}
+	}
 
     if (m_fwhmX != 0 && m_fwhmXdistrib !=0){
     	G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for X OR set FWHM for Z distribution." << G4endl;
@@ -198,28 +201,18 @@ void GateSpatialResolution::Digitize(){
 		  G4double Pz = P.z();
 		  G4double stddevX = 0., stddevY = 0., stddevZ = 0.;
 
-		  if (m_fwhmDistrib2D) {
-		      if (m_nameAxis.size() != 2) {
-		          GateError(" *** ERROR***   GateSpatialResolution::Digitize. "
-		                    "Attempt to use fwhmDistrib2D but the length of the named axis is not 2!\n");
-		      } else {
-		          if (m_nameAxis == "XY") {
-		              stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-		              stddevY = m_fwhmDistrib2D->Value2D(P.x() * mm, P.y() * mm);
-		              if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
-		          } else if (m_nameAxis == "XZ") {
-		              stddevX = m_fwhmDistrib2D->Value2D(P.x() * mm, P.z() * mm);
-		              stddevZ = m_fwhmDistrib2D->Value2D(P.x() * mm, P.z() * mm);
-		              if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
-		          } else if (m_nameAxis == "YZ") {
-		              stddevY = m_fwhmDistrib2D->Value2D(P.y() * mm, P.z() * mm);
-		              stddevZ = m_fwhmDistrib2D->Value2D(P.y() * mm, P.z() * mm);
-		              if (fwhmX) stddevX = fwhmX / GateConstants::fwhm_to_sigma;
-		          } else {
-		              GateError(" *** ERROR***   GateSpatialResolution::Digitize. "
-		                        "Unrecognized axis configuration: " + m_nameAxis + "\n");
-		          }
-		      }
+		  // Use the configured axis pair (m_nameAxis) to evaluate Value2D.
+		  // Allowed pairs for PET: "XZ" or "YZ" (default "YZ").
+		  if (m_fwhmXDistrib2D || m_fwhmYDistrib2D || m_fwhmZDistrib2D) {
+			  if (m_nameAxis == "XZ") {
+				  if (m_fwhmXDistrib2D) stddevX = m_fwhmXDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+				  if (m_fwhmYDistrib2D) stddevY = m_fwhmYDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+				  if (m_fwhmZDistrib2D) stddevZ = m_fwhmZDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+			  } else { // YZ
+				  if (m_fwhmXDistrib2D) stddevX = m_fwhmXDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+				  if (m_fwhmYDistrib2D) stddevY = m_fwhmYDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+				  if (m_fwhmZDistrib2D) stddevZ = m_fwhmZDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+			  }
 		  }
 		 else {
 
@@ -345,7 +338,13 @@ void GateSpatialResolution::Digitize(){
   	  if (nVerboseLevel>1)
   	  	G4cout << "[GateSpatialResolution::Digitize]: input digi collection is null -> nothing to do\n\n";
   	    return;
-    }
+		// Ensure the chosen axis configuration is allowed for PET scanners
+		if (!(m_nameAxis == "XZ" || m_nameAxis == "YZ")) {
+			G4cout << "***ERROR*** GateSpatialResolution::SetSpatialResolutionParameters: "
+					  "Only 'XZ' and 'YZ' are allowed as nameAxis values for 2D spatial resolution distributions.\n";
+			abort();
+		}
+	}
   StoreDigiCollection(m_OutputDigiCollection);
 
 }

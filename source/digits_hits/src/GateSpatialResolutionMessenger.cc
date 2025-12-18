@@ -59,13 +59,23 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 
 	cmdName = GetDirectoryName() + "fwhmDistrib2D";
 	spresolutionDistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
-	spresolutionDistrib2DCmd->SetGuidance("Set the distribution 2D of  spatial resolution in position for gaussian spblurring the name of the axis must be defined. default=XY");
+	spresolutionDistrib2DCmd->SetGuidance("Set the distribution 2D of spatial resolution in position for gaussian blurring. The name of the axis must be defined. default=XY. This legacy command sets the same distribution for X, Y and Z 2D distributors.");
+
+	cmdName = GetDirectoryName() + "fwhmDistrib2DX";
+	spresolutionDistrib2DXCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionDistrib2DXCmd->SetGuidance("Set the 2D distribution for X axis (expects a 2D distribution object)");
+	cmdName = GetDirectoryName() + "fwhmDistrib2DY";
+	spresolutionDistrib2DYCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionDistrib2DYCmd->SetGuidance("Set the 2D distribution for Y axis (expects a 2D distribution object)");
+	cmdName = GetDirectoryName() + "fwhmDistrib2DZ";
+	spresolutionDistrib2DZCmd = new G4UIcmdWithAString(cmdName,this);
+	spresolutionDistrib2DZCmd->SetGuidance("Set the 2D distribution for Z axis (expects a 2D distribution object)");
 
 
-    cmdName = GetDirectoryName()+"nameAxis";
-    nameAxisCmd = new G4UIcmdWithAString(cmdName,this);
-    nameAxisCmd ->SetGuidance("Provide the name of the axis that will follow the spatial resolution distribution, X, Y, Z, XY, XZ, or YZ");
-    nameAxisCmd ->SetCandidates("X Y Z XY XZ YZ");
+	cmdName = GetDirectoryName()+"nameAxis";
+	nameAxisCmd = new G4UIcmdWithAString(cmdName,this);
+	nameAxisCmd ->SetGuidance("Provide the coordinate pair used by 2D distributions: 'XZ' or 'YZ'. Default is 'YZ'.");
+	nameAxisCmd ->SetCandidates("XZ YZ");
 
 
 	cmdName = GetDirectoryName() + "confineInsideOfSmallestElement";
@@ -92,6 +102,10 @@ GateSpatialResolutionMessenger::~GateSpatialResolutionMessenger()
 	delete  spresolutionXdistribCmd;
 	delete  spresolutionYdistribCmd;
 	delete  spresolutionZdistribCmd;
+
+	delete  spresolutionDistrib2DXCmd;
+	delete  spresolutionDistrib2DYCmd;
+	delete  spresolutionDistrib2DZCmd;
 
 	delete  nameAxisCmd;
 	delete 	spresolutionDistrib2DCmd;
@@ -123,13 +137,34 @@ void GateSpatialResolutionMessenger::SetNewValue(G4UIcommand * aCommand,G4String
   		// Handle command for 2D-distribution resolution
 
    if (aCommand == nameAxisCmd)
-	 	      {
-	 			m_SpatialResolution->SetNameAxis(newValue);
-	 	      }
-   else if (aCommand == spresolutionDistrib2DCmd)
-             {GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
-           if (distrib) m_SpatialResolution->SetFWHMDistrib2D(distrib);
-           }
+ 	     {
+ 		// Only accept the PET-relevant options
+ 		if (newValue == "XZ" || newValue == "YZ") {
+ 			m_SpatialResolution->SetNameAxis(newValue);
+ 		} else {
+ 			G4cout << "***ERROR*** GateSpatialResolution::SetNewValue: nameAxis must be 'XZ' or 'YZ'\n"<< G4endl;
+ 		}
+ 	     }
+	 else if (aCommand == spresolutionDistrib2DCmd)
+						 {
+							 GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+							 if (distrib) m_SpatialResolution->SetFWHMDistrib2D(distrib);
+						 }
+	 else if (aCommand == spresolutionDistrib2DXCmd)
+						 {
+							 GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+							 if (distrib) m_SpatialResolution->SetFWHMXDistrib2D(distrib);
+						 }
+	 else if (aCommand == spresolutionDistrib2DYCmd)
+						 {
+							 GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+							 if (distrib) m_SpatialResolution->SetFWHMYDistrib2D(distrib);
+						 }
+	 else if (aCommand == spresolutionDistrib2DZCmd)
+						 {
+							 GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
+							 if (distrib) m_SpatialResolution->SetFWHMZDistrib2D(distrib);
+						 }
 
    else if ( aCommand==spresolutionXCmd )
    		{ m_SpatialResolution->SetFWHMx(spresolutionXCmd->GetNewDoubleValue(newValue)); }
