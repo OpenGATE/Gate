@@ -93,7 +93,7 @@ void GateEnergyFraming::Digitize()
 		  {
 	  	      G4double energy = 0;
 		      inputDigi=(*IDC)[i];
-		      GateDigi* m_outputDigi = new GateDigi(*inputDigi);
+		      m_outputDigi = new GateDigi(*inputDigi);
 		       	
 		      if( m_EnergyFramingLaw != 0 ){
 

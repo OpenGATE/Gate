@@ -76,7 +76,7 @@ void GateTimeDelay::Digitize()
 	  {
 		  inputDigi=(*IDC)[i];
 
-		  GateDigi* m_outputDigi = new GateDigi(*inputDigi);
+		  m_outputDigi = new GateDigi(*inputDigi);
 
 		  m_outputDigi->SetTime(inputDigi->GetTime()+ m_TimeDelay);
 
