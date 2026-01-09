@@ -121,11 +121,11 @@ void GateClustering::Digitize()
 		          G4cout << Gateendl;
 		      }
 
-		      GateDigi* m_outputDigi = new GateDigi(*inputDigi);
-		          m_outputDigi->SetEnergyFin(-1);
-		          m_outputDigi->SetEnergyIniTrack(-1);
-		          std::vector<double> dist;
-		          std::vector<int> index4ClustSameVol;
+		      m_outputDigi = new GateDigi(*inputDigi);
+		      m_outputDigi->SetEnergyFin(-1);
+		      m_outputDigi->SetEnergyIniTrack(-1);
+		      std::vector<double> dist;
+		      std::vector<int> index4ClustSameVol;
 
 		          if(OutputDigiCollectionVector->empty()){
 		        	  m_OutputDigiCollection->insert(m_outputDigi);
