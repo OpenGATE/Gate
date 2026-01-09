@@ -107,8 +107,7 @@ G4int GateMacfileParser::GenerateResolvedMacros(G4String directory)
 		i_str<<j;
 		GenerateResolvedMacro(dir+macNameDir+i_str.str()+".mac",j,splitfile); 
 		splitfile<<endl;  
-
-		if(j%(nSplits/10)==0)
+		if(nSplits>=10 && j%(nSplits/10)==0)
 			cout<<100*j/nSplits<<"% "<<flush;
 	}
 	if (filenames[ROOT]==1)
@@ -202,8 +201,11 @@ G4int GateMacfileParser::GenerateResolvedMacro(G4String outputName,G4int splitNu
 		// Actor check
 		G4cout << "Number of enabled actors: " << listOfEnabledActorName.size() << endl;
 		// Check if no output nor actor
+
+		
 		if (enabledOutput+listOfEnabledActorName.size()==0) G4cerr << "***** Warning: No output module nor actor are enabled !" << endl;
 		// Check if all aliases from the command line are used
+				
 		bool flag=true;
 		nAliases = (G4int)listOfUsedAliases.size();
 		for (G4int i=1;i<nAliases;i+=2) flag&=listOfUsedAliases[i];
@@ -214,7 +216,9 @@ G4int GateMacfileParser::GenerateResolvedMacro(G4String outputName,G4int splitNu
 				if(!listOfUsedAliases[i]) G4cout<<" "<<listOfAliases[i]<<G4endl;
 			return 1; 
 		}
+		
 	}
+	
 	macfile.close();
 	outputMacfile.close();
 	return 0;
@@ -546,7 +550,6 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
 		// so all output should be defined
 		if(splitNumber==1) CheckOutputPrint();
 		CheckOutput(output,splitfile,splitNumber);
-
 		// ==============================================================================================================
 		// This part is here to check the presence of time commands and to deal with fu*** default
 		// values permitted ... And default values always give very nice part of code, hummmmm.
