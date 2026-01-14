@@ -53,8 +53,28 @@ GateCylindricalPETSystem::GateCylindricalPETSystem(const G4String& itsName)
   // Integrate a coincidence sorter into the digitizer
   //OK GND 2022
   GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-  GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr,"Coincidences");
-  digitizerMgr->AddNewCoincidenceSorter(coincidenceSorter);
+  // In case of multiple detector geometries, multiple coincidence sortes are created with the name "Coincidences",
+  // which creates an ambiguity and eventually crashes with a segmentation violation; using /gate/digitizerMgr/list does
+  // not list multiple entries with identical names either; therefore we add a check
+
+  std::vector<GateCoincidenceSorter*> coincidenceSortersList = digitizerMgr->m_CoincidenceSortersList;
+
+  //for (G4int ii = 0; ii < coincidenceSortersList.size(); ++ii) {
+  //  std::cout << std::to_string(ii) + " "  << coincidenceSortersList[ii]->GetInputName()  << " " << coincidenceSortersList[ii]->GetOutputName() << std::endl;
+  //}
+
+  // Name options: itsName and GetName() are always "systems/cylindricalPET" in this class; so we go with GetOwnName()
+  //std::cout << itsName << " " << GetName() << " " << GetOwnName()  << std::endl;
+
+  if (coincidenceSortersList.size() == 0) {
+    GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr,"Coincidences");
+    //GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr, "Coincidences_" + GetOwnName());
+    digitizerMgr->AddNewCoincidenceSorter(coincidenceSorter);
+  }
+  else {
+    //GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr, "Coincidences_" + GetOwnName());
+    //digitizerMgr->AddNewCoincidenceSorter(coincidenceSorter);
+  }
   
 #ifdef GATE_USE_LMF
 
