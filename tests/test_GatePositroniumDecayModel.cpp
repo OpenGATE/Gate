@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include <GateMiniPositroniumDecayModel.hh>
+#include <GatePositroniumDecayModel.hh>
 
 #include "GateRunManager.hh"
 #include "GatePhysicsList.hh"
@@ -29,7 +29,7 @@ bool run_tests2()
   params.fFractions={0.3,0.7};
   params.fLifetimes={0.1244 ,138.6};
   params.fDecayKind={PositroniumDecayKind::k2Gamma, PositroniumDecayKind::k3Gamma};
-  MiniPositroniumDecayModel model(params);
+  PositroniumDecayModel model(params);
 
   return true;
 }
@@ -39,13 +39,13 @@ bool run_tests()
 {
   bool res = true;
   PositroniumDecayModelParams params;
-  MiniPositroniumDecayModel model(params);
-  int index = MiniPositroniumDecayModel::getPositroniumDecayIndex({1});
+  PositroniumDecayModel model(params);
+  int index = PositroniumDecayModel::getPositroniumDecayIndex({1});
   if (index != 0) {
     res = false;
     std::cerr << "getPositroniumDecayDecayIndex({1})!=0" << std::endl;
   }
-  index = MiniPositroniumDecayModel::getPositroniumDecayIndex({});
+  index = PositroniumDecayModel::getPositroniumDecayIndex({});
   if (index != -1) {
     res = false;
     std::cerr << "getPositroniumDecayDecayIndex({})!=-1" << std::endl;
@@ -56,7 +56,7 @@ bool run_tests()
   std::vector<float> fractions={0.5,0.4,0.1};
   std::vector<int> indices = {0,0,0};
   for (int i = 0; i < num_of_trials; i++) {
-    index = MiniPositroniumDecayModel::getPositroniumDecayIndex(fractions);
+    index = PositroniumDecayModel::getPositroniumDecayIndex(fractions);
     indices[index] = indices[index] +1;
   }
   std::vector<float> estimated_fractions = {0.,0., 0.};

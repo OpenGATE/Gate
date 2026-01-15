@@ -8,22 +8,22 @@
 
 #include "G4Event.hh"
 
-#include "GateExtendedVSource.hh"
+#include "GatePositroniumSource.hh"
 #include "GatePositroniumDecayModel.hh"
 
 
-GateExtendedVSource::GateExtendedVSource(const G4String &name)
+GatePositroniumSource::GatePositroniumSource(const G4String &name)
     : GateVSource(name),
-      pMessenger(std::make_unique<GateExtendedVSourceMessenger>(this)) 
+      pMessenger(std::make_unique<GatePositroniumSourceMessenger>(this)) 
 {
 }
 
-void GateExtendedVSource::SetModel(const G4String &model_name) 
+void GatePositroniumSource::SetModel(const G4String &model_name) 
 {
   static const std::map<G4String, ModelKind> models{
-      {"pPs", GateExtendedVSource::ModelKind::ParaPositronium},
-      {"oPs", GateExtendedVSource::ModelKind::OrthoPositronium},
-      {"Ps", GateExtendedVSource::ModelKind::Positronium}};
+      {"pPs", GatePositroniumSource::ModelKind::ParaPositronium},
+      {"oPs", GatePositroniumSource::ModelKind::OrthoPositronium},
+      {"Ps", GatePositroniumSource::ModelKind::Positronium}};
 
   auto it = models.find(model_name);
   if (it != models.end())
@@ -31,13 +31,13 @@ void GateExtendedVSource::SetModel(const G4String &model_name)
     fModelKind = it->second;
   } else {
     fBehaveLikeVSource = true;
-    G4cout << "GateExtendedVSource::SetModel : Unknown gamma source model. "
+    G4cout << "GatePositroniumSource::SetModel : Unknown gamma source model. "
               "Enable: pPs, oPs, Ps. Switching to GateVSource behavour."
            << G4endl;
   }
 }
 
-void GateExtendedVSource::PrepareModel() 
+void GatePositroniumSource::PrepareModel() 
 {
   SetModel(GetType());
 
@@ -45,28 +45,28 @@ void GateExtendedVSource::PrepareModel()
     return;
   }
 
-  if (fModelKind == GateExtendedVSource::ModelKind::Positronium) {
+  if (fModelKind == GatePositroniumSource::ModelKind::Positronium) {
     auto params = pMessenger->generatePositroniumDecayParams();
     pModel = std::make_unique<PositroniumDecayModel>(params);
   } else {
-    if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium) {
+    if (fModelKind == GatePositroniumSource::ModelKind::ParaPositronium) {
       auto params = pMessenger->generatePositroniumDecayParams(
           GatePositroniumDecayParamsGenerator::kParaPositronium);
       pModel = std::make_unique<PositroniumDecayModel>(params);
 
     } else {
-      if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
+      if (fModelKind == GatePositroniumSource::ModelKind::OrthoPositronium) {
         auto params = pMessenger->generatePositroniumDecayParams(
             GatePositroniumDecayParamsGenerator::kOrthoPositronium);
         pModel = std::make_unique<PositroniumDecayModel>(params);
       } else {
-        GateError("GateExtendedVSource::PrepareModel - unknown model.");
+        GateError("GatePositroniumSource::PrepareModel - unknown model.");
       }
     }
   }
 }
 
-G4int GateExtendedVSource::GeneratePrimaries(G4Event* event)
+G4int GatePositroniumSource::GeneratePrimaries(G4Event* event)
 {
  if (!fBehaveLikeVSource && !pModel) { PrepareModel(); }
  if (fBehaveLikeVSource) { return GateVSource::GeneratePrimaries(event); }
