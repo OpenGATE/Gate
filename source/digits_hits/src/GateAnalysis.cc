@@ -482,7 +482,16 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 						  nCrystalCompton = photon2_crystal_compton;
 						  nCrystalRayleigh = photon2_crystal_Rayleigh;
 						}
-
+					  else if (photonID == 3)
+						{
+						  nPhantomCompton = photon3_phantom_compton;
+						  nPhantomRayleigh = photon3_phantom_Rayleigh;
+						  theComptonVolumeName = theComptonVolumeName3;
+						  theRayleighVolumeName = theRayleighVolumeName3;
+						  nCrystalCompton = photon3_crystal_compton;
+						  nCrystalRayleigh = photon3_crystal_Rayleigh;
+						}
+						
 					  // search the primary that originated the track
 					  primaryID = m_trajectoryNavigator->FindPrimaryID(trackID);
 
