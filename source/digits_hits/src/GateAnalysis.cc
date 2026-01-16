@@ -424,6 +424,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 					  if (crystalTrackID == photon1ID) photon1_crystal_compton++;
 					  if (crystalTrackID == photon2ID) photon2_crystal_compton++;
+					  if (crystalTrackID == photon3ID) photon3_crystal_compton++;
 					}
 
 				  // Counting Rayleigh scatter in crystal
@@ -432,6 +433,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 					  if (crystalTrackID == photon1ID) photon1_crystal_Rayleigh++;
 					  if (crystalTrackID == photon2ID) photon2_crystal_Rayleigh++;
+					  if (crystalTrackID == photon3ID) photon3_crystal_Rayleigh++;
 					}
 
 				  G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
