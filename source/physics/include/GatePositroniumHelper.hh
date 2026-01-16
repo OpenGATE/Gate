@@ -20,10 +20,10 @@ public:
 
 private:
 //For now stored as a internal parameter. To check if there is already defined value somewhere
-  float fpPsLifetime = 0.125; //ps
-  float fPPsToOPsFrac = 1.0/3.0;
-  float fOPsMeanLifetime = 142.; //ns
-  float fHyperfineCoef = 372;
+  float fParaPsLifetime = 0.125; //ps
+  float fParaToOrthoPsFraction = 1.0/3.0;
+  float fOrthoPsMeanLifetime = 142.; //ns
+  float fHyperfineCoefficient = 372;
 };
 
 #endif

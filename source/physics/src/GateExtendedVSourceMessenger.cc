@@ -78,7 +78,7 @@ void GateExtendedVSourceMessenger::InitCommands()
  upCmdSetPositroniumFractions.reset(GetStringCmd( "setPositroniumFractions", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] and sum of all fi ==1" ) );
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where" ) );
  upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2gamma or k3gamma" ) );
- upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kpPs, kdirect or koPs" ) );
+ upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kpPs, kdirect or koPs, of a given element in vector of components. Used to properly recalculate intensities of the components from the theory" ) );
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
 }
@@ -111,10 +111,8 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
    std::stringstream ss(new_value);
    float prob;
    while (ss >> prob) {
-     if (prob < 0)
-       prob = 0;
-     else if (prob > 1)
-       prob = 1;
+     prob = prob < 0 ? 0 : prob;
+     prob = prob > 1 ? 1 : prob;
      promptPhotonProb.push_back(prob);
    }
    fParamGenerator.SetPromptGammaProbabilities(promptPhotonProb);
