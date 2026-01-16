@@ -156,20 +156,25 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 			  //G4int positronID = 0; // no more needed
 			  G4int photon1ID  = 0;
 			  G4int photon2ID  = 0;
+			  G4int photon3ID  = 0;
 			  G4int rootID     = 0;
 			  G4int primaryID  = 0;
 
 			  G4int photon1_phantom_compton = 0;
 			  G4int photon2_phantom_compton = 0;
+			  G4int photon3_phantom_compton = 0;
 
 			  G4int photon1_crystal_compton = 0;
 			  G4int photon2_crystal_compton = 0;
+			  G4int photon3_crystal_compton = 0;
 
 			  G4int photon1_phantom_Rayleigh = 0;
 			  G4int photon2_phantom_Rayleigh = 0;
+			  G4int photon3_phantom_Rayleigh = 0;
 
 			  G4int photon1_crystal_Rayleigh = 0;
 			  G4int photon2_crystal_Rayleigh = 0;
+			  G4int photon3_crystal_Rayleigh = 0;
 
 			  G4int septalNb = 0; // HDS : septal penetration
 
