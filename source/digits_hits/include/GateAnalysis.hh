@@ -69,6 +69,17 @@ private:
   G4String m_septalPhysVolumeName;
   G4bool m_recordSeptalFlag = false;
 
+
+struct PhotonScatterings {
+  G4int photonID = 0;
+  G4int nPhantomCompton = 0;
+  G4int nPhantomRayleigh = 0;
+  G4int nCrystalCompton = 0;
+  G4int nCrystalRayleigh = 0;
+  G4String theComptonVolumeName = "NULL";
+  G4String theRayleighVolumeName = "NULL";
+};
+
 };
 
 #endif
