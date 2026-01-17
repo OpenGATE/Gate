@@ -1386,6 +1386,9 @@ void GateToRoot::CloseTracksRootFile() {
         dxg2_copy = dxg2;
         dyg2_copy = dyg2;
         dzg2_copy = dzg2;
+		dxg3_copy = dxg3;
+        dyg3_copy = dyg3;
+        dzg3_copy = dzg3;
 
         m_positronKinEnergy_copy = m_positronKinEnergy;
         m_ionDecayPos_copy = m_ionDecayPos;
@@ -1417,14 +1420,21 @@ void GateToRoot::PrintRecStep() {
     G4cout << "dxg2 = " << dxg2 << Gateendl;
     G4cout << "dyg2 = " << dyg2 << Gateendl;
     G4cout << "dzg2 = " << dzg2 << Gateendl;
+	G4cout << "dxg3 = " << dxg3 << Gateendl;
+    G4cout << "dyg3 = " << dyg3 << Gateendl;
+    G4cout << "dzg3 = " << dzg3 << Gateendl;
     G4cout << "photon1_phantom_Rayleigh = " << theCRData.photon2_phantom_Rayleigh << Gateendl;
     G4cout << "photon2_phantom_Rayleigh = " << theCRData.photon2_phantom_Rayleigh << Gateendl;
+	G4cout << "photon3_phantom_Rayleigh = " << theCRData.photon3_phantom_Rayleigh << Gateendl;
     G4cout << "photon1_phantom_compton = " << theCRData.photon1_phantom_compton << Gateendl;
     G4cout << "photon2_phantom_compton  = " << theCRData.photon2_phantom_compton << Gateendl;
+	G4cout << "photon3_phantom_compton  = " << theCRData.photon3_phantom_compton << Gateendl;
     G4cout << "theComptonVolumeName1   = " << theCRData.theComptonVolumeName1 << Gateendl;
     G4cout << "theComptonVolumeName2   = " << theCRData.theComptonVolumeName2 << Gateendl;
+	G4cout << "theComptonVolumeName3   = " << theCRData.theComptonVolumeName3 << Gateendl;
     G4cout << "theRayleighVolumeName1   = " << theCRData.theRayleighVolumeName1 << Gateendl;
     G4cout << "theRayleighVolumeName2   = " << theCRData.theRayleighVolumeName2 << Gateendl;
+	G4cout << "theRayleighVolumeName3   = " << theCRData.theRayleighVolumeName3 << Gateendl;
     G4cout << "--------------------- COPY------------------------------\n";
     G4cout << "Ion Decay Position = " << m_ionDecayPos_copy << Gateendl;
     G4cout << "positron Generation Position = " << m_positronGenerationPos_copy << Gateendl;
@@ -1436,14 +1446,21 @@ void GateToRoot::PrintRecStep() {
     G4cout << "dxg2 = " << dxg2_copy << Gateendl;
     G4cout << "dyg2 = " << dyg2_copy << Gateendl;
     G4cout << "dzg2 = " << dzg2_copy << Gateendl;
-    G4cout << "photon1_phantom_Rayleigh = " << theCRData_copy.photon2_phantom_Rayleigh << Gateendl;
+	G4cout << "dxg3 = " << dxg3_copy << Gateendl;
+    G4cout << "dyg3 = " << dyg3_copy << Gateendl;
+    G4cout << "dzg3 = " << dzg3_copy << Gateendl;
+    G4cout << "photon1_phantom_Rayleigh = " << theCRData_copy.photon1_phantom_Rayleigh << Gateendl;
     G4cout << "photon2_phantom_Rayleigh = " << theCRData_copy.photon2_phantom_Rayleigh << Gateendl;
+	G4cout << "photon3_phantom_Rayleigh = " << theCRData_copy.photon3_phantom_Rayleigh << Gateendl;
     G4cout << "photon1_phantom_compton = " << theCRData_copy.photon1_phantom_compton << Gateendl;
     G4cout << "photon2_phantom_compton  = " << theCRData_copy.photon2_phantom_compton << Gateendl;
+	G4cout << "photon3_phantom_compton  = " << theCRData_copy.photon3_phantom_compton << Gateendl;
     G4cout << "theComptonVolumeName1   = " << theCRData_copy.theComptonVolumeName1 << Gateendl;
     G4cout << "theComptonVolumeName2   = " << theCRData_copy.theComptonVolumeName2 << Gateendl;
+	G4cout << "theComptonVolumeName3   = " << theCRData_copy.theComptonVolumeName3 << Gateendl;
     G4cout << "theRayleighVolumeName1   = " << theCRData_copy.theRayleighVolumeName1 << Gateendl;
     G4cout << "theRayleighVolumeName2   = " << theCRData_copy.theRayleighVolumeName2 << Gateendl;
+	G4cout << "theRayleighVolumeName3   = " << theCRData_copy.theRayleighVolumeName3 << Gateendl;
 }
 
 /// OPEN ROOT TRACKS DATA FILE IN READ MODE
@@ -1580,14 +1597,21 @@ void GateToRoot::OpenTracksFile() {
     m_RecStepTree->SetBranchAddress(G4String("dxg2").c_str(), &dxg2);
     m_RecStepTree->SetBranchAddress(G4String("dyg2").c_str(), &dyg2);
     m_RecStepTree->SetBranchAddress(G4String("dzg2").c_str(), &dzg2);
+	m_RecStepTree->SetBranchAddress(G4String("dxg3").c_str(), &dxg3);
+    m_RecStepTree->SetBranchAddress(G4String("dyg3").c_str(), &dyg3);
+    m_RecStepTree->SetBranchAddress(G4String("dzg3").c_str(), &dzg3);
     m_RecStepTree->SetBranchAddress(G4String("photon1PhR").c_str(), &theCRData.photon1_phantom_Rayleigh);
     m_RecStepTree->SetBranchAddress(G4String("photon2PhR").c_str(), &theCRData.photon2_phantom_Rayleigh);
+	m_RecStepTree->SetBranchAddress(G4String("photon3PhR").c_str(), &theCRData.photon3_phantom_Rayleigh);
     m_RecStepTree->SetBranchAddress(G4String("photon1PhC").c_str(), &theCRData.photon1_phantom_compton);
     m_RecStepTree->SetBranchAddress(G4String("photon2PhC").c_str(), &theCRData.photon2_phantom_compton);
+	m_RecStepTree->SetBranchAddress(G4String("photon3PhC").c_str(), &theCRData.photon3_phantom_compton);
     m_RecStepTree->SetBranchAddress(G4String("ComptVol1").c_str(), &theCRData.theComptonVolumeName1);
     m_RecStepTree->SetBranchAddress(G4String("ComptVol2").c_str(), &theCRData.theComptonVolumeName2);
+	m_RecStepTree->SetBranchAddress(G4String("ComptVol3").c_str(), &theCRData.theComptonVolumeName3);
     m_RecStepTree->SetBranchAddress(G4String("RaylVol1").c_str(), &theCRData.theRayleighVolumeName1);
     m_RecStepTree->SetBranchAddress(G4String("RaylVol2").c_str(), &theCRData.theRayleighVolumeName2);
+	m_RecStepTree->SetBranchAddress(G4String("RaylVol3").c_str(), &theCRData.theRayleighVolumeName3);
     m_RecStepTree->SetBranchAddress(G4String("RunID").c_str(), &m_RSRunID);
 
     //  rewind counters
@@ -1602,24 +1626,31 @@ void GateToRoot::OpenTracksFile() {
 void GateToRoot::RecordPHData(ComptonRayleighData aCRData) {
     theCRData.photon1_phantom_Rayleigh = aCRData.photon1_phantom_Rayleigh;
     theCRData.photon2_phantom_Rayleigh = aCRData.photon1_phantom_Rayleigh;
+	theCRData.photon3_phantom_Rayleigh = aCRData.photon1_phantom_Rayleigh;
     theCRData.photon1_phantom_compton = aCRData.photon1_phantom_compton;
     theCRData.photon2_phantom_compton = aCRData.photon2_phantom_compton;
+	theCRData.photon3_phantom_compton = aCRData.photon3_phantom_compton;
     strcpy(theCRData.theComptonVolumeName1, aCRData.theComptonVolumeName1);
     strcpy(theCRData.theComptonVolumeName2, aCRData.theComptonVolumeName2);
+	strcpy(theCRData.theComptonVolumeName3, aCRData.theComptonVolumeName3);
     strcpy(theCRData.theRayleighVolumeName1, aCRData.theRayleighVolumeName1);
     strcpy(theCRData.theRayleighVolumeName2, aCRData.theRayleighVolumeName2);
+	strcpy(theCRData.theRayleighVolumeName3, aCRData.theRayleighVolumeName3);
 }
 
 void GateToRoot::GetPHData(ComptonRayleighData &aCRData) {
     aCRData.photon1_phantom_Rayleigh = theCRData.photon1_phantom_Rayleigh;
     aCRData.photon2_phantom_Rayleigh = theCRData.photon1_phantom_Rayleigh;
+	aCRData.photon3_phantom_Rayleigh = theCRData.photon1_phantom_Rayleigh;
     aCRData.photon1_phantom_compton = theCRData.photon1_phantom_compton;
     aCRData.photon2_phantom_compton = theCRData.photon2_phantom_compton;
+	aCRData.photon3_phantom_compton = theCRData.photon3_phantom_compton;
     strcpy(aCRData.theComptonVolumeName1, theCRData.theComptonVolumeName1);
     strcpy(aCRData.theComptonVolumeName2, theCRData.theComptonVolumeName2);
+	strcpy(aCRData.theComptonVolumeName3, theCRData.theComptonVolumeName3);
     strcpy(aCRData.theRayleighVolumeName1, theCRData.theRayleighVolumeName1);
     strcpy(aCRData.theRayleighVolumeName2, theCRData.theRayleighVolumeName2);
-
+	strcpy(aCRData.theRayleighVolumeName3, theCRData.theRayleighVolumeName3);
 }
 
 void GateToRoot::GetCurrentRecStepData(const G4Event *evt) {
