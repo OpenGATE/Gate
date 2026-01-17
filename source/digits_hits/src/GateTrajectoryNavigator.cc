@@ -183,17 +183,23 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
       // considered by GateAnalysis
       G4int i1;
       G4int i2;
+	  G4int i3;
       for (G4int j1=0; j1<nPh; j1++) {
 	for (G4int j2=j1+1; j2<nPh; j2++) {
+		for (G4int j3=j1+1; j2<nPh; j2++) {
 	  i1 = photonIndices[j1];
 	  i2 = photonIndices[j2];
-	  if ((i1 >= 0) && (i2 >= 0)) {
+	  i3 = photonIndices[j3];
+	  if ((i1 >= 0) && (i2 >= 0) && (i3 >= 0)) {
 	    // both gammas were not already taken
 	    G4Trajectory* trj1 = (G4Trajectory*)((*m_trajectoryContainer)[i1]);
 	    G4Trajectory* trj2 = (G4Trajectory*)((*m_trajectoryContainer)[i2]);
+		G4Trajectory* trj3 = (G4Trajectory*)((*m_trajectoryContainer)[i3]);
 
 	    G4ThreeVector vert1 = ((G4TrajectoryPoint*)(trj1->GetPoint(0)))->GetPosition();
 	    G4ThreeVector vert2 = ((G4TrajectoryPoint*)(trj2->GetPoint(0)))->GetPosition();
+		G4ThreeVector vert3 = ((G4TrajectoryPoint*)(trj3->GetPoint(0)))->GetPosition();
+		  
 	    // in detector mode the vertex position is stored at the last trajectory point
 	    // not the first one
 	    if (  theMode == TrackingMode::kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
@@ -202,6 +208,8 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
                 vert1 = ((G4TrajectoryPoint*)(trj1->GetPoint( n_points - 1 )))->GetPosition();
                 n_points =trj2->GetPointEntries();
                 vert2 = ((G4TrajectoryPoint*)(trj2->GetPoint( n_points - 1 )))->GetPosition();
+				n_points =trj3->GetPointEntries();
+                vert3 = ((G4TrajectoryPoint*)(trj3->GetPoint( n_points - 1 )))->GetPosition();
               }
 
 	    G4double dist = (vert1-vert2).mag();
@@ -215,6 +223,7 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
 	      // we add both photons to the vertex
 	      m_photonIDVec.push_back(trj1->GetTrackID());
 	      m_photonIDVec.push_back(trj2->GetTrackID());
+		  m_photonIDVec.push_back(trj3->GetTrackID());
 	      // we cancel the 2nd photon from the list to avoid double counting later
 	      photonIndices[j2] = -1;
 	    }
