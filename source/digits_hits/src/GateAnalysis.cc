@@ -144,6 +144,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
       for (size_t i=0; i<CHC_vector.size();i++ )
       {
       GateHitsCollection* CHC = CHC_vector[i];
+	  std::vector<PhotonScatterings> photon_scatterings(3);
       G4int NbHits = 0;
       G4int NpHits = 0;
 
@@ -154,6 +155,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 			  //G4int ionID      = 1; // the primary vertex particle
 			  //G4int positronID = 0; // no more needed
+			/*
 			  G4int photon1ID  = 0;
 			  G4int photon2ID  = 0;
 			  G4int photon3ID  = 0;
@@ -175,13 +177,14 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 			  G4int photon1_crystal_Rayleigh = 0;
 			  G4int photon2_crystal_Rayleigh = 0;
 			  G4int photon3_crystal_Rayleigh = 0;
+			*/
 
 			  G4int septalNb = 0; // HDS : septal penetration
 
 		  ////////////
 			  // search the positron
 			  //positronID = // No more needed
-			  m_trajectoryNavigator->FindPositronTrackID();
+			//  m_trajectoryNavigator->FindPositronTrackID();
 
 			  /*if (positronID == 0)
 				{
@@ -193,7 +196,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 		  ////////////
 		  //search the two gammas
-
+    /*
 			  std::vector<G4int> photonIDVec = m_trajectoryNavigator->FindAnnihilationGammasTrackID();
 			  if (photonIDVec.size() == 0)
 				{
@@ -228,8 +231,16 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 			  if (nVerboseLevel > 1) G4cout
 									   << "GateAnalysis::RecordEndOfEvent : photon1ID : " << photon1ID
 									   << "     photon2ID : " << photon2ID << Gateendl;
-
-
+       */
+			 // new
+			m_trajectoryNavigator->FindPositronTrackID();
+			std::vector<G4int> photonIDVec = m_trajectoryNavigator->FindAnnihilationGammasTrackID();
+			if (photonIDVec.size() > 0) {
+				photon_scatterings[0].photonID = photonIDVec[0];
+				photon_scatterings[1].photonID = (photonIDVec.size() >= 2) ? photonIDVec[1] : 0;
+				photon_scatterings[2].photonID = (photonIDVec.size() >= 3) ? photonIDVec[2] : 0;
+			}
+			// new
 			  // analysis of the phantom hits to count the comptons, etc.
 
 			  GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
@@ -277,6 +288,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 				  // modif. by CJG to separate Compton and Rayleigh photons
 				  if (processName.find("ompt") != G4String::npos)
 					{
+					/*
 					  if ((phantomTrackID == photon1ID)||(phantomTrackID == photon2ID))
 						{
 						  G4Navigator *gNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
@@ -345,11 +357,51 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 						  photon3_phantom_Rayleigh++;
 						  theRayleighVolumeName3 = theRayleighVolumeName;
 						  if (nVerboseLevel > 0) G4cout
-												   << "GateAnalysis::RecordEndOfEvent : photon2_phantom_Rayleigh : " << photon3_phantom_Rayleigh << Gateendl;
+												   << "GateAnalysis::RecordEndOfEvent : photon3_phantom_Rayleigh : " << photon3_phantom_Rayleigh << Gateendl;
 						}
 
 					}
+				 */	
+
+						auto it = std::find_if(
+ photon_scatterings.begin(),
+ photon_scatterings.end(),
+ [&](PhotonScatterings& ps) {
+   return ps.photonID == phantomTrackID;
+ });
+
+if (it != photon_scatterings.end()) {
+
+ const bool isCompton =
+   processName.find("ompt") != G4String::npos;
+
+ const bool isRayleigh =
+   processName.find("Rayl") != G4String::npos;
+
+ if (isCompton || isRayleigh) {
+
+   G4Navigator* gNavigator = G4TransportationManager::GetTransportationManager() ->GetNavigatorForTracking();
+
+   G4ThreeVector zero(0,0,0);
+
+   G4String volumeName =
+	gNavigator->LocateGlobalPointAndSetup(hitPos,&zero,false)
+	->GetName();
+
+   if (isCompton) {
+ 	it->nPhantomCompton++;
+ 	it->theComptonVolumeName = volumeName;
+   }
+
+   if (isRayleigh) {
+ 	it->nPhantomRayleigh++;
+ 	it->theRayleighVolumeName = volumeName;
+   }
+ }
+}
+						
 				} // end loop NpHits
+					
 
 			  TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 
