@@ -118,6 +118,7 @@ G4int GateTrajectoryNavigator::FindPositronTrackID()
 
 
 /* modifs pour cas du mode detector : PY Descourt 08/09/2009 */
+/* commented for 2 + 1
 std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
 {
 
@@ -248,10 +249,148 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
   }*/
 
 
+//  return m_photonIDVec;
+//}
+
+//commnetd 
+*/
+
+/* 2 + 1*/
+std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
+{
+  m_photonIDVec.clear();
+
+  if (nVerboseLevel > 2)
+	G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID\n";
+
+  if (!m_trajectoryContainer) {
+	G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID : ERROR : NULL trajectoryContainer\n";
+	return m_photonIDVec;
+  }
+
+  std::vector<G4int> photonIndices = GetPhotonIndices();
+
+  G4int nPh = photonIndices.size();
+
+  if (nPh == 1) {
+
+	G4Trajectory* trj =
+  	(G4Trajectory*)((*m_trajectoryContainer)[photonIndices[0]]);
+
+	m_photonIDVec.push_back(trj->GetTrackID());
+
+  }
+  else if (nPh == 2) {
+
+	G4Trajectory* trj1 =
+  	(G4Trajectory*)((*m_trajectoryContainer)[photonIndices[0]]);
+	G4Trajectory* trj2 =
+  	(G4Trajectory*)((*m_trajectoryContainer)[photonIndices[1]]);
+
+	m_photonIDVec.push_back(trj1->GetTrackID());
+	m_photonIDVec.push_back(trj2->GetTrackID());
+
+  }
+  else if (nPh >= 3) {
+
+	FillPhotonIDsForThreePhotons(photonIndices);
+
+  }
+
   return m_photonIDVec;
 }
+	
+void GateTrajectoryNavigator::FillPhotonIDsForThreePhotons(std::vector<G4int>& photonIndices)
+{
+  TrackingMode theMode =
+	((GateSteppingAction*)GateRunManager::GetRunManager()
+  	->GetUserSteppingAction())->GetMode();
 
+  G4int nPh = photonIndices.size();
 
+  for (G4int j1 = 0; j1 < nPh; j1++) {
+	for (G4int j2 = j1 + 1; j2 < nPh; j2++) {
+  	for (G4int j3 = j2 + 1; j3 < nPh; j3++) {
+
+    	G4int i1 = photonIndices[j1];
+    	G4int i2 = photonIndices[j2];
+    	G4int i3 = photonIndices[j3];
+
+    	if (i1 < 0 || i2 < 0 || i3 < 0) continue;
+
+    	G4Trajectory* trj1 =
+      	(G4Trajectory*)((*m_trajectoryContainer)[i1]);
+    	G4Trajectory* trj2 =
+      	(G4Trajectory*)((*m_trajectoryContainer)[i2]);
+    	G4Trajectory* trj3 =
+      	(G4Trajectory*)((*m_trajectoryContainer)[i3]);
+
+    	G4ThreeVector v1 =
+      	((G4TrajectoryPoint*)trj1->GetPoint(0))->GetPosition();
+    	G4ThreeVector v2 =
+      	((G4TrajectoryPoint*)trj2->GetPoint(0))->GetPosition();
+    	G4ThreeVector v3 =
+      	((G4TrajectoryPoint*)trj3->GetPoint(0))->GetPosition();
+
+    	if (theMode == TrackingMode::kDetector) {
+      	v1 = ((G4TrajectoryPoint*)
+            	trj1->GetPoint(trj1->GetPointEntries()-1))->GetPosition();
+      	v2 = ((G4TrajectoryPoint*)
+            	trj2->GetPoint(trj2->GetPointEntries()-1))->GetPosition();
+      	v3 = ((G4TrajectoryPoint*)
+            	trj3->GetPoint(trj3->GetPointEntries()-1))->GetPosition();
+    	}
+
+    	if ((v1-v2).mag()/mm < 1E-7 &&
+        	(v2-v3).mag()/mm < 1E-7) {
+
+      	m_photonIDVec.push_back(trj1->GetTrackID());
+      	m_photonIDVec.push_back(trj2->GetTrackID());
+      	m_photonIDVec.push_back(trj3->GetTrackID());
+
+      	photonIndices[j1] =
+      	photonIndices[j2] =
+      	photonIndices[j3] = -1;
+
+      	return;
+    	}
+  	}
+	}
+  }
+}
+
+std::vector<G4int> GateTrajectoryNavigator::GetPhotonIndices()
+{
+  std::vector<G4int> photonIndices;
+
+  SetIonID();
+
+  if (!m_trajectoryContainer) return photonIndices;
+
+  G4int n_trajectories = m_trajectoryContainer->entries();
+
+  for (G4int iTrj = 0; iTrj < n_trajectories; iTrj++) {
+
+	G4Trajectory* trj =
+  	(G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
+
+	if (m_positronTrackID != 0) {
+  	if ((trj->GetParentID() == m_positronTrackID) &&
+      	(trj->GetPDGEncoding() == 22)) {
+    	photonIndices.push_back(iTrj);
+  	}
+	} else {
+  	if ((trj->GetParentID() >= 0) &&
+      	(trj->GetPDGEncoding() == 22)) {
+    	photonIndices.push_back(iTrj);
+  	}
+	}
+  }
+
+  return photonIndices;
+}
+/* 2 + 1*/
+	
 // search the gamma from which this track comes --> photonID
 G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
 {
@@ -277,7 +416,7 @@ G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
 
       // we go up and up, starting from the present trackID, to the parentID, the parentID, ecc until
       // we find that the ID of the track is equal to the ID of: one of the photons, or rootID(==0)
-      while (!((photonID==photon1ID)||(photonID==photon2ID)||(photonID==rootID))) {
+      while (!((photonID==photon1ID)||(photonID==photon2ID)|| (photonID==photon3ID) || (photonID==rootID))) {
 	found = false;
 	G4int n_trajectories = m_trajectoryContainer->entries();
 	for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); iTrj++) {
@@ -296,6 +435,9 @@ G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
 	photonID = 1;
       } else if (photonID == photon2ID) {
 	photonID = 2;
+      }
+      } else if (photonID == photon3ID) {
+	photonID = 3;
       }
 
     }
