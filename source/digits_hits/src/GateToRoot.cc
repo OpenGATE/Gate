@@ -76,23 +76,31 @@ ComptonRayleighData::ComptonRayleighData() { ; }
 ComptonRayleighData::ComptonRayleighData(ComptonRayleighData &aCRData) {
     photon1_phantom_Rayleigh = aCRData.photon1_phantom_Rayleigh;
     photon2_phantom_Rayleigh = aCRData.photon2_phantom_Rayleigh;
+	photon3_phantom_Rayleigh = aCRData.photon3_phantom_Rayleigh;
     photon1_phantom_compton = aCRData.photon1_phantom_compton;
     photon2_phantom_compton = aCRData.photon2_phantom_compton;
+	photon3_phantom_compton = aCRData.photon3_phantom_compton;
     strcpy(theComptonVolumeName1, aCRData.theComptonVolumeName1);
     strcpy(theComptonVolumeName2, aCRData.theComptonVolumeName2);
+	strcpy(theComptonVolumeName3, aCRData.theComptonVolumeName3);
     strcpy(theRayleighVolumeName1, aCRData.theRayleighVolumeName1);
     strcpy(theRayleighVolumeName2, aCRData.theRayleighVolumeName2);
+	strcpy(theRayleighVolumeName3, aCRData.theRayleighVolumeName3);
 }
 
 ComptonRayleighData &ComptonRayleighData::operator=(const ComptonRayleighData &aCR) {
     photon1_phantom_Rayleigh = aCR.photon1_phantom_Rayleigh;
     photon2_phantom_Rayleigh = aCR.photon2_phantom_Rayleigh;
+	photon3_phantom_Rayleigh = aCR.photon3_phantom_Rayleigh;
     photon1_phantom_compton = aCR.photon1_phantom_compton;
     photon2_phantom_compton = aCR.photon2_phantom_compton;
+	photon3_phantom_compton = aCR.photon3_phantom_compton;
     strcpy(theComptonVolumeName1, aCR.theComptonVolumeName1);
     strcpy(theComptonVolumeName2, aCR.theComptonVolumeName2);
+	strcpy(theComptonVolumeName3, aCR.theComptonVolumeName3);
     strcpy(theRayleighVolumeName1, aCR.theRayleighVolumeName1);
     strcpy(theRayleighVolumeName2, aCR.theRayleighVolumeName2);
+	strcpy(theRayleighVolumeName3, aCR.theRayleighVolumeName3);
     return *this;
 }
 
@@ -517,14 +525,21 @@ void GateToRoot::RecordBeginOfAcquisition() {
         m_RecStepTree->Branch(G4String("dxg2").c_str(), &dxg2, "dxg2/D");
         m_RecStepTree->Branch(G4String("dyg2").c_str(), &dyg2, "dyg2/D");
         m_RecStepTree->Branch(G4String("dzg2").c_str(), &dzg2, "dzg2/D");
+		m_RecStepTree->Branch(G4String("dxg3").c_str(), &dxg3, "dxg3/D");
+        m_RecStepTree->Branch(G4String("dyg3").c_str(), &dyg3, "dyg3/D");
+        m_RecStepTree->Branch(G4String("dzg3").c_str(), &dzg3, "dzg3/D");
         m_RecStepTree->Branch(G4String("photon1PhR").c_str(), &theCRData.photon1_phantom_Rayleigh, "photon1PhR/I");
         m_RecStepTree->Branch(G4String("photon2PhR").c_str(), &theCRData.photon2_phantom_Rayleigh, "photon2PhR/I");
+		m_RecStepTree->Branch(G4String("photon3PhR").c_str(), &theCRData.photon3_phantom_Rayleigh, "photon3PhR/I");
         m_RecStepTree->Branch(G4String("photon1PhC").c_str(), &theCRData.photon1_phantom_compton, "photon1PhC/I");
         m_RecStepTree->Branch(G4String("photon2PhC").c_str(), &theCRData.photon2_phantom_compton, "photon2PhC/I");
+		m_RecStepTree->Branch(G4String("photon3PhC").c_str(), &theCRData.photon3_phantom_compton, "photon3PhC/I");
         m_RecStepTree->Branch(G4String("ComptVol1").c_str(), &theCRData.theComptonVolumeName1, "ComptVol1/C");
         m_RecStepTree->Branch(G4String("ComptVol2").c_str(), &theCRData.theComptonVolumeName2, "ComptVol2/C");
+		m_RecStepTree->Branch(G4String("ComptVol3").c_str(), &theCRData.theComptonVolumeName3, "ComptVol3/C");
         m_RecStepTree->Branch(G4String("RaylVol1").c_str(), &theCRData.theRayleighVolumeName1, "RaylVol1/C");
         m_RecStepTree->Branch(G4String("RaylVol2").c_str(), &theCRData.theRayleighVolumeName2, "RaylVol2/C");
+		m_RecStepTree->Branch(G4String("RaylVol3").c_str(), &theCRData.theRayleighVolumeName3, "RaylVol3/C");
         m_RecStepTree->Branch(G4String("EventID").c_str(), &m_RSEventID, "EventID/I");
         m_RecStepTree->Branch(G4String("RunID").c_str(), &m_RSRunID, "RunID/I");
         ////////////////////////
@@ -709,12 +724,16 @@ void GateToRoot::RecordBeginOfEvent(const G4Event *evt) {
 
     theCRData.photon1_phantom_Rayleigh = 0;
     theCRData.photon2_phantom_Rayleigh = 0;
+	theCRData.photon3_phantom_Rayleigh = 0;
     theCRData.photon1_phantom_compton = 0;
     theCRData.photon2_phantom_compton = 0;
+	theCRData.photon3_phantom_compton = 0;
     strcpy(theCRData.theComptonVolumeName1, G4String("NULL").c_str());
     strcpy(theCRData.theComptonVolumeName2, G4String("NULL").c_str());
+	strcpy(theCRData.theComptonVolumeName3, G4String("NULL").c_str());
     strcpy(theCRData.theRayleighVolumeName1, G4String("NULL").c_str());
     strcpy(theCRData.theRayleighVolumeName2, G4String("NULL").c_str());
+	strcpy(theCRData.theRayleighVolumeName3, G4String("NULL").c_str());
     m_ionDecayPos = G4ThreeVector(0., 0., 0.);
     m_positronGenerationPos = G4ThreeVector(0., 0., 0.);
     m_positronAnnihilPos = G4ThreeVector(0., 0., 0.);
@@ -724,15 +743,22 @@ void GateToRoot::RecordBeginOfEvent(const G4Event *evt) {
     dxg2 = 0.;
     dyg2 = 0.;
     dzg2 = 0.;
+	dxg3 = 0.;
+    dyg3 = 0.;
+    dzg3 = 0.;
 
     theCRData.photon1_phantom_Rayleigh = 0;
     theCRData.photon2_phantom_Rayleigh = 0;
+	theCRData.photon3_phantom_Rayleigh = 0;
     theCRData.photon1_phantom_compton = 0;
     theCRData.photon2_phantom_compton = 0;
+	theCRData.photon3_phantom_compton = 0;
     strcpy(theCRData.theComptonVolumeName1, G4String("NULL").c_str());
     strcpy(theCRData.theComptonVolumeName2, G4String("NULL").c_str());
+	strcpy(theCRData.theComptonVolumeName3, G4String("NULL").c_str());
     strcpy(theCRData.theRayleighVolumeName1, G4String("NULL").c_str());
     strcpy(theCRData.theRayleighVolumeName2, G4String("NULL").c_str());
+	 strcpy(theCRData.theRayleighVolumeName3, G4String("NULL").c_str());
 
 
     TrackingMode theMode = ((GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()))->GetMode();
@@ -755,6 +781,9 @@ void GateToRoot::RecordBeginOfEvent(const G4Event *evt) {
             dxg2 = dxg2_copy;
             dyg2 = dyg2_copy;
             dzg2 = dzg2_copy;
+			dxg3 = dxg2_copy;
+            dyg3 = dyg2_copy;
+            dzg3 = dzg2_copy;
             fSkipRecStepData = 0;
             //G4cout << "GateToRoot::RecordBeginOfEvent \n";
             //PrintRecStep();
