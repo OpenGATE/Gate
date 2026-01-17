@@ -39,6 +39,9 @@ public:
 
   G4int         FindPrimaryID(G4int trackID);
 
+  std::vector<G4int> GetPhotonIndices();
+  void FillPhotonIDsForThreePhotons(std::vector<G4int>& photonIndices);
+
   void          Initialize();
 
   void                          SetTrajectoryContainer(G4TrajectoryContainer* trajectoryContainer);
