@@ -1159,7 +1159,7 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step *aStep) 
             } else {
                 procName = "";
             }
-            if (aStep->GetTrack()->GetTrackID() == 2 && procName == "annihil") {
+            if (aStep->GetTrack()->GetTrackID() == 2 && procName == "prompt") {
 
                 dxg1 = momentumDirection.x();
                 dyg1 = momentumDirection.y();
@@ -1171,6 +1171,11 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step *aStep) 
                 dxg2 = momentumDirection.x();
                 dyg2 = momentumDirection.y();
                 dzg2 = momentumDirection.z();
+            }
+			if (aStep->GetTrack()->GetTrackID() == 4 && procName == "annihil") {
+               dxg3 = momentumDirection.x();
+               dyg3 = momentumDirection.y();
+               dzg3 = momentumDirection.z();
             }
         }
 
