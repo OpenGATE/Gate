@@ -4,6 +4,9 @@
 
 #include "GateMessageManager.hh"
 #include "GatePositroniumHelper.hh"
+#include "GatePositroniumConstants.hh"
+
+using namespace gate_positronium_constants;
 
 PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetimes(PositroniumDecayModelParams params)
 {
@@ -35,7 +38,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
   float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
   if (pPsIntens > 0) {
     paramsOut.fFractions.push_back(pPsIntens);
-    paramsOut.fLifetimes.push_back(fParaPsLifetime);
+    paramsOut.fLifetimes.push_back(kParaPsLifetime_ps);
     paramsOut.fPromptGammaProbabilities.push_back(paramsOut.fPromptGammaProbabilities.at(0));
     paramsOut.fPromptGammaEnergy.push_back(paramsOut.fPromptGammaEnergy.at(0));
     paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
@@ -57,19 +60,19 @@ float GatePositroniumHelper::CalcPPsFractionFromOPs(std::vector<float> fractions
     ++itFrac;
     ++itDec;
   }
-  return sum*fParaToOrthoPsFraction ;
+  return sum*kParaToOrthoPsFraction ;
 }
 
 std::pair<float, float> GatePositroniumHelper::CalcFractionsFromLifetime(float intensity, float lifetime, PositronElectronInteraction inter) {
   float intens2G = 1., intens3G = 0.;
   switch (inter) {
     case PositronElectronInteraction::kDirect:
-      intens2G = intensity*(fHyperfineCoefficient  - 1.)/fHyperfineCoefficient;
-      intens3G = intensity/fHyperfineCoefficient;
+      intens2G = intensity*(kHyperfineCoefficient  - 1.)/kHyperfineCoefficient;
+      intens3G = intensity/kHyperfineCoefficient;
       break;
     case PositronElectronInteraction::koPs:
-      intens2G = intensity*(fOrthoPsMeanLifetime  - lifetime)/fOrthoPsMeanLifetime;
-      intens3G = intensity*lifetime/fOrthoPsMeanLifetime;
+      intens2G = intensity*(kOrthoPsMeanLifetime_ns  - lifetime)/kOrthoPsMeanLifetime_ns;
+      intens3G = intensity*lifetime/kOrthoPsMeanLifetime_ns;
       break;
   }
   return std::make_pair(intens2G, intens3G);
@@ -80,14 +83,14 @@ float GatePositroniumHelper::CalcFractionFromOPsLifetime(float intensity, float 
   if (intensity > 0 && lifetime > 0) {
     switch (decay) {
       case PositroniumDecayKind::k2Gamma:
-        nominator = fOrthoPsMeanLifetime  - lifetime;
+        nominator = kOrthoPsMeanLifetime_ns  - lifetime;
         break;
       case PositroniumDecayKind::k3Gamma:
         nominator = lifetime;
         break;
 // If there will be more decays one needs to modify it
     }
-    return intensity*nominator/fOrthoPsMeanLifetime ;
+    return intensity*nominator/kOrthoPsMeanLifetime_ns ;
   } else
     return nominator;
 }
@@ -97,13 +100,13 @@ float GatePositroniumHelper::CalcFractionFromDirectLifetime(float intensity, Pos
   if (intensity > 0) {
     switch (decay) {
       case PositroniumDecayKind::k2Gamma:
-        nominator = fHyperfineCoefficient  - 1.;
+        nominator = kHyperfineCoefficient  - 1.;
         break;
       case PositroniumDecayKind::k3Gamma:
         nominator = 1.;
         break;
     }
-    return intensity*nominator/fHyperfineCoefficient ;
+    return intensity*nominator/kHyperfineCoefficient ;
   } else
     return nominator;
 }

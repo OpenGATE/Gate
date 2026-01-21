@@ -15,13 +15,6 @@ public:
   float CalcFractionFromOPsLifetime(float intensity, float lifetime, PositroniumDecayKind decay);
   float CalcFractionFromDirectLifetime(float intensity, PositroniumDecayKind decay);
   std::vector<float> NormalizeFractions (std::vector<float> fractions);
-
-private:
-//For now stored as a internal parameter. To check if there is already defined value somewhere
-  static constexpr float fParaPsLifetime = 0.125; //ps
-  static constexpr float fParaToOrthoPsFraction = 1.0/3.0;
-  static constexpr float fOrthoPsMeanLifetime = 142.; //ns
-  static constexpr float fHyperfineCoefficient = 372;
 };
 
 #endif
