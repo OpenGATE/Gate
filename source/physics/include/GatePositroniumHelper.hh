@@ -2,8 +2,6 @@
 #define GatePositroniumHelper_h 1
 
 #include "GatePositroniumDecayModelParams.hh"
-#include "GatePositroniumDecayModel.hh"
-#include "globals.hh"
 
 class GatePositroniumHelper
 {
@@ -20,10 +18,10 @@ public:
 
 private:
 //For now stored as a internal parameter. To check if there is already defined value somewhere
-  float fParaPsLifetime = 0.125; //ps
-  float fParaToOrthoPsFraction = 1.0/3.0;
-  float fOrthoPsMeanLifetime = 142.; //ns
-  float fHyperfineCoefficient = 372;
+  static constexpr float fParaPsLifetime = 0.125; //ps
+  static constexpr float fParaToOrthoPsFraction = 1.0/3.0;
+  static constexpr float fOrthoPsMeanLifetime = 142.; //ns
+  static constexpr float fHyperfineCoefficient = 372;
 };
 
 #endif
