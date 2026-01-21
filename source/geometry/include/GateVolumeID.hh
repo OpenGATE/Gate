@@ -76,7 +76,7 @@ class GateVolumeSelector
       - Transfer a position from a volume's reference frame into another volume's reference frame
       - Return a "daughterID" for each level
 */      
-class GateVolumeID : public std::vector<GateVolumeSelector>
+class GateVolumeID
 {
   public:
 
@@ -90,6 +90,20 @@ class GateVolumeID : public std::vector<GateVolumeSelector>
     GateVolumeID(G4int *daughterID, size_t arraySize);
 
     virtual inline ~GateVolumeID() {}
+
+  public: // vector interface
+    inline size_t size() const { return storage.size(); }
+    inline std::vector<GateVolumeSelector>::iterator begin() { return storage.begin(); }
+    inline std::vector<GateVolumeSelector>::const_iterator begin() const { return storage.begin(); }
+    inline std::vector<GateVolumeSelector>::iterator end() { return storage.end(); }
+    inline std::vector<GateVolumeSelector>::const_iterator end() const { return storage.end(); }
+    inline std::vector<GateVolumeSelector>::iterator insert( std::vector<GateVolumeSelector>::iterator position, const GateVolumeSelector& val) {
+        return storage.insert(position, val);
+    }
+    inline GateVolumeSelector& operator[] (size_t n) { return storage[n]; }
+    inline const GateVolumeSelector& operator[] (size_t n) const { return storage[n]; }
+    inline friend bool operator==(const GateVolumeID& lhs, const GateVolumeID& rhs) { return lhs.storage == rhs.storage; }
+    inline void push_back (const GateVolumeSelector& val) { storage.push_back(val); }
 
   public:
     inline G4bool IsValid() const     { return size()!=0; }   	    //!< Returns true for a valid (i.e. not empty) volumeID
@@ -184,10 +198,12 @@ class GateVolumeID : public std::vector<GateVolumeSelector>
 
     //! Printing methods
     friend std::ostream& operator<<(std::ostream&, const GateVolumeID& volumeID);    
+
+  protected:
+    std::vector<GateVolumeSelector> storage;
 };
 
 inline GateVolumeID::GateVolumeID()
- : std::vector<GateVolumeSelector>()
 {}
 
 
