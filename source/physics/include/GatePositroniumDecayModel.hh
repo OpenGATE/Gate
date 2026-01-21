@@ -16,15 +16,14 @@
 #include "GatePositroniumDecayModelParams.hh"
 #include "GatePositronium.hh"
 
-// Todo change the name to GatePositroniumDecayModel
 // Todo2: add docs
-class PositroniumDecayModel:public GateGammaEmissionModel
+class GatePositroniumDecayModel:public GateGammaEmissionModel
 {
   public:
   static int getPositroniumDecayIndex(const std::vector<float>& fractions); 
 
   public:
-  explicit PositroniumDecayModel(const PositroniumDecayModelParams& modelParams);
+  explicit GatePositroniumDecayModel(const PositroniumDecayModelParams& modelParams);
 
   protected:
   virtual G4int GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position) override;

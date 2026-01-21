@@ -13,7 +13,7 @@
 
 #include "GatePositroniumDecayModel.hh"
 
-int PositroniumDecayModel::getPositroniumDecayIndex(const std::vector<float>& fractions) {
+int GatePositroniumDecayModel::getPositroniumDecayIndex(const std::vector<float>& fractions) {
   auto r = G4UniformRand(); 
   float curr_frac_cumulative = 0.0;
   for (int i = 0; i < fractions.size(); ++i) {
@@ -23,7 +23,7 @@ int PositroniumDecayModel::getPositroniumDecayIndex(const std::vector<float>& fr
   return -1;
 }
 
-PositroniumDecayModel::PositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
+GatePositroniumDecayModel::GatePositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
 {
   auto num_of_decay_channels = fModelParams.fDecayKind.size();
   for (int i = 0; i < num_of_decay_channels; i++) {
@@ -36,7 +36,7 @@ PositroniumDecayModel::PositroniumDecayModel(const PositroniumDecayModelParams& 
   }
 }
 
-G4PrimaryVertex* PositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector& particle_position, int decayIndex)
+G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector& particle_position, int decayIndex)
 {
 
  G4double shifted_particle_time = particle_time + G4RandExponential::shoot(fModelParams.fLifetimes[decayIndex]);
@@ -47,9 +47,9 @@ G4PrimaryVertex* PositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnihilat
  return vertex;
 }
 
-G4int PositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position)
+G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position)
 {
-  auto decayIndex = PositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
+  auto decayIndex = GatePositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
 
   G4int number_of_vertices = 1;
   if(fModelParams.fPromptGammaProbabilities[decayIndex] > G4UniformRand()) 
@@ -61,21 +61,21 @@ G4int PositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& p
   return number_of_vertices;
 } 
 
-G4PrimaryParticle* PositroniumDecayModel::GetGammaFromDeexcitation(int decayIndex)
+G4PrimaryParticle* GatePositroniumDecayModel::GetGammaFromDeexcitation(int decayIndex)
 {
  G4PrimaryParticle* gamma = GetSingleGamma(fModelParams.fPromptGammaEnergy[decayIndex]);
  gamma->SetUserInformation( GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt ) );
  return gamma;
 }
 
-G4PrimaryVertex* PositroniumDecayModel::GetPrimaryVertexFromDeexcitation(G4double particle_time, const  G4ThreeVector& particle_position, int decayIndex)
+G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromDeexcitation(G4double particle_time, const  G4ThreeVector& particle_position, int decayIndex)
 {
  G4PrimaryVertex* vertex = new G4PrimaryVertex(particle_position, particle_time);
  vertex->SetPrimary(GetGammaFromDeexcitation(decayIndex));
  return vertex;
 }
 
-std::vector<G4PrimaryParticle*> PositroniumDecayModel::GetGammasFromPositroniumAnnihilation(int decayIndex)
+std::vector<G4PrimaryParticle*> GatePositroniumDecayModel::GetGammasFromPositroniumAnnihilation(int decayIndex)
 { 
  int annihilation_gammas_number = fPositroniumDecayChannel[decayIndex].GetAnnihilationGammasNumber();
  std::vector<G4PrimaryParticle*> gammas(annihilation_gammas_number); 

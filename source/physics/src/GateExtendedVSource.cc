@@ -47,18 +47,18 @@ void GateExtendedVSource::PrepareModel()
 
   if (fModelKind == GateExtendedVSource::ModelKind::Positronium) {
     auto params = pMessenger->generatePositroniumDecayParams();
-    pModel = std::make_unique<PositroniumDecayModel>(params);
+    pModel = std::make_unique<GatePositroniumDecayModel>(params);
   } else {
     if (fModelKind == GateExtendedVSource::ModelKind::ParaPositronium) {
       auto params = pMessenger->generatePositroniumDecayParams(
           GatePositroniumDecayParamsGenerator::kParaPositronium);
-      pModel = std::make_unique<PositroniumDecayModel>(params);
+      pModel = std::make_unique<GatePositroniumDecayModel>(params);
 
     } else {
       if (fModelKind == GateExtendedVSource::ModelKind::OrthoPositronium) {
         auto params = pMessenger->generatePositroniumDecayParams(
             GatePositroniumDecayParamsGenerator::kOrthoPositronium);
-        pModel = std::make_unique<PositroniumDecayModel>(params);
+        pModel = std::make_unique<GatePositroniumDecayModel>(params);
       } else {
         GateError("GateExtendedVSource::PrepareModel - unknown model.");
       }
