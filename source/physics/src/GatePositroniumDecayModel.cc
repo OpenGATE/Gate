@@ -31,7 +31,7 @@ GatePositroniumDecayModel::GatePositroniumDecayModel(const PositroniumDecayModel
     {
       fPositroniumDecayChannel.push_back(std::move(GatePositronium("pPs", fModelParams.fLifetimes[i]* ns)));
     } else {
-      fPositroniumDecayChannel.push_back(std::move(GatePositronium("pPs", fModelParams.fLifetimes[i]* ns)));
+      fPositroniumDecayChannel.push_back(std::move(GatePositronium("oPs", fModelParams.fLifetimes[i]* ns)));
     }
   }
 }
