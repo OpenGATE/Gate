@@ -38,7 +38,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
   float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
   if (pPsIntens > 0) {
     paramsOut.fFractions.push_back(pPsIntens);
-    paramsOut.fLifetimes.push_back(kParaPsLifetime_ps);
+    paramsOut.fLifetimes.push_back(kParaPsLifetime_ns);
     paramsOut.fPromptGammaProbabilities.push_back(paramsOut.fPromptGammaProbabilities.at(0));
     paramsOut.fPromptGammaEnergy.push_back(paramsOut.fPromptGammaEnergy.at(0));
     paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
