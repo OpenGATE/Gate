@@ -52,7 +52,7 @@ G4int PositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& p
   auto decayIndex = PositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
 
   G4int number_of_vertices = 1;
-  if(fModelParams.fIsPromptGamma[decayIndex]) 
+  if(fModelParams.fPromptGammaProbabilities[decayIndex] > G4UniformRand()) 
   { 
     ++number_of_vertices;
     event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
