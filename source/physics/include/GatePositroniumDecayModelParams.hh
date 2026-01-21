@@ -9,9 +9,7 @@
 
 #include <vector>
 
-//#include "GatePositroniumHelper.hh"
-
-enum PositroniumDecayKind { k2Gamma, k3Gamma};
+enum PositroniumDecayKind {k2Gamma, k3Gamma};
 
 enum PositronElectronInteraction {kpPs, kDirect, koPs};
 
