@@ -50,8 +50,8 @@ bool run_tests()
       std::cerr << "Calculation of direct annihilation intensity error" << std::endl;
     }
 
-    float intensityOPs2G = helper.CalcFractionFromOPsLifetime(goodFractions.at(2), PositroniumDecayKind::k2Gamma);
-    float intensityOPs3G = helper.CalcFractionFromOPsLifetime(goodFractions.at(2), PositroniumDecayKind::k3Gamma);
+    float intensityOPs2G = helper.CalcFractionFromOPsLifetime(goodFractions.at(2), lifetimes.at(2), PositroniumDecayKind::k2Gamma);
+    float intensityOPs3G = helper.CalcFractionFromOPsLifetime(goodFractions.at(2), lifetimes.at(2), PositroniumDecayKind::k3Gamma);
     float goodIntensOPs3G = lifetimes.at(2)*goodFractions.at(2)/142.;
     if (intensityOPs3G != goodIntensOPs3G || intensityOPs2G != goodFractions.at(2) - goodIntensOPs3G) {
       res = false;
