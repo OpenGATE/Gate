@@ -1,4 +1,3 @@
-
 /** ----------------------
   Copyright (C): OpenGATE Collaboration
   This software is distributed under the terms
@@ -11,7 +10,6 @@
 #include <optional>
 #include <vector>
 
-#include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayModelParams.hh"
 
 /*! class GatePositroniumDecayParamsGenerator

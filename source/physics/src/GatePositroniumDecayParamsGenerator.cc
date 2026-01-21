@@ -26,7 +26,7 @@ void GatePositroniumDecayParamsGenerator::SetPromptGammaEnergies(const std::vect
 }
 void GatePositroniumDecayParamsGenerator::SetPositroniumFraction(const std::vector<float>& positroniumFractions)
 {
-  fPositroniumFractions = positroniumFractions; 
+  fPositroniumFractions = positroniumFractions;
 }
 
 PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams(const GatePositroniumDecayParamsGenerator::DecayModel model) const
