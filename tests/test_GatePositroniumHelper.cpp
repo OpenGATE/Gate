@@ -32,7 +32,7 @@ bool run_tests()
 
     std::vector<float> fractions = {2, 12, 4, 2};
     std::vector<float> lifetimes = {0.125, 0.4, 2.0, 50.0};
-    std::vector<PositronElectronInteraction> decays = {kpPs, kDirect, koPs, koPs}
+    std::vector<PositronElectronInteraction> decays = {kpPs, kDirect, koPs, koPs};
     std::vector<float> normFractions = helper.NormalizeFractions(fractions);
     std::vector<float> goodFractions = {0.1, 0.6, 0.2, 0.1};
     for (int i=0; i<normFractions.size(); i++) {
