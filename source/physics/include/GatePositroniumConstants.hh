@@ -9,7 +9,7 @@
 
 namespace gate_positronium_constants
 {
-  constexpr double kParaPsLifetime_ns = 0.125; 
+  constexpr double kParaPsLifetime_ns = 0.1244;
   constexpr double kParaToOrthoPsFraction = 1.0/3.0;
   constexpr double kOrthoPsMeanLifetime_ns = 142.;  
   constexpr double kHyperfineCoefficient = 372;

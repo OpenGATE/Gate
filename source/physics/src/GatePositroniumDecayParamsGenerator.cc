@@ -3,6 +3,9 @@
 #include "GateMessageManager.hh"
 #include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayParamsGenerator.hh"
+#include "GatePositroniumConstants.hh"
+
+using namespace gate_positronium_constants;
 
 void GatePositroniumDecayParamsGenerator::SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb)
 {
@@ -34,7 +37,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
   PositroniumDecayModelParams params;
   if (model == GatePositroniumDecayParamsGenerator::kParaPositronium) {
     params.fFractions= {1};
-    params.fLifetimes= {0.1244}; // [ns]
+    params.fLifetimes= {kParaPsLifetime_ns}; // [ns]
     params.fDecayKind= {k2Gamma};
     params.fPositronInteractions= {kpPs};
     if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
@@ -49,7 +52,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
   }
   if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
     params.fFractions= {1};
-    params.fLifetimes= {142}; // [ns]
+    params.fLifetimes= {kOrthoPsMeanLifetime_ns}; // [ns]
     params.fDecayKind= {k3Gamma};
     params.fPositronInteractions= {koPs};
     if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
