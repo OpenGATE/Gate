@@ -4,7 +4,6 @@
 
 #include "GateMessageManager.hh"
 #include "GatePositroniumHelper.hh"
-#include "globals.hh"
 
 PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetimes(PositroniumDecayModelParams params)
 {
