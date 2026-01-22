@@ -10,7 +10,6 @@
 
 #include "TestingTools.h"
 
-
 void initializeGateRunManager(GateRunManager* runManager)
 {
   GateDetectorConstruction* gateDC = new GateDetectorConstruction();
@@ -116,7 +115,7 @@ bool test_vector_size_mismatch()
   //gen.SetPositroniumFraction({0.5f, 0.5f});
   //gen.SetPositroniumLifetimes({0.12f}); // mismatch!
   //gen.SetDecayKinds({k2Gamma, k3Gamma});
-  //gen.SetEnablePromptGamma({false, false});
+  //gen.SetPromptGammaProbabilities({0, 0});
   //gen.SetPromptGammaEnergies({0.0f, 0.0f});
 
   //bool caught = false;
