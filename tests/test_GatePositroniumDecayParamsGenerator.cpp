@@ -51,7 +51,7 @@ bool test_para_prompt_gamma()
 {
   std::cout << "test_prompt_gamma" << std::endl;
   GatePositroniumDecayParamsGenerator gen;
-  gen.SetEnablePromptGamma({true});
+  gen.SetPromptGammaProbabilities({1.0});
   gen.SetPromptGammaEnergies({1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
@@ -69,7 +69,7 @@ bool test_positronium_custom()
   gen.SetPositroniumFraction({0.3f, 0.7f});
   gen.SetPositroniumLifetimes({0.12f, 140.0f});
   gen.SetDecayKinds({k2Gamma, k3Gamma});
-  gen.SetEnablePromptGamma({false, true});
+  gen.SetPromptGammaProbabilities({0, 1.0});
   gen.SetPromptGammaEnergies({0.0f, 1.2f});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kPositronium);
