@@ -29,7 +29,7 @@
 #include "G4RunManager.hh"
 #include "GateSourceOfPromptGamma.hh"
 #include "GateSourcePhaseSpace.hh"
-#include "GateExtendedVSource.hh"
+#include "legacy/GateExtendedVSource.hh"
 #include "GatePositroniumSource.hh"
 
 //----------------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)
       }
       else if (sourceGeomType == "Extended"){
-    	source = new GateExtendedVSource( sourceName );
+    	source = new GateLegacy::GateExtendedVSource( sourceName );
     	source->SetSourceID( m_sourceProgressiveNumber );
       }
       else if (sourceGeomType == "PositroniumSource"){
