@@ -4,19 +4,20 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateOrthoPositronium.hh"
+#include "legacy/GateOrthoPositronium.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleTable.hh"
 #include "G4DecayTable.hh"
-#include "GatePositroniumDecayChannel.hh"
+#include "legacy/GatePositroniumDecayChannel.hh"
 
+namespace GateLegacy{
 
-GateOrthoPositronium* GateOrthoPositronium::theInstance = nullptr;
+GateOrthoPositronium* GateOrthoPositronium::theInstance = 0;
 
 GateOrthoPositronium* GateOrthoPositronium::Definition()
 {
- if (theInstance) return theInstance;
+ if (theInstance !=0) return theInstance;
  
  const G4String name = "oPs";
  const G4double mass = 2.0 * electron_mass_c2;
@@ -29,7 +30,7 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
  G4ParticleTable* pTable = G4ParticleTable::GetParticleTable();
  G4ParticleDefinition* anInstance = pTable->FindParticle(name);
 
- if (!anInstance)
+ if ( anInstance == 0 )
  {
   // create particle
 
@@ -49,9 +50,9 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
                     nullptr, false, "e" );
 
   //create Decay Table 
-  auto table = new G4DecayTable();
+  G4DecayTable* table = new G4DecayTable();
   // create a decay channel
-  auto mode = new GatePositroniumDecayChannel( name, BR );
+  G4VDecayChannel* mode = new GatePositroniumDecayChannel( name, BR );
   table->Insert(mode);
   anInstance->SetDecayTable(table);
  }
@@ -62,3 +63,4 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
 GateOrthoPositronium* GateOrthoPositronium::OrthoPositroniumDefinition() { return Definition(); }
 
 GateOrthoPositronium* GateOrthoPositronium::OrthoPositronium() { return Definition(); }
+}
