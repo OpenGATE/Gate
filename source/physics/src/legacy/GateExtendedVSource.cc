@@ -94,7 +94,6 @@ void GateExtendedVSource::PrepareModel()
  if ( fFixedEmissionDirection.IsSetted() ) { pModel->SetFixedEmissionDirection( fFixedEmissionDirection.Get() ); }
  if ( fEnableFixedEmissionDirection.IsSetted() ) { pModel->SetEnableFixedEmissionDirection( fEnableFixedEmissionDirection.Get() ); }
  if ( fEmissionEnergy.IsSetted() ) { pModel->SetEmissionEnergy( fEmissionEnergy.Get() ); }
- if ( fSeed.IsSetted() ) { pModel->SetSeed( fSeed.Get() ); }
 
 }
 
