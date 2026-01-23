@@ -30,6 +30,7 @@
 #include "GateSourceOfPromptGamma.hh"
 #include "GateSourcePhaseSpace.hh"
 #include "GateExtendedVSource.hh"
+#include "GatePositroniumSource.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -235,6 +236,10 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       }
       else if (sourceGeomType == "Extended"){
     	source = new GateExtendedVSource( sourceName );
+    	source->SetSourceID( m_sourceProgressiveNumber );
+      }
+      else if (sourceGeomType == "PositroniumSource"){
+    	source = new GatePositroniumSource( sourceName );
     	source->SetSourceID( m_sourceProgressiveNumber );
       }
       else {
