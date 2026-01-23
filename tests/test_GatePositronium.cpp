@@ -110,9 +110,9 @@ bool test_in_vector()
   return true;
 }
 
-bool test_decay_products()
+bool test_decay_products_pPs()
 {
-  std::cout << "test_decay_products\n";
+  std::cout << "test_decay_products_pPs\n";
   GatePositronium pPs("pPs", 0.1 * ns);
 
   auto* products = pPs.GetDecayProducts();
@@ -122,6 +122,16 @@ bool test_decay_products()
   return true;
 }
 
+bool test_decay_products_oPs()
+{
+  std::cout << "test_decay_products_oPs\n";
+  GatePositronium pPs("oPs", 0.1 * ns);
+
+  auto* products = pPs.GetDecayProducts();
+  CHECK(products != nullptr, "DecayProducts should not be null");
+  CHECK(products->entries() == 3, "oPs should produce 3 daughters");
+  return true;
+}
 
 int main()
 {
@@ -134,7 +144,8 @@ int main()
   ok = ok & test_oPs_properties();
   ok = ok & test_move_semantics();
   ok = ok & test_in_vector();
-  ok = ok & test_decay_products();
+  ok = ok & test_decay_products_pPs();
+  ok = ok & test_decay_products_oPs();
 
   if (ok) {
     std::cout << "All tests have passed" << std::endl;
