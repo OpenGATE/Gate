@@ -6,7 +6,7 @@
 #include "GatePositroniumHelper.hh"
 #include "GatePositroniumConstants.hh"
 
-using namespace gate_positronium_constants;
+using namespace GatePositroniumConstants;
 
 PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetimes(PositroniumDecayModelParams params)
 {

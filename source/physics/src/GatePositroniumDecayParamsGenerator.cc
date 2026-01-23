@@ -5,7 +5,7 @@
 #include "GatePositroniumDecayParamsGenerator.hh"
 #include "GatePositroniumConstants.hh"
 
-using namespace gate_positronium_constants;
+using namespace GatePositroniumConstants;
 
 void GatePositroniumDecayParamsGenerator::SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb)
 {

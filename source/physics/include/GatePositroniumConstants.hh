@@ -7,7 +7,7 @@
 #ifndef GatePositroniumConstants_hh
 #define GatePositroniumConstants_hh
 
-namespace gate_positronium_constants
+namespace GatePositroniumConstants
 {
   constexpr double kParaPsLifetime_ns = 0.1244;
   constexpr double kParaToOrthoPsFraction = 1.0/3.0;
