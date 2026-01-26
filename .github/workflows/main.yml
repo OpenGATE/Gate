@@ -98,7 +98,7 @@ jobs:
                        -Dclad=OFF \
                        -Dxrootd=OFF \
                        -Dvdt=OFF \
-                       -Dbuiltin_vdt= OFF \
+                       -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
                        -Dwebgui=OFF \
