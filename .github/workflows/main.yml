@@ -105,13 +105,13 @@ jobs:
                        -Dx11=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          cmake --build . -j4 --target install --verbose || ( \
-          echo "===== VDT CONFIGURE STDOUT ====="; \
-          cat /Users/runner/software/root/build/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true; \
-          echo "===== VDT CONFIGURE STDERR ====="; \
-          cat /Users/runner/software/root/build/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true; \
-          exit 1 )
-          #make -j4 install
+          grep -i vdt CMakeCache.txt || true
+          make -j4 install || true
+          echo "===== VDT CONFIGURE STDOUT ====="
+          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
+          echo "===== VDT CONFIGURE STDERR ====="
+          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true
+          exit 1
           cd ..
           rm -rf bin src
         fi
