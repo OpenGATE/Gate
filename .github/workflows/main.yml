@@ -70,7 +70,7 @@ jobs:
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
 
           brew update || true
-          brew install cmake ninja pkg-config ccache tbb xrootd fftw qt python@3.12 || true
+          brew install cmake ccache tbb xrootd fftw qt python@3.12 || true
           brew link --overwrite python@3.12 || true
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
           export CMAKE_PREFIX_PATH="$(brew --prefix qt)"
@@ -94,6 +94,7 @@ jobs:
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
+                       -Dxvdt=OFF \
                        -Dqt6=ON \
                        -Dqt5=OFF \
                        -Dwebgui=OFF \
