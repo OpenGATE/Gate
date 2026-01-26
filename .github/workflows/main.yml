@@ -103,6 +103,8 @@ jobs:
                        -Dqt5=OFF \
                        -Dwebgui=OFF \
                        -Dx11=OFF \
+                       -Droofit=OFF \
+                       -Dtmva=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           #grep -i vdt CMakeCache.txt || true
