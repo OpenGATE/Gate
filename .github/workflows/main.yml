@@ -86,10 +86,13 @@ jobs:
           cd $HOME/software
           mkdir root
           cd root
-          mkdir src bin install
+          mkdir -p src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
+          rm -rf bin
+          mkdir -p bin
           cd bin
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
+                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -Dpython=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
@@ -102,23 +105,14 @@ jobs:
                        -Dx11=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          echo "===== SEARCH VDT LOGS ====="
-          find /Users/runner/software/root -name "VDT-configure-*.log" -print || true
-          echo "===== LIST VDT STAMP DIR ====="
-          find /Users/runner/software/root -path "*VDT-stamp*" -type d -print || true
-          echo "===== PRINT VDT LOG ====="
-          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-*.log || true
-          echo "===== VDT STAMP CONTENT ====="
-          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp || true
-          echo "===== VDT CONFIGURE CMAKE ====="
-          sed -n '1,120p' /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-Release.cmake || true
-          echo "===== VDT BUILD DIR CONTENT ====="
-          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-build || true
-          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles || true
-          echo "===== CMAKE ERROR/OUTPUT LOGS ====="
-          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles/CMakeError.log || true
-          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles/CMakeOutput.log || true
-          make -j4 install
+
+          cmake --build . -j4 --target install --verbose || ( \
+          echo "===== VDT CONFIGURE STDOUT ====="; \
+          cat /Users/runner/software/root/build/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true; \
+          echo "===== VDT CONFIGURE STDERR ====="; \
+          cat /Users/runner/software/root/build/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true; \
+          exit 1 )*
+          #make -j4 install
           cd ..
           rm -rf bin src
         fi
