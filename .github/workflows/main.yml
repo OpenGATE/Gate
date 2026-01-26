@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-build1
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build1
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build1
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -56,8 +56,10 @@ jobs:
                                   libxpm-dev \
                                   libxft-dev \
                                   libxext-dev \
-                                  qtbase5-dev \
-                                  qt5-qmake \
+                                  qt6-base-dev \
+                                  qt6-base-dev-tools \
+                                  qt6-tools-dev \
+                                  qt6-tools-dev-tools \
                                   git \
                                   cmake \
                                   libssl-dev \
@@ -66,22 +68,14 @@ jobs:
                                   libfftw3-dev
           gcc -v
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew install python@3.12 || true
-          brew link --overwrite python@3.12
-          #brew update
-          brew cleanup
-          brew config
-          #rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
-          #rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
-          brew install --force --verbose --overwrite --debug qt5 \
-                                                             ccache \
-                                                             tbb \
-                                                             xrootd \
-                                                             fftw
-          brew link qt5 --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
-          export PATH=/usr/local/opt/qt/bin:$PATH
-          export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
-          export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
+
+          brew update || true
+          brew install cmake ninja pkg-config ccache tbb xrootd fftw qt python@3.12 || true
+          brew link --overwrite python@3.12 || true
+          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
+          export CMAKE_PREFIX_PATH="$(brew --prefix qt)"
+          echo "Qt6_DIR=$Qt6_DIR"
+          ls "$Qt6_DIR"
         fi
         cd $HOME/
         mkdir -p software option_dependencies
@@ -100,6 +94,12 @@ jobs:
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
+                       -Dqt6=ON \
+                       -Dqt5=OFF \
+                       -Dwebgui=OFF \
+                       -Dx11=OFF \
+                       -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
+                       -DQt6_DIR="$Qt6_DIR" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           make -j4 install
           cd ..
@@ -116,8 +116,10 @@ jobs:
           cd bin
           cmake -DGEANT4_INSTALL_DATA=ON \
                 -DGEANT4_BUILD_MULTITHREADED=OFF \
+                -DGEANT4_USE_QT=ON \
                 -DGEANT4_INSTALL_DATADIR=$HOME/software/geant4/data \
                 -DCMAKE_INSTALL_PREFIX=$HOME/software/geant4/install \
+                -DQt6_DIR="$Qt6_DIR" \
                 ../src
           make -j4 install
           cd ..
