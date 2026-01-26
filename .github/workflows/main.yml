@@ -92,8 +92,8 @@ jobs:
           mkdir -p bin
           cd bin
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
-                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -Dpython=OFF \
+                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
@@ -105,7 +105,6 @@ jobs:
                        -Dx11=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-
           cmake --build . -j4 --target install --verbose || ( \
           echo "===== VDT CONFIGURE STDOUT ====="; \
           cat /Users/runner/software/root/build/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true; \
