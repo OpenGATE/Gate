@@ -108,7 +108,16 @@ jobs:
           find /Users/runner/software/root -path "*VDT-stamp*" -type d -print || true
           echo "===== PRINT VDT LOG ====="
           cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-*.log || true
-          
+          echo "===== VDT STAMP CONTENT ====="
+          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp || true
+          echo "===== VDT CONFIGURE CMAKE ====="
+          sed -n '1,120p' /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-Release.cmake || true
+          echo "===== VDT BUILD DIR CONTENT ====="
+          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-build || true
+          ls -la /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles || true
+          echo "===== CMAKE ERROR/OUTPUT LOGS ====="
+          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles/CMakeError.log || true
+          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-build/CMakeFiles/CMakeOutput.log || true
           make -j4 install
           cd ..
           rm -rf bin src
