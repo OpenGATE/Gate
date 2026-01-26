@@ -71,7 +71,7 @@ jobs:
 
           brew update || true
           brew install cmake ccache tbb xrootd fftw qt python@3.12 || true
-          brew link --overwrite --force python@3.12 || true
+          #brew link --overwrite --force python@3.12 || true
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
           export CMAKE_PREFIX_PATH="$(brew --prefix qt)"
           echo "Qt6_DIR=$Qt6_DIR"
@@ -102,6 +102,13 @@ jobs:
                        -Dx11=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
+          echo "===== SEARCH VDT LOGS ====="
+          find /Users/runner/software/root -name "VDT-configure-*.log" -print || true
+          echo "===== LIST VDT STAMP DIR ====="
+          find /Users/runner/software/root -path "*VDT-stamp*" -type d -print || true
+          echo "===== PRINT VDT LOG ====="
+          cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-*.log || true
+          
           make -j4 install
           cd ..
           rm -rf bin src
