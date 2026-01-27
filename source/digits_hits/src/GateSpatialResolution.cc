@@ -23,9 +23,16 @@
   	  This blurring has been validated up to a given FWHM of 10mm.
   	  At higher FWHM, the number of "relocated" digis is no longer negligible. The blurring effect is then so compensated that resolution will improve compared to lower values of FWHM.
 -modified by Radia Oudihat 06/2024
-        Added support for 1D and 2D FWHM distributions for X and Y, and applied Gaussian blurring.
+        Added support for 1D FWHM distribution for X and Y, and applied Gaussian blurring.
         Implemented logic to determine standard deviations (stddevX, stddevY) based on defined 1D and 2D FWHM distributions for the X and Y axes.
-*/
+-modified by Marc Granado-Gonzalez 2025
+		- Added 2D FWHM distribution for X, Y and Z, and applied Gaussian blurring.
+		Implemented logic to determine standard deviations (stddevX, stddevY, stddevZ) based on defined 2D FWHM distributions for the X, Y and Z axes.
+		- Added option to choose the axis pair for 2D distributions (nameAxis): "XZ" or "YZ" (default "YZ").
+		- Added Truncated Gaussian option for confined and non-confined cases.
+		*/
+
+
 #include "GateSpatialResolution.hh"
 #include "GateSpatialResolutionMessenger.hh"
 #include "GateDigi.hh"
