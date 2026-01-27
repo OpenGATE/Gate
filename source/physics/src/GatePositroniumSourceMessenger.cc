@@ -77,7 +77,7 @@ void GatePositroniumSourceMessenger::InitCommands()
 {
  upCmdSetPositroniumFractions.reset(GetStringCmd( "setPositroniumFractions", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] and sum of all fi ==1" ) );
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where ti corresponds to lifetime constants of the components" ) );
- upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2gamma or k3gamma" ) );
+ upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2Gamma or k3Gamma" ) );
  upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kpPs, kdirect or koPs, of a given element in vector of components. Used to properly recalculate intensities of the components from the theory" ) );
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
@@ -134,7 +134,11 @@ void GatePositroniumSourceMessenger::SetNewValue( G4UIcommand* command, G4String
     if (kind == "k2Gamma")  {
         decayKinds.push_back(k2Gamma);
       } else {
-      decayKinds.push_back(k3Gamma);
+        if (kind == "k3Gamma") {
+          decayKinds.push_back(k3Gamma);
+        } else {
+          GateError("GatePositroniumSourceMessenger::SetNewValue: unknown decay kind read from macro.");
+        }
       }
   }
   fParamGenerator.SetDecayKinds(decayKinds);
