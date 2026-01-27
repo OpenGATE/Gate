@@ -16,7 +16,6 @@
 #include "GatePositroniumDecayModelParams.hh"
 #include "GatePositronium.hh"
 
-// Todo2: add docs
 class GatePositroniumDecayModel:public GateGammaEmissionModel
 {
   public:
