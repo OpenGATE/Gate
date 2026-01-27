@@ -30,20 +30,13 @@ void GatePositroniumSource::SetModel(const G4String &model_name)
   {
     fModelKind = it->second;
   } else {
-    fBehaveLikeVSource = true;
-    G4cout << "GatePositroniumSource::SetModel : Unknown gamma source model. "
-              "Enable: pPs, oPs, Ps. Switching to GateVSource behavour."
-           << G4endl;
+    GateError("GatePositroniumSource::SetModel: Unknown gamma source model.");
   }
 }
 
 void GatePositroniumSource::PrepareModel() 
 {
   SetModel(GetType());
-
-  if (fBehaveLikeVSource) {
-    return;
-  }
 
   if (fModelKind == GatePositroniumSource::ModelKind::Positronium) {
     auto params = pMessenger->generatePositroniumDecayParams();
@@ -68,9 +61,8 @@ void GatePositroniumSource::PrepareModel()
 
 G4int GatePositroniumSource::GeneratePrimaries(G4Event* event)
 {
- if (!fBehaveLikeVSource && !pModel) { PrepareModel(); }
- if (fBehaveLikeVSource) { return GateVSource::GeneratePrimaries(event); }
- 
+ if (!pModel) { PrepareModel(); }
+
  G4double particle_time = GetTime();
  G4ThreeVector particle_position = GetPosDist()->GenerateOne();
  ChangeParticlePositionRelativeToAttachedVolume(particle_position);

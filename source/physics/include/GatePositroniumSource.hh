@@ -43,9 +43,6 @@ public:
    std::unique_ptr<GatePositroniumSourceMessenger> pMessenger;
   //User settings:
   ModelKind fModelKind = ModelKind::NotDefined;
-  
-  //Set by PrepareModel() and used in GeneratePrimaries()
-  G4bool fBehaveLikeVSource = false;
 };
 
 #endif
