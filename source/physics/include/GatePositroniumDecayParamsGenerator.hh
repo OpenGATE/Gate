@@ -24,7 +24,7 @@ class GatePositroniumDecayParamsGenerator
 public:
   enum DecayModel {kParaPositronium, kOrthoPositronium, kPositronium};
 
-  GatePositroniumDecayParamsGenerator()= default;
+  GatePositroniumDecayParamsGenerator()=default;
   virtual ~GatePositroniumDecayParamsGenerator()=default;
 
   void SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb);
@@ -34,7 +34,7 @@ public:
   void SetPositronInteractions(const std::vector<PositronElectronInteraction>& positronInteractions);
   void SetPositroniumFraction(const std::vector<float>& positroniumFractions);
 
-  PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model= kPositronium) const;
+  PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model=kPositronium) const;
 
 private:
   std::optional<std::vector<float>> fPositroniumFractions;
