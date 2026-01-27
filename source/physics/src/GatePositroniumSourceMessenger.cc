@@ -67,7 +67,7 @@ G4UIcmdWith3VectorAndUnit* GatePositroniumSourceMessenger::GetVectorCmdWithUnit(
  G4String cmd_path = GetDirectoryName() + cmd_name;
  G4UIcmdWith3VectorAndUnit* cmd = new G4UIcmdWith3VectorAndUnit( cmd_path , this );
  cmd->SetGuidance( cmd_guidance );
- cmd->SetParameterName( G4String( cmd_name + "_x" ), G4String( cmd_name + "y" ), G4String( cmd_name + "z" ), false );
+ cmd->SetParameterName( G4String( cmd_name + "_x" ), G4String( cmd_name + "_y" ), G4String( cmd_name + "_z" ), false );
  cmd->SetDefaultUnit( default_unit.c_str() );
  cmd->SetUnitCandidates( unit_candidates.c_str() );
  return cmd; 
