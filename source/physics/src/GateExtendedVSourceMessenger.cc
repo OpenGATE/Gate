@@ -145,11 +145,11 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
    std::string inter;
    while (ss >> inter) {
      if (inter == "kpPs")  {
-       positronInteractions.push_back(PositronElectronInteraction::kpPs);
+       positronInteractions.push_back(PositronElectronInteraction::kParaPs);
      } else if (inter == "kdirect") {
        positronInteractions.push_back(PositronElectronInteraction::kDirect);
      } else {
-       positronInteractions.push_back(PositronElectronInteraction::koPs);
+       positronInteractions.push_back(PositronElectronInteraction::kOrthoPs);
      }
    }
    fParamGenerator.SetPositronInteractions(positronInteractions);

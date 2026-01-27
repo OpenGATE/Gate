@@ -11,7 +11,7 @@
 
 enum PositroniumDecayKind {k2Gamma, k3Gamma};
 
-enum PositronElectronInteraction {kpPs, kDirect, koPs};
+enum PositronElectronInteraction {kParaPs, kDirect, kOrthoPs};
 
 struct PositroniumDecayModelParams
 {

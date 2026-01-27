@@ -13,7 +13,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
   PositroniumDecayModelParams paramsOut;
   bool pPsExist = false;
   for (unsigned i=0; i<params.fPositronInteractions.size(); i++) {
-    if (params.fPositronInteractions.at(i) != PositronElectronInteraction::kpPs) {
+    if (params.fPositronInteractions.at(i) != PositronElectronInteraction::kParaPs) {
       std::pair<float, float> intens = CalcFractionsFromLifetime(params.fFractions.at(i), params.fLifetimes.at(i), params.fPositronInteractions.at(i));
       paramsOut.fFractions.push_back(intens.first);  //2G intens
       paramsOut.fFractions.push_back(intens.second); //3G intens
@@ -42,7 +42,7 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
     paramsOut.fPromptGammaProbabilities.push_back(paramsOut.fPromptGammaProbabilities.at(0));
     paramsOut.fPromptGammaEnergy.push_back(paramsOut.fPromptGammaEnergy.at(0));
     paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
-    paramsOut.fPositronInteractions.push_back(PositronElectronInteraction::kpPs);
+    paramsOut.fPositronInteractions.push_back(PositronElectronInteraction::kParaPs);
   }
 
   paramsOut.fFractions = NormalizeFractions(paramsOut.fFractions);
@@ -55,7 +55,7 @@ float GatePositroniumHelper::CalcPPsFractionFromOPs(std::vector<float> fractions
   auto itFrac = fractions.begin();
   auto itDec = decays.begin();
   while (itFrac != fractions.end() && itDec != decays.end()) {
-    if (*itDec == PositronElectronInteraction::koPs)
+    if (*itDec == PositronElectronInteraction::kOrthoPs)
       sum += *itFrac;
     ++itFrac;
     ++itDec;
@@ -70,7 +70,7 @@ std::pair<float, float> GatePositroniumHelper::CalcFractionsFromLifetime(float i
       intens2G = intensity*(kHyperfineCoefficient  - 1.)/kHyperfineCoefficient;
       intens3G = intensity/kHyperfineCoefficient;
       break;
-    case PositronElectronInteraction::koPs:
+    case PositronElectronInteraction::kOrthoPs:
       intens2G = intensity*(kOrthoPsMeanLifetime_ns  - lifetime)/kOrthoPsMeanLifetime_ns;
       intens3G = intensity*lifetime/kOrthoPsMeanLifetime_ns;
       break;

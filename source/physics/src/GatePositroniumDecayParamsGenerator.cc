@@ -39,7 +39,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     params.fFractions= {1};
     params.fLifetimes= {kParaPsLifetime_ns}; // [ns]
     params.fDecayKind= {k2Gamma};
-    params.fPositronInteractions= {kpPs};
+    params.fPositronInteractions= {kParaPs};
     if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
       params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
       assert(params.fPromptGammaProbabilities.size()==1);
@@ -54,7 +54,7 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     params.fFractions= {1};
     params.fLifetimes= {kOrthoPsMeanLifetime_ns}; // [ns]
     params.fDecayKind= {k3Gamma};
-    params.fPositronInteractions= {koPs};
+    params.fPositronInteractions={kOrthoPs};
     if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
       params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
       assert(params.fPromptGammaProbabilities.size()==1);
