@@ -115,7 +115,7 @@ jobs:
           #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true
           #exit 1
           cd ..
-          rm -rf bin src
+          rm -rf src
         fi
     - name: Install Geant4
       run: |
