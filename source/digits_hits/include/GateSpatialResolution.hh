@@ -47,9 +47,9 @@ public:
 
   //! These functions return the resolution in use.
     G4double GetFWHM()				{ return m_fwhm; }
-    GateVDistribution* GetFWHMxdistrib()	{ return m_fwhmXdistrib; }
-    GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYdistrib; }
-    GateVDistribution* GetFWHMzdistrib()    	{ return m_fwhmZdistrib; }
+    GateVDistribution* GetFWHMxdistrib() 	{ return m_fwhmXDistrib; }
+    GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYDistrib; }
+    GateVDistribution* GetFWHMzdistrib()    	{ return m_fwhmZDistrib; }
     G4String GetNameAxis()				   { return m_nameAxis;     }
     GateVDistribution* GetFWHMDistrib2D()	{ return m_fwhmXDistrib2D ? m_fwhmXDistrib2D : (m_fwhmYDistrib2D? m_fwhmYDistrib2D : m_fwhmZDistrib2D); }
 
@@ -66,9 +66,9 @@ public:
       If you want a resolution of 10%, SetSpresolution(0.1)
     */
     void SetFWHM(G4double val)   { m_fwhm = val;  }
-    void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXdistrib= dist; }
-    void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYdistrib = dist; }
-    void SetFWHMzdistrib(GateVDistribution* dist)  { m_fwhmZdistrib = dist; }
+    void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXDistrib= dist; }
+    void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYDistrib = dist; }
+    void SetFWHMzdistrib(GateVDistribution* dist)  { m_fwhmZDistrib = dist; }
 
 
     void SetNameAxis(const G4String& name) {m_nameAxis=name;}
@@ -106,9 +106,9 @@ protected:
     G4double m_fwhmY;
     G4double m_fwhmZ;
 
-    GateVDistribution* m_fwhmXdistrib;
-    GateVDistribution* m_fwhmYdistrib;
-    GateVDistribution* m_fwhmZdistrib;
+    GateVDistribution* m_fwhmXDistrib;
+    GateVDistribution* m_fwhmYDistrib;
+    GateVDistribution* m_fwhmZDistrib;
 
     GateVDistribution* m_fwhmXDistrib2D;
     GateVDistribution* m_fwhmYDistrib2D;

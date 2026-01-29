@@ -48,10 +48,9 @@ private:
   G4UIcmdWithAString	*spresolutionYdistribCmd;// Command declaration for 1D Y-resolution distribution
   G4UIcmdWithAString	*spresolutionZdistribCmd;// Command declaration for 1D Y-resolution distribution
   G4UIcmdWithAString	*nameAxisCmd;
-  G4UIcmdWithAString	*spresolutionDistrib2DCmd; // Command declaration for 2D resolution distribution will be used with nameAxisCmd
-  G4UIcmdWithAString	*spresolutionDistrib2DXCmd; // per-axis 2D distribution commands
-  G4UIcmdWithAString	*spresolutionDistrib2DYCmd;
-  G4UIcmdWithAString	*spresolutionDistrib2DZCmd;
+  G4UIcmdWithAString	*spresolutionXDistrib2DCmd; // per-axis 2D distribution commands will be used nameAxis to determine which axes to apply the distribution to
+  G4UIcmdWithAString	*spresolutionYDistrib2DCmd;
+  G4UIcmdWithAString	*spresolutionZDistrib2DCmd;
   G4UIcmdWithABool* 	confineCmd;
   G4UIcmdWithABool*		useTruncatedGaussianCmd;
 
