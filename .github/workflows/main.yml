@@ -125,6 +125,8 @@ jobs:
                        -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
+                       -Dcling=OFF \
+                       -Dllvm=OFF \
                        -Dwebgui=OFF \
                        -Dx11=OFF \
                        -Droofit=OFF \
