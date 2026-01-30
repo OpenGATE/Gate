@@ -91,6 +91,13 @@ jobs:
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
           export CMAKE_PREFIX_PATH="$(brew --prefix qt):$CMAKE_PREFIX_PATH"
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
+
+          QT_PREFIX="$(brew --prefix qt)"
+          
+          LLVM_PREFIX="$(brew --prefix llvm || true)"
+          export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
+          export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
+
           cmake --version
           which cmake
           
