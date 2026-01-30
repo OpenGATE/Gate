@@ -125,6 +125,9 @@ jobs:
                        -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
+                       -Dbuiltin_cling=OFF \
+                       -Dcxxmodules=OFF \
+                       -Droot7=OFF \
                        -Dcling=OFF \
                        -Dllvm=OFF \
                        -Dwebgui=OFF \
