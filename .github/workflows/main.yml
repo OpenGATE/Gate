@@ -108,7 +108,7 @@ jobs:
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           #grep -i vdt CMakeCache.txt || true
-          make -j4 install 
+          make -j4 install VERBOSE=1
           #echo "===== VDT CONFIGURE STDOUT ====="
           #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
           #echo "===== VDT CONFIGURE STDERR ====="
