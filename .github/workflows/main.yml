@@ -121,6 +121,7 @@ jobs:
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
+                       -Dinterpreter=OFF \
                        -Dvdt=OFF \
                        -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
