@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build1
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build1
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build0
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build0
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -108,14 +108,14 @@ jobs:
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           #grep -i vdt CMakeCache.txt || true
-          make -j4 install || true
+          make -j4 install 
           #echo "===== VDT CONFIGURE STDOUT ====="
           #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
           #echo "===== VDT CONFIGURE STDERR ====="
           #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true
           #exit 1
           cd ..
-          rm -rf src
+          rm -rf bin src
         fi
     - name: Install Geant4
       run: |
