@@ -67,15 +67,28 @@ jobs:
                                   ccache \
                                   libfftw3-dev
           gcc -v
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-
-          brew update || true
-          brew install cmake ccache tbb xrootd fftw qt python@3.12 || true
-          #brew link --overwrite --force python@3.12 || true
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then          
+          brew install python@3.12 || true
+          brew link --overwrite python@3.12
+          #brew update
+          brew cleanup
+          brew config
+          #rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
+          #rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
+          brew install --force --verbose --overwrite --debug qt \
+                                                             ccache \
+                                                             tbb \
+                                                             xrootd \
+                                                             fftw
+          brew link qt --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
+          export PATH=/usr/local/opt/qt/bin:$PATH
+          export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
+          export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
+          
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
           export CMAKE_PREFIX_PATH="$(brew --prefix qt)"
-          echo "Qt6_DIR=$Qt6_DIR"
-          ls "$Qt6_DIR"
+          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
+          
         fi
         cd $HOME/
         mkdir -p software option_dependencies
