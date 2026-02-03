@@ -72,6 +72,7 @@ jobs:
           brew install python@3.12 || true
           
           brew link --overwrite --force python@3.12
+          export Python3_EXECUTABLE="$(brew --prefix python@3.12)/bin/python3"
           #brew update
           #brew cleanup
           #brew config
@@ -119,6 +120,9 @@ jobs:
           cd bin
           cmake -G Ninja ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
+                       -DCMAKE_CXX_EXTENSIONS=OFF \
+                       -Druntime_cxxmodules=OFF \
+                       -Dcxxmodules=OFF \                    
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dcling=OFF \
@@ -132,6 +136,8 @@ jobs:
                        -Dx11=OFF \
                        -Droofit=OFF \
                        -Dtmva=OFF \
+                       -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 \
+                       -DPython3_EXECUTABLE="$Python3_EXECUTABLE" \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           set -o pipefail
