@@ -120,23 +120,24 @@ jobs:
                        -Dpython=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
-                       -Dxrootd=OFF \
                        -Dinterpreter=OFF \
+                       -Dcling=OFF \
+                       -Dbuiltin_cling=OFF \
+                       -Dcxxmodules=OFF \
+                       -Dxrootd=OFF \
                        -Dvdt=OFF \
                        -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
-                       -Dbuiltin_cling=OFF \
-                       -Dcxxmodules=OFF \
                        -Droot7=OFF \
-                       -Dcling=OFF \
-                       -Dllvm=OFF \
                        -Dwebgui=OFF \
                        -Dx11=OFF \
                        -Droofit=OFF \
                        -Dtmva=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
+          grep -E "INTERPRETER|CLING|BUILTIN_CLING|CXXMODULES" CMakeCache.txt || true
+
           #grep -i vdt CMakeCache.txt || true
           make -j4 install VERBOSE=1
           #echo "===== VDT CONFIGURE STDOUT ====="
