@@ -90,11 +90,11 @@ jobs:
           #export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
           
           export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
-          export CMAKE_PREFIX_PATH="$(brew --prefix qt):$CMAKE_PREFIX_PATH"
-          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
+          #export CMAKE_PREFIX_PATH="$(brew --prefix qt):$CMAKE_PREFIX_PATH"
+          #export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
 
           QT_PREFIX="$(brew --prefix qt)"
-          
+          export Qt6_DIR="$QT_PREFIX/lib/cmake/Qt6"
           LLVM_PREFIX="$(brew --prefix llvm || true)"
           #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
@@ -118,6 +118,8 @@ jobs:
           rm -rf bin
           mkdir -p bin
           cd bin
+          unset CPATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH OBJC_INCLUDE_PATH
+          unset CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBRARY_PATH
           cmake -G Ninja ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
                        -DCMAKE_CXX_EXTENSIONS=OFF \
@@ -125,7 +127,6 @@ jobs:
                        -Dcxxmodules=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
-                       -Dcling=OFF \
                        -Dbuiltin_cling=ON \
                        -Dxrootd=OFF \
                        -Dvdt=OFF \
@@ -138,14 +139,14 @@ jobs:
                        -Dtmva=OFF \
                        -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 \
                        -DPython3_EXECUTABLE="$Python3_EXECUTABLE" \
-                       -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
+                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           set -o pipefail
           ninja -v -j3 install 2>&1 | tee "$HOME/root_build.log"
           grep -R "opt/homebrew/include" -n CMakeCache.txt || true
           env | egrep "CPATH|C_INCLUDE_PATH|CPLUS_INCLUDE_PATH|CPPFLAGS|CFLAGS|CXXFLAGS|LDFLAGS|SDKROOT|MACOSX_DEPLOYMENT_TARGET"
           #grep -i vdt CMakeCache.txt || true
-          make -j4 install VERBOSE=1
+          #make -j4 install VERBOSE=1
           #echo "===== VDT CONFIGURE STDOUT ====="
           #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
           #echo "===== VDT CONFIGURE STDERR ====="
