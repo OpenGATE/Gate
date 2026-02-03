@@ -96,8 +96,8 @@ jobs:
           QT_PREFIX="$(brew --prefix qt)"
           
           LLVM_PREFIX="$(brew --prefix llvm || true)"
-          export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
-          export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
+          #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
+          #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
           export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
           export MACOSX_DEPLOYMENT_TARGET=13.0
           cmake --version
@@ -141,7 +141,9 @@ jobs:
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           set -o pipefail
-          ninja -v install 2>&1 | tee "$HOME/root_build.log"
+          ninja -v -j3 install 2>&1 | tee "$HOME/root_build.log"
+          grep -R "opt/homebrew/include" -n CMakeCache.txt || true
+          env | egrep "CPATH|C_INCLUDE_PATH|CPLUS_INCLUDE_PATH|CPPFLAGS|CFLAGS|CXXFLAGS|LDFLAGS|SDKROOT|MACOSX_DEPLOYMENT_TARGET"
           #grep -i vdt CMakeCache.txt || true
           make -j4 install VERBOSE=1
           #echo "===== VDT CONFIGURE STDOUT ====="
