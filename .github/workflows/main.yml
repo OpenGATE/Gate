@@ -97,7 +97,8 @@ jobs:
           LLVM_PREFIX="$(brew --prefix llvm || true)"
           export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
-
+          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          export MACOSX_DEPLOYMENT_TARGET=13.0
           cmake --version
           which cmake
           
@@ -144,6 +145,21 @@ jobs:
           #exit 1
           cd ..
           rm -rf bin src
+        fi
+    - name: Extract ROOT error (macOS)
+      if: failure() && matrix.os == 'macos-latest'
+      run: |
+        echo "=== tail root_build.log (300 lines) ==="
+        tail -n 300 "$HOME/root_build.log" || true
+        echo "=== grep error lines ==="
+        egrep -n "error:|fatal error:|ld:|Undefined symbols|undefined symbol|clang:|c\\+\\+:|collect2:|libtool:" \
+          "$HOME/root_build.log" | tail -n 120 || true
+        echo "=== first error context (80 lines around) ==="
+        first=$(egrep -n "fatal error:|error:|ld:" "$HOME/root_build.log" | head -n 1 | cut -d: -f1)
+        if [ -n "$first" ]; then
+          start=$((first-80)); if [ $start -lt 1 ]; then start=1; fi
+          end=$((first+80))
+          sed -n "${start},${end}p" "$HOME/root_build.log" || true
         fi
     - name: Install Geant4
       run: |
