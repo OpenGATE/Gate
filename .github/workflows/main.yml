@@ -122,7 +122,7 @@ jobs:
                        -Dpython=OFF \
                        -DCMAKE_CXX_EXTENSIONS=OFF \
                        -Druntime_cxxmodules=OFF \
-                       -Dcxxmodules=OFF \                    
+                       -Dcxxmodules=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dcling=OFF \
