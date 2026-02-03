@@ -120,16 +120,13 @@ jobs:
                        -Dpython=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
-                       -Dinterpreter=OFF \
                        -Dcling=OFF \
-                       -Dbuiltin_cling=OFF \
-                       -Dcxxmodules=OFF \
+                       -Dbuiltin_cling=ON \
                        -Dxrootd=OFF \
                        -Dvdt=OFF \
                        -Dbuiltin_vdt=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
-                       -Droot7=OFF \
                        -Dwebgui=OFF \
                        -Dx11=OFF \
                        -Droofit=OFF \
