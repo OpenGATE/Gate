@@ -116,7 +116,7 @@ jobs:
           rm -rf bin
           mkdir -p bin
           cd bin
-          cmake ../src -DCMAKE_CXX_STANDARD=17 \
+          cmake -G Ninja ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
@@ -133,8 +133,8 @@ jobs:
                        -Dtmva=OFF \
                        -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          grep -E "INTERPRETER|CLING|BUILTIN_CLING|CXXMODULES" CMakeCache.txt || true
-
+          set -o pipefail
+          ninja -v install 2>&1 | tee "$HOME/root_build.log"
           #grep -i vdt CMakeCache.txt || true
           make -j4 install VERBOSE=1
           #echo "===== VDT CONFIGURE STDOUT ====="
