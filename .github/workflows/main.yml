@@ -157,6 +157,14 @@ jobs:
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           set -o pipefail
           ninja -v -j3 install 2>&1 | tee "$HOME/root_build.log"
+          echo "===== DAVIX configure out ====="
+          cat /Users/runner/software/root/bin/builtins/davix/DAVIX-prefix/src/DAVIX-stamp/DAVIX-configure-out.log || true
+          echo "===== DAVIX configure err ====="
+          cat /Users/runner/software/root/bin/builtins/davix/DAVIX-prefix/src/DAVIX-stamp/DAVIX-configure-err.log || true
+          echo "===== CMakeError.log ====="
+          cat /Users/runner/software/root/bin/builtins/davix/DAVIX-prefix/src/DAVIX-build/CMakeFiles/CMakeError.log || true
+          echo "===== CMakeOutput.log ====="
+          cat /Users/runner/software/root/bin/builtins/davix/DAVIX-prefix/src/DAVIX-build/CMakeFiles/CMakeOutput.log || true
           grep -R "opt/homebrew/include" -n CMakeCache.txt || true
           env | egrep "CPATH|C_INCLUDE_PATH|CPLUS_INCLUDE_PATH|CPPFLAGS|CFLAGS|CXXFLAGS|LDFLAGS|SDKROOT|MACOSX_DEPLOYMENT_TARGET"
           #grep -i vdt CMakeCache.txt || true
