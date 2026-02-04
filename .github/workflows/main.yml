@@ -73,9 +73,6 @@ jobs:
           
           brew link --overwrite --force python@3.12
           export Python3_EXECUTABLE="$(brew --prefix python@3.12)/bin/python3"
-
-          #rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
-          #rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
           brew install --force --verbose --overwrite --debug qt \
                                                              ccache \
                                                              tbb \
@@ -111,19 +108,25 @@ jobs:
           cd $HOME/software
           mkdir root
           cd root
-          mkdir -p src bin install
+          mkdir src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
-          rm -rf bin
-          mkdir -p bin
           cd bin
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
-            -DCMAKE_BUILD_TYPE=Release "-Dalien=off" "-Dall=off" "-Darrow=off" "-Dasan=off" "-Dasimage=on" "-Dasserts=off" "-Dbuiltin_cfitsio=on" "-Dbuiltin_clang=on" "-Dbuiltin_cling=on" "-Dbuiltin_cppzmq=on" "-Dbuiltin_davix=on" "-Dbuiltin_fftw3=on" "-Dbuiltin_freetype=on" "-Dbuiltin_ftgl=on" "-Dbuiltin_gl2ps=on" "-Dbuiltin_glew=on" "-Dbuiltin_gsl=on" "-Dbuiltin_gtest=on" "-Dbuiltin_llvm=on" "-Dbuiltin_lz4=on" "-Dbuiltin_lzma=on" "-Dbuiltin_nlohmannjson=on" "-Dbuiltin_openssl=on" "-Dbuiltin_openui5=on" "-Dbuiltin_pcre=on" "-Dbuiltin_tbb=on" "-Dbuiltin_unuran=on" "-Dbuiltin_vc=off" "-Dbuiltin_vdt=on" "-Dbuiltin_veccore=on" "-Dbuiltin_xrootd=on" "-Dbuiltin_xxhash=on" "-Dbuiltin_zeromq=on" "-Dbuiltin_zlib=off" "-Dbuiltin_zstd=on" "-Dccache=on" "-Dcefweb=off" "-Dclad=on" "-Dclingtest=off" "-Dcocoa=on" "-Dcoverage=off" "-Dcuda=off" "-Ddaos=off" "-Ddataframe=on" "-Ddavix=on" "-Ddcache=off" "-Ddev=off" "-Ddistcc=off" "-Dfail-on-missing=on" "-Dfcgi=off" "-Dfftw3=on" "-Dfitsio=on" "-Dfortran=off" "-Dgdml=on" "-Dgminimal=off" "-Dgnuinstall=off" "-Dgsl_shared=off" "-Dgviz=off" "-Dhttp=on" "-Dimt=on" "-Djemalloc=off" "-Dlibcxx=off" "-Dmacos_native=off" "-Dmathmore=on" "-Dmemory_termination=off" "-Dminimal=off" "-Dmpi=off" "-Dmysql=off" "-Dodbc=off" "-Dopengl=on" "-Dpgsql=off" "-Dpyroot=on" "-Dpythia8=off" "-Dqt6web=off" "-Dr=off" "-Droofit=on" "-Droofit_multiprocess=on" "-Droot7=on" "-Drootbench=off" "-Droottest=on" "-Droottest_force_checkout=off" "-Drpath=on" "-Druntime_cxxmodules=on" "-Dshadowpw=off" "-Dshared=on" "-Dsoversion=off" "-Dspectrum=on" "-Dsqlite=on" "-Dssl=on" "-Dtcmalloc=off" "-Dtest_distrdf_dask=on" "-Dtest_distrdf_pyspark=off" "-Dtesting=on" "-Dtmva-cpu=on" "-Dtmva-cudnn=off" "-Dtmva-gpu=off" "-Dtmva-pymva=off" "-Dtmva-rmva=off" "-Dtmva-sofie=on" "-Dtmva=on" "-Dunfold=on" "-Dunuran=on" "-During=off" "-Dvc=off" "-Dvdt=on" "-Dveccore=off" "-Dvecgeom=off" "-Dwebgui=on" "-Dwin_broken_tests=off" "-Dwinrtdebug=off" "-Dx11=off" "-Dxml=on" "-Dxrootd=on" -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
+                       -Dpython=OFF \
+                       -Dpyroot=OFF \
+                       -Dclad=OFF \
+                       -Dxrootd=OFF \
+                       -Dvdt=OFF \
+                       -Dbuiltin_vdt=OFF \
+                       -Dqt6=OFF \
+                       -Dqt5=OFF \
+                       -Dwebgui=OFF \
+                       -Dx11=OFF \
+                       -Droofit=OFF \
+                       -Dtmva=OFF \
+                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
+                       -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
           make -j4 install
-          #echo "===== VDT CONFIGURE STDOUT ====="
-          #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
-          #echo "===== VDT CONFIGURE STDERR ====="
-          #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true
-          #exit 1
           cd ..
           rm -rf bin src
         fi
