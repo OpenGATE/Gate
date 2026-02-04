@@ -101,7 +101,7 @@ jobs:
           export MACOSX_DEPLOYMENT_TARGET=13.0
           cmake --version
           which cmake
-          
+        fi  
         cd $HOME/
         mkdir -p software option_dependencies
         cmake --version
