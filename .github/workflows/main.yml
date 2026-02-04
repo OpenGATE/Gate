@@ -83,19 +83,26 @@ jobs:
           #                                                   tbb \
           #                                                   xrootd \
           #                                                   fftw
-          brew install ninja cmake ccache python@3.12 || true                                                  
+          # Xcode Command Line Tools (compilos Apple clang)
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer || true
+          xcodebuild -version || true
+          xcrun --find clang
+          xcrun --find clang++
+          brew install ninja cmake ccache || true 
+          which cmake && cmake --version
+          which ninja && ninja --version
           #brew link qt --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
           brew cleanup
           #export PATH=/usr/local/opt/qt/bin:$PATH
           #export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
           #export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
           
-          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
+          #export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
           #export CMAKE_PREFIX_PATH="$(brew --prefix qt):$CMAKE_PREFIX_PATH"
           #export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
 
-          QT_PREFIX="$(brew --prefix qt)"
-          export Qt6_DIR="$QT_PREFIX/lib/cmake/Qt6"
+          #QT_PREFIX="$(brew --prefix qt)"
+          #export Qt6_DIR="$QT_PREFIX/lib/cmake/Qt6"
           LLVM_PREFIX="$(brew --prefix llvm || true)"
           #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
@@ -127,13 +134,11 @@ jobs:
           export MACOSX_DEPLOYMENT_TARGET=13.0
           cmake -G Ninja ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
-                       -DCMAKE_IGNORE_PREFIX_PATH="/opt/homebrew;/usr/local" \
-                       -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=OFF \
-                       -DCMAKE_FIND_USE_PACKAGE_REGISTRY=OFF \
                        -DCMAKE_OSX_SYSROOT="$SDKROOT" \
+                       -DCMAKE_C_COMPILER="$CC" \
+                       -DCMAKE_CXX_COMPILER="$CXX" \
                        -DCMAKE_CXX_EXTENSIONS=OFF \
                        -Druntime_cxxmodules=OFF \
-                       -Dcxxmodules=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dbuiltin_cling=ON \
@@ -146,7 +151,7 @@ jobs:
                        -Dx11=OFF \
                        -Droofit=OFF \
                        -Dtmva=OFF \
-                       -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 \
+                       -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" \
                        -DPython3_EXECUTABLE="$Python3_EXECUTABLE" \
                        -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
