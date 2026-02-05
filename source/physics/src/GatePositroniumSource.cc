@@ -18,49 +18,19 @@ GatePositroniumSource::GatePositroniumSource(const G4String &name)
 {
 }
 
-void GatePositroniumSource::SetModel(const G4String &model_name) 
-{
-  static const std::map<G4String, ModelKind> models{
-      {"pPs", GatePositroniumSource::ModelKind::ParaPositronium},
-      {"oPs", GatePositroniumSource::ModelKind::OrthoPositronium},
-      {"Ps", GatePositroniumSource::ModelKind::Positronium}};
-
-  auto it = models.find(model_name);
-  if (it != models.end())
-  {
-    fModelKind = it->second;
-  } else {
-    GateError("GatePositroniumSource::SetModel: Unknown gamma source model.");
-  }
-}
-
 void GatePositroniumSource::PrepareModel() 
 {
-  SetModel(GetType());
-
-  if (fModelKind == GatePositroniumSource::ModelKind::Positronium) {
-    auto params = pMessenger->generatePositroniumDecayParams();
-    pModel = std::make_unique<GatePositroniumDecayModel>(params);
-  } else {
-    if (fModelKind == GatePositroniumSource::ModelKind::ParaPositronium) {
-      auto params = pMessenger->generatePositroniumDecayParams(
-          GatePositroniumDecayParamsGenerator::kParaPositronium);
-      pModel = std::make_unique<GatePositroniumDecayModel>(params);
-
-    } else {
-      if (fModelKind == GatePositroniumSource::ModelKind::OrthoPositronium) {
-        auto params = pMessenger->generatePositroniumDecayParams(
-            GatePositroniumDecayParamsGenerator::kOrthoPositronium);
-        pModel = std::make_unique<GatePositroniumDecayModel>(params);
-      } else {
-        GateError("GatePositroniumSource::PrepareModel - unknown model.");
-      }
-    }
+  if (GetType() != "Ps") {
+    GateError("GatePositroniumSource::PrepareModel - model type is not Positronium. Current type: " + GetType());
   }
+
+  auto params = pMessenger->generatePositroniumDecayParams();
+  pModel = std::make_unique<GatePositroniumDecayModel>(params);
 }
 
 G4int GatePositroniumSource::GeneratePrimaries(G4Event* event)
 {
+  
  if (!pModel) { PrepareModel(); }
 
  G4double particle_time = GetTime();

@@ -16,27 +16,17 @@
 class GatePositroniumSource : public GateVSource
 {
 public:
-
-  enum class ModelKind {
-    NotDefined,
-    ParaPositronium,
-    OrthoPositronium,
-    Positronium
-  };
-
   explicit GatePositroniumSource(const G4String& name);
   virtual ~GatePositroniumSource() = default;
 
   virtual G4int GeneratePrimaries( G4Event* event ) override;
 
  protected:
-   void SetModel(const G4String &model_name);
    void PrepareModel();
 
  protected:
   std::unique_ptr<GateGammaEmissionModel> pModel;
   std::unique_ptr<GatePositroniumSourceMessenger> pMessenger;
-  ModelKind fModelKind = ModelKind::NotDefined;
 };
 
 #endif
