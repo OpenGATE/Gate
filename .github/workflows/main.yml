@@ -23,7 +23,7 @@ jobs:
             options: torch
 
     env:
-      ROOT_VERSION: 'v6-32-04'
+      ROOT_VERSION: 'v6-32-06'
       ITK_VERSION: 'v5.4.2'
       GEANT4_VERSION: 'v11.4.0'
       ROOT_DIR: $(HOME)/software/root
@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build4
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build4
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build5
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build5
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -73,7 +73,8 @@ jobs:
           
           brew link --overwrite --force python@3.12
           export Python3_EXECUTABLE="$(brew --prefix python@3.12)/bin/python3"
-          brew install --force --verbose --overwrite --debug qt \
+          brew install --force --verbose --overwrite --debug cmake \
+                                                             qt \
                                                              ccache \
                                                              tbb \
                                                              xrootd \
@@ -94,7 +95,7 @@ jobs:
           LLVM_PREFIX="$(brew --prefix llvm || true)"
           #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
-          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          #export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
           #export MACOSX_DEPLOYMENT_TARGET=13.0
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
@@ -118,41 +119,30 @@ jobs:
           export CXX=/usr/bin/clang++
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
+                       -Dglew=OFF -Dbuiltin_glew=OFF \
+                       -Dbuiltin_afterimage=OFF \
+                       -Dasimage=OFF \
+                       -Ddavix=OFF \
                        -Dpyroot=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
                        -Dvdt=OFF \
                        -Dbuiltin_vdt=OFF \
+                       -Dbuiltin_davix=OFF \
                        -Dqt6=OFF \
                        -Dqt5=OFF \
                        -Dwebgui=OFF \
                        -Dx11=OFF \
                        -Droofit=OFF \
                        -Dtmva=OFF \
+                       -Dglew=OFF -Dbuiltin_glew=OFF \
                        -DCMAKE_C_COMPILER=$CC \
                        -DCMAKE_CXX_COMPILER=$CXX \
                        -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          cmake --build . --target install -j4 2>&1 | tee "$HOME/root_build.log"
-
-          #make -j4 install
+          make install
           cd ..
           rm -rf bin src
-        fi
-    - name: Extract ROOT error (macOS)
-      if: failure() && matrix.os == 'macos-latest'
-      run: |
-        echo "=== tail root_build.log (300 lines) ==="
-        tail -n 300 "$HOME/root_build.log" || true
-        echo "=== grep error lines ==="
-        egrep -n "error:|fatal error:|ld:|Undefined symbols|undefined symbol|clang:|c\\+\\+:|collect2:|libtool:" \
-          "$HOME/root_build.log" | tail -n 120 || true
-        echo "=== first error context (80 lines around) ==="
-        first=$(egrep -n "fatal error:|error:|ld:" "$HOME/root_build.log" | head -n 1 | cut -d: -f1)
-        if [ -n "$first" ]; then
-          start=$((first-80)); if [ $start -lt 1 ]; then start=1; fi
-          end=$((first+80))
-          sed -n "${start},${end}p" "$HOME/root_build.log" || true
         fi
     - name: Install Geant4
       run: |
