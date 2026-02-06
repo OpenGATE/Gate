@@ -95,7 +95,7 @@ jobs:
           LLVM_PREFIX="$(brew --prefix llvm || true)"
           #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
-          #export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
           #export MACOSX_DEPLOYMENT_TARGET=13.0
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
