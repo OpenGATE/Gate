@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build3
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build3
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build4
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build4
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -95,7 +95,10 @@ jobs:
           #export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
           #export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
           export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
-          export MACOSX_DEPLOYMENT_TARGET=13.0
+          #export MACOSX_DEPLOYMENT_TARGET=13.0
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          
           cmake --version
           which cmake
         fi  
@@ -111,6 +114,8 @@ jobs:
           mkdir src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
           cd bin
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
                        -Dpython=OFF \
                        -Dpyroot=OFF \
@@ -124,9 +129,13 @@ jobs:
                        -Dx11=OFF \
                        -Droofit=OFF \
                        -Dtmva=OFF \
+                       -DCMAKE_C_COMPILER=$CC \
+                       -DCMAKE_CXX_COMPILER=$CXX \
                        -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          make -j4 install
+          cmake --build . --target install -j4 2>&1 | tee "$HOME/root_build.log"
+
+          #make -j4 install
           cd ..
           rm -rf bin src
         fi
