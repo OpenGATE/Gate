@@ -124,6 +124,7 @@ jobs:
                        -Dasimage=OFF \
                        -Ddavix=OFF \
                        -Dpyroot=OFF \
+                       -Dtpython=OFF \
                        -Dclad=OFF \
                        -Dxrootd=OFF \
                        -Dvdt=OFF \
