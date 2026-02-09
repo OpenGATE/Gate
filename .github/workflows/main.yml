@@ -122,6 +122,7 @@ jobs:
                        -Dglew=OFF -Dbuiltin_glew=OFF \
                        -Dbuiltin_afterimage=OFF \
                        -Dasimage=OFF \
+                       -Dopengl=OFF \
                        -Ddavix=OFF \
                        -Dpyroot=OFF \
                        -Dtpython=OFF \
