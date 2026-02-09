@@ -23,7 +23,7 @@ jobs:
             options: torch
 
     env:
-      ROOT_VERSION: 'v6-32-06'
+      ROOT_VERSION: 'v6-38-00'
       ITK_VERSION: 'v5.4.2'
       GEANT4_VERSION: 'v11.4.0'
       ROOT_DIR: $(HOME)/software/root
@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build5
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build5
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
