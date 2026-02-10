@@ -117,7 +117,7 @@ void GateDoIModels::Digitize()
 		   	   return;
 		   	}
 
-		   GateDigi* m_outputDigi = new GateDigi(*inputDigi);
+		   m_outputDigi = new GateDigi(*inputDigi);
 
 		   if (flgCorrectAxis==1)
 		   {
