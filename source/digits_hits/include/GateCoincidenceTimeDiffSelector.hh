@@ -15,27 +15,37 @@ See LICENSE.md for further details
 #include <vector>
 #include "G4ThreeVector.hh"
 
-#include "GateVPulseProcessor.hh"
+//#include "GateVPulseProcessor.hh"
 #include "GateObjectStore.hh"
-#include "GateVCoincidencePulseProcessor.hh"
 
+#include "GateVDigitizerModule.hh"
+#include "GateCoincidenceDigi.hh"
+#include "GateClockDependent.hh"
+#include "GateCrystalSD.hh"
+
+
+#include "GateDigi.hh"
+
+#include "GateCoincidenceTimeDiffSelectorMessenger.hh"
+#include "GateCoincidenceDigitizer.hh"
 class GateCoincidenceTimeDiffSelectorMessenger;
 
 
-class GateCoincidenceTimeDiffSelector : public GateVCoincidencePulseProcessor
+class GateCoincidenceTimeDiffSelector : public GateVDigitizerModule,public GateDigi
 {
 public:
 
-
+	GateCoincidenceTimeDiffSelector(GateCoincidenceDigitizer *digitizer, G4String name);
+	  ~GateCoincidenceTimeDiffSelector();
 
   //! Destructor
-  virtual ~GateCoincidenceTimeDiffSelector() ;
+  //virtual ~GateCoincidenceTimeDiffSelector() ;
 
 
   //! Constructs a new dead time attached to a GateDigitizer
-  GateCoincidenceTimeDiffSelector(GateCoincidencePulseProcessorChain* itsChain,
-                                  const G4String& itsName);
-
+  //GateCoincidenceTimeDiffSelector(GateCoincidencePulseProcessorChain* itsChain,
+                                  //const G4String& itsName);
+void Digitize() override;
 public:
 
   //! Returns the TimeDiffSelector
@@ -53,7 +63,7 @@ public:
 protected:
 
   /*! Implementation of the pure virtual method declared by the base class GateVCoincidencePulseProcessor*/
-  GateCoincidencePulse* ProcessPulse(GateCoincidencePulse* inputPulse,G4int iPulse);
+  //GateCoincidencePulse* ProcessPulse(GateCoincidencePulse* inputPulse,G4int iPulse);
 
 
 
@@ -61,6 +71,11 @@ private:
   G4double m_minTime; //!< TimeDiffSelector value
   G4double m_maxTime;  //!< contains the rebirth time.
   GateCoincidenceTimeDiffSelectorMessenger *m_messenger;    //!< Messenger
+  GateCoincidenceDigi* m_outputDigi;
+
+   GateCoincidenceDigiCollection*  m_OutputDigiCollection;
+
+   GateCoincidenceDigitizer *m_digitizer;
 };
 
 

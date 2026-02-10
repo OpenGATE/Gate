@@ -23,7 +23,7 @@ See LICENSE.md for further details
 // define the minimum offset for a delayed coincidence window in sec
 #define  MIN_COINC_OFFSET -1.
 
-class GateCoincidenceDigi : public G4VDigi, public std::vector<GateDigi*>
+class GateCoincidenceDigi :  public G4VDigi, public std::vector<GateDigi*>
 {
 public:
 
@@ -51,6 +51,7 @@ public:
 
 public:
 
+	  G4double ComputeFinishTime();
 
     inline G4double GetStartTime() const
       { return m_startTime; }
@@ -83,6 +84,7 @@ public:
   static void SetCoincidenceASCIIMask(std::vector<G4bool>);
   static std::vector<G4bool> GetCoincidenceASCIIMask();
   static G4bool GetCoincidenceASCIIMask(G4int index);
+
 
 protected:
   static std::vector<G4bool> m_coincidenceASCIIMask;

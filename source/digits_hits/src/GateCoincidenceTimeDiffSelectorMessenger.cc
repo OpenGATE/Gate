@@ -10,12 +10,19 @@ See LICENSE.md for further details
 #include "GateCoincidenceTimeDiffSelectorMessenger.hh"
 
 #include "GateCoincidenceTimeDiffSelector.hh"
-
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
+#include "GateDigitizerMgr.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
+#include "GateClockDependentMessenger.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UIdirectory.hh"
 
-GateCoincidenceTimeDiffSelectorMessenger::GateCoincidenceTimeDiffSelectorMessenger(GateCoincidenceTimeDiffSelector* itsTimeDiffSelector)
-    : GateClockDependentMessenger(itsTimeDiffSelector)
+GateCoincidenceTimeDiffSelectorMessenger::GateCoincidenceTimeDiffSelectorMessenger (GateCoincidenceTimeDiffSelector* CoincidenceTimeDiffSelector)
+:GateClockDependentMessenger(CoincidenceTimeDiffSelector),
+	  m_CoincidenceTimeDiffSelector(CoincidenceTimeDiffSelector)
+
 {
   G4String guidance;
   G4String cmdName;
@@ -44,9 +51,9 @@ GateCoincidenceTimeDiffSelectorMessenger::~GateCoincidenceTimeDiffSelectorMessen
 void GateCoincidenceTimeDiffSelectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
   if (command==minTimeCmd)
-    GetTimeDiffSelector()->SetMinTime(minTimeCmd->GetNewDoubleValue(newValue));
+	 m_CoincidenceTimeDiffSelector->SetMinTime(minTimeCmd->GetNewDoubleValue(newValue));
   else if (command == maxTimeCmd)
-    GetTimeDiffSelector()->SetMaxTime(maxTimeCmd->GetNewDoubleValue(newValue));
+	  m_CoincidenceTimeDiffSelector->SetMaxTime(maxTimeCmd->GetNewDoubleValue(newValue));
   else
     GateClockDependentMessenger::SetNewValue(command,newValue);
 }

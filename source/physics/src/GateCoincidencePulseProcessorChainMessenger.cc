@@ -9,9 +9,9 @@ See LICENSE.md for further details
 
 #include "GateCoincidencePulseProcessorChainMessenger.hh"
 
-//#include "../../digits_hits/include/GateCoincidenceBuffer.hh"
-//#include "../../digits_hits/include/GateCoincidenceMultiplesKiller.hh"
-#include "../../digits_hits/include/GateCoincidenceTimeDiffSelector.hh"
+//#include "../../digits_hits/include/GateCoincidenceBufferOld.hh"
+//#include "../../digits_hits/include/GateCoincidenceMultiplesKillerOld.hh"
+//#include "../../digits_hits/include/GateCoincidenceTimeDiffSelectorOld.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithABool.hh"
@@ -92,8 +92,8 @@ void GateCoincidencePulseProcessorChainMessenger::DoInsertion(const G4String& ch
   */
   if (childTypeName=="sequenceRecon")
     newProcessor = new GateCCCoincidenceSequenceRecon(GetProcessorChain(),newInsertionName);
-  else if (childTypeName=="timeDiffSelector")
-    newProcessor = new GateCoincidenceTimeDiffSelector(GetProcessorChain(),newInsertionName);
+  //else if (childTypeName=="timeDiffSelector")
+    //newProcessor = new GateCoincidenceTimeDiffSelector(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="geometrySelector")
     newProcessor = new GateCoincidenceGeometrySelector(GetProcessorChain(),newInsertionName);
  // else if (childTypeName=="buffer")

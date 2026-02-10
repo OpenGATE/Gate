@@ -41,6 +41,21 @@ GateCoincidenceDigi::GateCoincidenceDigi(GateDigi *firstDigi,
 
 
 }
+G4double GateCoincidenceDigi::ComputeFinishTime()
+{
+	//std::vector< GateDigi* >* IDCVector = IDC->GetVector ();
+    std::vector<GateDigi*>::iterator iter;
+
+    G4double finishTime = 0;
+    for (iter =begin(); iter < end() ; ++iter) {
+    	if ( (*iter)->GetTime() > finishTime ){
+    		finishTime  = (*iter)->GetTime();
+      			}
+      	}
+
+
+    return finishTime;
+}
 
 
 
