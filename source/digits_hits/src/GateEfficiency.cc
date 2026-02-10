@@ -169,6 +169,11 @@ void GateEfficiency::Digitize()
 		   {
 			   m_OutputDigiCollection->insert(m_outputDigi);
 		   }
+      else
+      {
+        delete m_outputDigi;
+        m_outputDigi = nullptr;
+      }
 
 
 	  }
