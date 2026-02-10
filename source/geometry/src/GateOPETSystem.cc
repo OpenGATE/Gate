@@ -50,9 +50,13 @@ GateOPETSystem::GateOPETSystem(const G4String& itsName)
  
   // Integrate a coincidence sorter into the digitizer
     //OK GND 2022
-    GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+  // MR 2025: For multi-detector geometries: suppress the generation of multiple coincidence sorters called
+  // "Coincidences" to avoid ambiguity issues
+  GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
+  if (digitizerMgr->m_CoincidenceSortersList.size() == 0) {
     GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizerMgr,"Coincidences");
     digitizerMgr->AddNewCoincidenceSorter(coincidenceSorter);
+  }
 #ifdef GATE_USE_LMF
 
   // Insert an LMF output module into the output manager

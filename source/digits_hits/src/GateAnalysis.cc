@@ -35,6 +35,10 @@
 #include "GateToRoot.hh"
 #include "GateDigitizerMgr.hh"
 
+#include "G4UnitsTable.hh"
+#include <numeric>
+#include <algorithm>
+
 //--------------------------------------------------------------------------------------------------
 GateAnalysis::GateAnalysis(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
@@ -114,6 +118,39 @@ void GateAnalysis::RecordBeginOfEvent(const G4Event* )
 //--------------------------------------------------------------------------------------------------
 
 
+///////////////////////////////////////////////////////////////////////
+
+std::vector<G4int> argsort(const std::vector<G4double>& v) {
+    std::vector<G4int> idx(v.size());
+    std::iota(idx.begin(), idx.end(), 0);
+
+    std::sort(idx.begin(), idx.end(),
+              [&v](G4int i1, G4int i2) { return v[i1] < v[i2]; });
+
+    return idx;
+}
+
+std::vector<G4int> inverse_argsort(const std::vector<G4double>& unsorted_array) {
+    std::vector<G4int> sorted_indices = argsort(unsorted_array);
+    std::vector<G4int> original_indices(sorted_indices.size());
+
+    for (G4int i = 0; i < sorted_indices.size(); ++i) {
+        original_indices[sorted_indices[i]] = i;
+    }
+
+    return original_indices;
+}
+/*
+template <typename T>
+void printVector(const std::vector<T>& v) {
+	for (T ii: v)
+		 std::cout << std::setprecision(16) << ii << ' ';
+		 std::cout << std::endl;
+}
+*/
+///////////////////////////////////////////////////////////////////////
+
+
 //--------------------------------------------------------------------------------------------------
 void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 {
@@ -140,6 +177,148 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     {
 	  //OK GND 2022
       std::vector<GateHitsCollection*> CHC_vector = GetOutputMgr()->GetHitCollections();
+      
+      /////////////////////////////////////////////////////////////////
+
+	  //Number of sensitive detectors
+	  //G4cout << CHC_vector.size() << G4endl;
+	  //G4cout << "--" << G4endl;
+	  
+	  //G4bool oneInFirstLayer = false;
+	  //G4bool twoInFirstLayer = false;
+	  //G4double oneKeep, twoKeep;
+	  
+	  // The following bit used to be part of the main loop
+	  // todo: Check if moving this causes some errors
+	  G4int photon1ID  = 0;
+	  G4int photon2ID  = 0;
+	  
+	  ////////////
+	  // search the positron
+	  //positronID = // No more needed
+      m_trajectoryNavigator->FindPositronTrackID();
+	  
+	  /*
+	  if (positronID == 0) {
+		  if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0\n";
+	  }
+	  
+	  if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << Gateendl;
+	  */	  
+	  ////////////
+	  
+	  //search the two gammas
+	  std::vector<G4int> photonIDVec = m_trajectoryNavigator->FindAnnihilationGammasTrackID();
+	  if (photonIDVec.size() == 0) {
+		  // no gamma coming from a positron or an ion, or shooted as primary
+		  if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photonIDs not found\n";
+	  }
+	  else {
+		  //  This warning is somewhat irrelevant with 124I
+		  if (nVerboseLevel > 0 && photonIDVec.size() > 2) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photonID vector size > 2\n";
+		  
+		  // Print the 
+		  //for (G4int ii: photonIDVec)
+		  //std::cout << ii << ' ';
+		  //std::cout << std::endl;
+		  
+		  photon1ID = photonIDVec[0];
+		  photon2ID = (photonIDVec.size() >= 2) ? photonIDVec[1] : 0;
+	  }
+
+	  if (photon1ID == 0) {
+		  if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photon1ID == 0\n";
+	  }
+	  
+	  if (photon2ID == 0) {
+		  if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photon2ID == 0\n";
+	  }
+	  
+	  if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : photon1ID : " << photon1ID << "     photon2ID : " << photon2ID << Gateendl;
+      
+	  ///////////////////////////////////////////////////////////////////
+
+
+	  ///////////////////////////////////////////////////////////////////
+
+
+
+	  // Get all the Compton (and Rayleigh) interactions before processing the hit layers individually
+	  std::vector<G4int> comptonCount1, comptonCount2, rayleighCount1, rayleighCount2;
+
+  	  G4bool multi_detector = CHC_vector.size() > 1;
+
+  	  // Only do this if there are multiple layers / geometries
+  	  if (multi_detector) {
+
+  	  	std::vector<G4double> comptonTimes1, comptonTimes2, rayleighTimes1, rayleighTimes2;
+
+	  	  for (size_t i=0; i<CHC_vector.size(); i++) {
+	  	  	GateHitsCollection* CHC = CHC_vector[i];
+	  	  	G4int NbHits = 0;
+	  	  	if (CHC) {
+	  	  		NbHits = CHC->entries();
+	  	  		//G4int c1 = 0, c2 = 0, r1 = 0, r2 = 0;
+
+	  	  		// Hits loop
+	  	  		for (G4int iHit=0;iHit<NbHits;iHit++) {
+	  	  			G4int crystalTrackID = (*CHC)[iHit]->GetTrackID();
+	  	  			G4String processName = (*CHC)[iHit]->GetProcess();
+
+	  	  			if (processName.find("ompt") != G4String::npos) {
+
+	  	  				if (crystalTrackID == photon1ID) {
+	  	  					comptonTimes1.push_back((*CHC)[iHit]->GetTime());
+	  	  					//comptonCount1.push_back(c1);
+	  	  					//c1++;
+	  	  				}
+	  	  				if (crystalTrackID == photon2ID) {
+	  	  					comptonTimes2.push_back((*CHC)[iHit]->GetTime());
+	  	  					//comptonCount2.push_back(c2);
+	  	  					//c2++;
+	  	  				}
+	  	  			}
+
+	  	  			if (processName.find("Rayl") != G4String::npos) {
+
+	  	  				if (crystalTrackID == photon1ID) {
+	  	  					rayleighTimes1.push_back((*CHC)[iHit]->GetTime());
+	  	  					//rayleighCount1.push_back(r1);
+	  	  					//r1++;
+	  	  				}
+
+	  	  				if (crystalTrackID == photon2ID) {
+	  	  					rayleighTimes2.push_back((*CHC)[iHit]->GetTime());
+	  	  					//rayleighCount2.push_back(r2);
+	  	  					//r2++;
+	  	  				}
+
+	  	  			}
+	  	  		}
+	  	  	}
+	  	  }
+  	  	// Get the correct ordering
+  	  	//comptonCount1 = argsort(comptonTimes1);
+  	  	//comptonCount2 = argsort(comptonTimes2);
+  	  	comptonCount1 = inverse_argsort(comptonTimes1);
+  	  	comptonCount2 = inverse_argsort(comptonTimes2);
+
+  	  	//~ if (comptonCount1.size() > 0) {
+  	  	//~ printVector(comptonTimes1);
+  	  	//~ printVector(comptonCount1);
+  	  	//~ G4cout << G4endl;
+  	  	//~ }
+
+  	  	//rayleighCount1 = argsort(rayleighTimes1);
+  	  	//rayleighCount2 = argsort(rayleighTimes2);
+  	  	rayleighCount1 = inverse_argsort(rayleighTimes1);
+  	  	rayleighCount2 = inverse_argsort(rayleighTimes2);
+  	  }
+
+      G4int ic1=0, ic2=0, ir1=0, ir2=0;	 
+	  
+	  ///////////////////////////////////////////////////////////////////
+
 
       for (size_t i=0; i<CHC_vector.size();i++ )
       {
@@ -154,8 +333,8 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 			  //G4int ionID      = 1; // the primary vertex particle
 			  //G4int positronID = 0; // no more needed
-			  G4int photon1ID  = 0;
-			  G4int photon2ID  = 0;
+			  //G4int photon1ID  = 0; // Moved outside of the loop!
+			  //G4int photon2ID  = 0; // Moved outside of the loop!
 			  G4int rootID     = 0;
 			  G4int primaryID  = 0;
 
@@ -173,18 +352,22 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 			  G4int septalNb = 0; // HDS : septal penetration
 
+          /////////////////////////////////////////////////////////////
+          // The following bit of the code has been moved outside of the loop!
+          /*
+
 		  ////////////
 			  // search the positron
 			  //positronID = // No more needed
 			  m_trajectoryNavigator->FindPositronTrackID();
 
-			  /*if (positronID == 0)
-				{
-				if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0\n";
-				}
+			  //if (positronID == 0)
+				//{
+				//if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0\n";
+				//}
 
-				if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << Gateendl;
-			  */
+				//if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << Gateendl;
+			  
 
 		  ////////////
 		  //search the two gammas
@@ -202,6 +385,8 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 				  if (nVerboseLevel > 0 && photonIDVec.size() > 2)
 					G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photonID vector size > 2\n";
 
+				  //printVector(photonIDVec);
+
 				  photon1ID = photonIDVec[0];
 				  photon2ID = (photonIDVec.size() >= 2) ? photonIDVec[1] : 0;
 				}
@@ -218,6 +403,9 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 			  if (nVerboseLevel > 1) G4cout
 									   << "GateAnalysis::RecordEndOfEvent : photon1ID : " << photon1ID
 									   << "     photon2ID : " << photon2ID << Gateendl;
+
+              */
+              /////////////////////////////////////////////////////////
 
 
 			  // analysis of the phantom hits to count the comptons, etc.
@@ -381,22 +569,86 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 				{
 				  G4int    crystalTrackID = (*CHC)[iHit]->GetTrackID();
 				  G4String processName = (*CHC)[iHit]->GetProcess();
+
+				  /////////////////////////////////////////////////////////////
+				  // Check the ordering
+				  /*
+				  G4cout << std::setprecision(16) << (*CHC)[iHit]->GetTime()/second << G4endl; // somehow does not show all 16 digits?
+				  if (processName == "Compton") {
+					 std::cout << std::setprecision (16) << (*CHC)[iHit]->GetTime()/second << " " << crystalTrackID << std::endl;
+					
+					if ((crystalTrackID == photon1ID) && (i == 1) && oneInFirstLayer){
+						if (oneKeep > (*CHC)[iHit]->GetTime()/second){
+						std::cout << std::setprecision (16) << oneKeep << std::endl;
+						std::cout << std::setprecision (16) << (*CHC)[iHit]->GetTime()/second << " " << crystalTrackID << std::endl;
+						std::cout << std::endl;}
+						
+					}
+					
+					if ((crystalTrackID == photon2ID) && (i == 1) && twoInFirstLayer){
+						if (twoKeep > (*CHC)[iHit]->GetTime()/second){
+						std::cout << std::setprecision (16) << twoKeep << std::endl;
+						std::cout << std::setprecision (16) << (*CHC)[iHit]->GetTime()/second << " " << crystalTrackID << std::endl;
+						std::cout << std::endl;}
+					}
+					
+					
+					if ((crystalTrackID == photon1ID) && (i == 0)) oneInFirstLayer = true, oneKeep = (*CHC)[iHit]->GetTime()/second;
+					if ((crystalTrackID == photon2ID) && (i == 0)) twoInFirstLayer = true, twoKeep = (*CHC)[iHit]->GetTime()/second;
+				  }
+				  */
+
 				  // Counting Compton in the Crystal
 				  //      if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {
 				  if (processName.find("ompt") != G4String::npos)
 					{
 
-					  if (crystalTrackID == photon1ID) photon1_crystal_compton++;
-					  if (crystalTrackID == photon2ID) photon2_crystal_compton++;
+					  if (crystalTrackID == photon1ID) {
+					  	  if (multi_detector) {
+					  	  	photon1_crystal_compton = comptonCount1[ic1] + 1;
+					  	  	ic1++;
+					  	  } else {
+						  	  photon1_crystal_compton++;
+					  	  }
+					  }
+					  
+					  if (crystalTrackID == photon2ID) {
+						  if (multi_detector) {
+						  	photon2_crystal_compton = comptonCount2[ic2] + 1;
+						  	ic2++;
+						  } else {
+							  photon2_crystal_compton++;
+						  }
+
+					  }
+					  
 					}
 
 				  // Counting Rayleigh scatter in crystal
 				  if (processName.find("Rayl") != G4String::npos)
 					{
 
-					  if (crystalTrackID == photon1ID) photon1_crystal_Rayleigh++;
-					  if (crystalTrackID == photon2ID) photon2_crystal_Rayleigh++;
+					  if (crystalTrackID == photon1ID) {
+					  	if (multi_detector) {
+					  		photon1_crystal_Rayleigh = rayleighCount1[ir1] + 1;
+					  		ir1++;
+					  	} else {
+					  		photon1_crystal_Rayleigh++;
+					  	}
+					  }
+					  
+					  if (crystalTrackID == photon2ID) {
+					  	if (multi_detector) {
+					  		photon2_crystal_Rayleigh = rayleighCount2[ir2] + 1;
+					  		ir2++;
+					  	} else {
+					  		photon2_crystal_Rayleigh++;
+					  	}
+					  }
+					  
 					}
+
+				  /////////////////////////////////////////////////////////////
 
 				  G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
 				  if (nVerboseLevel > 2)
