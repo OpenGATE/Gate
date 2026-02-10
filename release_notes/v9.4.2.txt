@@ -24,8 +24,9 @@ Main new features
 
 - Bug corrections:
 1) Coincidence Sorter: Memory leak correction
-2) Memory leaks corrections in: GateEnergyFraming, GateClustering, GateDoIModels, GateTimeDelay
-3) JobSplitter bug correction (error message if use less than 10 nodes) 
+2) Memory leaks corrections in Digitizer
+3) JobSplitter bug correction (error message if use less than 10 nodes)
+4) Generalisation of spatial resolution
 
 From 9.4.1 version: 
 1) Some of functionalities are temporarily disabled:
