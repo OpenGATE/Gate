@@ -1,0 +1,53 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.4.2        #
+#                          #
+#        01/2026           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 11.4.0 only. 
+Gate cannot be compiled with earlier Geant4 versions. 
+It *may* works with other ROOT, ITK, libtorch version but it is not tested.
+
+Dependencies:
+- Geant4: v11.4.0 (cxx17 is required)
+- ROOT: v6-32-08 (must be compiled with -DCMAKE_CXX_STANDARD=17)
+- ITK: v5.2.0 (with RTK enabled)
+- libtorch: v1.10.1
+
+
+-----------------
+Main new features
+-----------------
+
+- Bug corrections:
+1) Coincidence Sorter: Memory leak correction
+2) Memory leaks corrections in: GateEnergyFraming, GateClustering, GateDoIModels, GateTimeDelay
+3) JobSplitter bug correction (error message if use less than 10 nodes) 
+
+From 9.4.1 version: 
+1) Some of functionalities are temporarily disabled:
+          - Outputs: Sino, LMF, Ecat7
+
+New features:
+1) Generalisation of Spatial resolution in 2D (x,sigma(x))
+
+
+- additional Benchmarks
+https://github.com/OpenGATE/GateBenchmarks
+
+----------
+Gate Tools
+----------
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
+GATE tools:         https://github.com/OpenGATE/GateTools
