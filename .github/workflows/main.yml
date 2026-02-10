@@ -41,7 +41,6 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-
         key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
         restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
     - name: Install dependencies
@@ -90,7 +89,6 @@ jobs:
           cmake --version
           which cmake
         fi  
-
         cd $HOME/
         mkdir -p software option_dependencies
         cmake --version
@@ -103,6 +101,8 @@ jobs:
           mkdir src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
           cd bin
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
                        -DCMAKE_C_COMPILER=$CC \
                        -DCMAKE_CXX_COMPILER=$CXX \

@@ -1548,6 +1548,7 @@ Here is an example of how to configure this in a macro file:
 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/buffer/setMode 1
 
 
+
 For a coincidence sorter user can chose a presort buffer with a following command: 
 
    /gate/digitizer/Coincidences/setPresortBufferSize 256 

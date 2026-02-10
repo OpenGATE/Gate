@@ -169,6 +169,12 @@ void GateCoincidenceDigitizerMessenger::DoInsertion(const G4String& childTypeNam
     	  m_CoinDigitizer->AddNewModule(newDM);
       }
 
+  else if (childTypeName=="timeDiffSelector")
+      {
+    	  newDM = new GateCoincidenceTimeDiffSelector(m_CoinDigitizer, DMname);
+    	  m_CoinDigitizer->AddNewModule(newDM);
+      }
+
   /*else if (childTypeName=="readout")
   {
 	  newDM = new GateReadout(m_digitizer, DMname);
