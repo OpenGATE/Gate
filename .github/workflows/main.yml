@@ -23,7 +23,7 @@ jobs:
             options: torch
 
     env:
-      ROOT_VERSION: 'v6-32-04'
+      ROOT_VERSION: 'v6-38-00'
       ITK_VERSION: 'v5.4.2'
       GEANT4_VERSION: 'v11.4.0'
       ROOT_DIR: $(HOME)/software/root
@@ -41,8 +41,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/software
-        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build0
-        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-build0
+        key: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
+        restore-keys: ${{ matrix.os }}-geant4-${{ env.GEANT4_VERSION }}-root-${{ env.ROOT_VERSION }}-qt6-root3800
     - name: Install dependencies
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
@@ -72,36 +72,23 @@ jobs:
           brew install python@3.12 || true
           
           brew link --overwrite --force python@3.12
-          #brew update
-          #brew cleanup
-          #brew config
-          #rm -rf /usr/local/bin/python3.11-config /usr/local/bin/2to3-3.11 /usr/local/bin/idle3.11 /usr/local/bin/pydoc3.11 /usr/local/bin/python3.11
-          #rm -rf /usr/local/bin/python3-config /usr/local/bin/2to3 /usr/local/bin/idle3 /usr/local/bin/pydoc3 /usr/local/bin/python3
-          brew install --force --verbose --overwrite --debug qt \
+          export Python3_EXECUTABLE="$(brew --prefix python@3.12)/bin/python3"
+          brew install --force --verbose --overwrite --debug cmake \
+                                                             qt \
                                                              ccache \
                                                              tbb \
                                                              xrootd \
                                                              fftw
-          #brew link qt --force && sudo ln -s /usr/local/opt/qt/mkspecs /usr/local/mkspecs && sudo ln -s /usr/local/opt/qt/plugins /usr/local/plugins
+          
           brew cleanup
-          #export PATH=/usr/local/opt/qt/bin:$PATH
-          #export LDFLAGS="-L/usr/local/opt/qt/lib -L/usr/local/opt/llvm/lib"
-          #export CPPFLAGS="-I/usr/local/opt/qt/include -I/usr/local/opt/llvm/include -fopenmp"
+          #LLVM_PREFIX="$(brew --prefix llvm || true)"
+          #export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
           
-          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
-          export CMAKE_PREFIX_PATH="$(brew --prefix qt):$CMAKE_PREFIX_PATH"
-          export Qt6_DIR="$(brew --prefix qt)/lib/cmake/Qt6"
-
-          QT_PREFIX="$(brew --prefix qt)"
-          
-          LLVM_PREFIX="$(brew --prefix llvm || true)"
-          export LDFLAGS="-L$QT_PREFIX/lib ${LLVM_PREFIX:+-L$LLVM_PREFIX/lib}"
-          export CPPFLAGS="-I$QT_PREFIX/include ${LLVM_PREFIX:+-I$LLVM_PREFIX/include}"
-
           cmake --version
           which cmake
-          
-        fi
+        fi  
         cd $HOME/
         mkdir -p software option_dependencies
         cmake --version
@@ -111,37 +98,17 @@ jobs:
           cd $HOME/software
           mkdir root
           cd root
-          mkdir -p src bin install
+          mkdir src bin install
           git clone  --branch $ROOT_VERSION https://github.com/root-project/root.git --depth 1 src
-          rm -rf bin
-          mkdir -p bin
           cd bin
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
           cmake ../src -DCMAKE_CXX_STANDARD=17 \
-                       -Dpython=OFF \
-                       -Dpyroot=OFF \
-                       -Dclad=OFF \
-                       -Dcling=OFF \
-                       -Dbuiltin_cling=ON \
-                       -Dxrootd=OFF \
-                       -Dvdt=OFF \
-                       -Dbuiltin_vdt=OFF \
-                       -Dqt6=OFF \
-                       -Dqt5=OFF \
-                       -Dwebgui=OFF \
-                       -Dx11=OFF \
-                       -Droofit=OFF \
-                       -Dtmva=OFF \
-                       -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" \
+                       -DCMAKE_C_COMPILER=$CC \
+                       -DCMAKE_CXX_COMPILER=$CXX \
+                       -DCMAKE_OSX_ARCHITECTURES=arm64 \
                        -DCMAKE_INSTALL_PREFIX=$HOME/software/root/install
-          grep -E "INTERPRETER|CLING|BUILTIN_CLING|CXXMODULES" CMakeCache.txt || true
-
-          #grep -i vdt CMakeCache.txt || true
-          make -j4 install VERBOSE=1
-          #echo "===== VDT CONFIGURE STDOUT ====="
-          #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-out.log || true
-          #echo "===== VDT CONFIGURE STDERR ====="
-          #cat /Users/runner/software/root/bin/VDT-prefix/src/VDT-stamp/VDT-configure-err.log || true
-          #exit 1
+          make install -j 4
           cd ..
           rm -rf bin src
         fi
