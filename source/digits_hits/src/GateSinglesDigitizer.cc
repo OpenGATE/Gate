@@ -46,14 +46,19 @@ GateSinglesDigitizer::GateSinglesDigitizer( GateDigitizerMgr* itsDigitizerMgr,
 	 */
 
   //Prepare OutputMng for this digitizer
-  	GateOutputMgr::GetInstance()->RegisterNewSingleDigiCollection(m_digitizerName+"_"+SD->GetName(),false);
-  	if(!itsDigitizerMgr->m_isInitialized)
+  //
+  // TODO Remove after code review ...
+  //
+  	// Move to DigitizerMgr
+  	//GateOutputMgr::GetInstance()->RegisterNewSingleDigiCollection(m_digitizerName+"_"+SD->GetName(),false);
+  	
+  	// m_isInitialized is set to 1 in the DigitizerMgr constructor. How could it be 0??
+  	/*if(!itsDigitizerMgr->m_isInitialized)
   	{
 
   		itsDigitizerMgr->AddNewSinglesDigitizer(this);
 
-  	}
-
+  	}*/
 }
 
 
