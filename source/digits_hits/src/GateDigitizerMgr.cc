@@ -255,24 +255,33 @@ void GateDigitizerMgr::AddNewSD(GateCrystalSD* newSD)
 
 //-----------------------------------------------------------------
 // Integrates a new Singles Digitizer
-void GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
+bool GateDigitizerMgr::AddNewSinglesDigitizer(GateSinglesDigitizer* digitizer)
 {
+  // Do not allow to register digitizers with identical names
+  G4String DigitizerName = digitizer->m_digitizerName + "_" + digitizer->m_SD->GetName();
+  if (FindSinglesDigitizer(DigitizerName) != nullptr) {
+      return false;
+  }
+
   GateDigitizerInitializationModule * myDM = new GateDigitizerInitializationModule(digitizer);
   m_digitizerIMList.push_back(myDM);
   G4DigiManager::GetDMpointer()->AddNewModule(myDM);
 
-  
   G4String outputName = digitizer->GetOutputName() ;
   if (nVerboseLevel>1)
     G4cout << "[GateDigitizerMgr::AddNewSinglesDigitizer]: Storing new digitizer '" << digitizer->GetObjectName() << "'"
            << " with output pulse-list name '" << outputName << "'\n";
 
+  //Prepare OutputMng for this digitizer
+  GateOutputMgr::GetInstance()->RegisterNewSingleDigiCollection(DigitizerName, false);
   //Add digitizer to the list
   m_SingleDigitizersList.push_back(digitizer);
 
   //! Next lines are for the multi-system approach
   if(m_systemList && m_systemList->size() == m_SDlist.size())
 	  digitizer->SetSystem((*m_systemList)[0]);
+
+  return true;
 }
 //-----------------------------------------------------------------
 
