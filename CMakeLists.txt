@@ -300,6 +300,7 @@ IF(GATE_COMPILE_GATEDIGIT)
     INSTALL(TARGETS Convert_CCMod2PETCoinc DESTINATION bin)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
+
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
 # such warning related to clhep/g4 system of units.

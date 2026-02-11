@@ -47,11 +47,15 @@ public:
 
   //! These functions return the resolution in use.
     G4double GetFWHM()				{ return m_fwhm; }
-    GateVDistribution* GetFWHMxdistrib()	{ return m_fwhmXdistrib; }
-    GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYdistrib; }
-    GateVDistribution* GetFWHMzdistrib()    	{ return m_fwhmZdistrib; }
+    GateVDistribution* GetFWHMxdistrib() 	{ return m_fwhmXDistrib; }
+    GateVDistribution* GetFWHMydistrib()    	{ return m_fwhmYDistrib; }
+    GateVDistribution* GetFWHMzdistrib()    	{ return m_fwhmZDistrib; }
     G4String GetNameAxis()				   { return m_nameAxis;     }
-    GateVDistribution* GetFWHMDistrib2D()	{ return m_fwhmDistrib2D; }
+    GateVDistribution* GetFWHMDistrib2D()	{ return m_fwhmXDistrib2D ? m_fwhmXDistrib2D : (m_fwhmYDistrib2D? m_fwhmYDistrib2D : m_fwhmZDistrib2D); }
+
+    GateVDistribution* GetFWHMXDistrib2D() { return m_fwhmXDistrib2D; }
+    GateVDistribution* GetFWHMYDistrib2D() { return m_fwhmYDistrib2D; }
+    GateVDistribution* GetFWHMZDistrib2D() { return m_fwhmZDistrib2D; }
 
     G4double GetFWHMx()         { return m_fwhmX; }
     G4double GetFWHMy()			{ return m_fwhmY; }
@@ -62,13 +66,18 @@ public:
       If you want a resolution of 10%, SetSpresolution(0.1)
     */
     void SetFWHM(G4double val)   { m_fwhm = val;  }
-    void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXdistrib= dist; }
-    void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYdistrib = dist; }
-    void SetFWHMzdistrib(GateVDistribution* dist)  { m_fwhmZdistrib = dist; }
+    void SetFWHMxdistrib(GateVDistribution* dist)  { m_fwhmXDistrib= dist; }
+    void SetFWHMydistrib(GateVDistribution* dist)  { m_fwhmYDistrib = dist; }
+    void SetFWHMzdistrib(GateVDistribution* dist)  { m_fwhmZDistrib = dist; }
 
 
     void SetNameAxis(const G4String& name) {m_nameAxis=name;}
-    void SetFWHMDistrib2D(GateVDistribution* dist)  { m_fwhmDistrib2D= dist;}
+    // Backwards-compatible: sets all 3 axis 2D distributions to the same distribution
+    void SetFWHMDistrib2D(GateVDistribution* dist)  { m_fwhmXDistrib2D = m_fwhmYDistrib2D = m_fwhmZDistrib2D = dist; }
+
+    void SetFWHMXDistrib2D(GateVDistribution* dist) { m_fwhmXDistrib2D = dist; }
+    void SetFWHMYDistrib2D(GateVDistribution* dist) { m_fwhmYDistrib2D = dist; }
+    void SetFWHMZDistrib2D(GateVDistribution* dist) { m_fwhmZDistrib2D = dist; }
 
     void SetFWHMx(G4double val)   { m_fwhmX = val;  }
     void SetFWHMy(G4double val)   { m_fwhmY = val;  }
@@ -97,11 +106,13 @@ protected:
     G4double m_fwhmY;
     G4double m_fwhmZ;
 
-    GateVDistribution* m_fwhmXdistrib;
-    GateVDistribution* m_fwhmYdistrib;
-    GateVDistribution* m_fwhmZdistrib;
+    GateVDistribution* m_fwhmXDistrib;
+    GateVDistribution* m_fwhmYDistrib;
+    GateVDistribution* m_fwhmZDistrib;
 
-    GateVDistribution* m_fwhmDistrib2D;
+    GateVDistribution* m_fwhmXDistrib2D;
+    GateVDistribution* m_fwhmYDistrib2D;
+    GateVDistribution* m_fwhmZDistrib2D;
 
     G4String m_nameAxis;
 

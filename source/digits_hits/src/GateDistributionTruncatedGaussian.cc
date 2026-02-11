@@ -21,6 +21,7 @@ See LICENSE.md for further details
 
 //#include "GateDistributionTruncatedGaussianMessenger.hh"
 #include <math.h>
+#include <algorithm>
 //#include <CLHEP/Random/RandGauss.h>
 #include "Randomize.hh"
 #include "GateTools.hh"
@@ -144,7 +145,24 @@ G4double GateDistributionTruncatedGaussian::computeTruncatedSigmaStatic(G4double
     double mean_shift = (phi_lowLim - phi_hiLim) / Z;
     double variance_correction = 1 - (lowLim_std * phi_lowLim - hiLim_std * phi_hiLim) / Z - mean_shift * mean_shift;
 
-    return sigma * sqrt(variance_correction);
+    double truncatedSigma = sigma * sqrt(variance_correction);
+
+    // Edge correction: empirical fit to compensate for edge effects
+    constexpr double A = 3.61070188;
+    constexpr double B = -0.86538264;
+
+    double delta = std::min(mu - lowLimit, highLimit - mu);
+    delta = std::max(0., delta);
+
+    double delta_norm = delta / sigma;
+    double correction = 1;
+
+    // Cuts on delta_norm > 0.95 and delta_norm < 4 comply with the safe limits of the fit
+    delta_norm = std::max(.95, delta_norm);
+    if (delta_norm < 4)
+        correction = A * std::exp(B * delta_norm);
+
+    return truncatedSigma * correction;
 }
 
 //___________________________________________________________________
@@ -162,5 +180,22 @@ G4double GateDistributionTruncatedGaussian::computeTruncatedSigma() const{
     double mean_shift = (phi_lowLim - phi_hiLim) / Z;
     double variance_correction = 1 - (lowLim_std * phi_lowLim - hiLim_std * phi_hiLim) / Z - mean_shift * mean_shift;
 
-    return m_Sigma * sqrt(variance_correction);
+    double truncatedSigma = m_Sigma * sqrt(variance_correction);
+
+    // Edge correction: empirical fit to compensate for edge effects
+    constexpr double A = 3.61070188;
+    constexpr double B = -0.86538264;
+
+    double delta = std::min(m_Mu - m_lowLimit, m_highLimit - m_Mu);
+    delta = std::max(0., delta);
+
+    double delta_norm = delta / m_Sigma;
+    double correction = 1;
+
+    // Cuts on delta_norm > 0.95 and delta_norm < 4 comply with the safe limits of the fit
+    delta_norm = std::max(.95, delta_norm);
+    if (delta_norm < 4)
+        correction = A * std::exp(B * delta_norm);
+
+    return truncatedSigma * correction;
 }

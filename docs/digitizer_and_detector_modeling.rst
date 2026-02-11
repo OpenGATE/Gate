@@ -533,32 +533,31 @@ BEWARE: The confined and the use of the truncated Gaussian are default options. 
 /gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/confineInsideOfSmallestElement true 
 /gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/useTruncatedGaussian 		true
 
-
 **Configuring Spatial Resolution with 1D and 2D Distributions**::
 
-This approach is particularly essential  for  monolithic crystal detectors, where factors like edge effects and interaction positions significantly  may influence spatial  resolution. The spatial distribution resolution allows to select what axis will be using such distribution. Currently only one distribution is allowed for all axis.
+This approach is particularly essential  for  monolithic crystal detectors, where factors such as edge effects and interaction positions may significantly influence spatial resolution.
+
+In order to map the 2D distribution with the crystal, the command "nameAxis" is used. The value of the axis provided will be the ones attributed to the 2 dimensions (columns and rows) of the distribution file. Assuming the crystal will be placed along the Z direction the options are "XZ" for a ring starting on top, and "YZ" for a ring starting on the sides. The default value for "nameAxis" is "YZ".
 
 Here is an example of how to configure this in a macro file:
 
 **Example for 2D distribution**::
 
 
-The axis are selected with a "nameAxis". IMPORTANT NOTE: Only the "XY" axis are available:
-
-/gate/distributions/name                                                                                        my_distrib2D
-/gate/distributions/insert                                                                                      File
-/gate/distributions/my_distrib2D/setFileName                                                                    data/my_stddev_distribuion_file.txt
-/gate/distributions/my_distrib2D/readMatrix2d
-/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/insert                                               spatialResolution
-/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/nameAxis                           XY
-/gate/digitizerMgr/pseudoCrystal/SinglesDigitizer/Singles/spatialResolution/fwhmDistrib2D                      my_distrib2D
-
+  /gate/distributions/name    my_distrib2D
+  /gate/distributions/insert   File
+  /gate/distributions/my_distrib2D/setFileName    Lut_XY.txt
+  /gate/distributions/my_distrib2D/readMatrix2d
+  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/insert spatialResolution
+  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/nameAxis       YZ
+  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmYdistrib2D my_distrib2D
+  /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmZdistrib2D my_distrib2D
 
 **Example for 1D distribution**::
 
   /gate/distributions/name   my_distrib1D
   /gate/distributions/insert  File
-  /gate/distributions/my_distrib1D/setFileName  macros/LutY.txt
+  /gate/distributions/my_distrib1D/setFileName  macros/Lut_Y.txt
   /gate/distributions/my_distrib1D/read
   /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/insert spatialResolution
   /gate/digitizerMgr/crystalUnit/SinglesDigitizer/Singles/spatialResolution/fwhmYdistrib my_distrib1D
@@ -569,23 +568,18 @@ These commands allow for more precise control over the spatial resolution by usi
 
 BEWARE : The file for 2D Distribution  should be structured such that:
 
--The first line contains the values of the x position. See the example below where the first line has values from -29.5 to 29.5 in this example for a 59 mm crystal.
+-The first line contains the x values.
 
--Each subsequent line begins with the value of the y position followed by the standard deviation (stddev) values corresponding to each x value and y value pair.
+-Each subsequent line begins with a y value followed by the standard deviation (stddev) values corresponding to each x value and y value pair.
 
 **Example**::
 
--29.50 -22.94 -16.39 -9.83 -3.28 3.28 9.83 16.39 22.94 29.50
--29.50 8.05 5.1 4.24 4.23 4.23 4.19 4.56 4.6 5.02 7.68
--22.94 4.76 2.39 2.31 2.35 2.4 2.35 2.36 2.32 2.44 4.52
--16.39 4.53 2.45 2.28 2.39 2.35 2.36 2.46 2.46 2.55 4.52
--9.83 4.38 2.35 2.13 2.09 2.13 2.07 2.14 2.11 2.33 4.44
--3.28 4.18 2.18 1.97 1.96 1.97 1.97 2.03 2.02 2.19 4.2
-3.28 4.2 2.27 2.04 2.01 2.03 2.06 1.98 1.97 2.24 4.13
-9.83 4.24 2.4 2.23 2.24 2.21 2.28 2.22 2.21 2.35 4.36
-16.39 4.32 2.59 2.47 2.55 2.56 2.52 2.45 2.42 2.55 4.51
-22.94 4.07 2.32 2.33 2.34 2.34 2.27 2.36 2.29 2.4 4.3
-29.50 7.2 4.58 4.07 3.9 3.89 3.83 4.09 3.99 4.47 7.08
+
+  -30 -15 0 15 30
+  -15 9.31 7.25 6.22 7.31 9.73
+  0 9.42 6.25 3.25 6.22 9.72
+  15 9.42 6.53 3.15 6.32 9.71
+  30 9.42 7.45 6.25 7.32 9.74
 
 Energy Framing
 ^^^^^^^^^^^^^^
