@@ -31,9 +31,7 @@ See LICENSE.md for further details
 class GateCoincidenceTimeDiffSelectorMessenger;
 
 
-
 class GateCoincidenceTimeDiffSelector : public GateVDigitizerModule
-
 {
 public:
 
