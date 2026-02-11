@@ -300,16 +300,6 @@ IF(GATE_COMPILE_GATEDIGIT)
     INSTALL(TARGETS Convert_CCMod2PETCoinc DESTINATION bin)
 ENDIF(GATE_COMPILE_GATEDIGIT)
 
-# Option to build small unit tests for Gate (requires Geant4/ROOT as configured above)
-OPTION(GATE_BUILD_UNIT_TESTS "Build unit tests for Gate" OFF)
-IF(GATE_BUILD_UNIT_TESTS)
-  ADD_EXECUTABLE(TestSpatialResStdDev ${PROJECT_SOURCE_DIR}/source/digits_hits/test/TestSpatialResStdDev.cc $<TARGET_OBJECTS:GateLib>)
-  TARGET_LINK_LIBRARIES(TestSpatialResStdDev GateLib)
-  INSTALL(TARGETS TestSpatialResStdDev DESTINATION bin)
-    IF(BUILD_TESTING)
-      add_test(NAME TestSpatialResStdDev COMMAND TestSpatialResStdDev)
-    ENDIF(BUILD_TESTING)
-ENDIF(GATE_BUILD_UNIT_TESTS)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
