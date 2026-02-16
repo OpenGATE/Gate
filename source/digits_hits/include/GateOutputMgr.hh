@@ -101,7 +101,7 @@ public:
 
   //! Static getter and setter to know the current mode of the digitizer
   inline static DigiMode GetDigiMode()  	  { return m_digiMode;}
-  inline static void SetDigiMode(DigiMode mode)   { m_digiMode = mode; }
+  inline static void SetDigiMode(DigiMode mode)   { m_digiMode = mode;}
   GateVOutputModule* GetModule(G4String);
 
   //! Call in startDAQ, this function search for all output module inserted

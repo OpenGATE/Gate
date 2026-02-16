@@ -88,12 +88,10 @@ GateOutputMgr::GateOutputMgr(const G4String name)
     AddOutputModule((GateVOutputModule*)gateFastAnalysis);
   }
 #endif
-
-  if (m_digiMode==kruntimeMode) {
-    GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
+  //commented for offline digi by OK for GND feb 2026 if (m_digiMode==kruntimeMode) {
+	 GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
-
-  }
+  //}
 
 
 #ifdef G4ANALYSIS_USE_FILE
@@ -160,7 +158,6 @@ GateVOutputModule* GateOutputMgr::FindOutputModule(G4String name)
 	for(G4int i=0;i<int(m_outputModules.size());i++)
 		{
 		G4String moduleName = m_outputModules[i]->GetName();
-		//G4cout << moduleName << " "<< name<< G4endl;
 		if(moduleName == name)
 			return m_outputModules[i];
 		}
@@ -262,14 +259,24 @@ void GateOutputMgr::RecordBeginOfAcquisition()
     G4cout << "GateOutputMgr::RecordBeginOfAcquisition\n";
   //OK GND
   GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+  /*if (m_digiMode==kruntimeMode)
+  {*/
 	if((digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
 			&& !this->FindOutputModule("analysis")->IsEnabled()
 			&& !this->FindOutputModule("fastanalysis")->IsEnabled())
 	{
 		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules to write down Singles or Coincidences.\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
 	}
-
-
+  /*}
+  else
+  {
+	  G4cout<<"**************************"<<digitizerMgr->m_recordSingles << " "<< digitizerMgr->m_recordCoincidences<<G4endl;
+	  if(!digitizerMgr->m_recordSingles|| !digitizerMgr->m_recordCoincidences)
+	  	{
+	  		GateError("***ERROR: Digi MODE *** Digitizer Manager is not initialized properly. The output flag is set to 0 for both Signles and Coincidences. \n");
+	  	}
+  }
+*/
 #ifdef G4ANALYSIS_USE_ROOT
   if (m_digiMode==kofflineMode)
     GateHitFileReader::GetInstance()->PrepareAcquisition();

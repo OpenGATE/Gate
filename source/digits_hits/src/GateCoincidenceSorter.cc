@@ -278,13 +278,27 @@ void GateCoincidenceSorter::Digitize()
 
 
   //------ put input digis in sorted input buffer----------
+  if (nVerboseLevel > 1) {
+  	G4cout<<"GateCoincidenceSorter::Digitize. Putting input digis in sorted input buffer"<<G4endl;
+
+  }
   for(gpl_iter = IDCvector->begin();gpl_iter != IDCvector->end();gpl_iter++)
   {
     // make a copy of the digi
     digi = new GateDigi(**gpl_iter);
+    if (nVerboseLevel > 1) {
+     	G4cout<<"[GateCoincidenceSorter::Digitize] EventID "<< digi->GetEventID()<<G4endl;
+
+     }
+
+    if (nVerboseLevel > 2) {
+    	G4cout << "[GateCoincidenceSorter::Digitize] Input digi \n"
+    						 << *digi << Gateendl << Gateendl ;
+
+     }
 
       if(m_presortBuffer.empty())
-      m_presortBuffer.push_back(digi);
+    	  m_presortBuffer.push_back(digi);
       else if(digi->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
     {
           if(!m_presortWarning)
@@ -298,13 +312,18 @@ void GateCoincidenceSorter::Digitize()
           while(digi->GetTime() < (*buf_iter)->GetTime())
         buf_iter++;
       m_presortBuffer.insert(buf_iter, digi);
-          // G4cout<<"presortBuffer filled in position "<<std::distance(m_presortBuffer.begin(),buf_iter)<<G4endl;
-      // G4cout<<"digiTime "<<digi->GetTime()<<G4endl;
-      // G4cout<<"digiTime "<<digi->GetTime()/ns<<G4endl;
+      if (nVerboseLevel > 3)
+      	  {
+          G4cout<<"presortBuffer filled in position "<<std::distance(m_presortBuffer.begin(),buf_iter)<<G4endl;
+          G4cout<<"digiTime "<<digi->GetTime()<<G4endl;
+          G4cout<<"digiTime "<<digi->GetTime()/ns<<G4endl;
+      	  }
     }
 
   }
 
+  if (nVerboseLevel > 1)
+   	G4cout<<"[GateCoincidenceSorter::Digitize] Analyzing the presort buffer..."<<G4endl;
 
   //  once buffer reaches the specified size look for coincidences
   for(G4int i = m_presortBuffer.size();i > m_presortBufferSize;i--)
@@ -373,6 +392,13 @@ void GateCoincidenceSorter::Digitize()
       }
     }
     delete digi;
+  }
+
+  if (nVerboseLevel>1) {
+ 	 G4cout << "[GateCoincidenceSorter::Digitizer]: returning output coincidence digi collection with " << m_OutputCoincidenceDigiCollection->GetSize ()  << " entries\n";
+ 	 //for (iter=m_OutputCoincidenceDigiCollection->begin(); iter!= m_OutputCoincidenceDigiCollection->end() ; ++iter)
+ 	 //G4cout << **iter << Gateendl;
+ 	 //G4cout << Gateendl;
   }
 
   StoreDigiCollection(m_OutputCoincidenceDigiCollection);
