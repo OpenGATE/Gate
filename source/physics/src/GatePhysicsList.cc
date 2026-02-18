@@ -59,6 +59,7 @@
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4RadioactiveDecayPhysics.hh"
+#include "G4QuasiOpticalPhoton.hh"
 
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
@@ -499,6 +500,8 @@ void GatePhysicsList::ConstructParticle()
  //Construct positroniums
  GateParaPositronium::ParaPositroniumDefinition();
  GateOrthoPositronium::OrthoPositroniumDefinition();
+
+ G4QuasiOpticalPhoton::QuasiOpticalPhotonDefinition();
 }
 //-----------------------------------------------------------------------------------------
 
