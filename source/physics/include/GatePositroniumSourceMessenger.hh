@@ -17,6 +17,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
+#include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayParamsGenerator.hh"
 
 class GatePositroniumSource;
@@ -31,6 +32,7 @@ class GatePositroniumSourceMessenger: public GateVSourceMessenger
   ~GatePositroniumSourceMessenger()=default;
 
   void SetNewValue(G4UIcommand *command, G4String newValue) override;
+  G4double CheckIfUnit(std::string val);
    
   PositroniumDecayModelParams generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model= GatePositroniumDecayParamsGenerator::kPositronium) const;
 

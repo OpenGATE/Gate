@@ -96,10 +96,16 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetPositroniumLifetimes.get()) {
     std::vector<float> lifetimes;
     std::stringstream ss(new_value);
-    G4double num;
+    std::string num;
     while (ss >> num) {
-      lifetimes.push_back(num);
+      if (ss.good()) {
+        lifetimes.push_back(stod(num));
+      } else {
+        G4double unitVal = CheckIfUnit(num);
+      }
     }
+    for (unsigned i=0; i<lifetimes.size(); i++)
+      lifetimes.at(i) *= unitVal;
     fParamGenerator.SetPositroniumLifetimes(lifetimes);
   } else if (command == upCmdSetPromptPhotonProbabilites.get()) {
     std::vector<float> promptPhotonProb;
@@ -114,10 +120,16 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetPromptPhotonEnergies.get()) {
     std::vector<float> promptPhotonEnergies;
     std::stringstream ss(new_value);
-    float energy;
+    std::string energy;
     while (ss >> energy) {
-      promptPhotonEnergies.push_back(energy);
+      if (ss.good()) {
+        promptPhotonEnergies.push_back(stod(energy));
+      } else {
+        G4double unitVal = CheckIfUnit(energy);
+      }
     }
+    for (unsigned i=0; i<promptPhotonEnergies.size(); i++)
+      promptPhotonEnergies.at(i) *= unitVal;
     fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
   } else if (command == upCmdSetDecayKinds.get()) {
     std::vector<PositroniumDecayKind> decayKinds;
@@ -164,4 +176,40 @@ PositroniumDecayModelParams GatePositroniumSourceMessenger::generatePositroniumD
   return fParamGenerator.generatePositroniumDecayParams(model);
 }
 
+G4double GatePositroniumSourceMessenger::CheckIfUnit(std::string val)
+{
+  int strSize = val.size();
+  G4double unitValue = 1;
 
+  if (!strSize || strSize > 3)
+    return unitValue;
+
+  char firstChar = val.at(0);
+  char lastChar = val.at(strSize-1);
+  if (lastChar == 's') {
+    unitValue = 1.e+9;          // default is ns
+  } else if (lastChar == 'm') {
+    unitValue = 1.e+4;          // default is mm
+  } else if (lastChar == 'V' && strSize > 1) {
+    if (val.at(strSize-2) == 'e')
+      unitValue = 1.e-6;        // default is MeV
+  } // Bq is the nominal value therefore does not need additional handling
+
+  if (firstChar == 'G') {
+    unitValue *= 1.e+9;
+  } else if (firstChar == 'M') {
+    unitValue *= 1.e+6;
+  } else if (firstChar == 'k') {
+    unitValue *= 1.e+3;
+  } else if (firstChar == 'c') {
+    unitValue *= 1.e-2;
+  } else if (firstChar == 'm') {
+    unitValue *= 1.e-3;
+  } else if (firstChar == 'u') {
+    unitValue *= 1.e-6;
+  } else if (firstChar == 'n') {
+    unitValue *= 1.e-9;
+  }
+
+  return unitValue;
+}
