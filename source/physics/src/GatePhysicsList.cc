@@ -59,6 +59,7 @@
 #include "G4LossTableManager.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4RadioactiveDecayPhysics.hh"
+#include "G4QuasiOpticalPhoton.hh"
 
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
@@ -337,7 +338,10 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     pl = new G4EmStandardPhysics_option3();
   }
   if (mUserPhysicListName == "emstandard_opt4") {
-    pl = new G4EmStandardPhysics_option4();
+
+	GateWarning("Since Geant4 11.4.0 it is recommended to use G4EmStandardPhysics_option3 instead of opt4... Switching from opt4 to opt3 automatically for you");
+	//pl = new G4EmStandardPhysics_option4();
+	pl = new G4EmStandardPhysics_option3();
   }
   if (mUserPhysicListName == "emstandard_SS") {
     pl = new G4EmStandardPhysicsSS();
@@ -496,6 +500,8 @@ void GatePhysicsList::ConstructParticle()
  //Construct positroniums
  GateParaPositronium::ParaPositroniumDefinition();
  GateOrthoPositronium::OrthoPositroniumDefinition();
+
+ G4QuasiOpticalPhoton::QuasiOpticalPhotonDefinition();
 }
 //-----------------------------------------------------------------------------------------
 
