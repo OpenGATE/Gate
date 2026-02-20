@@ -49,6 +49,11 @@ IF(BUILD_TESTING)
 
   ADD_TEST(NAME test_GatePositroniumDecyParamsGenerator COMMAND test_GatePositroniumDecayParamsGenerator)
 
+  ADD_EXECUTABLE(test_GatePositroniumSourceMessenger tests/test_GatePositroniumSourceMessenger.cpp)
+  TARGET_LINK_LIBRARIES(test_GatePositroniumSourceMessenger GateLib)
+
+  ADD_TEST(NAME test_GatePositroniumSourceMessenger COMMAND test_GatePositroniumSourceMessenger)
+
 ENDIF(BUILD_TESTING)
 #=========================================================
 
