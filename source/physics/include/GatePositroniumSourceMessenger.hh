@@ -17,7 +17,6 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 
-#include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayParamsGenerator.hh"
 
 class GatePositroniumSource;
