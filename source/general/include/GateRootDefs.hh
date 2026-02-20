@@ -75,7 +75,8 @@ class GateRootHitBuffer
     //@{
     inline void SetCCFlag (G4bool val) {m_CCflag=val;}
     inline G4bool GetCCFlag () {return m_CCflag;}
-
+    inline void SetSpatialRes2DStdDevFlag (G4bool val) { m_SpatialRes2DStdDevFlag=val;}
+    inline G4bool GetSpatialRes2DStdDevFlag() {return m_SpatialRes2DStdDevFlag;}
 
     //! Returns the time in G4 units (conversion from seconds)
     inline G4double GetTime() const
@@ -239,6 +240,8 @@ class GateRootHitBuffer
     Int_t decayType = 0; //Type of positronium decay (check ExtendedVSource)
     Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check ExtendedVSource)
 
+  G4bool m_SpatialRes2DStdDevFlag; 
+  
     //OK GND for CC
     G4bool m_CCflag;
     Float_t sourceEnergy;
@@ -302,6 +305,11 @@ class GateRootSingleBuffer
     inline void SetCCFlag (G4bool val) {m_CCflag=val;}
     inline G4bool GetCCFlag () {return m_CCflag;}
     G4bool m_CCflag;
+
+    inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
+    inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
+    G4bool m_SpatialRes2DStdDevFlag;
+  
 
     //! \name Data fields
     //@{
@@ -395,6 +403,10 @@ class GateRootCoincBuffer
     inline G4bool GetCCFlag() {return m_CCflag;}
     G4bool m_CCflag;
 
+    inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
+    inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
+    G4bool m_SpatialRes2DStdDevFlag;
+  
     //! \name Data fields
     //@{
 
