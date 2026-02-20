@@ -85,6 +85,7 @@ void GatePositroniumSourceMessenger::InitCommands()
 
 void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value) 
 {
+  G4double unitVal = 1;
   if (command == upCmdSetPositroniumFractions.get()) {
     std::vector<float> fractions;
     std::stringstream ss(new_value);
@@ -101,7 +102,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
       if (ss.good()) {
         lifetimes.push_back(stod(num));
       } else {
-        G4double unitVal = CheckIfUnit(num);
+        unitVal = CheckIfUnit(num);
       }
     }
     for (unsigned i=0; i<lifetimes.size(); i++)
@@ -125,7 +126,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
       if (ss.good()) {
         promptPhotonEnergies.push_back(stod(energy));
       } else {
-        G4double unitVal = CheckIfUnit(energy);
+        unitVal = CheckIfUnit(energy);
       }
     }
     for (unsigned i=0; i<promptPhotonEnergies.size(); i++)
