@@ -32,7 +32,6 @@ class GatePositroniumSourceMessenger: public GateVSourceMessenger
   ~GatePositroniumSourceMessenger()=default;
 
   void SetNewValue(G4UIcommand *command, G4String newValue) override;
-  G4double CheckIfUnit(std::string val);
    
   PositroniumDecayModelParams generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model= GatePositroniumDecayParamsGenerator::kPositronium) const;
 
