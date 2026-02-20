@@ -34,25 +34,6 @@ void initializeGateRunManager(GateRunManager* runManager)
   runManager->InitializeAll();
 }
 
-
-//bool test_default_params()
-//{
-  //std::cout << "test_default_params\n";
-
-  //DummyPositroniumSource src;
-  //TestablePositroniumMessenger msg(&src);
-
-  //auto p = msg.generatePositroniumDecayParams();
-
-  //CHECK(p.fFractions.size() == 1, "default fractions size != 1");
-  //CHECK(p.fFractions[0] == 1.0f, "default fraction != 1");
-  //CHECK(p.fPromptGammaProbabilities[0] == 0.0f, "default prompt prob != 0");
-
-  //return true;
-//}
-
-
-
 bool test_full_custom()
 {
   std::cout << "test_full_custom\n";
