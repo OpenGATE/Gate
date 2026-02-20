@@ -255,7 +255,6 @@ void GateToRoot::BookBeginOfRun() {
 		{
 			GateRootHitBuffer hitBuffer;
 			hitBuffer.SetCCFlag(GetRootCCFlag());
-			hitBuffer.SetSpatialRes2DStdDevFlag(GetRootSpRes2DStdDevFlag());
 			m_hitBuffers.push_back(hitBuffer);
 		}
 
