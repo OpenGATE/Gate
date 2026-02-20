@@ -76,29 +76,36 @@ G4UIcmdWith3VectorAndUnit* GatePositroniumSourceMessenger::GetVectorCmdWithUnit(
 void GatePositroniumSourceMessenger::InitCommands()
 {
  upCmdSetPositroniumFractions.reset(GetStringCmd( "setPositroniumFractions", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] and sum of all fi ==1" ) );
- upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn\" - where ti corresponds to lifetime constants of the components" ) );
+ upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn t_unit\" - where ti corresponds to lifetime constants and t_unit is one of the Geant4 time units e.g. ns" ) );
  upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2Gamma or k3Gamma" ) );
  upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kParaPs, kDirect or kOrthoPs, of a given element in vector of components. Used to properly recalculate intensities of the components from the theory" ) );
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
- upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
+ upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., en e_unit\" - where ei are energies and e_unit is one of the Geant4 energy units e.g. MeV" ) );
 }
 
-std::vector<float> parseListOfParamsWithUnit(const G4String& input_string)
+std::vector<float> parseListOfParamsWithUnit(const G4String& input)
 {
-    std::stringstream ss(input_string);
-    std::vector<float> values;
-    std::vector<std::string> tokens;
-    std::string token;
-    while (ss >> token) {
-        tokens.push_back(token);
-    }
-    G4String unit = tokens.back();
-    G4double unitValue = G4UnitDefinition::GetValueOf(unit);
-    for (unsigned i=0; i<tokens.size()-1; i++) {
-      G4double value = std::stod(tokens[i]);
-      values.push_back(value * unitValue);
-    }
-    return values;
+  std::vector<float> values;
+  std::stringstream ss(input);
+  std::vector<G4String> tokens;
+  std::string token;
+
+  while (ss >> token) {
+    tokens.push_back(token);
+  }
+
+  if (tokens.size() < 2) {
+    GateError("parseListOfParamsWithUnit(): Need at least one value and one unit.");
+  }
+
+  G4String unitStr = tokens.back();
+  G4double unitValue = G4UnitDefinition::GetValueOf(unitStr);
+
+  for (unsigned i=0; i<tokens.size()-1; i++) {
+    values.push_back(std::stod(tokens[i]) * unitValue);
+  }
+
+  return values;
 }  
 
 void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value) 
