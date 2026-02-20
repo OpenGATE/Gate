@@ -83,7 +83,7 @@ void GatePositroniumSourceMessenger::InitCommands()
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., en e_unit\" - where ei are energies and e_unit is one of the Geant4 energy units e.g. MeV" ) );
 }
 
-std::vector<float> parseListOfParamsWithUnit(const G4String& input)
+std::vector<float> GatePositroniumSourceMessenger::parseListOfParamsWithUnit(const G4String& input)
 {
   std::vector<float> values;
   std::stringstream ss(input);

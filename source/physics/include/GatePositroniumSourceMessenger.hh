@@ -54,6 +54,8 @@ class GatePositroniumSourceMessenger: public GateVSourceMessenger
   std::unique_ptr<G4UIcmdWithAString> upCmdSetDecayKinds;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositronInteractions;
 
+  std::vector<float> parseListOfParamsWithUnit(const G4String& input);
+
   GatePositroniumDecayParamsGenerator fParamGenerator;
   
 };
