@@ -103,7 +103,6 @@ std::vector<float> parseListOfParamsWithUnit(const G4String& input_string)
 
 void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value) 
 {
-  G4double unitVal = 1;
   if (command == upCmdSetPositroniumFractions.get()) {
     std::vector<float> fractions;
     std::stringstream ss(new_value);
