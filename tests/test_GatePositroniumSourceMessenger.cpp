@@ -61,10 +61,10 @@ bool test_full_custom()
   TestablePositroniumMessenger msg(&src);
 
   msg.SetNewValue(msg.CmdFractions(), "0.3 0.7");
-  msg.SetNewValue(msg.CmdLifetimes(), "0.1 100");
+  msg.SetNewValue(msg.CmdLifetimes(), "0.1 100 ns");
   msg.SetNewValue(msg.CmdDecayKinds(), "k2Gamma k3Gamma");
   msg.SetNewValue(msg.CmdPromptProb(), "0.2 0.8");
-  msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0");
+  msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0 MeV");
 
   auto p = msg.generatePositroniumDecayParams();
 
@@ -85,17 +85,17 @@ bool test_unit_handling_in_commands()
   TestablePositroniumMessenger msg(&src);
 
   msg.SetNewValue(msg.CmdFractions(), "0.3 0.7");
-  msg.SetNewValue(msg.CmdLifetimes(), "0.1 100");
+  msg.SetNewValue(msg.CmdLifetimes(), "0.1 100 ns");
   msg.SetNewValue(msg.CmdDecayKinds(), "k2Gamma k3Gamma");
   msg.SetNewValue(msg.CmdPromptProb(), "0.2 0.8");
-  msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0");
+  msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0 keV");
 
   auto p = msg.generatePositroniumDecayParams();
 
   CHECK(p.fFractions.size() == 2, "wrong size");
   CHECK(p.fFractions[1] == 0.7f, "fraction wrong");
   CHECK(p.fDecayKind[1] == k3Gamma, "decay kind wrong");
-  CHECK(p.fPromptGammaEnergy[1] == 1.0f, "energy wrong");
+  CHECK(p.fPromptGammaEnergy[1] == 1.0f /1000, "energy wrong"); // Cause we used keV and MeV is the default unit
 
   return true;
 }
