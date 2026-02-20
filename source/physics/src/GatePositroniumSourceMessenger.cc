@@ -83,6 +83,24 @@ void GatePositroniumSourceMessenger::InitCommands()
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., fn\" - where ei are energies " ) );
 }
 
+std::vector<float> parseListOfParamsWithUnit(const G4String& input_string)
+{
+    std::stringstream ss(input_string);
+    std::vector<float> values;
+    std::vector<std::string> tokens;
+    std::string token;
+    while (ss >> token) {
+        tokens.push_back(token);
+    }
+    G4String unit = tokens.back();
+    G4double unitValue = G4UnitDefinition::GetValueOf(unit);
+    for (unsigned i=0; i<tokens.size()-1; i++) {
+      G4double value = std::stod(tokens[i]);
+      values.push_back(value * unitValue);
+    }
+    return values;
+}  
+
 void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value) 
 {
   G4double unitVal = 1;
@@ -95,18 +113,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
     }
     fParamGenerator.SetPositroniumFraction(fractions);
   } else if (command == upCmdSetPositroniumLifetimes.get()) {
-    std::vector<float> lifetimes;
-    std::stringstream ss(new_value);
-    std::string num;
-    while (ss >> num) {
-      if (ss.good()) {
-        lifetimes.push_back(stod(num));
-      } else {
-        unitVal = CheckIfUnit(num);
-      }
-    }
-    for (unsigned i=0; i<lifetimes.size(); i++)
-      lifetimes.at(i) *= unitVal;
+    auto lifetimes =parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPositroniumLifetimes(lifetimes);
   } else if (command == upCmdSetPromptPhotonProbabilites.get()) {
     std::vector<float> promptPhotonProb;
@@ -119,18 +126,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
     }
     fParamGenerator.SetPromptGammaProbabilities(promptPhotonProb);
   } else if (command == upCmdSetPromptPhotonEnergies.get()) {
-    std::vector<float> promptPhotonEnergies;
-    std::stringstream ss(new_value);
-    std::string energy;
-    while (ss >> energy) {
-      if (ss.good()) {
-        promptPhotonEnergies.push_back(stod(energy));
-      } else {
-        unitVal = CheckIfUnit(energy);
-      }
-    }
-    for (unsigned i=0; i<promptPhotonEnergies.size(); i++)
-      promptPhotonEnergies.at(i) *= unitVal;
+    auto promptPhotonEnergies = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
   } else if (command == upCmdSetDecayKinds.get()) {
     std::vector<PositroniumDecayKind> decayKinds;
