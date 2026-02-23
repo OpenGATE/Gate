@@ -9,7 +9,7 @@
 
 #include "GateVSource.hh"
 #include "legacy/GateExtendedVSourceMessenger.hh"
-#include "GateGammaEmissionModel.hh"
+#include "legacy/GateGammaEmissionModel.hh"
 
 namespace GateLegacy{
 
