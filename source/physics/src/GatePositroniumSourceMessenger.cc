@@ -10,7 +10,7 @@
 #include "GatePositroniumSourceMessenger.hh"
 #include "GatePositroniumSource.hh"
 
-GatePositroniumSourceMessenger::GatePositroniumSourceMessenger(GatePositroniumSource *source): GateVSourceMessenger(source), pSource(source) 
+GatePositroniumSourceMessenger::GatePositroniumSourceMessenger(GatePositroniumSource *source): GateVSourceMessenger(source), pSource(source)
 {
   InitCommands();
 }
@@ -70,7 +70,7 @@ G4UIcmdWith3VectorAndUnit* GatePositroniumSourceMessenger::GetVectorCmdWithUnit(
  cmd->SetParameterName( G4String( cmd_name + "_x" ), G4String( cmd_name + "_y" ), G4String( cmd_name + "_z" ), false );
  cmd->SetDefaultUnit( default_unit.c_str() );
  cmd->SetUnitCandidates( unit_candidates.c_str() );
- return cmd; 
+ return cmd;
 }
 
 void GatePositroniumSourceMessenger::InitCommands()
@@ -106,9 +106,9 @@ std::vector<float> GatePositroniumSourceMessenger::parseListOfParamsWithUnit(con
   }
 
   return values;
-}  
+}
 
-void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value) 
+void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String new_value)
 {
   if (command == upCmdSetPositroniumFractions.get()) {
     std::vector<float> fractions;
@@ -119,7 +119,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
     }
     fParamGenerator.SetPositroniumFraction(fractions);
   } else if (command == upCmdSetPositroniumLifetimes.get()) {
-    auto lifetimes =parseListOfParamsWithUnit(new_value);
+    auto lifetimes = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPositroniumLifetimes(lifetimes);
   } else if (command == upCmdSetPromptPhotonProbabilites.get()) {
     std::vector<float> promptPhotonProb;
