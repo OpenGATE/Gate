@@ -69,19 +69,21 @@ G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnih
 
 G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4double& particle_time,  G4ThreeVector& particle_position)
 {
-  auto decayIndex = GatePositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
-
   G4int number_of_vertices = 0;
-  if(fModelParams.fPromptGammaProbabilities[decayIndex] > G4UniformRand()) 
-  { 
-    ++number_of_vertices;
-    event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
-  }
+  while (number_of_vertices <=0) { 
+    auto decayIndex = GatePositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
 
-  if(fModelParams.fElectronCaptureProbabilities[decayIndex] < G4UniformRand()) 
-  {
-    ++number_of_vertices;
-    event->AddPrimaryVertex(GetPrimaryVertexFromPositroniumAnnihilation(particle_time, particle_position, decayIndex));
+    if(fModelParams.fPromptGammaProbabilities[decayIndex] >= G4UniformRand()) 
+    { 
+      ++number_of_vertices;
+      event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
+    }
+
+    if(fModelParams.fElectronCaptureProbabilities[decayIndex] < G4UniformRand()) 
+    {
+      ++number_of_vertices;
+      event->AddPrimaryVertex(GetPrimaryVertexFromPositroniumAnnihilation(particle_time, particle_position, decayIndex));
+    }
   }
   return number_of_vertices;
 } 
