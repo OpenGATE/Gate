@@ -17,6 +17,7 @@ struct PositroniumDecayModelParams
 {
   std::vector<float> fFractions;
   std::vector<float> fLifetimes;
+  std::vector<float> fElectronCaptureProbabilities;
   std::vector<float> fPromptGammaProbabilities;
   std::vector<float> fPromptGammaEnergy;
   std::vector<PositroniumDecayKind> fDecayKind;

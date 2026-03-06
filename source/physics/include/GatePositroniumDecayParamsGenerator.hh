@@ -27,6 +27,7 @@ public:
   GatePositroniumDecayParamsGenerator()=default;
   virtual ~GatePositroniumDecayParamsGenerator()=default;
 
+  void SetElectronCaptureProbabilities(const std::vector<float>& electronCaptureProb);
   void SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb);
   void SetPromptGammaEnergies(const std::vector<float>& energies);
   void SetPositroniumLifetimes(const std::vector<float>& fPositroniumLifetimes);
@@ -42,6 +43,7 @@ private:
   std::optional<std::vector<float>> fPositroniumLifetimes;
   std::optional<std::vector<float>> fPromptGammaProbabilities;
   std::optional<std::vector<float>> fPromptGammaEnergies;
+  std::optional<std::vector<float>> fElectronCaptureProbabilities;
   std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
   std::optional<std::vector<PositronElectronInteraction>> fPositronInteractions;
   std::optional<std::vector<bool>> fMeanPositronRangeEnabled;

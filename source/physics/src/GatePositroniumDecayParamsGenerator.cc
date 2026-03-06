@@ -7,6 +7,11 @@
 
 using namespace GatePositroniumConstants;
 
+void GatePositroniumDecayParamsGenerator::SetElectronCaptureProbabilities(const std::vector<float>& electronCaptureProb)
+{
+  fElectronCaptureProbabilities = electronCaptureProb;
+}
+
 void GatePositroniumDecayParamsGenerator::SetPromptGammaProbabilities(const std::vector<float>& promptGammaProb)
 {
   fPromptGammaProbabilities = promptGammaProb;
@@ -64,6 +69,11 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       params.fMeanPositronRangeEnabled={false};
       params.fMeanPositronRange ={0.0};
     }
+    if(fElectronCaptureProbabilities.has_value()){
+      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
+    } else {
+      params.fElectronCaptureProbabilities={0.0};
+    }
   }
   if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
     params.fFractions= {1};
@@ -87,6 +97,11 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     } else {
       params.fMeanPositronRangeEnabled={false};
       params.fMeanPositronRange ={0.0};
+    }
+    if(fElectronCaptureProbabilities.has_value()){
+      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
+    } else {
+      params.fElectronCaptureProbabilities={0.0};
     }
   }
 
@@ -120,6 +135,12 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       params.fPromptGammaEnergy=fPromptGammaEnergies.value();
     } else {
       GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Prompt gamma energies are not set");
+    }
+
+    if(fElectronCaptureProbabilities.has_value()) {
+      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
+    } else {
+      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium electron capture probabilities are not set");
     }
 
     if(fDecayKinds.has_value()) {

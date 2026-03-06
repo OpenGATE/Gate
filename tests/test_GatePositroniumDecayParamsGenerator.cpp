@@ -70,6 +70,7 @@ bool test_positronium_custom()
   gen.SetDecayKinds({k2Gamma, k3Gamma});
   gen.SetPromptGammaProbabilities({0, 1.0});
   gen.SetPromptGammaEnergies({0.0f, 1.2f});
+  gen.SetElectronCaptureProbabilities({0.0, 0.5});
 
   auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kPositronium);
 
@@ -78,12 +79,14 @@ bool test_positronium_custom()
   CHECK(p.fDecayKind[0] == k2Gamma, "PS decay kind mismatch");
   CHECK(p.fPromptGammaProbabilities[0] == 0.0, "PS prompt probability mismatch");
   CHECK(p.fPromptGammaEnergy[0] == 0.0f, "PS prompt energy mismatch");
+  CHECK(p.fElectronCaptureProbabilities[0] == 0.0f, "PS electron capture mismatch");
 
   CHECK(p.fFractions[1] == 0.7f, "PS fraction mismatch");
   CHECK(p.fLifetimes[1] == 140.0f, "PS lifetime mismatch");
   CHECK(p.fDecayKind[1] == k3Gamma, "PS decay kind mismatch");
   CHECK(p.fPromptGammaProbabilities[1] == 1.0, "PS prompt probability mismatch");
   CHECK(p.fPromptGammaEnergy[1] == 1.2f, "PS prompt energy mismatch");
+  CHECK(p.fElectronCaptureProbabilities[1] == 0.5f, "PS electron capture mismatch");
   return true;
 }
 

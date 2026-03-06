@@ -22,6 +22,7 @@ public:
   G4UIcommand* CmdLifetimes()     { return upCmdSetPositroniumLifetimes.get(); }
   G4UIcommand* CmdDecayKinds()    { return upCmdSetDecayKinds.get(); }
   G4UIcommand* CmdPromptProb()    { return upCmdSetPromptPhotonProbabilites.get(); }
+  G4UIcommand* CmdElectronCaptureProb()    { return upCmdSetElectronCaptureProbabilites.get(); }
   G4UIcommand* CmdPromptEnergy()  { return upCmdSetPromptPhotonEnergies.get(); }
   G4UIcommand* CmdInteractions()  { return upCmdSetPositronInteractions.get(); }
   G4UIcommand* CmdMeanPositronRange()  { return upCmdSetMeanPositronRange.get(); }
@@ -47,6 +48,7 @@ bool test_full_custom()
   msg.SetNewValue(msg.CmdDecayKinds(), "k2Gamma k3Gamma");
   msg.SetNewValue(msg.CmdPromptProb(), "0.2 0.8");
   msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0 MeV");
+  msg.SetNewValue(msg.CmdElectronCaptureProb(), "0.3 0.0");
 
   auto p = msg.generatePositroniumDecayParams();
 
@@ -80,6 +82,7 @@ bool test_unit_handling_in_commands()
   msg.SetNewValue(msg.CmdPromptProb(), "0.2 0.8");
   msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0 keV");
   msg.SetNewValue(msg.CmdMeanPositronRange(), "0.1 0.0 cm");
+  msg.SetNewValue(msg.CmdElectronCaptureProb(), "0.0 0.0");
 
   auto p = msg.generatePositroniumDecayParams();
 

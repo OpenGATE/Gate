@@ -82,6 +82,7 @@ void GatePositroniumSourceMessenger::InitCommands()
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., en e_unit\" - where ei are energies and e_unit is one of the Geant4 energy units e.g. MeV" ) );
  upCmdSetMeanPositronRange.reset(GetStringCmd( "setMeanPositronRange", "\"r1, r2, r3 .., rn r_unit\" - where ri are mean positron range and r_unit is one of the Geant 4 distance units e.g. mm " ) );
+ upCmdSetElectronCaptureProbabilites.reset(GetStringCmd( "setElectronCaptureProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
 }
 
 std::vector<float> GatePositroniumSourceMessenger::parseListOfParamsWithUnit(const G4String& input) const
@@ -138,6 +139,16 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetMeanPositronRange.get()) {
     auto positronRange = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetMeanPositronRange(positronRange);
+  } else if (command == upCmdSetElectronCaptureProbabilites.get()) {
+    std::vector<float> electronCaptureProb;
+    std::stringstream ss(new_value);
+    float prob;
+    while (ss >> prob) {
+      prob = prob < 0 ? 0 : prob;
+      prob = prob > 1 ? 1 : prob;
+      electronCaptureProb.push_back(prob);
+    }
+    fParamGenerator.SetElectronCaptureProbabilities(electronCaptureProb);
   } else if (command == upCmdSetDecayKinds.get()) {
     std::vector<PositroniumDecayKind> decayKinds;
     std::stringstream ss(new_value);
