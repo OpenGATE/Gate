@@ -581,6 +581,11 @@ BEWARE : The file for 2D Distribution  should be structured such that:
   15 9.42 6.53 3.15 6.32 9.71
   30 9.42 7.45 6.25 7.32 9.74
 
+**IMPORTANT!** It is possible to keep the history of the spatial resolution for each Singles and Coincidences. It is availble for the moment only in ROOT output (:ref:`data_output_management.html#root-output`) with a command:: 
+
+  /gate/output/root/SpRes2DStdDevOutput 1
+
+
 Energy Framing
 ^^^^^^^^^^^^^^
 *Previously Thresholder and Upholder*
