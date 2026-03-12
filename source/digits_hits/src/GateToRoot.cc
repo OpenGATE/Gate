@@ -111,7 +111,8 @@ GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
       if (digiMode==kofflineMode)
       m_fileName="digigate";
     */
-	m_rootCCFlag=false;
+    m_rootCCFlag=false;
+    m_rootSpRes2DStdDevFlag=false;
     m_isEnabled = false; // Keep this flag false: all output are disabled by default
     nVerboseLevel = 0;
 
@@ -333,6 +334,7 @@ void GateToRoot::BookBeginOfRun() {
     for (size_t i = 0; i < m_outputChannelList.size(); ++i)
     {
     	 m_outputChannelList[i]->SetCCFlag(GetRootCCFlag());
+	 m_outputChannelList[i]->SetSpatialRes2DStdDevFlag(GetRootSpRes2DStdDevFlag());
         m_outputChannelList[i]->Book();
 
     }

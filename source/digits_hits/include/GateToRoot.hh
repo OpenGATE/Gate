@@ -157,10 +157,11 @@ public:
     //--------------------------------------------------------------------------
     class VOutputChannel {
     public:
-        inline VOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag)
+      inline VOutputChannel(const G4String &aCollectionName, G4bool outputFlag, G4bool CCFlag, G4bool SpatialRes2DStdDevFlag )
                 : nVerboseLevel(0),
                   m_outputFlag(outputFlag),
 				  m_CCFlag(CCFlag),
+		  m_SpatialRes2DStdDevFlag(SpatialRes2DStdDevFlag),
                   m_collectionName(aCollectionName),
                   m_collectionID(-1),
 				  m_singlesCommands(0),
@@ -179,6 +180,11 @@ public:
         inline void SetCCFlag(G4bool val){m_CCFlag=val;};
         inline G4bool GetCCFlag(){return m_CCFlag;};
 
+        inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
+        inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
+        G4bool m_SpatialRes2DStdDevFlag;
+     
+      
 
         inline void AddSinglesCommand() { m_singlesCommands++; };
 
@@ -202,7 +208,7 @@ public:
     class SingleOutputChannel : public VOutputChannel {
     public:
         inline SingleOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
-                : VOutputChannel(aCollectionName, outputFlag, false),
+	  : VOutputChannel(aCollectionName, outputFlag, false, false),
                   m_tree(0)
         		{ m_buffer.Clear();     			}
 
@@ -241,6 +247,7 @@ public:
             	m_tree = new GateSingleTree(treeName);
 
             	m_buffer.SetCCFlag(GetCCFlag());
+		m_buffer.SetSpatialRes2DStdDevFlag(GetSpatialRes2DStdDevFlag());
             	m_tree->Init(m_buffer);
             }
         }
@@ -256,7 +263,7 @@ public:
     class CoincidenceOutputChannel : public VOutputChannel {
     public:
         inline CoincidenceOutputChannel(const G4String &aCollectionName, G4bool outputFlag)
-                : VOutputChannel(aCollectionName, outputFlag, false),
+	  : VOutputChannel(aCollectionName, outputFlag, false, false),
                   m_tree(0) { m_buffer.Clear(); }
 
         virtual inline ~CoincidenceOutputChannel() {}
@@ -292,6 +299,7 @@ public:
         	 		 treeName = treeName+"_run"+std::to_string(runID);
 
                 m_tree = new GateCoincTree(treeName);
+		m_buffer.SetSpatialRes2DStdDevFlag(GetSpatialRes2DStdDevFlag());
                 m_tree->Init(m_buffer);
             }
         }
@@ -314,6 +322,9 @@ public:
 
     void SetRootHitFlag(G4bool flag) { m_rootHitFlag = flag; };
 
+    void SetRootSpRes2DStdDevFlag(G4bool flag) { m_rootSpRes2DStdDevFlag = flag; };
+    G4bool GetRootSpRes2DStdDevFlag() {return  m_rootSpRes2DStdDevFlag; };
+  
     void SetRootCCFlag(G4bool flag) { m_rootCCFlag = flag; };
     G4bool GetRootCCFlag() {return  m_rootCCFlag; };
 
@@ -422,6 +433,7 @@ private:
 // v. cuplov - optical photons
 
     G4bool m_rootHitFlag;
+    G4bool m_rootSpRes2DStdDevFlag;
     G4bool m_rootCCFlag;
     G4bool m_rootCCSourceParentIDSpecificationFlag;
     G4bool m_rootNtupleFlag;
