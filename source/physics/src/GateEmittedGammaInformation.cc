@@ -22,6 +22,10 @@ void GateEmittedGammaInformation::SetGammaKind( GateEmittedGammaInformation::Gam
 
 GateEmittedGammaInformation::GammaKind GateEmittedGammaInformation::GetGammaKind() const { return fGammaKind; }
 
+void GateEmittedGammaInformation::SetDecayIndex( G4int decay_index ) { fDecayIndex = decay_index; }
+
+G4int GateEmittedGammaInformation::GetDecayIndex() const { return fDecayIndex; }
+
 void GateEmittedGammaInformation::SetInitialPolarization( const G4ThreeVector& polarization ) { fInitialPolarization = polarization; }
 
 G4ThreeVector GateEmittedGammaInformation::GetInitialPolarization() const { return fInitialPolarization; }

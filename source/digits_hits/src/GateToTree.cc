@@ -103,6 +103,7 @@ GateToTree::GateToTree(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     m_hitsParams_to_write.emplace("sourceType", SaveDataParam());
     m_hitsParams_to_write.emplace("decayType", SaveDataParam());
     m_hitsParams_to_write.emplace("gammaType", SaveDataParam());
+    m_hitsParams_to_write.emplace("decayIndex", SaveDataParam());
     //CC
     m_hitsParams_to_write.emplace("sourceEnergy",SaveDataParam());
     m_hitsParams_to_write.emplace("sourcePDG",SaveDataParam());
@@ -360,6 +361,9 @@ void GateToTree::RecordBeginOfAcquisition() {
                if (m_hitsParams_to_write.at("gammaType").toSave())
                    m_manager_hits.write_variable("gammaType", &m_gammaType);
 
+               if (m_hitsParams_to_write.at("decayIndex").toSave())
+                   m_manager_hits.write_variable("decayIndex", &m_decayIndex);
+
 
                m_manager_hits.write_header();
 
@@ -516,6 +520,9 @@ void GateToTree::RecordBeginOfAcquisition() {
 
         if (m_hitsParams_to_write.at("gammaType").toSave())
             mm.write_variable("gammaType", &m_gammaType);
+
+        if (m_hitsParams_to_write.at("decayIndex").toSave())
+            mm.write_variable("decayIndex", &m_decayIndex);
 
         if(m_cc_enabled)
         {
@@ -980,6 +987,7 @@ void GateToTree::RecordEndOfEvent(const G4Event *event) {
 			m_sourceType = hit->GetSourceType();
 			m_decayType = hit->GetDecayType();
 			m_gammaType = hit->GetGammaType();
+			m_decayIndex = hit->GetDecayIndex();
 
 			if(m_cc_enabled)
 			{

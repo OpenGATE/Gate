@@ -64,7 +64,9 @@ G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
 G4PrimaryParticle* GatePositroniumDecayModel::GetGammaFromDeexcitation(int decayIndex)
 {
  G4PrimaryParticle* gamma = GetSingleGamma(fModelParams.fPromptGammaEnergy[decayIndex]);
- gamma->SetUserInformation( GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt ) );
+ GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt );
+ info->SetDecayIndex( decayIndex );
+ gamma->SetUserInformation( info );
  return gamma;
 }
 
@@ -89,7 +91,9 @@ std::vector<G4PrimaryParticle*> GatePositroniumDecayModel::GetGammasFromPositron
   G4LorentzVector lv = dynamic_gamma->Get4Momentum();
   gamma->Set4Momentum( lv.px(), lv.py(), lv.pz(), lv.e() );
   gamma->SetPolarization( dynamic_gamma->GetPolarization() );
-  gamma->SetUserInformation( GetPrimaryParticleInformation(  gamma, GateEmittedGammaInformation::GammaKind::Annihilation ) );
+  GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Annihilation );
+  info->SetDecayIndex( decayIndex );
+  gamma->SetUserInformation( info );
   gammas[i] = gamma;
  }
  delete decay_products;

@@ -144,6 +144,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4int source_type = static_cast<G4int>(GateEmittedGammaInformation::SourceKind::NotDefined);
   G4int decay_type = static_cast<G4int>(GateEmittedGammaInformation::DecayModel::None);
   G4int gamma_type = static_cast<G4int>(GateEmittedGammaInformation::GammaKind::Unknown);
+  G4int decay_index = -1;
   G4PrimaryParticle* primary_particle = aTrack->GetDynamicParticle()->GetPrimaryParticle();
   if( primary_particle != nullptr )
   {
@@ -153,6 +154,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     source_type = static_cast<G4int>( info->GetSourceKind() );
     decay_type = static_cast<G4int>( info->GetDecayModel() );
     gamma_type = static_cast<G4int>( info->GetGammaKind() );   
+    decay_index = info->GetDecayIndex();
    }
   }
 
@@ -289,6 +291,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetSourceType( source_type );
   aHit->SetDecayType( decay_type );
   aHit->SetGammaType( gamma_type );
+  aHit->SetDecayIndex( decay_index );
 
 
   // OK GND 2023 for CC

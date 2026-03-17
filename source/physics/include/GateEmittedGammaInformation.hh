@@ -61,6 +61,13 @@ class GateEmittedGammaInformation : public G4VUserPrimaryParticleInformation
   void SetGammaKind( GammaKind gamma_kind );
   GammaKind GetGammaKind() const;
 
+  /** Set decay channel index
+   **/
+  void SetDecayIndex( G4int decay_index );
+  /** Get decay channel index
+   **/
+  G4int GetDecayIndex() const;
+
   /** Set polarization of gamma at the moment when it was emitted
    **/
   void SetInitialPolarization( const G4ThreeVector& polarization );
@@ -80,6 +87,7 @@ class GateEmittedGammaInformation : public G4VUserPrimaryParticleInformation
   SourceKind fSourceKind = SourceKind::NotDefined;
   DecayModel fDecayModel = DecayModel::None;
   GammaKind fGammaKind = GammaKind::Unknown;
+  G4int fDecayIndex = -1;
   G4ThreeVector fInitialPolarization = G4ThreeVector( 0.0, 0.0, 0.0 );
   G4double fTimeShift = 0.0;//[ns]
 };

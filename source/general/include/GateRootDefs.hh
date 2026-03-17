@@ -237,8 +237,7 @@ class GateRootHitBuffer
     Int_t sourceType = 0; //Type of gamma source (check ExtendedVSource)
     Int_t decayType = 0; //Type of positronium decay (check ExtendedVSource)
     Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check ExtendedVSource)
-
-  
+    Int_t decayIndex = -1; //Decay channel index
     //OK GND for CC
     G4bool m_CCflag;
     Float_t sourceEnergy;

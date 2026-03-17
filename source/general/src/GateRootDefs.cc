@@ -139,6 +139,7 @@ void GateRootHitBuffer::Clear()
 	  sourceType = 0;
 	  decayType = 0;
 	  gammaType = 0;
+	  decayIndex = -1;
 	  strcpy (comptonVolumeName," ");
 	  strcpy (RayleighVolumeName," ");
    	  }
@@ -216,6 +217,7 @@ void GateRootHitBuffer::Fill(GateHit* aHit)
 	  sourceType = aHit->GetSourceType();
 	  decayType = aHit->GetDecayType();
 	  gammaType = aHit->GetGammaType();
+	  decayIndex = aHit->GetDecayIndex();
    	  }
   else
   {
@@ -284,6 +286,7 @@ GateHit* GateRootHitBuffer::CreateHit()
   aHit->SetSourceType(sourceType);
   aHit->SetDecayType(decayType);
   aHit->SetGammaType(gammaType);  
+  aHit->SetDecayIndex(decayIndex);  
 
   aHit->SetSourceEnergy(GetSourceEnergy());
   aHit->SetSourcePDG(GetSourcePDG());
@@ -354,6 +357,7 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
 	  Branch("sourceType", &buffer.sourceType,"sourceType/I");
 	  Branch("decayType", &buffer.decayType,"decayType/I");
 	  Branch("gammaType", &buffer.gammaType,"gammaType/I");
+	  Branch("decayIndex", &buffer.decayIndex,"decayIndex/I");
    	  }
   else
   {
@@ -424,6 +428,7 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
 	  hitTree->SetBranchAddress("sourceType",&buffer.sourceType);
 	  hitTree->SetBranchAddress("decayType",&buffer.decayType);
 	  hitTree->SetBranchAddress("gammaType",&buffer.gammaType);
+	  hitTree->SetBranchAddress("decayIndex",&buffer.decayIndex);
 
    	  }
   else

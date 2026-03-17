@@ -108,6 +108,7 @@ public:
   G4int m_sourceType = 0;//0 means 'by default not known'; sourceType says what type of positronium (Ps) is used: pPs, oPs 
   G4int m_decayType = 0;//0 means 'by default not known'; decayType says what type of Ps decay is used: standard (without prompt gamma), deexcitation (with prompt gamma)
   G4int m_gammaType = 0;//0 means 'by default not known'; gammaType says what type of gamma is emitted: annihilation, prompt, other
+  G4int m_decayIndex = -1;//decay channel index; -1 means 'by default not known'
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -256,6 +257,9 @@ public:
       
       inline void SetGammaType(G4int value){ m_gammaType = value; }
       inline G4int GetGammaType() const { return m_gammaType; }
+      
+      inline void SetDecayIndex(G4int value){ m_decayIndex = value; }
+      inline G4int GetDecayIndex() const { return m_decayIndex; }
 };
 
 
