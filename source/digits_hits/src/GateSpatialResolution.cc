@@ -191,7 +191,7 @@ void GateSpatialResolution::Digitize(){
 	GateDigi* inputDigi;
 
 
-	/*	if(!m_IsConfined && !m_Navigator)
+	if(!m_IsConfined && !m_Navigator)
 	  {
 	    //Getting world Volume
 	    // Do not use from TransportationManager as it is not recommended
@@ -200,7 +200,7 @@ void GateSpatialResolution::Digitize(){
 	    m_Navigator = new G4Navigator();
 	    m_Navigator->SetWorldVolume(WorldVolume);
 	  }
-	*/
+	
 
   if (IDC)
      {
@@ -333,12 +333,6 @@ void GateSpatialResolution::Digitize(){
 			   
 			  m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())); //TC
 
-	    //Getting world Volume
-	    // Do not use from TransportationManager as it is not recommended
-	    G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-	    G4VPhysicalVolume *WorldVolume = navigator->GetWorldVolume();
-	    m_Navigator = new G4Navigator();
-	    m_Navigator->SetWorldVolume(WorldVolume);
 			  G4VPhysicalVolume* PV = m_Navigator->LocateGlobalPointAndSetup(m_outputDigi->GetGlobalPos());
 			  m_Touchable = m_Navigator->CreateTouchableHistoryHandle();
 			  G4int hdepth = m_Touchable->GetHistoryDepth(); // zero always!
