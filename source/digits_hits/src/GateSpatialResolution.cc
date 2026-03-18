@@ -15,7 +15,7 @@
   Includes functionalities from:
   	  GateSpblurring
 	  GateCC3DlocalSpblurring
-	  GateDoIModels (TODO)
+	  GateDoIModels
 
   Previous authors: Steven.Staelens@rug.ac.be(?), AE
 
@@ -70,7 +70,7 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
 	m_fwhmYDistrib2D(0),
 	m_fwhmZDistrib2D(0),
    m_IsConfined(true),
-   m_UseTruncatedGaussian(true),
+   m_UseTruncatedGaussian(false),
    m_Navigator(0),
    m_Touchable(0),
    m_systemDepth(-1),
@@ -135,6 +135,7 @@ void GateSpatialResolution::SetSpatialResolutionParameters() {
 
 void GateSpatialResolution::Digitize(){
 
+ 
 	GateVSystem* m_system =  ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
 
 	  if (m_IsFirstEntrance) {
@@ -189,6 +190,17 @@ void GateSpatialResolution::Digitize(){
 
 	GateDigi* inputDigi;
 
+
+	/*	if(!m_IsConfined && !m_Navigator)
+	  {
+	    //Getting world Volume
+	    // Do not use from TransportationManager as it is not recommended
+	    G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+	    G4VPhysicalVolume *WorldVolume = navigator->GetWorldVolume();
+	    m_Navigator = new G4Navigator();
+	    m_Navigator->SetWorldVolume(WorldVolume);
+	  }
+	*/
 
   if (IDC)
      {
@@ -278,6 +290,8 @@ void GateSpatialResolution::Digitize(){
 
 
 			m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
+			//G4cout<<G4ThreeVector(PxNew,PyNew,PzNew)<<G4endl;
+			//G4cout<<m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())<<G4endl;
 			m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())); //TC
 			//TC
 			//outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));
@@ -315,15 +329,16 @@ void GateSpatialResolution::Digitize(){
 			  if(PyNew>Ymax) PyNew=Ymax;
 			  if(PzNew>Zmax) PzNew=Zmax;
 			   m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
+
+			   
 			  m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())); //TC
 
-			 //Getting world Volume
-			  // Do not use from TransportationManager as it is not recommended
-			   G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-			  G4VPhysicalVolume *WorldVolume = navigator->GetWorldVolume();
-			  m_Navigator = new G4Navigator();
-			  m_Navigator->SetWorldVolume(WorldVolume);
-
+	    //Getting world Volume
+	    // Do not use from TransportationManager as it is not recommended
+	    G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+	    G4VPhysicalVolume *WorldVolume = navigator->GetWorldVolume();
+	    m_Navigator = new G4Navigator();
+	    m_Navigator->SetWorldVolume(WorldVolume);
 			  G4VPhysicalVolume* PV = m_Navigator->LocateGlobalPointAndSetup(m_outputDigi->GetGlobalPos());
 			  m_Touchable = m_Navigator->CreateTouchableHistoryHandle();
 			  G4int hdepth = m_Touchable->GetHistoryDepth(); // zero always!
@@ -332,6 +347,7 @@ void GateSpatialResolution::Digitize(){
 			  {
 				  UpdateVolumeID();
 			  }
+			  
 			  m_OutputDigiCollection->insert(m_outputDigi);
 
 
