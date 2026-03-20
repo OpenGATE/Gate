@@ -51,15 +51,14 @@ GatePositroniumDecayModel::GatePositroniumDecayModel(const PositroniumDecayModel
 
 G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector& particle_position, int decayIndex)
 {
- bool is_positron_range_enabled = false; 
- G4double mean_positron_range = 0.1;
+ bool is_positron_range_enabled = fModelParams.fMeanPositronRangeEnabled[decayIndex]; 
 
  G4double shifted_particle_time = particle_time + G4RandExponential::shoot(fModelParams.fLifetimes[decayIndex]);
 
  auto shifted_particle_position = particle_position;
  if (is_positron_range_enabled)
  {
-   shifted_particle_position = AddPositronRangeShift(particle_position, mean_positron_range); 
+   shifted_particle_position = AddPositronRangeShift(particle_position, fModelParams.fMeanPositronRange[decayIndex]); 
  }
 
  G4PrimaryVertex* vertex = new G4PrimaryVertex( shifted_particle_position, shifted_particle_time );

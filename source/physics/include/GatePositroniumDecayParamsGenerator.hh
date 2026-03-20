@@ -33,6 +33,7 @@ public:
   void SetDecayKinds(const std::vector<PositroniumDecayKind>& decayKinds);
   void SetPositronInteractions(const std::vector<PositronElectronInteraction>& positronInteractions);
   void SetPositroniumFraction(const std::vector<float>& positroniumFractions);
+  void SetMeanPositronRange(const std::vector<float>& meanPositronRange);
 
   PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model=kPositronium) const;
 
@@ -43,5 +44,7 @@ private:
   std::optional<std::vector<float>> fPromptGammaEnergies;
   std::optional<std::vector<PositroniumDecayKind>> fDecayKinds;
   std::optional<std::vector<PositronElectronInteraction>> fPositronInteractions;
+  std::optional<std::vector<bool>> fMeanPositronRangeEnabled;
+  std::optional<std::vector<float>> fMeanPositronRange;
 };
 #endif

@@ -32,6 +32,12 @@ void GatePositroniumDecayParamsGenerator::SetPositroniumFraction(const std::vect
   fPositroniumFractions = positroniumFractions;
 }
 
+void GatePositroniumDecayParamsGenerator::SetMeanPositronRange(const std::vector<float>& meanPositironRange)
+{
+  fMeanPositronRange = meanPositironRange;
+}
+
+
 PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams(const GatePositroniumDecayParamsGenerator::DecayModel model) const
 {
   PositroniumDecayModelParams params;
@@ -49,6 +55,15 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       params.fPromptGammaProbabilities={0.0};
       params.fPromptGammaEnergy ={0.0};
     }
+
+    if(fMeanPositronRange.has_value()) {
+      params.fMeanPositronRange=fMeanPositronRange.value();
+      assert(params.fMeanPositronRange.size() == 1);
+      params.fMeanPositronRangeEnabled={true};
+    } else {
+      params.fMeanPositronRangeEnabled={false};
+      params.fMeanPositronRange ={0.0};
+    }
   }
   if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
     params.fFractions= {1};
@@ -63,6 +78,15 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     } else {
       params.fPromptGammaProbabilities={0.0};
       params.fPromptGammaEnergy ={0.0};
+    }
+
+    if(fMeanPositronRange.has_value()) {
+      params.fMeanPositronRange=fMeanPositronRange.value();
+      assert(params.fMeanPositronRange.size() == 1);
+      params.fMeanPositronRangeEnabled={true};
+    } else {
+      params.fMeanPositronRangeEnabled={false};
+      params.fMeanPositronRange ={0.0};
     }
   }
 
@@ -104,6 +128,15 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       params = positronHelper.CalculateFractionsFromLifetimes(params);
     } else {
       GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay kinds are not set and one or more sets that can calculate them (positronInteractions, lifetimes or fractions) is/are empty");
+    }
+
+    auto nElements = fPositroniumFractions.value().size();
+    if(fMeanPositronRange.has_value()) {
+      params.fMeanPositronRangeEnabled.assign(nElements, true);
+      params.fMeanPositronRange=fMeanPositronRange.value();
+    } else {
+      params.fMeanPositronRangeEnabled.assign(nElements, false);
+      params.fMeanPositronRange.assign(nElements, 0.0);
     }
   }
 

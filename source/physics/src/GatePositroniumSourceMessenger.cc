@@ -81,6 +81,7 @@ void GatePositroniumSourceMessenger::InitCommands()
  upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kParaPs, kDirect or kOrthoPs, of a given element in vector of components. Used to properly recalculate intensities of the components from the theory" ) );
  upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., en e_unit\" - where ei are energies and e_unit is one of the Geant4 energy units e.g. MeV" ) );
+ upCmdSetMeanPositronRange.reset(GetStringCmd( "setMeanPositronRange", "\"r1, r2, r3 .., rn r_unit\" - where ri are mean positron range and r_unit is one of the Geant 4 distance units e.g. mm " ) );
 }
 
 std::vector<float> GatePositroniumSourceMessenger::parseListOfParamsWithUnit(const G4String& input) const
@@ -134,6 +135,9 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetPromptPhotonEnergies.get()) {
     auto promptPhotonEnergies = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
+  } else if (command == upCmdSetMeanPositronRange.get()) {
+    auto positronRange = parseListOfParamsWithUnit(new_value);
+    fParamGenerator.SetMeanPositronRange(positronRange);
   } else if (command == upCmdSetDecayKinds.get()) {
     std::vector<PositroniumDecayKind> decayKinds;
     std::stringstream ss(new_value);

@@ -24,6 +24,7 @@ public:
   G4UIcommand* CmdPromptProb()    { return upCmdSetPromptPhotonProbabilites.get(); }
   G4UIcommand* CmdPromptEnergy()  { return upCmdSetPromptPhotonEnergies.get(); }
   G4UIcommand* CmdInteractions()  { return upCmdSetPositronInteractions.get(); }
+  G4UIcommand* CmdMeanPositronRange()  { return upCmdSetMeanPositronRange.get(); }
 };
 
 void initializeGateRunManager(GateRunManager* runManager)
