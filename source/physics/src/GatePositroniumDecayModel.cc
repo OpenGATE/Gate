@@ -23,6 +23,17 @@ int GatePositroniumDecayModel::getPositroniumDecayIndex(const std::vector<float>
   return -1;
 }
 
+G4ThreeVector GatePositroniumDecayModel::AddPositronRangeShift(const G4ThreeVector& original_position,  G4double mean_positron_range)
+{
+  // r = sqrt(x**2+y**2+z**2)
+  // <r> = sigma * sqrt(8/Pi) // matching mean for 3-D Gaussian
+  G4double sigma  = mean_positron_range/1.595;
+  G4ThreeVector shift(G4RandGauss::shoot(0., sigma),
+                      G4RandGauss::shoot(0., sigma),
+                      G4RandGauss::shoot(0., sigma));
+  return original_position + shift;
+}
+
 GatePositroniumDecayModel::GatePositroniumDecayModel(const PositroniumDecayModelParams& modelParams):fModelParams(modelParams)
 {
   auto num_of_decay_channels = fModelParams.fDecayKind.size();
@@ -36,12 +47,21 @@ GatePositroniumDecayModel::GatePositroniumDecayModel(const PositroniumDecayModel
   }
 }
 
+
 G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector& particle_position, int decayIndex)
 {
+ bool is_positron_range_enabled = false; 
+ G4double mean_positron_range = 0.1;
 
  G4double shifted_particle_time = particle_time + G4RandExponential::shoot(fModelParams.fLifetimes[decayIndex]);
 
- G4PrimaryVertex* vertex = new G4PrimaryVertex( particle_position, shifted_particle_time );
+ auto shifted_particle_position = particle_position;
+ if (is_positron_range_enabled)
+ {
+   shifted_particle_position = AddPositronRangeShift(particle_position, mean_positron_range); 
+ }
+
+ G4PrimaryVertex* vertex = new G4PrimaryVertex( shifted_particle_position, shifted_particle_time );
  std::vector<G4PrimaryParticle*> gammas = GetGammasFromPositroniumAnnihilation(decayIndex);
  std::for_each( gammas.begin(), gammas.end(), [&]( G4PrimaryParticle* gamma ) { vertex->SetPrimary( gamma ); } );
  return vertex;
