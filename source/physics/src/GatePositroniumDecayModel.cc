@@ -27,7 +27,8 @@ G4ThreeVector GatePositroniumDecayModel::AddPositronRangeShift(const G4ThreeVect
 {
   // r = sqrt(x**2+y**2+z**2)
   // <r> = sigma * sqrt(8/Pi) // matching mean for 3-D Gaussian
-  G4double sigma  = mean_positron_range/1.595;
+  const G4double sqrt8_over_pi = std::sqrt(8.0/CLHEP::pi);
+  G4double sigma  = mean_positron_range/sqrt8_over_pi ;
   G4ThreeVector shift(G4RandGauss::shoot(0., sigma),
                       G4RandGauss::shoot(0., sigma),
                       G4RandGauss::shoot(0., sigma));
