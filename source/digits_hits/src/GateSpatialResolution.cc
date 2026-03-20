@@ -65,7 +65,7 @@ GateSpatialResolution::GateSpatialResolution(GateSinglesDigitizer *digitizer, G4
 	 m_fwhmXDistrib(0),
 	 m_fwhmYDistrib(0),
 	 m_fwhmZDistrib(0),
- 	m_nameAxis("YZ"),
+ 	m_nameAxis(""),
 	m_fwhmXDistrib2D(0),
 	m_fwhmYDistrib2D(0),
 	m_fwhmZDistrib2D(0),
@@ -128,6 +128,23 @@ void GateSpatialResolution::SetSpatialResolutionParameters() {
     	G4cout << "***ERROR*** Spatial Resolution is ambiguous: you can set FWHM for Z OR set FWHM for Z distribution." << G4endl;
     	abort();
    	}
+
+
+    if (m_nameAxis == "YZ" && (m_fwhmYDistrib2D ==0 || m_fwhmZDistrib2D ==0))
+      {
+	G4cout << "***ERROR*** Spatial Resolution 2D distribution: you choose YZ axis but one or both parameters /fwhmYDistrib2D or /m_fwhmZDistrib2D are not defined" << G4endl;
+    	abort();
+   	}
+    if (m_nameAxis == "XZ" && (m_fwhmXDistrib2D ==0 || m_fwhmZDistrib2D ==0))
+      {
+	G4cout << "***ERROR*** Spatial Resolution 2D distribution: you choose XZ axis but one or both parameters /fwhmXDistrib2D or /m_fwhmZDistrib2D are not defined" << G4endl;
+    	abort();
+   	}
+
+
+    
+
+    
 
 }
 
@@ -220,39 +237,41 @@ void GateSpatialResolution::Digitize(){
 		  G4double Pz = P.z();
 		  G4double stddevX = 0., stddevY = 0., stddevZ = 0.;
 
-		  // Use the configured axis pair (m_nameAxis) to evaluate Value2D.
 		  // Allowed pairs for PET: "XZ" or "YZ" (default "YZ").
-		  if (m_fwhmXDistrib2D || m_fwhmYDistrib2D || m_fwhmZDistrib2D) {
-			  if (m_nameAxis == "XZ") {
-				  if (m_fwhmXDistrib2D) stddevX = m_fwhmXDistrib2D->Value2D(P.x() * mm, P.z() * mm);
-				  if (m_fwhmYDistrib2D) stddevY = m_fwhmYDistrib2D->Value2D(P.x() * mm, P.z() * mm);
-				  if (m_fwhmZDistrib2D) stddevZ = m_fwhmZDistrib2D->Value2D(P.x() * mm, P.z() * mm);
-			  } else { // YZ
-				  if (m_fwhmXDistrib2D) stddevX = m_fwhmXDistrib2D->Value2D(P.y() * mm, P.z() * mm);
-				  if (m_fwhmYDistrib2D) stddevY = m_fwhmYDistrib2D->Value2D(P.y() * mm, P.z() * mm);
-				  if (m_fwhmZDistrib2D) stddevZ = m_fwhmZDistrib2D->Value2D(P.y() * mm, P.z() * mm);
-			  }
+		  if (m_nameAxis == "XZ") { //if 2D distributions are defined
+			    stddevX = m_fwhmXDistrib2D->Value2D(P.x() * mm, P.z() * mm);
+			    stddevZ = m_fwhmZDistrib2D->Value2D(P.x() * mm, P.z() * mm);
 		  }
-		 else {
-
-			 if (m_fwhmXDistrib) stddevX = m_fwhmXDistrib->Value(P.x() * mm);
-			 else if (fwhmX) stddevX = fwhmX / GateConstants::fwhm_to_sigma;
-
-			 if (m_fwhmYDistrib) stddevY = m_fwhmYDistrib->Value(P.y() * mm);
-			 else if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
-
-			 if (m_fwhmZDistrib) stddevZ = m_fwhmZDistrib->Value(P.z() * mm);
-			 else if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
-
+		  if(m_nameAxis == "YZ") { // YZ
+			    stddevY = m_fwhmYDistrib2D->Value2D(P.y() * mm, P.z() * mm);
+			    stddevZ = m_fwhmZDistrib2D->Value2D(P.y() * mm, P.z() * mm);
 		  }
+		
+		   
+		   if (m_fwhmXDistrib) stddevX = m_fwhmXDistrib->Value(P.x() * mm);
+		   else if (fwhmX)
+		     stddevX = fwhmX / GateConstants::fwhm_to_sigma;
+		  		     
+
+		   if (m_fwhmYDistrib) stddevY = m_fwhmYDistrib->Value(P.y() * mm);
+		   else if (fwhmY) stddevY = fwhmY / GateConstants::fwhm_to_sigma;
+		   
+		   if (m_fwhmZDistrib) stddevZ = m_fwhmZDistrib->Value(P.z() * mm);
+		   else if (fwhmZ) stddevZ = fwhmZ / GateConstants::fwhm_to_sigma;
+
+		   //  }
 
 
-
+		   if(!stddevX || !stddevY || !stddevZ)
+		     {
+		       G4cout << " *** ERROR*** GateSpatialResolution::Digitize. Resolution for one of the axis is not set. If you really don't want to apply spatial resolution on one of the axis, please, contact kochebina [a] gmail (dot) com " << G4endl;
+		       abort();
+		     }
 			  G4double PxNew ;
 			  G4double PyNew ;
 			  G4double PzNew ;
 
-// store the computed stddevs into the digi for later ROOT output
+			  // store the computed stddevs into the digi for later ROOT output
 		  m_outputDigi->SetSpatialRes2DStdDevX(stddevX);
 		  m_outputDigi->SetSpatialRes2DStdDevY(stddevY);
 		  m_outputDigi->SetSpatialRes2DStdDevZ(stddevZ);
@@ -290,8 +309,6 @@ void GateSpatialResolution::Digitize(){
 
 
 			m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
-			//G4cout<<G4ThreeVector(PxNew,PyNew,PzNew)<<G4endl;
-			//G4cout<<m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())<<G4endl;
 			m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())); //TC
 			//TC
 			//outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));
@@ -328,6 +345,7 @@ void GateSpatialResolution::Digitize(){
 			  if(PxNew>Xmax) PxNew=Xmax;
 			  if(PyNew>Ymax) PyNew=Ymax;
 			  if(PzNew>Zmax) PzNew=Zmax;
+
 			   m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
 
 			   
