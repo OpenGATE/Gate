@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <numeric>
 
 #include <GatePositroniumDecayModel.hh>
 
@@ -74,11 +75,37 @@ bool run_tests()
   return res;
 }
 
+bool run_tests_positron_range() {
+  bool res = true;
+  G4ThreeVector vec(0, 0, 0);
+  G4double expectedRange = 0.1 * mm;
+  double epsilon = 3e-3 * mm;
+  G4int ntrials = 1000000;
+  std::vector<G4ThreeVector> shiftedPos;
+  std::vector<G4double> shiftedRadii(ntrials);
+  for (int i = 0; i < ntrials; i++) {
+    shiftedPos.push_back(
+        GatePositroniumDecayModel::AddPositronRangeShift(vec, expectedRange));
+  }
+  std::transform(shiftedPos.begin(), shiftedPos.end(), shiftedRadii.begin(),
+                 [](const G4ThreeVector &vec) { return vec.mag(); });
+  auto radiiSum =
+      std::accumulate(shiftedRadii.begin(), shiftedRadii.end(), 0.0);
+  auto radiusMean = radiiSum / ntrials;
+  if (std::abs(radiusMean - expectedRange) > epsilon) {
+    res = false;
+    std::cerr << "assumed range and estimated range differ, expected:"
+              << expectedRange << ", determined:" << radiusMean << std::endl;
+  }
+  return res;
+}
+
 int main()
 {
   bool res = true;
   res = res & run_tests();
   res = res & run_tests2();
+  res = res & run_tests_positron_range();
 
   if (res) {
     std::cout << "All tests have passed" << std::endl;
