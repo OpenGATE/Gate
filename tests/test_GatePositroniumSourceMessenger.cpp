@@ -50,10 +50,15 @@ bool test_full_custom()
 
   auto p = msg.generatePositroniumDecayParams();
 
+  CHECK(p.fMeanPositronRangeEnabled[0] == false, "positron range enable wrong");
+  CHECK(p.fMeanPositronRange[0] == 0.0, "positron range enable wrong");
+
   CHECK(p.fFractions.size() == 2, "wrong size");
   CHECK(p.fFractions[1] == 0.7f, "fraction wrong");
   CHECK(p.fDecayKind[1] == k3Gamma, "decay kind wrong");
   CHECK(p.fPromptGammaEnergy[1] == 1.0f, "energy wrong");
+  CHECK(p.fMeanPositronRangeEnabled[1] == false, "positron range enable wrong");
+  CHECK(p.fMeanPositronRange[1] == 0.0, "positron range enable wrong");
 
   return true;
 }
@@ -71,13 +76,19 @@ bool test_unit_handling_in_commands()
   msg.SetNewValue(msg.CmdDecayKinds(), "k2Gamma k3Gamma");
   msg.SetNewValue(msg.CmdPromptProb(), "0.2 0.8");
   msg.SetNewValue(msg.CmdPromptEnergy(), "0.5 1.0 keV");
+  msg.SetNewValue(msg.CmdMeanPositronRange(), "0.1 0.0 cm");
 
   auto p = msg.generatePositroniumDecayParams();
+
+  CHECK(p.fMeanPositronRangeEnabled[0] == true, "positron range enable wrong");
+  CHECK(p.fMeanPositronRange[0] == 0.1 * 10, "positron range enable wrong"); // Cause mm is the default unit
 
   CHECK(p.fFractions.size() == 2, "wrong size");
   CHECK(p.fFractions[1] == 0.7f, "fraction wrong");
   CHECK(p.fDecayKind[1] == k3Gamma, "decay kind wrong");
   CHECK(p.fPromptGammaEnergy[1] == 1.0f /1000, "energy wrong"); // Cause we used keV and MeV is the default unit
+  CHECK(p.fMeanPositronRangeEnabled[1] == true, "positron range enable wrong");
+  CHECK(p.fMeanPositronRange[1] == 0.0 *10 , "positron range enable wrong");
 
   return true;
 }
