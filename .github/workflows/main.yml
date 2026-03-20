@@ -254,6 +254,7 @@ jobs:
                         t29_optical_digi,
                         t30_dna,
                         t31_vpgTLE-tt,
+                        t32_isotopes,
                         t33_invert_filter,
                         t34_biodose_actor]
 
@@ -291,5 +292,5 @@ jobs:
         mkdir gate_benchmarks
         export GIT_SSL_NO_VERIFY=1
         git clone --recursive https://github.com/OpenGATE/GateBenchmarks.git gate_benchmarks
-        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.4.1 /home/.github/workflows/runTest.sh
+        docker run --rm -e "TEST=${{ matrix.strategy_name }}" -v $GITHUB_WORKSPACE:/src -v $GITHUB_WORKSPACE/gate_benchmarks:/home tbaudier/gatebenchmarks:9.4.2 /home/.github/workflows/runTest.sh
 
