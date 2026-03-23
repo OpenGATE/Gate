@@ -57,6 +57,7 @@ GateSpatialResolutionMessenger::GateSpatialResolutionMessenger (GateSpatialResol
 	spresolutionZdistribCmd = new G4UIcmdWithAString(cmdName,this);
 	spresolutionZdistribCmd->SetGuidance("Set the  distribution resolution in position for gaussian spblurring");
 
+	
 	cmdName = GetDirectoryName() + "fwhmXDistrib2D";
 	spresolutionXDistrib2DCmd = new G4UIcmdWithAString(cmdName,this);
 	spresolutionXDistrib2DCmd->SetGuidance("Set the 2D distribution for X axis (expects a 2D distribution object)");
