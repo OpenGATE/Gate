@@ -1,6 +1,6 @@
 .. _installation_guide-label:
 
-Installation Guide V9.4.1
+Installation Guide V9.4.2
 =========================
 
 .. contents:: Table of Contents
