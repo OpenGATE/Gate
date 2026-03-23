@@ -1,6 +1,6 @@
 .. _compilation_instructions-label:
 
-Compiling GATE V9.4.1
+Compiling GATE V9.4.2
 =====================
 
 
@@ -35,10 +35,10 @@ Direct dependencies of GATE
 ---------------------------
 
 
-For compiling GATE V9.4.1, the required dependencies are
+For compiling GATE V9.4.2, the required dependencies are
   
-* Geant4 11.3.0 (available in http://geant4.web.cern.ch/geant4/support/download.shtml).
-* ROOT (ROOT 6.xx) # still required, but it may become optional in the future
+* Geant4 11.4.0 (available in http://geant4.web.cern.ch/geant4/support/download.shtml).
+* ROOT (ROOT 6.xx) # still required
    
 Geant4 needs to be compiled. ROOT is avalaible as binary on some platform (or has to be compiled)
    
@@ -133,19 +133,19 @@ In some configuration, the following path should also be set ::
 
 We recommend you to use libtorch version 1.10.1 but other version may works. You can download libtorch from (pytorch)[https://pytorch.org/get-started/locally], select "LibTorch" in the matrix. 
 
-GATE V9.4.1
+GATE V9.4.2
 -----------
 
-First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.4.1.zip
+First, download the GATE sources at this address: https://github.com/OpenGATE/Gate/archive/v9.4.2.zip
 Unzip the downloaded file::
 
-   unzip Gate-9.4.1.zip
+   unzip Gate-9.4.2.zip
 
-Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.4* release tag.
+Alternatively, if you are familiar with git, then instead of downloading and extracting the tar file, you can also clone the sources from github and check out the *v9.4.2* release tag.
 
    git clone https://github.com/OpenGATE/Gate.git Gate
    cd Gate
-   git checkout v9.4.1
+   git checkout v9.4.2
 
 Create two directories to build and install GATE::
 
@@ -158,7 +158,7 @@ Move into the GATE build directory::
 
 Run ccmake as follows::
 
-   ccmake ../Gate-9.4.1
+   ccmake ../Gate-9.4.2
 
 You need to change the *CMAKE_INSTALL_PREFIX*, it should be set to the install directory (defined above). The default given by CMake is */usr/local*; if you have root/sudo permissions on your machine then it's possible to install Gate there, but it's not recommended, especially if you need to work with more than one version of Gate (for instance, if you want to do development on Gate, or if you want to verify that a new release is compatible with the old release that you have been using).
 You should get something like this (the screen shot is taken from the 8.0 release, the only difference is the version number):
@@ -221,7 +221,7 @@ This file should be defined as follows:
    setenv PATH ${PATH}:/PATH_TO/2.3.4.3/CLHEP/bin
    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/PATH_TO/2.3.4.3/CLHEP/lib
 
-Save this file in */PATH_TO/gate_v9.4.1-install/bin*. Finally, before to start a GATE session::
+Save this file in */PATH_TO/gate_v9.4.2-install/bin*. Finally, before to start a GATE session::
 
    source /PATH_TO/gate-install/bin/gate_env.sh
 
@@ -361,9 +361,9 @@ Installation of cluster tools
 jobsplitter
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.4.1/cluster_tools/jobsplitter::
+Go to /PATH_TO/gate_v9.4.2/cluster_tools/jobsplitter::
 
-   cd /PATH_TO/gate_v9.4.1/cluster_tools/jobsplitter
+   cd /PATH_TO/gate_v9.4.2/cluster_tools/jobsplitter
 
 Make sure ROOT and Geant4 environment variables are set::
 
@@ -376,12 +376,12 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.4.1/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.4.1-install/bin
+   cp /PATH_TO/gate_v9.4.2/cluster_tools/jobsplitter/gjs /PATH_TO/gate_v9.4.2-install/bin
 
 filemerger
 ~~~~~~~~~~~
 
-Go to /PATH_TO/gate_v9.4.1/cluster_tools/filemerger
+Go to /PATH_TO/gate_v9.4.2/cluster_tools/filemerger
 Make sure ROOT and Geant4 environment variables are set::
 
    source /PATH_TO/root_v6.XX/bin/thisroot.sh
@@ -393,6 +393,6 @@ Compile::
 
 Copy the gjs executable file to the correct place::
 
-   cp /PATH_TO/gate_v9.4.1/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.4.1-install/bin
+   cp /PATH_TO/gate_v9.4.2/cluster_tools/filemerger/gjm /PATH_TO/gate_v9.4.2-install/bin
 
 
