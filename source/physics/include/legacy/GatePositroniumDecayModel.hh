@@ -14,8 +14,8 @@
 #include "G4GeneralPhaseSpaceDecay.hh"
 #include "G4DecayTable.hh"
 #include "G4ParticleDefinition.hh"
-#include "GateEmittedGammaInformation.hh"
-#include "GateGammaEmissionModel.hh"
+#include "legacy/GateEmittedGammaInformation.hh"
+#include "legacy/GateGammaEmissionModel.hh"
 
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
@@ -97,7 +97,7 @@ class GatePositroniumDecayModel : public GateGammaEmissionModel
   /** Depends on used model and setted fractions it chooses positronium which decay will be used to generate gammas
    **/
   void PreparePositroniumParametrization();
-  /** Generate vertex for deexcitation gamma ( prompt gamma ) - position and time is the same as generted by source 
+  /** Generate vertex for deexcitation gamma ( prompt gamma ) - position and time is the same as generted by source
    **/
   G4PrimaryVertex* GetPrimaryVertexFromDeexcitation(const G4double& particle_time, const  G4ThreeVector& particle_position );
   /** Generate vertex for annihilation gammas  - position is the same as generted by source, but time is shifted by positronium lifetime ( T0 + f(lifetime))
