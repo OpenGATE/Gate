@@ -336,8 +336,14 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                         CleanAbort(output,splitfile);
                         exit(1);
 		}
-		char temp=lambda_str[position-1];
-		if (temp != '.') lambda_str=lambda_str+"0";
+		//char temp=lambda_str[position-1];
+		//if (temp != '.') lambda_str=lambda_str+"0";
+		std::stringstream ss(subMacline);
+		double value;
+		std::string unit;
+		ss >> value >> unit;
+		lambda = value;
+		
 		stringstream lambda_ss(lambda_str);
 		lambda_ss>>lambda;
 		lambda=log(2.0)/lambda;
@@ -370,8 +376,15 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                         CleanAbort(output,splitfile);
                         exit(1);
                 }
-		char temp=timeStop_str[position-1];
-		if (temp != '.') timeStop_str=timeStop_str+"0";
+
+		//char temp=timeStop_str[position-1];
+		//if (temp != '.') timeStop_str=timeStop_str+"0";
+		std::stringstream ss(subMacline);
+		double value;
+		std::string unit;
+		ss >> value >> unit;
+		timeStop = value;
+		
 		stringstream timeStop_ss(timeStop_str);
 		timeStop_ss>>timeStop;
 		splitfile<<"Stop time is: "<<macline.substr(30,256)<<endl;
@@ -396,8 +409,13 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                         CleanAbort(output,splitfile);
                         exit(1);
                 }
-		char temp=timeStart_str[position-1];
-		if (temp != '.') timeStart_str=timeStart_str+"0";
+		//char temp=timeStart_str[position-1];
+		//if (temp != '.') timeStart_str=timeStart_str+"0";
+		std::stringstream ss(subMacline);
+		double value;
+		std::string unit;
+		ss >> value >> unit;
+		timeStart = value;
 		stringstream timeStart_ss(timeStart_str);
 		timeStart_ss>>timeStart;
 		splitfile<<"Start time is: "<<macline.substr(31,256)<<endl;
@@ -427,8 +445,13 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                         CleanAbort(output,splitfile);
                         exit(1);
                 }
-                char temp=timeSlice_str[position-1];
-                if (temp != '.') timeSlice_str=timeSlice_str+"0";
+                //char temp=timeSlice_str[position-1];
+                //if (temp != '.') timeSlice_str=timeSlice_str+"0";
+		std::stringstream ss(subMacline);
+		double value;
+		std::string unit;
+		ss >> value >> unit;
+		timeSlice = value;
                 stringstream timeSlice_ss(timeSlice_str);
                 timeSlice_ss>>timeSlice;
 		splitfile<<"Timeslice is: "<<macline.substr(31,256)<<endl;  
@@ -465,8 +488,14 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                         CleanAbort(output,splitfile);
                         exit(1);
                 }
-                char temp=addSlice_str[position-1];
-                if (temp != '.') addSlice_str=addSlice_str+"0";
+                //char temp=addSlice_str[position-1];
+                //if (temp != '.') addSlice_str=addSlice_str+"0";
+		std::stringstream ss(subMacline);
+		double value;
+		std::string unit;
+		ss >> value >> unit;
+		addSlice = value;
+		
                 stringstream addSlice_ss(addSlice_str);
 		G4double newAddSlice;
                 addSlice_ss>>newAddSlice;
