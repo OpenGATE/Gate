@@ -50,6 +50,9 @@ bool test_full_custom()
 
   auto p = msg.generatePositroniumDecayParams();
 
+  CHECK(p.fMeanPositronRangeEnabled.size() == 2, "wrong size of fMeanPositronRangeEnabled");
+  CHECK(p.fMeanPositronRange.size() == 2, "wrong size of fMeanPositronRange");
+
   CHECK(p.fMeanPositronRangeEnabled[0] == false, "positron range enable wrong");
   CHECK(p.fMeanPositronRange[0] == 0.0, "positron range enable wrong");
 
