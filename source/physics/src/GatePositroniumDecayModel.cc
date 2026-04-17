@@ -6,6 +6,7 @@
   ----------------------*/
 #include <cmath>
 #include <algorithm>
+#include <cassert>
 
 #include "Randomize.hh"
 #include "G4DecayProducts.hh"
@@ -72,14 +73,16 @@ G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
   G4int number_of_vertices = 0;
   while (number_of_vertices <=0) { 
     auto decayIndex = GatePositroniumDecayModel::getPositroniumDecayIndex(fModelParams.fFractions);
+    auto no_electron_capture_prob = 1- fModelParams.fElectronCaptureProbabilities[decayIndex];
+    assert(no_electron_capture_prob>=0);
 
-    if(fModelParams.fPromptGammaProbabilities[decayIndex] >= G4UniformRand()) 
+    if(G4UniformRand() <= fModelParams.fPromptGammaProbabilities[decayIndex]) 
     { 
       ++number_of_vertices;
       event->AddPrimaryVertex(GetPrimaryVertexFromDeexcitation(particle_time, particle_position, decayIndex)); 
     }
 
-    if(fModelParams.fElectronCaptureProbabilities[decayIndex] < G4UniformRand()) 
+    if(G4UniformRand() <= no_electron_capture_prob) 
     {
       ++number_of_vertices;
       event->AddPrimaryVertex(GetPrimaryVertexFromPositroniumAnnihilation(particle_time, particle_position, decayIndex));
