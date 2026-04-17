@@ -83,15 +83,15 @@ bool test_unit_handling_in_commands()
 
   auto p = msg.generatePositroniumDecayParams();
 
-  CHECK(p.fMeanPositronRangeEnabled[0] == true, "positron range enable wrong");
-  CHECK(p.fMeanPositronRange[0] == 0.1 * 10, "positron range enable wrong"); // Cause mm is the default unit
+  CHECK(p.fMeanPositronRangeEnabled[0] == true, "positron range enabled wrong");
+  CHECK(p.fMeanPositronRange[0] == 0.1 * 10, "positron range wrong"); // Cause mm is the default unit
 
   CHECK(p.fFractions.size() == 2, "wrong size");
   CHECK(p.fFractions[1] == 0.7f, "fraction wrong");
   CHECK(p.fDecayKind[1] == k3Gamma, "decay kind wrong");
   CHECK(p.fPromptGammaEnergy[1] == 1.0f /1000, "energy wrong"); // Cause we used keV and MeV is the default unit
-  CHECK(p.fMeanPositronRangeEnabled[1] == true, "positron range enable wrong");
-  CHECK(p.fMeanPositronRange[1] == 0.0 *10 , "positron range enable wrong");
+  CHECK(p.fMeanPositronRangeEnabled[1] == true, "positron range enabled wrong");
+  CHECK(p.fMeanPositronRange[1] == 0.0 *10 , "positron range wrong");
 
   return true;
 }
