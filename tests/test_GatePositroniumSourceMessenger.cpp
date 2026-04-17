@@ -22,7 +22,7 @@ public:
   G4UIcommand* CmdLifetimes()     { return upCmdSetPositroniumLifetimes.get(); }
   G4UIcommand* CmdDecayKinds()    { return upCmdSetDecayKinds.get(); }
   G4UIcommand* CmdPromptProb()    { return upCmdSetPromptPhotonProbabilites.get(); }
-  G4UIcommand* CmdElectronCaptureProb()    { return upCmdSetElectronCaptureProbabilites.get(); }
+  G4UIcommand* CmdElectronCaptureProb()    { return upCmdSetElectronCaptureProbabilities.get(); }
   G4UIcommand* CmdPromptEnergy()  { return upCmdSetPromptPhotonEnergies.get(); }
   G4UIcommand* CmdInteractions()  { return upCmdSetPositronInteractions.get(); }
   G4UIcommand* CmdMeanPositronRange()  { return upCmdSetMeanPositronRange.get(); }

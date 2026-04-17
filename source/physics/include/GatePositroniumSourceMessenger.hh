@@ -51,7 +51,7 @@ class GatePositroniumSourceMessenger: public GateVSourceMessenger
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositroniumLifetimes;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonProbabilites;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPromptPhotonEnergies;
-  std::unique_ptr<G4UIcmdWithAString> upCmdSetElectronCaptureProbabilites;
+  std::unique_ptr<G4UIcmdWithAString> upCmdSetElectronCaptureProbabilities;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetDecayKinds;
   std::unique_ptr<G4UIcmdWithAString> upCmdSetPositronInteractions;
 
