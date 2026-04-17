@@ -162,6 +162,13 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
     }
   }
 
+  validatePositroniumDecayParams(params);
+
+  return params;
+}
+
+void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const PositroniumDecayModelParams& params) const
+{
   auto ref_param_number = params.fDecayKind.size();
   bool size_mismatch = (ref_param_number != params.fFractions.size()) ||
                        (ref_param_number != params.fPromptGammaProbabilities.size()) ||
@@ -175,6 +182,12 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
         "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
         "Gamma Energies, Electron Capture Probabilites are not the same");
   }
-
-  return params;
+  constexpr double kProb_of_no_particle_limit = 10e-2;
+  for (int i = 0; i < ref_param_number; i++) {
+    auto electron_capture_prob = params.fElectronCaptureProbabilities[i]; 
+    auto no_prompt_prob = 1 -params.fPromptGammaProbabilities[i];
+    if (electron_capture_prob *no_prompt_prob< kProb_of_no_particle_limit) {
+      GateWarning("The probability of 0 prompt emission times probability of electron capture (no anihillation) is very small. Please check channel definitions! Otherwise simulations can take a lot of time");
+    }
+  }
 }

@@ -37,6 +37,8 @@ public:
   void SetMeanPositronRange(const std::vector<float>& meanPositronRange);
 
   PositroniumDecayModelParams generatePositroniumDecayParams(DecayModel model=kPositronium) const;
+  void validatePositroniumDecayParams(const PositroniumDecayModelParams& params) const;
+
 
 private:
   std::optional<std::vector<float>> fPositroniumFractions;
