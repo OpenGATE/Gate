@@ -166,13 +166,14 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
   bool size_mismatch = (ref_param_number != params.fFractions.size()) ||
                        (ref_param_number != params.fPromptGammaProbabilities.size()) ||
                        (ref_param_number != params.fLifetimes.size()) ||
-                       (ref_param_number != params.fPromptGammaEnergy.size());
+                       (ref_param_number != params.fPromptGammaEnergy.size()) ||
+                       (ref_param_number != params.fElectronCaptureProbabilities.size());
   if (size_mismatch) {
-    std::cout << ref_param_number << " " << params.fFractions.size() << " " << params.fPromptGammaProbabilities.size() << " " << params.fLifetimes.size() << " " << params.fPromptGammaEnergy.size() << std::endl;
+    std::cout << ref_param_number << " " << params.fFractions.size() << " " << params.fPromptGammaProbabilities.size() << " " << params.fLifetimes.size() << " " << params.fPromptGammaEnergy.size() << params.fElectronCaptureProbabilities.size() << std::endl;
     GateError(
         "GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: "
         "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
-        "Gamma Energies are not the same");
+        "Gamma Energies, Electron Capture Probabilites are not the same");
   }
 
   return params;
