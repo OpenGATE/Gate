@@ -137,10 +137,11 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Prompt gamma energies are not set");
     }
 
+    auto nElements = fPositroniumFractions.value().size();
     if(fElectronCaptureProbabilities.has_value()) {
       params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
     } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium electron capture probabilities are not set");
+      params.fElectronCaptureProbabilities.assign(nElements, 0.0);
     }
 
     if(fDecayKinds.has_value()) {
