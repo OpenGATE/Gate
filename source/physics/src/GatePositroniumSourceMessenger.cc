@@ -136,14 +136,10 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetPromptPhotonEnergies.get()) {
     auto promptPhotonEnergies = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPromptGammaEnergies(promptPhotonEnergies);
-<<<<<<< HEAD
   } else if (command == upCmdSetMeanPositronRange.get()) {
     auto positronRange = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetMeanPositronRange(positronRange);
-  } else if (command == upCmdSetElectronCaptureProbabilites.get()) {
-=======
   } else if (command == upCmdSetElectronCaptureProbabilities.get()) {
->>>>>>> ab0fda98 (Fix typo in the command name)
     std::vector<float> electronCaptureProb;
     std::stringstream ss(new_value);
     float prob;

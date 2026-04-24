@@ -152,7 +152,6 @@ PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositro
       GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay kinds are not set and one or more sets that can calculate them (positronInteractions, lifetimes or fractions) is/are empty");
     }
 
-    auto nElements = fPositroniumFractions.value().size();
     if(fMeanPositronRange.has_value()) {
       params.fMeanPositronRangeEnabled.assign(nElements, true);
       params.fMeanPositronRange=fMeanPositronRange.value();
