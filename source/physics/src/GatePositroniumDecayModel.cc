@@ -21,7 +21,7 @@ int GatePositroniumDecayModel::getPositroniumDecayIndex(const std::vector<float>
     curr_frac_cumulative = curr_frac_cumulative + fractions[i];
     if(r<= curr_frac_cumulative) return i;   
  }
-  return -1;
+  return static_cast<int>(fractions.size()) - 1;
 }
 
 G4ThreeVector GatePositroniumDecayModel::AddPositronRangeShift(const G4ThreeVector& original_position,  G4double mean_positron_range)
