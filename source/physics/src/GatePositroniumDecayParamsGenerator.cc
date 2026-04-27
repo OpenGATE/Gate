@@ -188,12 +188,12 @@ void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const P
         "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
         "Gamma Energies, Electron Capture Probabilites are not the same");
   }
-  constexpr double kProb_of_no_particle_limit = 10e-2;
+  constexpr double kProb_of_no_particle_limit = 0.9;
   for (int i = 0; i < ref_param_number; i++) {
     auto electron_capture_prob = params.fElectronCaptureProbabilities[i]; 
     auto no_prompt_prob = 1 -params.fPromptGammaProbabilities[i];
-    if (electron_capture_prob *no_prompt_prob< kProb_of_no_particle_limit) {
-      GateWarning("The probability of 0 prompt emission times probability of electron capture (no anihillation) is very small. Please check channel definitions! Otherwise simulations can take a lot of time");
+    if (electron_capture_prob *no_prompt_prob >= kProb_of_no_particle_limit) {
+      GateWarning("The probability of 0 prompt emission times probability of electron capture (no anihillation) is larger than 90%. Please check channel definitions! Otherwise simulations can take a lot of time");
     }
   }
 }
