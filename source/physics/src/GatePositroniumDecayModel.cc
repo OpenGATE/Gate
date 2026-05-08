@@ -91,11 +91,39 @@ G4int GatePositroniumDecayModel::GeneratePrimaryVertices(G4Event* event, G4doubl
   return number_of_vertices;
 } 
 
+GateEmittedGammaInformation::DecayModel GatePositroniumDecayModel::GetDecayModel(const int decayIndex) const
+{
+  if (fModelParams.fPromptGammaProbabilities[decayIndex] > 0) {
+    return GateEmittedGammaInformation::DecayModel::Deexcitation;
+  }
+  return GateEmittedGammaInformation::DecayModel::Standard;
+}
+
+GateEmittedGammaInformation::SourceKind GatePositroniumDecayModel::GetSourceKind(int decayIndex) const
+{
+  const PositronElectronInteraction interaction = fModelParams.fPositronInteractions[decayIndex];
+
+  switch (interaction)
+  {
+    case PositronElectronInteraction::kParaPs:
+      return GateEmittedGammaInformation::SourceKind::ParaPositronium;
+    case PositronElectronInteraction::kOrthoPs:
+      return GateEmittedGammaInformation::SourceKind::OrthoPositronium;
+    case PositronElectronInteraction::kDirect:
+      return GateEmittedGammaInformation::SourceKind::DirectAnnihilation;
+    default:
+      break;
+  }
+  return GateEmittedGammaInformation::SourceKind::NotDefined;
+}
+
 G4PrimaryParticle* GatePositroniumDecayModel::GetGammaFromDeexcitation(int decayIndex)
 {
  G4PrimaryParticle* gamma = GetSingleGamma(fModelParams.fPromptGammaEnergy[decayIndex]);
  GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt );
  info->SetDecayIndex( decayIndex );
+ info->SetDecayModel( GetDecayModel(decayIndex) );
+ info->SetSourceKind( GetSourceKind(decayIndex) );
  gamma->SetUserInformation( info );
  return gamma;
 }
@@ -123,6 +151,8 @@ std::vector<G4PrimaryParticle*> GatePositroniumDecayModel::GetGammasFromPositron
   gamma->SetPolarization( dynamic_gamma->GetPolarization() );
   GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Annihilation );
   info->SetDecayIndex( decayIndex );
+  info->SetDecayModel( GetDecayModel(decayIndex) );
+  info->SetSourceKind( GetSourceKind(decayIndex) );
   gamma->SetUserInformation( info );
   gammas[i] = gamma;
  }

@@ -30,7 +30,8 @@ class GateEmittedGammaInformation : public G4VUserPrimaryParticleInformation
    NotDefined = 0, // by default
    SingleGammaEmitter = 1, // just emitted single gamma with specfic energy ( by class GateGammaEmissionModel )
    ParaPositronium = 2, // 2 gammas ( plus prompt if it is required ) from pPs decay ( by GatePositroniumDecayModel )
-   OrthoPositronium = 3 // 3 gammas ( plus prompt if it is required ) from oPs decay ( by GatePositroniumDecayModel )
+   OrthoPositronium = 3, // 3 gammas ( plus prompt if it is required ) from oPs decay ( by GatePositroniumDecayModel )
+   DirectAnnihilation = 4 // 2 gammas from direct annihilation of positron without formation of positronium
   };
 
   /** This enum specifies model of source decay ( if it is present )

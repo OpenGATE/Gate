@@ -30,6 +30,16 @@ class GatePositroniumDecayModel:public GateGammaEmissionModel
   G4PrimaryVertex* GetPrimaryVertexFromPositroniumAnnihilation(G4double particle_time, const G4ThreeVector &particle_position, int decayIndex);
   G4PrimaryParticle* GetGammaFromDeexcitation(int decayIndex);
   std::vector<G4PrimaryParticle*> GetGammasFromPositroniumAnnihilation(int decayIndex);
+  /* The decay model is determined by presence of prompt gamma - if it is present (probability > 0) then it is Deexcitation model, 
+   * otherwise it is Standard model. 
+   */
+  GateEmittedGammaInformation::DecayModel GetDecayModel(const int decayIndex) const;
+  
+  /*
+   * The source kind is determined by type of positron-electron interaction 
+   * ( paraPs, orthoPs or direct annihilation without positronium formation )
+   */
+  GateEmittedGammaInformation::SourceKind GetSourceKind(int decayIndex) const;
 
   private:
   PositroniumDecayModelParams fModelParams;
