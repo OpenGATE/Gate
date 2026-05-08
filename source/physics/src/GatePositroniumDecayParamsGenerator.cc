@@ -10,9 +10,6 @@
 #include "GateMessageManager.hh"
 #include "GatePositroniumHelper.hh"
 #include "GatePositroniumDecayParamsGenerator.hh"
-#include "GatePositroniumConstants.hh"
-
-using namespace GatePositroniumConstants;
 
 void GatePositroniumDecayParamsGenerator::SetElectronCaptureProbabilities(const std::vector<float>& electronCaptureProb)
 {
@@ -50,127 +47,66 @@ void GatePositroniumDecayParamsGenerator::SetMeanPositronRange(const std::vector
 }
 
 
-PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams(const GatePositroniumDecayParamsGenerator::DecayModel model) const
+PositroniumDecayModelParams GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams() const
 {
   PositroniumDecayModelParams params;
-  if (model == GatePositroniumDecayParamsGenerator::kParaPositronium) {
-    params.fFractions= {1};
-    params.fLifetimes= {kParaPsLifetime_ns}; // [ns]
-    params.fDecayKind= {k2Gamma};
-    params.fPositronInteractions= {kParaPs};
-    if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
-      params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
-      assert(params.fPromptGammaProbabilities.size()==1);
-      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
-      assert(params.fPromptGammaEnergy.size()==1);
-    } else {
-      params.fPromptGammaProbabilities={0.0};
-      params.fPromptGammaEnergy ={0.0};
-    }
-
-    if(fMeanPositronRange.has_value()) {
-      params.fMeanPositronRange=fMeanPositronRange.value();
-      assert(params.fMeanPositronRange.size() == 1);
-      params.fMeanPositronRangeEnabled={true};
-    } else {
-      params.fMeanPositronRangeEnabled={false};
-      params.fMeanPositronRange ={0.0};
-    }
-    if(fElectronCaptureProbabilities.has_value()){
-      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
-    } else {
-      params.fElectronCaptureProbabilities={0.0};
-    }
-  }
-  if (model == GatePositroniumDecayParamsGenerator::kOrthoPositronium) {
-    params.fFractions= {1};
-    params.fLifetimes= {kOrthoPsMeanLifetime_ns}; // [ns]
-    params.fDecayKind= {k3Gamma};
-    params.fPositronInteractions={kOrthoPs};
-    if(fPromptGammaProbabilities.has_value() && fPromptGammaEnergies.has_value()) {
-      params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
-      assert(params.fPromptGammaProbabilities.size()==1);
-      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
-      assert(params.fPromptGammaEnergy.size()==1);
-    } else {
-      params.fPromptGammaProbabilities={0.0};
-      params.fPromptGammaEnergy ={0.0};
-    }
-
-    if(fMeanPositronRange.has_value()) {
-      params.fMeanPositronRange=fMeanPositronRange.value();
-      assert(params.fMeanPositronRange.size() == 1);
-      params.fMeanPositronRangeEnabled={true};
-    } else {
-      params.fMeanPositronRangeEnabled={false};
-      params.fMeanPositronRange ={0.0};
-    }
-    if(fElectronCaptureProbabilities.has_value()){
-      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
-    } else {
-      params.fElectronCaptureProbabilities={0.0};
-    }
+  GatePositroniumHelper positronHelper;
+  if(fPositroniumFractions.has_value()) {
+    params.fFractions=positronHelper.NormalizeFractions(fPositroniumFractions.value());
+  } else {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay fractions are not set");
   }
 
-  if (model == GatePositroniumDecayParamsGenerator::kPositronium) {
-    GatePositroniumHelper positronHelper;
-    if(fPositroniumFractions.has_value()) {
-      params.fFractions=positronHelper.NormalizeFractions(fPositroniumFractions.value());
-    } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay fractions are not set");
-    }
-
-    if(fPositroniumLifetimes.has_value()) {
-      params.fLifetimes=fPositroniumLifetimes.value();
-    } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium lifetimes are not set");
-    }
-
-    if(fPositronInteractions.has_value()) {
-      params.fPositronInteractions=fPositronInteractions.value();
-    } else if (!fDecayKinds.has_value()) {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium interactions are not set and decay kinds are also empty");
-    }
-
-    if(fPromptGammaProbabilities.has_value()) {
-      params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
-    } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium prompt gamma probabilities are not set");
-    }
-
-    if(fPromptGammaEnergies.has_value()) {
-      params.fPromptGammaEnergy=fPromptGammaEnergies.value();
-    } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Prompt gamma energies are not set");
-    }
-
-    auto nElements = fPositroniumFractions.value().size();
-    if(fElectronCaptureProbabilities.has_value()) {
-      params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
-    } else {
-      params.fElectronCaptureProbabilities.assign(nElements, 0.0);
-    }
-
-    if(fDecayKinds.has_value()) {
-      params.fDecayKind=fDecayKinds.value();
-    } else if (!params.fPositronInteractions.empty() && !params.fLifetimes.empty() && !params.fFractions.empty()) {
-      params = positronHelper.CalculateFractionsFromLifetimes(params);
-    } else {
-      GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay kinds are not set and one or more sets that can calculate them (positronInteractions, lifetimes or fractions) is/are empty");
-    }
-
-    if(fMeanPositronRange.has_value()) {
-      params.fMeanPositronRangeEnabled.assign(nElements, true);
-      params.fMeanPositronRange=fMeanPositronRange.value();
-    } else {
-      params.fMeanPositronRangeEnabled.assign(nElements, false);
-      params.fMeanPositronRange.assign(nElements, 0.0);
-    }
+  if(fPositroniumLifetimes.has_value()) {
+    params.fLifetimes=fPositroniumLifetimes.value();
+  } else {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium lifetimes are not set");
   }
 
-  validatePositroniumDecayParams(params);
+  if(fPositronInteractions.has_value()) {
+    params.fPositronInteractions=fPositronInteractions.value();
+  } else if (!fDecayKinds.has_value()) {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium interactions are not set and decay kinds are also empty");
+  }
 
-  return params;
+  if(fPromptGammaProbabilities.has_value()) {
+    params.fPromptGammaProbabilities=fPromptGammaProbabilities.value();
+  } else {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium prompt gamma probabilities are not set");
+  }
+
+  if(fPromptGammaEnergies.has_value()) {
+    params.fPromptGammaEnergy=fPromptGammaEnergies.value();
+  } else {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Prompt gamma energies are not set");
+  }
+
+  auto nElements = fPositroniumFractions.value().size();
+  if(fElectronCaptureProbabilities.has_value()) {
+    params.fElectronCaptureProbabilities=fElectronCaptureProbabilities.value();
+  } else {
+    params.fElectronCaptureProbabilities.assign(nElements, 0.0);
+  }
+
+  if(fDecayKinds.has_value()) {
+    params.fDecayKind=fDecayKinds.value();
+  } else if (!params.fPositronInteractions.empty() && !params.fLifetimes.empty() && !params.fFractions.empty()) {
+    params = positronHelper.CalculateFractionsFromLifetimes(params);
+  } else {
+    GateError("GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: Positronium decay kinds are not set and one or more sets that can calculate them (positronInteractions, lifetimes or fractions) is/are empty");
+  }
+
+  if(fMeanPositronRange.has_value()) {
+    params.fMeanPositronRangeEnabled.assign(nElements, true);
+    params.fMeanPositronRange=fMeanPositronRange.value();
+  } else {
+    params.fMeanPositronRangeEnabled.assign(nElements, false);
+    params.fMeanPositronRange.assign(nElements, 0.0);
+  }
+
+validatePositroniumDecayParams(params);
+
+return params;
 }
 
 void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const PositroniumDecayModelParams& params) const
@@ -190,7 +126,7 @@ void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const P
   }
   constexpr double kProb_of_no_particle_limit = 0.9;
   for (int i = 0; i < ref_param_number; i++) {
-    auto electron_capture_prob = params.fElectronCaptureProbabilities[i]; 
+    auto electron_capture_prob = params.fElectronCaptureProbabilities[i];
     auto no_prompt_prob = 1 -params.fPromptGammaProbabilities[i];
     if (electron_capture_prob *no_prompt_prob >= kProb_of_no_particle_limit) {
       GateWarning("The probability of 0 prompt emission times probability of electron capture (no anihillation) is larger than 90%. Please check channel definitions! Otherwise simulations can take a lot of time");

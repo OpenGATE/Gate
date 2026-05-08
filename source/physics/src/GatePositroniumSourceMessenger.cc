@@ -189,7 +189,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   }
 }
 
-PositroniumDecayModelParams GatePositroniumSourceMessenger::generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::DecayModel model) const
+PositroniumDecayModelParams GatePositroniumSourceMessenger::generatePositroniumDecayParams() const
 {
-  return fParamGenerator.generatePositroniumDecayParams(model);
+  return fParamGenerator.generatePositroniumDecayParams();
 }

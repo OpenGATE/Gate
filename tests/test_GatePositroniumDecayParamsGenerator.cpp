@@ -25,47 +25,7 @@ void initializeGateRunManager(GateRunManager* runManager)
   runManager->InitializeAll();
 }
 
-bool test_para_default()
-{
-  std::cout << "test_para_default" << std::endl;
-  GatePositroniumDecayParamsGenerator gen;
-  auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
 
-  CHECK(p.fFractions[0] == 1, "para fraction != 1");
-  CHECK(p.fLifetimes[0] == 0.1244f, "para lifetime wrong");
-  CHECK(p.fDecayKind[0] == k2Gamma, "para decay kind wrong");
-  CHECK(p.fPromptGammaProbabilities[0] == 0.0, "para prompt probability wrong");
-  CHECK(p.fPromptGammaEnergy[0] == 0.0f, "para prompt energy wrong");
-  return true;
-}
-
-bool test_ortho_default()
-{
-  std::cout << "test_ortho_default" << std::endl;
-  GatePositroniumDecayParamsGenerator gen;
-  auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kOrthoPositronium);
-
-  CHECK(p.fFractions[0] == 1, "ortho fraction != 1");
-  CHECK(p.fLifetimes[0] == 142.0f, "ortho lifetime wrong");
-  CHECK(p.fDecayKind[0] == k3Gamma, "ortho decay kind wrong");
-  CHECK(p.fPromptGammaProbabilities[0] == 0.0, "ortho prompt probability wrong");
-  CHECK(p.fPromptGammaEnergy[0] == 0.0f, "ortho prompt energy wrong");
-  return true;
-}
-
-bool test_para_prompt_gamma()
-{
-  std::cout << "test_prompt_gamma" << std::endl;
-  GatePositroniumDecayParamsGenerator gen;
-  gen.SetPromptGammaProbabilities({1.0});
-  gen.SetPromptGammaEnergies({1.2f});
-
-  auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kParaPositronium);
-
-  CHECK(p.fPromptGammaProbabilities[0] == 1.0, "para prompt photon probability wrong");
-  CHECK(p.fPromptGammaEnergy[0] == 1.2f, "prompt photon energy wrong");
-  return true;
-}
 
 bool test_positronium_custom()
 {
@@ -79,7 +39,7 @@ bool test_positronium_custom()
   gen.SetPromptGammaEnergies({0.0f, 1.2f});
   gen.SetElectronCaptureProbabilities({0.0, 0.5});
 
-  auto p = gen.generatePositroniumDecayParams(GatePositroniumDecayParamsGenerator::kPositronium);
+  auto p = gen.generatePositroniumDecayParams();
 
   CHECK(p.fFractions[0] == 0.3f, "PS fraction mismatch");
   CHECK(p.fLifetimes[0] == 0.12f, "PS lifetime mismatch");
@@ -145,9 +105,6 @@ int main()
   initializeGateRunManager(runManager.get());
 
   bool res = true;
-  res &= test_para_default();
-  res &= test_ortho_default();
-  res &= test_para_prompt_gamma();
   res &= test_positronium_custom();
   res &= test_missing_params_should_fail();
   res &= test_vector_size_mismatch();
