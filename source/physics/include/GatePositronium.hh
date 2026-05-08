@@ -25,8 +25,8 @@ public:
 
   GatePositronium(const GatePositronium&) = delete;
   GatePositronium& operator=(const GatePositronium&) = delete;
-  GatePositronium(GatePositronium&&) noexcept = default;
-  GatePositronium& operator=(GatePositronium&&) noexcept = default;
+  GatePositronium(GatePositronium&&) = default;
+  GatePositronium& operator=(GatePositronium&&) = default;
 
 
   G4double GetLifeTime() const;

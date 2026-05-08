@@ -13,6 +13,7 @@
 #include "GateOutputMgrMessenger.hh"
 #include "GateConfiguration.h"
 #include "GateAnalysis.hh"
+#include "GateMultiPhotonAnalysis.hh"
 #ifdef GATE_USE_OPTICAL
 #include "GateFastAnalysis.hh"
 #endif
@@ -92,6 +93,9 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   if (m_digiMode==kruntimeMode) {
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
+
+    GateMultiPhotonAnalysis* gateMultiPhotonAnalysis = new GateMultiPhotonAnalysis("multianalysis", this, m_digiMode);
+    AddOutputModule((GateVOutputModule*)gateMultiPhotonAnalysis);
 
   }
 
@@ -262,11 +266,23 @@ void GateOutputMgr::RecordBeginOfAcquisition()
     G4cout << "GateOutputMgr::RecordBeginOfAcquisition\n";
   //OK GND
   GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
-	if((digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
-			&& !this->FindOutputModule("analysis")->IsEnabled()
-			&& !this->FindOutputModule("fastanalysis")->IsEnabled())
+  bool analysisEnabled = false;
+  bool fastanalysisEnabled = false;
+  bool multianalysisEnabled = false;
+  for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
+    const G4String moduleName = m_outputModules[iMod]->GetName();
+    if (moduleName == "analysis") {
+      analysisEnabled = m_outputModules[iMod]->IsEnabled();
+    } else if (moduleName == "fastanalysis") {
+      fastanalysisEnabled = m_outputModules[iMod]->IsEnabled();
+    } else if (moduleName == "multianalysis") {
+      multianalysisEnabled = m_outputModules[iMod]->IsEnabled();
+    }
+  }
+  if((digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
+      && !IsAnyAnalysisModuleEnabled(analysisEnabled, fastanalysisEnabled, multianalysisEnabled))
 	{
-		GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis or fastanalysis Output Modules to write down Singles or Coincidences.\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable.\n");
+    GateError("***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis, fastanalysis or multianalysis Output Modules to write down Singles or Coincidences.\n Use,  /gate/output/analysis/enable or  /gate/output/fastanalysis/enable or /gate/output/multianalysis/enable.\n");
 	}
 
 

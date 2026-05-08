@@ -222,6 +222,7 @@ class GateRootHitBuffer
     Int_t    nCrystalCompton; 	      	      	//!< Number of Compton interactions in the crystam
     Int_t    nPhantomRayleigh; 	      	      	//!< Number of Rayleigh interactions in the phantom
     Int_t    nCrystalRayleigh; 	      	      	//!< Number of Rayleigh interactions in the crystam
+    Int_t    nInteractions;            	      //!< Number of non-Transportation interactions in phantom + crystal
     Int_t    primaryID;       	      	      	//!< Primary ID
     Float_t  sourcePosX,sourcePosY,sourcePosZ;	//!< Global decay position (in millimeters)
     Int_t    sourceID;	      	      	      	//!< Source ID

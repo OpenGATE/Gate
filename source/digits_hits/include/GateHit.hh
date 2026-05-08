@@ -78,6 +78,7 @@ public:
   G4int m_nCrystalCompton;    // # of compton processes in the crystal occurred to the photon
   G4int m_nPhantomRayleigh;    // # of Rayleigh processes in the phantom occurred to the photon
   G4int m_nCrystalRayleigh;    // # of Rayleigh processes in the crystal occurred to the photon
+  G4int m_nInteractions;      // # of non-Transportation interactions in phantom + crystal; -1 when not computed
   G4String m_comptonVolumeName; // name of the volume of the last (if any) compton scattering
   G4String m_RayleighVolumeName; // name of the volume of the last (if any) Rayleigh scattering
   G4int m_primaryID;          // primary that caused the hit
@@ -170,6 +171,9 @@ public:
 
       inline void  SetNCrystalRayleigh(G4int j)  { m_nCrystalRayleigh = j; }
       inline G4int GetNCrystalRayleigh() const        { return m_nCrystalRayleigh; }
+
+      inline void  SetNInteractions(G4int j)  { m_nInteractions = j; }
+      inline G4int GetNInteractions() const        { return m_nInteractions; }
 
       inline void     SetComptonVolumeName(G4String name) { m_comptonVolumeName = name; }
       inline G4String GetComptonVolumeName() const        { return m_comptonVolumeName; }
