@@ -848,7 +848,7 @@ where *POSITRONIUM* is a name of positronium type (pPs or oPs), *PROBABILITY* is
 Dedicated branches
 ~~~~~~~~~~~~~~~~~~
 
-For this source 3 additional branches in **Hits** tree  are provided :
+For this source 4 additional branches are present in the **Hits** tree:
 
 * **gammaType** - describes the type of the gamma
 
@@ -856,7 +856,9 @@ For this source 3 additional branches in **Hits** tree  are provided :
 
 * **decayType** - describes from which decay channel of positronium is emitted gamma
 
-Int is a type of value stored in all three branches . Meaning of values in each branch is described in the tables below
+* **decayIndex** - branch present in the output format, but not filled by ``ExtendedVSource``
+
+``Int`` is the type of value stored in all four branches. Meaning of values in ``gammaType``, ``sourceType`` and ``decayType`` is described in the tables below.
 
 .. table:: Description of values in gammaType branch
    :widths: auto
@@ -865,7 +867,7 @@ Int is a type of value stored in all three branches . Meaning of values in each 
    +-------+---------------------------------------------------+
    | Value | Description                                       |
    +=======+===================================================+
-   | 0     | photon/particle not emitted by ExtendedVSource    |
+   | 0     | photon/particle without emitted-gamma metadata    |
    +-------+---------------------------------------------------+
    | 1     | single photon (emitted by sg model)               |
    +-------+---------------------------------------------------+
@@ -874,21 +876,23 @@ Int is a type of value stored in all three branches . Meaning of values in each 
    | 3     | prompt gamma                                      |
    +-------+---------------------------------------------------+
 
-.. table:: Description of values in sourceType branch
-  :widths: auto
-  :name: sourceType_branch_values
+.. list-table:: Description of values in sourceType branch
+   :widths: 10 90
+   :header-rows: 1
+   :name: sourceType_branch_values
 
-  +-------+---------------------------------+
-  | Value | Description                     |
-  +=======+=================================+
-  | 0     | not ExtendedVSource's source    |
-  +-------+---------------------------------+
-  | 1     | single gamma emitter (sg model) |
-  +-------+---------------------------------+
-  | 2     | parapositronium (pPs)           |
-  +-------+---------------------------------+
-  | 3     | orthopositronium (oPs)          |
-  +-------+---------------------------------+
+   * - Value
+     - Description
+   * - 0
+     - photon/particle without emitted-gamma metadata
+   * - 1
+     - single gamma emitter (sg model)
+   * - 2
+     - parapositronium (pPs)
+   * - 3
+     - orthopositronium (oPs)
+   * - 4
+     - direct annihilation without positronium formation; not emitted by ExtendedVSouce
 
 .. table:: Description of values in decayType branch
   :widths: auto
@@ -903,3 +907,190 @@ Int is a type of value stored in all three branches . Meaning of values in each 
   +-------+---------------------------------------------------------------------------------+
   | 2     | de-excitation and decay channel (pPs-->2 gamma + prompt, oPs-->3 gamma + prompt)|
   +-------+---------------------------------------------------------------------------------+
+
+For ``ExtendedVSource``, the ``decayIndex`` branch is not set by the source model and therefore always keeps the default value ``-1``.
+
+
+PositroniumSource
+-----------------
+
+``PositroniumSource`` is a dedicated source model for positronium decays. It combines the standard source activity, time and position handling from ``GateVSource`` with an internal decay model that generates:
+
+* a delayed 2-gamma or 3-gamma annihilation vertex,
+* an optional prompt de-excitation gamma,
+* an optional spatial shift of the annihilation point to model the mean positron range.
+
+The source is configured component-by-component. Each component represents one positronium decay channel description with its own intensity, lifetime and prompt-gamma settings.
+
+Creating a positronium source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create the source with the dedicated source type and then set its internal model type to ``Ps``::
+
+   /gate/source/addSource NAME PositroniumSource
+   /gate/source/NAME/setType Ps
+
+As for other sources, the activity and the spatial or temporal distributions are configured with the standard source commands, for example::
+
+   /gate/source/NAME/setActivity 1000 becquerel
+   /gate/source/NAME/gps/pos/type Point
+   /gate/source/NAME/gps/centre 0. 0. 0. mm
+
+The annihilation particles are generated internally by the positronium model, therefore there is no need to configure ``gps/particle``, ``gps/energytype``, ``gps/monoenergy`` or angular GPS settings for the annihilation gammas.
+
+Component parameters
+~~~~~~~~~~~~~~~~~~~~
+
+All positronium-specific commands are available under ``/gate/source/NAME/``.
+
+Required commands
+^^^^^^^^^^^^^^^^^
+
+``/gate/source/NAME/setPositroniumFractions f1 f2 ... fn``
+   Relative weights of the configured components. The implementation normalizes the vector internally, but the values should represent the intended relative intensities.
+
+``/gate/source/NAME/setPositroniumLifetimes t1 t2 ... tn unit``
+   Lifetime of each component. The last token is a Geant4 time unit such as ``ns``.
+
+``/gate/source/NAME/setPromptPhotonProbabilites p1 p2 ... pn``
+   Probability of prompt-gamma emission for each component. Values are clamped to the ``[0, 1]`` range by the messenger.
+
+``/gate/source/NAME/setPromptPhotonEnergies e1 e2 ... en unit``
+   Prompt-gamma energies for each component. The last token is a Geant4 energy unit such as ``keV`` or ``MeV``.
+
+One of the following commands must also be provided:
+
+``/gate/source/NAME/setDecayKinds k1 k2 ... kn``
+   Explicit annihilation channel selection for each component. Allowed values are ``k2Gamma`` and ``k3Gamma``.
+
+``/gate/source/NAME/setPositronInteractions k1 k2 ... kn``
+   Interaction type assigned to each component. Allowed values are ``kParaPs``, ``kDirect`` and ``kOrthoPs``. This command is used by the model to derive the ``sourceType`` metadata stored in the **Hits** tree. It can also be used instead of ``setDecayKinds`` to derive the 2-gamma and 3-gamma contributions from the theory.
+
+.. note::
+
+   The current implementation can build the decay model from ``setDecayKinds`` alone, but the ``sourceType`` metadata in the **Hits** tree is derived from ``setPositronInteractions``. In practice, if you want a fully consistent ``PositroniumSource`` configuration and meaningful ``sourceType`` values, define ``setPositronInteractions`` as well.
+
+Optional commands
+^^^^^^^^^^^^^^^^^
+
+``/gate/source/NAME/setElectronCaptureProbabilities p1 p2 ... pn``
+   Probability that the positron is lost by electron capture and no annihilation vertex is produced for a given component. If this command is omitted, all probabilities default to ``0``. Values are clamped to the ``[0, 1]`` range.
+
+``/gate/source/NAME/setMeanPositronRange r1 r2 ... rn unit``
+   Mean positron range for each component. When this command is set, the annihilation vertex is shifted with an isotropic 3D Gaussian whose mean displacement matches the supplied range.
+
+.. note::
+
+   In the explicit ``setDecayKinds`` workflow, all parameter vectors must describe the same number of components. This applies to the fractions, lifetimes, decay kinds, prompt-gamma probabilities, prompt-gamma energies and, when used, electron-capture probabilities and mean positron ranges.
+
+.. note::
+
+   The current implementation requires both ``setPromptPhotonProbabilites`` and ``setPromptPhotonEnergies`` even when the prompt-gamma probability is zero for all components. A common convention is to set the corresponding energies to ``0``.
+
+Event timing and generated vertices
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each event, the source first samples the source time and position from the standard source configuration. Then the positronium model may generate up to two primary vertices:
+
+* a prompt-gamma vertex at the sampled source time and position,
+* an annihilation vertex delayed by an exponential law with the configured positronium lifetime.
+
+If ``setMeanPositronRange`` is used, the annihilation vertex position is additionally smeared around the sampled source position.
+
+If the electron-capture probability is very high and the prompt-gamma probability is very low, event generation can become inefficient because the source retries until at least one primary vertex is created. The code emits a warning when the probability of producing neither a prompt gamma nor an annihilation exceeds 90% for a component.
+
+Dedicated Hits branches
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Hits produced by ``PositroniumSource`` carry four additional integer branches in the **Hits** tree:
+
+* **gammaType** - type of emitted gamma,
+* **sourceType** - physical origin of the gamma,
+* **decayType** - decay model attached to the sampled component,
+* **decayIndex** - zero-based index of the sampled decay component.
+
+The ``decayIndex`` value is copied to all gammas emitted from the same sampled component. In the explicit ``setDecayKinds`` workflow, the index follows the order of components in the user-defined vectors. When the source is configured through ``setPositronInteractions``, the helper may internally expand one user component into several annihilation channels, so ``decayIndex`` refers to the final internal component list used by the model.
+
+.. table:: Description of values in gammaType branch for PositroniumSource
+   :widths: auto
+   :name: positronium_source_gammaType_branch_values
+
+   +-------+----------------------------------------------------------------+
+   | Value | Description                                                    |
+   +=======+================================================================+
+   | 0     | photon/particle without emitted-gamma metadata                 |
+   +-------+----------------------------------------------------------------+
+   | 1     | single photon from the ``sg`` model; not emitted here          |
+   +-------+----------------------------------------------------------------+
+   | 2     | annihilation gamma emitted after positronium decay             |
+   +-------+----------------------------------------------------------------+
+   | 3     | prompt gamma emitted in the de-excitation part of the decay    |
+   +-------+----------------------------------------------------------------+
+
+.. table:: Description of values in sourceType branch for PositroniumSource
+   :widths: auto
+   :name: positronium_source_sourceType_branch_values
+
+   +-------+---------------------------------------------------------------+
+   | Value | Description                                                   |
+   +=======+===============================================================+
+   | 0     | photon/particle without emitted-gamma metadata                |
+   +-------+---------------------------------------------------------------+
+   | 1     | single gamma emitter; not emitted by ``PositroniumSource``    |
+   +-------+---------------------------------------------------------------+
+   | 2     | parapositronium component (pPs, 2-gamma annihilation)         |
+   +-------+---------------------------------------------------------------+
+   | 3     | orthopositronium component (oPs, 3-gamma annihilation)        |
+   +-------+---------------------------------------------------------------+
+   | 4     | direct annihilation without positronium formation             |
+   +-------+---------------------------------------------------------------+
+
+The values observed in ``sourceType`` are assigned by ``GatePositroniumDecayModel::GetSourceKind`` from the sampled interaction kind. For this reason, meaningful ``sourceType`` values require ``setPositronInteractions`` to be configured.
+
+.. table:: Description of values in decayType branch for PositroniumSource
+   :widths: auto
+   :name: positronium_source_decayType_branch_values
+
+   +-------+---------------------------------------------------------------------------------+
+   | Value | Description                                                                     |
+   +=======+=================================================================================+
+   | 0     | decay model not defined for this particle or metadata unavailable               |
+   +-------+---------------------------------------------------------------------------------+
+   | 1     | standard decay channel (annihilation only)                                      |
+   +-------+---------------------------------------------------------------------------------+
+   | 2     | de-excitation and decay channel (prompt gamma plus annihilation)                |
+   +-------+---------------------------------------------------------------------------------+
+
+.. list-table:: Description of values in decayIndex branch for PositroniumSource
+   :widths: 12 88
+   :header-rows: 1
+   :name: positronium_source_decayIndex_branch_values
+
+   * - Value
+     - Description
+   * - -1
+     - decay index not defined for this particle or metadata unavailable
+   * - 0, 1, ...
+     - zero-based index of the sampled decay component stored in the model
+
+Minimal example
+~~~~~~~~~~~~~~~
+
+The example below defines a two-component source with explicit 2-gamma and 3-gamma channels, a prompt gamma accompanying both components and a finite mean positron range::
+
+   /gate/source/addSource psSource PositroniumSource
+   /gate/source/psSource/setType Ps
+   /gate/source/psSource/setActivity 1000 becquerel
+   /gate/source/psSource/gps/pos/type Point
+   /gate/source/psSource/gps/centre 0. 0. 0. mm
+
+   /gate/source/psSource/setPositroniumFractions 0.25 0.75
+   /gate/source/psSource/setPositroniumLifetimes 0.125 142.0 ns
+   /gate/source/psSource/setDecayKinds k2Gamma k3Gamma
+   /gate/source/psSource/setPositronInteractions kParaPs kOrthoPs
+   /gate/source/psSource/setPromptPhotonProbabilites 1.0 1.0
+   /gate/source/psSource/setPromptPhotonEnergies 1.274 1.274 MeV
+   /gate/source/psSource/setElectronCaptureProbabilities 0.0 0.0
+   /gate/source/psSource/setMeanPositronRange 0.2 0.2 mm
+
+In this setup, each sampled decay produces a prompt gamma at the source position and a delayed positronium annihilation. The first component annihilates into 2 gammas, while the second one annihilates into 3 gammas.
