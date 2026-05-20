@@ -104,9 +104,9 @@ The source takes care of particle definitions (gamma, positron) and energy distr
 
 To define the activity of the given source, the user defines the amount of activity and its unit using the following command::
 
-   /gate/source/NAME/setActivity 5. becquerel
+   /gate/source/NAME/setActivity 5. Bq
 
-In this example, the total activity of the source referred to as "NAME" is set to 5 Bq. The activity can be defined in Curie (Ci) as well as in Becquerel (Bq).
+In this example, the total activity of the source referred to as "NAME" is set to 5 Bq. The activity can be defined in Curie (Ci) as well as in Bq (Bq).
 
 Defining the energy
 ~~~~~~~~~~~~~~~~~~~
@@ -421,7 +421,7 @@ The following example explains how to use this option. First you must define a v
 Then you describe your source with the Forbid command::
 
    /gate/source/addSource number1
-   /gate/source/number1/setActivity 100000. becquerel
+   /gate/source/number1/setActivity 100000. Bq
    /gate/source/number1/gps/particle gamma
    /gate/source/number1/setType backtoback
    /gate/source/number1/gps/type Volume
@@ -932,7 +932,7 @@ Create the source with the dedicated source type and then set its internal model
 
 As for other sources, the activity and the spatial or temporal distributions are configured with the standard source commands, for example::
 
-   /gate/source/NAME/setActivity 1000 becquerel
+   /gate/source/NAME/setActivity 1000 Bq
    /gate/source/NAME/gps/pos/type Point
    /gate/source/NAME/gps/centre 0. 0. 0. mm
 
@@ -1080,7 +1080,7 @@ The example below defines a two-component source with explicit 2-gamma and 3-gam
 
    /gate/source/addSource psSource PositroniumSource
    /gate/source/psSource/setType Ps
-   /gate/source/psSource/setActivity 1000 becquerel
+   /gate/source/psSource/setActivity 1000 Bq
    /gate/source/psSource/gps/pos/type Point
    /gate/source/psSource/gps/centre 0. 0. 0. mm
 
