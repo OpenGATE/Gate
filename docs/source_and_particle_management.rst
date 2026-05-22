@@ -955,7 +955,7 @@ Required commands
    Lifetime of each component. The last token is a Geant4 time unit such as ``ns``.
 
 ``/gate/source/NAME/setPromptPhotonProbabilites p1 p2 ... pn``
-   Probability of prompt-gamma emission for each component. Values are clamped to the ``[0, 1]`` range by the messenger.
+   Probability of prompt-gamma emission for each component. Values are restricted to the ``[0, 1]`` range by the messenger.
 
 ``/gate/source/NAME/setPromptPhotonEnergies e1 e2 ... en unit``
    Prompt-gamma energies for each component. The last token is a Geant4 energy unit such as ``keV`` or ``MeV``.
@@ -976,7 +976,7 @@ Optional commands
 ^^^^^^^^^^^^^^^^^
 
 ``/gate/source/NAME/setElectronCaptureProbabilities p1 p2 ... pn``
-   Probability that the positron is lost by electron capture and no annihilation vertex is produced for a given component. If this command is omitted, all probabilities default to ``0``. Values are clamped to the ``[0, 1]`` range.
+   Probability that the positron is lost by electron capture and no annihilation vertex is produced for a given component. If this command is omitted, all probabilities default to ``0``. Values are restricted to the ``[0, 1]`` range.
 
 ``/gate/source/NAME/setMeanPositronRange r1 r2 ... rn unit``
    Mean positron range for each component. When this command is set, the annihilation vertex is shifted with an isotropic 3D Gaussian whose mean displacement matches the supplied range.
