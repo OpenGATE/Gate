@@ -914,6 +914,8 @@ For ``ExtendedVSource``, the ``decayIndex`` branch is not set by the source mode
 PositroniumSource
 -----------------
 
+The full theoretical description of the model, together with implementation details and tests, is available in `A Monte Carlo positronium decay source model with multiple annihilation channels in GATE <https://arxiv.org/abs/2605.14987>`_.
+
 ``PositroniumSource`` is a dedicated source model for positronium decays. It combines the standard source activity, time and position handling from ``GateVSource`` with an internal decay model that generates:
 
 * a delayed 2-gamma or 3-gamma annihilation vertex,
