@@ -1278,9 +1278,9 @@ Example of code for modelling fanbeam collimators::
 
 Modelling a parametrized pinhole collimator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Since Gate9.2 it is possible to define a parameterized pinhole collimator with the class GateParameterisedPinholeCollimator. The description of calculations and some additional information of the class can be found here: 
+Since Gate9.2 it is possible to define a parameterized pinhole collimator with the class GateParameterisedPinholeCollimator. The description of calculations and some additional information of the class can be found here (and in other documents of the same repository): 
 
-https://github.com/kochebina/ParametrisedPinholeCollimator/blob/main/PinholeCollimatorClass/GATE_PinholeCollimatorClass.pdf
+https://github.com/kochebina/ParametrisedPinholeCollimator/tree/main/PinholeCollimatorClass/corrections/pinhole_geometry_corrected_MohammadMirdoraghi.pdf
 
 Example of GATE macros for a preclinical SPECT scanner with four heads and mutlipihole collimators is also here:
 

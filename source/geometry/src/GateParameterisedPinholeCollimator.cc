@@ -6,9 +6,9 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 
 Contact: Olga Kochebina, kochebina@gmail.com
-
+or
+Mohammad Mirdoraghi, mirdoraghimohammad@gmail.com
 ----------------------*/
-
 
 #include "GateParameterisedPinholeCollimator.hh"
 #include "GateParameterisedPinholeCollimatorMessenger.hh"
@@ -30,7 +30,6 @@ GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4S
 		 			 		 G4int depth)
   : GateTrpd(itsName,"Air",8.0,8.4,1.,acceptsChildren,depth),
     m_colli_solid(0), m_messenger(0)
-   
 { 
   G4cout << " Constructor GateParameterisedPinholeCollimator - begin " << itsName << Gateendl;
   
@@ -42,13 +41,10 @@ GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4S
   m_DimensionX2=1.*cm;
   m_DimensionY2=1.*cm;
 
-  
   m_messenger = new GateParameterisedPinholeCollimatorMessenger(this);
   
   G4cout << " Constructor GateParameterisedPinholeCollimator - end \n";
 }
-//-------------------------------------------------------------------------------------------------------------------
-
 
 //-------------------------------------------------------------------------------------------------------------------
 GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4String& itsName,const G4String& itsMaterialName,
@@ -59,8 +55,6 @@ GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4S
   : GateTrpd(itsName,itsMaterialName,itsDimensionX1,itsDimensionY1,itsDimensionX2,itsDimensionY2,itsHeight,false,false),
     m_colli_solid(0), m_colli_log(0), m_messenger(0)
 {
-
-  
   m_InputFile = "";
   m_Height=itsHeight;
   m_RotRadius=itsRotRadius;
@@ -71,37 +65,24 @@ GateParameterisedPinholeCollimator::GateParameterisedPinholeCollimator(const G4S
 
   m_messenger = new GateParameterisedPinholeCollimatorMessenger(this);
 }
-//-------------------------------------------------------------------------------------------------------------------
-
 
 //-------------------------------------------------------------------------------------------------------------------
 GateParameterisedPinholeCollimator::~GateParameterisedPinholeCollimator()
 {
   delete m_messenger;
 }
-//-------------------------------------------------------------------------------------------------------------------
-
-
 
 //-------------------------------------------------------------------------------------------------------------------
 void GateParameterisedPinholeCollimator::ResizeCollimator()
 {
-  //GetCollimatorCreator()->SetBoxXLength(m_DimensionX1);
-  //GetCollimatorCreator()->SetBoxYLength(m_DimensionY1);
-  //GetCollimatorCreator()->SetBoxZLength(m_Height);
-
-  // m_holeInserter->ResizeHole(m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,m_InnerRadius,
-  //		     m_Height,m_DimensionX1,m_DimensionY1);
+  // Implementation as needed for dynamic resizing
 }
+
 //-------------------------------------------------------------------------------------------------------------------
-
-
 G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogicalVolume(G4Material* mater, G4bool flagUpdateOnly)
 {
-
   G4ThreeVector BoxPos_down;
   G4ThreeVector BoxPos_up;
-  G4RotationMatrix rotMatrix; // Unit matrix created by default
 
   if (!flagUpdateOnly)
     {
@@ -109,22 +90,18 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 	= new G4Trd(GetSolidName(), GetCollimatorDimensionX1()/2., GetCollimatorDimensionX2()/2., GetCollimatorDimensionY1()/2., GetCollimatorDimensionY2()/2.,
 		    GetCollimatorHeight()/2.);
 
-      
 	char temp_str[64];
-
 	int n_pinholes;
 	float x, y;
 	float dia, cone_angle;
 	float x_focal, y_focal;
 	
-      // open pinhole description file
 	std::ifstream fin;
 	fin.open(m_InputFile);
 
-	// parse file
 	fin >> temp_str;
 	if (temp_str[0] == '#')
-		fin.ignore(256,'\n'); // ignore first line if it starts with #
+		fin.ignore(256,'\n'); 
 
 	fin >> temp_str;
 	if(temp_str[0] == '[')
@@ -138,120 +115,95 @@ G4LogicalVolume* GateParameterisedPinholeCollimator::ConstructOwnSolidAndLogical
 
 	fin >> n_pinholes;
 
-	//Temp. volume of pinholes
 	G4SubtractionSolid* temp_solid;
 	temp_solid=(G4SubtractionSolid*) m_colli_solid;
 
-
-	
 	float z =  GetCollimatorRotRadius();
 	float Dz;
 	G4ThreeVector normal;
-	
 	float h = GetCollimatorHeight()/2.;
 	
 	for(int i=0;i<n_pinholes;i++)
 	{
-	  
 	  fin >> x >> y >> dia  >> cone_angle >> x_focal >> y_focal;
-	  cone_angle *= 4.0f * atan(1.0f) / 180.0f;
 	  
-	  float alpha=cone_angle;
-	  normal.setX(x-x_focal);
-	  normal.setY(y-y_focal);
-	  normal.setZ(z);
+	  // 1. Correct half-angle alpha in radians
+	  float alpha = (cone_angle / 2.0f) * (pi / 180.0f);
 	  
+	  // 2. TRUE 3D Tilt Angle (beta) 
+	  // This fixes the error where beta only considered the X-axis.
+	  float dx = x - x_focal;
+	  float dy = y - y_focal;
+	  float r = sqrt(dx*dx + dy*dy);
+	  float beta = (r == 0) ? (pi/2.0f) : atan(z / r);
 
-	  float t=normal.getX()*normal.getX()+normal.getY()*normal.getY()+normal.getZ()*normal.getZ();
-	  normal.setX(normal.getX()/sqrt(t));
-	  normal.setY(normal.getY()/sqrt(t));
-	  normal.setZ(normal.getZ()/sqrt(t));
-	 
-	  float theta = atan((x-x_focal)/z);  
-	  float beta= fabs(pi/2. - fabs(theta));
+	  // 3. Geometric parameters along the tilted axis
+	  float a, b, l, k, s, n;
+	  float tan_plus = tan(beta + alpha);
+	  float tan_minus = tan(beta - alpha);
 
-	  float a,b,l,k,s,n;
-	  
-	  float tan_plus = tan(beta+alpha);
-	  float tan_minus = tan(beta-alpha);
+	  k = dia * tan_minus * tan_plus / (tan_plus - tan_minus);
+	  n = (k / tan_plus) - dia;
+	  a = k / sin(beta);
+	  l = h / sin(beta);
+	  s = (k / tan(beta)) - n;
+	  b = (dia - s) * (a + l) * cos(beta) / a;
 
-	  k = dia * tan_minus * tan_plus / (tan_plus-tan_minus) ;
-	  n = k/tan_minus - dia;
+	  // 4. FINAL DZ CALCULATION (Corrected scalar depth)
+	  Dz = a + l + b;
 
-	
-	  a = k/sin(beta);
-	  l = h/sin(beta);
-	  s = k/tan(beta) - n ;
-	  b = (dia-s) * (a+l) * cos(beta) /(a); 
-	  // G4cout<<i<<" "<< x<<" "<<y <<"; "<< b <<" "<<  (dia-s) * (a+l) /(a*tan(beta))<<G4endl;
+	  // 5. Create Unique Names for Visualization/Debugging
+	  G4String upName = GetSolidName() + "_up_" + std::to_string(i);
+	  G4String downName = GetSolidName() + "_down_" + std::to_string(i);
 
+	  // 6. Safety check for rmax to prevent degenerate volumes
+	  G4double rmax = Dz * tan(alpha);  
+          if (rmax < (dia/2.0)) rmax = (dia/2.0) + 0.01*mm;
 
-	  float Dz_x = a + l + b;
-	  float Dz_y = (y-y_focal) / cos((y-y_focal)/z);
-	  Dz = sqrt(Dz_x*Dz_x + Dz_y*Dz_y);
-
-
-
-	  G4double rmax=Dz*tanf(alpha);  
-	
 	  m_cone_up_solid
-	    = new G4Cons(GetSolidName(),0,rmax*mm,0,0,(Dz/2.)*mm, 0.*deg, 360.*deg);// toward the detector		    
+	    = new G4Cons(upName, 0, rmax*mm, 0, 0, (Dz/2.)*mm, 0.*deg, 360.*deg); // Toward detector
 	  
 	  m_cone_down_solid
-	    = new G4Cons(GetSolidName(),0,0,0,rmax*mm, (Dz/2.)*mm, 0.*deg, 360.*deg);// toward the source
-	 
-	  float correction_z=k-(Dz/2.)*sin(beta);
-	  float correction_x=correction_z*(x-x_focal)/z;
-	  float correction_y=correction_z*(y-y_focal)/z;
+	    = new G4Cons(downName, 0, 0, 0, rmax*mm, (Dz/2.)*mm, 0.*deg, 360.*deg); // Toward source
 
-	  BoxPos_down.setX(x+correction_x);
-	  BoxPos_down.setY(y+correction_y);
-	  BoxPos_down.setZ(-correction_z);
-	 
-	  BoxPos_up.setX(x-correction_x);
-	  BoxPos_up.setY(y-correction_y);
-	  BoxPos_up.setZ(correction_z);
-	  
-	  rotMatrix.rotateY(atan(normal.getX()/normal.getZ())*rad);
-	  rotMatrix.rotateX(-atan(normal.getY()/normal.getZ())*rad);
-	  
-	  
-	  //G4cout<<i<<" "<< x<<" "<<y <<"; "<< b <<" "<< rotMatrix.phi() *180.0f/(4.0f * atan(1.0f))<<" "<< rotMatrix.theta()*180.0f/(4.0f * atan(1.0f))<<" "<<rotMatrix.psi()*180.0f/(4.0f * atan(1.0f))<<G4endl;
-	   	
+	  // 7. Persistent Rotation Matrix
+	  // Heap allocation prevents all pinholes from sharing a single local matrix reference.
+	  G4RotationMatrix* pRot = new G4RotationMatrix();
+	  normal.set(dx, dy, z);
+	  normal /= normal.mag();
+
+	  pRot->rotateY(atan2(normal.x(), normal.z())*rad);
+	  pRot->rotateX(-atan2(normal.y(), normal.z())*rad);
+
+	  // 8. Balanced 3D Displacement
+	  // Ensures the waist remains anchored at (x, y) on the midplane.
+	  float correction_z = k - (Dz/2.0f) * sin(beta);
+          float horizontal_shift = (beta == pi/2.0f) ? 0 : correction_z / tan(beta);
+          float phi_dir = atan2(dy, dx); 
+
+	  BoxPos_down.set(x + horizontal_shift*cos(phi_dir), y + horizontal_shift*sin(phi_dir), -correction_z);
+	  BoxPos_up.set(x - horizontal_shift*cos(phi_dir), y - horizontal_shift*sin(phi_dir), correction_z);
+
+	  // 9. Boolean Subtraction
 	  m_sub_up_solid
-	    = new G4SubtractionSolid(GetSolidName(), temp_solid, m_cone_up_solid, &rotMatrix, BoxPos_up);
+	    = new G4SubtractionSolid(upName + "_sub", temp_solid, m_cone_up_solid, pRot, BoxPos_up);
 	  
 	  m_sub_down_solid
-	     = new G4SubtractionSolid(GetSolidName(), m_sub_up_solid, m_cone_down_solid, &rotMatrix, BoxPos_down);
-	  
-	  G4ThreeVector u = G4ThreeVector(1, 0, 0);
-	  G4ThreeVector v = G4ThreeVector(0, 1, 0);
-	  G4ThreeVector w = G4ThreeVector(0, 0, 1);
-	  rotMatrix.setRows(u, v, w);
-	  
+	     = new G4SubtractionSolid(downName + "_sub", m_sub_up_solid, m_cone_down_solid, pRot, BoxPos_down);
 	
-	  temp_solid=m_sub_down_solid;
+	  temp_solid = m_sub_down_solid;
 	}
-	//	exit(1);
 
 	fin.close();
-
-	//m_colli_pinholes_log
-	m_colli_log
-	  = new G4LogicalVolume( temp_solid, mater, GetLogicalVolumeName(),0,0,0);
-
+	m_colli_log = new G4LogicalVolume(temp_solid, mater, GetLogicalVolumeName(), 0, 0, 0);
     }
 
-  //return m_colli_pinholes_log;
   return m_colli_log;
 }
 
 void GateParameterisedPinholeCollimator::DestroyOwnSolidAndLogicalVolume()
 {
-
   if (m_colli_log)
     delete m_colli_log;
   m_colli_log = 0;
-
-
 }
