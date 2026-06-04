@@ -171,8 +171,12 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   IoniCmd = new G4UIcmdWithAString(cmd,this);
   IoniCmd->SetGuidance("Set the ionisation potential for a material (two parameters 'material' and 'value and unit')");
 
-
-
+  cmd = "/gate/geometry/setMeanEnergyPerIonPair";
+  IonPairCmd = new G4UIcmdWithAString(cmd,this);
+  IonPairCmd->SetGuidance("Set the mean energy per ion pair. "
+                          "This controls the magnitude of the acollinearity effect for electron-positron annihilation. "
+                          "The default value is 5 eV (see https://www.geant4.org/download/release-notes/notes-v10.7.0.html). "
+                          "(two parameters 'material' and 'value with unit')");
 
   GateDistributionListManager::Init();
 }
@@ -244,6 +248,13 @@ void GateDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
       double value;
       GetStringAndValueFromCommand(command, newValue, matName, value);
       pDetectorConstruction->SetMaterialIoniPotential(matName,value);
+    }
+  else if( command == IonPairCmd )
+    {
+      G4String matName;
+      double value;
+      GetStringAndValueFromCommand(command, newValue, matName, value);
+      pDetectorConstruction->SetMaterialMeanEnergyPerIonPair(matName,value);
     }
   else
     G4UImessenger::SetNewValue(command,newValue);

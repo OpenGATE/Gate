@@ -153,6 +153,22 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
 
   const G4MaterialTable * theTable = G4Material::GetMaterialTable();
   for(unsigned int i =0;i<(*theTable).size();i++){
+    // Set the default value
+  	G4double defaultMeanEnergyPerIonPair = 5. * eV;
+  	(*theTable)[i]->GetIonisation()->SetMeanEnergyPerIonPair(defaultMeanEnergyPerIonPair);
+
+    // Update, if given
+  	if(theListOfMeanEnergyPerIonPair[(*theTable)[i]->GetName()]){
+  		(*theTable)[i]->GetIonisation()->SetMeanEnergyPerIonPair(theListOfMeanEnergyPerIonPair[(*theTable)[i]->GetName()]);
+  		GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t updating the default 'mean energy per ion pair' value of " <<
+					  G4BestUnit(defaultMeanEnergyPerIonPair,"Energy") << "to " <<
+					  G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanEnergyPerIonPair(),"Energy") << Gateendl);
+  	}
+  	else {
+  		GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t using the default 'mean energy per ion pair' value of " <<
+					  G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanEnergyPerIonPair(),"Energy") << Gateendl);
+  	}
+
     if(theListOfIonisationPotential[(*theTable)[i]->GetName()]){
       (*theTable)[i]->GetIonisation()->SetMeanExcitationEnergy(theListOfIonisationPotential[(*theTable)[i]->GetName()]);
       GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t defaut value: I = " <<

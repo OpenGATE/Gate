@@ -58,6 +58,7 @@ class GateDetectorMessenger: public G4UImessenger
 
     G4UIcmdWithoutParameter*   pListCreatorsCmd;
     G4UIcmdWithAString*        IoniCmd;
+    G4UIcmdWithAString*        IonPairCmd;
 
     //G4UIcmdWithABool* 	       pEnableAutoUpdateCmd;    
     //G4UIcmdWithABool* 	       pDisableAutoUpdateCmd; 
