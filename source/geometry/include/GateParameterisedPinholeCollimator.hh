@@ -8,7 +8,7 @@ See GATE/LICENSE.txt for further details
 
 // GateParameterisedPinholeCollimator class for analytic parameterization 
 // Contact: Olga Kochebina kochebina@gmail.com
-
+// June 2026: Corrections from Yusheng Li and Mohammad Mirdoraghi, mirdoraghimohammad@gmail.com
 
 #ifndef GateParameterisedPinholeCollimator_h
 #define GateParameterisedPinholeCollimator_h 1
@@ -21,6 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "G4SubtractionSolid.hh"
 
 class GateParameterisedPinholeCollimatorMessenger;
+
 
 
 class GateParameterisedPinholeCollimator : public GateTrpd
