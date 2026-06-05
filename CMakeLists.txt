@@ -23,12 +23,8 @@ IF(BUILD_TESTING)
   ENABLE_TESTING()
   SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
   MARK_AS_ADVANCED(BUILDNAME)
+
   #Stupid solution cause it links to everything but for now on
-  ADD_EXECUTABLE(test_dummy tests/test_dummy.cpp)
-  TARGET_LINK_LIBRARIES(test_dummy GateLib)
-
-  ADD_TEST(NAME test_dummy COMMAND test_dummy)
-
   ADD_EXECUTABLE(test_GatePositroniumDecayModel tests/test_GatePositroniumDecayModel.cpp)
   TARGET_LINK_LIBRARIES(test_GatePositroniumDecayModel GateLib)
 

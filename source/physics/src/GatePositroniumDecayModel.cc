@@ -60,7 +60,7 @@ G4PrimaryVertex* GatePositroniumDecayModel::GetPrimaryVertexFromPositroniumAnnih
  if (is_positron_range_enabled)
  {
    shifted_particle_position = AddPositronRangeShift(particle_position, fModelParams.fMeanPositronRange[decayIndex]); 
- }
+}
 
  G4PrimaryVertex* vertex = new G4PrimaryVertex( shifted_particle_position, shifted_particle_time );
  std::vector<G4PrimaryParticle*> gammas = GetGammasFromPositroniumAnnihilation(decayIndex);
@@ -101,8 +101,13 @@ GateEmittedGammaInformation::DecayModel GatePositroniumDecayModel::GetDecayModel
 
 GateEmittedGammaInformation::SourceKind GatePositroniumDecayModel::GetSourceKind(int decayIndex) const
 {
-  const PositronElectronInteraction interaction = fModelParams.fPositronInteractions[decayIndex];
+  // fPositronInteractions is only populated when setPositronInteractions is explicitly called.
+  // We intentionally do not fall back to inferring SourceKind from fDecayKind because
+  // k2Gamma does not uniquely identify pPs: oPs pick-off/quenching also produces 2 gammas.
+  if (decayIndex >= static_cast<int>(fModelParams.fPositronInteractions.size()))
+    return GateEmittedGammaInformation::SourceKind::NotDefined;
 
+  const PositronElectronInteraction interaction = fModelParams.fPositronInteractions[decayIndex];
   switch (interaction)
   {
     case PositronElectronInteraction::kParaPs:
@@ -123,7 +128,9 @@ G4PrimaryParticle* GatePositroniumDecayModel::GetGammaFromDeexcitation(int decay
  GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Prompt );
  info->SetDecayIndex( decayIndex );
  info->SetDecayModel( GetDecayModel(decayIndex) );
- info->SetSourceKind( GetSourceKind(decayIndex) );
+ auto sourceKind = GetSourceKind(decayIndex);
+ if (sourceKind != GateEmittedGammaInformation::SourceKind::NotDefined)
+  info->SetSourceKind( sourceKind );
  gamma->SetUserInformation( info );
  return gamma;
 }
@@ -152,7 +159,9 @@ std::vector<G4PrimaryParticle*> GatePositroniumDecayModel::GetGammasFromPositron
   GateEmittedGammaInformation* info = GetPrimaryParticleInformation( gamma, GateEmittedGammaInformation::GammaKind::Annihilation );
   info->SetDecayIndex( decayIndex );
   info->SetDecayModel( GetDecayModel(decayIndex) );
-  info->SetSourceKind( GetSourceKind(decayIndex) );
+  auto sourceKind = GetSourceKind(decayIndex);
+  if (sourceKind != GateEmittedGammaInformation::SourceKind::NotDefined)
+   info->SetSourceKind( sourceKind );
   gamma->SetUserInformation( info );
   gammas[i] = gamma;
  }

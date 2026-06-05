@@ -37,6 +37,7 @@
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
 #include "GateEmittedGammaInformation.hh"
+#include "legacy/GateEmittedGammaInformation.hh"
 
 #include "GateOutputMgr.hh"
 
@@ -153,8 +154,18 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
    {
     source_type = static_cast<G4int>( info->GetSourceKind() );
     decay_type = static_cast<G4int>( info->GetDecayModel() );
-    gamma_type = static_cast<G4int>( info->GetGammaKind() );   
+    gamma_type = static_cast<G4int>( info->GetGammaKind() );
     decay_index = info->GetDecayIndex();
+   }
+   else
+   {
+    GateLegacy::GateEmittedGammaInformation* legacy_info = dynamic_cast<GateLegacy::GateEmittedGammaInformation*>( primary_particle->GetUserInformation() );
+    if ( legacy_info != nullptr )
+    {
+     source_type = static_cast<G4int>( legacy_info->GetSourceKind() );
+     decay_type = static_cast<G4int>( legacy_info->GetDecayModel() );
+     gamma_type = static_cast<G4int>( legacy_info->GetGammaKind() );
+    }
    }
   }
 

@@ -124,6 +124,14 @@ void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const P
         "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
         "Gamma Energies, Electron Capture Probabilites are not the same");
   }
+  if (params.fPositronInteractions.empty())
+    GateWarning("PositroniumSource: setPositronInteractions was not called. "
+                "sourceType in ROOT output will be 1 (SingleGammaEmitter, the generic default) "
+                "instead of 2 (ParaPositronium), 3 (OrthoPositronium), or 4 (DirectAnnihilation). "
+                "Note: k2Gamma does not uniquely imply pPs — oPs pick-off/quenching also produces 2 gammas, "
+                "so sourceType cannot be safely inferred from decayKind alone. "
+                "Call setPositronInteractions with kParaPs, kOrthoPs, or kDirect for correct sourceType tagging.");
+
   constexpr double kProb_of_no_particle_limit = 0.9;
   for (int i = 0; i < ref_param_number; i++) {
     auto electron_capture_prob = params.fElectronCaptureProbabilities[i];
