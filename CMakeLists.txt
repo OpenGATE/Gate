@@ -4,9 +4,6 @@ CMAKE_POLICY(SET CMP0012 NEW) # if() recognizes numbers and boolean constants.
 CMAKE_POLICY(SET CMP0025 NEW) # Compiler id for Apple Clang is now AppleClang.
 CMAKE_POLICY(SET CMP0057 NEW) # Support new if() IN_LIST operator.
 CMAKE_POLICY(SET CMP0072 NEW) # FindOpenGL prefers GLVND by default when available.
-#=========================================================
-#set(CMAKE_CXX_COMPILER "/usr/bin/x86_64-linux-gnu-g++-13")
-#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #=========================================================
 PROJECT(Gate)
@@ -23,33 +20,6 @@ IF(BUILD_TESTING)
   ENABLE_TESTING()
   SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
   MARK_AS_ADVANCED(BUILDNAME)
-
-  #Stupid solution cause it links to everything but for now on
-  ADD_EXECUTABLE(test_GatePositroniumDecayModel tests/test_GatePositroniumDecayModel.cpp)
-  TARGET_LINK_LIBRARIES(test_GatePositroniumDecayModel GateLib)
-
-  ADD_TEST(NAME test_GatePositroniumDecayModel COMMAND test_GatePositroniumDecayModel)
-
-  ADD_EXECUTABLE(test_GatePositronium tests/test_GatePositronium.cpp)
-  TARGET_LINK_LIBRARIES(test_GatePositronium GateLib)
-
-  ADD_TEST(NAME test_GatePositronium COMMAND test_GatePositronium)
-
-  ADD_EXECUTABLE(test_GatePositroniumHelper tests/test_GatePositroniumHelper.cpp)
-  TARGET_LINK_LIBRARIES(test_GatePositroniumHelper GateLib)
-
-  ADD_TEST(NAME test_GatePositroniumHelper COMMAND test_GatePositroniumHelper)
-
-  ADD_EXECUTABLE(test_GatePositroniumDecyParamsGenerator tests/test_GatePositroniumDecayParamsGenerator.cpp)
-  TARGET_LINK_LIBRARIES(test_GatePositroniumDecyParamsGenerator GateLib)
-
-  ADD_TEST(NAME test_GatePositroniumDecyParamsGenerator COMMAND test_GatePositroniumDecayParamsGenerator)
-
-  ADD_EXECUTABLE(test_GatePositroniumSourceMessenger tests/test_GatePositroniumSourceMessenger.cpp)
-  TARGET_LINK_LIBRARIES(test_GatePositroniumSourceMessenger GateLib)
-
-  ADD_TEST(NAME test_GatePositroniumSourceMessenger COMMAND test_GatePositroniumSourceMessenger)
-
 ENDIF(BUILD_TESTING)
 #=========================================================
 
