@@ -159,7 +159,8 @@ public:
   void SetMaterialIoniPotential(G4String n,G4double v){theListOfIonisationPotential[n]=v;}
   G4double GetMaterialIoniPotential(G4String n){ return theListOfIonisationPotential[n];}
 
-
+  void SetMaterialMeanEnergyPerIonPair(G4String n,G4double v){theListOfMeanEnergyPerIonPair[n]=v;}
+  G4double GetMaterialMeanEnergyPerIonPair(G4String n){ return theListOfMeanEnergyPerIonPair[n];}
 
 private :
 
@@ -185,6 +186,7 @@ protected :
   G4bool moveFlag;
 
   std::map<G4String,G4double> theListOfIonisationPotential;
+  std::map<G4String,G4double> theListOfMeanEnergyPerIonPair;
 
 
 private:

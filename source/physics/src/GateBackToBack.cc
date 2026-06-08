@@ -52,12 +52,21 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       if (accoValue == 0.0){
         accoValue = 0.5*pi / 180;
       }
-    
-      G4double dev = CLHEP::RandGauss::shoot( 0.,accoValue / GateConstants::fwhm_to_sigma );
-      G4double Phi1 = ( twopi * G4UniformRand() )/2. ;
-      
-      G4ThreeVector DirectionPhoton( sin( dev ) * cos( Phi1 ),
-                                     sin( dev ) * sin( Phi1 ), cos( dev ) );
+
+      // Adapt the correction suggested by Toussaint et al. (https://doi.org/10.1088/1361-6560/ad70f1)
+
+      // G4double dev = CLHEP::RandGauss::shoot( 0.,accoValue / GateConstants::fwhm_to_sigma );
+      // G4double Phi1 = ( twopi * G4UniformRand() )/2. ;
+      //
+      // G4ThreeVector DirectionPhoton( sin( dev ) * cos( Phi1 ),
+      //                                sin( dev ) * sin( Phi1 ), cos( dev ) );
+
+      G4double phi = CLHEP::RandGauss::shoot(0., accoValue / GateConstants::fwhm_to_sigma);
+      G4double psi = CLHEP::RandGauss::shoot(0., accoValue / GateConstants::fwhm_to_sigma);
+
+      G4double theta = sqrt(pow(phi, 2.0) + pow(psi, 2.0));
+
+      G4ThreeVector DirectionPhoton(sin(theta) * phi / theta, sin(theta) * psi / theta, cos(theta));
       
       // Scale vector to unit length before rotation, re-scale to original length after rotation:
       G4double gammaMom_mag = gammaMom.mag();
