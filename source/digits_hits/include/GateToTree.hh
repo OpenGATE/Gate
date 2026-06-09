@@ -201,6 +201,7 @@ private:
   G4int m_sourceType = 0;
   G4int m_decayType = 0;
   G4int m_gammaType = 0;
+  G4int m_decayIndex = -1;
 
   G4float m_sourceEnergy;
   G4int m_sourcePDG;

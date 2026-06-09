@@ -4,25 +4,26 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateOrthoPositronium.hh"
+#include "legacy/GateParaPositronium.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleTable.hh"
 #include "G4DecayTable.hh"
-#include "GatePositroniumDecayChannel.hh"
+#include "legacy/GatePositroniumDecayChannel.hh"
 
+namespace GateLegacy{
 
-GateOrthoPositronium* GateOrthoPositronium::theInstance = 0;
+GateParaPositronium* GateParaPositronium::theInstance = 0;
 
-GateOrthoPositronium* GateOrthoPositronium::Definition()
+GateParaPositronium* GateParaPositronium::Definition()
 {
  if (theInstance !=0) return theInstance;
  
- const G4String name = "oPs";
+ const G4String name = "pPs";
  const G4double mass = 2.0 * electron_mass_c2;
- const G4int spin = 2;
- const G4int parity = -1;
- const G4double lifetime = 138.6 * ns;
+ const G4int  spin = 0;
+ const G4int parity = 1;
+ const G4double lifetime = 0.1244 * ns;
  const G4double BR = 1.0;
 
  // search in particle table
@@ -55,10 +56,11 @@ GateOrthoPositronium* GateOrthoPositronium::Definition()
   table->Insert(mode);
   anInstance->SetDecayTable(table);
  }
- theInstance = dynamic_cast<GateOrthoPositronium*>(anInstance);
+ theInstance = dynamic_cast<GateParaPositronium*>(anInstance);
  return theInstance;
 }
 
-GateOrthoPositronium* GateOrthoPositronium::OrthoPositroniumDefinition() { return Definition(); }
+GateParaPositronium* GateParaPositronium::ParaPositroniumDefinition() { return Definition(); }
 
-GateOrthoPositronium* GateOrthoPositronium::OrthoPositronium() { return Definition(); }
+GateParaPositronium* GateParaPositronium::ParaPositronium() { return Definition(); }
+}

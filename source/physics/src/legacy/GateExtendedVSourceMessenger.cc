@@ -5,10 +5,12 @@
   See LICENSE.md for further details
   ----------------------*/
 
-#include "GateExtendedVSourceMessenger.hh"
-#include "GateExtendedVSource.hh"
+#include "legacy/GateExtendedVSourceMessenger.hh"
+#include "legacy/GateExtendedVSource.hh"
 #include <sstream>
 
+namespace GateLegacy 
+{
 GateExtendedVSourceMessenger::GateExtendedVSourceMessenger( GateExtendedVSource* source ) : GateVSourceMessenger( source )
 {
  pSource = source;
@@ -141,6 +143,6 @@ void GateExtendedVSourceMessenger::SetNewValue( G4UIcommand* command, G4String n
  }
 }
 
-
+}
 
 

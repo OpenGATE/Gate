@@ -4,12 +4,14 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#ifndef GateExtendedVSource_hh
-#define GateExtendedVSource_hh
+#ifndef Legacy_GateExtendedVSource_hh
+#define Legacy_GateExtendedVSource_hh
 
 #include "GateVSource.hh"
-#include "GateExtendedVSourceMessenger.hh"
-#include "GateGammaEmissionModel.hh"
+#include "legacy/GateExtendedVSourceMessenger.hh"
+#include "legacy/GateGammaEmissionModel.hh"
+
+namespace GateLegacy{
 
 /**  About class: this is helper class to control if setting is in use
  **/
@@ -116,5 +118,6 @@ public:
   G4bool fBehaveLikeVSource = false;
 
 };
+}
 
 #endif

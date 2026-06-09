@@ -186,6 +186,10 @@ jobs:
           if [ "${{ matrix.options }}" == 'optic' ]; then
             export GATE_USE_OPTIC=ON
           fi
+          CMAKE_PREFIX_PATH_EXTRA=""
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            CMAKE_PREFIX_PATH_EXTRA="-DCMAKE_PREFIX_PATH=$(brew --prefix)"
+          fi
           cmake -DGATE_USE_TORCH=$GATE_USE_TORCH \
                 -DTorch_DIR=$HOME/option_dependencies/libtorch/share/cmake/Torch \
                 -DGATE_COMPILE_GATEDIGIT=ON \
@@ -193,6 +197,7 @@ jobs:
                 -DITK_DIR=$HOME/option_dependencies/rtk/bin/ \
                 -DGATE_USE_OPTICAL=$GATE_USE_OPTICAL \
                 -DBUILD_TESTING=ON \
+                $CMAKE_PREFIX_PATH_EXTRA \
                 $GITHUB_WORKSPACE
         fi
     - name: Build Gate

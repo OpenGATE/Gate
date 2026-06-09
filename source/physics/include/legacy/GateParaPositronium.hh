@@ -4,10 +4,12 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#ifndef GateParaPositronium_hh
-#define GateParaPositronium_hh
+#ifndef Legacy_GateParaPositronium_hh
+#define Legacy_GateParaPositronium_hh
 
 #include "G4ParticleDefinition.hh"
+
+namespace GateLegacy{
 
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
@@ -25,5 +27,6 @@ class GateParaPositronium : public G4ParticleDefinition
   static GateParaPositronium* ParaPositroniumDefinition();
   static GateParaPositronium* ParaPositronium();
 };
+}
 
 #endif

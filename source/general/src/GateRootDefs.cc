@@ -133,12 +133,14 @@ void GateRootHitBuffer::Clear()
 	  nCrystalCompton = -1;
 	  nPhantomRayleigh = -1;
 	  nCrystalRayleigh = -1;
+    nInteractions = -1;
 	  primaryID       = -1;
 	  axialPos        = 0.;
 	  rotationAngle   = 0.;
 	  sourceType = 0;
 	  decayType = 0;
 	  gammaType = 0;
+	  decayIndex = -1;
 	  strcpy (comptonVolumeName," ");
 	  strcpy (RayleighVolumeName," ");
    	  }
@@ -207,6 +209,7 @@ void GateRootHitBuffer::Fill(GateHit* aHit)
 	  nCrystalCompton = aHit->GetNCrystalCompton();
 	  nPhantomRayleigh = aHit->GetNPhantomRayleigh();
 	  nCrystalRayleigh = aHit->GetNCrystalRayleigh();
+    nInteractions = aHit->GetNInteractions();
 	  primaryID       = aHit->GetPrimaryID();
 	  momDirX         = aHit->GetMomentumDir().x();
 	  momDirY         = aHit->GetMomentumDir().y();
@@ -216,6 +219,7 @@ void GateRootHitBuffer::Fill(GateHit* aHit)
 	  sourceType = aHit->GetSourceType();
 	  decayType = aHit->GetDecayType();
 	  gammaType = aHit->GetGammaType();
+	  decayIndex = aHit->GetDecayIndex();
    	  }
   else
   {
@@ -271,6 +275,7 @@ GateHit* GateRootHitBuffer::CreateHit()
   aHit->SetNCrystalCompton( 	nCrystalCompton );
   aHit->SetNPhantomRayleigh( 	nPhantomRayleigh);
   aHit->SetNCrystalRayleigh( 	nCrystalRayleigh );
+  aHit->SetNInteractions(     nInteractions );
   aHit->SetComptonVolumeName( comptonVolumeName );
   aHit->SetRayleighVolumeName( RayleighVolumeName );
   aHit->SetPrimaryID(       	primaryID );
@@ -284,6 +289,7 @@ GateHit* GateRootHitBuffer::CreateHit()
   aHit->SetSourceType(sourceType);
   aHit->SetDecayType(decayType);
   aHit->SetGammaType(gammaType);  
+  aHit->SetDecayIndex(decayIndex);  
 
   aHit->SetSourceEnergy(GetSourceEnergy());
   aHit->SetSourcePDG(GetSourcePDG());
@@ -341,6 +347,7 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
 	  Branch("nCrystalCompton",&buffer.nCrystalCompton,"nCrystalCompton/I");
 	  Branch("nPhantomRayleigh",&buffer.nPhantomRayleigh,"nPhantomRayleigh/I");
 	  Branch("nCrystalRayleigh",&buffer.nCrystalRayleigh,"nCrystalRayleigh/I");
+    Branch("nInteractions",&buffer.nInteractions,"nInteractions/I");
 	  Branch("primaryID",      &buffer.primaryID,"primaryID/I");
 
 	  Branch("axialPos",       &buffer.axialPos,"axialPos/F");
@@ -354,6 +361,7 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
 	  Branch("sourceType", &buffer.sourceType,"sourceType/I");
 	  Branch("decayType", &buffer.decayType,"decayType/I");
 	  Branch("gammaType", &buffer.gammaType,"gammaType/I");
+	  Branch("decayIndex", &buffer.decayIndex,"decayIndex/I");
    	  }
   else
   {
@@ -376,6 +384,7 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("PDGEncoding",&buffer.PDGEncoding);
   hitTree->SetBranchAddress("trackID",&buffer.trackID);
   hitTree->SetBranchAddress("parentID",&buffer.parentID);
+  hitTree->SetBranchAddress("trackLocalTime",&buffer.trackLocalTime);
   hitTree->SetBranchAddress("time",&buffer.time);
   hitTree->SetBranchAddress("edep",&buffer.edep);
   hitTree->SetBranchAddress("stepLength",&buffer.stepLength);
@@ -413,6 +422,11 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
 	  hitTree->SetBranchAddress("nCrystalCompton",&buffer.nCrystalCompton);
 	  hitTree->SetBranchAddress("nPhantomRayleigh",&buffer.nPhantomRayleigh);
 	  hitTree->SetBranchAddress("nCrystalRayleigh",&buffer.nCrystalRayleigh);
+    if (hitTree->GetBranch("nInteractions")) {
+      hitTree->SetBranchAddress("nInteractions",&buffer.nInteractions);
+    } else {
+      buffer.nInteractions = -1;
+    }
 	  hitTree->SetBranchAddress("primaryID",&buffer.primaryID);
 
 	  hitTree->SetBranchAddress("axialPos",&buffer.axialPos);
@@ -424,6 +438,7 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
 	  hitTree->SetBranchAddress("sourceType",&buffer.sourceType);
 	  hitTree->SetBranchAddress("decayType",&buffer.decayType);
 	  hitTree->SetBranchAddress("gammaType",&buffer.gammaType);
+	  hitTree->SetBranchAddress("decayIndex",&buffer.decayIndex);
 
    	  }
   else

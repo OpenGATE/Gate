@@ -4,10 +4,12 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateExtendedVSource.hh"
+#include "legacy/GateExtendedVSource.hh"
 #include <algorithm>
-#include "GatePositroniumDecayModel.hh"
+#include "legacy/GatePositroniumDecayModel.hh"
 #include "G4Event.hh"
+
+namespace GateLegacy{
 
 GateExtendedVSource::GateExtendedVSource( G4String name ) : GateVSource( name )
 {
@@ -92,7 +94,6 @@ void GateExtendedVSource::PrepareModel()
  if ( fFixedEmissionDirection.IsSetted() ) { pModel->SetFixedEmissionDirection( fFixedEmissionDirection.Get() ); }
  if ( fEnableFixedEmissionDirection.IsSetted() ) { pModel->SetEnableFixedEmissionDirection( fEnableFixedEmissionDirection.Get() ); }
  if ( fEmissionEnergy.IsSetted() ) { pModel->SetEmissionEnergy( fEmissionEnergy.Get() ); }
- if ( fSeed.IsSetted() ) { pModel->SetSeed( fSeed.Get() ); }
 
 }
 
@@ -105,5 +106,6 @@ G4int GateExtendedVSource::GeneratePrimaries( G4Event* event )
  G4ThreeVector particle_position = GetPosDist()->GenerateOne();
  ChangeParticlePositionRelativeToAttachedVolume( particle_position );
  return pModel->GeneratePrimaryVertices( event, particle_time, particle_position);
+}
 }
 

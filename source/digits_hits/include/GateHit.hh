@@ -78,6 +78,7 @@ public:
   G4int m_nCrystalCompton;    // # of compton processes in the crystal occurred to the photon
   G4int m_nPhantomRayleigh;    // # of Rayleigh processes in the phantom occurred to the photon
   G4int m_nCrystalRayleigh;    // # of Rayleigh processes in the crystal occurred to the photon
+  G4int m_nInteractions;      // # of non-Transportation interactions in phantom + crystal; -1 when not computed
   G4String m_comptonVolumeName; // name of the volume of the last (if any) compton scattering
   G4String m_RayleighVolumeName; // name of the volume of the last (if any) Rayleigh scattering
   G4int m_primaryID;          // primary that caused the hit
@@ -108,6 +109,7 @@ public:
   G4int m_sourceType = 0;//0 means 'by default not known'; sourceType says what type of positronium (Ps) is used: pPs, oPs 
   G4int m_decayType = 0;//0 means 'by default not known'; decayType says what type of Ps decay is used: standard (without prompt gamma), deexcitation (with prompt gamma)
   G4int m_gammaType = 0;//0 means 'by default not known'; gammaType says what type of gamma is emitted: annihilation, prompt, other
+  G4int m_decayIndex = -1;//decay channel index; -1 means 'by default not known'
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -169,6 +171,9 @@ public:
 
       inline void  SetNCrystalRayleigh(G4int j)  { m_nCrystalRayleigh = j; }
       inline G4int GetNCrystalRayleigh() const        { return m_nCrystalRayleigh; }
+
+      inline void  SetNInteractions(G4int j)  { m_nInteractions = j; }
+      inline G4int GetNInteractions() const        { return m_nInteractions; }
 
       inline void     SetComptonVolumeName(G4String name) { m_comptonVolumeName = name; }
       inline G4String GetComptonVolumeName() const        { return m_comptonVolumeName; }
@@ -256,6 +261,9 @@ public:
       
       inline void SetGammaType(G4int value){ m_gammaType = value; }
       inline G4int GetGammaType() const { return m_gammaType; }
+      
+      inline void SetDecayIndex(G4int value){ m_decayIndex = value; }
+      inline G4int GetDecayIndex() const { return m_decayIndex; }
 };
 
 

@@ -19,6 +19,16 @@
 #include "GateDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
+/**
+ * @brief Evaluates if at least one analysis-capable output module is enabled.
+ */
+inline bool IsAnyAnalysisModuleEnabled(
+    bool analysis_enabled,
+    bool fastanalysis_enabled,
+    bool multianalysis_enabled) {
+  return analysis_enabled || fastanalysis_enabled || multianalysis_enabled;
+}
+
 class G4Run;
 class G4Step;
 class G4Event;

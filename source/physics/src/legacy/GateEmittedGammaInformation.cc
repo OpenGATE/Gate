@@ -4,7 +4,9 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateEmittedGammaInformation.hh"
+#include "legacy/GateEmittedGammaInformation.hh"
+
+namespace GateLegacy{
 
 GateEmittedGammaInformation::GateEmittedGammaInformation() {}
 
@@ -22,10 +24,6 @@ void GateEmittedGammaInformation::SetGammaKind( GateEmittedGammaInformation::Gam
 
 GateEmittedGammaInformation::GammaKind GateEmittedGammaInformation::GetGammaKind() const { return fGammaKind; }
 
-void GateEmittedGammaInformation::SetDecayIndex( G4int decay_index ) { fDecayIndex = decay_index; }
-
-G4int GateEmittedGammaInformation::GetDecayIndex() const { return fDecayIndex; }
-
 void GateEmittedGammaInformation::SetInitialPolarization( const G4ThreeVector& polarization ) { fInitialPolarization = polarization; }
 
 G4ThreeVector GateEmittedGammaInformation::GetInitialPolarization() const { return fInitialPolarization; }
@@ -35,3 +33,5 @@ void GateEmittedGammaInformation::SetTimeShift( const G4double& time_shift ) { f
 G4double GateEmittedGammaInformation::GetTimeShift() const { return fTimeShift; }
 
 void GateEmittedGammaInformation::Print() const { G4cout << "GateEmittedGammaInformation" << G4endl; }
+
+}

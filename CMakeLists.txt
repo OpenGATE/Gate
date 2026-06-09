@@ -226,6 +226,7 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/physics/src/legacy/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/Matrix/*.cc
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc)
@@ -235,6 +236,7 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/physics/include/legacy/*.hh
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/externals/clhep/include/*.hh)

@@ -222,6 +222,7 @@ class GateRootHitBuffer
     Int_t    nCrystalCompton; 	      	      	//!< Number of Compton interactions in the crystam
     Int_t    nPhantomRayleigh; 	      	      	//!< Number of Rayleigh interactions in the phantom
     Int_t    nCrystalRayleigh; 	      	      	//!< Number of Rayleigh interactions in the crystam
+    Int_t    nInteractions;            	      //!< Number of non-Transportation interactions in phantom + crystal
     Int_t    primaryID;       	      	      	//!< Primary ID
     Float_t  sourcePosX,sourcePosY,sourcePosZ;	//!< Global decay position (in millimeters)
     Int_t    sourceID;	      	      	      	//!< Source ID
@@ -237,8 +238,7 @@ class GateRootHitBuffer
     Int_t sourceType = 0; //Type of gamma source (check ExtendedVSource)
     Int_t decayType = 0; //Type of positronium decay (check ExtendedVSource)
     Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check ExtendedVSource)
-
-  
+    Int_t decayIndex = -1; //Decay channel index
     //OK GND for CC
     G4bool m_CCflag;
     Float_t sourceEnergy;

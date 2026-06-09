@@ -4,16 +4,21 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#ifndef GateGammaEmissionModel_hh
-#define GateGammaEmissionModel_hh
+#ifndef Legacy_GateGammaEmissionModel_hh
+#define Legacy_GateGammaEmissionModel_hh
 
 #include "G4PrimaryParticle.hh"
-#include "GateEmittedGammaInformation.hh"
+#include <vector>
+#include <string>
+#include "legacy/GateEmittedGammaInformation.hh"
 #include "G4Event.hh"
 #include "G4SystemOfUnits.hh"
 
+namespace GateLegacy{
+
 /** Author: Mateusz Bała
  *  Email: bala.mateusz@gmail.com
+ *  Organization: J-PET (http://koza.if.uj.edu.pl/pet/)
  *  About class: Basic class for other model of gammas emission. Provides basic tools for calculation and can generate single gamma.
  **/
 class GateGammaEmissionModel
@@ -36,6 +41,13 @@ class GateGammaEmissionModel
   /** Get single gamma kinematic energy.
    **/
   G4double GetEmissionEnergy() const;
+
+  /** Set seed for generators from "Randomize.hh"
+   **/
+  void SetSeed( G4long seed );
+  /** Get seed for generators from "Randomize.hh"
+   **/
+  G4long GetSeed() const;
 
   /** Generate single vertex with single gamma
    **/
@@ -73,5 +85,6 @@ class GateGammaEmissionModel
   G4ParticleDefinition* pGammaDefinition = nullptr;
 
 };
+}
 
 #endif

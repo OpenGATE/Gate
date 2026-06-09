@@ -4,8 +4,8 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#ifndef GateExtendedVSourceMessenger_hh
-#define GateExtendedVSourceMessenger_hh
+#ifndef Legacy_GateExtendedVSourceMessenger_hh
+#define Legacy_GateExtendedVSourceMessenger_hh
 
 #include "GateVSourceMessenger.hh"
 #include "G4UImessenger.hh"
@@ -17,6 +17,9 @@
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include <memory>
 
+
+namespace GateLegacy 
+{
 class GateExtendedVSource;
 
 /** Author: Mateusz Bała
@@ -55,5 +58,6 @@ class GateExtendedVSourceMessenger: public GateVSourceMessenger
   std::unique_ptr<G4UIcmdWithADoubleAndUnit> upCmdSetLifetime;
   
 };
+}
 
 #endif

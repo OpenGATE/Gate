@@ -72,8 +72,8 @@
 #include "G4OpticalPhoton.hh"
 #include "G4OpticalPhysics.hh"
 
-#include "GateParaPositronium.hh"
-#include "GateOrthoPositronium.hh"
+#include "legacy/GateParaPositronium.hh"
+#include "legacy/GateOrthoPositronium.hh"
 
 
 //-----------------------------------------------------------------------------------------
@@ -498,10 +498,10 @@ void GatePhysicsList::ConstructParticle()
 	emDNAActivator->ConstructParticle();
 
  //Construct positroniums
- GateParaPositronium::ParaPositroniumDefinition();
- GateOrthoPositronium::OrthoPositroniumDefinition();
 
  G4QuasiOpticalPhoton::QuasiOpticalPhotonDefinition();
+ GateLegacy::GateParaPositronium::ParaPositroniumDefinition();
+ GateLegacy::GateOrthoPositronium::OrthoPositroniumDefinition();
 }
 //-----------------------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See LICENSE.md for further details
   ----------------------*/
-#include "GateGammaEmissionModel.hh"
+#include "legacy/GateGammaEmissionModel.hh"
 #include <exception>
 #include "G4LorentzVector.hh"
 #include "Randomize.hh"
@@ -13,6 +13,7 @@
 #include "G4PrimaryParticle.hh"
 #include "G4ParticleTable.hh"
 
+namespace GateLegacy{
 
 GateGammaEmissionModel::GateGammaEmissionModel() { pGammaDefinition = G4ParticleTable::GetParticleTable()->FindParticle( "gamma" ); }
 
@@ -69,6 +70,14 @@ void GateGammaEmissionModel::SetEmissionEnergy( const G4double& energy )
 }
 
 G4double GateGammaEmissionModel::GetEmissionEnergy() const { return fEmissionEnergy; }
+
+void GateGammaEmissionModel::SetSeed( G4long seed )
+{ 
+ if ( seed < 0 ) { NoticeError( G4String( __FUNCTION__ ), "seed should be positive value." ); }
+ G4Random::setTheSeed( seed ); 
+}
+ 
+G4long GateGammaEmissionModel::GetSeed() const { return G4Random::getTheSeed (); }
 
 G4ThreeVector GateGammaEmissionModel::GetUniformOnSphere() const
 {
@@ -133,4 +142,5 @@ GateEmittedGammaInformation* GateGammaEmissionModel::GetPrimaryParticleInformati
  egi->SetGammaKind( gamma_kind );
  egi->SetInitialPolarization( pp->GetPolarization() );
  return egi;
+}
 }

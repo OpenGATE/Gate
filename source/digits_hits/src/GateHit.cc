@@ -30,6 +30,7 @@ GateHit::GateHit()
   m_systemID(-1),
   m_sourceEnergy(-1),
   m_sourcePDG(0),
+  m_nInteractions(-1),
   m_nCrystalConv(0)
 {;}
 //---------------------------------------------------------------------

@@ -1069,7 +1069,7 @@ In hits, variables that can be disabled are::
     nPhantomCompton,nCrystalCompton,
     nPhantomRayleigh,nCrystalRayleigh,
     gantryID,rsectorID,moduleID,submoduleID,crystalID,layerID,photonID, #/!\ depend on the system type
-    gammaType,decayType,sourceType # for Extended source
+   gammaType,decayType,sourceType,decayIndex # for ExtendedVSource and PositroniumSource
     
 
 
@@ -1128,7 +1128,7 @@ and for disabling variable output::
 Multi-system detectors
 ~~~~~~~~~~~~~~~~~~~~~~
 
-When "Multi-system detectors" feature is used (see :ref:`multi-system-detector-label`), a new variable appears in Hits, Singles and Coincidences : *systemID". The systemID correspond to the number order of apparation in system definition. For example::
+When "Multi-system detectors" feature is used (see :ref:`multi-system-detector-label`), a new variable appears in Hits, Singles and Coincidences: ``systemID``. The systemID correspond to the number order of apparation in system definition. For example::
 
     /gate/world/daughters/name scanner_lead
     /gate/world/daughters/systemType scanner
