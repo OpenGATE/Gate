@@ -60,6 +60,10 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
 
 // setting pPs
   float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
+  if (pPsIntens > 0 && pPsIndex < 0) {
+    GateError("GatePositroniumHelper::CalculateFractionsFromLifetimes: A non-zero para-Ps fraction was derived from the ortho-Ps components, but no kParaPs entry was provided in fPositronInteractions to supply its lifetime/prompt-gamma parameters.");
+    return params;
+  }
   if (pPsIntens > 0) {
     assert(pPsIndex >=0);
     paramsOut.fFractions.push_back(pPsIntens);
