@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <numeric>
 #include <vector>
+#include <cassert>
 
 #include "GateMessageManager.hh"
 #include "GatePositroniumHelper.hh"
@@ -19,41 +20,62 @@ PositroniumDecayModelParams GatePositroniumHelper::CalculateFractionsFromLifetim
 {
   PositroniumDecayModelParams paramsOut;
   bool pPsExist = false;
+  int pPsIndex = -1; 
   for (unsigned i=0; i<params.fPositronInteractions.size(); i++) {
-    if (params.fPositronInteractions.at(i) != PositronElectronInteraction::kParaPs) {
+    if (params.fPositronInteractions.at(i) == PositronElectronInteraction::kParaPs) {
+      assert(pPsIndex<0); 
+      pPsIndex = i; 
+    } else {
+      /// fraction passed to CalcFractionsFromLifetime is really an overall intensity here.
       std::pair<float, float> intens = CalcFractionsFromLifetime(params.fFractions.at(i), params.fLifetimes.at(i), params.fPositronInteractions.at(i));
+
       paramsOut.fFractions.push_back(intens.first);  //2G intens
       paramsOut.fFractions.push_back(intens.second); //3G intens
-      paramsOut.fLifetimes.push_back(params.fLifetimes.at(i));
-      paramsOut.fLifetimes.push_back(params.fLifetimes.at(i));
-      paramsOut.fPromptGammaProbabilities.push_back(params.fPromptGammaProbabilities.at(i));
-      paramsOut.fPromptGammaProbabilities.push_back(params.fPromptGammaProbabilities.at(i));
-      paramsOut.fPromptGammaEnergy.push_back(params.fPromptGammaEnergy.at(i));
-      paramsOut.fPromptGammaEnergy.push_back(params.fPromptGammaEnergy.at(i));
       paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
       paramsOut.fDecayKind.push_back(PositroniumDecayKind::k3Gamma);
+
+      paramsOut.fLifetimes.push_back(params.fLifetimes.at(i));
+      paramsOut.fLifetimes.push_back(params.fLifetimes.at(i));
+      paramsOut.fPromptGammaProbabilities.push_back(params.fPromptGammaProbabilities.at(i));
+      paramsOut.fPromptGammaProbabilities.push_back(params.fPromptGammaProbabilities.at(i));
+      paramsOut.fPromptGammaEnergy.push_back(params.fPromptGammaEnergy.at(i));
+      paramsOut.fPromptGammaEnergy.push_back(params.fPromptGammaEnergy.at(i));
       paramsOut.fPositronInteractions.push_back(params.fPositronInteractions.at(i));
       paramsOut.fPositronInteractions.push_back(params.fPositronInteractions.at(i));
+
+      if (params.fElectronCaptureProbabilities.size() > 0) {
+        paramsOut.fElectronCaptureProbabilities.push_back(params.fElectronCaptureProbabilities.at(i));
+        paramsOut.fElectronCaptureProbabilities.push_back(params.fElectronCaptureProbabilities.at(i));
+      }
+      if (params.fMeanPositronRange.size() > 0) {
+        paramsOut.fMeanPositronRange.push_back(params.fMeanPositronRange.at(i));
+        paramsOut.fMeanPositronRange.push_back(params.fMeanPositronRange.at(i));
+      }
     }
   }
   if (!paramsOut.fPositronInteractions.size()) {
-    GateError("GatePositroniumHelper::CalculateFractionsFromLifetimes: Could not calculate fraction from lifetimes");
+    GateError("GatePositroniumHelper::CalculateFractionsFromLifetimes: Could not calculate fractions from lifetimes. fPositronInteractions is empty.");
     return params;
   }
 
 // setting pPs
   float pPsIntens = CalcPPsFractionFromOPs(paramsOut.fFractions, paramsOut.fPositronInteractions);
   if (pPsIntens > 0) {
+    assert(pPsIndex >=0);
     paramsOut.fFractions.push_back(pPsIntens);
-    paramsOut.fLifetimes.push_back(kParaPsLifetime_ns);
-    paramsOut.fPromptGammaProbabilities.push_back(paramsOut.fPromptGammaProbabilities.at(0));
-    paramsOut.fPromptGammaEnergy.push_back(paramsOut.fPromptGammaEnergy.at(0));
+    paramsOut.fLifetimes.push_back(params.fLifetimes.at(pPsIndex));
+    paramsOut.fPromptGammaProbabilities.push_back(params.fPromptGammaProbabilities.at(pPsIndex));
+    paramsOut.fPromptGammaEnergy.push_back(params.fPromptGammaEnergy.at(pPsIndex));
     paramsOut.fDecayKind.push_back(PositroniumDecayKind::k2Gamma);
     paramsOut.fPositronInteractions.push_back(PositronElectronInteraction::kParaPs);
+    if (params.fElectronCaptureProbabilities.size() > 0) {
+      paramsOut.fElectronCaptureProbabilities.push_back(params.fElectronCaptureProbabilities.at(pPsIndex));
+    }
+    if (params.fMeanPositronRange.size() > 0) {
+      paramsOut.fMeanPositronRange.push_back(params.fMeanPositronRange.at(pPsIndex));
+    }
   }
-
   paramsOut.fFractions = NormalizeFractions(paramsOut.fFractions);
-
   return paramsOut;
 }
 
