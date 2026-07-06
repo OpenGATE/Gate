@@ -777,138 +777,6 @@ The data file must be a raw binary containing data in IEEE 32-bit floating point
 
    gate/source/mySource/setVoxelizedPhantomPosition -3.5 6.0 -10.0 cm
 
-ExtendedVSource
----------------
-
-The *ExtendedVSource* is an extension of the basic GATE's VSource class, which provides the model for the positronium decay.
-
-All properties of VSource source are inherited by ExtendedVSource.
-
-Two positronium decays channels are provided: two-photon decay (parapositronium (pPs) decay) and three-photon decay (orthopositronium (oPs) decay). Additionally, it is possible to add de-excitation (prompt) gamma to the decay model.
-
-Creating a source
-~~~~~~~~~~~~~~~~~
-
-To create a source use command::
-
-  /gate/source/addSource NAME Extended
-
-and choose the model::
-
-  /gate/source/NAME/setType MODEL
-
-There are 4 possible models:
-
-* **sg** - single photon emission
-* **pPs** - two-photon emission from pPs decay
-* **oPs** - three-photon emission from oPs decay
-* **Ps** - mixed emission ( mixed photon emission from oPs and pPs decays )
-
-Additionally one can add a prompt gamma emission (gamma emitted during the de-excitation).
-
-To do that use a command::
-
-  /gate/source/NAME/setEnableDeexcitation true
-  /gate/source/NAME/setPromptGammaEnergy ENERGY UNIT
-
-*ENERGY* is a float number, *UNIT* is energy unit (eV, keV, MeV, ...)
-
-Other commands
-~~~~~~~~~~~~~~
-
-For all models following commands are available:
-
-* **setFixedEmissionDirection** - set fixed emission direction of single gamma or prompt gamma::
-
-  /gate/source/NAME/setFixedEmissionDirection X Y Z
-
-* **setEnableFixedEmissionDirection** - set enable/disable fixed emission direction of single gamma or prompt gamma::
-
-  /gate/source/NAME/setEnableFixedEmissionDirection true
-
-For **sg** model there is a dedicated command to set emitted photon energy **setEmissionEnergy**::
-
-  /gate/source/NAME/setEmissionEnergy ENERGY UNIT
-
-The positronium mean lifetime can be set for the following models: **pPs**, **oPs** and **Ps** . The mean lifetime values in the vacuum are used as defaults. The lifetime per event is randomly chosen from the exponential distribution. Each annihilation gamma has time increased by this value.
-To set the mean positronium lifetime use a command **setPostroniumLifetime**::
-
-  /gate/source/NAME/setPostroniumLifetime POSITRONIUM TIMEVALUE TIMEUNIT
-
-where *POSITRONIUM* is a name of positronium type (pPs or oPs), *TIMEVALUE* is  float number, *TIMEUNIT* is time unit (ns, ps, ...).
-
-For the **Ps**  model it is required to define a fraction (normalized to 1) of emitting photons from pPs and oPs decay. User must define a fraction for one type of positronium - the second one  will be calculated automatically.
-To do that use a command **setPositroniumFraction**::
-
-  /gate/source/NAME/setPositroniumFraction POSITRONIUM PROBABILITY
-
-where *POSITRONIUM* is a name of positronium type (pPs or oPs), *PROBABILITY* is a float number in range from 0 to 1.
-
-
-Dedicated branches
-~~~~~~~~~~~~~~~~~~
-
-For this source 4 additional branches are present in the **Hits** tree:
-
-* **gammaType** - describes the type of the gamma
-
-* **sourceType** - describes the source type
-
-* **decayType** - describes from which decay channel of positronium is emitted gamma
-
-* **decayIndex** - branch present in the output format, but not filled by ``ExtendedVSource``
-
-``Int`` is the type of value stored in all four branches. Meaning of values in ``gammaType``, ``sourceType`` and ``decayType`` is described in the tables below.
-
-.. table:: Description of values in gammaType branch
-   :widths: auto
-   :name: gammaType_branch_values
-
-   +-------+---------------------------------------------------+
-   | Value | Description                                       |
-   +=======+===================================================+
-   | 0     | photon/particle without emitted-gamma metadata    |
-   +-------+---------------------------------------------------+
-   | 1     | single photon (emitted by sg model)               |
-   +-------+---------------------------------------------------+
-   | 2     | annhilation gamma                                 |
-   +-------+---------------------------------------------------+
-   | 3     | prompt gamma                                      |
-   +-------+---------------------------------------------------+
-
-.. list-table:: Description of values in sourceType branch
-   :widths: 10 90
-   :header-rows: 1
-   :name: sourceType_branch_values
-
-   * - Value
-     - Description
-   * - 0
-     - photon/particle without emitted-gamma metadata
-   * - 1
-     - single gamma emitter (sg model)
-   * - 2
-     - parapositronium (pPs)
-   * - 3
-     - orthopositronium (oPs)
-   * - 4
-     - direct annihilation without positronium formation; not emitted by ExtendedVSouce
-
-.. table:: Description of values in decayType branch
-  :widths: auto
-  :name: decayType_branch_values
-
-  +-------+---------------------------------------------------------------------------------+
-  | Value | Description                                                                     |
-  +=======+=================================================================================+
-  | 0     | unknown decay                                                                   |
-  +-------+---------------------------------------------------------------------------------+
-  | 1     | standard decay channel (pPs-->2 gamma, oPs-->3 gamma)                           |
-  +-------+---------------------------------------------------------------------------------+
-  | 2     | de-excitation and decay channel (pPs-->2 gamma + prompt, oPs-->3 gamma + prompt)|
-  +-------+---------------------------------------------------------------------------------+
-
-For ``ExtendedVSource``, the ``decayIndex`` branch is not set by the source model and therefore always keeps the default value ``-1``.
 
 
 PositroniumSource
@@ -1096,3 +964,138 @@ The example below defines a two-component source with explicit 2-gamma and 3-gam
    /gate/source/psSource/setMeanPositronRange 0.2 0.2 mm
 
 In this setup, each sampled decay produces a prompt gamma at the source position and a delayed positronium annihilation. The first component annihilates into 2 gammas, while the second one annihilates into 3 gammas.
+
+ExtendedVSource 
+---------------
+
+**Deprecated:** ``ExtendedVSource`` is an obsolete implementation and should not be used in new code. Use ``PositroniumSource`` instead, as it provides a much broader range of functionality.
+
+The *ExtendedVSource* is an extension of the basic GATE's VSource class, which provides the model for the positronium decay.
+
+All properties of VSource source are inherited by ExtendedVSource.
+
+Two positronium decays channels are provided: two-photon decay (parapositronium (pPs) decay) and three-photon decay (orthopositronium (oPs) decay). Additionally, it is possible to add de-excitation (prompt) gamma to the decay model.
+
+Creating a source
+~~~~~~~~~~~~~~~~~
+
+To create a source use command::
+
+  /gate/source/addSource NAME Extended
+
+and choose the model::
+
+  /gate/source/NAME/setType MODEL
+
+There are 4 possible models:
+
+* **sg** - single photon emission
+* **pPs** - two-photon emission from pPs decay
+* **oPs** - three-photon emission from oPs decay
+* **Ps** - mixed emission ( mixed photon emission from oPs and pPs decays )
+
+Additionally one can add a prompt gamma emission (gamma emitted during the de-excitation).
+
+To do that use a command::
+
+  /gate/source/NAME/setEnableDeexcitation true
+  /gate/source/NAME/setPromptGammaEnergy ENERGY UNIT
+
+*ENERGY* is a float number, *UNIT* is energy unit (eV, keV, MeV, ...)
+
+Other commands
+~~~~~~~~~~~~~~
+
+For all models following commands are available:
+
+* **setFixedEmissionDirection** - set fixed emission direction of single gamma or prompt gamma::
+
+  /gate/source/NAME/setFixedEmissionDirection X Y Z
+
+* **setEnableFixedEmissionDirection** - set enable/disable fixed emission direction of single gamma or prompt gamma::
+
+  /gate/source/NAME/setEnableFixedEmissionDirection true
+
+For **sg** model there is a dedicated command to set emitted photon energy **setEmissionEnergy**::
+
+  /gate/source/NAME/setEmissionEnergy ENERGY UNIT
+
+The positronium mean lifetime can be set for the following models: **pPs**, **oPs** and **Ps** . The mean lifetime values in the vacuum are used as defaults. The lifetime per event is randomly chosen from the exponential distribution. Each annihilation gamma has time increased by this value.
+To set the mean positronium lifetime use a command **setPostroniumLifetime**::
+
+  /gate/source/NAME/setPostroniumLifetime POSITRONIUM TIMEVALUE TIMEUNIT
+
+where *POSITRONIUM* is a name of positronium type (pPs or oPs), *TIMEVALUE* is  float number, *TIMEUNIT* is time unit (ns, ps, ...).
+
+For the **Ps**  model it is required to define a fraction (normalized to 1) of emitting photons from pPs and oPs decay. User must define a fraction for one type of positronium - the second one  will be calculated automatically.
+To do that use a command **setPositroniumFraction**::
+
+  /gate/source/NAME/setPositroniumFraction POSITRONIUM PROBABILITY
+
+where *POSITRONIUM* is a name of positronium type (pPs or oPs), *PROBABILITY* is a float number in range from 0 to 1.
+
+
+Dedicated branches
+~~~~~~~~~~~~~~~~~~
+
+For this source 4 additional branches are present in the **Hits** tree:
+
+* **gammaType** - describes the type of the gamma
+
+* **sourceType** - describes the source type
+
+* **decayType** - describes from which decay channel of positronium is emitted gamma
+
+* **decayIndex** - branch present in the output format, but not filled by ``ExtendedVSource``
+
+``Int`` is the type of value stored in all four branches. Meaning of values in ``gammaType``, ``sourceType`` and ``decayType`` is described in the tables below.
+
+.. table:: Description of values in gammaType branch
+   :widths: auto
+   :name: gammaType_branch_values
+
+   +-------+---------------------------------------------------+
+   | Value | Description                                       |
+   +=======+===================================================+
+   | 0     | photon/particle without emitted-gamma metadata    |
+   +-------+---------------------------------------------------+
+   | 1     | single photon (emitted by sg model)               |
+   +-------+---------------------------------------------------+
+   | 2     | annhilation gamma                                 |
+   +-------+---------------------------------------------------+
+   | 3     | prompt gamma                                      |
+   +-------+---------------------------------------------------+
+
+.. list-table:: Description of values in sourceType branch
+   :widths: 10 90
+   :header-rows: 1
+   :name: sourceType_branch_values
+
+   * - Value
+     - Description
+   * - 0
+     - photon/particle without emitted-gamma metadata
+   * - 1
+     - single gamma emitter (sg model)
+   * - 2
+     - parapositronium (pPs)
+   * - 3
+     - orthopositronium (oPs)
+   * - 4
+     - direct annihilation without positronium formation; not emitted by ExtendedVSouce
+
+.. table:: Description of values in decayType branch
+  :widths: auto
+  :name: decayType_branch_values
+
+  +-------+---------------------------------------------------------------------------------+
+  | Value | Description                                                                     |
+  +=======+=================================================================================+
+  | 0     | unknown decay                                                                   |
+  +-------+---------------------------------------------------------------------------------+
+  | 1     | standard decay channel (pPs-->2 gamma, oPs-->3 gamma)                           |
+  +-------+---------------------------------------------------------------------------------+
+  | 2     | de-excitation and decay channel (pPs-->2 gamma + prompt, oPs-->3 gamma + prompt)|
+  +-------+---------------------------------------------------------------------------------+
+
+For ``ExtendedVSource``, the ``decayIndex`` branch is not set by the source model and therefore always keeps the default value ``-1``.
