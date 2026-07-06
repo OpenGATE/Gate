@@ -107,6 +107,9 @@ std::pair<float, float> GatePositroniumHelper::CalcFractionsFromLifetime(float i
       intens2G = intensity*(kOrthoPsMeanLifetime_ns  - lifetime)/kOrthoPsMeanLifetime_ns;
       intens3G = intensity*lifetime/kOrthoPsMeanLifetime_ns;
       break;
+    case PositronElectronInteraction::kParaPs:
+      GateError("GatePositroniumHelper::CalcFractionsFromLifetimes: This function does not handle parapositrionium case. It should never be callded with inter == PositronElectronInteraction::kParaPs");
+      break;
   }
   return std::make_pair(intens2G, intens3G);
 }
