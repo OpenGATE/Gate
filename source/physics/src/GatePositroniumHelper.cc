@@ -111,39 +111,6 @@ std::pair<float, float> GatePositroniumHelper::CalcFractionsFromLifetime(float i
   return std::make_pair(intens2G, intens3G);
 }
 
-float GatePositroniumHelper::CalcFractionFromOPsLifetime(float intensity, float lifetime, PositroniumDecayKind decay) {
-  float nominator = 0.;
-  if (intensity > 0 && lifetime > 0) {
-    switch (decay) {
-      case PositroniumDecayKind::k2Gamma:
-        nominator = kOrthoPsMeanLifetime_ns  - lifetime;
-        break;
-      case PositroniumDecayKind::k3Gamma:
-        nominator = lifetime;
-        break;
-// If there will be more decays one needs to modify it
-    }
-    return intensity*nominator/kOrthoPsMeanLifetime_ns ;
-  } else
-    return nominator;
-}
-
-float GatePositroniumHelper::CalcFractionFromDirectLifetime(float intensity, PositroniumDecayKind decay) {
-  float nominator = 0.;
-  if (intensity > 0) {
-    switch (decay) {
-      case PositroniumDecayKind::k2Gamma:
-        nominator = kHyperfineCoefficient  - 1.;
-        break;
-      case PositroniumDecayKind::k3Gamma:
-        nominator = 1.;
-        break;
-    }
-    return intensity*nominator/kHyperfineCoefficient ;
-  } else
-    return nominator;
-}
-
 std::vector<float> GatePositroniumHelper::NormalizeFractions(std::vector<float> fractions) {
   std::vector<float> normalizedVector = fractions;
   double sum = std::accumulate(fractions.begin(), fractions.end(), 0.0);
