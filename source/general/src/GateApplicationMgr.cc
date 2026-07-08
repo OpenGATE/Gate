@@ -21,6 +21,8 @@
 #include "GateVSource.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
+#include "GateHitFileReader.hh"
+
 #include <algorithm> /* min and max */
 
 GateApplicationMgr* GateApplicationMgr::instance = 0;
@@ -361,11 +363,14 @@ void GateApplicationMgr::StartDAQ()
   m_clusterStop = mTimeSlices.back();
 
   if (mOutputMode)
-    GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
+	  GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
+
+
+  bool offlineFinished = false;
 
   G4int slice=0;
   m_time = mTimeSlices.front();
-  while(m_time < mTimeSlices.back())
+  while(m_time < mTimeSlices.back()  && !offlineFinished)
     {
       
       // Informational message about the current slice
@@ -380,8 +385,10 @@ void GateApplicationMgr::StartDAQ()
       GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
       theClock->SetTime(m_time);
 
+
+
       if (mReadNumberOfPrimariesInAFileIsUsed) {
-        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #  
+        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
         GateRunManager::GetRunManager()->BeamOn(mNumberOfPrimariesPerRun[slice]);
         m_time = mTimeSlices[slice+1];
       }
@@ -400,6 +407,7 @@ void GateApplicationMgr::StartDAQ()
                 - int(mTimeSlices[slice]/mTimeStepInTotalAmountOfPrimariesMode);
             }
           GateRunManager::GetRunManager()->SetRunIDCounter(slice);                    // Must explicitly keep the RunID in sync with the slice #      
+          //G4cout << "Calling BeamOn(" << mRequestedAmountOfPrimariesPerRun << ")" << G4endl;
           GateRunManager::GetRunManager()->BeamOn(mRequestedAmountOfPrimariesPerRun); // otherwise RunID is automatically incremented
           m_time = mTimeSlices[slice+1];
         }
@@ -408,9 +416,21 @@ void GateApplicationMgr::StartDAQ()
           while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
             {
               GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
+              //G4cout << "Calling BeamOn(INT_MAX)" << G4endl;
+
               GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
+			#ifdef G4ANALYSIS_USE_ROOT
+              if (GateOutputMgr::GetInstance()->GetDigiMode()==kofflineMode &&
+                  GateHitFileReader::GetInstance()->IsFinished())
+            	  {
+            	  offlineFinished = true;
+                  break;
+            	  }
+	       #endif
               theClock->SetTimeNoGeoUpdate(m_time);
             }
+
+
         }
 
       slice++;

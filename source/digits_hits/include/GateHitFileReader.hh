@@ -15,12 +15,9 @@ See LICENSE.md for further details
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "globals.hh"
-#include <queue>
-
-#include "G4Event.hh"
-
+#include "GateHit.hh"
 class G4Event;
-class GateHit;
+
 
 
 #include "TROOT.h"
@@ -53,6 +50,7 @@ public:
     */
   static GateHitFileReader* GetInstance();
 
+
   ~GateHitFileReader();       //!< Public destructor
 
 private:
@@ -72,7 +70,7 @@ public:
 
   //! This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
   //! It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
-  void PrepareEndOfEvent();
+  //void PrepareEndOfEvent();
 
 
   //! This method must be called (normally by the application manager) after completion of a DigiGate acquisition
@@ -84,13 +82,28 @@ public:
   //! Set the hit file name
   void   SetFileName(const G4String aName)   { m_fileName = aName; };
 
+
+  const std::vector<GateHit*>& GetHitVector() const
+  {
+      return m_hitVector;
+  }
+
+  std::vector<GateHit*>& GetHitVector()
+  {
+      return m_hitVector;
+  }
+
+  bool IsFinished() const
+  {
+      return m_finished;
+  }
+
   /*! \brief Overload of the base-class virtual method to print-out a description of the reader
 
       \param indent: the print-out indentation (cosmetic parameter)
   */
   virtual void Describe(size_t indent=0);
-
-
+  void ReleaseHits();
 protected:
 
   //! Reads a set of hit data from the hit-tree, and stores them into the root-hit buffer
@@ -111,15 +124,21 @@ protected:
 					      //!< The hit-data are loaded into this buffer by LoadHitData()
 					      //!< They are then transformed into a crystal-hit by PrepareNextEvent()
 
-  std::queue<GateHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
+  //std::queue<GateHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
       	      	      	      	      	      //!< For each event, the queue is filled (from data read out of the hit-file) at
 					      //!< the beginning of each event by PrepareNextEvent(). It is emptied into
 					      //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
+
+
+  std::vector<GateHit*> m_hitVector;
+
 
   GateHitFileReaderMessenger *m_messenger;    //!< Messenger;
 
 private:
   static GateHitFileReader*   instance;       //!< Instance of the GateHitFielReader singleton
+  bool m_finished;
+
 };
 
 #endif

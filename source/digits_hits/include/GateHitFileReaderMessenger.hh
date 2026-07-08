@@ -40,6 +40,8 @@ class GateHitFileReaderMessenger: public GateClockDependentMessenger
 
     void SetNewValue(G4UIcommand*, G4String);
 
+
+
     //! Get the clock-dependent object
     inline GateHitFileReader* GetHitFileReader()
       { return (GateHitFileReader*) GetClockDependent(); }

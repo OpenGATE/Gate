@@ -417,9 +417,8 @@ GateCoincidenceDigitizer* GateDigitizerMgr::FindCoincidenceDigitizer(G4String mN
 /////////////////
 void GateDigitizerMgr::RunDigitizers()
 {
-	//G4cout<<"GateDigitizerMgr::RunDigitizers"<<G4endl;
-	//ShowSummary();
 
+ G4cout<<"RunDigitizers"<<G4endl;
 	if ( !IsEnabled() )
 		return;
 
@@ -471,6 +470,9 @@ void GateDigitizerMgr::RunDigitizers()
 		}
 
 		m_alreadyRun=true;
+
+		G4cout<<"GateDigitizerMgr::RunDigitizers"<<G4endl;
+		ShowSummary();
 }
 
 void GateDigitizerMgr::RunCoincidenceSorters()
@@ -562,7 +564,40 @@ void GateDigitizerMgr::ShowSummary()
 		}
 	}
 
-
-
-
 }
+
+
+GateHitsCollection* GateDigitizerMgr::GetOfflineHitsCollection()
+{
+
+	G4cout<< "GateDigitizerMgr::GetHitsCollection"<<std::endl;
+    if (mOfflineHitsCollection)
+        return mOfflineHitsCollection;
+
+    //return (GateHitsCollection*)
+    //   G4DigiManager::GetHitsCollection(HCID);
+}
+
+
+void GateDigitizerMgr::SetOfflineHitsCollection(GateHitsCollection* hc)
+{
+	 G4cout<< "GateDigitizerMgr::SetOfflineHitsCollection("<<std::endl;
+	//mOfflineHitsCollection = hc;
+    if (mOfflineHitsCollection)
+        delete mOfflineHitsCollection;
+
+    mOfflineHitsCollection = hc;
+}
+
+
+void GateDigitizerMgr::ClearOfflineHitsCollection()
+{
+    delete mOfflineHitsCollection;
+    mOfflineHitsCollection = nullptr;
+}
+
+
+
+
+
+

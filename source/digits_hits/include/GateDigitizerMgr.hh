@@ -88,9 +88,6 @@ public:
   GateSinglesDigitizer* FindSinglesDigitizer(G4String mName);
    /// End of methods for Singles
 
-
-
-
    /// Methods for Coincidences
 
    //Sorters
@@ -105,12 +102,20 @@ public:
    GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
 
+
+public:
+    void SetOfflineMode(bool b) { mOfflineMode = b; }
+    bool IsOfflineMode() const { return mOfflineMode; }
+
+   GateHitsCollection* GetOfflineHitsCollection();
+
+   void SetOfflineHitsCollection(GateHitsCollection* hc);
+   void ClearOfflineHitsCollection();
 private:
-
-
   GateDigitizerMgrMessenger *fMessenger;
-
   static GateDigitizerMgr*  theDigitizerMgr;
+  GateHitsCollection* mOfflineHitsCollection = nullptr;
+  bool mOfflineMode = false;
 
 protected:
   G4String 					m_elementTypeName;	 //!< Type-name for DigitizerMgr --> used only for cout and help messengers
@@ -133,6 +138,7 @@ public:
   G4bool m_recordCoincidences;
 
   G4bool m_alreadyRun;
+
 
 
 };

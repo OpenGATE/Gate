@@ -189,8 +189,9 @@ void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
   GateMessage("Output", 5, "GateOutputMgr::RecordEndOfEvent\n";);
 
 #ifdef G4ANALYSIS_USE_ROOT
-  if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->PrepareEndOfEvent();
+
+ // if (m_digiMode==kofflineMode)
+  //  GateHitFileReader::GetInstance()->PrepareEndOfEvent();
 #endif
 
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
@@ -253,6 +254,7 @@ void GateOutputMgr::RecordEndOfRun(const G4Run* run)
 //----------------------------------------------------------------------------------
 void GateOutputMgr::RecordBeginOfAcquisition()
 {
+	G4cout << "==== GateOutputMgr::RecordBeginOfAcquisition ====" << G4endl;
   GateMessage("Output", 5, " GateOutputMgr::RecordBeginOfAcquisition \n";);
 
   if (nVerboseLevel > 2)

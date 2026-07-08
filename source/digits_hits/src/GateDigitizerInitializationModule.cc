@@ -28,6 +28,7 @@
 #include "G4SDManager.hh"
 #include "G4DigiManager.hh"
 #include "G4ios.hh"
+#include "GateDigitizerMgr.hh"
 
 GateDigitizerInitializationModule::GateDigitizerInitializationModule(GateSinglesDigitizer *digitizer)
   :GateVDigitizerModule("DigiInit","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/digiInit",digitizer, digitizer->GetSD()),
@@ -51,6 +52,8 @@ GateDigitizerInitializationModule::~GateDigitizerInitializationModule()
 void GateDigitizerInitializationModule::Digitize()
 {
 
+	G4cout<<"GateDigitizerInitializationModule::Digitize()"<<G4endl;
+
 	m_outputDigiCollection = new GateDigiCollection (GetName(),  m_digitizer->GetOutputName() ); // to create the Digi Collection
 
 	G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
@@ -65,7 +68,29 @@ void GateDigitizerInitializationModule::Digitize()
 	}
 
 
-	GateHitsCollection* inHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCID));// DigiMan->GetHitsCollectionID(HCname)));
+	GateHitsCollection* inHC;
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+
+	if (GateDigitizerMgr::GetInstance()->IsOfflineMode() &&
+			digitizerMgr->GetOfflineHitsCollection() == nullptr)
+	{
+	    GateMessage("OfflineDigi", 1,
+	        "No offline hits, skipping digitization.");
+	    return;
+	}
+
+
+	if (GateDigitizerMgr::GetInstance()->IsOfflineMode())
+	    inHC = digitizerMgr->GetOfflineHitsCollection();
+	else
+	    inHC = (GateHitsCollection*)DigiMan->GetHitsCollection(m_HCID);
+
+	G4cout << "Retrieved HC = " << inHC
+	       << " entries = " << inHC->entries()
+	       << G4endl;
+
+
 
 
 	if (inHC)
@@ -74,63 +99,67 @@ void GateDigitizerInitializationModule::Digitize()
 
 	 for (G4int i=0;i<n_hit;i++)
 	{
-    	 if((*inHC)[i]->GetEdep() !=0 )
+		 GateHit *hit = (*inHC)[i];
+		 G4cout<<"Hit eventID "<<hit->GetEventID() <<G4endl;
+
+
+    	 if(hit->GetEdep() !=0 )
     	  {
     		  GateDigi* Digi = new GateDigi();
-    		  Digi->SetMother( (*inHC)[i] );
-    		  Digi->SetRunID( (*inHC)[i]->GetRunID() );
-    		  Digi->SetEventID( (*inHC)[i]->GetEventID() );
-    		  Digi->SetTrackID( (*inHC)[i]->GetTrackID() );
-    		  Digi->SetSourceID( (*inHC)[i]->GetSourceID() );
-    		  Digi->SetSourcePosition( (*inHC)[i]->GetSourcePosition() );
-    		  Digi->SetTime( (*inHC)[i]->GetTime() );
-    		  Digi->SetEnergy( (*inHC)[i]->GetEdep() );
-    		  Digi->SetMaxEnergy( (*inHC)[i]->GetEdep() );
-    		  Digi->SetLocalPos( (*inHC)[i]->GetLocalPos() );
-    		  Digi->SetGlobalPos( (*inHC)[i]->GetGlobalPos() );
-    		  Digi->SetPDGEncoding( (*inHC)[i]->GetPDGEncoding() );
-    		  Digi->SetOutputVolumeID( (*inHC)[i]->GetOutputVolumeID() );
-    		  Digi->SetNPhantomCompton( (*inHC)[i]->GetNPhantomCompton() );
-    		  Digi->SetNCrystalCompton( (*inHC)[i]->GetNCrystalCompton() );
-    		  Digi->SetNPhantomRayleigh( (*inHC)[i]->GetNPhantomRayleigh() );
-    		  Digi->SetNCrystalRayleigh( (*inHC)[i]->GetNCrystalRayleigh() );
-    		  Digi->SetComptonVolumeName( (*inHC)[i]->GetComptonVolumeName() );
-    		  Digi->SetRayleighVolumeName( (*inHC)[i]->GetRayleighVolumeName() );
-    		  Digi->SetVolumeID( (*inHC)[i]->GetVolumeID() );
-    		  Digi->SetSystemID( (*inHC)[i]->GetSystemID() );
-    		  Digi->SetScannerPos( (*inHC)[i]->GetScannerPos() );
-    		  Digi->SetScannerRotAngle( (*inHC)[i]->GetScannerRotAngle() );
+    		  Digi->SetMother( hit );
+    		  Digi->SetRunID( hit->GetRunID() );
+    		  Digi->SetEventID( hit->GetEventID() );
+    		  Digi->SetTrackID( hit->GetTrackID() );
+    		  Digi->SetSourceID( hit->GetSourceID() );
+    		  Digi->SetSourcePosition( hit->GetSourcePosition() );
+    		  Digi->SetTime( hit->GetTime() );
+    		  Digi->SetEnergy( hit->GetEdep() );
+    		  Digi->SetMaxEnergy( hit->GetEdep() );
+    		  Digi->SetLocalPos( hit->GetLocalPos() );
+    		  Digi->SetGlobalPos( hit->GetGlobalPos() );
+    		  Digi->SetPDGEncoding( hit->GetPDGEncoding() );
+    		  Digi->SetOutputVolumeID( hit->GetOutputVolumeID() );
+    		  Digi->SetNPhantomCompton( hit->GetNPhantomCompton() );
+    		  Digi->SetNCrystalCompton( hit->GetNCrystalCompton() );
+    		  Digi->SetNPhantomRayleigh( hit->GetNPhantomRayleigh() );
+    		  Digi->SetNCrystalRayleigh( hit->GetNCrystalRayleigh() );
+    		  Digi->SetComptonVolumeName( hit->GetComptonVolumeName() );
+    		  Digi->SetRayleighVolumeName( hit->GetRayleighVolumeName() );
+    		  Digi->SetVolumeID( hit->GetVolumeID() );
+    		  Digi->SetSystemID( hit->GetSystemID() );
+    		  Digi->SetScannerPos( hit->GetScannerPos() );
+    		  Digi->SetScannerRotAngle( hit->GetScannerRotAngle() );
     		  #ifdef GATE_USE_OPTICAL
-    		    Digi->SetOptical( (*inHC)[i]->GetPDGEncoding() == -22);
+    		    Digi->SetOptical( hit->GetPDGEncoding() == -22);
     		  #endif
-    		  Digi->SetNSeptal( (*inHC)[i]->GetNSeptal() );  // HDS : septal penetration
+    		  Digi->SetNSeptal( hit->GetNSeptal() );  // HDS : septal penetration
 
     		  // AE : Added for IdealComptonPhot adder which take into account several Comptons in the same volume
-    		  Digi->SetPostStepProcess((*inHC)[i]->GetPostStepProcess());
-    		  Digi->SetEnergyIniTrack((*inHC)[i]->GetEnergyIniTrack());
-    		  Digi->SetEnergyFin((*inHC)[i]->GetEnergyFin());
-    		  Digi->SetProcessCreator((*inHC)[i]->GetProcess());
-    		  Digi->SetTrackID((*inHC)[i]->GetTrackID());
-    		  Digi->SetParentID((*inHC)[i]->GetParentID());
-    		  Digi->SetSourceEnergy((*inHC)[i]->GetSourceEnergy());
-    		  Digi->SetSourcePDG((*inHC)[i]->GetSourcePDG());
-    		  Digi->SetNCrystalConv( (*inHC)[i]->GetNCrystalConv() );
+    		  Digi->SetPostStepProcess(hit->GetPostStepProcess());
+    		  Digi->SetEnergyIniTrack(hit->GetEnergyIniTrack());
+    		  Digi->SetEnergyFin(hit->GetEnergyFin());
+    		  Digi->SetProcessCreator(hit->GetProcess());
+    		  Digi->SetTrackID(hit->GetTrackID());
+    		  Digi->SetParentID(hit->GetParentID());
+    		  Digi->SetSourceEnergy(hit->GetSourceEnergy());
+    		  Digi->SetSourcePDG(hit->GetSourcePDG());
+    		  Digi->SetNCrystalConv( hit->GetNCrystalConv() );
 
     		  //-------------------------------------------------
 
-    		    if ((*inHC)[i]->GetComptonVolumeName().empty()) {
+    		    if (hit->GetComptonVolumeName().empty()) {
     		      Digi->SetComptonVolumeName( "NULL" );
     		      Digi->SetSourceID( -1 );
     		    }
 
-    		    if ((*inHC)[i]->GetRayleighVolumeName().empty()) {
+    		    if (hit->GetRayleighVolumeName().empty()) {
     		      Digi->SetRayleighVolumeName( "NULL" );
     		      Digi->SetSourceID( -1 );
     		    }
 
     		/* //  if (nVerboseLevel>1)
     		        	G4cout << "[GateDigitizerInitializationModule::Digitize]: \n"
-    		  	       << "\tprocessed " << *(*inHC)[i] << Gateendl
+    		  	       << "\tprocessed " << *hit << Gateendl
     		  	       << "\tcreated new Digi:\n"
     		  	       << Digi << Gateendl
     		  	       << *Digi << Gateendl;

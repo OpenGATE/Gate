@@ -54,6 +54,7 @@
 #include "GateVVolume.hh"
 #include "GateToRootMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
+#include "GateHitFileReader.hh"
 
 #include "TROOT.h"
 #include "TApplication.h"
@@ -374,6 +375,11 @@ void GateToRoot::RecordBeginOfAcquisition() {
         //////////
         // Open the output file
         if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation...\n";
+
+        if (m_digiMode == kofflineMode)
+            SetOfflineOutputFileName();
+
+
         switch (m_digiMode) {
             case kruntimeMode:
                 // In run-time mode, we open the file in RECREATE mode
@@ -1814,6 +1820,28 @@ void GateToRoot::RecordTracks(GateSteppingAction *mySteppingAction) {
 
     PPTrackVector->clear();
 
+}
+
+
+
+void GateToRoot::SetOfflineOutputFileName()
+{
+    G4String input = GateHitFileReader::GetInstance()->GetFileName();
+
+    // Remove ".root" if present
+    if (input.length() > 5 &&
+        input.substr(input.length() - 5) == ".root")
+    {
+        input = input.substr(0, input.length() - 5);
+    }
+
+    m_fileName = input + "_digi";
+
+    G4cout << G4endl
+           << "Offline Digi mode:" << G4endl
+           << "  Input : " << GateHitFileReader::GetInstance()->GetFileName() << G4endl
+           << "  Output: " << m_fileName << ".root" << G4endl
+           << G4endl;
 }
 
 /*PY Descourt 08/09/2009 */

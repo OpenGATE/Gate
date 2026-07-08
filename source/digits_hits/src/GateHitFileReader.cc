@@ -13,21 +13,22 @@ See LICENSE.md for further details
 #include "TBranch.h"
 #include "GateHit.hh"
 #include "GateOutputVolumeID.hh"
-#include "GateOutputMgr.hh"
 #include "GateTools.hh"
 #include "GateHitFileReaderMessenger.hh"
 #include "GateHitConvertor.hh"
+#include "GateDigitizerMgr.hh"
 
 GateHitFileReader* GateHitFileReader::instance = 0;
 
 // Private constructor: this function should only be called from GetInstance()
 GateHitFileReader::GateHitFileReader()
   : GateClockDependent("hitreader",false)
-  , m_fileName("gate")
+  , m_fileName("gate.root")
   , m_hitFile(0)
   , m_hitTree(0)
   , m_entries(0)
   , m_currentEntry(0)
+  , m_finished(false)
 {
   // Clear the root-hit structure
   m_hitBuffer.Clear();
@@ -68,15 +69,16 @@ GateHitFileReader* GateHitFileReader::GetInstance()
 
 
 
-
-
 // This method must be called (normally by the application manager) before starting a new DigiGate acquisition
 // It opens the ROOT input file, sets up the hit tree, and loads the first series of hits
 void GateHitFileReader::PrepareAcquisition()
 {
+	 //G4cout<<"PrepareAcquisition "<<this <<std::endl;
+	 m_finished = false;
   // Open the input file
-  m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
-  if (!m_hitFile)
+  //m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
+  m_hitFile = TFile::Open(m_fileName.c_str(), "READ");
+  /*if (!m_hitFile)
 	{
 		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
     G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
@@ -86,11 +88,18 @@ void GateHitFileReader::PrepareAcquisition()
 		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
     G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
 	}
+	*/
+  if (!m_hitFile || m_hitFile->IsZombie())
+  {
+      G4String msg =
+          "Could not open hit file '" + m_fileName + "'";
+      G4Exception("GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg);
+  }
   // Get the hit tree
   m_hitTree = (TTree*)( m_hitFile->Get(GateHitConvertor::GetOutputAlias()) );
   if (!m_hitTree)
 	{
-		G4String msg = "Could not find a tree of hits in the ROOT file '" + m_fileName + ".root'!";
+		G4String msg = "Could not find a tree of hits in the ROOT file '" + m_fileName + "'!";
     G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg);
 	}
   // Reset the entry counters
@@ -103,6 +112,15 @@ void GateHitFileReader::PrepareAcquisition()
 
   //  Load the first hit into the root-hit structure
   LoadHitData();
+
+  G4cout << "PrepareAcquisition:"
+         << " entries=" << m_entries
+         << " current=" << m_currentEntry
+         << " run=" << m_hitBuffer.runID
+         << " event=" << m_hitBuffer.eventID
+         << G4endl;
+
+
 }
 
 
@@ -118,52 +136,69 @@ void GateHitFileReader::PrepareAcquisition()
      should not be used for the current run but rather for a later run
 */
 G4int GateHitFileReader::PrepareNextEvent(G4Event* )
-{
+{ 	 //G4cout<<"PrepareNextEvent "<<this <<std::endl;
+
+    // Reset the offline hits collection for the new event
+    //GateDigitizerMgr::GetInstance()->ClearOfflineHitsCollection();
+	for (auto hit : m_hitVector)
+	    delete hit;
+
+	m_hitVector.clear();
+
+
+
   G4cout << " GateHitFileReader::PrepareNextEvent\n";
+  G4cout << "PrepareNextEvent: "
+         << m_hitBuffer.runID << " "
+         << m_hitBuffer.eventID << G4endl;
+
   // Store the current runID and eventID
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
 
   // We've reached the end-of-file
   if ( (currentEventID==-1) && (currentRunID==-1) )
-    return 0;
+  {
+      m_finished = true;
+      return 0;
+  }
 
   // Load the hits for the current event
   // We loop until the data that have been read are found to be for a different event or run
   while ( (currentEventID == m_hitBuffer.eventID) && (currentRunID == m_hitBuffer.runID) ) {
-
     // Create a new hit and store it into the hit-queue
     GateHit* aHit =  m_hitBuffer.CreateHit();
-    m_hitQueue.push(aHit);
+    m_hitVector.push_back(aHit);
+
+    //m_hitVector.push(aHit);
 
     // Load the next set of hit-data into the root-hit structure
     LoadHitData();
+
   }
 
-  if (currentRunID==m_hitBuffer.runID){
-    // We got a set of hits for the current run -> return 1
-    return 1;
-  }
-  else
-  {
-    // We got a set of hits for a later run -> return 0
-    return 0;
-  }
+
+  if (!m_hitVector.empty())
+      return 1;
+  return 0;
 }
 
 
+
+//Obsolete
 // This method is meant to be called by output manager before calling the methods RecordEndOfEvent() of the output modules.
 // It creates a new hit-collection, based on the queue of hits previously filled by PrepareNextEvent()
-void GateHitFileReader::PrepareEndOfEvent()
+/*void GateHitFileReader::PrepareEndOfEvent()
 {
   // We loop until the hit-queue is empty
   // Each hit is inserted into the crystalSD hit-collection, then removed from the queue
-  while (m_hitQueue.size()) {
-    GateOutputMgr::GetInstance()->GetHitCollection()->insert(m_hitQueue.front());
-    m_hitQueue.pop();
+  while (m_hitVector.size()) {
+    GateOutputMgr::GetInstance()->GetHitCollection()->insert(m_hitVector.front());
+    //m_hitVector.pop();
   }
-}
 
+}
+*/
 
 
 // This method must be called (normally by the application manager) after completion of a DigiGate acquisition
@@ -177,10 +212,15 @@ void GateHitFileReader::TerminateAfterAcquisition()
   }
 
   // If the hit queue was not empty (it should be), clear it up
-  while (m_hitQueue.size()) {
-    delete m_hitQueue.front();
-    m_hitQueue.pop();
+  /*while (m_hitVector.size()) {
+    delete m_hitVector.front();
+    m_hitVector.pop();
   }
+*/
+  for (auto hit : m_hitVector)
+      delete hit;
+
+  m_hitVector.clear();
 
   // Note that we don't delete the tree: it was based on the file so
   // I assume it was destroyed at the same time as the file was closed (true?)
@@ -192,6 +232,7 @@ void GateHitFileReader::TerminateAfterAcquisition()
 // Reads a set of hit data from the hit-tree, and stores them into the root-hit buffer
 void GateHitFileReader::LoadHitData()
 {
+
   // We've reached the end of file: set indicators to tell the caller that the reading failed
   if (m_currentEntry>=m_entries){
     m_hitBuffer.runID=-1;
@@ -206,8 +247,8 @@ void GateHitFileReader::LoadHitData()
     m_hitBuffer.runID=-1;
     m_hitBuffer.eventID=-1;
   }
-}
 
+}
 
 
 
@@ -226,6 +267,8 @@ void GateHitFileReader::Describe(size_t indent)
     G4cout << GateTools::Indent(indent) << "Current entry:    " << m_currentEntry << Gateendl;
   }
 }
+
+
 
 
 #endif
