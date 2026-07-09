@@ -28,6 +28,7 @@
 #include "G4SDManager.hh"
 #include "G4DigiManager.hh"
 #include "G4ios.hh"
+#include "GateDigitizerMgr.hh"
 
 GateDigitizerInitializationModule::GateDigitizerInitializationModule(GateSinglesDigitizer *digitizer)
   :GateVDigitizerModule("DigiInit","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/digiInit",digitizer, digitizer->GetSD()),
@@ -65,7 +66,30 @@ void GateDigitizerInitializationModule::Digitize()
 	}
 
 
-	GateHitsCollection* inHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCID));// DigiMan->GetHitsCollectionID(HCname)));
+	GateHitsCollection* inHC;
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+
+	if (GateDigitizerMgr::GetInstance()->IsOfflineMode() &&
+			digitizerMgr->GetOfflineHitsCollection() == nullptr)
+	{
+	    GateMessage("OfflineDigi", 1,
+	        "No offline hits, skipping digitization.");
+	    return;
+	}
+
+
+	if (GateDigitizerMgr::GetInstance()->IsOfflineMode())
+	    inHC = digitizerMgr->GetOfflineHitsCollection();
+	else
+	    inHC = (GateHitsCollection*)DigiMan->GetHitsCollection(m_HCID);
+
+	G4cout << "Retrieved HC = " << inHC
+	       << " entries = " << inHC->entries()
+	       << G4endl;
+
+
+
 
 
 	if (inHC)

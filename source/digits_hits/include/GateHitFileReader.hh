@@ -91,6 +91,21 @@ public:
   virtual void Describe(size_t indent=0);
 
 
+  const std::vector<GateHit*>& GetHitVector() const
+    {
+        return m_hitVector;
+    }
+
+    std::vector<GateHit*>& GetHitVector()
+    {
+        return m_hitVector;
+    }
+
+    bool IsFinished() const
+    {
+        return m_finished;
+    }
+
 protected:
 
   //! Reads a set of hit data from the hit-tree, and stores them into the root-hit buffer
@@ -111,15 +126,13 @@ protected:
 					      //!< The hit-data are loaded into this buffer by LoadHitData()
 					      //!< They are then transformed into a crystal-hit by PrepareNextEvent()
 
-  std::queue<GateHit*> m_hitQueue;   //!< Queue of waiting hits for the current event
-      	      	      	      	      	      //!< For each event, the queue is filled (from data read out of the hit-file) at
-					      //!< the beginning of each event by PrepareNextEvent(). It is emptied into
-					      //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
+  std::vector<GateHit*> m_hitVector;
 
   GateHitFileReaderMessenger *m_messenger;    //!< Messenger;
 
 private:
   static GateHitFileReader*   instance;       //!< Instance of the GateHitFielReader singleton
+  bool m_finished;
 };
 
 #endif

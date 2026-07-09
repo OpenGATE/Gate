@@ -538,6 +538,40 @@ void GateDigitizerMgr::RunCoincidenceDigitizers()
 	//m_alreadyRun=true;
 }
 
+
+GateHitsCollection* GateDigitizerMgr::GetOfflineHitsCollection()
+{
+
+	G4cout<< "GateDigitizerMgr::GetHitsCollection"<<std::endl;
+    if (mOfflineHitsCollection)
+        return mOfflineHitsCollection;
+
+    //return (GateHitsCollection*)
+    //   G4DigiManager::GetHitsCollection(HCID);
+}
+
+
+void GateDigitizerMgr::SetOfflineHitsCollection(GateHitsCollection* hc)
+{
+	 G4cout<< "GateDigitizerMgr::SetOfflineHitsCollection("<<std::endl;
+	//mOfflineHitsCollection = hc;
+    if (mOfflineHitsCollection)
+        delete mOfflineHitsCollection;
+
+    mOfflineHitsCollection = hc;
+}
+
+
+void GateDigitizerMgr::ClearOfflineHitsCollection()
+{
+    delete mOfflineHitsCollection;
+    mOfflineHitsCollection = nullptr;
+}
+
+
+
+
+
 void GateDigitizerMgr::ShowSummary()
 {
 	G4cout<<"-----------------------"<<G4endl;

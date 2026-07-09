@@ -105,11 +105,26 @@ public:
    GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
 
+
+   //Methods for OfflineDigi
+
+    void SetOfflineMode(bool b) { mOfflineMode = b; }
+    bool IsOfflineMode() const { return mOfflineMode; }
+
+   GateHitsCollection* GetOfflineHitsCollection();
+
+   void SetOfflineHitsCollection(GateHitsCollection* hc);
+   void ClearOfflineHitsCollection();
+
+
+
+
 private:
 
 
   GateDigitizerMgrMessenger *fMessenger;
-
+  GateHitsCollection* mOfflineHitsCollection = nullptr;
+  bool mOfflineMode = false;
   static GateDigitizerMgr*  theDigitizerMgr;
 
 protected:

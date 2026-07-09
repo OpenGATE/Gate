@@ -90,10 +90,11 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   }
 #endif
 
-  if (m_digiMode==kruntimeMode) {
+
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
 
+  if (m_digiMode==kruntimeMode) {
     GateMultiPhotonAnalysis* gateMultiPhotonAnalysis = new GateMultiPhotonAnalysis("multianalysis", this, m_digiMode);
     AddOutputModule((GateVOutputModule*)gateMultiPhotonAnalysis);
 
@@ -194,11 +195,6 @@ void GateOutputMgr::RecordBeginOfEvent(const G4Event* event)
 void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
 {
   GateMessage("Output", 5, "GateOutputMgr::RecordEndOfEvent\n";);
-
-#ifdef G4ANALYSIS_USE_ROOT
-  if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->PrepareEndOfEvent();
-#endif
 
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
     if ( m_outputModules[iMod]->IsEnabled() )
