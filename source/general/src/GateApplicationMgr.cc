@@ -336,6 +336,21 @@ void GateApplicationMgr::StartDAQ()
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
+  if (mOutputMode)
+  {
+
+	  GateMessage("Acquisition", 0," ! OFFLINE DIGI MODE ! \n");
+	  GateMessage("Acquisition", 0, "============= Source initialization =============\n");
+	  GateMessage("Acquisition", 0, "IGNORED\n");
+
+	  GateMessage("Acquisition", 0,"  \n");
+	  GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
+	  GateMessage("Acquisition", 0, "IGNORED\n");
+
+  }
+  else
+  {
+
   GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
 
@@ -356,7 +371,7 @@ void GateApplicationMgr::StartDAQ()
   GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
   theRandomEngine->Initialize();
   if (theRandomEngine->GetVerbosity()>=1) theRandomEngine->ShowStatus();
-
+  }
   GateClock* theClock = GateClock::GetInstance();
 
   m_clusterStart = mTimeSlices.front();

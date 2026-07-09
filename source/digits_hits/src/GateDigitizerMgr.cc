@@ -542,19 +542,14 @@ void GateDigitizerMgr::RunCoincidenceDigitizers()
 GateHitsCollection* GateDigitizerMgr::GetOfflineHitsCollection()
 {
 
-	G4cout<< "GateDigitizerMgr::GetHitsCollection"<<std::endl;
     if (mOfflineHitsCollection)
         return mOfflineHitsCollection;
 
-    //return (GateHitsCollection*)
-    //   G4DigiManager::GetHitsCollection(HCID);
 }
 
 
 void GateDigitizerMgr::SetOfflineHitsCollection(GateHitsCollection* hc)
 {
-	 G4cout<< "GateDigitizerMgr::SetOfflineHitsCollection("<<std::endl;
-	//mOfflineHitsCollection = hc;
     if (mOfflineHitsCollection)
         delete mOfflineHitsCollection;
 

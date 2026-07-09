@@ -74,22 +74,11 @@ GateHitFileReader* GateHitFileReader::GetInstance()
 // This method must be called (normally by the application manager) before starting a new DigiGate acquisition
 void GateHitFileReader::PrepareAcquisition()
 {
-	 //G4cout<<"PrepareAcquisition "<<this <<std::endl;
 	 m_finished = false;
   // Open the input file
-  //m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
+
   m_hitFile = TFile::Open(m_fileName.c_str(), "READ");
-  /*if (!m_hitFile)
-	{
-		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
-    G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
-	}
-  if (!(m_hitFile->IsOpen()))
-	{
-		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
-    G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
-	}
-	*/
+
   if (!m_hitFile || m_hitFile->IsZombie())
   {
       G4String msg =
@@ -114,14 +103,6 @@ void GateHitFileReader::PrepareAcquisition()
   //  Load the first hit into the root-hit structure
   LoadHitData();
 
-  G4cout << "PrepareAcquisition:"
-         << " entries=" << m_entries
-         << " current=" << m_currentEntry
-         << " run=" << m_hitBuffer.runID
-         << " event=" << m_hitBuffer.eventID
-         << G4endl;
-
-
 }
 
 
@@ -138,7 +119,6 @@ void GateHitFileReader::PrepareAcquisition()
 */
 G4int GateHitFileReader::PrepareNextEvent(G4Event* )
 {
-  G4cout << " GateHitFileReader::PrepareNextEvent\n";
 
   for (auto hit : m_hitVector)
   	    delete hit;

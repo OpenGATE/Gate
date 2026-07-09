@@ -128,13 +128,11 @@ void GatePrimaryGeneratorAction::GenerateSimulationPrimaries(G4Event* event)
 //---------------------------------------------------------------------------
 void GatePrimaryGeneratorAction::GenerateDigitisationPrimaries(G4Event* event)
 {
-	G4cout << "Offline Digi: GenerateDigitisationPrimaries()" << G4endl;
 #ifdef G4ANALYSIS_USE_ROOT
 	GateHitFileReader* reader = GateHitFileReader::GetInstance();
 
 	G4int ok = reader->PrepareNextEvent(event);
 
-	G4cout<<"OK ? "<< ok <<G4endl;
 	if (!ok)
 	{
 	    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(nullptr);
@@ -150,27 +148,14 @@ void GatePrimaryGeneratorAction::GenerateDigitisationPrimaries(G4Event* event)
 	    for (auto hit : reader->GetHitVector())
 	        hc->insert(hit);
 
-	    G4cout<< "hc size "<< hc->GetSize ()<<G4endl;
 
 	    // The collection now owns the hits
 	    reader->GetHitVector().clear();
 
 	    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(hc);
 
-	    G4cout << "Stored HC = " << hc
-	           << " entries = " << hc->entries()
-	           << G4endl;
 
-	    for (size_t i = 0; i < hc->entries(); ++i)
-	    {
-	        G4cout << "HC hit " << i
-	               << " eventID "
-	               << (*hc)[i]->GetEventID()
-	               << G4endl;
-	    }
-
-
-	m_nEvents++;
+	    m_nEvents++;
 
 
 	/*G4cout << "Finished = "

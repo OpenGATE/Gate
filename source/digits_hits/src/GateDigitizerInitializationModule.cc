@@ -84,13 +84,6 @@ void GateDigitizerInitializationModule::Digitize()
 	else
 	    inHC = (GateHitsCollection*)DigiMan->GetHitsCollection(m_HCID);
 
-	G4cout << "Retrieved HC = " << inHC
-	       << " entries = " << inHC->entries()
-	       << G4endl;
-
-
-
-
 
 	if (inHC)
     {
