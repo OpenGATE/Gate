@@ -35,7 +35,7 @@
 #include "GateDigitizer.hh"
 #include "GateCrystalSD.hh"
 #include "GatePhantomSD.hh"
-#include "GateHitFileReader.hh"
+#include "../include/GateOfflineFileReader.hh"
 #include "GateRandomEngine.hh"
 #include "GateARFDataToRoot.hh"
 #include "GateToRoot.hh"
@@ -283,8 +283,8 @@ void GateOutputMgr::RecordBeginOfAcquisition()
 
 
 #ifdef G4ANALYSIS_USE_ROOT
-  if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->PrepareAcquisition();
+  if (m_digiMode==kofflineMode||m_digiMode==kofflineSinglesMode)
+    GateOfflineFileReader::GetInstance()->PrepareAcquisition();
 #endif
 
 
@@ -317,7 +317,7 @@ void GateOutputMgr::RecordEndOfAcquisition()
 
 #ifdef G4ANALYSIS_USE_ROOT
   if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->TerminateAfterAcquisition();
+    GateOfflineFileReader::GetInstance()->TerminateAfterAcquisition();
 #endif
 
   m_acquisitionStarted = false;

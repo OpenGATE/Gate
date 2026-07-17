@@ -21,8 +21,8 @@
 #include "GateVSource.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
-#include "GateHitFileReader.hh"
 #include <algorithm> /* min and max */
+#include "../../digits_hits/include/GateOfflineFileReader.hh"
 
 GateApplicationMgr* GateApplicationMgr::instance = 0;
 //------------------------------------------------------------------------------------------
@@ -336,7 +336,8 @@ void GateApplicationMgr::StartDAQ()
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
-  if (mOutputMode)
+
+  if (GateOutputMgr::GetInstance()->GetDigiMode()!=kruntimeMode)
   {
 
 	  GateMessage("Acquisition", 0," ! OFFLINE DIGI MODE ! \n");
@@ -387,7 +388,8 @@ void GateApplicationMgr::StartDAQ()
   m_time = mTimeSlices.front();
   while(m_time < mTimeSlices.back()  && !offlineFinished)
     {
-      
+	  if (GateOutputMgr::GetInstance()->GetDigiMode()==kruntimeMode)
+	  {
       // Informational message about the current slice
       GateMessage("Acquisition", 0, "Slice " << slice << " from "
                   << mTimeSlices[slice]/s << " to "
@@ -395,7 +397,7 @@ void GateApplicationMgr::StartDAQ()
                   << " s [slice="
                   << GetTimeSlice(slice)/s
                   << " s]\n");
-
+	  }
       m_time = mTimeSlices[slice];
       GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
       theClock->SetTime(m_time);
@@ -435,8 +437,8 @@ void GateApplicationMgr::StartDAQ()
 
               GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
 			#ifdef G4ANALYSIS_USE_ROOT
-              if (GateOutputMgr::GetInstance()->GetDigiMode()==kofflineMode &&
-                  GateHitFileReader::GetInstance()->IsFinished())
+              if ((GateOutputMgr::GetInstance()->GetDigiMode()==kofflineMode || GateOutputMgr::GetInstance()->GetDigiMode()==kofflineSinglesMode) &&
+                  GateOfflineFileReader::GetInstance()->IsFinished())
             	  {
             	  offlineFinished = true;
                   break;

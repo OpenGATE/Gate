@@ -26,7 +26,9 @@ class GateVVolume;
 
 enum DigiMode {
   kruntimeMode,
-  kofflineMode
+  kofflineMode,              // Hits -> Singles -> Coincidences
+  kofflineSinglesMode        // Singles -> Coincidences,
+
 };
 
 class GateVOutputModule

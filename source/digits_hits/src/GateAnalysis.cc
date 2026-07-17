@@ -726,7 +726,6 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
 	 if(!digitizerMgr->m_alreadyRun)
 	 {
-
 		 if (digitizerMgr->m_recordSingles|| digitizerMgr->m_recordCoincidences)
 			 {
 

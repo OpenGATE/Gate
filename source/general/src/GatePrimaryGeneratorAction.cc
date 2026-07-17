@@ -16,6 +16,8 @@ See LICENSE.md for further details
 #include "G4ios.hh"
 
 #include "GatePrimaryGeneratorAction.hh"
+
+#include "../../digits_hits/include/GateOfflineFileReader.hh"
 #include "GatePrimaryGeneratorMessenger.hh"
 #include "GateDetectorConstruction.hh"
 
@@ -24,7 +26,6 @@ See LICENSE.md for further details
 
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
-#include "GateHitFileReader.hh"
 #include "GateDigitizerMgr.hh"
 
 #include "GateConfiguration.h"
@@ -68,6 +69,7 @@ void GatePrimaryGeneratorAction::SetVerboseLevel(G4int value)
 void GatePrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
 
+	//G4cout<<"GatePrimaryGeneratorAction::GeneratePrimaries"<<G4endl;
   if (!m_useGPS) {
 	  if (GateOutputMgr::GetInstance()->GetDigiMode() == kruntimeMode)
 	  	       GenerateSimulationPrimaries(event);
@@ -128,38 +130,72 @@ void GatePrimaryGeneratorAction::GenerateSimulationPrimaries(G4Event* event)
 //---------------------------------------------------------------------------
 void GatePrimaryGeneratorAction::GenerateDigitisationPrimaries(G4Event* event)
 {
+
+	//G4cout<<"GatePrimaryGeneratorAction::GenerateDigitisationPrimaries"<<G4endl;
 #ifdef G4ANALYSIS_USE_ROOT
-	GateHitFileReader* reader = GateHitFileReader::GetInstance();
-
-	G4int ok = reader->PrepareNextEvent(event);
-
-	if (!ok)
-	{
-	    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(nullptr);
-
-	    GateRunManager::GetRunManager()->AbortRun(true);
-
-	    return;
-	}
-	  // Build the hit collection for this event
-	    GateHitsCollection* hc =
-	        new GateHitsCollection("crystal", "CrystalCollection");
-
-	    for (auto hit : reader->GetHitVector())
-	        hc->insert(hit);
+	GateOfflineFileReader* reader = GateOfflineFileReader::GetInstance();
 
 
-	    // The collection now owns the hits
-	    reader->GetHitVector().clear();
+	if (GateOutputMgr::GetInstance()->GetDigiMode()==kofflineMode ) //Hits
+	     {
 
-	    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(hc);
+		G4int ok = reader->PrepareNextEventFromHits(event);
+		if (!ok)
+		{
+		    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(nullptr);
+		    GateRunManager::GetRunManager()->AbortRun(true);
+		    return;
+		}
+		  // Build the hit collection for this event
+
+		    GateHitsCollection* hc =
+		        new GateHitsCollection("toto", "fufu"); //the names are not important
+
+		    for (auto hit : reader->GetHitVector())
+		        hc->insert(hit);
+
+
+		    // The collection now owns the hits
+		    reader->GetHitVector().clear();
+
+		    GateDigitizerMgr::GetInstance()->SetOfflineHitsCollection(hc);
+	     }
+	     else // singles
+	     {
+
+	    	 G4int ok = reader->PrepareNextEventFromSingles(event);
+	    		if (!ok)
+	    		{
+	    		    GateDigitizerMgr::GetInstance()->SetOfflineDigiCollection(nullptr);
+	    		    GateRunManager::GetRunManager()->AbortRun(true);
+
+	    		    return;
+	    		}
+	    		  // Build the hit collection for this event
+
+	    		    GateDigiCollection* dc =
+	    		        new GateDigiCollection("toto", "fufu"); //the names are not important
+
+	    		    for (auto digi : reader->GetDigiVector())
+	    		        dc->insert(digi);
+
+
+	    		    // The collection now owns the hits
+	    		    reader->GetDigiVector().clear();
+
+	    		    GateDigitizerMgr::GetInstance()->SetOfflineDigiCollection(dc);
+	     }
+
+
+
+
 
 
 	    m_nEvents++;
 
 
 	/*G4cout << "Finished = "
-	       << GateHitFileReader::GetInstance()->IsFinished()
+	       << GateOfflineFileReader::GetInstance()->IsFinished()
 	       << G4endl;*/
 #endif
 }

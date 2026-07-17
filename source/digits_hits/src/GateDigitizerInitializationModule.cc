@@ -70,7 +70,7 @@ void GateDigitizerInitializationModule::Digitize()
 	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
 
 
-	if (GateDigitizerMgr::GetInstance()->IsOfflineMode() &&
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineMode &&
 			digitizerMgr->GetOfflineHitsCollection() == nullptr)
 	{
 	    GateMessage("OfflineDigi", 1,
@@ -79,7 +79,7 @@ void GateDigitizerInitializationModule::Digitize()
 	}
 
 
-	if (GateDigitizerMgr::GetInstance()->IsOfflineMode())
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineMode)
 	    inHC = digitizerMgr->GetOfflineHitsCollection();
 	else
 	    inHC = (GateHitsCollection*)DigiMan->GetHitsCollection(m_HCID);

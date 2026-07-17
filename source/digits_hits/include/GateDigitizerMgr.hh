@@ -36,7 +36,7 @@
 
 #include "GateCoinDigitizerInitializationModule.hh"
 #include "GateCoincidenceDigitizer.hh"
-
+#include "GateVOutputModule.hh"
 
 class GateDigitizerMgrMessenger;
 class GateVSystem;
@@ -108,15 +108,17 @@ public:
 
    //Methods for OfflineDigi
 
-    void SetOfflineMode(bool b) { mOfflineMode = b; }
-    bool IsOfflineMode() const { return mOfflineMode; }
+   void SetOfflineMode(DigiMode mode)  {  mOfflineMode = mode; }
+   DigiMode GetDigiMode() const  {  return mOfflineMode;}
+
 
    GateHitsCollection* GetOfflineHitsCollection();
-
    void SetOfflineHitsCollection(GateHitsCollection* hc);
    void ClearOfflineHitsCollection();
 
-
+   GateDigiCollection* GetOfflineDigiCollection();
+   void SetOfflineDigiCollection(GateDigiCollection* hc);
+   void ClearOfflineDigiCollection();
 
 
 private:
@@ -124,7 +126,8 @@ private:
 
   GateDigitizerMgrMessenger *fMessenger;
   GateHitsCollection* mOfflineHitsCollection = nullptr;
-  bool mOfflineMode = false;
+  GateDigiCollection* mOfflineDigiCollection = nullptr;
+  DigiMode mOfflineMode  = kruntimeMode; // = false;
   static GateDigitizerMgr*  theDigitizerMgr;
 
 protected:
