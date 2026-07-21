@@ -69,8 +69,8 @@ void printHelpAndQuit( G4String msg )
   GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
   GateMessage( "Core", 0, "  -v, --version          print the version" << G4endl );
   GateMessage( "Core", 0, "  -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'" << G4endl );
-  GateMessage( "Core", 0, "  --d FILE               use Offline Digi mode with input ROOT hit file" << G4endl );
-  GateMessage( "Core", 0, "  --d-from-singles FILE  use Offline Digi mode with input ROOT singles file" << G4endl );
+  GateMessage( "Core", 0, "  -d-fromHits FILE               use Offline Digi mode with input ROOT hit file" << G4endl );
+  GateMessage( "Core", 0, "  -d-fromSingles FILE  use Offline Digi mode with input ROOT singles file" << G4endl );
   GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
   exit( EXIT_FAILURE );
 }
