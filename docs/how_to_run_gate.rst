@@ -254,6 +254,10 @@ or::
 -> a new root output file **your_gate_output_digi.root** is produced which incorporates the changes due to a different digitizer without having to repeat the particle generation and
 its propagation.
 
+The digitizer and output parameters will be taken from your macro *MacroTest.mac*.
+
+Only the ROOT output is compatible so far with Offline Digitizer
+
 
 How to separate the phantom and detector tracking - Phase space approach
 ------------------------------------------------------------------------
