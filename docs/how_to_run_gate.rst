@@ -232,6 +232,8 @@ It is worth emphasizing the following points about aliases:
 * Aliases are case sensitive, so **[lld,350]** is not the same as **[LLD,350]**.
 * All aliases in your macro file(s) must be defined when you run Gate. If some are undefined the simulation will fail.
 
+.. _how_to_run_offline_digi-label-label:
+
 How to launch *DigiGate* or *OFFLINE DIGITIZER*
 ------------------------
 
