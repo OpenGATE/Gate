@@ -35,7 +35,7 @@
 #include "GateDigitizer.hh"
 #include "GateCrystalSD.hh"
 #include "GatePhantomSD.hh"
-#include "GateHitFileReader.hh"
+#include "../include/GateOfflineFileReader.hh"
 #include "GateRandomEngine.hh"
 #include "GateARFDataToRoot.hh"
 #include "GateToRoot.hh"
@@ -90,10 +90,11 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   }
 #endif
 
-  if (m_digiMode==kruntimeMode) {
+
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
 
+  if (m_digiMode==kruntimeMode) {
     GateMultiPhotonAnalysis* gateMultiPhotonAnalysis = new GateMultiPhotonAnalysis("multianalysis", this, m_digiMode);
     AddOutputModule((GateVOutputModule*)gateMultiPhotonAnalysis);
 
@@ -195,11 +196,6 @@ void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
 {
   GateMessage("Output", 5, "GateOutputMgr::RecordEndOfEvent\n";);
 
-#ifdef G4ANALYSIS_USE_ROOT
-  if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->PrepareEndOfEvent();
-#endif
-
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
     if ( m_outputModules[iMod]->IsEnabled() )
       {
@@ -287,8 +283,8 @@ void GateOutputMgr::RecordBeginOfAcquisition()
 
 
 #ifdef G4ANALYSIS_USE_ROOT
-  if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->PrepareAcquisition();
+  if (m_digiMode==kofflineMode||m_digiMode==kofflineSinglesMode)
+    GateOfflineFileReader::GetInstance()->PrepareAcquisition();
 #endif
 
 
@@ -321,7 +317,7 @@ void GateOutputMgr::RecordEndOfAcquisition()
 
 #ifdef G4ANALYSIS_USE_ROOT
   if (m_digiMode==kofflineMode)
-    GateHitFileReader::GetInstance()->TerminateAfterAcquisition();
+    GateOfflineFileReader::GetInstance()->TerminateAfterAcquisition();
 #endif
 
   m_acquisitionStarted = false;

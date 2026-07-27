@@ -53,12 +53,12 @@ namespace GateRootDefs
 }
 
 /*! \class  GateRootHitBuffer
-    \brief  ROOT structure to store hits for GateToRoot and GateHitFileReader
+    \brief  ROOT structure to store hits for GateToRoot and GateOfflineFileReader
     
     - GateRootHitBuffer - by Giovanni.Santin@cern.ch (May 1, 2002)
     
     - This structure was initally declared in GateToRoot. To insure consistency between
-      GateToRoot and GatHitFileReader, I have made it a separate class.
+      GateToRoot and GatOfflineFileReader, I have made it a separate class.
 */      
 class GateRootHitBuffer
 {
@@ -296,7 +296,7 @@ class GateRootSingleBuffer
 
     void Clear();     	      	      	      	  //!< Reset the fields of the structure
     void Fill(GateDigi* aDigi);
-
+    GateDigi* CreateDigi();
 
 
     inline void SetCCFlag (G4bool val) {m_CCflag=val;}
@@ -368,6 +368,7 @@ class GateSingleTree : public  TTree
     virtual inline ~GateSingleTree() {}
 
     void Init(GateRootSingleBuffer& buffer);
+    static void SetBranchAddresses(TTree* singleTree,GateRootSingleBuffer& buffer);
 
 
 };

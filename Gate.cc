@@ -6,7 +6,7 @@
  *	\brief To launch GATE:
  *	- 'Gate' or 'Gate --qt' using the Qt visualization
  *	- 'Gate your_macro.mac' or 'Gate --qt your_macro.mac' using the Qt visualization
- *	- 'Gate -d your_macro.mac' using the DigiGate
+ *	- 'Gate your_macro.mac --d hits.root' for Offline Digitizer
  *	- 'Gate -a [activity,10]' using the parameterized macro creating an alias in your macro
  */
 
@@ -36,12 +36,12 @@
 #include "GateOutputMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateUserActions.hh"
-#include "GateDigitizer.hh"
+#include "GateDigitizerMgr.hh"
 #include "GateClock.hh"
 #include "GateUIcontrolMessenger.hh"
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TPluginManager.h"
-#include "GateHitFileReader.hh"
+#include "GateOfflineFileReader.hh"
 #endif
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
@@ -69,7 +69,8 @@ void printHelpAndQuit( G4String msg )
   GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
   GateMessage( "Core", 0, "  -v, --version          print the version" << G4endl );
   GateMessage( "Core", 0, "  -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'" << G4endl );
-  GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
+  GateMessage( "Core", 0, "  -d-fromHits FILE               use Offline Digi mode with input ROOT hit file" << G4endl );
+  GateMessage( "Core", 0, "  -d-fromSingles FILE  use Offline Digi mode with input ROOT singles file" << G4endl );
   GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
   exit( EXIT_FAILURE );
 }
@@ -200,6 +201,7 @@ int main( int argc, char* argv[] )
 
   // analyzing arguments
   static G4int isDigiMode = 0; // DigiMode false by default
+  G4String digiInputFile = "";
   static G4int isQt = 0; // Enable Qt or not
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
@@ -214,7 +216,8 @@ int main( int argc, char* argv[] )
       static struct option longOptions[] = {
         { "help", no_argument, 0, 'h' },
         { "version", no_argument, 0, 'v' },
-        { "d", no_argument, &isDigiMode, 1 },
+        { "d-fromHits", required_argument, 0, 'd' },
+		{ "d-fromSingles", required_argument, 0, 's' },
         { "qt", no_argument, &isQt, 1 },
         { "param", required_argument, 0, 'a' }
       };
@@ -262,16 +265,38 @@ int main( int argc, char* argv[] )
         case 'a':
           listOfParameters = optarg;
           break;
-        default:
+		case 'd':
+		  isDigiMode = 1;
+		  digiInputFile = optarg;
+		  break;
+		case 's':
+			isDigiMode = 2;
+			digiInputFile = optarg;
+			break;
+		default:
           printHelpAndQuit( "Out of switch options" );
           break;
         }
     }
 
   // Checking if the DigiMode is activated
-  if( isDigiMode )
-    aDigiMode = kofflineMode;
+  if (isDigiMode == 1)
+      aDigiMode = kofflineMode;
+  else if (isDigiMode == 2)
+      aDigiMode = kofflineSinglesMode;
+  
+  if (isDigiMode)
+    {
+      if (digiInputFile.empty())
+	{
+        G4cerr << "Error: Offline Digi mode requires an input ROOT file.\n"
+               << "Usage: Gate main.mac --d input.root\n";
+        return EXIT_FAILURE;
+	}
 
+      GateOfflineFileReader::GetInstance()->SetFileName(digiInputFile);
+	  GateDigitizerMgr::GetInstance()->SetOfflineMode(aDigiMode);
+    }
   // Analyzing parameterized macro
   std::queue< G4String > commandQueue = decodeParameters( listOfParameters );
 
@@ -318,7 +343,7 @@ int main( int argc, char* argv[] )
 
   if( aDigiMode == kofflineMode )
 #ifdef G4ANALYSIS_USE_ROOT
-    GateHitFileReader::GetInstance();
+    GateOfflineFileReader::GetInstance();
 #else
   abortIfRootNotFound();
 #endif

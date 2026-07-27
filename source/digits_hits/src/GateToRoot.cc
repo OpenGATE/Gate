@@ -54,6 +54,7 @@
 #include "GateVVolume.hh"
 #include "GateToRootMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
+#include "GateOfflineFileReader.hh"
 
 #include "TROOT.h"
 #include "TApplication.h"
@@ -376,6 +377,10 @@ void GateToRoot::RecordBeginOfAcquisition() {
         //////////
         // Open the output file
         if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation...\n";
+
+
+        if (m_digiMode == kofflineMode || m_digiMode == kofflineSinglesMode)
+              SetOfflineOutputFileName();
         switch (m_digiMode) {
             case kruntimeMode:
                 // In run-time mode, we open the file in RECREATE mode
@@ -390,6 +395,7 @@ void GateToRoot::RecordBeginOfAcquisition() {
 
                 break;
             case kofflineMode:
+            case kofflineSinglesMode:
                 // In DigiGate mode, we first check that the file does not exist. If it does, we abort as we want to make sure the ROOT file is not overwritten by accident
 
                 // v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh)
@@ -1817,6 +1823,32 @@ void GateToRoot::RecordTracks(GateSteppingAction *mySteppingAction) {
     PPTrackVector->clear();
 
 }
+
+
+void GateToRoot::SetOfflineOutputFileName()
+{
+
+	//G4cout<<"GateToRoot::SetOfflineOutputFileName("<< G4endl;
+    G4String input = GateOfflineFileReader::GetInstance()->GetFileName();
+
+    // Remove ".root" if present
+    if (input.length() > 5 &&
+        input.substr(input.length() - 5) == ".root")
+    {
+        input = input.substr(0, input.length() - 5);
+    }
+
+    m_fileName = input + "_digi";
+
+    G4cout << G4endl
+           << "Offline Digi mode:" << G4endl
+           << "  Input : " << GateOfflineFileReader::GetInstance()->GetFileName() << G4endl
+           << "  Output: " << m_fileName << ".root" << G4endl
+           << G4endl;
+}
+
+
+
 
 /*PY Descourt 08/09/2009 */
 

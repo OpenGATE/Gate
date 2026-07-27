@@ -20,6 +20,7 @@
 #include "GateDigitizerMgrMessenger.hh"
 #include "GateDigitizerInitializationModule.hh"
 #include "GateHit.hh"
+#include "GateDigi.hh"
 #include "GateOutputMgr.hh"
 #include "GateToRoot.hh"
 
@@ -537,6 +538,55 @@ void GateDigitizerMgr::RunCoincidenceDigitizers()
 
 	//m_alreadyRun=true;
 }
+
+
+GateHitsCollection* GateDigitizerMgr::GetOfflineHitsCollection()
+{
+    if (mOfflineHitsCollection)
+        return mOfflineHitsCollection;
+}
+
+void GateDigitizerMgr::SetOfflineHitsCollection(GateHitsCollection* hc)
+{
+    if (mOfflineHitsCollection)
+        delete mOfflineHitsCollection;
+
+    mOfflineHitsCollection = hc;
+}
+
+void GateDigitizerMgr::ClearOfflineHitsCollection()
+{
+    delete mOfflineHitsCollection;
+    mOfflineHitsCollection = nullptr;
+}
+
+
+GateDigiCollection* GateDigitizerMgr::GetOfflineDigiCollection()
+{
+    if (mOfflineDigiCollection)
+        return mOfflineDigiCollection;
+}
+
+
+void GateDigitizerMgr::SetOfflineDigiCollection(GateDigiCollection* hc)
+{
+    if (mOfflineDigiCollection)
+        delete mOfflineDigiCollection;
+
+    mOfflineDigiCollection = hc;
+}
+
+
+void GateDigitizerMgr::ClearOfflineDigiCollection()
+{
+    delete mOfflineDigiCollection;
+    mOfflineDigiCollection = nullptr;
+}
+
+
+
+
+
 
 void GateDigitizerMgr::ShowSummary()
 {

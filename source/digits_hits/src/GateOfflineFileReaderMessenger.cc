@@ -6,11 +6,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
-#include "GateHitFileReaderMessenger.hh"
+#include "../include/GateOfflineFileReaderMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-#include "GateHitFileReader.hh"
+#include "GateOfflineFileReader.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -22,8 +22,8 @@ See LICENSE.md for further details
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-GateHitFileReaderMessenger::GateHitFileReaderMessenger(GateHitFileReader* itsHitFileReader)
-  : GateClockDependentMessenger(itsHitFileReader)
+GateOfflineFileReaderMessenger::GateOfflineFileReaderMessenger(GateOfflineFileReader* itsOfflineFileReader)
+  : GateClockDependentMessenger(itsOfflineFileReader)
 {
   SetDirectoryGuidance("Control the parameters of the hit-file reader used for DigiGate");
 
@@ -38,17 +38,17 @@ GateHitFileReaderMessenger::GateHitFileReaderMessenger(GateHitFileReader* itsHit
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-GateHitFileReaderMessenger::~GateHitFileReaderMessenger()
+GateOfflineFileReaderMessenger::~GateOfflineFileReaderMessenger()
 {
   delete SetFileNameCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void GateHitFileReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void GateOfflineFileReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if (command == SetFileNameCmd)
-    GetHitFileReader()->SetFileName(newValue);
+    GetOfflineFileReader()->SetFileName(newValue);
   else
     GateClockDependentMessenger::SetNewValue(command,newValue);
 

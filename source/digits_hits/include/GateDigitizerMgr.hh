@@ -36,7 +36,7 @@
 
 #include "GateCoinDigitizerInitializationModule.hh"
 #include "GateCoincidenceDigitizer.hh"
-
+#include "GateVOutputModule.hh"
 
 class GateDigitizerMgrMessenger;
 class GateVSystem;
@@ -105,11 +105,29 @@ public:
    GateCoincidenceDigitizer* FindCoincidenceDigitizer(G4String mName);
    /// End of methods for Coincidences
 
+
+   //Methods for OfflineDigi
+
+   void SetOfflineMode(DigiMode mode)  {  mOfflineMode = mode; }
+   DigiMode GetDigiMode() const  {  return mOfflineMode;}
+
+
+   GateHitsCollection* GetOfflineHitsCollection();
+   void SetOfflineHitsCollection(GateHitsCollection* hc);
+   void ClearOfflineHitsCollection();
+
+   GateDigiCollection* GetOfflineDigiCollection();
+   void SetOfflineDigiCollection(GateDigiCollection* hc);
+   void ClearOfflineDigiCollection();
+
+
 private:
 
 
   GateDigitizerMgrMessenger *fMessenger;
-
+  GateHitsCollection* mOfflineHitsCollection = nullptr;
+  GateDigiCollection* mOfflineDigiCollection = nullptr;
+  DigiMode mOfflineMode  = kruntimeMode; // = false;
   static GateDigitizerMgr*  theDigitizerMgr;
 
 protected:

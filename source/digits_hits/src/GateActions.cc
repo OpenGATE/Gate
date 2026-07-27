@@ -191,10 +191,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
 
-  //OK GND 2022 TODO
-   //I would like to RunDigitizers here but some aHit attributes are filled in OutputMng/GateAnalysis->RecordEndOfEvent
-   //GateDigitizerMgr* digitizerMgr = GateDigitizerMgr::GetInstance();
-   // 	  digitizerMgr->RunDigitizers();
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the OutputMgr manager

@@ -180,11 +180,9 @@ void GateCoincidenceSorter::SetAcceptancePolicy4CC(const G4String &policy)
 
 void GateCoincidenceSorter::Digitize()
 {
-  //	G4cout<<"GateCoincidenceSorter::Digitize "<< GetOutputName() <<G4endl;
+  //G4cout<<"GateCoincidenceSorter::Digitize " <<G4endl;
   //	G4cout<< "m_inputName "<< m_inputName<<G4endl;
 
-
-		
   GateDigi* digi;
   std::list<GateDigi*>::iterator buf_iter;                // presort buffer iterator
 
@@ -205,20 +203,34 @@ void GateCoincidenceSorter::Digitize()
       //G4cout<<"Unindefined system"<<G4endl;
       m_system=inputDigitizer->GetSystem();
   }
-  //G4cout<<m_system->GetName()<<G4endl;
-
 
   G4int inputCollID=inputDigitizer->m_outputDigiCollectionID;
   //G4cout<<"inputCollID "<<inputCollID<<G4endl;
   G4DigiManager *fDM = G4DigiManager::GetDMpointer();
 
-  GateDigiCollection* IDC = 0;
-  IDC = (GateDigiCollection*) (fDM->GetDigiCollection(inputCollID));
+  GateDigiCollection* IDC;
+
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineSinglesMode &&
+			digitizerMgr->GetOfflineDigiCollection() == nullptr)
+	{
+	    GateMessage("OfflineDigi", 1,
+	        "No offline singles, skipping digitization.");
+	    return;
+	}
+
+
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineSinglesMode)
+	    IDC = digitizerMgr->GetOfflineDigiCollection();
+	else
+	    IDC = (GateDigiCollection*)fDM->GetDigiCollection(inputCollID);
+
   if (!IDC)
      return ;
 
+
   std::vector< GateDigi* >* IDCvector = IDC->GetVector ();
   std::vector<GateDigi*>::iterator gpl_iter;
+
 
   //Output digi collection
   m_OutputCoincidenceDigiCollection = new GateCoincidenceDigiCollection("GateCoincidenceSorter",m_outputName); // to create the Digi Collection
@@ -227,7 +239,7 @@ void GateCoincidenceSorter::Digitize()
   if (!IsEnabled())
     return;
 
-  
+
 
   if(m_eventIDCoinc){
       GateCoincidenceDigi *coincidence;
@@ -247,6 +259,15 @@ void GateCoincidenceSorter::Digitize()
           for(gpl_iter = IDCvector->begin();gpl_iter != IDCvector->end();gpl_iter++)
           {
         digi = new GateDigi(**gpl_iter);
+
+				if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineMode || GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineSinglesMode)
+				{
+				//G4cout<<"Setting system ID 2 "<< m_system->GetItsNumber()<<G4endl;
+				digi->SetSystemID(m_system->GetItsNumber());
+				digi->SetOutputVolumeID(m_system->ComputeOutputVolumeID(digi->GetVolumeID()));
+				}
+
+
               if(!isCoincCreated){
                   isCoincCreated=true;
                   coincidence = new GateCoincidenceDigi(digi,window,offset);
@@ -282,7 +303,13 @@ void GateCoincidenceSorter::Digitize()
   {
     // make a copy of the digi
     digi = new GateDigi(**gpl_iter);
-
+    if (GateDigitizerMgr::GetInstance()->GetDigiMode() != kruntimeMode )
+    {
+    	//G4cout<<"Setting system ID 3 "<< m_system->GetItsNumber()<<G4endl;
+    	digi->SetSystemID(m_system->GetItsNumber());
+    	//G4cout<<"Volume ID "<<digi->GetVolumeID()<<G4endl;
+    	digi->SetOutputVolumeID(m_system->ComputeOutputVolumeID(digi->GetVolumeID()));
+    }
       if(m_presortBuffer.empty())
       m_presortBuffer.push_back(digi);
       else if(digi->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
@@ -374,7 +401,6 @@ void GateCoincidenceSorter::Digitize()
     }
     delete digi;
   }
-
   StoreDigiCollection(m_OutputCoincidenceDigiCollection);
 }
 
@@ -414,6 +440,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow4CC(GateCoincidence
 // look for valid coincidences
 bool GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDigi *coincidence)
 {
+
   G4int i, j, nDigis;
   G4int nGoods, maxGoods;
   G4double E, maxE;
@@ -460,9 +487,10 @@ bool GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
     // count the goods (iterate over all pairs because we're considering the multi as a unit, not breaking it up into pairs)
     nGoods = 0;
     for(i=0; i<(coincidence->IsDelayed()?1:(nDigis-1)); i++)
-      for(j=i+1; j<nDigis; j++)
+      for(j=i+1; j<nDigis; j++){
         if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
           nGoods++;
+      }
 
     if( nGoods == 0 )  // all of the remaining options expect at least one good
     {
@@ -545,12 +573,12 @@ bool GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
       }
     }
     maxGoods = PairWithFirstDigiOnly?(nDigis-1):(nDigis*(nDigis-1)/2);
-    if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods) 
+
+    if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods)/// Default
     {
       if(nGoods==maxGoods) 
       {
-        m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
-
+    	  m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, winner_i, winner_j));
 
         return false;
       } else {

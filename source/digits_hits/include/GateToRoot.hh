@@ -109,6 +109,8 @@ public:
     void RecordOpticalData(const G4Event *event);
 // v. cuplov - optical photons
 
+    void SetOfflineOutputFileName();
+
     void RecordVoxels(const G4Step *);
 
     void BookBeginOfAquisition();

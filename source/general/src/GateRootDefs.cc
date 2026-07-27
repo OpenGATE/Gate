@@ -590,7 +590,147 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
   aDigi->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 }
 
+void GateSingleTree::SetBranchAddresses(TTree* singleTree,
+                                        GateRootSingleBuffer& buffer)
+{
+  singleTree->SetBranchAddress("runID", &buffer.runID);
+  singleTree->SetBranchAddress("eventID", &buffer.eventID);
+  singleTree->SetBranchAddress("sourceID", &buffer.sourceID);
 
+  singleTree->SetBranchAddress("sourcePosX", &buffer.sourcePosX);
+  singleTree->SetBranchAddress("sourcePosY", &buffer.sourcePosY);
+  singleTree->SetBranchAddress("sourcePosZ", &buffer.sourcePosZ);
+
+  singleTree->SetBranchAddress("time", &buffer.time);
+  singleTree->SetBranchAddress("energy", &buffer.energy);
+
+  singleTree->SetBranchAddress("globalPosX", &buffer.globalPosX);
+  singleTree->SetBranchAddress("globalPosY", &buffer.globalPosY);
+  singleTree->SetBranchAddress("globalPosZ", &buffer.globalPosZ);
+
+  if (GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (size_t d = 0; d < ROOT_OUTPUTIDSIZE; ++d)
+      singleTree->SetBranchAddress(outputIDName[d],
+                                   (void*)(buffer.outputID + d));
+
+  if (GateRootDefs::GetRecordSeptalFlag())
+    singleTree->SetBranchAddress("septalNb", &buffer.septalNb);
+
+  if (!buffer.GetCCFlag())
+  {
+    singleTree->SetBranchAddress("comptonPhantom", &buffer.comptonPhantom);
+    singleTree->SetBranchAddress("comptonCrystal", &buffer.comptonCrystal);
+    singleTree->SetBranchAddress("RayleighPhantom", &buffer.RayleighPhantom);
+    singleTree->SetBranchAddress("RayleighCrystal", &buffer.RayleighCrystal);
+
+    singleTree->SetBranchAddress("axialPos", &buffer.axialPos);
+    singleTree->SetBranchAddress("rotationAngle", &buffer.rotationAngle);
+
+    singleTree->SetBranchAddress("comptVolName", buffer.comptonVolumeName);
+    singleTree->SetBranchAddress("RayleighVolName", buffer.RayleighVolumeName);
+  }
+  else
+  {
+    singleTree->SetBranchAddress("sourceEnergy", &buffer.sourceEnergy);
+    singleTree->SetBranchAddress("sourcePDG", &buffer.sourcePDG);
+    singleTree->SetBranchAddress("nCrystalConv", &buffer.nCrystalConv);
+    singleTree->SetBranchAddress("nCrystalCompt", &buffer.nCrystalCompt);
+    singleTree->SetBranchAddress("nCrystalRayl", &buffer.nCrystalRayl);
+
+    singleTree->SetBranchAddress("localPosX", &buffer.localPosX);
+    singleTree->SetBranchAddress("localPosY", &buffer.localPosY);
+    singleTree->SetBranchAddress("localPosZ", &buffer.localPosZ);
+
+    singleTree->SetBranchAddress("energyFinal", &buffer.energyFin);
+    singleTree->SetBranchAddress("energyIni", &buffer.energyIni);
+  }
+
+  if (buffer.GetSpatialRes2DStdDevFlag())
+  {
+    singleTree->SetBranchAddress("spatialRes2DStdDevX",
+                                 &buffer.spatialRes2DStdDevX);
+    singleTree->SetBranchAddress("spatialRes2DStdDevY",
+                                 &buffer.spatialRes2DStdDevY);
+    singleTree->SetBranchAddress("spatialRes2DStdDevZ",
+                                 &buffer.spatialRes2DStdDevZ);
+  }
+
+  singleTree->SetBranchAddress("volumeID", buffer.volumeID);
+}
+
+GateDigi* GateRootSingleBuffer::CreateDigi()
+{
+  // Create a volumeID from the ROOT single data
+
+	GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
+
+  GateOutputVolumeID anOutputVolumeID;
+  if (GateSystemListManager::GetInstance()->GetIsAnySystemDefined())
+    for (size_t d = 0; d < ROOT_OUTPUTIDSIZE; ++d)
+      anOutputVolumeID[d] = outputID[d];
+
+  // Create a new digi
+  GateDigi* aDigi = new GateDigi();
+
+  // Initialize the digi
+  aDigi->SetRunID(runID);
+  aDigi->SetEventID(eventID);
+  aDigi->SetSourceID(sourceID);
+
+  aDigi->SetSourcePosition(G4ThreeVector(sourcePosX*mm, sourcePosY*mm, sourcePosZ*mm));
+
+  aDigi->SetTime(time*s);
+  aDigi->SetEnergy(energy*MeV);
+
+  aDigi->SetGlobalPos(G4ThreeVector(globalPosX*mm, globalPosY*mm, globalPosZ*mm));
+
+  aDigi->SetOutputVolumeID(anOutputVolumeID);
+
+  aDigi->SetVolumeID(aVolumeID);
+
+  // Septal penetration
+  aDigi->SetNSeptal(septalNb);
+
+  if (!GetCCFlag())
+  {
+    aDigi->SetNPhantomCompton(comptonPhantom);
+    aDigi->SetNCrystalCompton(comptonCrystal);
+    aDigi->SetNPhantomRayleigh(RayleighPhantom);
+    aDigi->SetNCrystalRayleigh(RayleighCrystal);
+
+    aDigi->SetScannerPos(G4ThreeVector(0., 0., axialPos*mm));
+    aDigi->SetScannerRotAngle(rotationAngle*deg);
+
+    aDigi->SetComptonVolumeName(comptonVolumeName);
+    aDigi->SetRayleighVolumeName(RayleighVolumeName);
+  }
+  else
+  {
+    aDigi->SetSourceEnergy(sourceEnergy*MeV);
+    aDigi->SetSourcePDG(sourcePDG);
+
+    aDigi->SetNCrystalConv(nCrystalConv);
+    aDigi->SetNCrystalCompton(nCrystalCompt);
+    aDigi->SetNCrystalRayleigh(nCrystalRayl);
+
+    aDigi->SetLocalPos(G4ThreeVector(localPosX*mm, localPosY*mm, localPosZ*mm));
+
+    aDigi->SetEnergyFin(energyFin);
+    aDigi->SetEnergyIniTrack(energyIni);
+  }
+
+  if (GetSpatialRes2DStdDevFlag())
+  {
+    aDigi->SetSpatialRes2DStdDevX(spatialRes2DStdDevX*mm);
+    aDigi->SetSpatialRes2DStdDevY(spatialRes2DStdDevY*mm);
+    aDigi->SetSpatialRes2DStdDevZ(spatialRes2DStdDevZ*mm);
+  }
+
+
+
+
+  return aDigi;
+}
 
 
 

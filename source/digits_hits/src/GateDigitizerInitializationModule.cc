@@ -28,6 +28,7 @@
 #include "G4SDManager.hh"
 #include "G4DigiManager.hh"
 #include "G4ios.hh"
+#include "GateDigitizerMgr.hh"
 
 GateDigitizerInitializationModule::GateDigitizerInitializationModule(GateSinglesDigitizer *digitizer)
   :GateVDigitizerModule("DigiInit","digitizerMgr/"+digitizer->GetSD()->GetName()+"/SinglesDigitizer/"+digitizer->m_digitizerName+"/digiInit",digitizer, digitizer->GetSD()),
@@ -65,7 +66,23 @@ void GateDigitizerInitializationModule::Digitize()
 	}
 
 
-	GateHitsCollection* inHC = (GateHitsCollection*) (DigiMan->GetHitsCollection(m_HCID));// DigiMan->GetHitsCollectionID(HCname)));
+	GateHitsCollection* inHC;
+	GateDigitizerMgr* digitizerMgr=GateDigitizerMgr::GetInstance();
+
+
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineMode &&
+			digitizerMgr->GetOfflineHitsCollection() == nullptr)
+	{
+	    GateMessage("OfflineDigi", 1,
+	        "No offline hits, skipping digitization.");
+	    return;
+	}
+
+
+	if (GateDigitizerMgr::GetInstance()->GetDigiMode() == kofflineMode)
+	    inHC = digitizerMgr->GetOfflineHitsCollection();
+	else
+	    inHC = (GateHitsCollection*)DigiMan->GetHitsCollection(m_HCID);
 
 
 	if (inHC)

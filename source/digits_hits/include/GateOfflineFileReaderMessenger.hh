@@ -7,8 +7,8 @@ See LICENSE.md for further details
 ----------------------*/
 
 
-#ifndef GateHitFileReaderMessenger_h
-#define GateHitFileReaderMessenger_h 1
+#ifndef GateOfflineFileReaderMessenger_h
+#define GateOfflineFileReaderMessenger_h 1
 
 #include "GateConfiguration.h"
 
@@ -16,15 +16,15 @@ See LICENSE.md for further details
 
 #include "GateClockDependentMessenger.hh"
 
-class GateHitFileReader;
+class GateOfflineFileReader;
 
 
-/*! \class GateHitFileReaderMessenger
-    \brief Messenger used to command a GateHitFileReader
+/*! \class GateOfflineFileReaderMessenger
+    \brief Messenger used to command a GateOfflineFileReader
 
-    - GateHitFileReaderMessenger - by Daniel.Strul@iphe.unil.ch
+    - GateOfflineFileReaderMessenger - by Daniel.Strul@iphe.unil.ch
 
-    - The GateHitFileReaderMessenger inherits from the abilities/responsabilities
+    - The GateOfflineFileReaderMessenger inherits from the abilities/responsabilities
       of the GateClockDependentMessenger base-class, i.e. the creation and management
       of a Gate UI directory for a Gate object, plus the UI command 'describe'
 
@@ -32,17 +32,17 @@ class GateHitFileReader;
       definition of the name of the hit file
 
 */
-class GateHitFileReaderMessenger: public GateClockDependentMessenger
+class GateOfflineFileReaderMessenger: public GateClockDependentMessenger
 {
   public:
-    GateHitFileReaderMessenger(GateHitFileReader* itsHitFileReader);
-   ~GateHitFileReaderMessenger();
+    GateOfflineFileReaderMessenger(GateOfflineFileReader* itsOfflineFileReader);
+   ~GateOfflineFileReaderMessenger();
 
     void SetNewValue(G4UIcommand*, G4String);
 
     //! Get the clock-dependent object
-    inline GateHitFileReader* GetHitFileReader()
-      { return (GateHitFileReader*) GetClockDependent(); }
+    inline GateOfflineFileReader* GetOfflineFileReader()
+      { return (GateOfflineFileReader*) GetClockDependent(); }
 
   protected:
     G4UIcmdWithAString*      SetFileNameCmd;
