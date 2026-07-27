@@ -150,7 +150,6 @@ and the following output (or something similar) will appear on the screen::
    [Core-0]   -h, --help             print the help
    [Core-0]   -v, --version          print the version
    [Core-0]   -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'
-   [Core-0]   --d                    use the DigiMode
    [Core-0]   --qt                   use the Qt visualization mode
 
 Running GATE in Qt mode
@@ -204,18 +203,18 @@ For instance, suppose we want to parameterize the lower and upper level energy d
 and the length of coincidence window. Here is the corresponding macro command lines::
 
    #       D I G I T I Z E R
-   1	/gate/digitizer/Singles/insert adder
-   2	/gate/digitizer/Singles/insert readout
-   3	/gate/digitizer/Singles/readout/setDepth 1
-   4	/gate/digitizer/Singles/insert blurring
-   5	/gate/digitizer/Singles/blurring/setResolution 0.26
-   6	/gate/digitizer/Singles/blurring/setEnergyOfReference 511. keV
-   7	/gate/digitizer/Singles/insert thresholder
-   8	/gate/digitizer/Singles/thresholder/setThreshold {lld} keV
-   9	/gate/digitizer/Singles/insert upholder
-   10	/gate/digitizer/Singles/upholder/setUphold {uld} keV
+   1	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert adder
+   2	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert readout
+   3	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/readout/setDepth 1
+   4	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert blurring
+   5	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setResolution 0.26
+   6	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/blurring/setEnergyOfReference 511. keV
+   7	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert thresholder
+   8	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/thresholder/setThreshold {lld} keV
+   9	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert upholder
+   10	/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/upholder/setUphold {uld} keV
    #       C O I N C I D E N C E   S O R T E R
-   11	/gate/digitizer/Coincidences/setWindow {CoincWindow} ns
+   11	/gate/digitizerMgr/crystal/CoincidencesDigitizer/Coincidences/setWindow {CoincWindow} ns
 
 Lines 8, 10, and 11 define aliases for the lower level discriminator,
 the upper level discriminator, and the length of the coincidence window, respectively.
@@ -233,29 +232,34 @@ It is worth emphasizing the following points about aliases:
 * Aliases are case sensitive, so **[lld,350]** is not the same as **[LLD,350]**.
 * All aliases in your macro file(s) must be defined when you run Gate. If some are undefined the simulation will fail.
 
-How to launch *DigiGate*
+.. _how_to_run_offline_digi-label-label:
+
+How to launch *DigiGate* or *OFFLINE DIGITIZER*
 ------------------------
 
-GATE offers an operating mode dedicated to digitizer optimization, known as *DigiGate* (see :ref:`digitizer_and_readout_parameters-label`). *DigiGate* works by re-reading a previously generated ROOT hit-file.
+GATE offers an operating mode dedicated to digitizer optimization, known as *DigiGate* or *OFFLINE DIGITIZER*  (see :ref:`digitizer_and_readout_parameters-label`). *DigiGate* works by re-reading a previously generated ROOT hit or singles file.
 
 The use of **DigiGate** consists of two steps. 
 
-* In the first step, the simulation runs according to **MacroTest.mac**. This macro file should save the **Hits** data in the root output file with the name **gate.root** (which is the default name). 
-* In the second step, the digitizer modifications are made in **MacroTest.mac** (like a new module for the energy resolution, or a different dead-time...), and then the analysis is repeated by using the **gate.root** file as an input file for the program **DigiGate**. This is achieved by launching **Gate** with a '-d' option::
+* In the first step, the simulation runs according to **MacroTest.mac**. This macro file should save the **Hits** or **Singles** data in the root output file with the name a **your_gate_output.root**::
 
-    Gate < MacroTest.mac
+  > Gate MacroTest.mac
 
--> a root output file is produced with *Hits* information.
+* In the second step, the digitizer modifications are made in **MacroTest.mac** (like a new module for the energy resolution, or a different dead-time...) if needed, and then the analysis is repeated by using the **your_gate_output.root** file as an input file. This is achieved by launching **Gate** with '-d-fromHits' or '-d-fromSingles' options and the name of a file to take as input::
 
--> the digitizer of MacroTest.mac is changed along with the name of the root output file::
+   Gate MacroTest.mac -d_fromHits your_gate_output.root (to get Hits -> Singles -> Coincidences)
+   
+or::
+   
+   Gate MacroTest.mac -d_fromSingles your_gate_output.root (to get Singles -> Coincidences)
 
-   Gate --d < MacroTest.mac 
-
--> a new root output file is produced which incorporates the changes due to a different digitizer without having to repeat the particle generation and
+-> a new root output file **your_gate_output_digi.root** is produced which incorporates the changes due to a different digitizer without having to repeat the particle generation and
 its propagation.
-user can use the following GATE command to read the hit file replaced the name **gate.root**::
 
-   /gate/hitreader/setFileName FileName
+The digitizer and output parameters will be taken from your macro *MacroTest.mac*.
+
+Only the ROOT output is compatible so far with Offline Digitizer
+
 
 How to separate the phantom and detector tracking - Phase space approach
 ------------------------------------------------------------------------
