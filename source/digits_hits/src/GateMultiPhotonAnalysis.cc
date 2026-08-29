@@ -297,6 +297,15 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
     return;
   }
 
+  // An event without any primary vertex carries no track, hence no hit and no trajectory
+  // container. GateSourceMgr stops generating vertices once the time limit of the run is
+  // reached, so the last event of every run looks exactly like this. There is nothing to
+  // analyse and nothing anomalous about it, so it is skipped quietly instead of being
+  // reported as a missing trajectory container.
+  if (event->GetNumberOfPrimaryVertex() == 0) {
+    return;
+  }
+
   GateRunManager *runManager = GateRunManager::GetRunManager();
   GateSteppingAction *steppingAction = (GateSteppingAction *)(runManager->GetUserSteppingAction());
   TrackingMode mode = steppingAction->GetMode();
