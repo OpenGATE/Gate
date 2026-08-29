@@ -226,6 +226,20 @@ void RunDigitizersIfNeeded() {
   }
 }
 
+//! Runs the digitizer chain when the enclosing scope is left, whichever path is taken.
+//! GateAnalysis calls the digitizer outside of its "no trajectory container" branch, so
+//! whether Singles and Coincidences are produced for an event does not depend on the
+//! analysis being able to process that event. The guard gives the same guarantee here,
+//! where the event is abandoned in more than one place.
+class ScopedDigitizerRunner {
+ public:
+  ScopedDigitizerRunner() = default;
+  ~ScopedDigitizerRunner() { RunDigitizersIfNeeded(); }
+
+  ScopedDigitizerRunner(const ScopedDigitizerRunner &) = delete;
+  ScopedDigitizerRunner &operator=(const ScopedDigitizerRunner &) = delete;
+};
+
 }  // namespace
 
 GateMultiPhotonAnalysis::GateMultiPhotonAnalysis(const G4String &name, GateOutputMgr *outputMgr, DigiMode digiMode)
@@ -297,15 +311,6 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
     return;
   }
 
-  // An event without any primary vertex carries no track, hence no hit and no trajectory
-  // container. GateSourceMgr stops generating vertices once the time limit of the run is
-  // reached, so the last event of every run looks exactly like this. There is nothing to
-  // analyse and nothing anomalous about it, so it is skipped quietly instead of being
-  // reported as a missing trajectory container.
-  if (event->GetNumberOfPrimaryVertex() == 0) {
-    return;
-  }
-
   GateRunManager *runManager = GateRunManager::GetRunManager();
   GateSteppingAction *steppingAction = (GateSteppingAction *)(runManager->GetUserSteppingAction());
   TrackingMode mode = steppingAction->GetMode();
@@ -318,6 +323,18 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
         "GateMultiPhotonAnalysis cannot process the current tracking mode. "
         "Only TrackingMode::kBoth is supported, and continuing would skip the "
         "remaining end-of-event processing, including digitizer output.");
+    return;
+  }
+
+  // From here on the event is digitized whatever happens to the analysis itself.
+  ScopedDigitizerRunner digitizerRunner;
+
+  // An event without any primary vertex carries no track, hence no hit and no trajectory
+  // container. GateSourceMgr stops generating vertices once the time limit of the run is
+  // reached, so the last event of every run looks exactly like this. There is nothing to
+  // analyse and nothing anomalous about it, so it is skipped quietly instead of being
+  // reported as a missing trajectory container.
+  if (event->GetNumberOfPrimaryVertex() == 0) {
     return;
   }
 
@@ -384,8 +401,6 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
         m_trajectoryNavigator);
     ProcessTimeline(&timeline, m_trajectoryNavigator, context, legacyPhotonIDPolicy);
   }
-
-  RunDigitizersIfNeeded();
 }
 
 void GateMultiPhotonAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step *) {
