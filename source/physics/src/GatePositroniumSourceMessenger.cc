@@ -79,7 +79,7 @@ void GatePositroniumSourceMessenger::InitCommands()
  upCmdSetPositroniumLifetimes.reset(GetStringCmd( "setPositroniumLifetimes", "\"t1, t2, t3 .., tn t_unit\" - where ti corresponds to lifetime constants and t_unit is one of the Geant4 time units e.g. ns" ) );
  upCmdSetDecayKinds.reset(GetStringCmd( "setDecayKinds", "\"k1, k2, k3 .., kn\" - where ki is k2Gamma or k3Gamma" ) );
  upCmdSetPositronInteractions.reset(GetStringCmd( "setPositronInteractions", "\"k1, k2, k3 .., kn\" - where ki is kParaPs, kDirect or kOrthoPs, of a given element in vector of components. Used to properly recalculate intensities of the components from the theory" ) );
- upCmdSetPromptPhotonProbabilites.reset(GetStringCmd( "setPromptPhotonProbabilites", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
+ upCmdSetPromptPhotonProbabilities.reset(GetStringCmd( "setPromptPhotonProbabilities", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
  upCmdSetPromptPhotonEnergies.reset(GetStringCmd( "setPromptPhotonEnergies", "\"e1, e2, e3 .., en e_unit\" - where ei are energies and e_unit is one of the Geant4 energy units e.g. MeV" ) );
  upCmdSetMeanPositronRange.reset(GetStringCmd( "setMeanPositronRange", "\"r1, r2, r3 .., rn r_unit\" - where ri are mean positron range and r_unit is one of the Geant 4 distance units e.g. mm " ) );
  upCmdSetElectronCaptureProbabilities.reset(GetStringCmd( "setElectronCaptureProbabilities", "\"f1, f2, f3 .., fn\" - where fi in [0.0, 1.0] " ) );
@@ -123,7 +123,7 @@ void GatePositroniumSourceMessenger::SetNewValue(G4UIcommand *command, G4String 
   } else if (command == upCmdSetPositroniumLifetimes.get()) {
     auto lifetimes = parseListOfParamsWithUnit(new_value);
     fParamGenerator.SetPositroniumLifetimes(lifetimes);
-  } else if (command == upCmdSetPromptPhotonProbabilites.get()) {
+  } else if (command == upCmdSetPromptPhotonProbabilities.get()) {
     std::vector<float> promptPhotonProb;
     std::stringstream ss(new_value);
     float prob;

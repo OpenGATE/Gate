@@ -27,6 +27,7 @@ GateHit::GateHit()
   m_PDGEncoding(0),
   m_trackID(0),
   m_parentID(0),
+  m_sourceID(-1),
   m_systemID(-1),
   m_sourceEnergy(-1),
   m_sourcePDG(0),
