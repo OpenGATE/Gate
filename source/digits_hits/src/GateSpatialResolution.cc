@@ -324,45 +324,87 @@ void GateSpatialResolution::Digitize(){
   			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
   			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
 
+			  if (!m_IsConfined && m_UseTruncatedGaussian)
+			    {
+			      G4cout
+				<< "WARNING: truncated Gaussian is ignored in non-confined mode; "
+				<< "geometry navigation is used for spill-out."
+				<< G4endl;
+			    }
 
-				if (m_UseTruncatedGaussian)
-						  {
-
-							 PxNew = GateDistributionTruncatedGaussian::shootRandom(Px,stddevX,Xmin, Xmax);
-							 PyNew = GateDistributionTruncatedGaussian::shootRandom(Py,stddevY,Ymin, Ymax);
-							 PzNew = GateDistributionTruncatedGaussian::shootRandom(Pz,stddevZ,Zmin, Zmax);
-						  }
-				else{
-
-					PxNew = G4RandGauss::shoot(Px,stddevX);
-					PyNew = G4RandGauss::shoot(Py,stddevY);
-					PzNew = G4RandGauss::shoot(Pz,stddevZ);
-				}
-
-			  if(PxNew<Xmin) PxNew=Xmin;
-			  if(PyNew<Ymin) PyNew=Ymin;
-			  if(PzNew<Zmin) PzNew=Zmin;
-			  if(PxNew>Xmax) PxNew=Xmax;
-			  if(PyNew>Ymax) PyNew=Ymax;
-			  if(PzNew>Zmax) PzNew=Zmax;
-
-			   m_outputDigi->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
-
-			   
-			  m_outputDigi->SetGlobalPos(m_outputDigi->GetVolumeID().MoveToAncestorVolumeFrame(m_outputDigi->GetLocalPos())); //TC
-
-			  G4VPhysicalVolume* PV = m_Navigator->LocateGlobalPointAndSetup(m_outputDigi->GetGlobalPos());
-			  m_Touchable = m_Navigator->CreateTouchableHistoryHandle();
-			  G4int hdepth = m_Touchable->GetHistoryDepth(); // zero always!
-
-			  if ( hdepth == m_systemDepth  )
-			  {
-				  UpdateVolumeID();
-			  }
+			  PxNew = G4RandGauss::shoot(Px,stddevX);
+			  PyNew = G4RandGauss::shoot(Py,stddevY);
+			  PzNew = G4RandGauss::shoot(Pz,stddevZ);
+			  	  
+			       
+			  // unrestricted blurred point in original crystal local frame
+			  G4ThreeVector blurredLocal(PxNew,PyNew,PzNew);
 			  
+			  // transform it to global even if it is outside original crystal
+			  G4ThreeVector blurredGlobal = inputDigi->GetVolumeID().MoveToAncestorVolumeFrame(blurredLocal);
+			  
+			  // NOW locate where the unrestricted point went
+			  G4VPhysicalVolume* PV =	  m_Navigator->LocateGlobalPointAndSetup(blurredGlobal);
+			  
+			  m_Touchable =  m_Navigator->CreateTouchableHistoryHandle();
+
+
+
+
+			  bool landedInCrystal = false;
+
+			  if (PV != nullptr &&
+			      PV->GetLogicalVolume()->GetSensitiveDetector() != nullptr)
+			    {
+			      landedInCrystal = true;
+			    }
+			  
+			  if (landedInCrystal)
+			    {
+			      // Real spill into a valid sensitive crystal:
+			      // don't clamp.
+			      
+			      m_outputDigi->SetGlobalPos(blurredGlobal);
+
+			      // Need to express local position in the NEW crystal frame
+			      G4ThreeVector newLocal =
+				m_Touchable->GetHistory()
+				->GetTopTransform()
+				.TransformPoint(blurredGlobal);
+			      
+			      m_outputDigi->SetLocalPos(newLocal);
+
+			      // update volume IDs
+			      UpdateVolumeID();
+			    }
+			  else
+			    {
+			      // Point landed in dead material:
+			      // NOW apply your border treatment.
+			      
+			      if(PxNew<Xmin) PxNew=Xmin;
+			      if(PyNew<Ymin) PyNew=Ymin;
+			      if(PzNew<Zmin) PzNew=Zmin;
+			      
+			      if(PxNew>Xmax) PxNew=Xmax;
+			      if(PyNew>Ymax) PyNew=Ymax;
+			      if(PzNew>Zmax) PzNew=Zmax;
+			      
+			      m_outputDigi->SetLocalPos(
+							G4ThreeVector(PxNew,PyNew,PzNew)
+							);
+
+			      m_outputDigi->SetGlobalPos(
+							 inputDigi->GetVolumeID()
+							 .MoveToAncestorVolumeFrame(
+										    m_outputDigi->GetLocalPos()
+										    )
+							 );
+
+			      // m_OutputDigiCollection->insert(m_outputDigi);
+			      // Keep original volume ID
+			    }
 			  m_OutputDigiCollection->insert(m_outputDigi);
-
-
 
 		  }
 
@@ -390,11 +432,29 @@ void GateSpatialResolution::Digitize(){
 
 void GateSpatialResolution::UpdateVolumeID()
 {
- for (G4int i=1;i<m_systemDepth;i++)
-		{
-		G4int CopyNo = m_Touchable->GetReplicaNumber(m_systemDepth-1-i);
-		m_outputDigi->ChangeVolumeIDAndOutputVolumeIDValue(i,CopyNo);
-		}
+GateVSystem* system =
+        ((GateSinglesDigitizer*)this->GetDigitizer())->GetSystem();
+
+    // Reconstruct complete geometry path from navigator
+    GateVolumeID newVolumeID(
+        m_Touchable.operator->()
+    );
+
+    // Replace old geometry VolumeID
+    m_outputDigi->SetVolumeID(newVolumeID);
+
+    // Let the cylindricalPET system calculate rsector/module/
+    // submodule/crystal/layer IDs itself
+    m_outputDigi->SetOutputVolumeID(
+        system->ComputeOutputVolumeID(newVolumeID)
+    );
+
+    // Position must now be local to the NEW bottom volume
+    m_outputDigi->SetLocalPos(
+        newVolumeID.MoveToBottomVolumeFrame(
+            m_outputDigi->GetGlobalPos()
+        )
+    );
 }
 
 
