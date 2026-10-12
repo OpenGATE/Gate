@@ -324,13 +324,20 @@ void GateSpatialResolution::Digitize(){
   			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, Ymin, Ymax);
   			  inputDigi->GetVolumeID().GetCreator(m_systemDepth-1)->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, Zmin, Zmax);
 
-			  if (!m_IsConfined && m_UseTruncatedGaussian)
-			    {
-			      G4cout
-				<< "WARNING: truncated Gaussian is ignored in non-confined mode; "
-				<< "geometry navigation is used for spill-out."
-				<< G4endl;
-			    }
+			 if (!m_IsConfined && m_UseTruncatedGaussian)
+			   {
+			     static bool warningPrinted = false;
+
+			     if (!warningPrinted)
+			       {
+				 G4cout
+				   << "WARNING: truncated Gaussian is ignored in non-confined mode; "
+				   << "geometry navigation is used for spill-out."
+				   << G4endl;
+
+				 warningPrinted = true;
+			       }
+			   }
 
 			  PxNew = G4RandGauss::shoot(Px,stddevX);
 			  PyNew = G4RandGauss::shoot(Py,stddevY);
