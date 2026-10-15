@@ -133,16 +133,25 @@ void GateDigitizerInitializationModule::Digitize()
     		  Digi->SetSourcePDG((*inHC)[i]->GetSourcePDG());
     		  Digi->SetNCrystalConv( (*inHC)[i]->GetNCrystalConv() );
 
+    		  // Information from ExtendedVSource plus the interaction counter: they describe
+    		  // the decay and the photon, not the deposit, so they survive digitization
+    		  Digi->SetSourceType( (*inHC)[i]->GetSourceType() );
+    		  Digi->SetDecayType( (*inHC)[i]->GetDecayType() );
+    		  Digi->SetGammaType( (*inHC)[i]->GetGammaType() );
+    		  Digi->SetDecayIndex( (*inHC)[i]->GetDecayIndex() );
+    		  Digi->SetNInteractions( (*inHC)[i]->GetNInteractions() );
+
     		  //-------------------------------------------------
 
+    		    // An empty volume name only means that the output module in use did not
+    		    // fill it, so it is replaced by the "NULL" placeholder. It tells nothing
+    		    // about the source of the event, hence sourceID is left untouched.
     		    if ((*inHC)[i]->GetComptonVolumeName().empty()) {
     		      Digi->SetComptonVolumeName( "NULL" );
-    		      Digi->SetSourceID( -1 );
     		    }
 
     		    if ((*inHC)[i]->GetRayleighVolumeName().empty()) {
     		      Digi->SetRayleighVolumeName( "NULL" );
-    		      Digi->SetSourceID( -1 );
     		    }
 
     		/* //  if (nVerboseLevel>1)

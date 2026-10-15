@@ -514,10 +514,19 @@ bool GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidenceDig
       return;
     }
      */
-    if	( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) && (nGoods==1)) 
+    if	( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) && (nGoods==1))
     {
-      m_OutputCoincidenceDigiCollection->insert(coincidence);
-      return true; 
+      // Store the one good pair, not the multiple it was found in. A GateCoincidenceDigi is a
+      // vector of digis, but the ROOT writer only ever reads GetDigi(0) and GetDigi(1), so an
+      // unsplit multiple would put the first two digis of the window on the output - a pair
+      // IsForbiddenCoincidence had just rejected - and drop the remaining singles silently.
+      // Same loop as in kKillAllIfMultipleGoods below, which already does this correctly.
+      for(i=0; i<(coincidence->IsDelayed()?1:(nDigis-1)); i++)
+        for(j=i+1; j<nDigis; j++)
+          if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
+            m_OutputCoincidenceDigiCollection->insert(CreateSubDigi(coincidence, i, j));
+
+      return false;
     }
     if( (m_multiplesPolicy==kTakeWinnerIfOnlyOneGood) )
      {

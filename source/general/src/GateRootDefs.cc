@@ -478,6 +478,13 @@ void GateRootSingleBuffer::Clear()
   // HDS : septal
   septalNb = 0;
 
+  // Information from  PositroniumSource: zero and -1 mean 'not known', as in the hit buffer
+  sourceType = 0;
+  decayType = 0;
+  gammaType = 0;
+  decayIndex = -1;
+  nInteractions = -1;
+
   // initialize spatial resolution stddev fields
    if(GetSpatialRes2DStdDevFlag())
 	    { 
@@ -551,6 +558,13 @@ void GateRootSingleBuffer::Fill(GateDigi* aDigi)
   // HDS : septal penetration
   septalNb = aDigi->GetNSeptal();
 
+  // Information from  PositroniumSource plus the interaction counter
+  sourceType = aDigi->GetSourceType();
+  decayType = aDigi->GetDecayType();
+  gammaType = aDigi->GetGammaType();
+  decayIndex = aDigi->GetDecayIndex();
+  nInteractions = aDigi->GetNInteractions();
+
 
   if (!GetCCFlag())
    {
@@ -615,6 +629,19 @@ void GateSingleTree::SetBranchAddresses(TTree* singleTree,
 
   if (GateRootDefs::GetRecordSeptalFlag())
     singleTree->SetBranchAddress("septalNb", &buffer.septalNb);
+
+  // Branches added later than the rest, so files written by older versions do not have
+  // them - reading such a file leaves the buffer at its 'not known' value
+  if (singleTree->GetBranch("sourceType"))
+    singleTree->SetBranchAddress("sourceType", &buffer.sourceType);
+  if (singleTree->GetBranch("decayType"))
+    singleTree->SetBranchAddress("decayType", &buffer.decayType);
+  if (singleTree->GetBranch("gammaType"))
+    singleTree->SetBranchAddress("gammaType", &buffer.gammaType);
+  if (singleTree->GetBranch("decayIndex"))
+    singleTree->SetBranchAddress("decayIndex", &buffer.decayIndex);
+  if (singleTree->GetBranch("nInteractions"))
+    singleTree->SetBranchAddress("nInteractions", &buffer.nInteractions);
 
   if (!buffer.GetCCFlag())
   {
@@ -690,6 +717,13 @@ GateDigi* GateRootSingleBuffer::CreateDigi()
 
   // Septal penetration
   aDigi->SetNSeptal(septalNb);
+
+  // Information from  PositroniumSource plus the interaction counter
+  aDigi->SetSourceType(sourceType);
+  aDigi->SetDecayType(decayType);
+  aDigi->SetGammaType(gammaType);
+  aDigi->SetDecayIndex(decayIndex);
+  aDigi->SetNInteractions(nInteractions);
 
   if (!GetCCFlag())
   {
@@ -770,6 +804,15 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 	  // HDS : record septal penetration
 	  if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
 
+  // Information from  PositroniumSource plus the interaction counter, propagated from the hit.
+  // The same branches exist in the Hits tree; nInteractions is filled by
+  // GateMultiPhotonAnalysis only and stays at -1 on the classical GateAnalysis path.
+  Branch("sourceType",    &buffer.sourceType,"sourceType/I");
+  Branch("decayType",     &buffer.decayType,"decayType/I");
+  Branch("gammaType",     &buffer.gammaType,"gammaType/I");
+  Branch("decayIndex",    &buffer.decayIndex,"decayIndex/I");
+  Branch("nInteractions", &buffer.nInteractions,"nInteractions/I");
+
   if (!buffer.GetCCFlag())
    {
 	  if ( GateDigi::GetSingleASCIIMask(12) )
@@ -843,6 +886,11 @@ void GateRootCoincBuffer::Clear()
   RayleighCrystal1 = -1;
   strcpy (comptonVolumeName1," ");
   strcpy (RayleighVolumeName1," ");
+  sourceType1     = 0;
+  decayType1      = 0;
+  gammaType1      = 0;
+  decayIndex1     = -1;
+  nInteractions1  = -1;
 
   eventID2        = -1;
   sourceID2       = -1;
@@ -863,7 +911,12 @@ void GateRootCoincBuffer::Clear()
   RayleighCrystal2 = -1;
   strcpy (comptonVolumeName2," ");
   strcpy (RayleighVolumeName2," ");
-  
+  sourceType2     = 0;
+  decayType2      = 0;
+  gammaType2      = 0;
+  decayIndex2     = -1;
+  nInteractions2  = -1;
+
   if(GetSpatialRes2DStdDevFlag())
 	    { 
 	      // initialize spatial resolution stddev fields for coincidences
@@ -903,6 +956,11 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 
     strcpy (comptonVolumeName1,((aDigi->GetDigi(0))->GetComptonVolumeName()).c_str());
     strcpy (RayleighVolumeName1,((aDigi->GetDigi(0))->GetRayleighVolumeName()).c_str());
+    sourceType1    = (aDigi->GetDigi(0))->GetSourceType();
+    decayType1     = (aDigi->GetDigi(0))->GetDecayType();
+    gammaType1     = (aDigi->GetDigi(0))->GetGammaType();
+    decayIndex1    = (aDigi->GetDigi(0))->GetDecayIndex();
+    nInteractions1 = (aDigi->GetDigi(0))->GetNInteractions();
 
     eventID2       = (aDigi->GetDigi(1))->GetEventID();
     sourceID2      = (aDigi->GetDigi(1))->GetSourceID();
@@ -924,6 +982,11 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 
     strcpy (comptonVolumeName2,((aDigi->GetDigi(1))->GetComptonVolumeName()).c_str());
     strcpy (RayleighVolumeName2,((aDigi->GetDigi(1))->GetRayleighVolumeName()).c_str());
+    sourceType2    = (aDigi->GetDigi(1))->GetSourceType();
+    decayType2     = (aDigi->GetDigi(1))->GetDecayType();
+    gammaType2     = (aDigi->GetDigi(1))->GetGammaType();
+    decayIndex2    = (aDigi->GetDigi(1))->GetDecayIndex();
+    nInteractions2 = (aDigi->GetDigi(1))->GetNInteractions();
 
 
     if(GetSpatialRes2DStdDevFlag())
@@ -1086,6 +1149,20 @@ void GateCoincTree::Init(GateRootCoincBuffer& buffer)
     Branch("RayleighVolName1",  (void *)buffer.RayleighVolumeName1,"RayleighVolName1/C");
   if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(21) )
     Branch("RayleighVolName2",  (void *)buffer.RayleighVolumeName2,"RayleighVolName2/C");
+
+  // Information from PositroniumSource plus the interaction counter, propagated from the hit
+  // through the digi of each arm; same branches as in the Singles tree, with the 1/2 suffix
+  Branch("sourceType1",    &buffer.sourceType1,"sourceType1/I");
+  Branch("decayType1",     &buffer.decayType1,"decayType1/I");
+  Branch("gammaType1",     &buffer.gammaType1,"gammaType1/I");
+  Branch("decayIndex1",    &buffer.decayIndex1,"decayIndex1/I");
+  Branch("nInteractions1", &buffer.nInteractions1,"nInteractions1/I");
+
+  Branch("sourceType2",    &buffer.sourceType2,"sourceType2/I");
+  Branch("decayType2",     &buffer.decayType2,"decayType2/I");
+  Branch("gammaType2",     &buffer.gammaType2,"gammaType2/I");
+  Branch("decayIndex2",    &buffer.decayIndex2,"decayIndex2/I");
+  Branch("nInteractions2", &buffer.nInteractions2,"nInteractions2/I");
 }
 
 

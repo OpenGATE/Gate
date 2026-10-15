@@ -235,9 +235,9 @@ class GateRootHitBuffer
     Char_t   RayleighVolumeName[40];   	      	//!< Name of the last phantom-volume generating a Rayleigh
     Int_t    volumeID[ROOT_VOLUMEIDSIZE];     	//!< Volume ID
     Int_t    septalNb;							//!< HDS : septal penetration
-    Int_t sourceType = 0; //Type of gamma source (check ExtendedVSource)
-    Int_t decayType = 0; //Type of positronium decay (check ExtendedVSource)
-    Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check ExtendedVSource)
+    Int_t sourceType = 0; //Type of gamma source (check PositroniumSource)
+    Int_t decayType = 0; //Type of positronium decay (check PositroniumSource)
+    Int_t gammaType = 0; //Gamma type - single, annhilation, prompt (check PositroniumSource)
     Int_t decayIndex = -1; //Decay channel index
     //OK GND for CC
     G4bool m_CCflag;
@@ -343,6 +343,14 @@ class GateRootSingleBuffer
     Float_t  energyIni;
 
     Int_t    septalNb;							//!< HDS : septal penetration
+
+    // Information from PositroniumSource, propagated from the hit through GateDigi
+    Int_t    sourceType;        //!< Type of gamma source (check PositroniumSource)
+    Int_t    decayType;         //!< Type of positronium decay (check PositroniumSource)
+    Int_t    gammaType;         //!< Gamma type - single, annihilation, prompt (check PositroniumSource)
+    Int_t    decayIndex;        //!< Decay channel index
+    Int_t    nInteractions;     //!< Number of Compton and Rayleigh interactions; -1 when not computed
+
     // Spatial resolution standard deviations (from 2D FWHM distribution) in mm
     Float_t  spatialRes2DStdDevX;
     Float_t  spatialRes2DStdDevY;
@@ -429,6 +437,11 @@ class GateRootCoincBuffer
     Int_t    RayleighCrystal1;   
     Char_t   comptonVolumeName1[40];
     Char_t   RayleighVolumeName1[40];
+    Int_t    sourceType1;       //!< Type of gamma source (check PositroniumSource)
+    Int_t    decayType1;        //!< Type of positronium decay (check PositroniumSource)
+    Int_t    gammaType1;        //!< Gamma type - single, annihilation, prompt (check PositroniumSource)
+    Int_t    decayIndex1;       //!< Decay channel index
+    Int_t    nInteractions1;    //!< Number of Compton and Rayleigh interactions; -1 when not computed
 
     Int_t    eventID2;
     Int_t    sourceID2;
@@ -447,6 +460,11 @@ class GateRootCoincBuffer
     Int_t    RayleighCrystal2;    
     Char_t   comptonVolumeName2[40];
     Char_t   RayleighVolumeName2[40];
+    Int_t    sourceType2;       //!< Type of gamma source (check PositroniumSource)
+    Int_t    decayType2;        //!< Type of positronium decay (check PositroniumSource)
+    Int_t    gammaType2;        //!< Gamma type - single, annihilation, prompt (check PositroniumSource)
+    Int_t    decayIndex2;       //!< Decay channel index
+    Int_t    nInteractions2;    //!< Number of Compton and Rayleigh interactions; -1 when not computed
 
     // Spatial resolution standard deviations (averaged from both digis) in mm
     Float_t  spatialRes2DStdDevX;

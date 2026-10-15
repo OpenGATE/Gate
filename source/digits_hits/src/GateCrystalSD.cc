@@ -363,18 +363,33 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
 
 //------------------------------------------------------------------------------
+//! Asked before the SD is built, so that a refused attachment leaves nothing behind.
+//! The message keeps its original wording and prefix: user macros and logs may match on it.
+G4bool GateCrystalSD::CanAttachToCreator(GateVVolume* aCreator)
+{
+   if (GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator->GetCreator())) {
+      return true;
+   }
+
+   G4cout  << Gateendl << Gateendl << "[GateCrystalSD::PrepareCreatorAttachment]:\n"
+         << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
+         << "Your volume must belong to a system to be used with a crystalSD.\n"
+         << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
+   return false;
+}
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
 //! Next method underwent an important modification to be compatible with the multi-system approach
 G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 {
 
-   GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator->GetCreator());
-   if (!creatorSystem) {
-      G4cout  << Gateendl << Gateendl << "[GateCrystalSD::PrepareCreatorAttachment]:\n"
-            << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
-            << "Your volume must belong to a system to be used with a crystalSD.\n"
-            << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
+   if (!CanAttachToCreator(aCreator)) {
       return -1;
    }
+
+   GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator->GetCreator());
 
    if (!m_systemList)
    {

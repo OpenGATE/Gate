@@ -11,6 +11,7 @@ See LICENSE.md for further details
 
 #include "G4ThreeVector.hh"
 
+#include <cstddef>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -33,6 +34,16 @@ class G4TrajectoryContainer;
  */
 class GateMultiPhotonTrajectoryNavigator {
  public:
+  /**
+   * @brief Maximum number of reference photons kept for a single event.
+   *
+   * Four is the largest number GatePositroniumSource can emit from one decay: an ortho
+   * positronium decay gives three annihilation gammas and the source may additionally emit
+   * a prompt (de-excitation) gamma. Reference photons above this limit are dropped with
+   * a warning. If a more complex process is ever simulated, this limit has to be raised.
+   */
+  static constexpr std::size_t kMaxReferencePhotons = 4;
+
   /**
    * @brief Constructs an empty event-scoped navigator.
    */
@@ -68,6 +79,17 @@ class GateMultiPhotonTrajectoryNavigator {
    *   Reference photon track identifiers.
    */
   std::vector<int> FindReferencePhotonTrackIDs() const;
+
+  /**
+   * @brief Tells whether a track is itself a reference photon.
+   *
+   * Args:
+   *   trackID: Track identifier to check.
+   *
+   * Returns:
+   *   True when the track belongs to the reference photon set of the current event.
+   */
+  bool IsReferencePhoton(int trackID) const;
 
   /**
    * @brief Resolves ancestor reference photon for a track.

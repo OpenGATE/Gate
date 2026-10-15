@@ -88,6 +88,12 @@ class GateCrystalSD : public G4VSensitiveDetector
 
       G4int PrepareCreatorAttachment(GateVVolume* aCreator);
 
+      //! Tells whether a crystal SD may be attached to this volume, i.e. whether the volume
+      //! belongs to a system, and explains on G4cout when it may not. Has to be asked
+      //! *before* the SD is built: the constructor registers the SD in GateDigitizerMgr and
+      //! nothing takes it back, so a refused attachment would still leave a collection behind.
+      static G4bool CanAttachToCreator(GateVVolume* aCreator);
+
   protected:
      GateVSystem* m_system;                           //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach
      GateSystemList* m_systemList = nullptr;          //! System list instead of one system

@@ -196,6 +196,67 @@ generation (Poisson law). Gate generates the time delay from the
 previous event, if it is out of the time slice it stops the event 
 processing for the current time slice and if needed it starts a new time slice.
 
+.. _analysis_output_modules-label:
+
+Analysis output modules
+-----------------------
+
+A sensitive detector records the energy deposit, the position and the process name of every hit, but not the Monte Carlo information describing the *history* of the detected photon: the event and source it belongs to, how many times it scattered in the phantom and in the crystal before being absorbed, and in which volume the last scattering took place.
+Those attributes are filled at the end of each event by an **analysis output module**, which then triggers the digitizer, so every Single and every Coincidence inherits them.
+
+Three modules implement that step and they are mutually exclusive: **exactly one has to be enabled** whenever Singles or Coincidences are written. With none of them enabled GATE stops the simulation with::
+
+   ***ERROR*** Digitizer Manager is not initialized properly. Please, enable analysis,
+   fastanalysis or multianalysis Output Modules to write down Singles or Coincidences.
+
+.. list-table:: Analysis output modules
+   :widths: 22 30 48
+   :header-rows: 1
+   :name: analysis_output_modules_table
+
+   * - Module
+     - Command
+     - Purpose
+   * - ``analysis``
+     - ``/gate/output/analysis/enable`` (enabled by default)
+     - Reference implementation. Fills every attribute, but assigns the interaction counters only to the two annihilation gammas of an event.
+   * - ``fastanalysis``
+     - ``/gate/output/fastanalysis/enable``
+     - Speed-oriented variant. Fills only ``runID``, ``eventID`` and ``sourceID``; every other attribute is set to ``-1`` or ``"NULL"`` to mark it as not computed.
+   * - ``multianalysis``
+     - ``/gate/output/multianalysis/enable``
+     - Multi-photon variant, see below. Fills the same attributes as ``analysis`` plus ``nInteractions``, and does so for every emitted gamma.
+
+Remember to disable the module you are replacing, since ``analysis`` is enabled by default::
+
+   /gate/output/analysis/disable
+   /gate/output/fastanalysis/disable
+   /gate/output/multianalysis/enable
+
+The multi-photon analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``GateMultiPhotonAnalysis`` targets sources that emit more than two gammas per decay - ortho-positronium, which decays into three gammas, and de-excitation (prompt) gammas emitted alongside the annihilation pair. ``GateAnalysis`` resolves exactly two annihilation gammas per event, so hits belonging to a third gamma or to a prompt gamma keep zeroed counters; ``multianalysis`` builds the set of reference photons from the event itself and follows each of them separately.
+
+For decays into two gammas both modules agree: ``eventID``, ``trackID``, ``parentID``, ``processName``, ``nPhantomCompton``, ``nCrystalCompton``, ``nPhantomRayleigh``, ``nCrystalRayleigh``, ``comptVolName`` and ``RayleighVolName`` are filled identically.
+
+Three differences are deliberate:
+
+* ``nInteractions`` is filled **only** by ``multianalysis``. It counts the Compton and Rayleigh scatterings along the path of the photon, the current hit included, and grows along the whole history of that photon. On the ``analysis`` and ``fastanalysis`` paths the branch stays at ``-1``, which means "not computed".
+* ``photonID`` is always ``0``. In ``GateAnalysis`` the field distinguishes the first from the second annihilation gamma, which has no meaning once an event may contain three gammas or a prompt gamma; ``trackID`` identifies the photon instead.
+* septal penetration is configured through the ``analysis`` module even when it is disabled. ``/gate/output/analysis/setSeptalVolumeName`` and ``/gate/output/analysis/recordSeptalPenetration`` keep working, and ``multianalysis`` reads that configuration to fill ``septalNb`` exactly like ``GateAnalysis`` does.
+
+A typical macro looks like this::
+
+   /gate/output/analysis/disable
+   /gate/output/fastanalysis/disable
+   /gate/output/multianalysis/enable
+
+   /gate/output/root/enable
+   /gate/output/root/setFileName data
+   /gate/output/root/setRootHitFlag     1
+   /gate/output/root/setRootSinglesFlag 1
+
 .. _root_output-label:
 
 Root output
@@ -231,6 +292,46 @@ If you want to disable the whole ROOT output, just do not call it, or use the fo
 
    /gate/output/root/disable
 
+
+.. _decay_branches_root_output-label:
+
+Branches describing the decay and the interaction counters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``PositroniumSource`` attaches four integer fields to every emitted gamma: ``sourceType``, ``decayType``, ``gammaType`` and ``decayIndex``. Their values are listed in :ref:`positronium_source_branches-label`. A fifth field, ``nInteractions``, counts the Compton and Rayleigh scatterings along the path of the photon and is filled by the ``multianalysis`` output module (``GateMultiPhotonAnalysis``) only.
+
+All five fields describe the decay and the photon rather than the individual energy deposit, so they survive digitization and are written to the three ROOT trees:
+
+.. list-table:: Branches propagated to the ROOT trees
+   :widths: 20 40 40
+   :header-rows: 1
+   :name: decay_branches_root_trees
+
+   * - Tree
+     - Branch names
+     - Source of the value
+   * - ``Hits``
+     - ``sourceType``, ``decayType``, ``gammaType``, ``decayIndex``, ``nInteractions``
+     - the hit itself
+   * - ``Singles``
+     - same names
+     - copied from the hit, then merged by the digitizer
+   * - ``Coincidences``
+     - same names with the ``1`` and ``2`` suffix, one per arm
+     - the two digis forming the pair
+
+Merging rules follow the convention already used for ``sourceEnergy`` and ``sourcePDG``:
+
+* ``sourceType`` and ``decayIndex`` describe the decay, and all gammas of one event come from the same decay, so merging cannot produce a conflict;
+* ``decayType`` and ``gammaType`` describe a single gamma. When hits of gammas of different kinds are merged in one crystal - an annihilation gamma and a prompt gamma, for instance - the value falls back to the "not known" value of the enum, that is ``0``;
+* ``decayIndex`` falls back to ``-1`` for the same reason;
+* ``nInteractions`` is merged with the maximum, like ``nPhantomCompton``.
+
+Files written by older versions of GATE do not contain these branches in ``Singles`` and ``Coincidences``; reading such a file keeps the buffer at its "not known" value instead of failing.
+
+.. note::
+
+   The unified tree output (:ref:`new_unified_tree_output_general_set-label`) writes ``sourceType``, ``decayType``, ``gammaType`` and ``decayIndex`` for hits only, and does not write ``nInteractions`` at all. Use the ROOT output described here if you need those fields at the Singles or Coincidences level.
 
 Using TBrowser To Browse ROOT Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
