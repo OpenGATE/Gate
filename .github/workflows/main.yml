@@ -261,7 +261,8 @@ jobs:
                         t31_vpgTLE-tt,
                         t32_isotopes,
                         t33_invert_filter,
-                        t34_biodose_actor]
+                        t34_biodose_actor,
+                        t35_positronium_source]
 
     steps:
     - name: Checkout github repo
