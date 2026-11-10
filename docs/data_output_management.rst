@@ -300,7 +300,11 @@ Branches describing the decay and the interaction counters
 
 ``PositroniumSource`` attaches four integer fields to every emitted gamma: ``sourceType``, ``decayType``, ``gammaType`` and ``decayIndex``. Their values are listed in :ref:`positronium_source_branches-label`. A fifth field, ``nInteractions``, counts the Compton and Rayleigh scatterings along the path of the photon and is filled by the ``multianalysis`` output module (``GateMultiPhotonAnalysis``) only.
 
-All five fields describe the decay and the photon rather than the individual energy deposit, so they survive digitization and are written to the three ROOT trees:
+All five fields describe the decay and the photon rather than the individual energy deposit, so they survive digitization and can be written to the three ROOT trees. In the ``Hits`` tree they are always present. In the ``Singles`` and ``Coincidences`` trees they are **not written by default** and have to be requested with::
+
+   /gate/output/root/PositroniumSourceOutput true
+
+The command works like ``/gate/output/root/SpRes2DStdDevOutput``: it adds the branches to every ``Singles`` and ``Coincidences`` tree of the ROOT output and has no effect on the ``Hits`` tree. The five branches are switched together.
 
 .. list-table:: Branches propagated to the ROOT trees
    :widths: 20 40 40
@@ -313,10 +317,10 @@ All five fields describe the decay and the photon rather than the individual ene
    * - ``Hits``
      - ``sourceType``, ``decayType``, ``gammaType``, ``decayIndex``, ``nInteractions``
      - the hit itself
-   * - ``Singles``
+   * - ``Singles`` (with ``PositroniumSourceOutput``)
      - same names
      - copied from the hit, then merged by the digitizer
-   * - ``Coincidences``
+   * - ``Coincidences`` (with ``PositroniumSourceOutput``)
      - same names with the ``1`` and ``2`` suffix, one per arm
      - the two digis forming the pair
 
@@ -327,7 +331,7 @@ Merging rules follow the convention already used for ``sourceEnergy`` and ``sour
 * ``decayIndex`` falls back to ``-1`` for the same reason;
 * ``nInteractions`` is merged with the maximum, like ``nPhantomCompton``.
 
-Files written by older versions of GATE do not contain these branches in ``Singles`` and ``Coincidences``; reading such a file keeps the buffer at its "not known" value instead of failing.
+Files written without ``PositroniumSourceOutput``, or by older versions of GATE, do not contain these branches in ``Singles`` and ``Coincidences``; reading such a file keeps the buffer at its "not known" value instead of failing.
 
 .. note::
 
