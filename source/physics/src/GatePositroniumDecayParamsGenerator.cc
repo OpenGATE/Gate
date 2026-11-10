@@ -122,7 +122,7 @@ void GatePositroniumDecayParamsGenerator::validatePositroniumDecayParams(const P
     GateError(
         "GatePositroniumDecayParamsGenerator::generatePositroniumDecayParams: "
         "number of provided parameters in Fractions, PromptGamma, Lifetimes, "
-        "Gamma Energies, Electron Capture Probabilites are not the same");
+        "Gamma Energies, Electron Capture Probabilities are not the same");
   }
   if (params.fPositronInteractions.empty())
     GateWarning("PositroniumSource: setPositronInteractions was not called. "

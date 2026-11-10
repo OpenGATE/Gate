@@ -822,7 +822,7 @@ Required commands
 ``/gate/source/NAME/setPositroniumLifetimes t1 t2 ... tn unit``
    Lifetime of each component. The last token is a Geant4 time unit such as ``ns``.
 
-``/gate/source/NAME/setPromptPhotonProbabilites p1 p2 ... pn``
+``/gate/source/NAME/setPromptPhotonProbabilities p1 p2 ... pn``
    Probability of prompt-gamma emission for each component. Values are restricted to the ``[0, 1]`` range by the messenger.
 
 ``/gate/source/NAME/setPromptPhotonEnergies e1 e2 ... en unit``
@@ -855,7 +855,7 @@ Optional commands
 
 .. note::
 
-   The current implementation requires both ``setPromptPhotonProbabilites`` and ``setPromptPhotonEnergies`` even when the prompt-gamma probability is zero for all components. A common convention is to set the corresponding energies to ``0``.
+   The current implementation requires both ``setPromptPhotonProbabilities`` and ``setPromptPhotonEnergies`` even when the prompt-gamma probability is zero for all components. A common convention is to set the corresponding energies to ``0``.
 
 Event timing and generated vertices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -958,7 +958,7 @@ The example below defines a two-component source with explicit 2-gamma and 3-gam
    /gate/source/psSource/setPositroniumLifetimes 0.125 142.0 ns
    /gate/source/psSource/setDecayKinds k2Gamma k3Gamma
    /gate/source/psSource/setPositronInteractions kParaPs kOrthoPs
-   /gate/source/psSource/setPromptPhotonProbabilites 1.0 1.0
+   /gate/source/psSource/setPromptPhotonProbabilities 1.0 1.0
    /gate/source/psSource/setPromptPhotonEnergies 1.274 1.274 MeV
    /gate/source/psSource/setElectronCaptureProbabilities 0.0 0.0
    /gate/source/psSource/setMeanPositronRange 0.2 0.2 mm

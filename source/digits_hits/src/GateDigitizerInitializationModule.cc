@@ -135,14 +135,15 @@ void GateDigitizerInitializationModule::Digitize()
 
     		  //-------------------------------------------------
 
+    		    // An empty volume name only means that the output module in use did not
+    		    // fill it, so it is replaced by the "NULL" placeholder. It tells nothing
+    		    // about the source of the event, hence sourceID is left untouched.
     		    if ((*inHC)[i]->GetComptonVolumeName().empty()) {
     		      Digi->SetComptonVolumeName( "NULL" );
-    		      Digi->SetSourceID( -1 );
     		    }
 
     		    if ((*inHC)[i]->GetRayleighVolumeName().empty()) {
     		      Digi->SetRayleighVolumeName( "NULL" );
-    		      Digi->SetSourceID( -1 );
     		    }
 
     		/* //  if (nVerboseLevel>1)

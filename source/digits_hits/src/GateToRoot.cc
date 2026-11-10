@@ -628,9 +628,17 @@ void GateToRoot::RecordEndOfAcquisition() {
 
        // m_hfile = m_treeHit->GetCurrentFile();
 
-    	// Get file only for the 1st tree as it is the same file for all trees
-    	m_hfile = m_treesHit[0]->GetCurrentFile();
+    	// Get file only for the 1st tree as it is the same file for all trees.
+    	// The vector may be empty here: RecordEndOfRun() drops the trees (it saves the
+    	// current file beforehand) and a setup without any sensitive detector never fills
+    	// it. In both cases m_hfile already points to the file to be written.
+    	if (!m_treesHit.empty() && m_treesHit[0])
+    		m_hfile = m_treesHit[0]->GetCurrentFile();
 
+        if (!m_hfile) {
+            G4cerr << "GateToRoot::RecordEndOfAcquisition(): no ROOT file to write !\n";
+            return;
+        }
 
         if (nVerboseLevel > 0)
             G4cout << "GateToRoot: ROOT: files writing...\n";
@@ -685,6 +693,12 @@ void GateToRoot::RecordEndOfRun(const G4Run *) {
         G4cout << "GateToRoot::RecordEndOfRun\n";
 
     nbPrimaries -= 1.; // Number of primaries increase too much at each end of run !
+
+    // ROOT may have switched to another file while the run was written (files are split
+    // above 1.9 GBytes), so remember where the trees actually live before dropping them -
+    // RecordEndOfAcquisition() has no tree left to ask.
+    if (!m_treesHit.empty() && m_treesHit[0])
+        m_hfile = m_treesHit[0]->GetCurrentFile();
 
     m_hitBuffers.clear();
     m_treesHit.clear();
