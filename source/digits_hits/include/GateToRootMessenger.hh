@@ -52,6 +52,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 
     G4UIcmdWithoutParameter* ResetCmd;
     G4UIcmdWithABool*        RootSpRes2DStdDevCmd;
+    G4UIcmdWithABool*        RootPositroniumSourceCmd;
     G4UIcmdWithABool*        RootCCCmd;
     G4UIcmdWithABool*        RootCCSourceParentIDSpecificationCmd;
     G4UIcmdWithABool*        RootHitCmd;

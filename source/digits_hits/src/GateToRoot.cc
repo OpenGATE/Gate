@@ -114,6 +114,7 @@ GateToRoot::GateToRoot(const G4String &name, GateOutputMgr *outputMgr, DigiMode 
     */
     m_rootCCFlag=false;
     m_rootSpRes2DStdDevFlag=false;
+    m_rootPositroniumSourceFlag=false;
     m_isEnabled = false; // Keep this flag false: all output are disabled by default
     nVerboseLevel = 0;
 
@@ -336,6 +337,7 @@ void GateToRoot::BookBeginOfRun() {
     {
     	 m_outputChannelList[i]->SetCCFlag(GetRootCCFlag());
 	 m_outputChannelList[i]->SetSpatialRes2DStdDevFlag(GetRootSpRes2DStdDevFlag());
+	 m_outputChannelList[i]->SetPositroniumSourceFlag(GetRootPositroniumSourceFlag());
         m_outputChannelList[i]->Book();
 
     }
