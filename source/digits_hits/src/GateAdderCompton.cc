@@ -226,6 +226,8 @@ GateDigi* GateAdderCompton::CentroidMergeCompton(GateDigi *right, GateDigi *outp
     	output->m_nSeptal 	= right->m_nSeptal;
     }
 
+    MergeEmittedGammaInformation(right, output);
+
     // VolumeID: should be identical for both pulses, we do nothing
     // m_scannerPos: identical for both pulses, nothing to do
     // m_scannerRotAngle: identical for both pulses, nothing to do

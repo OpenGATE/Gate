@@ -385,6 +385,17 @@ void GateVVolume::AttachCrystalSD() {
    // GateCrystalSD *crystalSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetCrystalSD();
 
 
+    // Check whether this attachment is allowed or forbidden *before* building the SD: the
+    // GateCrystalSD constructor registers the detector in GateDigitizerMgr and nothing takes
+    // it back, so a refused attachment used to leave an empty hit collection behind. That
+    // collection renames the ROOT trees from Hits to Hits_<SD name> and changes the default
+    // name of the singles collection, which in turn breaks macros using a CoincidenceSorter.
+    if (!GateCrystalSD::CanAttachToCreator(this)) {
+        G4cout << "[GateVVolume::AttachCrystalSD]:\n"
+               << "Can not attach crystalSD!\n";
+        return;
+    }
+
     // OK GND 2022
     //----
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
@@ -394,7 +405,7 @@ void GateVVolume::AttachCrystalSD() {
     SDman->AddNewDetector(crystalSD);
     //----
 
-    // Check whether this attachement is allowed or forbidden
+    // Registers the system of this volume in the SD; cannot fail, the check above passed
     if (crystalSD->PrepareCreatorAttachment(this)) {
         G4cout << "[GateVVolume::AttachCrystalSD]:\n"
                << "Can not attach crystalSD!\n";

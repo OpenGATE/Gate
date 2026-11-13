@@ -39,6 +39,11 @@ GateDigi::GateDigi(const void* itsMother):
       #ifdef GATE_USE_OPTICAL
       m_optical(false),
       #endif
+      m_sourceType(0),
+      m_decayType(0),
+      m_gammaType(0),
+      m_decayIndex(-1),
+      m_nInteractions(-1),
       m_energyError(0.0),
       m_globalPosError(0.0),
       m_localPosError(0.0),

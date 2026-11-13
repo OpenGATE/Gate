@@ -40,6 +40,11 @@ public:
   GateDigi* CentroidMerge(GateDigi* right, GateDigi* output );
   GateDigi* MergePositionEnergyWin(GateDigi *right, GateDigi *output);
 
+  //! Merge the fields describing the decay, the kind of gamma and the interaction counter.
+  //! Shared by every adder so that all of them follow the same rule; see the definition
+  //! for the rule itself.
+  static void MergeEmittedGammaInformation(GateDigi *right, GateDigi *output);
+
 
 
   //! Method overloading GateClockDependent::Describe()

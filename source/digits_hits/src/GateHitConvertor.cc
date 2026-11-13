@@ -179,14 +179,15 @@ void GateHitConvertor::ProcessOneHit(const GateHit* hit,GatePulseList* pulseList
      
 
 
+  // An empty volume name only means that the output module in use did not fill it,
+  // so it is replaced by the "NULL" placeholder. It tells nothing about the source
+  // of the event, hence sourceID is left untouched.
   if (hit->GetComptonVolumeName().empty()) {
     pulse->SetComptonVolumeName( "NULL" );
-    pulse->SetSourceID( -1 );
   }
 
   if (hit->GetRayleighVolumeName().empty()) {
     pulse->SetRayleighVolumeName( "NULL" );
-    pulse->SetSourceID( -1 );
   }
 
   if (nVerboseLevel>1)

@@ -16,6 +16,9 @@ See LICENSE.md for further details
 
 #include "G4ios.hh"
 
+#include <algorithm>
+#include <vector>
+
 GateMultiPhotonTrajectoryNavigator::GateMultiPhotonTrajectoryNavigator()
     : m_tc(0),
       m_positronTrackID(0),
@@ -111,6 +114,10 @@ std::vector<int> GateMultiPhotonTrajectoryNavigator::FindReferencePhotonTrackIDs
   return out;
 }
 
+bool GateMultiPhotonTrajectoryNavigator::IsReferencePhoton(int trackID) const {
+  return m_referencePhotonTrackIDs.find(trackID) != m_referencePhotonTrackIDs.end();
+}
+
 int GateMultiPhotonTrajectoryNavigator::FindAncestorPhotonTrackID(int trackID) const {
   return MultiphotonTrajectoryResolver::ResolveAncestorPhotonTrackID(
       trackID,
@@ -141,6 +148,12 @@ void GateMultiPhotonTrajectoryNavigator::Reset() {
 }
 
 void GateMultiPhotonTrajectoryNavigator::BuildReferencePhotonSet() {
+  // Reference photons are gammas that either start the event (primary particles - this covers
+  // GatePositroniumSource, back-to-back and single gamma sources, including the prompt gamma)
+  // or are produced by the positron (ion sources with radioactive decay, e+ sources).
+  // No common-vertex criterion is applied: the prompt gamma and the annihilation gammas are
+  // emitted from two different vertices whenever the positron range is enabled.
+  std::vector<int> candidates;
   for (std::unordered_map<int, int>::const_iterator it = m_pdgByTrack.begin(); it != m_pdgByTrack.end(); ++it) {
     const int track_id = it->first;
     const int pdg = it->second;
@@ -154,27 +167,22 @@ void GateMultiPhotonTrajectoryNavigator::BuildReferencePhotonSet() {
     }
 
     const int parent_id = parent_it->second;
-
-    if (m_positronTrackID != 0) {
-      if (parent_id == m_positronTrackID) {
-        m_referencePhotonTrackIDs.insert(track_id);
-      }
-    } else {
-      bool is_reference_photon = false;
-      if (parent_id == 0) {
-        is_reference_photon = true;
-      } else if (m_ionID != 0 && parent_id == m_ionID) {
-        is_reference_photon = true;
-      } else {
-        const std::unordered_map<int, int>::const_iterator parent_pdg_it = m_pdgByTrack.find(parent_id);
-        if (parent_pdg_it != m_pdgByTrack.end() && parent_pdg_it->second == kPositronPDG) {
-          is_reference_photon = true;
-        }
-      }
-
-      if (is_reference_photon) {
-        m_referencePhotonTrackIDs.insert(track_id);
-      }
+    const bool is_primary = (parent_id == 0);
+    const bool comes_from_positron = (m_positronTrackID != 0) && (parent_id == m_positronTrackID);
+    if (is_primary || comes_from_positron) {
+      candidates.push_back(track_id);
     }
   }
+
+  // Deterministic order, so that the cut below always keeps the same photons.
+  std::sort(candidates.begin(), candidates.end());
+
+  if (candidates.size() > kMaxReferencePhotons) {
+    G4cout << "GateMultiPhotonTrajectoryNavigator::BuildReferencePhotonSet: WARNING found "
+           << candidates.size() << " reference photons, keeping the first " << kMaxReferencePhotons
+           << " (by track ID). Raise kMaxReferencePhotons if this process is expected." << G4endl;
+    candidates.resize(kMaxReferencePhotons);
+  }
+
+  m_referencePhotonTrackIDs.insert(candidates.begin(), candidates.end());
 }

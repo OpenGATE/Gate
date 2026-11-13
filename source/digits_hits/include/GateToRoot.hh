@@ -185,6 +185,10 @@ public:
         inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
         inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
         G4bool m_SpatialRes2DStdDevFlag;
+
+        inline void SetPositroniumSourceFlag (G4bool val) {m_PositroniumSourceFlag=val;}
+        inline G4bool GetPositroniumSourceFlag () {return m_PositroniumSourceFlag;}
+        G4bool m_PositroniumSourceFlag = false;
      
       
 
@@ -250,6 +254,7 @@ public:
 
             	m_buffer.SetCCFlag(GetCCFlag());
 		m_buffer.SetSpatialRes2DStdDevFlag(GetSpatialRes2DStdDevFlag());
+		m_buffer.SetPositroniumSourceFlag(GetPositroniumSourceFlag());
             	m_tree->Init(m_buffer);
             }
         }
@@ -302,6 +307,7 @@ public:
 
                 m_tree = new GateCoincTree(treeName);
 		m_buffer.SetSpatialRes2DStdDevFlag(GetSpatialRes2DStdDevFlag());
+		m_buffer.SetPositroniumSourceFlag(GetPositroniumSourceFlag());
                 m_tree->Init(m_buffer);
             }
         }
@@ -326,6 +332,9 @@ public:
 
     void SetRootSpRes2DStdDevFlag(G4bool flag) { m_rootSpRes2DStdDevFlag = flag; };
     G4bool GetRootSpRes2DStdDevFlag() {return  m_rootSpRes2DStdDevFlag; };
+
+    void SetRootPositroniumSourceFlag(G4bool flag) { m_rootPositroniumSourceFlag = flag; };
+    G4bool GetRootPositroniumSourceFlag() {return  m_rootPositroniumSourceFlag; };
   
     void SetRootCCFlag(G4bool flag) { m_rootCCFlag = flag; };
     G4bool GetRootCCFlag() {return  m_rootCCFlag; };
@@ -436,6 +445,7 @@ private:
 
     G4bool m_rootHitFlag;
     G4bool m_rootSpRes2DStdDevFlag;
+    G4bool m_rootPositroniumSourceFlag;
     G4bool m_rootCCFlag;
     G4bool m_rootCCSourceParentIDSpecificationFlag;
     G4bool m_rootNtupleFlag;

@@ -9,6 +9,7 @@ See LICENSE.md for further details
 #include "GateMultiPhotonAnalysis.hh"
 
 #include "GateActions.hh"
+#include "GateAnalysis.hh"
 #include "GateDigitizerMgr.hh"
 #include "GateHit.hh"
 #include "GateMultiPhotonAnalysisMessenger.hh"
@@ -20,8 +21,10 @@ See LICENSE.md for further details
 
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
+#include "G4Navigator.hh"
 #include "G4Run.hh"
 #include "G4TrajectoryContainer.hh"
+#include "G4TransportationManager.hh"
 
 #include <algorithm>
 #include <cstddef>
@@ -36,7 +39,6 @@ struct TimelineEntry {
   std::size_t sequence = 0;
   bool is_phantom = false;
   int track_id = 0;
-  int ancestor_photon = 0;
   GatePhantomHit *phantom_hit = 0;
   GateHit *crystal_hit = 0;
 };
@@ -64,9 +66,7 @@ bool EventHasProcessableHits(const std::vector<GateHitsCollection *> &CHC_vector
   return false;
 }
 
-std::vector<TimelineEntry> BuildBasePhantomTimeline(
-    GatePhantomHitsCollection *PHC,
-    GateMultiPhotonTrajectoryNavigator *trajectoryNavigator) {
+std::vector<TimelineEntry> BuildBasePhantomTimeline(GatePhantomHitsCollection *PHC) {
   std::vector<TimelineEntry> basePhantomTimeline;
   if (!PHC) {
     return basePhantomTimeline;
@@ -82,23 +82,89 @@ std::vector<TimelineEntry> BuildBasePhantomTimeline(
       continue;
     }
 
-    const G4int trackID = phantomHit->GetTrackID();
-    const int ancestorPhoton = trajectoryNavigator->FindAncestorPhotonTrackID(trackID);
-    if (ancestorPhoton == 0) {
-      continue;
-    }
-
     TimelineEntry entry;
     entry.time = phantomHit->GetTime();
     entry.sequence = sequence++;
     entry.is_phantom = true;
-    entry.track_id = trackID;
-    entry.ancestor_photon = ancestorPhoton;
+    entry.track_id = phantomHit->GetTrackID();
     entry.phantom_hit = phantomHit;
     basePhantomTimeline.push_back(entry);
   }
 
   return basePhantomTimeline;
+}
+
+std::string LocateVolumeName(const G4ThreeVector &position) {
+  G4Navigator *navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+  G4ThreeVector direction(0., 0., 0.);
+  G4VPhysicalVolume *volume = navigator->LocateGlobalPointAndSetup(position, &direction, false);
+  if (!volume) {
+    return MultiPhotonAnalysisHelpers::kNoVolumeName;
+  }
+  return volume->GetName();
+}
+
+int CountSeptalHits(GatePhantomHitsCollection *PHC) {
+  // Septal penetration is configured on the GateAnalysis module (setSeptalVolumeName and
+  // recordSeptalPenetration), so the settings are read from there - the same way GateRootDefs
+  // does it when deciding whether to create the septalNb branch.
+  // The counting rule is copied from GateAnalysis: every phantom hit recorded in the septal
+  // volume increments the counter, with no per-photon attribution, and the resulting event
+  // total is written to all crystal hits.
+  GateAnalysis *analysis =
+      dynamic_cast<GateAnalysis *>(GateOutputMgr::GetInstance()->GetModule("analysis"));
+  if (!analysis || !analysis->GetRecordSeptalFlag() || !PHC) {
+    return 0;
+  }
+
+  const G4String &septalVolumeName = analysis->GetSeptalPhysVolumeName();
+
+  int septalNb = 0;
+  const G4int NpHits = PHC->entries();
+  for (G4int iPHit = 0; iPHit < NpHits; ++iPHit) {
+    GatePhantomHit *phantomHit = (*PHC)[iPHit];
+    if (phantomHit && phantomHit->GetPhysVolName() == septalVolumeName) {
+      ++septalNb;
+    }
+  }
+
+  return septalNb;
+}
+
+std::unordered_map<int, MultiPhotonAnalysisHelpers::PhantomStatistics> ComputePhantomTotals(
+    GatePhantomHitsCollection *PHC,
+    GateMultiPhotonTrajectoryNavigator *trajectoryNavigator) {
+  // Phantom counters are event totals, exactly like in GateAnalysis: they are computed in
+  // a pass that precedes the crystal hits, so every crystal hit of a gamma gets the same value.
+  // Only hits of the reference photon itself are counted (attribution by exact track ID).
+  std::unordered_map<int, MultiPhotonAnalysisHelpers::PhantomStatistics> totals;
+  if (!PHC) {
+    return totals;
+  }
+
+  const G4int NpHits = PHC->entries();
+  for (G4int iPHit = 0; iPHit < NpHits; ++iPHit) {
+    GatePhantomHit *phantomHit = (*PHC)[iPHit];
+    if (!phantomHit) {
+      continue;
+    }
+
+    const G4int trackID = phantomHit->GetTrackID();
+    if (!trajectoryNavigator->IsReferencePhoton(trackID)) {
+      continue;
+    }
+
+    const MultiPhotonAnalysisHelpers::InteractionProcess process =
+        MultiPhotonAnalysisHelpers::GetInteractionProcess(phantomHit->GetProcess());
+    if (process == MultiPhotonAnalysisHelpers::InteractionProcess::Other) {
+      continue;
+    }
+
+    MultiPhotonAnalysisHelpers::AccumulatePhantomTotals(
+        phantomHit->GetProcess(), LocateVolumeName(phantomHit->GetPos()), totals[trackID]);
+  }
+
+  return totals;
 }
 
 EventContext BuildEventContext(
@@ -121,8 +187,7 @@ EventContext BuildEventContext(
 
 std::vector<TimelineEntry> BuildTimelineForCrystalCollection(
     const std::vector<TimelineEntry> &basePhantomTimeline,
-    GateHitsCollection *CHC,
-    GateMultiPhotonTrajectoryNavigator *trajectoryNavigator) {
+    GateHitsCollection *CHC) {
   std::vector<TimelineEntry> timeline = basePhantomTimeline;
   std::size_t sequence = timeline.size();
 
@@ -134,18 +199,13 @@ std::vector<TimelineEntry> BuildTimelineForCrystalCollection(
       continue;
     }
 
-    const G4int trackID = crystalHit->GetTrackID();
-    const int ancestorPhoton = trajectoryNavigator->FindAncestorPhotonTrackID(trackID);
-    if (ancestorPhoton == 0) {
-      continue;
-    }
-
+    // Hits whose gamma cannot be resolved are kept as well: they receive zeroed counters,
+    // but eventID, runID and the remaining attributes are filled in like in GateAnalysis.
     TimelineEntry entry;
     entry.time = crystalHit->GetTime();
     entry.sequence = sequence++;
     entry.is_phantom = false;
-    entry.track_id = trackID;
-    entry.ancestor_photon = ancestorPhoton;
+    entry.track_id = crystalHit->GetTrackID();
     entry.crystal_hit = crystalHit;
     timeline.push_back(entry);
   }
@@ -167,51 +227,75 @@ void ProcessTimeline(
     std::vector<TimelineEntry> *timeline,
     GateMultiPhotonTrajectoryNavigator *trajectoryNavigator,
     const EventContext &context,
+    const std::unordered_map<int, MultiPhotonAnalysisHelpers::PhantomStatistics> &phantomTotals,
+    int septalNb,
     int legacyPhotonIDPolicy) {
-  std::unordered_map<int, MultiPhotonAnalysisHelpers::GammaStatistics> runningStatsByPhotonTrackId;
+  const MultiPhotonAnalysisHelpers::PhantomStatistics kNoPhantomStatistics;
+
+  std::unordered_map<int, MultiPhotonAnalysisHelpers::RunningStatistics> runningStatsByPhotonTrackId;
   runningStatsByPhotonTrackId.reserve(timeline->size());
 
   for (std::size_t idx = 0; idx < timeline->size(); ++idx) {
     TimelineEntry &entry = (*timeline)[idx];
-    MultiPhotonAnalysisHelpers::GammaStatistics &runningStats = runningStatsByPhotonTrackId[entry.ancestor_photon];
 
-    if (!entry.is_phantom && entry.crystal_hit && entry.crystal_hit->GoodForAnalysis()) {
-      GateHit *hit = entry.crystal_hit;
-      const int primaryID = trajectoryNavigator->FindPrimaryTrackID(entry.track_id);
-      const int nInteractions = runningStats.phantomInteractions + runningStats.crystalInteractions;
-
-      hit->SetSourceID(context.source_id);
-      hit->SetSourcePosition(context.source_vertex);
-      hit->SetNPhantomCompton(runningStats.phantomCompton);
-      hit->SetNPhantomRayleigh(runningStats.phantomRayleigh);
-      if (runningStats.comptonVolumeName != "NULL") {
-        hit->SetComptonVolumeName(runningStats.comptonVolumeName.c_str());
+    // Counters are incremented only by hits of the reference photon itself (attribution by
+    // exact track ID, like in GateAnalysis) and BEFORE the hit is written, so that the value
+    // stored in the hit includes the current interaction.
+    if (trajectoryNavigator->IsReferencePhoton(entry.track_id)) {
+      MultiPhotonAnalysisHelpers::RunningStatistics &runningStats =
+          runningStatsByPhotonTrackId[entry.track_id];
+      if (entry.is_phantom) {
+        if (entry.phantom_hit) {
+          MultiPhotonAnalysisHelpers::AccumulatePhantom(entry.phantom_hit->GetProcess(), runningStats);
+        }
+      } else if (entry.crystal_hit) {
+        MultiPhotonAnalysisHelpers::AccumulateCrystal(entry.crystal_hit->GetProcess(), runningStats);
       }
-      if (runningStats.rayleighVolumeName != "NULL") {
-        hit->SetRayleighVolumeName(runningStats.rayleighVolumeName.c_str());
-      }
-      hit->SetPhotonID(legacyPhotonIDPolicy);
-      hit->SetPrimaryID(primaryID);
-      hit->SetEventID(context.event_id);
-      hit->SetRunID(context.run_id);
-      hit->SetNCrystalCompton(runningStats.crystalCompton);
-      hit->SetNCrystalRayleigh(runningStats.crystalRayleigh);
-      // nInteractions is intentionally filled only in the multiphoton analysis path.
-      hit->SetNInteractions(nInteractions);
     }
 
-    if (entry.is_phantom) {
-      if (!entry.phantom_hit) {
-        continue;
-      }
-
-      MultiPhotonAnalysisHelpers::AccumulatePhantom(entry.phantom_hit->GetProcess(), runningStats);
+    if (entry.is_phantom || !entry.crystal_hit || !entry.crystal_hit->GoodForAnalysis()) {
       continue;
     }
 
-    if (entry.crystal_hit) {
-      MultiPhotonAnalysisHelpers::AccumulateCrystal(entry.crystal_hit->GetProcess(), runningStats);
+    GateHit *hit = entry.crystal_hit;
+
+    // Which gamma the hit belongs to is resolved through the ancestry chain, so hits of
+    // secondary tracks receive the counters of their parent gamma without incrementing them.
+    const int ancestorPhoton = trajectoryNavigator->FindAncestorPhotonTrackID(entry.track_id);
+
+    const MultiPhotonAnalysisHelpers::PhantomStatistics *phantomStats = &kNoPhantomStatistics;
+    MultiPhotonAnalysisHelpers::RunningStatistics runningStats;
+    if (ancestorPhoton != 0) {
+      const std::unordered_map<int, MultiPhotonAnalysisHelpers::PhantomStatistics>::const_iterator
+          phantom_it = phantomTotals.find(ancestorPhoton);
+      if (phantom_it != phantomTotals.end()) {
+        phantomStats = &(phantom_it->second);
+      }
+
+      const std::unordered_map<int, MultiPhotonAnalysisHelpers::RunningStatistics>::const_iterator
+          running_it = runningStatsByPhotonTrackId.find(ancestorPhoton);
+      if (running_it != runningStatsByPhotonTrackId.end()) {
+        runningStats = running_it->second;
+      }
     }
+
+    hit->SetSourceID(context.source_id);
+    hit->SetSourcePosition(context.source_vertex);
+    hit->SetNPhantomCompton(phantomStats->compton);
+    hit->SetNPhantomRayleigh(phantomStats->rayleigh);
+    // Volume names are always written, also when no scattering happened - an empty string would
+    // make the digitizer overwrite sourceID with -1 in the Singles and Coincidences trees.
+    hit->SetComptonVolumeName(phantomStats->comptonVolumeName.c_str());
+    hit->SetRayleighVolumeName(phantomStats->rayleighVolumeName.c_str());
+    hit->SetPhotonID(legacyPhotonIDPolicy);
+    hit->SetPrimaryID(trajectoryNavigator->FindPrimaryTrackID(entry.track_id));
+    hit->SetEventID(context.event_id);
+    hit->SetRunID(context.run_id);
+    hit->SetNCrystalCompton(runningStats.crystalCompton);
+    hit->SetNCrystalRayleigh(runningStats.crystalRayleigh);
+    hit->SetNSeptal(septalNb);
+    // nInteractions is intentionally filled only in the multiphoton analysis path.
+    hit->SetNInteractions(runningStats.scatters);
   }
 }
 
@@ -225,6 +309,20 @@ void RunDigitizersIfNeeded() {
     }
   }
 }
+
+//! Runs the digitizer chain when the enclosing scope is left, whichever path is taken.
+//! GateAnalysis calls the digitizer outside of its "no trajectory container" branch, so
+//! whether Singles and Coincidences are produced for an event does not depend on the
+//! analysis being able to process that event. The guard gives the same guarantee here,
+//! where the event is abandoned in more than one place.
+class ScopedDigitizerRunner {
+ public:
+  ScopedDigitizerRunner() = default;
+  ~ScopedDigitizerRunner() { RunDigitizersIfNeeded(); }
+
+  ScopedDigitizerRunner(const ScopedDigitizerRunner &) = delete;
+  ScopedDigitizerRunner &operator=(const ScopedDigitizerRunner &) = delete;
+};
 
 }  // namespace
 
@@ -312,6 +410,18 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
     return;
   }
 
+  // From here on the event is digitized whatever happens to the analysis itself.
+  ScopedDigitizerRunner digitizerRunner;
+
+  // An event without any primary vertex carries no track, hence no hit and no trajectory
+  // container. GateSourceMgr stops generating vertices once the time limit of the run is
+  // reached, so the last event of every run looks exactly like this. There is nothing to
+  // analyse and nothing anomalous about it, so it is skipped quietly instead of being
+  // reported as a missing trajectory container.
+  if (event->GetNumberOfPrimaryVertex() == 0) {
+    return;
+  }
+
   std::vector<GateHitsCollection *> CHC_vector = GetOutputMgr()->GetHitCollections();
   GatePhantomHitsCollection *PHC = GetOutputMgr()->GetPhantomHitCollection();
 
@@ -359,7 +469,10 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
 
   m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
   m_trajectoryNavigator->BuildIndex();
-  std::vector<TimelineEntry> basePhantomTimeline = BuildBasePhantomTimeline(PHC, m_trajectoryNavigator);
+  std::vector<TimelineEntry> basePhantomTimeline = BuildBasePhantomTimeline(PHC);
+  const std::unordered_map<int, MultiPhotonAnalysisHelpers::PhantomStatistics> phantomTotals =
+      ComputePhantomTotals(PHC, m_trajectoryNavigator);
+  const int septalNb = CountSeptalHits(PHC);
   const EventContext context = BuildEventContext(event, runManager, m_trajectoryNavigator);
   const int legacyPhotonIDPolicy = ResolveLegacyPhotonIDPolicy();
 
@@ -369,14 +482,10 @@ void GateMultiPhotonAnalysis::RecordEndOfEvent(const G4Event *event) {
       continue;
     }
 
-    std::vector<TimelineEntry> timeline = BuildTimelineForCrystalCollection(
-        basePhantomTimeline,
-        CHC,
-        m_trajectoryNavigator);
-    ProcessTimeline(&timeline, m_trajectoryNavigator, context, legacyPhotonIDPolicy);
+    std::vector<TimelineEntry> timeline = BuildTimelineForCrystalCollection(basePhantomTimeline, CHC);
+    ProcessTimeline(&timeline, m_trajectoryNavigator, context, phantomTotals, septalNb,
+                    legacyPhotonIDPolicy);
   }
-
-  RunDigitizersIfNeeded();
 }
 
 void GateMultiPhotonAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step *) {
@@ -396,7 +505,14 @@ bool GateMultiPhotonAnalysis::IsTrackingModeSupported(int tracking_mode_code) co
   return tracking_mode_code == static_cast<int>(TrackingMode::kBoth);
 }
 
-int GateMultiPhotonAnalysis::ResolveLegacyPhotonIDPolicy() const { return 0; }
+int GateMultiPhotonAnalysis::ResolveLegacyPhotonIDPolicy() const {
+  // photonID is a GateAnalysis-specific field: it indexes the two gammas of a back-to-back
+  // annihilation (1 or 2, 0 when the hit comes from neither). There is no meaningful
+  // generalization for an arbitrary number of reference photons, and the field is not
+  // propagated to the Singles or Coincidences trees, so multi-photon analysis always writes 0.
+  // The value therefore differs from GateAnalysis in the Hits tree - this is intentional.
+  return 0;
+}
 
 void GateMultiPhotonAnalysis::SetMissingTrajectoryPolicy(MissingTrajectoryPolicy policy) {
   m_missingTrajectoryPolicy = policy;

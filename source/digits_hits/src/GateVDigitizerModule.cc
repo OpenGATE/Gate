@@ -219,6 +219,26 @@ void GateVDigitizerModule::InputCollectionID()
 }
 
 
+void GateVDigitizerModule::MergeEmittedGammaInformation(GateDigi *right, GateDigi *output)
+{
+    // Decay level (sourceType, decayIndex) and gamma level (decayType, gammaType) fields.
+    // Two digis of the same event always come from the same decay, so the decay level
+    // fields cannot conflict; the gamma level ones can, when hits of different gammas are
+    // merged. Both are handled the same way as m_sourceEnergy / m_sourcePDG above: keep the
+    // value when it agrees, fall back to the "not known" value of the enum when it does not.
+    if (output->m_sourceType != right->m_sourceType) output->m_sourceType = 0;
+    if (output->m_decayType != right->m_decayType) output->m_decayType = 0;
+    if (output->m_gammaType != right->m_gammaType) output->m_gammaType = 0;
+    if (output->m_decayIndex != right->m_decayIndex) output->m_decayIndex = -1;
+
+    // # of Compton and Rayleigh interactions: store the max nb, like the counters above
+    if ( right->m_nInteractions > output->m_nInteractions )
+    {
+        output->m_nInteractions = right->m_nInteractions;
+    }
+}
+
+
 GateDigi* GateVDigitizerModule::CentroidMerge(GateDigi* right, GateDigi* output )
 {
 
@@ -282,6 +302,8 @@ GateDigi* GateVDigitizerModule::CentroidMerge(GateDigi* right, GateDigi* output 
     {
         output->m_nSeptal 	= right->m_nSeptal;
     }
+
+    MergeEmittedGammaInformation(right, output);
 
     // VolumeID: should be identical for both pulses, we do nothing
     // m_scannerPos: identical for both pulses, nothing to do
@@ -350,6 +372,8 @@ GateDigi* GateVDigitizerModule::MergePositionEnergyWin(GateDigi *right, GateDigi
     {
     	output->m_nSeptal 	= right->m_nSeptal;
     }
+
+    MergeEmittedGammaInformation(right, output);
 
     // VolumeID: should be identical for both pulses, we do nothing
     // m_scannerPos: identical for both pulses, nothing to do
