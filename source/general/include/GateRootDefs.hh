@@ -306,6 +306,12 @@ class GateRootSingleBuffer
     inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
     inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
     G4bool m_SpatialRes2DStdDevFlag;
+
+    //! Write the PositroniumSource branches (sourceType, decayType, gammaType, decayIndex,
+    //! nInteractions); off by default, set by /gate/output/root/PositroniumSourceOutput
+    inline void SetPositroniumSourceFlag (G4bool val) {m_PositroniumSourceFlag=val;}
+    inline G4bool GetPositroniumSourceFlag () {return m_PositroniumSourceFlag;}
+    G4bool m_PositroniumSourceFlag = false;
   
 
     //! \name Data fields
@@ -412,6 +418,12 @@ class GateRootCoincBuffer
     inline void SetSpatialRes2DStdDevFlag (G4bool val) {m_SpatialRes2DStdDevFlag=val;}
     inline G4bool GetSpatialRes2DStdDevFlag () {return m_SpatialRes2DStdDevFlag;}
     G4bool m_SpatialRes2DStdDevFlag;
+
+    //! Write the PositroniumSource branches (sourceType, decayType, gammaType, decayIndex,
+    //! nInteractions); off by default, set by /gate/output/root/PositroniumSourceOutput
+    inline void SetPositroniumSourceFlag (G4bool val) {m_PositroniumSourceFlag=val;}
+    inline G4bool GetPositroniumSourceFlag () {return m_PositroniumSourceFlag;}
+    G4bool m_PositroniumSourceFlag = false;
   
     //! \name Data fields
     //@{

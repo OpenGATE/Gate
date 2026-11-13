@@ -881,7 +881,7 @@ Hits produced by ``PositroniumSource`` carry four additional integer branches in
 * **decayType** - decay model attached to the sampled component,
 * **decayIndex** - zero-based index of the sampled decay component.
 
-The same four branches are also written to the **Singles** and **Coincidences** trees, in the latter with the ``1`` and ``2`` suffix for the two arms of the pair; the merging rules applied by the digitizer are described in :ref:`decay_branches_root_output-label`.
+The same four branches can also be written to the **Singles** and **Coincidences** trees, in the latter with the ``1`` and ``2`` suffix for the two arms of the pair. They are off by default there and are enabled with ``/gate/output/root/PositroniumSourceOutput true``; the merging rules applied by the digitizer are described in :ref:`decay_branches_root_output-label`.
 
 The ``decayIndex`` value is copied to all gammas emitted from the same sampled component. In the explicit ``setDecayKinds`` workflow, the index follows the order of components in the user-defined vectors. When the source is configured through ``setPositronInteractions``, the helper may internally expand one user component into several annihilation channels, so ``decayIndex`` refers to the final internal component list used by the model.
 

@@ -73,6 +73,11 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   RootSpRes2DStdDevCmd = new G4UIcmdWithABool(cmdName,this);
   RootSpRes2DStdDevCmd->SetGuidance("Set the flag for Hits in case of SpRes2DStdDev ROOT output");
 
+  cmdName = GetDirectoryName()+"PositroniumSourceOutput";
+  RootPositroniumSourceCmd = new G4UIcmdWithABool(cmdName,this);
+  RootPositroniumSourceCmd->SetGuidance("Write the PositroniumSource branches (sourceType, decayType, gammaType, decayIndex, nInteractions) to the Singles and Coincidences trees");
+  RootPositroniumSourceCmd->SetGuidance("1. true/false (default: false)");
+
   cmdName = GetDirectoryName()+"CCoutput/specifysourceParentID";
   RootCCSourceParentIDSpecificationCmd = new G4UIcmdWithABool(cmdName,this);
   RootCCSourceParentIDSpecificationCmd->SetGuidance("By deflaut set to zero and parentID=0 particles are considered to register sourceEkine and sourcePDG information");
@@ -139,6 +144,7 @@ GateToRootMessenger::~GateToRootMessenger()
   delete RootCoincidencesCmd;
 
   delete  RootSpRes2DStdDevCmd;
+  delete  RootPositroniumSourceCmd;
   
   delete RootCCCmd;
   delete RootCCSourceParentIDSpecificationCmd;
@@ -172,6 +178,10 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
  
     else if (command == RootSpRes2DStdDevCmd) {
         m_gateToRoot->SetRootSpRes2DStdDevFlag(RootSpRes2DStdDevCmd->GetNewBoolValue(newValue));
+    }
+
+    else if (command == RootPositroniumSourceCmd) {
+        m_gateToRoot->SetRootPositroniumSourceFlag(RootPositroniumSourceCmd->GetNewBoolValue(newValue));
     }
   
     else if (command == RootCCCmd) {

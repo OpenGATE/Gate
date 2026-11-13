@@ -807,11 +807,15 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
   // Information from  PositroniumSource plus the interaction counter, propagated from the hit.
   // The same branches exist in the Hits tree; nInteractions is filled by
   // GateMultiPhotonAnalysis only and stays at -1 on the classical GateAnalysis path.
-  Branch("sourceType",    &buffer.sourceType,"sourceType/I");
-  Branch("decayType",     &buffer.decayType,"decayType/I");
-  Branch("gammaType",     &buffer.gammaType,"gammaType/I");
-  Branch("decayIndex",    &buffer.decayIndex,"decayIndex/I");
-  Branch("nInteractions", &buffer.nInteractions,"nInteractions/I");
+  // Written only on request (/gate/output/root/PositroniumSourceOutput)
+  if (buffer.GetPositroniumSourceFlag())
+  {
+    Branch("sourceType",    &buffer.sourceType,"sourceType/I");
+    Branch("decayType",     &buffer.decayType,"decayType/I");
+    Branch("gammaType",     &buffer.gammaType,"gammaType/I");
+    Branch("decayIndex",    &buffer.decayIndex,"decayIndex/I");
+    Branch("nInteractions", &buffer.nInteractions,"nInteractions/I");
+  }
 
   if (!buffer.GetCCFlag())
    {
@@ -1151,18 +1155,22 @@ void GateCoincTree::Init(GateRootCoincBuffer& buffer)
     Branch("RayleighVolName2",  (void *)buffer.RayleighVolumeName2,"RayleighVolName2/C");
 
   // Information from PositroniumSource plus the interaction counter, propagated from the hit
-  // through the digi of each arm; same branches as in the Singles tree, with the 1/2 suffix
-  Branch("sourceType1",    &buffer.sourceType1,"sourceType1/I");
-  Branch("decayType1",     &buffer.decayType1,"decayType1/I");
-  Branch("gammaType1",     &buffer.gammaType1,"gammaType1/I");
-  Branch("decayIndex1",    &buffer.decayIndex1,"decayIndex1/I");
-  Branch("nInteractions1", &buffer.nInteractions1,"nInteractions1/I");
+  // through the digi of each arm; same branches as in the Singles tree, with the 1/2 suffix.
+  // Written only on request (/gate/output/root/PositroniumSourceOutput)
+  if (buffer.GetPositroniumSourceFlag())
+  {
+    Branch("sourceType1",    &buffer.sourceType1,"sourceType1/I");
+    Branch("decayType1",     &buffer.decayType1,"decayType1/I");
+    Branch("gammaType1",     &buffer.gammaType1,"gammaType1/I");
+    Branch("decayIndex1",    &buffer.decayIndex1,"decayIndex1/I");
+    Branch("nInteractions1", &buffer.nInteractions1,"nInteractions1/I");
 
-  Branch("sourceType2",    &buffer.sourceType2,"sourceType2/I");
-  Branch("decayType2",     &buffer.decayType2,"decayType2/I");
-  Branch("gammaType2",     &buffer.gammaType2,"gammaType2/I");
-  Branch("decayIndex2",    &buffer.decayIndex2,"decayIndex2/I");
-  Branch("nInteractions2", &buffer.nInteractions2,"nInteractions2/I");
+    Branch("sourceType2",    &buffer.sourceType2,"sourceType2/I");
+    Branch("decayType2",     &buffer.decayType2,"decayType2/I");
+    Branch("gammaType2",     &buffer.gammaType2,"gammaType2/I");
+    Branch("decayIndex2",    &buffer.decayIndex2,"decayIndex2/I");
+    Branch("nInteractions2", &buffer.nInteractions2,"nInteractions2/I");
+  }
 }
 
 
